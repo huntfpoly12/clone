@@ -322,7 +322,6 @@ export default defineComponent({
                 index: value.index,
                 status: value.status,
                 refund: value.refund,
-                afterDeadline:value.afterDeadline,
                 submissionDate: value.submissionDate,
                 yearEndTaxAdjustment: value.yearEndTaxAdjustment,
                 imputedFinishYearMonth: value.imputedFinishYearMonth,
