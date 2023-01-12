@@ -1,3 +1,6 @@
+import filters from "@/helpers/filters";
+import dayjs from "dayjs";
+
 export const initialFormState = {
     status: 1,
     name: "",
@@ -30,8 +33,8 @@ export const initialFormState = {
     bankType: "13",
     accountNumber: "",
     accountOwner: "",
-    registerDate: new Date(),
-    cancelDate: "",
+    registerDate: filters.formatDateToInterger(dayjs().format("YYYYMMDD")),
+    cancelDate: null,
     remark: "",
 };
 
