@@ -403,24 +403,8 @@ export default defineComponent({
             modalCopy.value = false
         }
         return {
-            modalCopy,
-            actionSave,
-            statusButton,
-            valueCallApiGetEmployeeBusiness,
-            dataCustomRes,
-            globalYear,
-            loadingGetIncomeProcessBusinesses,
-            rowTable,
-            dataSource,
-            per_page, move_column, colomn_resize,
-            originData,
-            createdDone,
-            addMonth,
-            dataModalCopy,
-            saving,
-            showDetailSelected,
-            actionCopySuccess,
-            dataAddIncomeProcess
+            modalCopy,actionSave,statusButton,valueCallApiGetEmployeeBusiness,dataCustomRes,globalYear,loadingGetIncomeProcessBusinesses,rowTable,dataSource,per_page, move_column, colomn_resize,originData,dataModalCopy,
+            createdDone,addMonth,saving,showDetailSelected,actionCopySuccess,dataAddIncomeProcess
         };
     },
 });
