@@ -66,8 +66,36 @@
         color: white;
     }
 
-    // #gridContainer {
-    //     height: 600px;
-    // }
+    #active-save{
+        display: none;
+    }
+    
+}
+.custom-modal-delete {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
 
+    img {
+        width: 40px;
+        margin-right: 5px;
+    }
+
+    span {
+        padding: 0px 5px;
+    }
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.button-form-modal {
+    margin: 0px 5px;
 }

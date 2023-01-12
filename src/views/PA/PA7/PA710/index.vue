@@ -44,9 +44,18 @@
                             <template #company-name="{ data }">
                                 <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                     :idCardNumber="data.data.residentId" :status="data.data.status"
-                                    :foreigner="data.data.foreigner" :checkStatus="false" />
+                                    :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
+                                    :checkStatus="false" @toolTopErorr="toolTopErorr"
+                                    @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
                             </template>
-                            <DxColumn caption="주민등록번호" data-field="residentId" />
+                            <DxColumn caption="주민등록번호" cell-template="residentId" />
+                            <template #residentId="{ data }">
+                                <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                                <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]" position="top"
+                                    v-model:visible="defaultVisible" :hide-on-outside-click="false"
+                                    :target="`#residentId${data.data.residentId}`">Error
+                                </DxTooltip>
+                            </template>
                             <DxColumn caption="소득부분" cell-template="grade-cell" />
                             <template #grade-cell="{ data }" class="custom-action">
                                 <income-type :typeCode="data.data.incomeTypeCode"
@@ -56,7 +65,7 @@
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action">
                                     <a-space :size="10">
-                                        <DeleteOutlined v-if="data.data.deletable" @click="deleteData(data)" />
+                                        <DeleteOutlined v-if="data.data.deletable" @click="modalStatusDelete = true" />
                                     </a-space>
                                 </div>
                             </template>
@@ -64,7 +73,7 @@
                     </a-spin>
                 </a-col>
                 <a-col span="8" class="custom-layout">
-                    <a-spin :spinning="loadingForm" size="large">
+                    <a-spin :spinning="loadingForm" size="large" :key="resetFormNum">
                         <a-form-item label="코드" :label-col="labelCol" class="red">
                             <div class="custom-note d-flex-center">
                                 <text-number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
@@ -127,13 +136,28 @@
                 </a-col>
             </a-row>
         </div>
+        <a-modal :visible="modalStatusDelete" @cancel="modalStatusDelete = false" :mask-closable="false"
+            class="confirm-md" footer="" :width="500">
+            <standard-form action="" name="delete-510">
+                <div class="custom-modal-delete">
+                    <img src="@/assets/images/icon_delete.png" alt="" style="width: 30px;">
+                    <span>{{ contentDelete }}</span>
+                </div>
+                <div class="text-align-center mt-30">
+                    <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                        @onClick="modalStatusDelete = false" />
+                    <button-basic class="button-form-modal" :text="'네. 삭제합니다'" :width="140" :type="'default'"
+                        :mode="'contained'" @onClick="onSubmitDelete" />
+                </div>
+            </standard-form>
+        </a-modal>
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
             title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-710" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
-        <PopupMessage :modalStatus="confirmSave" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+        <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
             title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" />
     </div>
 </template>
@@ -145,16 +169,17 @@ import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
-import { Modal } from 'ant-design-vue';
 import { initialState, initialOptionsRadio } from "./utils/index"
 import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
+import { DxTooltip } from 'devextreme-vue/tooltip';
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
+        DxTooltip,
     },
     setup() {
         // config grid
@@ -170,7 +195,9 @@ export default defineComponent({
         let popupData = ref();
         const focusedRowKey = ref()
         const modalStatus = ref(false)
-        const modalStatusAdd = ref(false)
+        const modalStatusAdd = ref(false);
+        const modalStatusDelete = ref(false);
+        const defaultVisible = ref<boolean>(false);
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
@@ -210,6 +237,7 @@ export default defineComponent({
             notification('error', e.message)
         });
         onDoneDelete(() => {
+            modalStatusDelete.value = false;
             trigger.value = true;
             resetFormNum.value++;
             checkForm.value = false;
@@ -285,6 +313,11 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.incomeTypeName = e
         }
+        //tooltip residentId
+        const isResidentIdError = reactive<any>({});
+        const toolTopErorr = (val: any) => {
+            isResidentIdError[val.id] = val.isError;
+        }
 
         // When changing the value in the input form then moving to another row, check the valid form and display the popup
         const actionToAddFromEdit = (e: any) => {
@@ -341,23 +374,15 @@ export default defineComponent({
                 changeFormData({ ...initialState })
             }
         }
-        const deleteData = (data: any) => {
-            Modal.confirm({
-                title: contentDelete,
-                icon: createVNode(DeleteOutlined),
-                okText: '네. 삭제합니다',
-                cancelText: '아니요',
-                onOk() {
-                    let variables = {
-                        companyId: companyId,
-                        imputedYear: globalYear.value,
-                        employeeId: data.data.employeeId,
-                        incomeTypeCode: data.data.incomeTypeCode
-                    };
-                    actionDelete(variables);
-                },
-                class: 'confirmDelete',
-            });
+        
+        const onSubmitDelete = () => {
+            let variables = {
+                companyId: companyId,
+                imputedYear: globalYear.value,
+                employeeId: formState.employeeId,
+                incomeTypeCode: formState.incomeTypeCode
+            };
+            actionDelete(variables);
         }
         const statusComfirm = (val: any) => {
             if (val) {
@@ -417,8 +442,9 @@ export default defineComponent({
         });
 
         return {
-            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,loadingCreated,
-            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, deleteData, statusComfirm, statusComfirmAdd,
+            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
+            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            toolTopErorr, isResidentIdError, defaultVisible, contentDelete, modalStatusDelete, onSubmitDelete
         };
     },
 });
