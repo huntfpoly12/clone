@@ -31,7 +31,7 @@
                             <switch-basic v-if="formState.type != 'c'" v-model:valueSwitch="formState.active"
                                 textCheck="이용중" textUnCheck="이용중지" />
                         </a-form-item>
-                        <a-form-item label="회원종류" class="red" :label-col="labelCol">
+                        <a-form-item label="회원종류" class="red" :label-col="labelCol"> 
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput"
                                 style="width:170px" field-template="field" :disabled="true" :value="typeSelect">
@@ -406,8 +406,7 @@ export default defineComponent({
                 formState.value.facilityBusinesses = value.getUser.facilityBusinesses;
                 formState.value.screenRoleGroups = value.getUser.screenRoleGroups;
                 formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
-                originData.value.types = [value.getUser.type]
-                triggerSearchRoleGroup.value = true
+                originData.value.types = [value.getUser.type]  
                 typeSelect.value = value.getUser.type == 'm' ? 1 : (value.getUser.type == 'r' ? 3 : (value.getUser.type == 'p' ? 4 : 2))
                 let arrSelect: any = []
                 formState.value.screenRoleGroups.map((e) => {

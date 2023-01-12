@@ -205,7 +205,6 @@ export default defineComponent({
             trigger.value = true;
             refetchData();
         };
-
         const createSuccess = () => {
             trigger.value = true;
             refetchData();
@@ -218,14 +217,4 @@ export default defineComponent({
     },
 });
 </script>  
-
-
-
-
-
-
-
-
-
-
 <style scoped lang="scss" src="./style/style.scss" />

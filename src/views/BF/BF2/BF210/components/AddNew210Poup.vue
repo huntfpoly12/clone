@@ -226,25 +226,11 @@ export default defineComponent({
             rows: per_page,
             types: ["r"],
         });
-        let trigger = ref<boolean>(false);
-        let triggerDuplication = ref<boolean>(false);
-        let triggerGroup = ref<boolean>(false);
-        watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                triggerGroup.value = true
-                trigger.value = true;
-                if (newValue) {
-                    visible.value = newValue;
-                    reqGroup();
-                    reqRoleGroup();
-                    Object.assign(formState, initialFormState);
-                } else {
-                    visible.value = newValue;
-                    trigger.value = false;
-                }
-            }
-        );
+        let trigger = ref<boolean>(true);
+        let triggerDuplication = ref<boolean>(true);
+        let triggerGroup = ref<boolean>(true);
+       
+              
         const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
             queries.searchScreenRoleGroups, originData,
             () => ({
@@ -256,6 +242,8 @@ export default defineComponent({
         watch(resRoleGroup, (value: any) => {
             if (value && value.searchScreenRoleGroups) {
                 arrData.value = value.searchScreenRoleGroups.datas
+
+
             }
         });
         let dataCallGroup = ref({
@@ -398,6 +386,8 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 
 
 
