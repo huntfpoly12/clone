@@ -5,7 +5,7 @@
         <a-col :span="24">
           <a-form-item label="사업소득자" label-align="right">
             <employ-type-select
-              :disabled="isEdit"
+              :disabled="isEdit || !isColumnData"
               :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
               v-model:valueEmploy="dataAction.input.employeeId"
               width="350px"
@@ -21,26 +21,44 @@
         <a-col :span="12" style="padding-right: 5px">
           <a-form-item label="귀속/지급연월" style="display: flex">
             <div class="d-flex-center">
-              <div class="month-custom-1 d-flex-center">
+              <div class="month-custom-1 d-flex-center" v-if="isColumnData">
                 귀
                 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
               </div>
-              <div class="month-custom-2 d-flex-center">
+              <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" :disabled="true" v-else/>
+              <div class="month-custom-2 d-flex-center" v-if="isColumnData">
                 지
                 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
               </div>
+              <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" :disabled="true" v-else/>
             </div>
           </a-form-item>
           <a-form-item label="지급일">
-            <number-box :max="31" :min="1" :disabled="isEdit" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay"/>
+            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" />
             <div v-if="validations.paymentDay" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="지급액">
-            <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput" v-model:valueInput="dataAction.input.paymentAmount" :required="true"></number-box-money>
+            <number-box-money
+              width="150px"
+              :min="0"
+              :max="2147483647"
+              @changeInput="onChangeInput"
+              v-model:valueInput="dataAction.input.paymentAmount"
+              :required="true"
+              :disabled="!isColumnData"
+            ></number-box-money>
             <div v-if="validations.paymentAmount" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="필요경비">
-            <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput" v-model:valueInput="dataAction.input.requiredExpenses"></number-box-money>
+            <number-box-money
+              width="150px"
+              :min="0"
+              max="2147483647"
+              :required="true"
+              @changeInput="onChangeInput"
+              v-model:valueInput="dataAction.input.requiredExpenses"
+              :disabled="!isColumnData"
+            ></number-box-money>
             <div v-if="validations.requiredExpenses" class="validate">this must be filled</div>
           </a-form-item>
           <a-form-item label="세율">
@@ -115,9 +133,11 @@ import notification from '@/utils/notification';
 import { companyId } from '@/helpers/commonFunction';
 import { Formula } from '@bankda/jangbuda-common';
 import { useStore } from 'vuex';
+import DxButton from "devextreme-vue/button";
 export default defineComponent({
   components: {
     DxSelectBox,
+    DxButton
   },
   props: {
     editTax: {
@@ -129,6 +149,10 @@ export default defineComponent({
     },
     isLoadNewForm: {
       type: Boolean,
+    },
+    isColumnData: {
+      type: Boolean,
+      default: false
     },
   },
   setup(props, { emit }) {
@@ -183,13 +207,14 @@ export default defineComponent({
         if (newValue2) {
           newDateLoading.value = true;
           if (newValue.incomeId) {
+            console.log(`output->newValue`,newValue)
             incomeExtraParam.value = newValue;
             dataAction.companyId = newValue.companyId;
             triggerIncomeExtra.value = true;
-            let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
-            let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
-            month1.value = dayjs(date1).format('YYYY-MM');
-            month2.value = dayjs(date2).format('YYYY-MM');
+            // let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
+            // let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
+            // month1.value = dayjs(date1).format('YYYY-MM');
+            // month2.value = dayjs(date2).format('YYYY-MM');
             incomeArr.value = [];
             isEdit.value = true;
             refetchIncomeExtra();
@@ -267,7 +292,7 @@ export default defineComponent({
       requiredExpenses: false,
     });
     watch(
-      ()=>dataAction.input,
+      () => dataAction.input,
       (newVal) => {
         if (newVal.employeeId) {
           validations.employeeId = false;
@@ -289,49 +314,46 @@ export default defineComponent({
     );
     // SUBMIT FORM
 
-    watch(
-      actionSavePA720,
-      () => {
-        store.commit('common/keyActivePA720', dataAction.input.employeeId);
-        // store.commit('pending');
-        if (!dataAction.input.employeeId) {
-          validations.employeeId = true;
-        }
-        if (!dataAction.input.paymentDay) {
-          validations.paymentDay = true;
-        }
-        if (!dataAction.input.paymentAmount) {
-          validations.paymentAmount = true;
-        }
-        if (!dataAction.input.requiredExpenses) {
-          validations.requiredExpenses = true;
-        }
-        if (!dataAction.input.taxRate) {
-          validations.taxRate = true;
-        }
-        if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-          store.commit('common/isErrorFormPA720', true);
-          return;
-        }
-        store.commit('common/isErrorFormPA720', false);
-        dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
-        dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
-        dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
-        dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0]);
-        if (isEdit.value === true) {
-          let incomeExtraUpdateData = JSON.parse(JSON.stringify(dataAction));
-          delete incomeExtraUpdateData.input.paymentDay;
-          delete incomeExtraUpdateData.input.employeeId;
-          delete incomeExtraUpdateData.input.incomeTypeCode;
-          incomeExtraUpdateData.incomeId = incomeExtraParam.value.incomeId;
-          updateIncomeExtra(incomeExtraUpdateData);
-          return;
-        }
-        createIncomeExtra(dataAction);
-        let dataActionFake = JSON.parse(JSON.stringify(dataAction.input));
-        store.state.common.formInputInit = dataActionFake;
+    watch(actionSavePA720, () => {
+      store.commit('common/keyActivePA720', dataAction.input.employeeId);
+      // store.commit('pending');
+      if (!dataAction.input.employeeId) {
+        validations.employeeId = true;
       }
-    );
+      if (!dataAction.input.paymentDay) {
+        validations.paymentDay = true;
+      }
+      if (!dataAction.input.paymentAmount) {
+        validations.paymentAmount = true;
+      }
+      if (!dataAction.input.requiredExpenses) {
+        validations.requiredExpenses = true;
+      }
+      if (!dataAction.input.taxRate) {
+        validations.taxRate = true;
+      }
+      if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
+        store.commit('common/isErrorFormPA720', true);
+        return;
+      }
+      store.commit('common/isErrorFormPA720', false);
+      dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
+      dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
+      dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
+      dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0]);
+      if (isEdit.value === true) {
+        let incomeExtraUpdateData = JSON.parse(JSON.stringify(dataAction));
+        delete incomeExtraUpdateData.input.paymentDay;
+        delete incomeExtraUpdateData.input.employeeId;
+        delete incomeExtraUpdateData.input.incomeTypeCode;
+        incomeExtraUpdateData.incomeId = incomeExtraParam.value.incomeId;
+        updateIncomeExtra(incomeExtraUpdateData);
+        return;
+      }
+      createIncomeExtra(dataAction);
+      let dataActionFake = JSON.parse(JSON.stringify(dataAction.input));
+      store.state.common.formInputInit = dataActionFake;
+    });
     // GET FORM
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
@@ -416,7 +438,7 @@ export default defineComponent({
       validations,
       resultIncomeExtra,
       onChangeInput,
-      actionSavePA720
+      actionSavePA720,
     };
   },
 });

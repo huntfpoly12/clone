@@ -5,7 +5,7 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3">
+          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
@@ -21,11 +21,41 @@
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
-              {{data.data.imputedYear}}- {{data.data.imputedMonth}}
+              <a-tooltip>
+                <template #title>
+                    귀속기간
+                    {{
+                        data.data.reportType == 1 ?
+                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
+                    }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
             <template #paymentYear-paymentMonth="{ data }">
-              {{data.data.paymentYear}}- {{data.data.paymentMonth}}
+              <a-tooltip>
+                <template #title>
+                    지급기간
+                    {{
+                        data.data.reportType == 1 ?
+                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
+                    }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
             <template #afterDeadline-index="{ data }">
@@ -50,6 +80,7 @@
       </div>
     </a-spin>
   </a-modal>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
 </template>
 
 <script lang="ts">
@@ -60,7 +91,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,setValueDataTable,inputPosition} from "./Gridsetting"
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition} from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
@@ -90,7 +121,8 @@ export default defineComponent({
     DxItem, DxScrolling,DxButton
   },
   setup(props, { emit }) {
-    const wrapper =  ref<any>(null);
+    const wrapper = ref<any>(null);
+    const confirmStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -262,6 +294,14 @@ export default defineComponent({
       }
       actionUpdateTaxWithholding(variables)
     }
+
+    const actionConfirmDelete = ()=>{
+      confirmStatus.value = true
+    }
+
+    const actionCloseConfirm = (data: any) => {
+      confirmStatus.value = false
+    }
     return {
       setModalVisible,
       hotSettings,
@@ -272,7 +312,10 @@ export default defineComponent({
       colomn_resize,
       loadNew,
       getAfterDeadline,
-      updateTaxWithholding
+      updateTaxWithholding,
+      actionConfirmDelete,
+      actionCloseConfirm,
+      confirmStatus
     }
   }
 });

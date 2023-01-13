@@ -20,10 +20,10 @@
                                     귀속기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') +
+                                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') +
                                             (data.data.imputedFinishYearMonth ? '~' +
-                                                dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -40,10 +40,10 @@
                                     지급기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') +
+                                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') +
                                             (data.data.paymentFinishYearMonth ? '~' +
-                                                dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -93,6 +93,7 @@ import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
+import { getReportType } from "../utils/index"
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -297,17 +298,6 @@ export default defineComponent({
         };
         const setModalVisible = () => {
             emit("closePopup", false)
-        };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
-                }
-            });
-            return { 'text': text, 'style': style }
         };
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
