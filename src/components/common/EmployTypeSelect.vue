@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :data-source="arrayValueRes" item-template="item-data" value-expr="employeeId"
+    <DxSelectBox :width="width" :data-source="arrayValue" item-template="item-data" value-expr="employeeId"
         display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
@@ -62,22 +62,22 @@ export default defineComponent({
 
         };
 
-        watch(
-            () => props.arrayValue,
-            (newValue) => {
-                arrayValueRes.value = newValue;
-            }
-        ), { deep: true };
+        // watch(
+        //     () => props.arrayValue,
+        //     (newValue) => {
+        //         arrayValueRes.value = newValue;
+        //     }
+        // ), { deep: true };
         watch(
             () => props.valueEmploy,
             (newValue) => {
-                valueEmployRes.value = newValue
+                valueEmployRes.value = newValue;
             }
         );
         return {
             updateValue,
             valueEmployRes,
-            arrayValueRes,
+            // arrayValueRes,
         };
     },
 });

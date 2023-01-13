@@ -104,8 +104,7 @@ export const mergeCells = [
     { row: 36, col: 8, rowspan: 1, colspan: 1 },
     { row: 37, col: 0, rowspan: 1, colspan: 2 },
     { row: 37, col: 3, rowspan: 1, colspan: 2 },
-  ]
-
+]
 export const cellsSetting = [
     { row: 0, col: 0, readOnly: true },
 
@@ -485,7 +484,6 @@ export const cellsSetting = [
     { row: 37, col: 11, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' }, readOnly: true },
     { row: 37, col: 12, className: 'htMiddle htRight', type: 'numeric', numericFormat: { pattern: '0,0', culture: 'ko-KR' },readOnly: true },
 ]
-
 export  const dataInit = [
   ["1. 원천징수 내역 및 납부세액", "", "", "", "", "", "", "", "", "", "", "", ""],
   ["", "소득자 소득구분", "", "", "코드", "원 천 징 수 명 세", "", "", "", "", "⑨<br> 당월 조정<br>환급세액", "납부 세액", ""],
@@ -526,7 +524,6 @@ export  const dataInit = [
   ["", "", "", "", "", "", "", "금융회사등", "합병 등", "", "", "", ""],
   ["", "", "", "", "", "", "", "", "", "", "", "", ""],
 ]
-
 export const inputPosition = [
   { "className":"A01","value": [[4, 5], [4, 6], [4, 7], [4, 8], [4, 9], [4, 10], [4, 11], [4, 12]] },
   { "className":"A02","value": [[5, 5], [5, 6], [5, 7], [5, 8], [5, 9], [5, 10], [5, 11], [5, 12]] },

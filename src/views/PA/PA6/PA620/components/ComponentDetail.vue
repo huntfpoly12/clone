@@ -3,10 +3,10 @@
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
             <a-col style="display: flex">
               <DxButton
-                    :text="'귀' + (!isDisabledForm ? (processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)):'')"
+                    :text="'귀' + inputDateTax" :disabled="isDisabledForm"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
               <DxButton
-                    :text="'지' + (!isDisabledForm ? (processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)):'')"
+                    :text="'지' + paymentDateTax" :disabled="isDisabledForm"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
               <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm"/>
             </a-col>
@@ -41,7 +41,7 @@
                   </div>
               </DxButton>
               <div class="custom-select-tab ml-4">
-                <button class="button-open-tab" @click="onItemClick('openTab')">기타소득자등록</button>
+                <button class="button-open-tab" @click="onItemClick('openTab')">사업소득자등록</button>
               </div>
             </a-col>
         </a-row>
@@ -51,9 +51,9 @@
   <a-col :span="14" class="custom-layout ">
       <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-              :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-              :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEditFuc"
-              :focused-row-enabled="true" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
+              :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column" @focused-row-changed="onFocusedRowChanged"
+              :allow-column-resizing="colomn_resize" :column-auto-width="true"
+              :focused-row-enabled="true" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey" ref="gridRefName">
               <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
               <DxScrolling column-rendering-mode="virtual" />
               <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
@@ -87,9 +87,9 @@
   <a-col :span="10" class="custom-layout form-action">
       <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
           <a-form-item label="사업소득자" label-align="right">
-              <employ-type-select :disabled="disabledInput || isDisabledForm" :arrayValue="arrayEmploySelect"
+              <employ-type-select :arrayValue="arrayEmploySelect"
                   v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
-                  @incomeTypeCode="changeIncomeTypeCode" />
+                  @incomeTypeCode="changeIncomeTypeCode"  :disabled="disabledInput || isDisabledForm" />
           </a-form-item>
           <div class="header-text-1 mb-10">소득내역</div>
           <div class="income-details">
@@ -101,13 +101,13 @@
                                   귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="true" />
                               </div>
                               <DxButton
-                                        :text="'귀' + (!isDisabledForm ? (processKey?.imputedYear + '-' + formatMonth(processKey?.imputedMonth)):'')"
+                                        :text="'귀'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else/>
                               <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
                                   지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="true"/>
                               </div>
                                 <DxButton
-                                        :text="'지' + (!isDisabledForm ? (processKey?.paymentYear + '-' + formatMonth(processKey?.paymentMonth)):'')"
+                                        :text="'지'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
                           </div>
                       </a-form-item>
@@ -117,7 +117,7 @@
                       </a-form-item>
                       <a-form-item label="지급액" label-align="right">
                           <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
-                              v-model:valueInput="dataAction.input.paymentAmount" />
+                              v-model:valueInput="dataAction.input.paymentAmount" @changeInput="changeInput"/>
                       </a-form-item>
                       <a-form-item label="세율" label-align="right">
                           3%
@@ -131,13 +131,13 @@
                       <div>
                           <a-form-item label="소득세(공제)" label-align="right">
                               <div class="d-flex-center">
-                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
+                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="true"
                                       v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
                               </div>
                           </a-form-item>
                           <a-form-item label="지방소득세(공제)" label-align="right">
                               <div class="d-flex-center">
-                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
+                                  <number-box-money min="0" width="150px" class="mr-5" :disabled="true"
                                       v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" /> 원
                               </div>
                           </a-form-item>
@@ -168,6 +168,9 @@
       title="변경이력" typeHistory="pa-620-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
       :processKey="dataTableDetail.processKey"/>
+  <PopupMessage :modalStatus="popupAddStatus" @closePopup="popupAddStatus = false" :typeModal="'confirm'"
+    :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onPopupComfirm"
+    :isConfirmIcon="false" />
 </template>
 
 <script lang="ts">
@@ -188,6 +191,7 @@ import type { DropdownProps } from "ant-design-vue";
 import DeletePopup from "./DeletePopup.vue"
 import EditPopup from "./EditPopup.vue"
 import filters from "@/helpers/filters";
+import { Formula } from '@bankda/jangbuda-common';
 
 export default defineComponent({
   components: {
@@ -198,9 +202,6 @@ export default defineComponent({
   },
   props: {
       statusBt: {
-          type: Number
-      },
-      actionSave: {
           type: Number
       },
       isDisabledForm: {
@@ -229,20 +230,31 @@ export default defineComponent({
       const rowTable = ref(0);
       const globalYear = computed(() => store.state.settings.globalYear)
 
-      let dateCustom = {
-          imputedYear: globalYear.value,
-          imputedMonth: dayjs().month() + 1,
-          paymentYear: globalYear.value,
-          paymentMonth: dayjs().month() + 1,
-      }
-      store.commit('common/processKeyPA620', dateCustom)
-      const processKey = computed(() => store.state.common.processKeyPA620)
+    //   let dateCustom = {
+    //       imputedYear: globalYear.value,
+    //       imputedMonth: dayjs().month() + 1,
+    //       paymentYear: globalYear.value,
+    //       paymentMonth: dayjs().month() + 1,
+    //   }
+    //   store.commit('common/processKeyPA620', dateCustom)
+      const processKey = computed(() => store.getters['common/processKeyPA620']);
       
       const modalHistory = ref<boolean>(false)
       const modalHistoryStatus = ref<boolean>(false)
       let arrayEmploySelect: any = ref([])
       let placements = ["bottomRight"] as DropdownProps["placement"][];
-
+      const inputDateTax = computed(()=> {
+            if(!props.isDisabledForm){
+                return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
+            }
+            return '';
+        })
+        const paymentDateTax = computed(()=> {
+            if(!props.isDisabledForm){
+                return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
+            }
+            return '';
+        })
       let dataAction: any = reactive({
           ...dataActionUtils
       })
@@ -273,8 +285,10 @@ export default defineComponent({
     resIncomeProcessBusinessesDetail(res => {
         const val = res.data.getIncomeBusinesses;
           dataSourceDetail.value = val;
-          focusedRowKey.value =  val[0]?.employeeId;
+          console.log(`output->isFirstChange.value`,isFirstChange.value)
           if(isFirstChange.value) {
+            isCompare.value = false;
+            focusedRowKey.value = val[0]?.employeeId;
             dataAction.input.paymentDay = val[0]?.paymentDay ?? '';
             dataAction.input.employeeId = val[0]?.employeeId ?? '';
             dataAction.input.incomeTypeCode = val[0]?.incomeTypeCode;
@@ -282,6 +296,9 @@ export default defineComponent({
             dataAction.input.withholdingIncomeTax = val[0]?.withholdingIncomeTax;
             dataAction.input.withholdingLocalIncomeTax = val[0]?.withholdingLocalIncomeTax;
             isFirstChange.value = false;
+          }
+          if(val.length == 0){
+            disabledInput.value = false;
           }
           triggerDetail.value = false
       })
@@ -305,7 +322,7 @@ export default defineComponent({
               })
           })
       }, { deep: true })
-
+    //   actionEditFuc
       // API QUERY DETAIL VALUE TO EDIT
       const { refetch: refetchDetailEdit, loading: loadingDetailEdit, onError: errorDetailEdit, result: resDetailEdit } = useQuery(queries.getIncomeBusiness, dataCallApiDetailEdit, () => ({
           enabled: triggerDetailDetailEdit.value,
@@ -321,6 +338,8 @@ export default defineComponent({
               dataAction.input.withholdingIncomeTax = respon.withholdingIncomeTax
               dataAction.input.withholdingLocalIncomeTax = respon.withholdingLocalIncomeTax
               triggerDetailDetailEdit.value = false;
+              dataActionEditInit.value = JSON.parse(JSON.stringify(dataAction.input));
+              // isCompare.value=false;
           }
       }, { deep: true })
       errorDetailEdit(res => {
@@ -380,9 +399,6 @@ export default defineComponent({
       })
 
       // Action save value
-      watch(() => props.actionSave, () => {
-          
-      })
 
       const {
           mutate: actionChangeIncomeProcessBusinessStatus,
@@ -393,28 +409,113 @@ export default defineComponent({
           notification('error', e.message)
       })
       successChangeIncomeProcessBusinessStatus(e => {
-          notification('success', `업데이트 완료!`)
+          focusedRowKey.value = dataAction.input.employeeId;
+          notification('success', `업데이트 완료!`);
+          emit('createdDone', true)
       })
 
-      // ================FUNCTION============================================   
-      const addRow = () => {
-          disabledInput.value = false
-          dataAction.input.paymentDay = null
-          dataAction.input.employeeId = 0
-          dataAction.input.incomeTypeCode = ""
-          dataAction.input.paymentAmount = 0
-          dataAction.input.withholdingIncomeTax = 0
-          dataAction.input.withholdingLocalIncomeTax = 0
-          switchAction.value = true
-      }
+      // ================FUNCTION============================================ 
 
-      const actionEditFuc = (data: any) => {
-          disabledInput.value = true
-          switchAction.value = false
-          dataCallApiDetailEdit.processKey = processKey.value
-          dataCallApiDetailEdit.incomeId = data.data.incomeId
+      const caclInput = () => {
+      let objIncomeTax: any = Formula.getIncomeTax(dataAction.input.paymentAmount, dataAction.input.taxRate);
+      dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
+      dataAction.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
+    };
+    const changeInput = () => {
+        caclInput();
+    }
+    const popupAddStatus = ref<boolean>(false);
+    const titleModalConfirm = ref('Do you want to reset your form?');
+    const dataActionToCompare = ref({
+      paymentDay: null,
+      employeeId: 0,
+      incomeTypeCode: "",
+      paymentAmount: 0,
+      taxRate: 3,
+      withholdingIncomeTax: 0,
+      withholdingLocalIncomeTax: 0,
+    });
+    const popupAddType = ref(1);
+    const dataActionEditInit = ref({});
+    const isCompare = ref(false);
+    const copyFocusRowKey = ref();
+    const oldIncomeId = ref(1);
+    const resetForm = () => {
+      disabledInput.value = false
+        dataAction.input.paymentDay = null
+        dataAction.input.employeeId = 0
+        dataAction.input.incomeTypeCode = ""
+        dataAction.input.paymentAmount = 0
+        dataAction.input.withholdingIncomeTax = 0
+        dataAction.input.withholdingLocalIncomeTax = 0
+        switchAction.value = true;
+        gridRefName.value.instance.option("selectedRowKeys", -[]);
+        gridRefName.value.instance.option("focusedRowIndex", -1);
+    }
+    const onPopupComfirm = (e: any) => {
+      if (e) {
+        if (popupAddType.value == 2) {
+          onSave();
+          // isCompare.value = true;
+          focusedRowKey.value = copyFocusRowKey.value;
+          triggerDetailDetailEdit.value = true;
+          refetchDetailEdit()
+        } else {
+          resetForm();
+        }
+      } else {
+        if (popupAddType.value == 2) {
+          // isCompare.value = true;
+          dataCallApiDetailEdit.incomeId = oldIncomeId.value;
           triggerDetailDetailEdit.value = true
           refetchDetailEdit()
+        }
+          // isLoadNewForm.value = true;
+      }
+    };
+    const addRow = () => {
+      if(!disabledInput.value){
+        if (JSON.stringify(dataAction.input) != JSON.stringify(dataActionToCompare.value)) {
+          popupAddStatus.value = true;
+          titleModalConfirm.value = 'Do you want to reset your form?';
+        }
+      }else {
+        resetForm();
+      }
+    }
+      const onFocusedRowChanged = (data: any) => {
+          const dataRow = data.row && data.row.data;
+          console.log(`output-> focus row key hihi`,)
+          if(!dataRow){
+            disabledInput.value = false;
+          }
+          if(dataRow){
+            disabledInput.value = true;
+            switchAction.value = false
+            
+            if (isCompare.value){
+              if ( JSON.stringify(dataAction.input) != JSON.stringify(dataActionEditInit.value)) {
+                popupAddType.value = 2
+                popupAddStatus.value = true;
+                titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
+                copyFocusRowKey.value = dataRow.employeeId;
+                oldIncomeId.value = dataRow?.incomeId
+              }else {
+              dataCallApiDetailEdit.processKey = processKey.value
+              dataCallApiDetailEdit.incomeId = dataRow?.incomeId;
+              triggerDetailDetailEdit.value = true
+              refetchDetailEdit();
+            }
+            }else {
+              dataCallApiDetailEdit.processKey = processKey.value
+              dataCallApiDetailEdit.incomeId = dataRow?.incomeId;
+              triggerDetailDetailEdit.value = true
+              refetchDetailEdit();
+              setTimeout(()=> {
+                isCompare.value = true;
+              }, 100)
+            }
+          } 
       }
 
       const changeIncomeTypeCode = (res: string) => {
@@ -511,6 +612,8 @@ export default defineComponent({
 
       const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
       watch(processKeyPA620,(newVal: any,oldV)=>{
+          isCompare.value = false;
+          focusedRowKey.value = 0;
           isFirstChange.value = true;
           dataTableDetail.processKey = processKeyPA620.value;
           delete dataTableDetail.processKey.status;
@@ -521,8 +624,11 @@ export default defineComponent({
             month1.value = dayjs(date1).format("YYYY-MM")
             month2.value = dayjs(date2).format("YYYY-MM");
         })
-      const focusedRowKey = ref<Number>(1);
-
+      const focusedRowKey = ref<Number>();
+      const gridRefName: any = ref();
+// COMPARE DATA TO CHECK FORM WHEN ROW CHANGE
+      //TH1: NO EDITED
+      
       return {
           month1, month2,
           arrayEmploySelect,
@@ -546,7 +652,6 @@ export default defineComponent({
           modalEdit,
           addRow,processKey,
           deleteItem,
-          actionEditFuc,
           changeIncomeTypeCode,
           selectionChanged,
           actionDeleteSuccess,
@@ -557,7 +662,17 @@ export default defineComponent({
           onSave,
           formatMonth,
           processKeyPA620,
-          focusedRowKey
+          focusedRowKey,
+          inputDateTax,
+          paymentDateTax,
+          onFocusedRowChanged,
+          changeInput,
+          gridRefName,
+          popupAddStatus,
+          titleModalConfirm,
+          onPopupComfirm,
+          copyFocusRowKey,
+          isCompare
       }
   }
 });
