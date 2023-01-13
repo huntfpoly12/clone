@@ -2,7 +2,7 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="500">
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
-        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month) }}</div>
+        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month1) }}</div>
         <div class="month-custom-2 d-flex-center">지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" /></div>
       </div>
     </a-form-item>
@@ -18,7 +18,7 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer="" :width="600">
     <div class="mt-30 d-flex-center">
-      <span>과거내역 {{ month2 }} </span>
+      <span>과거내역</span>
       <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
           <span v-if="data" style="padding: 4px">
@@ -63,6 +63,10 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    dateType: {
+        type: Number,
+        default: 1,
+    }
   },
   components: {
     DxSelectBox,
@@ -102,6 +106,18 @@ export default defineComponent({
       findIncomeProcessExtraStatViewsTrigger.value = false;
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
+    const month1 = ref(1);
+    watch(() => props.month, (val) => {
+            month1.value = val;
+            let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth }`;
+            if(props.dateType == 2 && props.month) {
+                yearMonth = `${processKey.value.paymentYear}${props.month + 1}`;
+            }
+            if(props.dateType == 1) {
+                yearMonth = `${processKey.value.paymentYear}${props.month}`;
+            }
+            month2.value = yearMonth;
+        });
     onError((res) => {
       notification('error', res.message);
     });
@@ -133,7 +149,7 @@ export default defineComponent({
         paymentMonth:  parseInt(month2.value.toString().slice(4,6)),
       });
       emit('closePopup', false);
-      store.commit('common/processKeyPA620', dateCustom)
+    //   store.commit('common/processKeyPA620', dateCustom)
     };
 
     const openModalCopy = () => {
@@ -176,6 +192,7 @@ export default defineComponent({
       arrDataPoint,
       dataApiCopy,
       formatMonth,
+      month1
     };
   },
 });
