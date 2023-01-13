@@ -2,7 +2,7 @@
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy" :name="nameInput"
-        field-template="field-data" @value-changed="updateValue" @closed="eventItemClick"
+        field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 4px">
@@ -95,6 +95,7 @@ export default defineComponent({
 
         const updateValue = (value: any) => {
             emit("update:valueEmploy", value.value);
+            emit("onUpdateValue", value.value)
         };
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
@@ -111,8 +112,8 @@ export default defineComponent({
             }
         );
 
-        const eventItemClick = () => {
-            emit('onChange')
+        const eventItemClick = (e: any) => {
+            emit('onChange', e.itemData.employeeId)
         }
         return {
             updateValue,

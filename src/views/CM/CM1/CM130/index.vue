@@ -88,7 +88,7 @@
                                         <a-col :span="24">
                                             <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
-                                                    <number-box :width="150" :required="true" placeholder="Number box"
+                                                    <number-box :width="150" :required="true"
                                                         :min="0" :max="30" v-model:valueInput="formState.paymentDay"
                                                         :spinButtons="true">
                                                     </number-box>
