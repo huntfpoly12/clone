@@ -288,8 +288,8 @@ export default defineComponent({
     setup(props, { emit }) {
         const joinedAt = ref()
 
-        let month1: any = ref(dayjs().format("YYYY-MM"))
-        let month2: any = ref(dayjs().format("YYYY-MM"))
+        let month1: any = ref(dayjs().format("YYYYMM"))
+        let month2: any = ref(dayjs().format("YYYYMM"))
 
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         const dataPrevRetiredYearsOfService: any = ref({})
@@ -300,12 +300,12 @@ export default defineComponent({
 
         // =============== WATCH ==================================
         watch(month1, (value) => {
-            props.dataForm.processKey.imputedYear = parseInt(value.split('-')[0])
-            props.dataForm.processKey.imputedMonth = parseInt(value.split('-')[1])
+            props.dataForm.processKey.imputedYear = parseInt(value.toString().slice(0, 4))
+            props.dataForm.processKey.imputedMonth = parseInt(value.toString().slice(4, 6))
         });
         watch(month2, (value) => {
-            props.dataForm.processKey.paymentYear = parseInt(value.split('-')[0])
-            props.dataForm.processKey.paymentMonth = parseInt(value.split('-')[1])
+            props.dataForm.processKey.paymentYear = parseInt(value.toString().slice(0, 4))
+            props.dataForm.processKey.paymentMonth = parseInt(value.toString().slice(4, 6))
         });
 
         // Prev
