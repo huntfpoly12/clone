@@ -7,7 +7,7 @@
         <div class="action-right">
           <!-- <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3"> -->
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="createTaxWithholding">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -153,6 +153,7 @@
       </div>
     </a-spin>
   </a-modal>
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
 </template>
 
 <script lang="ts">
@@ -170,7 +171,7 @@ import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline} from "../../utils/index"
-
+import ConfirmloadNew from "./ConfirmloadNew.vue"
 // register Handsontable's modules
 registerAllModules();
 
@@ -190,10 +191,12 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxToolbar, DxPaging,
-    DxItem, DxScrolling,DxButton
+    DxItem, DxScrolling, DxButton,
+    ConfirmloadNew
   },
   setup(props, { emit }) {
     const wrapper =  ref<any>(null);
+    const confirmLoadNewStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -263,6 +266,10 @@ export default defineComponent({
       }
     })
 
+    const actionConfirmLoadNew = ()=>{
+      confirmLoadNewStatus.value = true
+    }
+    
     const loadNew = () => {
       if (!firstClickLoadNew.value) {
         originData.value = {
@@ -374,7 +381,7 @@ export default defineComponent({
       wrapper,
       move_column,
       colomn_resize,
-      loadNew,
+      loadNew,confirmLoadNewStatus,actionConfirmLoadNew,
       getAfterDeadline,
       createTaxWithholding
     }
