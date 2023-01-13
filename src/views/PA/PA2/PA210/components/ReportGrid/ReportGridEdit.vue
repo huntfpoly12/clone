@@ -49,11 +49,13 @@
             <template #afterDeadline-index="{ data }">
                <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="'33px'" />
             </template>
-            <DxColumn caption="연말" data-field="yearEndTaxAdjustment"/>
-      
+            <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
+            <template #yearEndTaxAdjustment="{ data }">
+              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"/>
+            </template>
             <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
             <template #refund="{ data }">
-              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'X'" :textUnCheck="'O'" />
+              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" />
             </template>
             <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
             <template #submission-date="{ data }">
@@ -75,6 +77,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import DxButton from "devextreme-vue/button";
+import { DxCheckBox } from 'devextreme-vue/check-box';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "devextreme-vue/data-grid";
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
@@ -108,7 +111,7 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxToolbar, DxPaging,
-    DxItem, DxScrolling, DxButton,
+    DxItem, DxScrolling, DxButton,DxCheckBox,
     ConfirmDelete,ConfirmloadNew
   },
   setup(props, { emit }) {
