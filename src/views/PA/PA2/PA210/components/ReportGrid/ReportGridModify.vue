@@ -20,11 +20,29 @@
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
-              {{data.data.imputedYear}}- {{data.data.imputedMonth}}
+              <a-tooltip>
+                <template #title>
+                    귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
             <template #paymentYear-paymentMonth="{ data }">
-              {{data.data.paymentYear}}- {{data.data.paymentMonth}}
+              <a-tooltip>
+                <template #title>
+                    지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
             <template #afterDeadline-index="{ data }">
@@ -59,13 +77,13 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { useMutation} from "@vue/apollo-composable";
 import { mergeCellsModified, cellsSettingModified, dataModified ,calculateWithholdingStatusReportModified,inputPositionModified,clearAllCellValue} from "./GridsettingModify"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
-import { getAfterDeadline} from "../../utils/index"
+import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
 // register Handsontable's modules
@@ -366,7 +384,8 @@ export default defineComponent({
       confirmStatus,
       actionCloseConfirm,
       actionConfirmLoadNew,
-      confirmLoadNewStatus
+      confirmLoadNewStatus,
+      showTooltipYearMonth,
     }
   }
 });

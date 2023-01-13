@@ -7,7 +7,7 @@
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -69,6 +69,7 @@
     </a-spin>
   </a-modal>
   <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
 </template>
 
 <script lang="ts">
@@ -78,14 +79,15 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition} from "./Gridsetting"
+import { useMutation} from "@vue/apollo-composable";
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition,clearAllCellValue} from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
-
+import ConfirmDelete from "./ConfirmDelete.vue"
+import ConfirmloadNew from "./ConfirmloadNew.vue"
 
 // register Handsontable's modules
 registerAllModules();
@@ -106,11 +108,13 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxToolbar, DxPaging,
-    DxItem, DxScrolling,DxButton
+    DxItem, DxScrolling, DxButton,
+    ConfirmDelete,ConfirmloadNew
   },
   setup(props, { emit }) {
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false)
+    const confirmLoadNewStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -142,10 +146,7 @@ export default defineComponent({
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const trigger = ref<boolean>(false)
     const dataSource = ref<any>(props.dataReport);
-    const originData = ref()
-    const firstClickLoadNew = ref(false)
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -154,6 +155,7 @@ export default defineComponent({
       dataSource.value = newValue
     })
     onMounted(() => {
+      clearAllCellValue(wrapper)
       let hot  = wrapper.value?.hotInstance; 
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
           const rowPosition = inputPosition.find(item => item.className == data.code);
@@ -199,6 +201,10 @@ export default defineComponent({
         hot.setDataAtCell(adjustmentPosition?.value[9][0], adjustmentPosition?.value[9][1], adjustment?.refundApplicationAmount);
     })
 
+    const actionConfirmLoadNew = ()=>{
+      confirmLoadNewStatus.value = true
+    }
+    
     const loadNew = () => {
         calculateWithholdingStatusReport(wrapper)
     }
@@ -298,7 +304,7 @@ export default defineComponent({
       wrapper,
       move_column,
       colomn_resize,
-      loadNew,
+      loadNew,confirmLoadNewStatus,actionConfirmLoadNew,
       getAfterDeadline,
       updateTaxWithholding,
       actionConfirmDelete,
