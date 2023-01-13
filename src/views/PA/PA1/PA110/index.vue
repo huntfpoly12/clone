@@ -1,8 +1,9 @@
 <template>
   <div>
-  <action-header title="기타소득자등록" @actionSave="actionAddItem ? onSubmit($event) : updateData($event)" />
+  <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-110" class="page-content">
     <a-row>
+        {{ processKey }}
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
@@ -198,17 +199,19 @@
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
       <a-col :span="5">
         <div style="display: flex;">
-          <DxButton :text="'귀' + processKey.paymentYear + '-' + processKey.paymentMonth"
-          :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-          <DxButton :text="'지' + processKey.paymentYear + '-' + processKey.paymentMonth"
+          <DxButton
+            :text="'귀' + inputDateTax" :disabled="false"
+            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+          <DxButton
+            :text="'지' + paymentDateTax" :disabled="false"
             :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
           <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
         </div>
       </a-col>
       <a-col :span="9">
         <div style="float: right;display: flex;">
-          <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
-          @loadingTableInfo="loadingTableInfo" />
+          <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="onActionAddItem"
+          @loadingTableInfo="loadingTableInfo" @actionSave="onSubmit" @actionUpdate="updateData" :actionAddItem="actionAddItem"/>
         </div>
       </a-col>
     </a-row>
@@ -217,10 +220,10 @@
         <a-spin :spinning="(loadingTaxPayInfo)" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
+            :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId" id="pa-110-gridContainer"
             :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
-            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-            <DxColumn width="200" caption="사원" cell-template="tag" />
+            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" width="40"/>
+            <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">
               <div class="custom-action">
                 <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -228,10 +231,10 @@
                   :midTermSettlement="data.data.midTermSettlement" />
               </div>
             </template>
-            <DxColumn caption="급여" data-field="totalPay" />
-            <DxColumn caption="공제" data-field="totalDeduction" />
-            <DxColumn caption="차인지급액" data-field="actualPayment" />
-            <DxColumn width="250" caption="비고" cell-template="four-major-insurance" />
+            <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay" :customize-text="formateMoney"/>
+            <DxColumn alignment="left" width="75" caption="공제" data-field="totalDeduction" :customize-text="formateMoney" />
+            <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" />
+            <DxColumn alignment="left" class="min-w-240" caption="비고" cell-template="four-major-insurance" />
             <template #four-major-insurance="{ data }" class="custom-action">
               <div class="custom-action">
                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
@@ -248,7 +251,10 @@
                   :ratio="data.data.employee.incomeTaxMagnification" />
               </div>
             </template>
-            <DxColumn caption="지급일" data-field="paymentDay" />
+            <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay" cell-template="paymentDay" />
+            <template #paymentDay="{ data }" class="custom-action">
+                <div class="text-center">{{ data.data.paymentDay }}</div>
+            </template>
             <DxSummary>
               <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
               <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}" />
@@ -259,11 +265,12 @@
           </a-spin>
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem"  @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" />
+        <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem" 
+         @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" :keyForm="keyForm" ref="formRef"/>
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
-        @dataAddIncomeProcess="dataAddIncomeProcess" />
+        @dataAddIncomeProcess="dataAddIncomeProcess" :dateType="dateType"/>
     </a-row>
   </div>
   
@@ -287,6 +294,7 @@ import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
 import { sampleDataIncomeWage } from "./utils/index"
+import queriesHolding from "@/graphql/queries/CM/CM130/index";
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -331,7 +339,26 @@ export default defineComponent({
     const actionSaveItem= ref<number>(0)
     const actionUpdateItem = ref<number>(0)
     const focusedRowKey = ref<Number>(1);
-    let status = ref()
+    let status = ref();
+    const isDisabledForm = ref<boolean>(false);
+    const formatMonth = (month: any) => {
+      if (+month < 10) {
+          return '0' + month;
+      }
+      return month;
+    };
+    const inputDateTax = computed(()=> {
+        if(!isDisabledForm.value){
+            return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
+        }
+        return '';
+      })
+    const paymentDateTax = computed(()=> {
+      if(!isDisabledForm.value){
+          return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
+      }
+      return '';
+    })
     // call api getIncomeProcessWages for first table 
     const {
       refetch: refetchDataProcessIncomeWages,
@@ -340,7 +367,6 @@ export default defineComponent({
     } = useQuery(queries.getIncomeProcessWages, {
       companyId: companyId,
       imputedYear: globalYear,
-      imputedMonth: dayjs().month() + 1,
     }, () => ({
       fetchPolicy: "no-cache",
     }))
@@ -439,12 +465,12 @@ export default defineComponent({
           }
           if (data.imputedMonth == (dayjs().month() + 1)) {
                 status.value = data.status
-                if(actionUpdateItem.value == 0){
-                    store.state.common.processKeyPA110.imputedYear = data.imputedYear
-                    store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
-                    store.state.common.processKeyPA110.paymentYear = data.paymentYear
-                    store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
-                }          
+                // if(actionUpdateItem.value == 0){
+                //     store.state.common.processKeyPA110.imputedYear = data.imputedYear
+                //     store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+                //     store.state.common.processKeyPA110.paymentYear = data.paymentYear
+                //     store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+                // }          
               }
           
         });
@@ -463,13 +489,20 @@ export default defineComponent({
     }, () => ({
       fetchPolicy: "no-cache",
     }))
+    const formRef = ref();
     watch(resultTaxPayInfo, (value) => {
-      if (actionUpdateItem.value == 0) {
-        focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
-        dataIncomeWage.value = value.getIncomeWages[0]
-        actionAddItem.value = false
-      }
-      dataTaxPayInfo.value = value.getIncomeWages
+        if(value?.getIncomeWages[0]) {
+            if (actionUpdateItem.value == 0) {
+                focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
+                dataIncomeWage.value = value.getIncomeWages[0]
+                actionAddItem.value = false
+            }
+            dataTaxPayInfo.value = value.getIncomeWages
+        }else {
+            dataTaxPayInfo.value = value.getIncomeWages;
+            formRef.value.addRow()
+        }
+        
     })
 
     /**
@@ -506,14 +539,16 @@ export default defineComponent({
       store.state.common.processKeyPA110.paymentYear = month.paymentYear
       store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
       store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
+      store.state.common.processKeyPA110.imputedYear = globalYear.value;
     }
     /**
      * copy data from other month
      * @param month 
      */
     const copyMonth = (month: number) => {
-        dataModalCopy.value = month
-        modalCopy.value = true
+        dataModalCopy.value = month;
+        modalCopy.value = true;
+        
     }
 
     const loadingTableInfo = () => {
@@ -563,11 +598,32 @@ export default defineComponent({
      * @param monthInputed 
      */
     const setUnderline = (monthInputed : any)=>{
-        return monthClicked.value == monthInputed
+        return monthClicked.value == monthInputed;
     }
 
     const createdDone = () => {
-      refetchDataTaxPayInfo()
+    //   refetchDataTaxPayInfo();
+    }
+    const formateMoney = (options: any) => {
+      return filters.formatCurrency(options.value);
+    };
+    // get config to check default date type
+    const dateType = ref<number>(1)
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    const { result: resultConfig} = useQuery(
+        queriesHolding.getWithholdingConfig,
+        dataQuery,
+        () => ({
+            fetchPolicy: "no-cache",
+        })
+    );
+    watch(resultConfig,(newVal)=> {
+        dateType.value = newVal.paymentType;
+    });
+    const keyForm = ref(1);
+    const onActionAddItem = (emit: any) => {
+        actionAddItem.value = true;
+        keyForm.value ++;
     }
     return {
       globalYear,
@@ -601,6 +657,13 @@ export default defineComponent({
       setUnderline,
       createdDone,
       focusedRowKey,
+      formateMoney,
+      dateType,
+      inputDateTax,
+      paymentDateTax,
+      onActionAddItem,
+      keyForm,
+      formRef
     }
 
   },

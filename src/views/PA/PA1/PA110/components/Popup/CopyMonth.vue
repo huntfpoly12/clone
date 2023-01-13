@@ -80,6 +80,10 @@ export default defineComponent({
             type: Array,
             default: []
         },
+        dateType: {
+            type: Number,
+            default: 1,
+        },
     },
     components: {
         DxSelectBox,
@@ -93,6 +97,14 @@ export default defineComponent({
         const dataApiCopy: any = ref({})
         watch(() => props.data, (val) => {
             month.value = val
+        let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
+        if (props.dateType == 2 && props.data) {
+          yearMonth = `${processKey.value.paymentYear}${props.data + 1}`;
+        }
+        if (props.dateType == 1) {
+          yearMonth = `${processKey.value.paymentYear}${props.data}`;
+        }
+        month2.value = yearMonth;
         });
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value
@@ -114,9 +126,6 @@ export default defineComponent({
             setModalVisibleCopy()
             notification('success', ` 완료!`)
             emit('loadingTableInfo', true)
-            store.state.common.processKeyPA510.imputedMonth = month.value
-            store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
-            store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
         })
 
         const setModalVisible = () => {
@@ -130,9 +139,13 @@ export default defineComponent({
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
-                paymentYear: parseInt(month2.value.split('-')[0]),
-                paymentMonth: parseInt(month2.value.split('-')[1]),
+                paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4,6)),
             })
+            store.state.common.processKeyPA110.imputedYear = globalYear.value
+            store.state.common.processKeyPA110.imputedMonth = month.value
+            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0,4))
+            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4,6))
             emit("closePopup", false)
         };
 
@@ -140,6 +153,9 @@ export default defineComponent({
             modalCopy.value = true
         }
         const actionCopy = () => {
+            onSubmit();
+            setModalVisible()
+            setModalVisibleCopy()
             if (dataApiCopy.value.imputedYear) {
                 mutate({
                     companyId: companyId,
@@ -147,10 +163,11 @@ export default defineComponent({
                     target: {
                         imputedYear: processKey.value.imputedYear,
                         imputedMonth: month.value,
-                        paymentYear: dataApiCopy.value.paymentYear,
-                        paymentMonth: dataApiCopy.value.paymentMonth,
+                        paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4,6)),
                     },
                 })
+                
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
@@ -209,11 +226,11 @@ export default defineComponent({
 
 ::v-deep .month-custom-1 {
     background-color: #A6A6A6;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-
+    font-size: 16px;
     .dp__input {
         color: white;
         padding: 0px;

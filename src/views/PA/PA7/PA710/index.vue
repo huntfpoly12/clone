@@ -46,13 +46,13 @@
                                     :idCardNumber="data.data.residentId" :status="data.data.status"
                                     :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
                                     :checkStatus="false" @toolTopErorr="toolTopErorr"
-                                    @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
+                                    />
                             </template>
                             <DxColumn caption="주민등록번호" cell-template="residentId" />
                             <template #residentId="{ data }">
                                 <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
                                 <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]" position="top"
-                                    v-model:visible="defaultVisible" :hide-on-outside-click="false"
+                                    v-model:visible="isResidentIdError[`${data.data.employeeId}`]" :hide-on-outside-click="false"
                                     :target="`#residentId${data.data.residentId}`">Error
                                 </DxTooltip>
                             </template>
@@ -197,7 +197,6 @@ export default defineComponent({
         const modalStatus = ref(false)
         const modalStatusAdd = ref(false);
         const modalStatusDelete = ref(false);
-        const defaultVisible = ref<boolean>(false);
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         const listEmployeeExtra = ref([])
@@ -444,7 +443,7 @@ export default defineComponent({
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            toolTopErorr, isResidentIdError, defaultVisible, contentDelete, modalStatusDelete, onSubmitDelete
+            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete
         };
     },
 });
