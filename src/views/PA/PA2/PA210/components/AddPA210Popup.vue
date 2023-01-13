@@ -13,13 +13,19 @@
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
                         :onRowClick="onSelectionChanged">
+                        <DxColumn caption="선택" cell-template="radioCheck" />
+                        <template #radioCheck="{ data }">
+                            <div class="text-align-center pt-8">
+                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.reportId ? true : false"/>
+                            </div>
+                        </template>
                         <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
                                     귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                                 </template>
-                                <div class="custom-grade-cell text-align-center">
+                                <div class="text-align-center">
                                     <DxButton
                                         :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -32,7 +38,7 @@
                                 <template #title>
                                     지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                                 </template>
-                                <div class="custom-grade-cell text-align-center">
+                                <div class="text-align-center">
                                     <DxButton
                                         :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
