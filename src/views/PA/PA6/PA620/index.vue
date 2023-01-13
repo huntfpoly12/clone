@@ -254,7 +254,7 @@
                     </a-spin>
                 </a-col>
                 <ComponentDetail  v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    :actionSave="actionSave" @createdDone="createdDone"/>
+                    @createdDone="createdDone"/>
 
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy=false" 
                 :data="dataModalCopy" :dateType = "dateType"
@@ -446,6 +446,7 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
+            isDisabledForm.value = false;
         }
 
         const setUnderline = (monthInputed : any)=>{

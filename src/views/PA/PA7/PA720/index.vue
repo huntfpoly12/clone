@@ -200,24 +200,24 @@
         <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
             <a-col style="display: flex">
                 <DxButton
-                    :text="'귀' + incomeExtrasParams?.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams?.processKey?.imputedMonth)"
+                    :text="'귀' + inputDateTax" :disabled="!isColumnData"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 <DxButton
-                    :text="'지' + incomeExtrasParams?.processKey?.paymentYear + '-' + formatMonth(incomeExtrasParams?.processKey?.paymentMonth)"
+                    :text="'지' + paymentDateTax" :disabled="!isColumnData"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
                 <ProcessStatus v-model:valueStatus="statusParam.status"
                     @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
             </a-col>
             <a-col style="display: inline-flex; align-items: center">
-                <DxButton class="ml-4" icon="plus" @click="addItem" />
-                <DxButton class="ml-3" @click="deleteItem">
-                    <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
+                <DxButton class="ml-4" icon="plus" @click="addItem" :disabled="!isColumnData" />
+                <DxButton class="ml-3" @click="deleteItem" :disabled="!isColumnData">
+                    <img style="width: 17px" src="@/assets/images/icon_delete.png" alt=""/>
                 </DxButton>
-                <DxButton @click="onSave" size="large" class="ml-4">
+                <DxButton @click="onSave" size="large" class="ml-4" :disabled="!isColumnData">
                     <SaveOutlined style="font-size: 17px" />
                 </DxButton>
 
-                <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true">
+                <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="!isColumnData">
                     <a-tooltip placement="top">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -225,7 +225,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true">
+                <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true" :disabled="!isColumnData">
                     <a-tooltip placement="top">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -233,7 +233,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editItem" class="ml-4 custom-button-checkbox">
+                <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="!isColumnData">
                     <div class="d-flex-center">
                         <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -248,11 +248,11 @@
         <a-row class="content-btm">
             <a-col :span="13" class="custom-layout">
                 <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax"
-                    :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
+                :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" />
             </a-col>
             <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-                <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
-                    @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="dataAddIncomeProcess" />
+                <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm" :isColumnData="isColumnData"
+                    @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="incomeExtrasParams.processKey" />
             </a-col>
         </a-row>
     </div>
@@ -264,7 +264,7 @@
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
     <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
-    <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false"
+    <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" :dateType="dateType"
         @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
     <PopupMessage :modalStatus="popupAddStatus" @closePopup="popupAddStatus = false" :typeModal="'confirm'"
         :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onPopupComfirm"
@@ -291,6 +291,7 @@ import CopyMonth from './components/Popup/CopyMonth.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
 import { dataActionUtils } from './utils/index';
+import queriesHolding from "@/graphql/queries/CM/CM130/index";
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -339,15 +340,26 @@ export default defineComponent({
             companyId: companyId,
             processKey: {
                 imputedYear: globalYear.value,
-                imputedMonth: +dayjs().format('MM'),
+                imputedMonth: +dayjs().format('MM')+1,
                 paymentYear: globalYear.value,
-                paymentMonth: +dayjs().format('MM'),
+                paymentMonth: +dayjs().format('MM')+1,
             },
         });
         const modalCopy = ref<boolean>(false);
         const dataModalCopy = ref<number>(1);
-        const dataAddIncomeProcess = ref({});
         const popupAddStatus = ref<boolean>(false);
+        const inputDateTax = computed(()=> {
+            if(isColumnData.value){
+                return incomeExtrasParams.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams.processKey?.imputedMonth)
+            }
+            return '';
+        })
+        const paymentDateTax = computed(()=> {
+            if(isColumnData.value){
+                return incomeExtrasParams.processKey?.paymentYear + '-' + formatMonth(incomeExtrasParams.processKey?.paymentMonth)
+            }
+            return '';
+        })
         // ======================= GRAPQL ================================
         const {
             refetch: refetchIncomeProcessExtras,
@@ -424,10 +436,10 @@ export default defineComponent({
         };
         const onAddIncomeProcess = (emit: any) => {
             resetForm();
-            dataAddIncomeProcess.value = emit;
             incomeExtrasParams.processKey = { ...emit };
             columnData.value[0]['month_' + emit.imputedMonth] = emit
-            columnData.value[0]['month_' + emit.imputedMonth].status = 10
+            columnData.value[0]['month_' + emit.imputedMonth].status = 10;
+            isColumnData.value = true;
         };
         const addItem = () => {
             if (!formTaxRef.value.isEdit) {
@@ -497,7 +509,6 @@ export default defineComponent({
             incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
             incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
             incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
-            dataAddIncomeProcess.value = { ...incomeExtrasParams.processKey };
             statusParam.value = { ...incomeExtrasParams, status: obj.status };
             resetForm();
             month.value = obj.imputedMonth;
@@ -510,6 +521,8 @@ export default defineComponent({
         }]);
         const isRunOnce = ref<boolean>(true);
         const toNumber = (num: any) => (!num ? '' : num);
+            //columnData has data
+        const isColumnData = ref<boolean>(false);
         onResultIncomeProcessExtras((res: any) => {
             let responeData = res.data?.getIncomeProcessExtras ?? [];
             columnData.value = [{
@@ -576,22 +589,40 @@ export default defineComponent({
             }
             if(!columnData.value[0].hasData) {
                 showDetailSelected({
-                    imputedMonth: dayjs().month() ,
+                    imputedMonth: dayjs().month() +1 ,
                     imputedYear: globalYear.value,
-                    paymentMonth: dayjs().month() ,
+                    paymentMonth: dayjs().month() +1 ,
                     paymentYear: globalYear.value,
                 })
             }
+            isColumnData.value = columnData.value[0].hasData ? true : false;
             trigger.value = false;
         });
         watch(globalYear,(newVal)=> {
-            originData.imputedYear = newVal;
+            originData.imputedYear=newVal;
+            isRunOnce.value = true;
+            incomeExtrasParams.processKey.imputedYear = globalYear.value;
+            incomeExtrasParams.processKey.paymentYear = globalYear.value;
             trigger.value = true;
-            
+            refetchIncomeProcessExtras()
         })
+        // get config to check default date type
+        const dateType = ref<number>(1)
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig} = useQuery(
+            queriesHolding.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig,(newVal)=> {
+            dateType.value = newVal.paymentType;
+        });
         return {
-            statusParam,loadingIncomeProcessExtras,per_page,move_column,colomn_resize,modalDelete,popupDataDelete,modalEdit,globalYear,IncomeProcessExtrasCustom,columnData,incomeExtrasParams,editTaxParam,changeFommDone,formTaxRef,resetFormNum,taxPayRef,deleteIncomeExtrasParam,changeIncomeExtraPaymentDayParam,modalHistory,modalHistoryStatus,modalCopy,dataModalCopy,dataAddIncomeProcess,popupAddStatus,isRunOnce,month,isLoadNewForm,titleModalConfirm,
+            statusParam,loadingIncomeProcessExtras,per_page,move_column,colomn_resize,modalDelete,popupDataDelete,modalEdit,globalYear,IncomeProcessExtrasCustom,columnData,incomeExtrasParams,editTaxParam,changeFommDone,formTaxRef,resetFormNum,taxPayRef,deleteIncomeExtrasParam,changeIncomeExtraPaymentDayParam,modalHistory,modalHistoryStatus,modalCopy,dataModalCopy,popupAddStatus,isRunOnce,month,isLoadNewForm,titleModalConfirm,isColumnData,
             onSubmit,deleteItem,editItem,checkLen,showDetailSelected,editTax,onFormDone,actionDeleteSuccess,onAddMonth,mutateChangeIncomeProcessExtraStatus,actionEditDaySuccess,onLoadingTable,onAddIncomeProcess,formatMonth,resetForm,openTab,onPopupComfirm,addItem,onSave,
+            paymentDateTax, inputDateTax, dateType
         };
     },
 });

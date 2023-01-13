@@ -31,13 +31,7 @@
                 <template #imputed="{ data }">
                     <a-tooltip>
                         <template #title>
-                            귀속기간
-                            {{
-                                data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
-                            }}
+                            귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
@@ -50,13 +44,7 @@
                 <template #payment="{ data }">
                     <a-tooltip>
                         <template #title>
-                            지급기간
-                            {{
-                                data.data.reportType == 1 ?
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
-                            }}
+                            지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
@@ -72,8 +60,8 @@
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
-                    <DxButton :text="getColorButton(data.data)?.text" :style="getColorButton(data.data)?.style"
-                        :height="'33px'" />
+                    <DxButton :text="getAfterDeadline(data.data.index, data.data.afterDeadline)?.tag_name"
+                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style" :height="'33px'" />
                 </template>
 
                 <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
@@ -114,22 +102,26 @@
                     cell-template="extraIncome" />
                 <template #extraIncome="{ data }">{{ data.data.extraIncome ? 'O' : '' }}</template>
 
-                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint" />
+                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center"
+                    format="fixedPoint" />
+                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center"
+                    format="fixedPoint" />
+                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center"
+                    format="fixedPoint" />
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" />
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')"
+                        style="border: none; margin-top: -2px;" />
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
                     fixedPosition="right" />
                 <template #add="{ data }">
-                    <a-tooltip>
+                    <a-tooltip v-if="checkModify(data.data)">
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
                         <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
-                            <div style="width: 100%;text-align: center;">[+]</div>
+                            <div style="width: 100%;text-align: center; margin-top: 5px;">[+]</div>
                         </div>
                     </a-tooltip>
                 </template>
@@ -152,15 +144,13 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport" :key="resetComponentEdit" />
-    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false" :dataReport="dataReport" :key="resetComponentModify" />
+    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false"
+        :dataReport="dataReport" :key="resetComponentEdit" />
+    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
+        :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import {
-    WageReportType,
-    enum2Entries,
-} from "@bankda/jangbuda-common";
 import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
@@ -177,6 +167,7 @@ import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/index"
 
 export default defineComponent({
     components: {
@@ -335,39 +326,24 @@ export default defineComponent({
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
             }
-            
         };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
+        const checkModify = (data: any) => {
+            if (data.status == 40) {
+                let reportClassCodes = dataSource.value.filter((value: any) => value.reportClassCode == data.reportClassCode)
+                let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
+                if (indexMax == data.index) {
+                    return true;
+                } else {
+                    return false;
                 }
-            });
-            return { 'text': text, 'style': style }
-        };
-        const getColorButton = (data: any) => {
-            if (data.index) {
-                return {
-                    "text": '수정' + (data.afterDeadline ? '' : data.index),
-                    "style": { color: 'white', backgroundColor: 'orange' }
-                };
             } else {
-                return {
-                    "text": data.afterDeadline ? '기한후' : '정기',
-                    "style": data.afterDeadline ?
-                        { color: 'white', backgroundColor: 'black' } :
-                        { color: 'black', backgroundColor: 'white', border: 'black' }
-                };
+                return false;
             }
         }
-
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getReportType, getColorButton,
+            getReportType,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
@@ -375,8 +351,9 @@ export default defineComponent({
             openPopupPrint, modalPrintStatus,
             editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
-            changeStatus, resetComponentEdit, resetComponentModify
-
+            changeStatus, resetComponentEdit, resetComponentModify,
+            getAfterDeadline,
+            checkModify, showTooltipYearMonth,
         };
     },
 });

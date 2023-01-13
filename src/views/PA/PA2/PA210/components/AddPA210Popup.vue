@@ -13,20 +13,19 @@
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
                         :onRowClick="onSelectionChanged">
+                        <DxColumn caption="선택" cell-template="radioCheck" />
+                        <template #radioCheck="{ data }">
+                            <div class="text-align-center pt-8">
+                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.reportId ? true : false"/>
+                            </div>
+                        </template>
                         <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
-                                    귀속기간
-                                    {{
-                                        data.data.reportType == 1 ?
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') +
-                                            (data.data.imputedFinishYearMonth ? '~' +
-                                                dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
-                                    }}
+                                    귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                                 </template>
-                                <div class="custom-grade-cell text-align-center">
+                                <div class="text-align-center">
                                     <DxButton
                                         :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
@@ -37,16 +36,9 @@
                         <template #payment="{ data }">
                             <a-tooltip>
                                 <template #title>
-                                    지급기간
-                                    {{
-                                        data.data.reportType == 1 ?
-                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') +
-                                            (data.data.paymentFinishYearMonth ? '~' +
-                                                dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
-                                    }}
+                                    지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                                 </template>
-                                <div class="custom-grade-cell text-align-center">
+                                <div class="text-align-center">
                                     <DxButton
                                         :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
@@ -84,15 +76,12 @@
 
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
-import {
-    WageReportType,
-    enum2Entries,
-} from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
+import { getReportType, showTooltipYearMonth } from "../utils/index"
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -298,17 +287,6 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
-                }
-            });
-            return { 'text': text, 'style': style }
-        };
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
         };
@@ -322,7 +300,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent
+            focusedRowKey,resetComponent, showTooltipYearMonth
         };
     },
 });
