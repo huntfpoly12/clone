@@ -3,11 +3,12 @@ export default gql`
   query getWithholdingConfigDeductionItems(
     $companyId: Int!
     $imputedYear: Int!
+    $useOnly: Boolean
   ) {
     getWithholdingConfigDeductionItems(
       companyId: $companyId
       imputedYear: $imputedYear
-      useOnly: true
+      useOnly: $useOnly
     ) {
       itemCode
       name

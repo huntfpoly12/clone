@@ -249,12 +249,12 @@ export default defineComponent({
             }
             return '';
         })
-        const paymentDateTax = computed(()=> {
-            if(!props.isDisabledForm){
-                return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
-            }
-            return '';
-        })
+      const paymentDateTax = computed(()=> {
+          if(!props.isDisabledForm){
+              return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
+          }
+          return '';
+      })
       let dataAction: any = reactive({
           ...dataActionUtils
       })
@@ -285,7 +285,6 @@ export default defineComponent({
     resIncomeProcessBusinessesDetail(res => {
         const val = res.data.getIncomeBusinesses;
           dataSourceDetail.value = val;
-          console.log(`output->isFirstChange.value`,isFirstChange.value)
           if(isFirstChange.value) {
             isCompare.value = false;
             focusedRowKey.value = val[0]?.employeeId;
@@ -485,7 +484,6 @@ export default defineComponent({
     }
       const onFocusedRowChanged = (data: any) => {
           const dataRow = data.row && data.row.data;
-          console.log(`output-> focus row key hihi`,)
           if(!dataRow){
             disabledInput.value = false;
           }
