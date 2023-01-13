@@ -666,7 +666,10 @@ export const calculateWithholdingStatusReport = (wrapper: any,data: any = []) =>
       }
     }
   }
+  console.log(cellData);
+  
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
+    console.log(output);
     
     if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
       output.incomeWages.forEach((item) => {

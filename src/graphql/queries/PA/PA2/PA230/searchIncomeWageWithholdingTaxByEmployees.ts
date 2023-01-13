@@ -15,6 +15,7 @@ query SearchIncomeWageWithholdingTaxByEmployees(
         employeeId
         incomeTypeCode
         name
+        email
         foreigner
         nationality
         nationalityCode

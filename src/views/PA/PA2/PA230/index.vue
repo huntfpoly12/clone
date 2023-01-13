@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="loading" size="large">
+    <a-spin :spinning="loading || loadingPrint || loadingSendEmail" size="large">
         <action-header title="" @actionSearch="searching" />
         <div id="pa-230">
             <div class="search-form">
@@ -7,10 +7,11 @@
                     <a-col :span="12">
                         <a-row :gutter="[24, 8]">
                             <a-col>
-                                <div class="dflex custom-flex">
+                                <div class="d-flex-center">
                                     <label class="lable-item">구분 :</label>
-                                    <radio-group :arrayValue="radioCheckDataSearch" v-model:valueRadioCheck="testValue1"
-                                        :layoutCustom="'horizontal'" style="margin: 6px 20px 0px 0px" />
+                                    <radio-group :arrayValue="radioCheckDataSearch"
+                                        v-model:valueRadioCheck="checkBoxOption" layoutCustom="horizontal"
+                                        class="mt-7" />
                                 </div>
                             </a-col>
                             <a-col>
@@ -21,13 +22,9 @@
                             </a-col>
                         </a-row>
                     </a-col>
-                    <a-col :span="12">
-                        <div class="d-flex-center" style="justify-content: flex-end;">
-                            <img src="@/assets/images/email.svg" alt="" height="30" class="mail-230"
-                                @click="sendMail('mail')" />
-                            <img src="@/assets/images/print.svg" alt="" height="28" class="group-mail-230 ml-5"
-                                @click="sendMail('groupMail')" />
-                        </div>
+                    <a-col :span="12" style="text-align: right;">
+                        <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
+                            @click="sendMail" />
                     </a-col>
                 </a-row>
             </div>
@@ -42,21 +39,19 @@
                             </div>
                         </a-form-item>
                         <div class="tax-select">
-                            <radio-group :arrayValue="radioCheckData" v-model:valueRadioCheck="testValue2" />
+                            <radio-group :arrayValue="radioCheckData" v-model:valueRadioCheck="checkBoxOption2" />
                         </div>
                     </a-col>
                     <a-col :span="12">
                         <div class="created-date">
                             <label class="lable-item">구분 :</label>
-                            <date-time-box width="150px"></date-time-box>
+                            <date-time-box v-model:valueDate="createDate" width="150px" />
                         </div>
                     </a-col>
                 </a-row>
-
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="employeeId" @exporting="onExporting"
-                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true">
+                    :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="성명" cell-template="employee-info" width="300" />
                     <template #employee-info="{ data }">
@@ -85,47 +80,79 @@
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
                     </template>
-
                     <DxColumn caption="구분" cell-template="status" />
                     <template #status="{ data }">
                         <span class="status-red" v-if="data.data.status != 0">중도</span>
                         <span class="status-blue" v-else>중도</span>
                     </template>
-
                     <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" />
-
                     <DxColumn caption="" cell-template="pupop" width="100" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="@/assets/images/email.svg" alt=""
-                                style="width: 25px; margin-right: 3px; cursor: pointer;" />
-                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
+                                style="width: 25px; margin-right: 3px; cursor: pointer;"
+                                @click="sendMail(data.data.employee)" />
+                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                                @click="printFunc(data.data.employeeId)" />
                         </div>
                     </template>
                 </DxDataGrid>
             </div>
         </div>
     </a-spin>
+    <a-modal :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
+        <standard-form>
+            <div class="d-flex-center mt-20" v-if="switchTypeSendMail == true">
+                <img src="@/assets/images/email.svg" alt="" style="width: 50px;">
+                <mail-text-box :required="true" width="200px" class="ml-5" v-model:valueInput="emailAddress"
+                    placeholder="abc@example.com" />
+                <span class="ml-5">로 메일을 발송하시겠습니까?</span>
+            </div>
+            <div v-else>
+                <img src="@/assets/images/emailGroup.png" alt="" style="width: 50px;">
+                <div class="ml-40 mt-10">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div>
+                <div class="ml-40 d-flex-center">
+                    <mail-text-box :required="true" width="200px" class="ml-5" v-model:valueInput="emailAddress"
+                        placeholder="abc@example.com" />
+                    <span class="ml-5">로 메일을 발송하시겠습니까?</span>
+                </div>
+            </div>
+
+            <a-row style="margin-top: 50px;">
+                <a-col :span="16" :offset="8">
+                    <button-basic text="아니요" type="default" mode="outlined" :width="100" style="margin-right: 10px;"
+                        @onClick="modalSendMail = false" />
+                    <button-basic text="네. 발송합니다" type="default" mode="contained" :width="150"
+                        @onClick="confirmSendMail" />
+                </a-col>
+            </a-row>
+        </standard-form>
+    </a-modal>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from "vuex";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { companyId, onExportingCommon, } from "@/helpers/commonFunction";
+import { companyId } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
+import mutations from "@/graphql/mutations/PA/PA2/PA230/index";
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
     },
     setup() {
-        const testValue1 = ref(1);
-        const testValue2 = ref(1);
+        const checkBoxOption = ref(1);
+        const checkBoxOption2 = ref(1);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const trigger = ref<boolean>(true);
+        const modalSendMail = ref<boolean>(false);
+        const triggerPrint = ref<boolean>(false);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const dataSource = ref([]);
@@ -136,6 +163,31 @@ export default defineComponent({
                 "leaved": true
             },
         });
+        let dataPrint = ref()
+
+        let createDate = ref(filters.formatDateToInterger(dayjs().format("YYYYMMDD")))
+        let emailAddress = ref()
+        let dataSendEmail: any = ref({
+            "companyId": companyId,
+            "input": {
+                "imputedYear": globalYear.value,
+                "printOption": checkBoxOption2.value,
+                "createDate": createDate.value
+            },
+            "employeeInputs": []
+        })
+        // =========================== GRAPHQL =======================================
+        const {
+            refetch: refetchPrint,
+            onResult: onResultPrint,
+            loading: loadingPrint,
+        } = useQuery(queries.getIncomeWageWithholdingTaxByEmployeeReportViewUrl, dataPrint, () => ({
+            enabled: triggerPrint.value,
+            fetchPolicy: "no-cache",
+        }));
+        onResultPrint((res) => {
+            window.open(res.data?.getIncomeWageWithholdingTaxByEmployeeReportViewUrl)
+        })
         const {
             refetch: refetchData,
             result,
@@ -144,29 +196,77 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        const onExporting = (e: { component: any; cancel: boolean }) => {
-            onExportingCommon(e.component, e.cancel, "계약정보관리&심사")
-        };
         watch(result, (value) => {
             if (value) {
-                console.log(value.searchIncomeWageWithholdingTaxByEmployees)
-
                 dataSource.value = value.searchIncomeWageWithholdingTaxByEmployees
                 trigger.value = false;
             }
         });
 
+
+        const { mutate: callSendEmail, onDone, onError, loading: loadingSendEmail } = useMutation(
+            mutations.sendIncomeWageWithholdingTaxByEmployeeReportEmail
+        );
+        // ============================== FUNCTION =====================================
         const searching = () => {
             trigger.value = true;
             refetchData();
         };
+        const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
+        const sendMail = (e: any) => {
+            // If the retention style is number, send an email to one person. If it's an object type, send a group. 
+            dataSendEmail.value.companyId = companyId
+            dataSendEmail.value.input = {
+                "imputedYear": globalYear.value,
+                "printOption": checkBoxOption2.value,
+                "createDate": createDate.value
+            }
 
-        const sendMail = (sendType: string) => {
-            alert(sendType);
+            if (e.employeeId) {
+                emailAddress.value = e.email
+                dataSendEmail.value.employeeInputs = [
+                    {
+                        "receiverName": e.name,
+                        "receiverAddress": e.email,
+                        "senderName": sessionStorage.getItem("username"),
+                        "employeeId": e.employeeId
+                    }
+                ]
+                switchTypeSendMail.value = true
+            } else {
+                switchTypeSendMail.value = false
+            }
+            modalSendMail.value = true
+        }
+        const printFunc = (employeeIds: any) => {
+            triggerPrint.value = true
+            dataPrint.value = {
+                "companyId": companyId,
+                "input": {
+                    "imputedYear": globalYear.value,
+                    "printOption": checkBoxOption2.value,
+                    "createDate": createDate.value
+                },
+                "employeeIds": [employeeIds]
+            }
+            if (dataPrint.value)
+                refetchPrint()
+        }
+
+        const confirmSendMail = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                if (switchTypeSendMail.value == true) {
+                    dataSendEmail.value.employeeInputs[0].receiverAddress = emailAddress.value
+                    callSendEmail(dataSendEmail.value)
+                }
+            }
         }
         return {
-            loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, testValue1, testValue2,
-            searching, sendMail, onExporting,
+            loadingSendEmail, switchTypeSendMail, emailAddress, modalSendMail, loadingPrint, createDate, loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, checkBoxOption, checkBoxOption2,
+            confirmSendMail, searching, sendMail, printFunc
         };
     },
 });
