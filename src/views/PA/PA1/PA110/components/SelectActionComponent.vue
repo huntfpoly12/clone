@@ -4,21 +4,9 @@
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="actionAddItem" />
     <DxButton class="ml-3" icon="edit" @click="editItem" />
-
-    <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
-        item-template="item-field">
-        <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
-                    style="width: 25px; height: 25px;" /></div>
-        </template>
-    </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
-        item-template="item-field">
-        <template #item-field="{ data }">
-            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
-                    style="width: 25px; height: 25px;" /></div>
-        </template>
-    </DxDropDownButton>
+    <DxButton @click="actionAddItem1 ? onSubmit($event) : updateData($event)" size="large" class="ml-4" :disabled="false">
+        <SaveOutlined style="font-size: 17px" />
+    </DxButton>
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
       <a-tooltip  color="black" placement="top">
         <template #title>근로소득자료 변경이력</template>
@@ -38,6 +26,21 @@
     <div class="custom-select-tab ml-4">
       <button class="button-open-tab" @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">일용직사원등록</button>
     </div>
+    <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
+        item-template="item-field">
+        <template #item-field="{ data }">
+            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
+                    style="width: 25px; height: 25px;" /></div>
+        </template>
+    </DxDropDownButton>
+    <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
+        item-template="item-field">
+        <template #item-field="{ data }">
+            <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
+                    style="width: 25px; height: 25px;" /></div>
+        </template>
+    </DxDropDownButton>
+    
     <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo"
         :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -63,7 +66,7 @@ import EditPopup from "./Popup/EditPopup.vue"
 import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterPopup.vue"
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
 import EmailSinglePopup from "./Popup/EmailSinglePopup.vue"
-import { HistoryOutlined } from "@ant-design/icons-vue"
+import { HistoryOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import { companyId,openTab } from "@/helpers/commonFunction"
 import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
@@ -80,7 +83,8 @@ export default defineComponent({
         EmailSinglePayrollRegisterPopup,
         EmailMultiPopup,
         EmailSinglePopup,
-        HistoryOutlined
+        HistoryOutlined,
+        SaveOutlined
     },
     props: {
         modalStatus: {
@@ -90,6 +94,7 @@ export default defineComponent({
             type: Array,
             default: []
         },
+        actionAddItem: Boolean,
     },
   setup(props, { emit }) {
     const store = useStore()
@@ -121,10 +126,16 @@ export default defineComponent({
     const popupDataEmailSingle: any = ref({})
     const popupDataEmailSinglePayrollRegister: any = ref({})
     const popupDataEmailMulti: any = ref({})
+    const actionAddItem1 = ref<Boolean>(false)
+    const actionSaveItem= ref<number>(0)
+    const actionUpdateItem = ref<number>(0)
     watch(() => props.dataRows, (value) => {
         if (value) {
             popupDataDelete.value = value
         }
+    })
+    watch(()=> props.actionAddItem,(newVal: Boolean)=> {
+        actionAddItem1.value = newVal;
     })
     const deleteItem = (value: any) => {
         if (props.dataRows.length) {
@@ -136,6 +147,7 @@ export default defineComponent({
         }
     };
     const actionAddItem = (value: any) => {
+        actionAddItem1.value = true;
         emit("actionAddItem", true)
     }
     const editItem = (value: any) => {
@@ -225,7 +237,15 @@ export default defineComponent({
         modalHistoryStatus.value = true;
         popupDataHistoryStatus.value = { ...processKey.value }
     }
-
+    const onSubmit = (e: any) => {
+        emit('actionSave',actionSaveItem.value++)
+    }
+    /**
+     *  Update value 
+     */
+    const updateData = (e: any) => {
+        emit('actionUpdate',actionUpdateItem.value++)
+    }
     return {
         deleteItem,
         editItem,
@@ -251,7 +271,10 @@ export default defineComponent({
         popupDataEdit,
         loadingTableInfo,
         showHistory,
-        showHistoryStatus
+        showHistoryStatus,
+        actionAddItem1,
+        onSubmit,
+        updateData
     };
     },
 });

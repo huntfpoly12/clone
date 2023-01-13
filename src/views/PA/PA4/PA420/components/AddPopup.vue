@@ -16,7 +16,7 @@
                 @onClick="setModalVisible" />
             <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
                 @onClick="openModalAdd" />
-        </div>
+        </div>       
     </a-modal>
 
     <a-modal :visible="modalStatusAccept" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
@@ -26,7 +26,7 @@
             <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)" />
             <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)" />
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
-        </a-steps>
+        </a-steps>  
         <div class="step-content pt-20">
             <form action="your-action">
                 <keep-alive>
@@ -52,7 +52,7 @@
             <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
         </div>
     </a-modal>
-
+    
 </template>
 
 <script lang="ts">
@@ -98,7 +98,7 @@ export default defineComponent({
         const retirementIncome1 = ref(true)
         const modalOption = ref()
         const trigger = ref(false)
-        const dataForm = reactive({ ...initialFormState });
+        const dataForm = reactive(JSON.parse(JSON.stringify({...initialFormState})));
         const option1 = reactive([
             { id: true, text: '사원' },
             { id: false, text: '일용직사원' }

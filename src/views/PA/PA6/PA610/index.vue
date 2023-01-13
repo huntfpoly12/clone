@@ -321,7 +321,7 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction) && disabledInput.value == true)
+            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction) )
                 modalChangeRow.value = true
             else {
                 triggerDetail.value = true

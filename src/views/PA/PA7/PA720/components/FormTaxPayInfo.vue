@@ -49,7 +49,7 @@
             ></number-box-money>
             <div v-if="validations.paymentAmount" class="validate">this must be filled</div>
           </a-form-item>
-          <a-form-item label="필요경비">
+          <a-form-item label="필요경비" class="red">
             <number-box-money
               width="150px"
               :min="0"
@@ -58,6 +58,7 @@
               @changeInput="onChangeInput"
               v-model:valueInput="dataAction.input.requiredExpenses"
               :disabled="!isColumnData"
+              class="red"
             ></number-box-money>
             <div v-if="validations.requiredExpenses" class="validate">this must be filled</div>
           </a-form-item>
@@ -207,7 +208,6 @@ export default defineComponent({
         if (newValue2) {
           newDateLoading.value = true;
           if (newValue.incomeId) {
-            console.log(`output->newValue`,newValue)
             incomeExtraParam.value = newValue;
             dataAction.companyId = newValue.companyId;
             triggerIncomeExtra.value = true;

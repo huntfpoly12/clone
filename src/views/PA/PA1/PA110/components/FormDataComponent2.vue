@@ -1,35 +1,33 @@
 <template>
     <div id="pa-110">
         <a-spin :spinning="loading" size="large">
-            <a-row>
-                <a-col :span="24">
+            <a-row class="row-1">
+                <a-col :span="12">
                     <a-form-item label="사원">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
-                            v-model:valueEmploy="dataIW.employee.employeeId" width="316px" />
+                            v-model:valueEmploy="dataIW.employee.employeeId" width="316px" @onChange="onUpdateValue"/>
                     </a-form-item>
                 </a-col>
-            </a-row>
-            <a-row>
-                <a-col :span="24">
+                <a-col :span="12">
                     <a-form-item label="지급일">
-                        <number-box width="200px" :min="1" v-model="dataIW.paymentDay" :max="31"
+                        <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31" :disabled="!actionAddItem"
                             :spinButtons="true" />
                     </a-form-item>
                 </a-col>
             </a-row>
             <a-row :gutter="16">
-              <a-col :span="14">
+              <a-col :span="12">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
-                        <div class="text0">소득수당 합계 {{ $filters.formatCurrency(totalPayItem) }}원</div>
-                        <div class="text1">수당 과세 합계 {{ $filters.formatCurrency(totalPayItemTax) }} 원</div>
-                        <div class="text2">수당 비과세 합계 {{ $filters.formatCurrency(totalPayItemTaxFree) }}원</div>
-                        <div class="text3">공제 합계 {{ $filters.formatCurrency(totalDeduction) }}원 </div>
+                        <div class="text0">소득수당 합계 <span>{{ $filters.formatCurrency(totalPayItem) }}원</span></div>
+                        <div class="text1">수당 과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTax) }} 원</span></div>
+                        <div class="text2">수당 비과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}원</span></div>
+                        <div class="text3">공제 합계 <span>{{ $filters.formatCurrency(totalDeduction) }}원 </span></div>
                         <div>
                         </div>
-                        <div class="text4">차인지급액 {{ $filters.formatCurrency(subPayment) }}원 </div>
-                        <div class="text5">
-                            <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                        <div>
+                            차인지급액 <span>{{ $filters.formatCurrency(subPayment) }}원 </span>
+                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                                 차인지급액 = 수당 합계 - 공제 합계
                             </span>
@@ -37,13 +35,18 @@
                     </div>
 
                 </a-col>
-                <a-col :span="10" class="input-items">
+                <a-col :span="12" class="input-items">
                     <div class="header-text-2">근로시간
                         <span class="d-flex-center fz-11 ml-10" style="color: gray;">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             사원별 급여명세서에 표시 됩니다.
                         </span>
                     </div>
+                    <a-form-item label="근무일수" label-align="right">
+                        <div style="display: flex;align-items: center;">
+                            <text-number-box width="150px" v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
+                        </div>
+                    </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <text-number-box width="150px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
@@ -87,7 +90,7 @@
                                         :name="item.name" :type="4" subName="과세" />
                                 </span>
                                 <div>
-                                    <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
+                                    <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
                                         v-model:valueInput="item.value" :min="0">
                                     </number-box-money>
                                     <span class="pl-5">원</span>
@@ -124,7 +127,7 @@
                     </a-spin>
                 </a-col>
             </a-row>
-            <a-row style="margin-top: 40px">
+            <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
                     <div class="text-align-center ">
                         <DxButton @click="popupCompareData" :text="'공제 재계산'"
@@ -171,6 +174,8 @@ import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
 import DeletePopupTaxPay from "./Popup/DeletePopupTaxPay.vue"
 import DeletePopupMidTerm from "./Popup/DeletePopupMidTerm.vue"
+import queries120 from '@/graphql/queries/PA/PA1/PA120/index';
+
 export default defineComponent({
     components: {
         DxButton, DeductionPopup, InsurancePopup, DeletePopupTaxPay, DeletePopupMidTerm
@@ -249,9 +254,16 @@ export default defineComponent({
         })
 
         watch(() => props.dataIncomeWage, (value) => {
-            dataIW.value = value
-            refetchConfigPayItems()
-            refetchConfigDeduction()
+            if(value?.incomeId) {
+                incomeWageParams.incomeId = value.incomeId;
+                triggerDetail.value = true;
+                refetchValueDetail();
+                dataIW.value = value
+                refetchConfigPayItems()
+                refetchConfigDeduction()
+            }else {
+                addRow()
+            }
         })
 
         const {
@@ -278,11 +290,11 @@ export default defineComponent({
                         value: 0
                     }
                 });
-                triggerDetail.value = true;
-                refetchValueDetail({
-                    companyId: companyId,
-                    processKey: { ...processKey.value }, incomeId: props.dataIncomeWage.incomeId,
-                });
+                // triggerDetail.value = true;
+                // refetchValueDetail({
+                //     companyId: companyId,
+                //     processKey: { ...processKey.value }, incomeId: props.dataIncomeWage.incomeId,
+                // });
             }
         });
         // get WithouthouldingConfigdeduction
@@ -304,15 +316,23 @@ export default defineComponent({
             }
         });
         // get IncomeWage value
+        const incomeWageParams = reactive({
+            companyId: companyId,
+            processKey: { ...processKey.value },
+            incomeId: 0
+        })
+        watch(()=> props.dataIncomeWage, (newVal: any) => {
+            if(newVal?.incomeId) {
+                incomeWageParams.incomeId = newVal.incomeId;
+                triggerDetail.value = true;
+                refetchValueDetail();
+            }
+        })
         const {
             refetch: refetchValueDetail,
             result,
             loading
-        } = useQuery(queries.getIncomeWage, {
-            companyId: companyId,
-            processKey: { ...processKey.value },
-            incomeId: 0,
-        }, () => ({
+        } = useQuery(queries.getIncomeWage, incomeWageParams, () => ({
             fetchPolicy: "no-cache",
             enabled: triggerDetail.value,
         }))
@@ -466,8 +486,8 @@ export default defineComponent({
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
             emit("loadingTableInfo", true)
-            triggerDetail.value = true
-            refetchValueDetail()
+            // triggerDetail.value = true
+            // refetchValueDetail()
         })
 
         errorCreated(res => {
@@ -493,6 +513,7 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
+                    workingDays:dataIW.value.workingDays,
                     totalWorkingHours: dataIW.value.totalWorkingHours,
                     overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIW.value.workingHoursAtNight,
@@ -511,6 +532,7 @@ export default defineComponent({
                 processKey: { ...processKey.value },
                 incomeId: props.dataIncomeWage.incomeId,
                 input: {
+                    workingDays:dataIW.value.workingDays,
                     totalWorkingHours: dataIW.value.totalWorkingHours,
                     overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
                     workingHoursAtNight: dataIW.value.workingHoursAtNight,
@@ -523,10 +545,10 @@ export default defineComponent({
             };
             actionCreated(variables)
         }
-        watch(() => props.dataIncomeWage, (newValue) => {
-            dataIW.value = newValue
-            triggerDetail.value = true
-        }, { deep: true })
+        // watch(() => props.dataIncomeWage, (newValue) => {
+        //     dataIW.value = newValue
+        //     triggerDetail.value = true
+        // }, { deep: true })
         // action add new
         watch(() => props.actionAddItem, (value) => {
             if (value) {
@@ -545,6 +567,7 @@ export default defineComponent({
             createWage()
 
         })
+        
         // open popup deduction
         const popupCompareData = () => {
             modalDeductions.value = true
@@ -553,6 +576,51 @@ export default defineComponent({
         const calculate = () => {
             calculateTax()
         }
+        /**
+         * get Employee Wage
+         */
+        const employeeIdPA120 = ref(1);
+        const employeeWageTrigger = ref<boolean>(false);
+        const onUpdateValue = (e: any) => {
+            employeeIdPA120.value = e;
+            employeeWageTrigger.value = true;
+            refetchEmployeeWage();
+        }
+        const {
+        refetch: refetchEmployeeWage,
+        result: resultEmployeeWage,
+        } = useQuery(
+        queries120.getEmployeeWage,
+        {
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            employeeId: employeeIdPA120.value,
+        },
+        () => ({
+            fetchPolicy: 'no-cache',
+            enabled: employeeWageTrigger.value,
+        })
+        );
+        watch(resultEmployeeWage, (newVal: any)=> {
+            if (newVal.getEmployeeWage.payItems) {
+                newVal.getEmployeeWage.payItems.map((item: any) => {
+                    dataConfigPayItems.value.find((Obj: any) => {
+                        if (item.itemCode == Obj.itemCode) {
+                            Obj.value = item.amount;
+                        }
+                    });
+                })
+                newVal.getEmployeeWage.deductionItems.map((item: any) => {
+                    dataConfigDeduction.value.find((Obj: any) => {
+                        if (item.itemCode == Obj.itemCode) {
+                            Obj.value = item.amount;
+                        }
+                    });
+                })
+                // calculateTax();
+            }
+            // resultEmployeeWage
+        })
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,globalYear,
@@ -561,7 +629,7 @@ export default defineComponent({
             totalDeduction, dataIW,
             subPayment, arrayEmploySelect,
             calculateTax, loadingEmployeeWage, arrDeduction,
-            updateIncomeWage, actionUpdate, calculate, createWage, popupCompareData,
+            updateIncomeWage, actionUpdate, calculate, createWage, popupCompareData,onUpdateValue,
             companyId, dataConfigPayItems, dataConfigDeduction, month1, month2,
         };
     },
@@ -727,16 +795,19 @@ export default defineComponent({
     }
 
     .summary {
-        font-weight: bold;
-
-        .text1 {
-            margin-left: 50px;
+        span {
+            font-weight: bold;
         }
+        // .text1 {
+        //     margin-left: 50px;
+        // }
 
-        .text2 {
-            margin-left: 50px;
+        // .text2 {
+        //     margin-left: 50px;
+        // }
+        div{
+            margin-bottom: 5px;
         }
-
         .text5 {
             span {
                 display: flex;
