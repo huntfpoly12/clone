@@ -125,7 +125,8 @@
                         </a-form-item>
                         <a-form-item label="해지일자" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
-                                <date-time-box v-model:valueDate="formState.cancelDate" />
+                                <date-time-box v-model:valueDate="formState.cancelDate"
+                                    :disabled="formState.status == 1 ? true : false" />
                             </div>
                         </a-form-item>
                     </a-col>
@@ -150,7 +151,6 @@
         </a-modal>
     </div>
 </template>
-
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from 'vue';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -191,9 +191,7 @@ export default defineComponent({
                 }
             }
         );
-
-        let formState:any = reactive({ ...initialFormState });
-
+        let formState: any = reactive({ ...initialFormState });
         // query check if can be change name company 
         const { result: resCheckPerEdit, refetch: refetchCheckPer } = useQuery(
             queries.isSalesRepresentativeChangableName, dataQueryCheckPer,
@@ -202,14 +200,12 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
         // watch result resCheckPerEdit
         watch(resCheckPerEdit, (value) => {
             if (value) {
                 canChangeCompanyName.value = value.isSalesRepresentativeChangableName;
             }
         });
-
         // get  sale representative
         const { result, loading, refetch, onError } = useQuery(
             queries.getSalesRepresentative,
@@ -219,16 +215,13 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-
         onError((error) => {
             notification('error', error.message);
         })
-
         watch(result, (value) => {
             if (value && value.getSalesRepresentative) {
                 code.value = value.getSalesRepresentative.code;
                 id.value = value.getSalesRepresentative.id;
-
                 formState.status = value.getSalesRepresentative.status;
                 formState.name = value.getSalesRepresentative.name;
                 formState.grade = value.getSalesRepresentative.grade;
@@ -261,16 +254,13 @@ export default defineComponent({
                 formState.registerDate = value.getSalesRepresentative.detail.registerDate;
                 formState.cancelDate = value.getSalesRepresentative.detail.cancelDate;
                 formState.remark = value.getSalesRepresentative.detail.remark;
-
                 triggerCheckPer.value = true;
                 dataQueryCheckPer.value = { id: value.getSalesRepresentative.id, name: value.getSalesRepresentative.name };
                 // trigger query check if can be change business registration number 
                 refetchCheckPer()
-
                 dataDefault = JSON.stringify(formState)
             }
         });
-
         // update sale representative
         const {
             mutate: actionUpdate,
@@ -278,17 +268,14 @@ export default defineComponent({
             loading: loadingUpdate,
             onDone: updateDone,
         } = useMutation(mutations.updateSalesRepresentative);
-
         onUpdateError((error) => {
             notification('error', error.message);
         });
-
         updateDone(() => {
             notification('success', `업데이트가 완료되었습니다!`);
             emit('closePopup', false)
             emit('updateSuccess', true)
         });
-
         const updateSale = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -302,7 +289,6 @@ export default defineComponent({
                 actionUpdate(variables);
             }
         }
-
         const funcAddress = (data: any) => {
             formState.zipcode = data.zonecode;
             formState.roadAddress = data.roadAddress;
@@ -318,7 +304,6 @@ export default defineComponent({
             formState.addressDetail.sigunguCode = data.sigunguCode;
             formState.addressDetail.zonecode = data.zonecode;
         };
-
         const setModalVisible = () => {
             if (dataDefault == JSON.stringify(formState)) {
                 emit("closePopup", false)
@@ -326,14 +311,14 @@ export default defineComponent({
                 comfirmClosePopup(() => emit("closePopup", false))
             }
         }
-
         // watch result resCheckPerEdit
         watch(() => formState.status, (value) => {
-            if (value == 2) {
+            if (value == 1) {
+                formState.cancelDate = null
+            } else {
                 formState.cancelDate = filters.formatDateToInterger(dayjs().format('YYYYMMDD'));
             }
         });
-
         // if taxvoice = true then 전자세금계산서 수신이메일 require
         watch(() => formState.taxInvoice, (newValue) => {
             receiptOrNot.value = newValue;
@@ -354,7 +339,5 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss" scoped src="../style/editStyle.scss">
-
 </style>

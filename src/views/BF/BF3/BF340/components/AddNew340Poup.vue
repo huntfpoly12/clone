@@ -99,7 +99,6 @@
                                     </a-col>
                                 </a-row>
                             </div>
-
                         </a-col>
                     </a-row>
                     <a-row>
@@ -126,7 +125,7 @@
                             </a-form-item>
                             <a-form-item label="해지일자" label-align="right" :label-col="labelCol">
                                 <div style="width: 150px">
-                                    <date-time-box v-model:valueDate="formState.cancelDate" />
+                                    <date-time-box v-model:valueDate="formState.cancelDate" disabled="true"/>
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -153,7 +152,6 @@
         </a-modal>
     </div>
 </template>
-
 <script lang="ts">
 import { ref, defineComponent, watch, reactive } from 'vue'
 import { useMutation } from "@vue/apollo-composable";
@@ -161,7 +159,6 @@ import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
 import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
-
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -189,21 +186,21 @@ export default defineComponent({
             loading,
             onError
         } = useMutation(mutations.creactedSale);
-
         onDoneAdd((res) => {
             notification('success', `새러운 영업자 추가 완료!`)
             emit("closePopup", false);
             emit("createSuccess", true);
         })
-
         onError((error) => {
             notification('error', error.message)
         });
-
         const setModalVisible = () => {
-            comfirmClosePopup(() => emit('closePopup', false))
+            if (JSON.stringify(initialFormState) == JSON.stringify(formState)) {
+                emit("closePopup", false)
+            } else {
+                comfirmClosePopup(() => emit("closePopup", false))
+            }
         }
-
         const funcAddress = (data: any) => {
             formState.zipcode = data.zonecode;
             formState.roadAddress = data.roadAddress;
@@ -219,7 +216,6 @@ export default defineComponent({
             formState.addressDetail.sigunguCode = data.sigunguCode;
             formState.addressDetail.zonecode = data.zonecode;
         }
-
         const createSale = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -248,5 +244,4 @@ export default defineComponent({
 })
 </script>
 <style scoped lang="scss" src="../style/addnewStyle.scss">
-
 </style>

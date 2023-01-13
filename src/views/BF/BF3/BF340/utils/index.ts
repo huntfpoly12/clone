@@ -33,7 +33,7 @@ export const initialFormState = {
     bankType: "13",
     accountNumber: "",
     accountOwner: "",
-    registerDate: filters.formatDateToInterger(dayjs().format("YYYYMMDD")),
+    registerDate: null,
     cancelDate: null,
     remark: "",
 };
