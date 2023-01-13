@@ -6,7 +6,7 @@
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -38,7 +38,7 @@
             </template>
             <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
             <template #submission-date="{ data }">
-              <date-time-box v-model:valueDate="data.data.submissionDate"></date-time-box>
+              <date-time-box :valueDate="data.data.submissionDate"></date-time-box>
             </template>
             <DxScrolling column-rendering-mode="virtual"/>
           </DxDataGrid>
@@ -49,6 +49,7 @@
       </div>
   </a-modal>
   <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
 </template>
 
 <script lang="ts">
@@ -59,14 +60,14 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCellsModified, cellsSettingModified, dataModified ,calculateWithholdingStatusReportModified,inputPositionModified} from "./GridsettingModify"
+import { mergeCellsModified, cellsSettingModified, dataModified ,calculateWithholdingStatusReportModified,inputPositionModified,clearAllCellValue} from "./GridsettingModify"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
-
+import ConfirmloadNew from "./ConfirmloadNew.vue"
 // register Handsontable's modules
 registerAllModules();
 
@@ -87,11 +88,12 @@ export default defineComponent({
     DxColumn,
     DxToolbar, DxPaging,
     DxItem, DxScrolling,DxButton,
-    ConfirmDelete
+    ConfirmDelete,ConfirmloadNew
   },
   setup(props, { emit }) {
     const wrapper =  ref<any>(null);
     const confirmStatus = ref<boolean>(false)
+    const confirmLoadNewStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -132,6 +134,7 @@ export default defineComponent({
       dataSource.value = newValue
     })
     onMounted(() => {
+      clearAllCellValue(wrapper)
       let hot  = wrapper.value?.hotInstance; 
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
           const rowPosition = inputPositionModified.find(item => item.className == data.code);
@@ -217,7 +220,11 @@ export default defineComponent({
         hot.setDataAtCell(adjustmentPosition?.value.modifiedPosition[9][0], adjustmentPosition?.value.modifiedPosition[9][1], adjustment?.refundApplicationAmountModified);
     })
 
-    const loadNew = () => {
+    const actionConfirmLoadNew = ()=>{
+      confirmLoadNewStatus.value = true
+    }
+    
+    const loadNew = (data : any) => {
       calculateWithholdingStatusReportModified(wrapper)
     }
 
@@ -357,7 +364,9 @@ export default defineComponent({
       updateTaxWithholdingModifiy,
       actionConfirmDelete,
       confirmStatus,
-      actionCloseConfirm
+      actionCloseConfirm,
+      actionConfirmLoadNew,
+      confirmLoadNewStatus
     }
   }
 });
