@@ -21,11 +21,41 @@
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
-              {{data.data.imputedYear}}- {{data.data.imputedMonth}}
+              <a-tooltip>
+                <template #title>
+                    귀속기간
+                    {{
+                        data.data.reportType == 1 ?
+                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
+                    }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
             <template #paymentYear-paymentMonth="{ data }">
-              {{data.data.paymentYear}}- {{data.data.paymentMonth}}
+              <a-tooltip>
+                <template #title>
+                    지급기간
+                    {{
+                        data.data.reportType == 1 ?
+                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
+                    }}
+                </template>
+                <div class="custom-grade-cell">
+                    <DxButton
+                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                </div>
+              </a-tooltip>
             </template>
             <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
             <template #afterDeadline-index="{ data }">
