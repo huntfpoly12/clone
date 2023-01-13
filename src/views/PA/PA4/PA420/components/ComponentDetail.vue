@@ -128,7 +128,7 @@
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" />
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
@@ -189,6 +189,7 @@ export default defineComponent({
         const modalAdd = ref(false)
         const modalUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
+        const resetFormNum = ref(1);
         let dataAction: any = reactive({
             ...dataActionUtils
         })
@@ -246,6 +247,7 @@ export default defineComponent({
             }
         };
         const actionDeleteSuccess = () => {
+            resetFormNum.value++
             modalDelete.value = false
             modalEdit.value = false
             triggerDetail.value = true
@@ -326,6 +328,7 @@ export default defineComponent({
             actionEditRow,
             actionClosePopup,
             refetchTableDetail,
+            resetFormNum,
         }
     }
 });
