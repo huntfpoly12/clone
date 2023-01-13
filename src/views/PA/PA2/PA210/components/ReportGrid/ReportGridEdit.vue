@@ -23,13 +23,7 @@
             <template #imputedYear-imputedMonth="{ data }">
               <a-tooltip>
                 <template #title>
-                    귀속기간
-                    {{
-                        data.data.reportType == 1 ?
-                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
-                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
-                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
-                    }}
+                    귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
@@ -42,13 +36,7 @@
             <template #paymentYear-paymentMonth="{ data }">
               <a-tooltip>
                 <template #title>
-                    지급기간
-                    {{
-                        data.data.reportType == 1 ?
-                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
-                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
-                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
-                    }}
+                    지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
@@ -97,7 +85,7 @@ import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
-import { getAfterDeadline} from "../../utils/index"
+import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
 
@@ -321,7 +309,8 @@ export default defineComponent({
       updateTaxWithholding,
       actionConfirmDelete,
       actionCloseConfirm,
-      confirmStatus
+      confirmStatus,
+      showTooltipYearMonth
     }
   }
 });
