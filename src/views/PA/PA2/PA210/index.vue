@@ -34,9 +34,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                                $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -53,9 +53,9 @@
                             지급기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
+                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                                $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -72,7 +72,7 @@
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
-                    <DxButton :text="getColorButton(data.data)?.text" :style="getColorButton(data.data)?.style"
+                    <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" 
                         :height="'33px'" />
                 </template>
 
@@ -114,25 +114,24 @@
                     cell-template="extraIncome" />
                 <template #extraIncome="{ data }">{{ data.data.extraIncome ? 'O' : '' }}</template>
 
-                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" />
-                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" />
-                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" />
-                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" />
+                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" format="fixedPoint"/>
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" />
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" style="border: none; margin-top: -2px;"/>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
                     fixedPosition="right" />
                 <template #add="{ data }">
-                    <a-tooltip>
+                    <a-tooltip v-if="checkModify(data.data)">
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
-                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
-                            <div style="width: 100%;text-align: center;">[+]</div>
+                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')" >
+                            <div style="width: 100%;text-align: center; margin-top: 5px;">[+]</div>
                         </div>
                     </a-tooltip>
-
                 </template>
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }" class="custom-action">
@@ -178,6 +177,7 @@ import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import { getAfterDeadline, getReportType } from "./utils/index"
 
 export default defineComponent({
     components: {
@@ -203,7 +203,6 @@ export default defineComponent({
         const dataSource: any = ref([])
         const dataPopup = ref()
         const dataPopupAdd: any = ref({
-            lastMonth: 0,
             reportType: 0,
             paymentType: 0,
             withholdingDutyName: '',
@@ -252,7 +251,7 @@ export default defineComponent({
                 })
                 // dataPopupAdd.value.reportClassCodes[0] = "반당2"
                 // dataPopupAdd.value.reportClassCodes[1] = "반당1"
-                // dataPopupAdd.value.reportClassCodes[3] = "반익1"
+                // dataPopupAdd.value.reportClassCodes[3] = "매당1"
             }
         });
         watch(resultConfig, (value) => {
@@ -279,8 +278,6 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            dataPopupAdd.value.lastMonth = dataSource.value.length ? Math.max(...dataSource.value.map((data: any) => data.imputedMonth)) : 12;
-            // dataPopupAdd.value.lastMonth = 12;
             modalAddNewStatus.value = true;
         }
         const openModalHistory = (data: any) => {
@@ -339,39 +336,26 @@ export default defineComponent({
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
             }
+        };
+        const checkModify = (data: any) => {
+            // if(data.status == 40) {
+            //     if(data.reportClassCode) {
+
+            //     }
+            //     return true;
+            // } else {
+            //     return false;
+            // }
+
+
+            return true;
             
-        };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
-                }
-            });
-            return { 'text': text, 'style': style }
-        };
-        const getColorButton = (data: any) => {
-            if (data.index) {
-                return {
-                    "text": '수정' + (data.afterDeadline ? '' : data.index),
-                    "style": { color: 'white', backgroundColor: 'orange' }
-                };
-            } else {
-                return {
-                    "text": data.afterDeadline ? '기한후' : '정기',
-                    "style": data.afterDeadline ?
-                        { color: 'white', backgroundColor: 'black' } :
-                        { color: 'black', backgroundColor: 'white', border: 'black' }
-                };
-            }
         }
 
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getReportType, getColorButton,
+            getReportType,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
@@ -379,8 +363,9 @@ export default defineComponent({
             openPopupPrint, modalPrintStatus,
             editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
-            changeStatus, resetComponentEdit, resetComponentModify
-
+            changeStatus, resetComponentEdit, resetComponentModify,
+            getAfterDeadline,
+            checkModify,
         };
     },
 });

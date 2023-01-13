@@ -22,13 +22,8 @@ export default defineComponent({
             background: 'grey',
             border: "1px solid grey"
         })
-
-
-
-        if (props.fieldData) {
+        if (props.fieldData)
             stydefault = props.fieldData
-        }
-
 
         return {
             stydefault

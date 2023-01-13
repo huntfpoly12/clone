@@ -17,10 +17,10 @@ const filters = {
             return input.toLocaleString('ko-KR');
         } return 0;
     },
-    formatDate(date: any) {
+    formatDate(date: any, format = "yyyy-MM-dd") {
         if (typeof date == 'number')
             date = date.toString()
-        return dayjs(date).format('YYYY-MM-DD')
+        return dayjs(date).format(format)
     },
     formatDateToInterger(date: any) {
         let valueConver = 0

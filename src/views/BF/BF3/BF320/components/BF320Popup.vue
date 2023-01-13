@@ -129,9 +129,8 @@
                                     <bank-select-box v-model:valueInput="formState.extendInfoCmsBankBankType"
                                         width="250px" />
                                 </a-form-item>
-                                <a-form-item label="출금계좌번호" class="clr">  
-                                    <text-number-box 
-                                        v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
+                                <a-form-item label="출금계좌번호" class="clr">
+                                    <text-number-box v-model:valueInput="formState.extendInfoCmsBankAccountNumber"
                                         placeholder="‘-’없이 숫자만 입력" width="250px" :required="true"
                                         nameInput="formState-extendInfoCmsBankAccountNumber">
                                     </text-number-box>
@@ -366,7 +365,7 @@ export default defineComponent({
             onError: deleteMemoErr
         } = useMutation(mutations.deleteCompanyManageMemo);
         onDeleteMemo(() => {
-            notification('success', "메모 추가 완료!")
+            notification('success', "메모가 삭제되었습니다.")
             refetchMemo();
         });
         deleteMemoErr((e) => {
@@ -541,7 +540,7 @@ export default defineComponent({
                     cmsBank: extendInfoCmsBank,
                 };
                 actionUpdate(variables);
-            } 
+            }
         }
         updateDone((res) => {
             notification('success', "업데이트 완료!")

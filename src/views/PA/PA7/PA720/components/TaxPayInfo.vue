@@ -9,7 +9,7 @@
       :allow-column-resizing="colomn_resize"
       :column-auto-width="true"
       focused-row-enabled="true"
-      key-expr="employeeId"
+      key-expr="incomeId"
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
@@ -143,9 +143,9 @@ export default defineComponent({
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
-        focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
+        focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.incomeId ?? 1);
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -212,22 +212,30 @@ export default defineComponent({
         }
       }, 100);
     });
+    const loadIndexInit = ref<number>(0);
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      updateParam = {
-        companyId: companyId,
-        processKey: {
-          imputedYear: dataTableDetail.value.processKey?.imputedYear,
-          imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
-          paymentYear: dataTableDetail.value.processKey?.paymentYear,
-          paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
-        },
-        incomeId: data.incomeId,
-      };
-      emit('editTax', updateParam, firsTimeRow.value);
-      setTimeout(() => {
-        firsTimeRow.value = false;
-      }, 100);
+      if (e.loadIndex != loadIndexInit.value) {
+        updateParam = {
+          companyId: companyId,
+          processKey: {
+            imputedYear: dataTableDetail.value.processKey?.imputedYear,
+            imputedMonth: dataTableDetail.value.processKey?.imputedMonth,
+            paymentYear: dataTableDetail.value.processKey?.paymentYear,
+            paymentMonth: dataTableDetail.value.processKey?.paymentMonth,
+          },
+          incomeId: data.incomeId,
+        };
+        emit('editTax', updateParam, firsTimeRow.value);
+        setTimeout(() => {
+          firsTimeRow.value = false;
+        }, 100);
+      }
+      if (e.loadIndex == undefined) {
+        loadIndexInit.value = 0;
+      } else {
+        loadIndexInit.value = e.loadIndex;
+      }
     };
     return {
       dataAction,

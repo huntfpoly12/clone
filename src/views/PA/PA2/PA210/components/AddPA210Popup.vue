@@ -20,10 +20,10 @@
                                     귀속기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') +
+                                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') +
                                             (data.data.imputedFinishYearMonth ? '~' +
-                                                dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -40,10 +40,10 @@
                                     지급기간
                                     {{
                                         data.data.reportType == 1 ?
-                                            dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                            dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') +
+                                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') +
                                             (data.data.paymentFinishYearMonth ? '~' +
-                                                dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') : '')
+                                            $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') : '')
                                     }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
@@ -67,7 +67,6 @@
                         <DxColumn data-field="refund" caption="환급" css-class="cell-center" cell-template="refund" />
                         <template #refund="{ data }">{{ data.data.refund ? 'O' : 'X' }}</template>
                     </DxDataGrid>
-
                 </a-spin>
                 <h3 class="text-align-center mt-20">선택한 원천징수이행상황신고서를 작성하시겠습니까?</h3>
                 <div class="text-align-center mt-20">
@@ -89,12 +88,12 @@ import {
     WageReportType,
     enum2Entries,
 } from "@bankda/jangbuda-common";
-import notification from "@/utils/notification";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
+import { getReportType } from "../utils/index"
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -213,52 +212,52 @@ export default defineComponent({
             loading.value = true;
             dataReports.value = []
             if (value.reportType == 1) {
-                let i = 0
-                let year = value.lastMonth == 12 ? globalYear.value + 1 : globalYear.value
-                let month = 12
+                let year = globalYear.value
                 if (value.paymentType == 1) {
-                    value.lastMonth != 12 ? i = value.lastMonth + 1 : i = 1
-                    for (i; i <= month; i++) {
-                        dataReports.value.push({
-                            reportId: i,
-                            imputedYear: year,
-                            imputedMonth: i,
-                            paymentYear: year,
-                            paymentMonth: i,
-                            reportClassCode: "매당" + i,
-                            ...value,
-                            index: 0,
-                            status: 10,
-                            refund: i == 2 ? true : false,
-                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
-                            yearEndTaxAdjustment: i == 2 ? true : false,
-                            imputedFinishYearMonth: parseInt(year + `${i}`),
-                            imputedStartYearMonth: parseInt(year + `${i}`),
-                            paymentFinishYearMonth: parseInt(year + `${i}`),
-                            paymentStartYearMonth: parseInt(year + `${i}`),
-                        })
+                    for (let i = 1; i <= 12; i++) {
+                        if (!value.reportClassCodes.find((item: any) => item == "매당" + i)) {
+                            dataReports.value.push({
+                                reportId: i,
+                                imputedYear: year,
+                                imputedMonth: i,
+                                paymentYear: year,
+                                paymentMonth: i,
+                                reportClassCode: "매당" + i,
+                                ...value,
+                                index: 0,
+                                status: 10,
+                                refund: i == 2 ? true : false,
+                                submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                                yearEndTaxAdjustment: i == 2 ? true : false,
+                                imputedFinishYearMonth: parseInt(year + `${i}`),
+                                imputedStartYearMonth: parseInt(year + `${i}`),
+                                paymentFinishYearMonth: parseInt(year + `${i}`),
+                                paymentStartYearMonth: parseInt(year + `${i}`),
+                            })
+                        }
                     }
                 } else {
-                    value.lastMonth != 12 ? i = value.lastMonth + 1 : ''
-                    for (i; i <= month; i++) {
-                        let imputedMonth = i == 0 ? 2 : i
-                        let paymentMonth = i == 0 ? 2 : i + 1
-                        dataReports.value.push({
-                            reportId: i,
-                            imputedYear: year,
-                            imputedMonth: imputedMonth,
-                            paymentYear: paymentMonth == 13 ? year + 1 : year,
-                            paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
-                            reportClassCode: "매익" + i,
-                            ...value,
-                            index: 0,
-                            status: 10,
-                            refund: i == 1 ? true : false,
-                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
-                            yearEndTaxAdjustment: i == 0 ? true : false,
-                            imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
-                            paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year + 1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
-                        })
+                    for (let i = 0; i <= 12; i++) {
+                        if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {
+                            let imputedMonth = i == 0 ? 2 : i
+                            let paymentMonth = i == 0 ? 2 : i + 1
+                            dataReports.value.push({
+                                reportId: i,
+                                imputedYear: year,
+                                imputedMonth: imputedMonth,
+                                paymentYear: paymentMonth == 13 ? year + 1 : year,
+                                paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
+                                reportClassCode: "매익" + i,
+                                ...value,
+                                index: 0,
+                                status: 10,
+                                refund: i == 1 ? true : false,
+                                submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                                yearEndTaxAdjustment: i == 0 ? true : false,
+                                imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
+                                paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year + 1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
+                            })
+                        }
                     }
                 }
             } else {
@@ -299,17 +298,6 @@ export default defineComponent({
         };
         const setModalVisible = () => {
             emit("closePopup", false)
-        };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
-                }
-            });
-            return { 'text': text, 'style': style }
         };
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]

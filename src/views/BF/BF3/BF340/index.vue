@@ -79,7 +79,7 @@
                     </template>
                     <DxColumn caption="해지일자" cell-template="cancelDate" />
                     <template #cancelDate="{ data }">
-                        {{ $filters.formatDate(data.data.cancelDate) }}
+                        {{ data.data.cancelDate ? $filters.formatDate(data.data.cancelDate) : '' }}
                     </template>
                     <DxColumn caption="사업자수" data-field="companyCount" data-type="number" cell-template="grid-number" />
                     <template #grid-number="{ data }">
@@ -89,11 +89,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalEditVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -105,7 +105,8 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
-                <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+                <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="keyAdd"
+                    @createSuccess="createSuccess" />
                 <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idSaleEdit="idRowEdit" @updateSuccess="updateDone" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -131,33 +132,12 @@ import { origindata } from "./utils";
 import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
-        DxDataGrid,
-        DxColumn,
-        DxButton,
-        DxPaging,
-        DxSelection,
-        DxExport,
-        DxSearchPanel,
-        DxScrolling,
-        EditOutlined,
-        HistoryOutlined,
-        DxToolbar,
-        DxEditing,
-        DxGrouping,
-        DxItem,
-        AddNew340Poup,
-        EditBF340Popup,
-        HistoryPopup,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
+        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        AddNew340Poup, EditBF340Popup, HistoryPopup,
     },
     setup() {
         // config grid
+        const keyAdd = ref()
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -193,6 +173,7 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
         const openAddNewModal = () => {
+            keyAdd.value++
             modalAddNewStatus.value = true;
         };
         const setModalEditVisible = (data: any) => {
@@ -224,22 +205,14 @@ export default defineComponent({
             trigger.value = true;
             refetchData();
         };
-        // ============ WATCH =======================
-        // watch(modalEditStatus, (newValue, old) => {
-        //     if (!newValue) {
-        //         trigger.value = true;
-        //         refetchData();
-        //     }
-        // });
-        watch(modalAddNewStatus, (newValue, old) => {
-            if (!newValue) {
-                trigger.value = true;
-                refetchData();
-            }
-        });
+        const createSuccess = () => {
+            trigger.value = true;
+            refetchData();
+        }
+        // ============ WATCH =======================  
         return {
-            loading, move_column, colomn_resize, dataSource, idRowEdit, saleStatus, saleGrade, originData, rowTable, popupData, modalAddNewStatus, modalEditStatus, modalHistoryStatus, SalesRepresentativeGrade,
-            onExporting, searching, refetchData, getColorTag, modalHistory, setModalEditVisible, openAddNewModal, updateDone, getEnumValue,
+            keyAdd, loading, move_column, colomn_resize, dataSource, idRowEdit, saleStatus, saleGrade, originData, rowTable, popupData, modalAddNewStatus, modalEditStatus, modalHistoryStatus, SalesRepresentativeGrade,
+            createSuccess, onExporting, searching, refetchData, getColorTag, modalHistory, setModalEditVisible, openAddNewModal, updateDone, getEnumValue,
         };
     },
 });
