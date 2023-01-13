@@ -1,6 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기" cancelText="그냥 나가기"
-        @cancel="setModalVisible" width="576px">
+        @cancel="setModalVisible" width="576px" :closable="false">
         <div class="content-confirm">
             <div class="text-icon">
              
@@ -16,7 +16,7 @@
                     <button-basic text="아니오" type="default" mode="outlined" @onClick="setModalVisible()"
                         :width="120" style="margin-right: 10px;" />
                     <button-basic text="네. 삭제합니다" type="default" mode="contained"
-                        @onClick="updateSubscriptionRequest($event)" :width="150" />
+                        @onClick="deleteReport()" :width="150" />
                 </a-col>
             </a-row>
         </div>
@@ -25,24 +25,53 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from "vue";
-
+import { useMutation } from "@vue/apollo-composable";
+import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
+import notification from "@/utils/notification"
+import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
     
     },
     props: {
-        modalStatus: Boolean,
+      modalStatus: Boolean,
+      imputedYear: Number,
+      reportId: Number
     },
     setup(props, { emit }) {
-        const textComfirm =  ref('')
-        const setModalVisible = () => {
-            emit("closePopup", true)
+      const textComfirm =  ref('')
+      const setModalVisible = () => {
+          emit("closePopup", true)
+      }
+
+      const {
+              mutate: actionDeleteReport,
+              onDone: doneUpdate,
+              onError: errUpdate
+          } = useMutation(mutations.deleteTaxWithholdingStatusReport);
+      doneUpdate(() => {
+        notification('success', `보고서가 삭제되었습니다!`)
+        setModalVisible()
+      })
+      errUpdate((error) => {
+          notification('error', error.message)
+      })
+      const deleteReport = () => {
+        if (textComfirm.value === '삭제') {
+          actionDeleteReport({
+                            companyId: companyId,
+                            imputedYear: props.imputedYear,
+                            reportId: props.reportId
+                            })
+        } else {
+          setModalVisible()
         }
-  
-        return {
-            textComfirm,
-            setModalVisible, 
-        }
+      }
+      return {
+        textComfirm,
+        setModalVisible, 
+        deleteReport
+      }
     }
 })
 </script>

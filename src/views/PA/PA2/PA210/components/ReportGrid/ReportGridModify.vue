@@ -48,7 +48,7 @@
         </div> 
       </div>
   </a-modal>
-  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm"></confirm-delete>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
 </template>
 
 <script lang="ts">
@@ -341,8 +341,8 @@ export default defineComponent({
       confirmStatus.value = true
     }
 
-    const actionCloseConfirm = (data : any)=>{
-      console.log(data)
+    const actionCloseConfirm = (data: any) => {
+      confirmStatus.value = false
     }
     return {
       setModalVisible,
