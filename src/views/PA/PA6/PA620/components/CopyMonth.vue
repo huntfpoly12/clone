@@ -129,7 +129,6 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', `완료!`)
-            emit('loadingTable', true)
         })
         const originData: any = ref({
             companyId: companyId,
@@ -154,16 +153,20 @@ export default defineComponent({
             modalCopy.value = false
         };
 
-        const onSubmit = () => {
+        const commitDate = () => {
             const dateCustom = {
                 imputedYear: globalYear.value,
                 imputedMonth: month1.value,
                 paymentYear: parseInt(month2.value.toString().slice(0,4)),
                 paymentMonth: parseInt(month2.value.toString().slice(4,6)),
             }
+            store.commit('common/processKeyPA620', dateCustom);
             emit("dataAddIncomeProcess", dateCustom)
+        }
+
+        const onSubmit = () => {
+            commitDate();
             emit("closePopup", false);
-            store.commit('common/processKeyPA620', dateCustom)
         };
         const updateValue = (value: any) => {
             dataApiCopy.value = {
@@ -181,10 +184,11 @@ export default defineComponent({
                     target: {
                         imputedYear: globalYear.value,
                         imputedMonth: month1.value,
-                        paymentYear: dataApiCopy.value.paymentYear,
-                        paymentMonth: dataApiCopy.value.paymentMonth,
+                        paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4,6)),
                     },
                 })
+                commitDate();
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
