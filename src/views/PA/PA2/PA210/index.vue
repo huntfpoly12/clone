@@ -34,9 +34,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.imputedStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.imputedFinishYearMonth.toString()).format('YYYY-MM')
+                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                                $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -53,9 +53,9 @@
                             지급기간
                             {{
                                 data.data.reportType == 1 ?
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM') :
-                                    dayjs(data.data.paymentStartYearMonth.toString()).format('YYYY-MM') + '~' +
-                                    dayjs(data.data.paymentFinishYearMonth.toString()).format('YYYY-MM')
+                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                                $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -72,7 +72,7 @@
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
-                    <DxButton :text="getColorButton(data.data)?.text" :style="getColorButton(data.data)?.style"
+                    <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" 
                         :height="'33px'" />
                 </template>
 
@@ -121,15 +121,15 @@
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" />
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" style="border: none; margin-top: -2px;"/>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
                     fixedPosition="right" />
                 <template #add="{ data }">
-                    <a-tooltip>
+                    <a-tooltip v-if="checkModify(data.data)">
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
-                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
-                            <div style="width: 100%;text-align: center;">[+]</div>
+                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')" >
+                            <div style="width: 100%;text-align: center; margin-top: 5px;">[+]</div>
                         </div>
                     </a-tooltip>
                 </template>
@@ -177,6 +177,7 @@ import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import { getAfterDeadline, getReportType } from "./utils/index"
 
 export default defineComponent({
     components: {
@@ -335,39 +336,26 @@ export default defineComponent({
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
             }
+        };
+        const checkModify = (data: any) => {
+            // if(data.status == 40) {
+            //     if(data.reportClassCode) {
+
+            //     }
+            //     return true;
+            // } else {
+            //     return false;
+            // }
+
+
+            return true;
             
-        };
-        const getReportType = (data: any) => {
-            let text = '';
-            let style = null;
-            enum2Entries(WageReportType).map((value) => {
-                if (data == value[1]) {
-                    text = value[0];
-                    style = data == 1 ? { color: 'white', backgroundColor: 'black' } : { color: 'white', backgroundColor: 'gray' }
-                }
-            });
-            return { 'text': text, 'style': style }
-        };
-        const getColorButton = (data: any) => {
-            if (data.index) {
-                return {
-                    "text": '수정' + (data.afterDeadline ? '' : data.index),
-                    "style": { color: 'white', backgroundColor: 'orange' }
-                };
-            } else {
-                return {
-                    "text": data.afterDeadline ? '기한후' : '정기',
-                    "style": data.afterDeadline ?
-                        { color: 'white', backgroundColor: 'black' } :
-                        { color: 'black', backgroundColor: 'white', border: 'black' }
-                };
-            }
         }
 
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getReportType, getColorButton,
+            getReportType,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
@@ -375,8 +363,9 @@ export default defineComponent({
             openPopupPrint, modalPrintStatus,
             editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
-            changeStatus, resetComponentEdit, resetComponentModify
-
+            changeStatus, resetComponentEdit, resetComponentModify,
+            getAfterDeadline,
+            checkModify,
         };
     },
 });
