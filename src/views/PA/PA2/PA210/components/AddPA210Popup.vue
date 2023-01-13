@@ -84,10 +84,6 @@
 
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
-import {
-    WageReportType,
-    enum2Entries,
-} from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";

@@ -34,9 +34,9 @@
                             귀속기간
                             {{
                                 data.data.reportType == 1 ?
-                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
-                                $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
-                                $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
+                                    $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
+                                    $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                    $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -53,9 +53,9 @@
                             지급기간
                             {{
                                 data.data.reportType == 1 ?
-                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
-                                $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
-                                $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
+                                    $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
+                                    $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') + '~' +
+                                    $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM')
                             }}
                         </template>
                         <div class="custom-grade-cell">
@@ -72,8 +72,8 @@
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
-                    <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" 
-                        :height="'33px'" />
+                    <DxButton :text="getAfterDeadline(data.data.index, data.data.afterDeadline)?.tag_name"
+                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style" :height="'33px'" />
                 </template>
 
                 <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
@@ -114,21 +114,25 @@
                     cell-template="extraIncome" />
                 <template #extraIncome="{ data }">{{ data.data.extraIncome ? 'O' : '' }}</template>
 
-                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" format="fixedPoint"/>
-                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint" />
+                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center"
+                    format="fixedPoint" />
+                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center"
+                    format="fixedPoint" />
+                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center"
+                    format="fixedPoint" />
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')" style="border: none; margin-top: -2px;"/>
+                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')"
+                        style="border: none; margin-top: -2px;" />
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
                     fixedPosition="right" />
                 <template #add="{ data }">
                     <a-tooltip v-if="checkModify(data.data)">
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
-                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')" >
+                        <div class="custom-grade-cell" @click="editRow(data.data, 'iconAdd')">
                             <div style="width: 100%;text-align: center; margin-top: 5px;">[+]</div>
                         </div>
                     </a-tooltip>
@@ -152,15 +156,13 @@
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
         :dataCall="dataPopup" />
-    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport" :key="resetComponentEdit" />
-    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false" :dataReport="dataReport" :key="resetComponentModify" />
+    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false"
+        :dataReport="dataReport" :key="resetComponentEdit" />
+    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
+        :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import {
-    WageReportType,
-    enum2Entries,
-} from "@bankda/jangbuda-common";
 import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from "vuex";
@@ -338,18 +340,17 @@ export default defineComponent({
             }
         };
         const checkModify = (data: any) => {
-            // if(data.status == 40) {
-            //     if(data.reportClassCode) {
-
-            //     }
-            //     return true;
-            // } else {
-            //     return false;
-            // }
-
-
-            return true;
-            
+            if (data.status == 40) {
+                let reportClassCodes = dataSource.value.filter((value: any) => value.reportClassCode == data.reportClassCode)
+                let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
+                if (indexMax == data.index) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
 
         return {
