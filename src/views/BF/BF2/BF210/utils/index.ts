@@ -77,3 +77,92 @@ export const productsValue = [
         border: "1px solid goldenrod",
     }
 ]
+
+
+export const formStatePopupEdit = {
+    id: 1,
+    type: "",
+    username: "",
+    name: "",
+    mobilePhone: "",
+    email: "",
+    president: true,
+    managerGrade: 1,
+    accountingRole: true,
+    withholdingRole: true,
+    createdAt: 1,
+    createdBy: "",
+    updatedAt: 1,
+    updatedBy: "",
+    ip: "",
+    active: true,
+    groupId: "",
+    groupCode: "",
+    groupName: "",
+    facilityBusinesses: [],
+    screenRoleGroups: [{
+        id: "",
+        name: "",
+        type: "",
+        readAdminScreenRoles: [],
+        writeAdminScreenRoles: [],
+        readWorkScreenRoles: [],
+        writeWorkScreenRoles: [],
+        lock: true,
+        memo: "",
+        createdAt: "",
+        createdBy: "",
+        updatedAt: "",
+        updatedBy: "",
+        ip: "",
+        active: true
+    }]
+}
+
+export const productsPopupEdit = [
+    {
+        id: 1,
+        color: 'white',
+        name: "중간메니저",
+        type: "m",
+        grade: "2",
+        background: 'black',
+        border: "1px solid black",
+    },
+    {
+        id: 2,
+        color: 'white',
+        name: "당당메니저",
+        type: "m",
+        grade: "3",
+        background: 'black',
+        border: "1px solid black",
+    },
+    {
+        id: 3,
+        color: 'white',
+        name: "영업자회원",
+        type: "r",
+        grade: "",
+        background: 'grey',
+        border: "1px solid grey",
+    },
+    {
+        id: 4,
+        color: 'white',
+        name: "파트너회원",
+        type: "p",
+        grade: "",
+        background: 'goldenrod',
+        border: "1px solid goldenrod",
+    },
+    {
+        id: 5,
+        color: 'white',
+        name: "고객사회원",
+        type: "c",
+        grade: "",
+        background: 'rgb(145, 213, 255)',
+        border: "1px solid rgb(145, 213, 255)",
+    }
+]

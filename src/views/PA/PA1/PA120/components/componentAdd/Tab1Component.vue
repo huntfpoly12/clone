@@ -79,7 +79,7 @@
           <custom-item-select-box width="200px" v-model:valueInput="formStateTab1.responsibility" :id="'pa-120-2'"
             :arrSelect="arrResponsibility"></custom-item-select-box>
         </a-form-item>
-        <a-row style="margin-top: 40px">
+        <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center;">
             <button-basic text="저장" type="default" mode="contained" :width="90"
               @onClick="createNewEmployeeWage($event)" />
