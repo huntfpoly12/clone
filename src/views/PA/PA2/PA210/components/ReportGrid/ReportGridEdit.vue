@@ -5,7 +5,7 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3">
+          <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="loadNew"></button-basic>
         </div>
@@ -50,6 +50,7 @@
       </div>
     </a-spin>
   </a-modal>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
 </template>
 
 <script lang="ts">
@@ -60,7 +61,7 @@ import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
 import { useQuery ,useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,setValueDataTable,inputPosition} from "./Gridsetting"
+import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition} from "./Gridsetting"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
@@ -90,7 +91,8 @@ export default defineComponent({
     DxItem, DxScrolling,DxButton
   },
   setup(props, { emit }) {
-    const wrapper =  ref<any>(null);
+    const wrapper = ref<any>(null);
+    const confirmStatus = ref<boolean>(false)
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -262,6 +264,14 @@ export default defineComponent({
       }
       actionUpdateTaxWithholding(variables)
     }
+
+    const actionConfirmDelete = ()=>{
+      confirmStatus.value = true
+    }
+
+    const actionCloseConfirm = (data: any) => {
+      confirmStatus.value = false
+    }
     return {
       setModalVisible,
       hotSettings,
@@ -272,7 +282,10 @@ export default defineComponent({
       colomn_resize,
       loadNew,
       getAfterDeadline,
-      updateTaxWithholding
+      updateTaxWithholding,
+      actionConfirmDelete,
+      actionCloseConfirm,
+      confirmStatus
     }
   }
 });
