@@ -17,7 +17,7 @@ const filters = {
             return input.toLocaleString('ko-KR');
         } return 0;
     },
-    formatDate(date: any, format = "yyyy-MM-dd") {
+    formatDate(date: any, format = "YYYY-MM-DD") {
         if (typeof date == 'number')
             date = date.toString()
         return dayjs(date).format(format)
