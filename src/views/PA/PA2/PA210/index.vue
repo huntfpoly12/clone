@@ -114,10 +114,10 @@
                     cell-template="extraIncome" />
                 <template #extraIncome="{ data }">{{ data.data.extraIncome ? 'O' : '' }}</template>
 
-                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" />
-                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" />
-                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" />
-                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" />
+                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center" format="fixedPoint"/>
+                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center" format="fixedPoint"/>
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
