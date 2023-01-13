@@ -22,8 +22,9 @@ const cellValueGreaterThan0 = (query: any, callback: any) => {
 const CellRenderer = (instance: any, td: any, row: any, col: any, prop: any, value: any, cellProperties: any)=>{
     if(value){ 
       td.innerHTML = `<p style="color:red;margin: unset;float: right;font-style: italic;">${filters.formatCurrency(parseInt(value))}</p>`
-      return td;
-    }   
+      
+  }   
+  return td;
 }
 
 // setting for modified data table
