@@ -64,9 +64,9 @@ export default defineComponent({
       default: 0,
     },
     dateType: {
-        type: Number,
-        default: 1,
-    }
+      type: Number,
+      default: 1,
+    },
   },
   components: {
     DxSelectBox,
@@ -75,7 +75,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const processKey = computed(() => store.state.common.processKeyPA510);
-    const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = computed(() => store.state.settings.globalYear);
     const dataApiCopy: any = ref({});
     const updateValue = (value: any) => {
       dataApiCopy.value = value.value;
@@ -107,17 +107,20 @@ export default defineComponent({
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
     const month1 = ref(1);
-    watch(() => props.month, (val) => {
-            month1.value = val;
-            let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth }`;
-            if(props.dateType == 2 && props.month) {
-                yearMonth = `${processKey.value.paymentYear}${props.month + 1}`;
-            }
-            if(props.dateType == 1) {
-                yearMonth = `${processKey.value.paymentYear}${props.month}`;
-            }
-            month2.value = yearMonth;
-        });
+    watch(
+      () => props.month,
+      (val) => {
+        month1.value = val;
+        let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
+        if (props.dateType == 2 && props.month) {
+          yearMonth = `${processKey.value.paymentYear}${props.month + 1}`;
+        }
+        if (props.dateType == 1) {
+          yearMonth = `${processKey.value.paymentYear}${props.month}`;
+        }
+        month2.value = yearMonth;
+      }
+    );
     onError((res) => {
       notification('error', res.message);
     });
@@ -136,20 +139,20 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
-        const dateCustom = {
-                imputedYear: globalYear.value,
-                imputedMonth: month2.value,
-                paymentYear: parseInt(month2.value.toString().slice(0,4)),
-                paymentMonth: parseInt(month2.value.toString().slice(4,6)),
-            }
+      const dateCustom = {
+        imputedYear: globalYear.value,
+        imputedMonth: month2.value,
+        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+      };
       emit('dataAddIncomeProcess', {
         imputedYear: processKey.value.imputedYear,
         imputedMonth: props.month,
-        paymentYear:  parseInt(month2.value.toString().slice(0,4)),
-        paymentMonth:  parseInt(month2.value.toString().slice(4,6)),
+        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
       });
       emit('closePopup', false);
-    //   store.commit('common/processKeyPA620', dateCustom)
+      //   store.commit('common/processKeyPA620', dateCustom)
     };
 
     const openModalCopy = () => {
@@ -163,8 +166,8 @@ export default defineComponent({
           target: {
             imputedYear: processKey.value.imputedYear,
             imputedMonth: props.month,
-            paymentYear: parseInt(month2.value.toString().slice(0,4)),
-            paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+            paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+            paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
           },
         });
       } else {
@@ -192,7 +195,7 @@ export default defineComponent({
       arrDataPoint,
       dataApiCopy,
       formatMonth,
-      month1
+      month1,
     };
   },
 });
