@@ -93,7 +93,6 @@
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
-
                 <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
                     :actionSave="actionSave" />
             </a-col>
@@ -206,13 +205,10 @@ export default defineComponent({
             resetAddComponent.value++;
             actionChangeComponent.value = 1
             modalAddNewStatus.value = true
-
             //remove active row edit
             const element = document.querySelector('.dx-row-focused');
             (element as HTMLInputElement).classList.remove("dx-row-focused");
         }
-
-       
         const openEditModal = (val: any) => {
             actionChangeComponent.value = 2
             if (store.state.common.checkStatusChangeValue == true) {
@@ -246,14 +242,12 @@ export default defineComponent({
             actionSave.value++
             store.state.common.actionSavePA520++
         }
-
         const statusComfirmSave = (res: any) => {
             if (res == true)
                 actionSaveFunc()
             store.state.common.idRowChangePa520 = dataChange.value
             idRowEdit.value = dataChange.value
         }
-
         return {
             modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
             statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
@@ -262,5 +256,4 @@ export default defineComponent({
 })
 </script> 
 <style lang="scss" scoped src="./style/style.scss" >
-
 </style>
