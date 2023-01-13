@@ -17,14 +17,7 @@
                         <template #imputed="{ data }">
                             <a-tooltip>
                                 <template #title>
-                                    귀속기간
-                                    {{
-                                        data.data.reportType == 1 ?
-                                        $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') :
-                                        $filters.formatDate(data.data.imputedStartYearMonth.toString(), 'YYYY-MM') +
-                                            (data.data.imputedFinishYearMonth ? '~' +
-                                            $filters.formatDate(data.data.imputedFinishYearMonth.toString(), 'YYYY-MM') : '')
-                                    }}
+                                    귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
                                     <DxButton
@@ -37,14 +30,7 @@
                         <template #payment="{ data }">
                             <a-tooltip>
                                 <template #title>
-                                    지급기간
-                                    {{
-                                        data.data.reportType == 1 ?
-                                        $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') :
-                                        $filters.formatDate(data.data.paymentStartYearMonth.toString(), 'YYYY-MM') +
-                                            (data.data.paymentFinishYearMonth ? '~' +
-                                            $filters.formatDate(data.data.paymentFinishYearMonth.toString(), 'YYYY-MM') : '')
-                                    }}
+                                    지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                                 </template>
                                 <div class="custom-grade-cell text-align-center">
                                     <DxButton
@@ -89,7 +75,7 @@ import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
-import { getReportType } from "../utils/index"
+import { getReportType, showTooltipYearMonth } from "../utils/index"
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -308,7 +294,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent
+            focusedRowKey,resetComponent, showTooltipYearMonth
         };
     },
 });
