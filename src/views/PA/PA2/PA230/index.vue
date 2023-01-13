@@ -25,6 +25,8 @@
                     <a-col :span="12" style="text-align: right;">
                         <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
                             @click="sendMail" />
+                        <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
+                            @click="sendMail" />
                     </a-col>
                 </a-row>
             </div>
@@ -51,7 +53,8 @@
                 </a-row>
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    @selection-changed="selectionChanged">
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="성명" cell-template="employee-info" width="300" />
                     <template #employee-info="{ data }">
@@ -92,7 +95,7 @@
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="sendMail(data.data.employee)" />
-                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                            <img src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
                                 @click="printFunc(data.data.employeeId)" />
                         </div>
                     </template>
@@ -117,7 +120,6 @@
                     <span class="ml-5">로 메일을 발송하시겠습니까?</span>
                 </div>
             </div>
-
             <a-row style="margin-top: 50px;">
                 <a-col :span="16" :offset="8">
                     <button-basic text="아니요" type="default" mode="outlined" :width="100" style="margin-right: 10px;"
@@ -135,28 +137,29 @@ import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, userId } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA2/PA230/index";
-
+import notification from "@/utils/notification";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
     },
     setup() {
+        const globalYear = computed(() => store.state.settings.globalYear);
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const checkBoxOption = ref(1);
         const checkBoxOption2 = ref(1);
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear);
         const trigger = ref<boolean>(true);
         const modalSendMail = ref<boolean>(false);
         const triggerPrint = ref<boolean>(false);
-        const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const dataSource = ref([]);
-        const originData = ref({
+        const dataSource: any = ref([]);
+        const originData: any = ref({
             companyId: companyId,
             filter: {
                 "imputedYear": globalYear,
@@ -164,7 +167,6 @@ export default defineComponent({
             },
         });
         let dataPrint = ref()
-
         let createDate = ref(filters.formatDateToInterger(dayjs().format("YYYYMMDD")))
         let emailAddress = ref()
         let dataSendEmail: any = ref({
@@ -176,6 +178,7 @@ export default defineComponent({
             },
             "employeeInputs": []
         })
+        let selectedItemKeys: any = ref([])
         // =========================== GRAPHQL =======================================
         const {
             refetch: refetchPrint,
@@ -202,15 +205,36 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
-
-
+        // QUERY NAME : getUser
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        onResultUserInf(e => {
+            emailAddress.value = e.data.getUser.email
+        })
         const { mutate: callSendEmail, onDone, onError, loading: loadingSendEmail } = useMutation(
             mutations.sendIncomeWageWithholdingTaxByEmployeeReportEmail
         );
+        onDone(() => {
+            notification('success', `업데이트 완료!`)
+        })
+        onError(e => {
+            notification('error', e.message)
+        })
         // ============================== FUNCTION =====================================
         const searching = () => {
             trigger.value = true;
-            refetchData();
+            if (checkBoxOption.value == 1)
+                originData.value.filter.leaved = null
+            if (checkBoxOption.value == 2)
+                originData.value.filter.leaved = true
+            if (checkBoxOption.value == 3)
+                originData.value.filter.leaved = false
+
+            if (originData.value.companyId)
+                refetchData();
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
@@ -221,7 +245,6 @@ export default defineComponent({
                 "printOption": checkBoxOption2.value,
                 "createDate": createDate.value
             }
-
             if (e.employeeId) {
                 emailAddress.value = e.email
                 dataSendEmail.value.employeeInputs = [
@@ -235,6 +258,22 @@ export default defineComponent({
                 switchTypeSendMail.value = true
             } else {
                 switchTypeSendMail.value = false
+                if (selectedItemKeys.value.length == 0) {
+                    notification('error', "항목을 1개 이상 선택해야합니다")
+                    return;
+                } else {
+                    selectedItemKeys.value.map((val: any) => {
+                        let dataChecked = dataSource.value.filter((data: any) => data.employeeId === val)[0]
+                        dataSendEmail.value.employeeInputs = [
+                            {
+                                "receiverName": dataChecked.employee.name,
+                                "receiverAddress": dataChecked.employee.email,
+                                "senderName": sessionStorage.getItem("username"),
+                                "employeeId": dataChecked.employeeId
+                            }
+                        ]
+                    })
+                }
             }
             modalSendMail.value = true
         }
@@ -252,7 +291,6 @@ export default defineComponent({
             if (dataPrint.value)
                 refetchPrint()
         }
-
         const confirmSendMail = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -260,13 +298,23 @@ export default defineComponent({
             } else {
                 if (switchTypeSendMail.value == true) {
                     dataSendEmail.value.employeeInputs[0].receiverAddress = emailAddress.value
-                    callSendEmail(dataSendEmail.value)
+                } else {
+                    dataSendEmail.value.employeeInputs.map((val: any) => {
+                        if (!val.receiverAddress) {
+                            val.receiverAddress = emailAddress.value
+                        }
+                    })
                 }
+                callSendEmail(dataSendEmail.value)
+                modalSendMail.value = false
             }
+        }
+        const selectionChanged = (data: any) => {
+            selectedItemKeys.value = data.selectedRowKeys
         }
         return {
             loadingSendEmail, switchTypeSendMail, emailAddress, modalSendMail, loadingPrint, createDate, loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, checkBoxOption, checkBoxOption2,
-            confirmSendMail, searching, sendMail, printFunc
+            selectionChanged, confirmSendMail, searching, sendMail, printFunc
         };
     },
 });
