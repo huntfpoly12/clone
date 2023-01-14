@@ -3,6 +3,7 @@
   <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-110" class="page-content">
     <a-row>
+        {{ processKey }}
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
@@ -209,7 +210,7 @@
       </a-col>
       <a-col :span="9">
         <div style="float: right;display: flex;">
-          <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="actionAddItem = true"
+          <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @actionAddItem="onActionAddItem"
           @loadingTableInfo="loadingTableInfo" @actionSave="onSubmit" @actionUpdate="updateData" :actionAddItem="actionAddItem"/>
         </div>
       </a-col>
@@ -265,7 +266,7 @@
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
         <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem" 
-         @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" />
+         @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" :keyForm="keyForm" ref="formRef"/>
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
@@ -464,12 +465,12 @@ export default defineComponent({
           }
           if (data.imputedMonth == (dayjs().month() + 1)) {
                 status.value = data.status
-                if(actionUpdateItem.value == 0){
-                    store.state.common.processKeyPA110.imputedYear = data.imputedYear
-                    store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
-                    store.state.common.processKeyPA110.paymentYear = data.paymentYear
-                    store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
-                }          
+                // if(actionUpdateItem.value == 0){
+                //     store.state.common.processKeyPA110.imputedYear = data.imputedYear
+                //     store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+                //     store.state.common.processKeyPA110.paymentYear = data.paymentYear
+                //     store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+                // }          
               }
           
         });
@@ -488,13 +489,20 @@ export default defineComponent({
     }, () => ({
       fetchPolicy: "no-cache",
     }))
+    const formRef = ref();
     watch(resultTaxPayInfo, (value) => {
-      if (actionUpdateItem.value == 0) {
-        focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
-        dataIncomeWage.value = value.getIncomeWages[0]
-        actionAddItem.value = false
-      }
-      dataTaxPayInfo.value = value.getIncomeWages
+        if(value?.getIncomeWages[0]) {
+            if (actionUpdateItem.value == 0) {
+                focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
+                dataIncomeWage.value = value.getIncomeWages[0]
+                actionAddItem.value = false
+            }
+            dataTaxPayInfo.value = value.getIncomeWages
+        }else {
+            dataTaxPayInfo.value = value.getIncomeWages;
+            formRef.value.addRow()
+        }
+        
     })
 
     /**
@@ -531,6 +539,7 @@ export default defineComponent({
       store.state.common.processKeyPA110.paymentYear = month.paymentYear
       store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
       store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
+      store.state.common.processKeyPA110.imputedYear = globalYear.value;
     }
     /**
      * copy data from other month
@@ -593,7 +602,7 @@ export default defineComponent({
     }
 
     const createdDone = () => {
-      refetchDataTaxPayInfo()
+    //   refetchDataTaxPayInfo();
     }
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
@@ -611,6 +620,11 @@ export default defineComponent({
     watch(resultConfig,(newVal)=> {
         dateType.value = newVal.paymentType;
     });
+    const keyForm = ref(1);
+    const onActionAddItem = (emit: any) => {
+        actionAddItem.value = true;
+        keyForm.value ++;
+    }
     return {
       globalYear,
       per_page,
@@ -647,6 +661,9 @@ export default defineComponent({
       dateType,
       inputDateTax,
       paymentDateTax,
+      onActionAddItem,
+      keyForm,
+      formRef
     }
 
   },
