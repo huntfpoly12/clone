@@ -365,7 +365,7 @@ export default {
         const checkAll = ref(false);
         const optionSale = ref();
         const statusMailValidate = ref(false);
-        const contractCreacted = reactive({ ...dataDefaultsUtil });
+        const contractCreacted:any = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
@@ -656,7 +656,7 @@ export default {
                     },
                     withholding: {
                         startYearMonth: contractCreacted.startYearMonthHolding,
-                        capacity: contractCreacted.capacityHolding,
+                        capacity: parseInt(contractCreacted.capacityHolding),
                         withholdingServiceTypes: contractCreacted.withholdingServiceTypes,
                     },
                     cmsBank: {
