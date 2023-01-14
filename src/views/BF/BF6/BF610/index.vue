@@ -4,7 +4,7 @@
         <div class="search-form">
             <a-row :gutter="[24, 8]">
                 <a-col>
-                    <a-form-item label="영업자코드" label-align="left" class="clr mb-0 label-select">
+                    <a-form-item label="귀속연월" label-align="left" class="clr mb-0 label-select">
                         <imputed-year-month-select-box :dataSelect="arraySelectBox" width="150px" :required="true"
                             v-model:valueInput="dataSearch.filter.imputedYearMonth" type="1" />
                     </a-form-item>
@@ -88,7 +88,7 @@
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="company" width="100" />
                     <template #company="{ data }">
-                        <a-tooltip  color="black" placement="topLeft">
+                        <a-tooltip color="black" placement="topLeft">
                             <template #title>{{ data.data.company.name + " " + data.data.company.address }}</template>
                             {{ data.data.company.name + " " + data.data.company.address }}
                         </a-tooltip>
@@ -99,7 +99,7 @@
                             <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                                 :dataRow="data.data" @dataRow="changeStatus" />
                             <div class="pl-5 pr-5">
-                                <a-tooltip  color="black" placement="topLeft">
+                                <a-tooltip color="black" placement="topLeft">
                                     <template #title>소득별 마감현황</template>
                                     <plus-outlined @click="openModalStatus(data.data)" />
                                 </a-tooltip>
@@ -428,32 +428,27 @@ export default defineComponent({
         /*
          * ============== FUNCTION ============== 
          */
-        const searching = (e: any) => {
-            var res = e.validationGroup.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-                // Import data to reportType (1, 6, null)
-                if (reportType.checkbox2 == true && reportType.checkbox3 == false)
-                    dataSearch.filter.reportType = 1
-                else if (reportType.checkbox3 == true && reportType.checkbox2 == false)
-                    dataSearch.filter.reportType = 6
-                else
-                    dataSearch.filter.reportType = null
+        const searching = () => { 
+            // Import data to reportType (1, 6, null)
+            if (reportType.checkbox2 == true && reportType.checkbox3 == false)
+                dataSearch.filter.reportType = 1
+            else if (reportType.checkbox3 == true && reportType.checkbox2 == false)
+                dataSearch.filter.reportType = 6
+            else
+                dataSearch.filter.reportType = null 
+            // Add value to array statuses
+            dataSearch.filter.statuses = []
+            if (statuses.checkbox1 == true)
+                dataSearch.filter.statuses.push(10)
+            if (statuses.checkbox2 == true)
+                dataSearch.filter.statuses.push(20)
+            if (statuses.checkbox3 == true)
+                dataSearch.filter.statuses.push(30)
+            if (statuses.checkbox4 == true)
+                dataSearch.filter.statuses.push(40)
+            trigger.value = true
+            refetchTable()
 
-                // Add value to array statuses
-                dataSearch.filter.statuses = []
-                if (statuses.checkbox1 == true)
-                    dataSearch.filter.statuses.push(10)
-                if (statuses.checkbox2 == true)
-                    dataSearch.filter.statuses.push(20)
-                if (statuses.checkbox3 == true)
-                    dataSearch.filter.statuses.push(30)
-                if (statuses.checkbox4 == true)
-                    dataSearch.filter.statuses.push(40)
-                trigger.value = true
-                refetchTable()
-            }
         }
 
         const closePopup = () => {
