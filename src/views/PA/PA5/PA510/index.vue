@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직근로소득자료입력" @actionSave="onSubmit($event)" />
+    <action-header title="일용직근로소득자료입력" :buttonSave="false" :buttonDelete="false" />
     <div id="pa-510" class="page-content">
         <a-row>
             <a-spin :spinning="loading" size="large">
