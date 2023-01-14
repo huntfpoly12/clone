@@ -5,7 +5,6 @@
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
-                    <!-- <month-picker-box v-model:valueDate="processKey.imputedYear" width="65px" class="ml-5" /> -->
                 </div>
                 <div class="month-custom-2 d-flex-center">
                     <span>지</span>
@@ -99,16 +98,24 @@ export default defineComponent({
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
+        const trigger = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
+            originData.value.filter = {
+                startImputedYearMonth: parseInt(`${globalYear.value}01`),
+                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+            }
+            trigger.value = true
         });
         const updateValue = (value: any) => {
-            dataApiCopy.value.paymentYear = value.value.paymentYear
-            dataApiCopy.value.paymentMonth = value.value.paymentMonth
+            dataApiCopy.value.paymentYear = value.value.paymentYear,
+            dataApiCopy.value.paymentMonth = value.value.paymentMonth,
             dataApiCopy.value.imputedMonth = value.value.imputedMonth
             dataApiCopy.value.imputedYear = value.value.imputedYear
         };
-        const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
+        
+        // const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
+        const month2: any = ref<number>()
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
@@ -116,24 +123,32 @@ export default defineComponent({
             queries.getWithholdingConfig,
             dataQuery,
             () => ({
+                enabled: trigger.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultConfig, (value) => {
+            let paymentMonth = month.value
             if (value) {
                 paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                if (value.getWithholdingConfig.paymentType == 2) {
+                    paymentMonth = month.value + 1
+                }
             }
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value+1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            trigger.value = false;
         });
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                startImputedYearMonth: parseInt(`${globalYear.value}1`),
+                startImputedYearMonth: parseInt(`${globalYear.value}01`),
                 finishImputedYearMonth: parseInt(`${globalYear.value}12`),
             }
         })
         const {
             onResult: onResult
         } = useQuery(queries.findIncomeProcessWageDailyStatViews, originData, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         onResult((value: any) => {
@@ -170,7 +185,7 @@ export default defineComponent({
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
                 paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-                paymentMonth: parseInt(month2.value.toString().slice(4, 7)),
+                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
         };
@@ -186,14 +201,13 @@ export default defineComponent({
                     target: {
                         imputedYear: processKey.value.imputedYear,
                         imputedMonth: month?.value,
-                        paymentYear: dataApiCopy.value.paymentYear,
-                        paymentMonth: dataApiCopy.value.paymentMonth,
+                        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
                     },
                 })
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
-
         }
         return {
             processKey,
@@ -233,24 +247,12 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-
-    .dp__input {
-        color: white;
-        padding: 0px;
-        border: none;
-        height: 30px;
-        background-color: #A6A6A6;
-    }
-
-    .dp__icon {
-        display: none;
-    }
 }
 
 ::v-deep .month-custom-2 {
-    font-size: 12px;
+    font-size: 13px;
     background-color: black;
-    padding-left: 10px;
+    padding: 2px 0px 0px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
@@ -261,6 +263,7 @@ export default defineComponent({
         border: none;
         height: 30px;
         background-color: black;
+        padding-top: 1px;
         font-size: 12px;
     }
 
