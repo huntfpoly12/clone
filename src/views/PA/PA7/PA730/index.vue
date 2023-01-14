@@ -28,7 +28,8 @@
           <a-col :span="12">
             <div class="created-date">
               <label class="lable-item">영수일 :</label>
-              <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"></date-time-box>
+              <date-time-box width="150px"
+                v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"></date-time-box>
             </div>
           </a-col>
         </a-row>
@@ -45,14 +46,21 @@
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
           <DxExport :enabled="true" :allow-export-selected-data="true" />
           <DxToolbar>
-            <DxItem name="addRowButton" show-text="always" />
-            <DxItem name="columnChooserButton" />
             <DxItem template="send-group-mail" />
+            <DxItem template="send-group-print" />
           </DxToolbar>
           <template #send-group-mail>
             <div class="custom-mail-group">
               <DxButton @click="actionOpenPopupEmailGroup">
                 <img src="@/assets/images/emailGroup.png" alt=""
+                  style="width: 35px; margin-right: 3px; cursor: pointer" />
+              </DxButton>
+            </div>
+          </template>
+          <template #send-group-print>
+            <div class="custom-mail-group">
+              <DxButton @click="onPrintGroup">
+                <img src="@/assets/images/printGroup.png" alt=""
                   style="width: 35px; margin-right: 3px; cursor: pointer" />
               </DxButton>
             </div>
@@ -98,8 +106,7 @@
               value-format="#,###" />
             <DxTotalItem show-in-column="원천징수세액 농어촌특별세" summary-type="sum" display-format="원천징수세액 지방소득세합계: 0"
               value-format="#,###" />
-            <DxTotalItem column="원천징수세액계합계" :customize-text="customTextSummary"
-              value-format="#,###" />
+            <DxTotalItem column="원천징수세액계합계" :customize-text="customTextSummary" value-format="#,###" />
           </DxSummary>
           <DxColumn :width="80" cell-template="pupop" />
           <template #pupop="{ data }" class="custom-action">
@@ -123,6 +130,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from 'vue';
 import { useStore } from 'vuex';
+import notification from "@/utils/notification";
 import { useQuery } from '@vue/apollo-composable';
 import DxButton from 'devextreme-vue/button';
 import dayjs, { Dayjs } from 'dayjs';
@@ -252,7 +260,7 @@ export default defineComponent({
       }
     };
     const onCloseEmailGroupModal = () => {
-      dataSelect = ref<any>([]);
+      // dataSelect = ref<any>([]);
       modalEmailGroup.value = false;
     };
     watch(result, (value) => {
@@ -279,13 +287,13 @@ export default defineComponent({
       companyId: companyId,
       input: {
         imputedYear: globalYear,
-        type: null,
+        type: valueDefaultIncomeExtra.value.input.type,
         receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
       },
-      employeeKeys: {
+      employeeKeys: [{
         employeeId: null,
         incomeTypeCode: null,
-      },
+      }],
     });
     const {
       result: resultReceiptReportViewUrl,
@@ -296,8 +304,8 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     const onPrint = (data: any) => {
-      receiptReportViewUrlParam.employeeKeys = { employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode };
-      receiptReportViewUrlParam.input = { imputedYear: globalYear, type: data.employee.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
+      receiptReportViewUrlParam.employeeKeys = [{ employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }];
+      receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
       receiptReportViewUrlTrigger.value = true;
       refetchReceiptViewUrl();
     };
@@ -309,6 +317,23 @@ export default defineComponent({
       },
       { deep: true }
     );
+    const onPrintGroup = () => {
+      if (dataSelect.value.length) {
+        var array: any = [];
+        dataSelect.value.map((val: any) => {
+          array.push({
+            employeeId: val.employeeId,
+            incomeTypeCode: val.incomeTypeCode
+          })
+        })
+        receiptReportViewUrlParam.employeeKeys = array
+        receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
+        receiptReportViewUrlTrigger.value = true;
+        refetchReceiptViewUrl();
+      } else {
+        notification('error', '항목을 최소 하나 이상 선택해야합니다')
+      }
+    };
     // group mail
     const { onResult: onResultUserInf } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
       fetchPolicy: 'no-cache',
@@ -346,7 +371,7 @@ export default defineComponent({
       onCloseEmailSingleModal,
       onCloseEmailGroupModal,
       onSelectionChanged,
-      onPrint,
+      onPrint, onPrintGroup,
       emailUserLogin,
       isOnlyEmployee,
       popupMailGroup,
@@ -356,6 +381,8 @@ export default defineComponent({
   },
 });
 </script>
+
+
 
 
 

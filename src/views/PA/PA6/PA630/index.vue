@@ -22,9 +22,9 @@
                         <div class="format-settings">
                             <strong>서식 설정 : </strong>
                             <div class="format-settings-text">
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 
+                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                 <span class="style-note">본 설정으로 적용된 서식으로 출력 및
-                                메일발송 됩니다.</span> 
+                                    메일발송 됩니다.</span>
                             </div>
                         </div>
                     </a-col>
@@ -36,7 +36,7 @@
                         </div>
                     </a-col>
                 </a-row>
-                <a-row >
+                <a-row>
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
@@ -49,11 +49,20 @@
                     @selection-changed="selectionChanged">
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
+                        <DxItem template="send-group-print" />
                     </DxToolbar>
                     <template #send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti">
                                 <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            </DxButton>
+                        </div>
+                    </template>
+                    <template #send-group-print>
+                        <div class="custom-mail-group">
+                            <DxButton @click="onPrintGroup">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
                             </DxButton>
                         </div>
                     </template>
@@ -72,24 +81,29 @@
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
                     </template>
-                    <DxColumn caption="지급총액" data-field="paymentAmount" :format="amountFormat"/>
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" :format="amountFormat"/>
-                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat"/>
-                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax" :format="amountFormat"/>
+                    <DxColumn caption="지급총액" data-field="paymentAmount" :format="amountFormat" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" :format="amountFormat" />
+                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat" />
+                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax"
+                        :format="amountFormat" />
                     <DxSummary>
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
-                        <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}" value-format="#,###"/>
-                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="원천징수세액 소득세합계: {0}" value-format="#,###"/>
-                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}" value-format="#,###"/>
-                        <DxTotalItem column="원천징수세액 계" summary-type="sum" display-format="원천징수세액 계합계: {0}" value-format="#,###"/>
+                        <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}"
+                            value-format="#,###" />
+                        <DxTotalItem column="원천징수세액 소득세" summary-type="sum" display-format="원천징수세액 소득세합계: {0}"
+                            value-format="#,###" />
+                        <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}"
+                            value-format="#,###" />
+                        <DxTotalItem column="원천징수세액 계" summary-type="sum" display-format="원천징수세액 계합계: {0}"
+                            value-format="#,###" />
                     </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action" style="text-align: center;">
-                            <img @click="actionOpenPopupEmailSingle(data.data)"
-                                src="@/assets/images/email.svg" alt=""
+                            <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px;" />
+                            <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
+                                style="width: 25px;" />
                         </div>
                     </template>
                 </DxDataGrid>
@@ -97,7 +111,6 @@
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
                     :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
-                <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'" :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" />
             </div>
         </div>
     </a-spin>
@@ -105,6 +118,7 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
+import notification from "@/utils/notification";
 import { useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
 import {
@@ -169,10 +183,10 @@ export default defineComponent({
                 type: 1,
                 receiptDate: parseInt(dayjs().format('YYYYMMDD')),
             },
-            employeeKeys: {
+            employeeKeys: [{
                 employeeId: 0,
                 incomeTypeCode: ""
-            }
+            }]
         });
         const {
             refetch: refetchData,
@@ -224,43 +238,47 @@ export default defineComponent({
         }
 
         const actionOpenPopupEmailMulti = () => {
-            if (!isClickRow.value) {
-                popupMailGroup.value = true;
-                return;
+            if (dataSelect.value.length) {
+                popupDataEmailMulti.value = {
+                    companyId: companyId,
+                    input: {
+                        imputedYear: globalYear,
+                        type: valueDefaultIncomeBusiness.value.input.type,
+                        receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
+                    },
+                    employeeInputs: dataSelect.value
+                }
+                modalEmailMulti.value = true
+            } else {
+                notification('error', '항목을 최소 하나 이상 선택해야합니다')
             }
-            if (isOnlyEmployee.value) {
-                popupMailGroup.value = true;
-                return;
-            }
-            popupDataEmailMulti.value = {
-                companyId: companyId,
-                input: {
-                    imputedYear: globalYear,
-                    type: valueDefaultIncomeBusiness.value.input.type,
-                    receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
-                },
-                employeeInputs: dataSelect.value
-            }
-            modalEmailMulti.value = true
         }
-        //popupMailGroup
-        const isOnlyEmployee = ref<boolean>(false);
-        const popupMailGroup = ref<boolean>(false);
-        const isClickRow = ref<boolean>(false);
-        const selectionChanged = (data: any) => {
-            isClickRow.value = true;
-            isOnlyEmployee.value = data.selectedRowKeys.length < 1;
-            if (!isOnlyEmployee.value) {
-                data.selectedRowKeys.forEach((data: any) => {
-                    dataSelect.value.push({
-                        senderName: sessionStorage.getItem("username"),
-                        receiverName: data.employee.name,
-                        receiverAddress: data.employee.email,
-                        employeeId: data.employee.employeeId,
-                        incomeTypeCode: data.employee.incomeTypeCode
+        const onPrintGroup = () => {
+            if (dataSelect.value.length) {
+                var array: any = [];
+                dataSelect.value.map((val: any) => {
+                    array.push({
+                        employeeId: val.employeeId,
+                        incomeTypeCode: val.incomeTypeCode
                     })
                 })
+                valueDefaultIncomeBusiness.value.employeeKeys = array
+                triggerPrint.value = true;
+            } else {
+                notification('error', '항목을 최소 하나 이상 선택해야합니다')
             }
+        };
+        const selectionChanged = (data: any) => {
+            dataSelect.value = []
+            data.selectedRowKeys.forEach((data: any) => {
+                dataSelect.value.push({
+                    senderName: sessionStorage.getItem("username"),
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    employeeId: data.employee.employeeId,
+                    incomeTypeCode: data.employee.incomeTypeCode
+                })
+            })
         }
         const {
             onResult: onResultUserInf
@@ -292,8 +310,9 @@ export default defineComponent({
         };
 
         const actionPrint = (data: any) => {
-            valueDefaultIncomeBusiness.value.employeeKeys.employeeId = data.employee.employeeId
-            valueDefaultIncomeBusiness.value.employeeKeys.incomeTypeCode = data.employee.incomeTypeCode
+            valueDefaultIncomeBusiness.value.employeeKeys = [
+                { employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }
+            ]
             triggerPrint.value = true;
         }
 
@@ -317,16 +336,18 @@ export default defineComponent({
             onCloseEmailMultiModal,
             selectionChanged,
             emailUserLogin,
-            actionPrint,
+            actionPrint, onPrintGroup,
             amountFormat,
-            popupMailGroup,
         };
     },
 });
 </script>
-  
+
+
+
+
+
 
 
 
 <style lang="scss" scoped src="./style/style.scss" />
-  
