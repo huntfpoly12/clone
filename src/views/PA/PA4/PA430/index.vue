@@ -344,6 +344,8 @@ export default defineComponent({
         }
 
         const selectionChanged = (data: any) => {
+            dataSelect.value = []
+            incomeIds.value = []
             data.selectedRowKeys.forEach((data: any) => {
                 dataSelect.value.push({
                     senderName: sessionStorage.getItem("username"),

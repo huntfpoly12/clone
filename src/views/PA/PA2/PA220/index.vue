@@ -10,8 +10,9 @@
                 <a-col :span="21">
                     <div class="selectRatio">
                         <strong class="lable-item">구분 :</strong>
-                        <radio-group :arrayValue="arrayRadioDivision" v-model:valueRadioCheck="searchParam.filter.leaved"
-                            :layoutCustom="'horizontal'" valueExpr = "value" />
+                        <radio-group :arrayValue="arrayRadioDivision"
+                            v-model:valueRadioCheck="searchParam.filter.leaved" :layoutCustom="'horizontal'"
+                            valueExpr="value" />
                     </div>
                 </a-col>
             </a-row>
@@ -33,10 +34,11 @@
                         </div>
                         <div class="title-body-left-2">
                             <radio-group :arrayValue="arrayRadioType" v-model:valueRadioCheck="viewUrlParam.input.type"
-                                :layoutCustom="'vetical'" valueExpr = "id"/>
+                                :layoutCustom="'vetical'" valueExpr="id" />
                         </div>
                     </a-col>
                     <a-col :span="12">
+                        {{  viewUrlParam.input.receiptDate  }}
                         <div class="title-body-right">
                             <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                                 dateFormat="YYYY-MM-DD" />
@@ -50,6 +52,7 @@
                 <DxScrolling column-rendering-mode="virtual" />
                 <DxToolbar>
                     <DxItem template="pagination-send-group-mail" />
+                    <DxItem template="send-group-print" />
                 </DxToolbar>
                 <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
@@ -58,6 +61,14 @@
                         </DxButton>
                     </div>
                 </template>
+                <template #send-group-print>
+                        <div class="custom-mail-group">
+                            <DxButton @click="onPrintGroup">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                            </DxButton>
+                        </div>
+                    </template>
                 <DxSelection mode="multiple" />
                 <DxColumn caption="성명" cell-template="tag" width="300px" />
                 <template #tag="{ data }" class="custom-action">
@@ -85,23 +96,27 @@
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }" class="custom-action">
                     <div class="custom-action" style="text-align: center;">
-                        <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg"
-                            alt="" style="width: 25px; margin-right: 3px;" />
-                        <img @click="onOpenPopUpMultiMail()" src="@/assets/images/print.svg" alt="" style="width: 25px;" />
+                        <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
+                            style="width: 25px; margin-right: 3px;" />
+                        <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
+                            style="width: 25px;" />
                     </div>
                 </template>
             </DxDataGrid>
-            <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
+            <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                 :data="popupDataEmailSingle" />
-            <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
+            <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
                 :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
-            <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'" :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" />
+            <!-- <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
+                :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" /> -->
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, reactive, watch } from "vue";
 import { useStore } from 'vuex';
+import notification from "@/utils/notification";
+import dayjs, { Dayjs } from 'dayjs';
 import { useQuery } from "@vue/apollo-composable";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
@@ -120,11 +135,11 @@ export default defineComponent({
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
         const arrayRadioDivision = ref([...radioLeaved])
-        const arrayRadioType = ref([ ...radioType ])
+        const arrayRadioType = ref([...radioType])
         const formSearch = ref({
             division: 1,
             type: 1,
-            receiptDate: new Date().toJSON().slice(0, 10),
+            receiptDate: parseInt(dayjs().format('YYYYMMDD')),
         })
 
         const popupDataEmailSingle = ref({})
@@ -134,13 +149,15 @@ export default defineComponent({
         const modalEmailMulti = ref(false)
 
         const dataSource: any = ref([]);
+        const dataSelect = ref<any>([]);
+        const incomeIds = ref<any>([])
         const store = useStore();
 
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
-// QUERY NAME : getUser
+        // QUERY NAME : getUser
         const emailUserLogin = ref()
         const {
             onResult: onResultUserInf
@@ -155,18 +172,18 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
 
-        const onCloseEmailSingleModal = () => {
-            modalEmailSingle.value = false
-        }
-        const onCloseEmailMultiModal = () => {
-            modalEmailMulti.value = false
-        }
+        // const onCloseEmailSingleModal = () => {
+        //     modalEmailSingle.value = false
+        // }
+        // const onCloseEmailMultiModal = () => {
+        //     modalEmailMulti.value = false
+        // }
 
-// Search
+        // Search
         const searchData = ref([]);
-        const searchParam  = reactive({
-            companyId: 29,
-            filter: { imputedYear: 2022, leaved: null, name: null }
+        const searchParam = reactive({
+            companyId: companyId,
+            filter: { imputedYear: globalYear.value, leaved: null, name: null }
         })
         const searchTrigger = ref<boolean>(true)
         const {
@@ -177,22 +194,22 @@ export default defineComponent({
             enabled: searchTrigger.value,
             fetchPolicy: "no-cache",
         }));
-        
-        watch(resultSearch, (newData)=> {
+
+        watch(resultSearch, (newData) => {
             searchTrigger.value = false;
             searchData.value = newData.searchIncomeWageWithholdingReceipts;
             viewUrlParam.input.type = newData.searchIncomeWageWithholdingReceipts?.employee?.type ?? 1;
             searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? null;
         })
-        const onSearch =()=> {
+        const onSearch = () => {
             searchTrigger.value = true;
             refetchSearch()
         }
-        
-// PRINT VIEW URL
-        const viewUrlParam = reactive({
-            companyId: 29,
-            input: { imputedYear: globalYear, type: 1, receiptDate: new Date().toJSON().slice(0, 10) },
+
+        // PRINT VIEW URL
+        const viewUrlParam: any = reactive({
+            companyId: companyId,
+            input: { imputedYear: globalYear.value, type: 1, receiptDate: parseInt(dayjs().format('YYYYMMDD')) },
             incomeIds: [],
         })
         const printTrigger = ref<boolean>(false);
@@ -208,49 +225,37 @@ export default defineComponent({
                 window.open(value.getIncomeBusinessWithholdingReceiptReportViewUrl)
             }
         });
-//SEND MAIL GROUP
+        //SEND MAIL GROUP
         const sendMailGroupParam = reactive({
             companyId: companyId,
             input: { imputedYear: globalYear, type: viewUrlParam.input.type, receiptDate: viewUrlParam.input.receiptDate },
             incomeInputs: [
-            {
-                receiverName: "",
-                receiverAddress: "",
-                senderName: "",
-                incomeId: NaN,
-            },
+                {
+                    receiverName: "",
+                    receiverAddress: "",
+                    senderName: "",
+                    incomeId: NaN,
+                },
             ]
         });
-        // has muitiple mail groups
-        const isOnlyEmployee = ref<boolean>(false);
-        const popupMailGroup = ref<boolean>(false);
-        const isClickRow = ref<boolean>(false);
         const selectionChanged = (data: any) => {
-            isClickRow.value = true;
-            isOnlyEmployee.value = data.selectedRowKeys.length < 2;
-            if (!isOnlyEmployee.value) {
-                data.selectedRowKeys.forEach((data: any) => {
-                    sendMailGroupParam.incomeInputs.push({
-                        senderName: sessionStorage.getItem("username") ?? "",
-                        receiverName: data.employee.name,
-                        receiverAddress: data.employee.email,
-                        incomeId: data.incomeId
-                    })
+            dataSelect.value = []
+            incomeIds.value = []
+            data.selectedRowKeys.forEach((data: any) => {
+                dataSelect.value.push({
+                    senderName: sessionStorage.getItem("username") ?? "",
+                    receiverName: data.employee.name,
+                    receiverAddress: data.employee.email,
+                    incomeId: data.incomeId
                 })
-            }
+                incomeIds.value.push(data.incomeId)
+            })
         }
-        const onOpenPopUpMultiMail = () => {
-            if (!isClickRow.value) {
-                popupMailGroup.value = true;
-                return;
-            }
-            if (isOnlyEmployee.value) {
-                popupMailGroup.value = true;
-                return;
-            }
-            modalEmailMulti.value = true
+        const actionPrint = (data: any) => {
+            viewUrlParam.incomeIds = [data.incomeId]
+            printTrigger.value = true
         }
-//SEND MAIL SINGLE
+        //SEND MAIL SINGLE
         const onOpenPopupEmailSingle = (data: any) => {
             popupDataEmailSingle.value = {
                 companyId: companyId,
@@ -270,17 +275,21 @@ export default defineComponent({
             modalEmailSingle.value = true
         }
         const sendMailGroup = () => {
-            if (!isClickRow.value) {
-                popupMailGroup.value = true;
-                return;
+            if (dataSelect.value.length) {
+                popupDataEmailMulti.value = sendMailGroupParam;
+                modalEmailMulti.value = true
+            } else {
+                notification('error', '항목을 최소 하나 이상 선택해야합니다')
             }
-            if (isOnlyEmployee.value) {
-                popupMailGroup.value = true;
-                return;
-            }
-            popupDataEmailMulti.value = sendMailGroupParam;
-            modalEmailMulti.value = true
         }
+        const onPrintGroup = () => {
+            if (incomeIds.value.length) {
+                viewUrlParam.incomeIds = incomeIds.value
+                printTrigger.value = true;
+            } else {
+                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+            }
+        };
         return {
             arrayRadioDivision,
             arrayRadioType,
@@ -293,16 +302,16 @@ export default defineComponent({
             popupDataEmailMulti,
             modalEmailSingle,
             modalEmailMulti,
-            onCloseEmailSingleModal,
-            onCloseEmailMultiModal,
+            // onCloseEmailSingleModal,
+            // onCloseEmailMultiModal,
             onOpenPopupEmailSingle,
             sendMailGroup,
             emailUserLogin,
             onExporting,
             searchData,
             viewUrlParam,
-            onOpenPopUpMultiMail,
-            popupMailGroup,
+            actionPrint,
+            onPrintGroup,
             searchParam,
             onSearch,
         };
