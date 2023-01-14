@@ -26,7 +26,7 @@
                         <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
                             @click="sendMail" />
                         <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
-                            @click="sendMail" />
+                            @click="printFunc" />
                     </a-col>
                 </a-row>
             </div>
@@ -163,10 +163,10 @@ export default defineComponent({
             companyId: companyId,
             filter: {
                 "imputedYear": globalYear,
-                "leaved": true
+                "leaved": null
             },
         });
-        let dataPrint = ref()
+
         let createDate = ref(filters.formatDateToInterger(dayjs().format("YYYYMMDD")))
         let emailAddress = ref()
         let dataSendEmail: any = ref({
@@ -179,6 +179,15 @@ export default defineComponent({
             "employeeInputs": []
         })
         let selectedItemKeys: any = ref([])
+        let dataPrint: any = ref({
+            "companyId": companyId,
+            "input": {
+                "imputedYear": globalYear.value,
+                "printOption": checkBoxOption2.value,
+                "createDate": createDate.value
+            },
+            "employeeIds": []
+        })
         // =========================== GRAPHQL =======================================
         const {
             refetch: refetchPrint,
@@ -277,19 +286,32 @@ export default defineComponent({
             }
             modalSendMail.value = true
         }
-        const printFunc = (employeeIds: any) => {
+        const printFunc = (val: any) => {
             triggerPrint.value = true
             dataPrint.value = {
-                "companyId": companyId,
                 "input": {
                     "imputedYear": globalYear.value,
                     "printOption": checkBoxOption2.value,
                     "createDate": createDate.value
                 },
-                "employeeIds": [employeeIds]
+                "employeeIds": []
             }
-            if (dataPrint.value)
-                refetchPrint()
+
+            // Print single row
+            if (typeof val == "number") {
+                dataPrint.value.employeeIds = [val]
+                if (dataPrint.value)
+                    refetchPrint()
+            } else { // Print multi row
+                if (selectedItemKeys.value.length == 0) {
+                    notification('error', "항목을 1개 이상 선택해야합니다")
+                    return;
+                } else
+                    dataPrint.value.employeeIds = selectedItemKeys.value
+
+                if (dataPrint.value)
+                    refetchPrint()
+            }
         }
         const confirmSendMail = (e: any) => {
             var res = e.validationGroup.validate();
