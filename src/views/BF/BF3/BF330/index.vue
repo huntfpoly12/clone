@@ -74,7 +74,10 @@
                     <DxColumn data-field="phone" caption="연락처" />
                     <DxColumn data-field="presidentMobilePhone" caption="휴대폰" />
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
-                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="manageStartDate" cell-template="manageStartDate" caption="관리시작일" data-type="date" />
+                    <template #manageStartDate="{ data }">
+                        {{ data.data.manageStartDate ? $filters.formatDate(data.data.manageStartDate) : '' }}
+                    </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }" class="custom-action" >

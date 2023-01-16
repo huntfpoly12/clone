@@ -50,15 +50,15 @@
             </template>
             <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
             <template #yearEndTaxAdjustment="{ data }">
-              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"/>
+              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
             </template>
             <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
             <template #refund="{ data }">
-              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" />
+              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'"   :disabled="true"/>
             </template>
             <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
             <template #submission-date="{ data }">
-              <date-time-box :valueDate="data.data.submissionDate"></date-time-box>
+              <date-time-box :valueDate="data.data.submissionDate" :disabled="true"></date-time-box>
             </template>
             <DxScrolling column-rendering-mode="virtual"/>
           </DxDataGrid>

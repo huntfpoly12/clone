@@ -59,13 +59,13 @@
                             </DxButton>
                         </template>
                         <DxPaging :page-size="15" />
-                        <DxColumn caption="성명" cell-template="company-name" width="300px" />
+                        <DxColumn caption="성명" cell-template="company-name" width="250" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false" />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="120px" />
+                        <DxColumn caption="주민등록번호" data-field="residentId" width="150" />
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">

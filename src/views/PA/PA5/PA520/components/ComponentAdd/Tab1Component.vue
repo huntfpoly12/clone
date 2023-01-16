@@ -34,17 +34,20 @@
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataCreated.foreigner"
                 layoutCustom="horizontal" />
         </a-form-item>
-        <a-form-item label="외국인 국적" label-align="right"
-            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
-                :hiddenOptionKR="dataCreated.foreigner" @textCountry="(res: any) => { dataCreated.nationality = res }"
-                :disabled="disabledSelectBox" width="200px" />
-        </a-form-item>
-        <a-form-item label="외국인 체류자격" label-align="right"
-            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="200px"
-                :disabled="disabledSelectBox" />
-        </a-form-item>
+        <div class="d-flex">
+            <a-form-item label="외국인 국적" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
+                    :hiddenOptionKR="dataCreated.foreigner"
+                    @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
+                    width="200px" />
+            </a-form-item>
+            <a-form-item label="외국인 체류자격" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true, 'pl-10': true }">
+                <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification"
+                    width="200px" :disabled="disabledSelectBox" />
+            </a-form-item>
+        </div>
         <a-form-item :label="labelResident" label-align="right" class="label-red">
             <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
         </a-form-item>
@@ -63,10 +66,12 @@
                     </div>
                 </a-col>
             </a-row>
-            <a-row style="display: inherit;">
-                <default-text-box width="357px" :disabled="true" placeholder="주소1"
-                    v-model:valueInput="dataCreated.roadAddress" style="margin: 5px 0 5px 0" />
-                <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataCreated.addressExtend" />
+            <a-row class="d-flex mt-5">
+                <default-text-box width="50%" :disabled="true" placeholder="주소1"
+                    v-model:valueInput="dataCreated.roadAddress" />
+                <div style="width: 50%;padding-left: 5px;">
+                    <default-text-box placeholder="주소2" v-model:valueInput="dataCreated.addressExtend" />
+                </div>
             </a-row>
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
@@ -219,4 +224,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>

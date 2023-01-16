@@ -17,7 +17,7 @@
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                     </div>
-                    <a-form-item label="근무일수"> 
+                    <a-form-item label="근무일수">
                         <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="200px"
                             :required="true" />
                     </a-form-item>
@@ -55,10 +55,10 @@
                     </div>
                     <div class="input-text">
                         <span>일급/월급:</span>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
-                            :textUnCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
-                            placeholder='월급여' :spinButtons="false"
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck"
+                            :textCheck="'월급'" :textUnCheck="'일급'" />
+                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px"
+                            :required="true" placeholder='월급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                         <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.dailyWage" />
@@ -73,22 +73,24 @@
                         <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
                             :spinButtons="true" />
                     </a-form-item>
-                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                        $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
-                            dataIncomeWageDaily.workingDays))
-                    }}원</span>
-                    
-                    <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
-                    <br>
+                    <div style="font-weight: bold;">
+                        <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
+                            $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
+                                dataIncomeWageDaily.workingDays))
+                        }}원</span>
 
-                    <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
-                        $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
-                    }}원</span>
+                        <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
+                        <br>
 
-                    <span v-else>월급여 {{
-                        $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
-                            dataIncomeWageDaily.workingDays)
-                    }}원</span>
+                        <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
+                            $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
+                        }}원</span>
+
+                        <span v-else>월급여 {{
+                            $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
+                                dataIncomeWageDaily.workingDays)
+                        }}원</span>
+                    </div>
 
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
@@ -100,13 +102,6 @@
                         <div class="deduction-main">
                             <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
                                 <span>
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" :width="'150px'" subName="월급" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
-                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3" :width="'150px'"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
                                     <deduction-items
                                         v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
                                         :name="item.name" :type="4" :width="'150px'" subName="월급" />
@@ -158,7 +153,7 @@ import DeductionPopup from "./Popup/DeductionPopup.vue"
 import InsurancePopup from "./Popup/InsurancePopup.vue"
 import { sampleDataIncomeWageDaily } from "../utils/index"
 import filters from "@/helpers/filters";
-
+import { Message } from "@/configs/enum"
 import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     components: {
@@ -174,6 +169,9 @@ export default defineComponent({
         isTaxhasData: Boolean,
     },
     setup(props, { emit }) {
+        const messageUpdateSuccess = Message.getMessage('COMMON', '106').message
+        const messageAddSuccess = Message.getMessage('COMMON', '101').message
+
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const processKey = computed(() => store.state.common.processKeyPA510)
@@ -261,14 +259,15 @@ export default defineComponent({
             store.state.common.actionAddItem = false;
             store.state.common.employeeId = dataIncomeWageDaily.value.employee.employeeId
             store.state.common.loadingTableInfo++
-            notification('success', `업데이트 완료!`)
+            notification('success', messageAddSuccess)
         })
         onerrorAdd((e: any) => {
             notification('error', e.message)
         })
         onDoneUpdate(() => {
             store.state.common.loadingTableInfo++
-            notification('success', `업데이트 완료!`)
+            triggerIncomeWageDaily.value = true;
+            notification('success', messageUpdateSuccess)
         })
         onerrorUpdate((e: any) => {
             notification('error', e.message)
@@ -278,12 +277,15 @@ export default defineComponent({
             arrayEmploySelect.value = value.data.getEmployeeWageDailies
         })
         resWithholdingConfigPayItems(res => {
+            arrDeduction.value = []
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
+                if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode)) {
+                    let price = funcCheckPrice(val.itemCode)
+                    arrDeduction.value.push({
+                        ...val,
+                        price: price
+                    })
+                }
             })
             triggerWithholdingConfigDeductionItems.value = false
         })
@@ -390,9 +392,9 @@ export default defineComponent({
             dataIncomeWageDaily.value.dailyWage = data.dailyWage;
             dataIncomeWageDaily.value.workingDays = data.workingDays;
             dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
-            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.employee.monthlyPaycheck;
+            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
             dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
-            dataIncomeWageDaily.value.employee.name = data.employee.name;
+            dataIncomeWageDaily.value.employee.name = data.name;
             dataIncomeWageDaily.value.paymentDay = data.paymentDay;
             arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
@@ -402,8 +404,6 @@ export default defineComponent({
                     }
                 })
             })
-            // 
-
         }, { deep: true })
 
         // ===================FUNCTION==================================
