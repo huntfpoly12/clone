@@ -115,9 +115,8 @@ export default [
   { name: "사업소득원천징수영수증", url: "/dashboard/pa-630", id: "pa-630" },
 
   { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710" },
-  { name: "기타소득자등록", url: "/dashboard/pa-720", id: "pa-720" },
-  { name: "기타소득자료입력", url: "/dashboard/bf-730", id: "pa-730" },
-  { name: "기타소득원천징수영수증", url: "#", id: "pa-740" },
+  { name: "기타소득자료입력", url: "/dashboard/pa-720", id: "pa-720" },
+  { name: "기타소득원천징수영수증", url: "/dashboard/bf-730", id: "pa-730" },
 
   { name: "취득신고", url: "#", id: "pa-810" },
   { name: "상실신고", url: "#", id: "pa-820" },
