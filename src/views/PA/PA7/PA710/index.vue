@@ -45,15 +45,14 @@
                                 <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                     :idCardNumber="data.data.residentId" :status="data.data.status"
                                     :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
-                                    :checkStatus="false" @toolTopErorr="toolTopErorr"
-                                    />
+                                    :checkStatus="false" @toolTopErorr="toolTopErorr" />
                             </template>
                             <DxColumn caption="주민등록번호" cell-template="residentId" />
                             <template #residentId="{ data }">
                                 <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
                                 <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]" position="top"
-                                    v-model:visible="isResidentIdError[`${data.data.employeeId}`]" :hide-on-outside-click="false"
-                                    :target="`#residentId${data.data.residentId}`">Error
+                                    v-model:visible="isResidentIdError[`${data.data.employeeId}`]"
+                                    :hide-on-outside-click="false" :target="`#residentId${data.data.residentId}`">Error
                                 </DxTooltip>
                             </template>
                             <DxColumn caption="소득부분" cell-template="grade-cell" />
@@ -162,7 +161,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, createVNode, computed } from "vue";
+import { defineComponent, ref, watch, reactive, computed } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -373,7 +372,7 @@ export default defineComponent({
                 changeFormData({ ...initialState })
             }
         }
-        
+
         const onSubmitDelete = () => {
             let variables = {
                 companyId: companyId,
@@ -436,7 +435,7 @@ export default defineComponent({
                 formState.nationalityCode = formState.nationalityCode == 'KR' ? null : formState.nationalityCode
             }
         });
-        watch(globalYear, (value) => {
+        watch(globalYear, () => {
             trigger.value = true;
         });
 

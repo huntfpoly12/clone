@@ -53,7 +53,7 @@ export default defineComponent({
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
       inputElement.value = inputElement.value.replaceAll(/\D/g, '');
-      if (inputElement.value)
+      // if (inputElement.value)
         emit("update:valueInput", inputElement.value);
     };
 
