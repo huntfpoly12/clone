@@ -7,7 +7,7 @@
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 40"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -51,21 +51,21 @@
             </template>
             <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
             <template #yearEndTaxAdjustment="{ data }">
-              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"/>
+              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
             </template>
             <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
             <template #refund="{ data }">
-              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" />
+              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" :disabled="true"/>
             </template>
             <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
             <template #submission-date="{ data }">
-              <date-time-box v-model:valueDate="data.data.submissionDate"></date-time-box>
+              <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status == 40"></date-time-box>
             </template>
             <DxScrolling column-rendering-mode="virtual"/>
           </DxDataGrid>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status == 40"></hot-table>
         </div> 
       </div>
     </a-spin>
@@ -118,7 +118,7 @@ export default defineComponent({
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false)
     const confirmLoadNewStatus = ref<boolean>(false)
-    const hotSettings =  {
+    const hotSettings = {
           comments: true,
           fillHandle: true,
           colWidths: 100,
