@@ -18,5 +18,6 @@ export default gql`
                 incomeTypeCode
                 incomeTypeName
                 email
+                deletable
             }
         }`

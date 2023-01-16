@@ -448,7 +448,6 @@ export default defineComponent({
                 dataSearch.filter.statuses.push(40)
             trigger.value = true
             refetchTable()
-
         }
 
         const closePopup = () => {
