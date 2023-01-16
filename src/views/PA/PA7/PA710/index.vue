@@ -227,7 +227,7 @@ export default defineComponent({
         onDoneAdd(() => {
             trigger.value = true;
             refetchData();
-            focusedRowKey.value = formState.employeeId
+            focusedRowKey.value = parseInt(formState.employeeId)
             dataRowOld = { ...formState }
             checkForm.value = true;
             notification('success', `업데이트 완료되었습니다!`)
@@ -247,7 +247,7 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                focusedRowKey.value = formState.employeeId
+                focusedRowKey.value = parseInt(formState.employeeId)
             } else {
                 let residentId = formState.residentId.replace('-', '')
                 if (checkForm.value) {

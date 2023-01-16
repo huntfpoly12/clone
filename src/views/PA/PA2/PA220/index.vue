@@ -38,7 +38,6 @@
                         </div>
                     </a-col>
                     <a-col :span="12">
-                        {{  viewUrlParam.input.receiptDate  }}
                         <div class="title-body-right">
                             <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                                 dateFormat="YYYY-MM-DD" />
@@ -62,13 +61,13 @@
                     </div>
                 </template>
                 <template #send-group-print>
-                        <div class="custom-mail-group">
-                            <DxButton @click="onPrintGroup">
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
-                            </DxButton>
-                        </div>
-                    </template>
+                    <div class="custom-mail-group">
+                        <DxButton @click="onPrintGroup">
+                            <img src="@/assets/images/printGroup.png" alt=""
+                                style="width: 35px; margin-right: 3px; cursor: pointer" />
+                        </DxButton>
+                    </div>
+                </template>
                 <DxSelection mode="multiple" />
                 <DxColumn caption="성명" cell-template="tag" width="300px" />
                 <template #tag="{ data }" class="custom-action">
@@ -82,7 +81,20 @@
                 <DxColumn caption="비고" cell-template="four-major" />
                 <template #four-major="{ data }" class="custom-action">
                     <div>
-                        <four-major-insurance :typeTag="1" :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                            :typeValue="1" />
+                        <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                            :ratio="data.data.nationalPensionSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                            :ratio="data.data.employeementInsuranceSupportPercent" />
+                        <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                            :ratio="data.data.employee.employeementReductionRatePercent" />
+                        <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                            :ratio="data.data.employee.incomeTaxMagnification" />
                     </div>
                 </template>
                 <DxColumn caption="구분" />
@@ -107,8 +119,6 @@
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
                 :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
-            <!-- <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
-                :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" /> -->
         </div>
     </div>
 </template>
@@ -172,12 +182,6 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
 
-        // const onCloseEmailSingleModal = () => {
-        //     modalEmailSingle.value = false
-        // }
-        // const onCloseEmailMultiModal = () => {
-        //     modalEmailMulti.value = false
-        // }
 
         // Search
         const searchData = ref([]);
@@ -302,8 +306,6 @@ export default defineComponent({
             popupDataEmailMulti,
             modalEmailSingle,
             modalEmailMulti,
-            // onCloseEmailSingleModal,
-            // onCloseEmailMultiModal,
             onOpenPopupEmailSingle,
             sendMailGroup,
             emailUserLogin,
