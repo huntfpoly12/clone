@@ -90,6 +90,7 @@ import { useStore } from 'vuex'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
 import notification from "@/utils/notification";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
         DxButton,
@@ -113,6 +114,7 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
+        const messageSelectItem = Message.getMessage('COMMON', '404').message
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const processKey = computed(() => store.state.common.processKeyPA510)
@@ -151,7 +153,7 @@ export default defineComponent({
                 modalDelete.value = true;
                 popupDataDelete.value = props.dataRows
             } else {
-                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                notification('error', messageSelectItem)
             }
         };
         const actionAddItem = () => {
@@ -169,7 +171,7 @@ export default defineComponent({
                 modalEdit.value = true;
                 popupDataEdit.value = props.dataRows
             } else {
-                notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                notification('error', messageSelectItem)
             }
         };
         const arrDropDownPayrollRegister = [
