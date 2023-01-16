@@ -17,7 +17,7 @@
         padding-left: 18px;
     }
 }
- 
+
 .created-date {
     padding-top: 15px;
     float: right;
@@ -29,21 +29,10 @@
     margin-top: 6px;
 }
 
-.send-mail-230 {
-    float: right;
-
-    .mail-230 {
-        cursor: pointer;
-    }
-
-    .group-mail-230 {
-        cursor: pointer;
-        margin-top: 8px;
-        margin-right: 13px;
-        margin-left: 10px;
-    }
-
+.mail-230 {
+    cursor: pointer;
 }
+
 
 .status-red {
     background-color: #C73F09;
@@ -51,6 +40,7 @@
     padding: 3px 20px;
     border-radius: 5px;
 }
+
 .status-blue {
     background-color: #77933C;
     color: white;

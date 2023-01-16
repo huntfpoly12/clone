@@ -16,26 +16,25 @@
                 </a-col>
             </a-row>
             <a-row :gutter="16">
-              <a-col :span="12">
+              <a-col :span="14">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
-                        <div class="text0">소득수당 합계 <span>{{ $filters.formatCurrency(totalPayItem) }}원</span></div>
-                        <div class="text1">수당 과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTax) }} 원</span></div>
-                        <div class="text2">수당 비과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}원</span></div>
-                        <div class="text3">공제 합계 <span>{{ $filters.formatCurrency(totalDeduction) }}원 </span></div>
+                        
+                        <div class="text0 d-flex"> <span class="d-flex-center"><span class="w-100">소득수당 합계</span><number-box-money class="mr-4" :readOnly="true" width="100px" v-model:valueInput="totalPayItem"/>원</span></div>
+                        <div class="text1"> <span class="d-flex-center"><span class="w-100">수당 과세 합계</span><number-box-money class="mr-4" :readOnly="true" width="100px" v-model:valueInput="totalPayItemTax"/> 원</span></div>
+                        <div class="text2 d-flex-center"><span class="w-100">수당 비과세 합계</span> <span><number-box-money class="mr-4" :readOnly="true" width="100px" v-model:valueInput="totalPayItemTaxFree"/></span>원</div>
+                        <div class="text3"><span class="d-flex-center"><span class="w-100">공제 합계</span><number-box-money class="mr-4" :readOnly="true" width="100px" v-model:valueInput="totalDeduction"/>원 </span></div>
                         <div>
-                        </div>
-                        <div>
-                            차인지급액 <span>{{ $filters.formatCurrency(subPayment) }}원 </span>
+                            <span class="d-flex-center"><span class="w-100">차인지급액</span><number-box-money class="mr-4" :readOnly="true" width="100px" v-model:valueInput="subPayment"/>원 
                             <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                                 차인지급액 = 수당 합계 - 공제 합계
                             </span>
+                        </span> 
                         </div>
                     </div>
-
                 </a-col>
-                <a-col :span="12" class="input-items">
+                <a-col :span="10" class="input-items">
                     <div class="header-text-2">근로시간
                         <span class="d-flex-center fz-11 ml-10" style="color: gray;">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -44,25 +43,27 @@
                     </div>
                     <a-form-item label="근무일수" label-align="right">
                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="150px" v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :max="31" :min="0" width="70px" v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
-                            <text-number-box width="150px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <text-number-box width="150px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
                         </div>
-                    </a-form-item> <a-form-item label="야간근로시간" label-align="right">
+                    </a-form-item> 
+                    <a-form-item label="야간근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <text-number-box width="150px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
+                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
                         </div>
-                    </a-form-item> <a-form-item label="휴일근로시간" label-align="right">
+                    </a-form-item> 
+                    <a-form-item label="휴일근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <text-number-box width="150px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                 </a-col>
@@ -75,7 +76,6 @@
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세 </div>
                     <a-spin :spinning="loading1" size="large">
                         <div class="deduction-main">
-
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
                                 <span>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
@@ -198,6 +198,7 @@ export default defineComponent({
             default: 0
         },
         modalStatus: Boolean,
+        keyForm: Number,
     },
     setup(props, { emit }) {
         const arrayEmploySelect: any = ref([])
@@ -337,7 +338,7 @@ export default defineComponent({
             enabled: triggerDetail.value,
         }))
         watch(result, (value) => {
-            if (value) {
+            if ( value?.getIncomeWage?.payItems) {
                 value.getIncomeWage.payItems.map((item: any) => {
                     dataConfigPayItems.value.find((Obj: any) => {
                         if (item.itemCode == Obj.itemCode) {
@@ -471,7 +472,7 @@ export default defineComponent({
         actionUpdateDone(res => {
             emit('createdDone', true)
             emit("loadingTableInfo", true)
-            emit('closePopup', false)
+            // emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
         // API CREATED 
@@ -484,8 +485,8 @@ export default defineComponent({
 
         doneCreated(res => {
             emit('createdDone', true)
-            notification('success', `업데이트 완료!`)
             emit("loadingTableInfo", true)
+            notification('success', `업데이트 완료!`)
             // triggerDetail.value = true
             // refetchValueDetail()
         })
@@ -496,15 +497,20 @@ export default defineComponent({
         })
         // refresh value
         const addRow = () => {
-            dataIW.value = { ...initFormState1 }
-            dataConfigDeduction.value.map((data: any) => {
-                data.value = 0
+            dataIW.value = { ...initFormState1 };
+            dataIW.value.employee.employeeId = null;
+            dataConfigDeduction.value = dataConfigDeduction.value.map((item: any) => {
+               return { ...item, value: 0};
             })
-            dataConfigPayItems.value.map((data: any) => {
-                data.value = 0
+            dataConfigPayItems.value = dataConfigPayItems.value.map((data: any) => {
+                return { ...data, value: 0};
             })
-            calculateTax()
-            emit('updateData', true)
+            totalPayItem.value = 0;
+            totalPayItemTax.value = 0;
+            totalPayItemTaxFree.value = 0;
+            totalDeduction.value = 0;
+            // calculateTax()
+            // emit('updateData', true)
         }
         // action update
         const updateIncomeWage = () => {
@@ -553,7 +559,7 @@ export default defineComponent({
         watch(() => props.actionAddItem, (value) => {
             if (value) {
                 switchAction.value = true
-                addRow()
+                // addRow()
             }
         })
         // action update
@@ -621,6 +627,9 @@ export default defineComponent({
             }
             // resultEmployeeWage
         })
+        watch(()=> props.keyForm, () => {
+            addRow();
+        }, {deep: true})
         return {
             formState2, loading1, loading2, loading,
             rangeDate, modalDeductions,globalYear,
@@ -630,7 +639,7 @@ export default defineComponent({
             subPayment, arrayEmploySelect,
             calculateTax, loadingEmployeeWage, arrDeduction,
             updateIncomeWage, actionUpdate, calculate, createWage, popupCompareData,onUpdateValue,
-            companyId, dataConfigPayItems, dataConfigDeduction, month1, month2,
+            companyId, dataConfigPayItems, dataConfigDeduction, month1, month2,addRow
         };
     },
 });
@@ -805,8 +814,8 @@ export default defineComponent({
         // .text2 {
         //     margin-left: 50px;
         // }
-        div{
-            margin-bottom: 5px;
+        >div{
+            margin-bottom: 10px;
         }
         .text5 {
             span {
@@ -820,6 +829,9 @@ export default defineComponent({
                     margin: 0px 0px 3px 10px;
                 }
             }
+        }
+        .w-100 {
+            width: 120px;
         }
     }
 }

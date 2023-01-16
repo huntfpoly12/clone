@@ -59,11 +59,20 @@
                     :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
+                        <DxItem template="send-group-print" />
                     </DxToolbar>
                     <template #send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti">
                                 <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                            </DxButton>
+                        </div>
+                    </template>
+                    <template #send-group-print>
+                        <div class="custom-mail-group">
+                            <DxButton @click="onPrintGroup">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
                             </DxButton>
                         </div>
                     </template>
@@ -187,6 +196,7 @@ export default defineComponent({
         const popupDataEmailSingle = ref({})
         const popupDataEmailMulti = ref({})
         const dataSelect = ref<any>([])
+        const incomeIds = ref<any>([])
         const store = useStore();
         const mode2 = ref<any>(['month', 'month']);
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -294,6 +304,19 @@ export default defineComponent({
         }
 
         /**
+         * action send multi print
+         */
+        const onPrintGroup = () => {
+            if (incomeIds.value.length) {
+                dataInputReport.incomeIds = incomeIds.value
+                triggerReport.value = true;
+                refetchReport()
+            } else {
+                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+             }
+        };
+
+        /**
          * action print report
          * @param data
          */
@@ -306,6 +329,10 @@ export default defineComponent({
             enabled: triggerReport.value,
             fetchPolicy: "no-cache",
         }));
+        watch(resultReport, (newValue) => {
+            window.open(newValue.getIncomeRetirementWithholdingReceiptReportViewUrl);
+            triggerReport.value = false;
+        }, { deep: true } );
         errorReport(res => {
             triggerReport.value = false
             notification('error', res.message)
@@ -317,6 +344,8 @@ export default defineComponent({
         }
 
         const selectionChanged = (data: any) => {
+            dataSelect.value = []
+            incomeIds.value = []
             data.selectedRowKeys.forEach((data: any) => {
                 dataSelect.value.push({
                     senderName: sessionStorage.getItem("username"),
@@ -325,6 +354,7 @@ export default defineComponent({
                     employeeId: data.employee.employeeId,
                     incomeTypeCode: data.employee.incomeTypeCode
                 })
+                incomeIds.value.push(data.incomeId)
             })
         }
         const {
@@ -378,7 +408,7 @@ export default defineComponent({
             employeeType1,
             locale, handleChange, handlePanelChange2, mode2, dataInputReport,
             loading, loadingReport,
-            actionPrint,
+            actionPrint, onPrintGroup,
             popupDataEmailSingle,
             popupDataEmailMulti,
             actionOpenPopupEmailSingle,

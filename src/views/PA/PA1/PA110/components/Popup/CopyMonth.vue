@@ -126,10 +126,6 @@ export default defineComponent({
             setModalVisibleCopy()
             notification('success', ` 완료!`)
             emit('loadingTableInfo', true)
-            store.state.common.processKeyPA110.imputedYear = globalYear.value
-            store.state.common.processKeyPA110.imputedMonth = month.value
-            store.state.common.processKeyPA110.paymentYear = dataApiCopy.value.paymentYear
-            store.state.common.processKeyPA110.paymentMonth = dataApiCopy.value.paymentMonth
         })
 
         const setModalVisible = () => {
@@ -157,6 +153,9 @@ export default defineComponent({
             modalCopy.value = true
         }
         const actionCopy = () => {
+            onSubmit();
+            setModalVisible()
+            setModalVisibleCopy()
             if (dataApiCopy.value.imputedYear) {
                 mutate({
                     companyId: companyId,
@@ -168,6 +167,7 @@ export default defineComponent({
                         paymentMonth: parseInt(month2.value.toString().slice(4,6)),
                     },
                 })
+                
             } else {
                 notification('error', '날짜를 선택하세요.')
             }

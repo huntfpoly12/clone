@@ -58,7 +58,7 @@
                             <template #resident-id="{ data }" class="custom-action">
                                 <a-tooltip placement="top"
                                     v-if="data.data.residentId?.length == 14
-    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
                                     key="black">
                                     {{ data.data.residentId }}
                                 </a-tooltip>
@@ -91,7 +91,7 @@
                 <a-col :span="8" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate || loadingCreated"
                         size="large" :key="resetFormNum">
-                        <a-form-item label="영업자코드" label-align="right" class="red">
+                        <a-form-item label="코드" label-align="right" class="red">
                             <div class="custom-note ">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
                                     placeholder="숫자만 입력 가능" :disabled="disabledInput" :required="true" />
@@ -122,7 +122,7 @@
                         </a-form-item>
                         <a-form-item :label="textResidentId" label-align="right" class="red">
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                placeholder="숫자 13자리" :required="true" />
+                                placeholder="숫자 13자리" :required="true" :disabled="!dataAction.deletable" />
                         </a-form-item>
                         <a-form-item label="소득구분" label-align="right" class="red">
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
@@ -193,7 +193,7 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear,
         })
-        let valueCallApiGetEmployeeBusiness = reactive({
+        let valueCallApiGetEmployeeBusiness: any = reactive({
             companyId: companyId,
             imputedYear: globalYear,
             incomeTypeCode: '',
@@ -230,6 +230,8 @@ export default defineComponent({
         }));
         resEmployeeBusinessesDetail(res => {
             if (res.data) {
+                console.log(res.data);
+
                 dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
                 dataAction.name = res.data.getEmployeeBusiness.name
                 dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
@@ -240,6 +242,7 @@ export default defineComponent({
                 dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
                 dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
                 dataAction.email = res.data.getEmployeeBusiness.email
+                dataAction.deletable = res.data.getEmployeeBusiness.deletable
 
                 dataRowOld.employeeId = res.data.getEmployeeBusiness.employeeId
                 dataRowOld.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
@@ -273,11 +276,11 @@ export default defineComponent({
         } = useMutation(mutations.createEmployeeBusiness);
         createdDone(() => {
             refetchData()
-            focusedRowKey.value = dataAction.employeeId
+            focusedRowKey.value = parseInt(dataAction.employeeId)
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = dataAction.employeeId
+            valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataAction.employeeId)
             refetchDataDetail()
             notification('success', `업데이트 완료!`)
         })
@@ -321,7 +324,7 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction) )
+            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction))
                 modalChangeRow.value = true
             else {
                 triggerDetail.value = true
@@ -411,11 +414,30 @@ export default defineComponent({
         }
         const statusComfirmChange = (res: any) => {
             if (res) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                let dataCreat = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    input: {
+                        name: dataAction.name,
+                        foreigner: dataAction.foreigner,
+                        nationality: dataAction.nationality,
+                        nationalityCode: dataAction.nationalityCode,
+                        stayQualification: dataAction.stayQualification,
+                        residentId: dataAction.residentId.slice(0, 6) + '-' + dataAction.residentId.slice(6, 13),
+                        email: dataAction.email,
+                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
+                        incomeTypeCode: dataAction.incomeTypeCode,
+                        incomeTypeName: dataAction.incomeTypeName,
+                    }
+                }
+                actionCreated(dataCreat)
+                // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
-                triggerDetail.value = true
+                console.log('2');
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+                triggerDetail.value = true
+                refetchDataDetail()
             }
         }
         const modalHistory = () => {
