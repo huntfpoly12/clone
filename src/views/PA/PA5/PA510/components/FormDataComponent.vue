@@ -98,20 +98,10 @@
                         <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ totalDeduction }}
                             원</a-typography-title>
                     </div>
-                    <!-- {{  arrDeduction }} -->
                     <a-spin :spinning="loadingDeductionItem" size="large">
                         <div class="deduction-main">
                             <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
                                 <span>
-                                    <!-- <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" :width="'150px'" subName="과세" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" :width="'150px'" subName="월급" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
-                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3" :width="'150px'"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
                                     <deduction-items
                                         v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
                                         :name="item.name" :type="4" :width="'150px'" subName="월급" />
@@ -181,7 +171,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const messageUpdateSuccess = Message.getMessage('COMMON', '106').message
         const messageAddSuccess = Message.getMessage('COMMON', '101').message
-        
+
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const processKey = computed(() => store.state.common.processKeyPA510)
@@ -287,12 +277,15 @@ export default defineComponent({
             arrayEmploySelect.value = value.data.getEmployeeWageDailies
         })
         resWithholdingConfigPayItems(res => {
+            arrDeduction.value = []
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
+                if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode)) {
+                    let price = funcCheckPrice(val.itemCode)
+                    arrDeduction.value.push({
+                        ...val,
+                        price: price
+                    })
+                }
             })
             triggerWithholdingConfigDeductionItems.value = false
         })
@@ -411,8 +404,6 @@ export default defineComponent({
                     }
                 })
             })
-            // 
-
         }, { deep: true })
 
         // ===================FUNCTION==================================

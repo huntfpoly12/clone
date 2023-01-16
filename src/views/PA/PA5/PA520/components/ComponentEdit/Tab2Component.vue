@@ -179,11 +179,14 @@ export default defineComponent({
         resWithholdingConfigPayItems(res => {
             arrDeduction.value = []
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
+                if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode)) {
+                    let price = funcCheckPrice(val.itemCode)
+                    arrDeduction.value.push({
+                        ...val,
+                        price: price
+                    })
+                }
+                    
             })
         })
         const {
