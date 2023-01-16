@@ -313,15 +313,11 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        watch(() => dataAction.value, (newVal) => {
-            if (store.state.common.activeAddRow == true) {
-                newVal.residentId = newVal.residentId
-                store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1] = newVal
-            }
-        }, { deep: true })
+        // ** After adding a new row, take the data from the store and print it to the table.
         watch(() => store.state.common.dataSourcePA610, (newVal) => {
             dataSource.value = newVal
         }, { deep: true })
+        // ** For dataAction equal to the value of the last row
         watch(() => store.state.common.activeAddRow, (newVal) => {
             if (newVal == true)
                 dataAction.value = {
