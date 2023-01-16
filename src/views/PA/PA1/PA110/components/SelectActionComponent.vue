@@ -2,7 +2,7 @@
     <DxButton class="ml-3" @click="deleteItem">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="actionAddItem" />
+    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" />
     <DxButton class="ml-3" icon="edit" @click="editItem" />
     <DxButton @click="actionAddItem1 ? onSubmit($event) : updateData($event)" size="large" class="ml-4" :disabled="false">
         <SaveOutlined style="font-size: 17px" />
@@ -146,7 +146,7 @@ export default defineComponent({
             notification('error', `항목을 최소 하나 이상 선택해야합니다`)
         }
     };
-    const actionAddItem = (value: any) => {
+    const onActionAddItem = (value: any) => {
         actionAddItem1.value = true;
         emit("actionAddItem", true)
     }
@@ -267,7 +267,7 @@ export default defineComponent({
         popupDataHistory,
         popupDataHistoryStatus,
         popupDataDelete,
-        actionAddItem,
+        onActionAddItem,
         popupDataEdit,
         loadingTableInfo,
         showHistory,

@@ -139,7 +139,16 @@
                     :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
+                        <DxItem template="group-print" />
                     </DxToolbar>
+                    <template #group-print>
+                        <div class="custom-mail-group">
+                            <DxButton>
+                                <img src="@/assets/images/printGroup.png" alt="" style="width: 33px;"
+                                    @click="printGroup" />
+                            </DxButton>
+                        </div>
+                    </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton>
@@ -455,7 +464,7 @@ export default defineComponent({
             else
                 checkAllValue.value = false
 
-        }, { deep: true }); 
+        }, { deep: true });
 
         // ================FUNCTION============================================ 
         const searching = () => {
@@ -555,13 +564,35 @@ export default defineComponent({
             arrCheckBoxSearch.quarter4.value = checkAllValue.value
             year1.value = checkAllValue.value
             year2.value = checkAllValue.value
+        }
 
+        const printGroup = () => {
+            if (selectedItemKeys.value.length > 0) {
+                triggerPrint.value = true
+                dataCallApiPrint.value = {
+                    companyId: companyId,
+                    employeeIds: selectedItemKeys.value,
+                    input: {
+                        imputedYear: globalYear,
+                        paymentYearMonths: getArrPaymentYearMonth(),
+                        type: valueSwitchChange.value == true ? 1 : 2,
+                        receiptDate: dateSendEmail.value
+                    }
+                }
+
+                refetchPrint()
+            } else
+                notification('error', "일용직근로자들을 선택하세요!")
         }
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
-            checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
+            printGroup, checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
         };
     },
 });
 </script>   
-<style scoped lang="scss" src="./style/style.scss"/>
+
+
+<style scoped lang="scss" src="./style/style.scss">
+
+</style>

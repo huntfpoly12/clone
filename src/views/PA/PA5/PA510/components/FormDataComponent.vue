@@ -105,6 +105,8 @@
                                 <span>
                                     <!-- <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
                                         :name="item.name" :type="1" :width="'150px'" subName="과세" />
+                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
+                                        :name="item.name" :type="1" :width="'150px'" subName="월급" />
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
                                         :name="item.name" :type="2" :width="'150px'" subName="상여(과세)" />
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
@@ -112,7 +114,7 @@
                                         :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
                                     <deduction-items
                                         v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :type="4" :width="'150px'" subName="과세" />
+                                        :name="item.name" :type="4" :width="'150px'" subName="월급" />
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false"
