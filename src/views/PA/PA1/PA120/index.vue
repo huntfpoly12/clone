@@ -49,6 +49,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
                         :focused-row-enabled="true" id="pa-120-gridContainer" :auto-navigate-to-focused-row="true"
                         v-model:focused-row-key="focusedRowKey">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -71,7 +72,7 @@
                         </template>
                         <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
                         <template #residentId="{ data }">
-                            <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}{{ data.data.employeeId }}</div>
+                            <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
                             <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]"
                                 position="top"
                                 v-model:visible="defaultVisible" :hide-on-outside-click="false"

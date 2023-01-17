@@ -557,7 +557,6 @@ export default defineComponent({
     const loadingTableInfo = (emit: any) => {
         refetchDataTaxPayInfo()
         refetchDataProcessIncomeWages();
-        console.log(`output->emit`,emit)
         focusedRowKey.value = emit;
     }
 
