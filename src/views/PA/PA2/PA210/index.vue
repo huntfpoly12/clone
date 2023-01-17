@@ -172,9 +172,9 @@ import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/i
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
+        DxDataGrid, DxColumn, DxToolbar,DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify, DxScrolling
+        ReportGridModify
     },
     setup() {
         const store = useStore();
@@ -320,7 +320,7 @@ export default defineComponent({
                 detailId: value.detailId,
                 ...value.detail,
             }];
-            if (icon == 'iconEdit') {
+            if (icon == 'iconEdit' && value.index == 0) {
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
             } else {

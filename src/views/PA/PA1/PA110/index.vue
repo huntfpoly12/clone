@@ -3,7 +3,6 @@
   <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-110" class="page-content">
     <a-row>
-        {{ processKey }}
       <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
@@ -266,7 +265,7 @@
       </a-col>
       <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
         <FormDataComponent :dataIncomeWage="dataIncomeWage" :actionAddItem="actionAddItem" :actionSaveItem="actionSaveItem" :actionUpdateItem="actionUpdateItem" 
-         @createdDone="createdDone" @loadingTableInfo="loadingTableInfo" :keyForm="keyForm" ref="formRef"/>
+         @loadingTableInfo="loadingTableInfo" :keyForm="keyForm" ref="formRef"/>
       </a-col>
       <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
         @closePopup="modalCopy = false" @loadingTableInfo="loadingTableInfo"
@@ -332,13 +331,12 @@ export default defineComponent({
     const arrDataPoint = ref<any>([])
     const dataModalCopy = ref()
     const dataIncomeWage = ref({...sampleDataIncomeWage})
-    const triggerIncomeWage = ref<boolean>(true)
     const actionAddItem = ref<boolean>(false)
     const modalCopy = ref<boolean>(false);
     const dataRows = ref([])
     const actionSaveItem= ref<number>(0)
     const actionUpdateItem = ref<number>(0)
-    const focusedRowKey = ref<Number>(1);
+    const focusedRowKey = ref<Number | null>(1);
     let status = ref();
     const isDisabledForm = ref<boolean>(false);
     const formatMonth = (month: any) => {
@@ -493,9 +491,14 @@ export default defineComponent({
     watch(resultTaxPayInfo, (value) => {
         if(value?.getIncomeWages[0]) {
             if (actionUpdateItem.value == 0) {
+                actionAddItem.value = false
+            }
+            if (actionUpdateItem.value == 1) {
+                actionAddItem.value = false
+            }
+            else {
                 focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
                 dataIncomeWage.value = value.getIncomeWages[0]
-                actionAddItem.value = false
             }
             dataTaxPayInfo.value = value.getIncomeWages
         }else {
@@ -551,9 +554,11 @@ export default defineComponent({
         
     }
 
-    const loadingTableInfo = () => {
-      refetchDataTaxPayInfo()
-      refetchDataProcessIncomeWages()
+    const loadingTableInfo = (emit: any) => {
+        refetchDataTaxPayInfo()
+        refetchDataProcessIncomeWages();
+        console.log(`output->emit`,emit)
+        focusedRowKey.value = emit;
     }
 
     /**
@@ -601,9 +606,6 @@ export default defineComponent({
         return monthClicked.value == monthInputed;
     }
 
-    const createdDone = () => {
-    //   refetchDataTaxPayInfo();
-    }
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
@@ -624,6 +626,7 @@ export default defineComponent({
     const onActionAddItem = (emit: any) => {
         actionAddItem.value = true;
         keyForm.value ++;
+        focusedRowKey.value = null;
     }
     return {
       globalYear,
@@ -655,7 +658,6 @@ export default defineComponent({
       dataAddIncomeProcess,
       status,
       setUnderline,
-      createdDone,
       focusedRowKey,
       formateMoney,
       dateType,
