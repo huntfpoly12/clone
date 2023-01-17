@@ -10,6 +10,6 @@ mutation createEmployeeBusiness(
             imputedYear: $imputedYear, 
             input: $input,
         ){
-            type
+            employeeId
         }
 }`
