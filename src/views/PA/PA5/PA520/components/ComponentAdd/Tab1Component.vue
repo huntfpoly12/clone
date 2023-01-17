@@ -40,12 +40,12 @@
                 <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                     :hiddenOptionKR="dataCreated.foreigner"
                     @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
-                    width="200px" />
+                    width="180px" />
             </a-form-item>
             <a-form-item label="외국인 체류자격" label-align="right"
                 :class="{ 'label-red': activeLabel, 'label-custom-width': true, 'pl-10': true }">
                 <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification"
-                    width="200px" :disabled="disabledSelectBox" />
+                    width="180px" :disabled="disabledSelectBox" />
             </a-form-item>
         </div>
         <a-form-item :label="labelResident" label-align="right" class="label-red">
@@ -111,7 +111,6 @@ export default defineComponent({
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
-        const countryInfo = ref()
         const selectBoxData1 = ref([])
         const selectBoxData2 = ref([])
         let dataCreated: any = reactive({
@@ -163,8 +162,10 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
-            emit("closePopup", dataCreated.employeeId)
+            // emit("closePopup", dataCreated.employeeId)
             notification('success', '업데이트 완료!');
+            store.state.common.activeAddRowPA520 = false
+            store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId
         })
         //============ WATCH =================================
         watch(() => dataCreated.foreigner, (value: any) => {
@@ -181,6 +182,23 @@ export default defineComponent({
                 dataCreated.stayQualification = 'C-4'
             }
         })
+        watch(() => dataCreated, (value) => {
+            if (store.state.common.activeAddRowPA520 == true) {
+                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
+                dataTable.employeeId = value.employeeId
+                dataTable.name = value.name
+                dataTable.foreigner = value.foreigner
+                dataTable.status = value.retirementIncome
+                dataTable.residentId = value.residentId
+            }
+
+            if (JSON.stringify(DataCreated) !== JSON.stringify(value))
+                store.state.common.checkChangeValueAddPA520 = true
+            else
+                store.state.common.checkChangeValueAddPA520 = false
+
+
+        }, { deep: true })
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
@@ -194,10 +212,12 @@ export default defineComponent({
                 let newValDataCreat = {
                     ...dataCreated,
                     employeeId: parseInt(dataCreated.employeeId),
+                    weeklyWorkingHours: parseInt(dataCreated.weeklyWorkingHours),
                     joinedAt: dataCreated.joinedAt,
                     leavedAt: dataCreated.leavedAt,
                     residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
                 };
+
                 delete newValDataCreat.zipcode;
                 let dataCallCreat = {
                     companyId: companyId,
@@ -208,17 +228,8 @@ export default defineComponent({
             }
         }
         return {
-            activeLabel,
-            labelResident,
-            disabledSelectBox,
-            actionCreated,
-            countryInfo,
-            dataCreated,
-            funcAddress,
-            radioCheckForeigner,
-            activeKey: ref("1"),
-            selectBoxData1,
-            selectBoxData2
+            activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionCreated, funcAddress,
         };
     },
 });

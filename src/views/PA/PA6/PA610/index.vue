@@ -67,7 +67,7 @@
                                         key="black">
                                         {{ data.data.residentId }}
                                     </a-tooltip>
-                                    <a-tooltip placement="top" v-else title="ERROR">
+                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
                                         {{ data.data.residentId }}
                                     </a-tooltip>
                                 </div>
@@ -134,8 +134,8 @@
                         </a-form-item>
                         <a-form-item :label="textResidentId" label-align="right" class="red">
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                v-if="store.state.common.activeAddRow == false" placeholder="숫자 13자리" :required="true"
-                                :disabled="disabledInput == true && !dataAction.deletable" />
+                                v-if="store.state.common.activeAddRowPA610 == false" placeholder="숫자 13자리"
+                                :required="true" :disabled="disabledInput == true && !dataAction.deletable" />
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px" v-else
                                 placeholder="숫자 13자리" :required="true" />
                         </a-form-item>
@@ -285,8 +285,8 @@ export default defineComponent({
             loading: loadingCreated,
             onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        createdDone((res) => { 
-            store.state.common.activeAddRow = false
+        createdDone((res) => {
+            store.state.common.activeAddRowPA610 = false
             refetchData()
             focusedRowKey.value = res.data.createEmployeeBusiness.employeeId
             disabledInput.value = true
@@ -318,7 +318,7 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(() => dataAction.value, (newVal) => {
-            if (store.state.common.activeAddRow == true) {
+            if (store.state.common.activeAddRowPA610 == true) {
                 newVal.residentId = newVal.residentId
                 store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1] = newVal
             }
@@ -326,7 +326,7 @@ export default defineComponent({
         watch(() => store.state.common.dataSourcePA610, (newVal) => {
             dataSource.value = newVal
         }, { deep: true })
-        watch(() => store.state.common.activeAddRow, (newVal) => {
+        watch(() => store.state.common.activeAddRowPA610, (newVal) => {
             if (newVal == true)
                 dataAction.value = {
                     ...store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1]
@@ -350,14 +350,14 @@ export default defineComponent({
         };
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            // Checking if the activeAddRow is true. If it is true, it will display the Vue HTML.
-            if (store.state.common.activeAddRow == true) {// *** If new and unsaved row is added  
+            // Checking if the activeAddRowPA610 is true. If it is true, it will display the Vue HTML.
+            if (store.state.common.activeAddRowPA610 == true) {// *** If new and unsaved row is added  
                 if (JSON.stringify(valueDefaultAction) !== JSON.stringify(dataAction.value)) {
                     modalChangeRow.value = true
                     return
                 } else {
                     store.state.common.dataSourcePA610 = store.state.common.dataSourcePA610.splice(0, store.state.common.dataSourcePA610.length - 1)
-                    store.state.common.activeAddRow = false
+                    store.state.common.activeAddRowPA610 = false
                     triggerDetail.value = true
                     valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                     valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
@@ -430,13 +430,12 @@ export default defineComponent({
             }
         }
         const addRow = () => {
-            if (store.state.common.activeAddRow == false) {
-                store.state.common.activeAddRow = true
+            if (store.state.common.activeAddRowPA610 == false) {
+                store.state.common.activeAddRowPA610 = true
                 let newVal = {
                     ...valueDefaultAction
                 }
-                let dataPush = JSON.parse(JSON.stringify(store.state.common.dataSourcePA610)).concat(newVal)
-                store.state.common.dataSourcePA610 = dataPush
+                store.state.common.dataSourcePA610 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA610)).concat(newVal)
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
@@ -460,12 +459,9 @@ export default defineComponent({
             }
         }
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
-            if (store.state.common.activeAddRow == true) {
-            } else {
-                valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
-                valueCallApiGetEmployeeBusiness.employeeId = employeeId
-                modalStatus.value = true
-            }
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = employeeId
+            modalStatus.value = true
         }
         const statusComfirm = (res: any) => {
             if (res == true)
@@ -474,7 +470,7 @@ export default defineComponent({
         const statusComfirmChange = (res: any) => {
             if (res) {
                 // anticon-save   
-                if (store.state.common.activeAddRow == false) {
+                if (store.state.common.activeAddRowPA610 == false) {
                     let dataCreat = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
@@ -497,7 +493,7 @@ export default defineComponent({
                 }
             } else {
                 store.state.common.dataSourcePA610 = store.state.common.dataSourcePA610.splice(0, store.state.common.dataSourcePA610.length - 1)
-                store.state.common.activeAddRow = false
+                store.state.common.activeAddRowPA610 = false
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
                 triggerDetail.value = true
