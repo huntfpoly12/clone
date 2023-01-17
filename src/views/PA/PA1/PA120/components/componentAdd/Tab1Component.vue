@@ -39,7 +39,13 @@
               layoutCustom="horizontal"></radio-group>
           </a-form-item>
           <a-form-item label="외국인 국적" label-align="right" :class="{red: foreigner==1}">
-            <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="foreigner == 0" />
+            <country-code-select-box v-if="formStateTab1.foreigner" style="width: 200px"
+                v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
+                :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner"
+                :hiddenOptionKR="true" />
+            <country-code-select-box v-else style="width: 200px"
+                v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
+                :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner" />
           </a-form-item>
   
           <a-form-item label="외국인 체류자격" label-align="right" :class="{red: foreigner==1}">
@@ -103,7 +109,6 @@ import {
   initFormStateTab1,
 } from "../../utils/index";
 import { companyId } from "@/helpers/commonFunction";
-import filters from "@/helpers/filters";
 export default defineComponent({
   components: {
   },
@@ -220,7 +225,7 @@ export default defineComponent({
 
     onDoneAdd(() => {
        emit('setTabsStatus', false);
-       notification("success", `업그레이드가 완료되었습니다! `);
+       notification("success", `사원등록이 완료되었습니다! `);
        store.commit('common/actionFormDonePA120')
        store.commit('common/keyActivePA120', employeeId.value);
     });
@@ -244,6 +249,7 @@ export default defineComponent({
             leavedAt: +dayjs(formStateTab1.leavedAt).format("YYYYMMDD"),
           },
         };
+        console.log(`output->dataNew`,dataNew)
         createEmployeeWage(dataNew);
       }
     };
@@ -263,6 +269,22 @@ export default defineComponent({
       return true;
     }
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
+// convert formStateTab1.name to uppercase
+    watch(()=> formStateTab1.name,(newVal)=> {
+        formStateTab1.name = newVal.toUpperCase();
+    },{deep: true})
+    const changeTextCountry = (text: any) => {
+        formStateTab1.nationality = text
+    }
+    watch(() => formStateTab1.foreigner, (newValue) => {
+        if (!newValue) {
+            formStateTab1.nationalityCode = 'KR'
+            formStateTab1.stayQualification = null
+        } else {
+            // resetFormNum.value++;
+            formStateTab1.nationalityCode = formStateTab1.nationalityCode == 'KR' ? null : formStateTab1.nationalityCode
+        }
+    });
     return {
       companyId,
       loading,
@@ -282,7 +304,8 @@ export default defineComponent({
       arrDepartments,
       arrResponsibility,
       compareData,
-      actionFormDonePA120
+      actionFormDonePA120,
+      changeTextCountry
     };
   },
 });
