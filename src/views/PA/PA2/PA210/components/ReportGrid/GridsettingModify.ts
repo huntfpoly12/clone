@@ -1259,10 +1259,11 @@ export const calculateWithholdingStatusReportModified = (wrapper: any,data: any 
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
+  
     for (let index = 0; index < arrData.length; index++) {
-      if (index >= 4 && index <= 61 && arrData[index][4] !== null) {
+      if (index >= 4 && index <= 61 && !arrData[index][4]) {
         cellData.push({
-          code: arrData[index][4],
+          code: arrData[index-1][4],
           numberOfPeople: arrData[index][5],
           totalPayment: arrData[index][6],
           collectedIncomeTax: arrData[index][7],
