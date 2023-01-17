@@ -102,7 +102,7 @@
                 </a-col>
                 <a-col :span="9" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate || loadingCreated"
-                        size="large" :key="resetFormNum">
+                        size="large" :key="resetFormNum"> 
                         <a-form-item label="코드" label-align="right" class="red">
                             <div class="custom-note ">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
@@ -134,13 +134,10 @@
                         </a-form-item>
                         <a-form-item :label="textResidentId" label-align="right" class="red">
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                v-if="!store.state.common.activeAddRow" placeholder="숫자 13자리" :required="true"
-                                :disabled="disabledInput ? !dataAction.deletable : false" />
-
-
-                            <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                v-if="store.state.common.activeAddRow" placeholder="숫자 13자리" :required="true"
-                                :disabled="false" />
+                                v-if="store.state.common.activeAddRow == false" placeholder="숫자 13자리" :required="true"
+                                :disabled="disabledInput == true && !dataAction.deletable" />
+                            <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px" v-else
+                                placeholder="숫자 13자리" :required="true" />
                         </a-form-item>
                         <a-form-item label="소득구분" label-align="right" class="red">
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
@@ -289,6 +286,7 @@ export default defineComponent({
             onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
         createdDone(() => {
+            store.state.common.activeAddRow = false
             refetchData()
             focusedRowKey.value = parseInt(dataAction.value.employeeId)
             disabledInput.value = true
@@ -319,11 +317,15 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        // ** After adding a new row, take the data from the store and print it to the table.
+        watch(() => dataAction.value, (newVal) => {
+            if (store.state.common.activeAddRow == true) {
+                newVal.residentId = newVal.residentId
+                store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1] = newVal
+            }
+        }, { deep: true })
         watch(() => store.state.common.dataSourcePA610, (newVal) => {
             dataSource.value = newVal
         }, { deep: true })
-        // ** For dataAction equal to the value of the last row
         watch(() => store.state.common.activeAddRow, (newVal) => {
             if (newVal == true)
                 dataAction.value = {
@@ -348,9 +350,11 @@ export default defineComponent({
         };
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            if (store.state.common.activeAddRow == true) {// *** If new and unsaved row is added 
+            // Checking if the activeAddRow is true. If it is true, it will display the Vue HTML.
+            if (store.state.common.activeAddRow == true) {// *** If new and unsaved row is added  
                 if (JSON.stringify(valueDefaultAction) !== JSON.stringify(dataAction.value)) {
                     modalChangeRow.value = true
+                    return
                 } else {
                     store.state.common.dataSourcePA610 = store.state.common.dataSourcePA610.splice(0, store.state.common.dataSourcePA610.length - 1)
                     store.state.common.activeAddRow = false
@@ -360,22 +364,15 @@ export default defineComponent({
                     refetchDataDetail()
                 }
             } else {  // Row Change Instance
-
-                setTimeout(() => {
-                    console.log(JSON.stringify(dataRowOld));
-                    console.log(JSON.stringify(dataAction.value));
-
-                    if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction.value)) {
-                        modalChangeRow.value = true
-                    }
-                    else {
-                        triggerDetail.value = true
-                        valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
-                        valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
-                        refetchDataDetail()
-                    }
-
-                }, 500);
+                if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction.value)) {
+                    modalChangeRow.value = true
+                }
+                else {
+                    triggerDetail.value = true
+                    valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+                    valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+                    refetchDataDetail()
+                }
             }
             disabledInput.value = true
         }
@@ -433,7 +430,6 @@ export default defineComponent({
             }
         }
         const addRow = () => {
-            // ** If you're not done typing, don't allow new clicks
             if (store.state.common.activeAddRow == false) {
                 store.state.common.activeAddRow = true
                 let newVal = {
@@ -512,8 +508,13 @@ export default defineComponent({
             modalHistoryStatus.value = true;
         }
         return {
-            store, resetFormNum, dataRowOld, focusedRowKey, modalStatusAdd, textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
-            statusComfirmAdd, statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
+            store, resetFormNum,
+            dataRowOld,
+            focusedRowKey,
+            modalStatusAdd,
+            statusComfirmAdd,
+            textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
+            statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
         };
     },
 });
