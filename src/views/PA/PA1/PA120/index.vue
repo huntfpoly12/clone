@@ -71,7 +71,7 @@
                         </template>
                         <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
                         <template #residentId="{ data }">
-                            <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                            <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}{{ data.data.employeeId }}</div>
                             <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]"
                                 position="top"
                                 v-model:visible="defaultVisible" :hide-on-outside-click="false"
@@ -214,6 +214,7 @@ export default defineComponent({
         }
         const openAddNewModal = async () => {
             actionChangeComponent.value = 1;
+            console.log(`output->dataSource.value`,dataSource.value)
             // if (!addNew.value.compareData()) {
             //     popupStatus.value = true;
             // }
@@ -284,11 +285,11 @@ export default defineComponent({
             isResidentIdError[val.id] = val.isError;
         }
         //focus Row
-        const focusedRowKey = ref<Number>(0);
+        const focusedRowKey = ref<String | Number>(0);
         const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
         const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
         watch(keyActivePA120, (newval: number) => {
-            focusedRowKey.value = newval;
+            focusedRowKey.value = +newval;
         })
         return {
             loading,

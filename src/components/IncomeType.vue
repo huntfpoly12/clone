@@ -19,7 +19,7 @@
     </a-tooltip>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 
 export default defineComponent({
     props: {
@@ -35,10 +35,14 @@ export default defineComponent({
             type: String,
         }
     },
-    setup(props) {  
-        let typeCodeRes = ref(props.typeCode)
-        let typeNameRes = ref(props.typeName)
-        let incomeTypeNameRes = ref(props.incomeTypeName)
+    setup(props) {
+        const typeCodeRes = ref(props.typeCode)
+        const typeNameRes = ref(props.typeName)
+        watch(() => (props.typeCode, props.typeName), (newValue) => {
+            typeCodeRes.value = props.typeCode
+            typeNameRes.value = props.typeName
+        });
+        const incomeTypeNameRes = ref(props.incomeTypeName)
 
         return {
             incomeTypeNameRes,

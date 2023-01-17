@@ -448,8 +448,9 @@ export default defineComponent({
         dataAction.input.withholdingIncomeTax = 0
         dataAction.input.withholdingLocalIncomeTax = 0
         switchAction.value = true;
-        gridRefName.value.instance.option("selectedRowKeys", -[]);
-        gridRefName.value.instance.option("focusedRowIndex", -1);
+        focusedRowKey.value = undefined;
+        // gridRefName.value.instance.option("selectedRowKeys", -[]);
+        // gridRefName.value.instance.option("focusedRowIndex", -1);
     }
     const onPopupComfirm = (e: any) => {
       if (e) {

@@ -157,7 +157,11 @@ export default defineComponent({
     onMounted(() => {
       clearAllCellValue(wrapper)
       let hot  = wrapper.value?.hotInstance; 
-      dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
+      dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
+          if (!data.code) {
+            return; 
+          }
+        
           const rowPosition = inputPositionModified.find(item => item.className == data.code);
           if (data.numberOfPeople)
             hot.setDataAtCell(rowPosition?.value.inputPosition[0][0], rowPosition?.value.inputPosition[0][1], data.numberOfPeople);
@@ -266,36 +270,36 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 61 && arrData[index][4] != null) {
+        if (index >= 4 && index <= 61 && arrData[index][4]) {
           statement.push({
             code: arrData[index][4],
-            numberOfPeople: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
-            numberOfPeopleModified: arrData[index][5] != '' ? arrData[index][5] : 0,
+            numberOfPeopleModified: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
+            numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
 
-            totalPayment: arrData[index+1][6] != '' ? arrData[index+1][6] : 0,
-            totalPaymentModified: arrData[index][6] != '' ? arrData[index][6] : 0,
+            totalPaymentModified: arrData[index+1][6] != '' ? arrData[index+1][6] : 0,
+            totalPayment: arrData[index][6] != '' ? arrData[index][6] : 0,
 
             collectedIncomeTaxModified: arrData[index+1][7] != '' ? arrData[index+1][7] : 0,
             collectedIncomeTax: arrData[index][7] != '' ? arrData[index][7] : 0,
 
-            collectedRuralSpecialTax: arrData[index+1][8] != '' ? arrData[index+1][8] : 0,
-            collectedRuralSpecialTaxModified: arrData[index][8] != '' ? arrData[index][8] : 0,
+            collectedRuralSpecialTaxModified: arrData[index+1][8] != '' ? arrData[index+1][8] : 0,
+            collectedRuralSpecialTax: arrData[index][8] != '' ? arrData[index][8] : 0,
 
-            collectedExtraTax: arrData[index+1][9] != '' ? arrData[index+1][9] : 0,
-            collectedExtraTaxModified: arrData[index][9] != '' ? arrData[index][9] : 0,
+            collectedExtraTaxModified: arrData[index+1][9] != '' ? arrData[index+1][9] : 0,
+            collectedExtraTax: arrData[index][9] != '' ? arrData[index][9] : 0,
 
-            thisMonthAdjustedRefundTaxAmount: arrData[index+1][10] != '' ? arrData[index+1][10] : 0,
-            thisMonthAdjustedRefundTaxAmountModified: arrData[index][10] != '' ? arrData[index][10] : 0,
+            thisMonthAdjustedRefundTaxAmountModified: arrData[index+1][10] != '' ? arrData[index+1][10] : 0,
+            thisMonthAdjustedRefundTaxAmount: arrData[index][10] != '' ? arrData[index][10] : 0,
 
-            incomeTaxPaid: arrData[index+1][11] != '' ? arrData[index+1][11] : 0,
-            incomeTaxPaidModified: arrData[index][11] != '' ? arrData[index][11] : 0,
+            incomeTaxPaidModified: arrData[index+1][11] != '' ? arrData[index+1][11] : 0,
+            incomeTaxPaid: arrData[index][11] != '' ? arrData[index][11] : 0,
 
-            ruralSpecialTaxPaid: arrData[index+1][12] != '' ? arrData[index+1][12] : 0,
-            ruralSpecialTaxPaidModified: arrData[index][12] != '' ? arrData[index][12] : 0,
+            ruralSpecialTaxPaidModified: arrData[index+1][12] != '' ? arrData[index+1][12] : 0,
+            ruralSpecialTaxPaid: arrData[index][12] != '' ? arrData[index][12] : 0,
           });
         }
       }
-
+      
       const variables = {
         companyId:companyId,
         reportId:dataSource.value[0].reportId,

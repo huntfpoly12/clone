@@ -20,10 +20,9 @@
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="editData" v-model:focused-row-key="focusedRowKey"
-                            :focused-row-enabled="true">
-                            <DxScrolling mode="infinite" />
-                            <DxSorting mode="none" />
+                            :column-auto-width="true" :onRowClick="onSelectionClick"
+                            v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
+                            <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
                             <DxToolbar>
@@ -42,14 +41,28 @@
                             </template>
                             <DxColumn caption="성명 (상호)" cell-template="company-name" />
                             <template #company-name="{ data }">
-                                <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                                    :idCardNumber="data.data.residentId" :status="data.data.status"
-                                    :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
-                                    :checkStatus="false" @toolTopErorr="toolTopErorr" />
+                                <div class="custom-action" v-if="data.data.__typename">
+                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                        :idCardNumber="data.data.residentId" :status="data.data.status"
+                                        :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
+                                        :checkStatus="false" @toolTopErorr="toolTopErorr" />
+                                </div>
+                                <div class="custom-action" v-else>
+                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                        :status="data.data.status" :foreigner="data.data.foreigner"
+                                        :checkStatus="false" />
+                                </div>
                             </template>
                             <DxColumn caption="주민등록번호" cell-template="residentId" />
                             <template #residentId="{ data }">
-                                <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                                <div v-if="data.data.residentId?.length == 14">
+                                    <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                                </div>
+                                <div v-else>
+                                    <div :id="`residentId${data.data.residentId}`">
+                                        {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
+                                    </div>
+                                </div>
                                 <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]" position="top"
                                     v-model:visible="isResidentIdError[`${data.data.employeeId}`]"
                                     :hide-on-outside-click="false" :target="`#residentId${data.data.residentId}`">Error
@@ -64,7 +77,8 @@
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action">
                                     <a-space :size="10">
-                                        <DeleteOutlined v-if="data.data.deletable" @click="modalStatusDelete = true" />
+                                        <DeleteOutlined v-if="data.data.deletable"
+                                            @click="modalStatusDelete = true" />
                                     </a-space>
                                 </div>
                             </template>
@@ -72,12 +86,12 @@
                     </a-spin>
                 </a-col>
                 <a-col span="8" class="custom-layout">
-                    <a-spin :spinning="loadingForm" size="large" :key="resetFormNum">
+                    <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum">
                         <a-form-item label="코드" :label-col="labelCol" class="red">
                             <div class="custom-note d-flex-center">
-                                <text-number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
-                                    placeholder="숫자만 입력 가능" :disabled="checkForm">
-                                </text-number-box>
+                                <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
+                                    placeholder="숫자만 입력 가능" :disabled="statusFormUpdate">
+                                </number-box>
                                 <div class="pl-5">
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                     <span class="style-note">최초 저장된 이후 수정 불가</span>
@@ -165,7 +179,7 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, DxEditing, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState, initialOptionsRadio } from "./utils/index"
@@ -178,17 +192,17 @@ import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
-        DxTooltip,
+        DxTooltip, DxEditing,
     },
     setup() {
-        // config grid
         const contentDelete = Message.getMessage('PA120', '002').message
+        // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const globalYear = computed(() => store.state.settings.globalYear)
-        const loadingForm = ref(false)
-        let checkForm = ref(false)
+
+        let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
         var idRowEdit = ref<number>(0);
         let popupData = ref();
@@ -198,18 +212,27 @@ export default defineComponent({
         const modalStatusDelete = ref(false);
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
-        const listEmployeeExtra = ref([])
-        let formState: any = reactive({ ...initialState });
+        let triggerDetail = ref(false);
+        const isResidentIdError = reactive<any>({});
+        const listEmployeeExtra: any = ref([])
+        let formState: any = ref({ ...initialState });
         let dataRow = reactive({ ...initialState });
         const resetFormNum = ref(1);
+        const statusRowAdd = ref(true);
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         }
+        const originDataDetail: any = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            employeeId: null,
+            incomeTypeCode: null,
+        });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
 
-
+        // ================GRAPQL==============================================
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
             mutations.createEmployeeExtra
         );
@@ -220,15 +243,37 @@ export default defineComponent({
             fetchPolicy: "no-cache",
             enabled: trigger.value,
         }));
+        const { refetch: refetchDataDetail, loading: loadingDetail, onResult: resultDetail } = useQuery(queries.getEmployeeExtra, originDataDetail, () => ({
+            fetchPolicy: "no-cache",
+            enabled: triggerDetail.value,
+        }));
+        resultDetail(res => {
+            var data = res.data.getEmployeeExtra;
+            if (data) {
+                formState.value.name = data.name
+                formState.value.foreigner = data.foreigner
+                formState.value.nationality = data.nationality
+                formState.value.nationalityCode = data.nationalityCode
+                formState.value.stayQualification = data.stayQualification
+                formState.value.residentId = data.residentId
+                formState.value.email = data.email
+                formState.value.employeeId = data.employeeId
+                formState.value.incomeTypeCode = data.incomeTypeCode
+                formState.value.incomeTypeName = data.incomeTypeName
+                formState.value.deletable = data.deletable
+                dataRowOld = { ...formState.value }
+            }
+            triggerDetail.value = false;
+        })
         const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
             mutations.deleteEmployeeExtra
         );
         onDoneAdd(() => {
             trigger.value = true;
             refetchData();
-            focusedRowKey.value = parseInt(formState.employeeId)
-            dataRowOld = { ...formState }
-            checkForm.value = true;
+            focusedRowKey.value = parseInt(formState.value.employeeId)
+            dataRowOld = { ...formState.value }
+            statusFormUpdate.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
@@ -238,81 +283,84 @@ export default defineComponent({
             modalStatusDelete.value = false;
             trigger.value = true;
             resetFormNum.value++;
-            checkForm.value = false;
+            statusFormUpdate.value = false;
+            focusedRowKey.value = null;
             refetchData();
-            changeFormData({ ...initialState })
+            Object.assign(formState.value, initialState);
         });
+        onDoneUpdate(() => {
+            trigger.value = true;
+            refetchData();
+            if (formState.value.employeeId != dataRow.employeeId) {
+                originDataDetail.value.employeeId = dataRow.employeeId
+                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                dataRowOld = { ...formState.value }
+            }
+            triggerDetail.value = true;
+            notification('success', `업데이트 완료되었습니다!`)
+        });
+        onErrorUpdate((e) => {
+            notification('error', e.message)
+        });
+
+        // ================FUNCTION============================================
         const actionSave = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                focusedRowKey.value = parseInt(formState.employeeId)
+                focusedRowKey.value = parseInt(formState.value.employeeId)
             } else {
-                let residentId = formState.residentId.replace('-', '')
-                if (checkForm.value) {
+                let residentId = formState.value.residentId.replace('-', '')
+                if (statusFormUpdate.value) {
                     let dataUpdate = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
-                        employeeId: parseInt(formState.employeeId),
-                        incomeTypeCode: formState.incomeTypeCode,
+                        employeeId: parseInt(formState.value.employeeId),
+                        incomeTypeCode: formState.value.incomeTypeCode,
                         input: {
-                            name: formState.name,
-                            foreigner: formState.foreigner,
-                            nationality: formState.nationality,
-                            nationalityCode: formState.nationalityCode,
-                            stayQualification: formState.stayQualification,
+                            name: formState.value.name,
+                            foreigner: formState.value.foreigner,
+                            nationality: formState.value.nationality,
+                            nationalityCode: formState.value.nationalityCode,
+                            stayQualification: formState.value.stayQualification,
                             residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: formState.email,
-                            incomeTypeName: formState.incomeTypeName,
+                            email: formState.value.email,
+                            incomeTypeName: formState.value.incomeTypeName,
                         }
                     };
                     updateEmployeeExtra(dataUpdate);
-                    changeFormData(dataRow)
                 } else {
                     let dataCreate = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
                         input: {
-                            employeeId: parseInt(formState.employeeId),
-                            incomeTypeCode: formState.incomeTypeCode,
-                            name: formState.name,
-                            foreigner: formState.foreigner,
-                            nationality: formState.nationality,
-                            nationalityCode: formState.nationalityCode,
-                            stayQualification: formState.stayQualification,
+                            employeeId: parseInt(formState.value.employeeId),
+                            incomeTypeCode: formState.value.incomeTypeCode,
+                            name: formState.value.name,
+                            foreigner: formState.value.foreigner,
+                            nationality: formState.value.nationality,
+                            nationalityCode: formState.value.nationalityCode,
+                            stayQualification: formState.value.stayQualification,
                             residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: formState.email,
-                            incomeTypeName: formState.incomeTypeName,
+                            email: formState.value.email,
+                            incomeTypeName: formState.value.incomeTypeName,
                         },
                     };
                     createEmployeeExtra(dataCreate);
                 }
             }
         };
-        onDoneUpdate(() => {
-            trigger.value = true;
-            refetchData();
-            if (formState.employeeId != dataRow.employeeId) {
-                changeFormData(dataRow)
-            } else {
-                dataRowOld = { ...formState }
-            }
-            notification('success', `업데이트 완료되었습니다!`)
-        });
-        onErrorUpdate((e) => {
-            notification('error', e.message)
-        });
+
         const modalHistory = (data: any) => {
             modalHistoryStatus.value = companyId
         }
         const textCountry = (val: any) => {
-            formState.nationality = val ? val : null;
+            formState.value.nationality = val ? val : null;
         }
         const textTypeCode = (e: any) => {
-            formState.incomeTypeName = e
+            formState.value.incomeTypeName = e
         }
         //tooltip residentId
-        const isResidentIdError = reactive<any>({});
         const toolTopErorr = (val: any) => {
             isResidentIdError[val.id] = val.isError;
         }
@@ -330,46 +378,48 @@ export default defineComponent({
             } else
                 confirmSave.value = true
         }
-        const editData = (data: any) => {
-            dataRow = data.data
-            if (checkForm.value == false && JSON.stringify(initialState) !== JSON.stringify(formState)) {
-                // 입력한 내용을 저장하시겠습니까? 
-                document.getElementById('active-save')?.click()
-            } else {
-                if (JSON.stringify(dataRowOld) !== JSON.stringify(formState) && checkForm.value == true) {
+        const onSelectionClick = (data: any) => {
+            if (data.data.employeeId) {
+                dataRow = data.data
+                originDataDetail.value.employeeId = dataRow.employeeId
+                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
+                    // document.getElementById('active-save')?.click()
                     modalStatus.value = true;
                 } else {
-                    loadingForm.value = true;
-                    changeFormData(dataRow)
-                    setTimeout(() => {
-                        loadingForm.value = false;
-                    }, 500);
+                    if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
+                        modalStatus.value = true;
+                    } else {
+                        if (!statusRowAdd.value) {
+                            listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
+                            statusRowAdd.value = true
+                        }
+                        originDataDetail.value.employeeId = data.data.employeeId
+                        originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
+                        triggerDetail.value = true;
+                    }
+                    statusFormUpdate.value = true;
                 }
-                checkForm.value = true;
             }
         }
-        const changeFormData = (data: any) => {
-            formState.name = data.name
-            formState.foreigner = data.foreigner
-            formState.nationality = data.nationality
-            formState.nationalityCode = data.nationalityCode
-            formState.stayQualification = data.stayQualification
-            formState.residentId = data.residentId
-            formState.email = data.email
-            formState.employeeId = data.employeeId
-            formState.incomeTypeCode = data.incomeTypeCode
-            formState.incomeTypeName = data.incomeTypeName
-            formState.deletable = data.deletable
-            dataRowOld = { ...formState }
-        }
         const formCreate = (e: any) => {
-            if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState) && checkForm.value == false) {
-                modalStatusAdd.value = true
+            if (statusRowAdd.value) {
+                if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
+                    modalStatusAdd.value = true
+                } else {
+                    statusRowAdd.value = false;
+                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+                    setTimeout(() => {
+                        let a = document.body.querySelectorAll('[aria-rowindex]');
+                        (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                    }, 100);
+                    resetFormNum.value++;
+                    focusedRowKey.value = null;
+                    statusFormUpdate.value = false;
+                }
             } else {
-                resetFormNum.value++;
-                focusedRowKey.value = null;
-                checkForm.value = false;
-                changeFormData({ ...initialState })
+                notification('error', "nhập vàooooo")
             }
         }
 
@@ -377,62 +427,68 @@ export default defineComponent({
             let variables = {
                 companyId: companyId,
                 imputedYear: globalYear.value,
-                employeeId: formState.employeeId,
-                incomeTypeCode: formState.incomeTypeCode
+                employeeId: formState.value.employeeId,
+                incomeTypeCode: formState.value.incomeTypeCode
             };
             actionDelete(variables);
         }
         const statusComfirm = (val: any) => {
             if (val) {
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
-            }
-            else {
-                changeFormData(dataRow)
+            } else {
+                if (!statusRowAdd.value) {
+                    listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
+                    statusRowAdd.value = true
+                }
+                statusFormUpdate.value = true
+                triggerDetail.value = true;
             }
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 resetFormNum.value++;
-                changeFormData({ ...initialState })
+                Object.assign(formState.value, initialState);
             }
         }
 
         const confimSaveWhenChangeRow = (status: any) => {
             if (status == true) {
-                let residentId = formState.residentId.replace('-', '')
+                let residentId = formState.value.residentId.replace('-', '')
                 let dataCreate = {
                     companyId: companyId,
                     imputedYear: globalYear.value,
                     input: {
-                        employeeId: parseInt(formState.employeeId),
-                        incomeTypeCode: formState.incomeTypeCode,
-                        name: formState.name,
-                        foreigner: formState.foreigner,
-                        nationality: formState.nationality,
-                        nationalityCode: formState.nationalityCode,
-                        stayQualification: formState.stayQualification,
+                        employeeId: parseInt(formState.value.employeeId),
+                        incomeTypeCode: formState.value.incomeTypeCode,
+                        name: formState.value.name,
+                        foreigner: formState.value.foreigner,
+                        nationality: formState.value.nationality,
+                        nationalityCode: formState.value.nationalityCode,
+                        stayQualification: formState.value.stayQualification,
                         residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                        email: formState.email,
-                        incomeTypeName: formState.incomeTypeName,
+                        email: formState.value.email,
+                        incomeTypeName: formState.value.incomeTypeName,
                     },
                 };
                 createEmployeeExtra(dataCreate);
             }
-            changeFormData(dataRow)
+            triggerDetail.value = true;
         }
+
+        // ================WATCHING============================================
         watch(result, (value) => {
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras
                 trigger.value = false;
             }
         });
-        watch(() => formState.foreigner, (newValue) => {
+        watch(() => formState.value.foreigner, (newValue) => {
             if (!newValue) {
-                formState.nationalityCode = 'KR'
-                formState.stayQualification = null
+                formState.value.nationalityCode = 'KR'
+                formState.value.stayQualification = null
             } else {
                 resetFormNum.value++;
-                formState.nationalityCode = formState.nationalityCode == 'KR' ? null : formState.nationalityCode
+                formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
             }
         });
         watch(globalYear, () => {
@@ -440,9 +496,9 @@ export default defineComponent({
         });
 
         return {
-            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingForm, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, checkForm, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
-            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, editData, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete
+            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
+            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete,
         };
     },
 });

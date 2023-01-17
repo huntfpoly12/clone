@@ -47,6 +47,7 @@
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -115,7 +116,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem} from "devextreme-vue/data-grid";
+import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem, DxScrolling} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
@@ -143,7 +144,8 @@ export default defineComponent({
         SearchOutlined,
         SaveOutlined,
         DeleteOutlined,
-        PrinterOutlined
+        PrinterOutlined,
+        DxScrolling,
     },
     setup() {
         // config grid
