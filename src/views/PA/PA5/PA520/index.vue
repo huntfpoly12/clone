@@ -128,8 +128,8 @@
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
         content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
-    <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+    <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
+        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue"
@@ -240,7 +240,6 @@ export default defineComponent({
             if (store.state.common.activeAddRowPA520 == false) {
                 let valueAddDefault = { ...DataCreatedTable }
                 store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
-
                 focusedRowKey.value = null
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
@@ -256,25 +255,26 @@ export default defineComponent({
             }
         }
         const modalChangeValueAdd = ref(false)
-        const openEditModal = (val: any) => { 
+        const openEditModal = (val: any) => {
             focusedRowKey.value = null
-            if (store.state.common.checkChangeValueAddPA520 == true) { 
+            store.state.common.idRowChangePa520 = val.data.employeeId
+            if (store.state.common.checkChangeValueAddPA520 == true) {
                 modalChangeValueAdd.value = true
             } else {
+                // change component edit
+                actionChangeComponent.value = 2
                 focusedRowKey.value = val.data.employeeId
                 if (store.state.common.activeAddRowPA520 == true) {
                     store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
                     store.state.common.activeAddRowPA520 = false
                 }
-                actionChangeComponent.value = 2
                 if (store.state.common.checkStatusChangeValuePA520 == true) {
                     modalStatusChange.value = true
                     dataChange.value = val.data.employeeId
                 } else {
-                    store.state.common.idRowChangePa520 = val.data.employeeId
                     idRowEdit.value = val.data.employeeId
                 }
-            } 
+            }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -305,9 +305,25 @@ export default defineComponent({
             store.state.common.idRowChangePa520 = dataChange.value
             idRowEdit.value = dataChange.value
         }
+
+        const confirmSaveAdd = (res: any) => {
+            // if (res == true) {
+
+            // } else {
+            //     actionChangeComponent.value = 2
+            //     focusedRowKey.value = val.data.employeeId 
+            //     if (store.state.common.checkStatusChangeValuePA520 == true) {
+            //         modalStatusChange.value = true
+            //         dataChange.value = val.data.employeeId
+            //     } else {
+            //         idRowEdit.value = val.data.employeeId
+            //     }
+            // }
+
+        }
         return {
             modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
-            statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
+            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },
 })
