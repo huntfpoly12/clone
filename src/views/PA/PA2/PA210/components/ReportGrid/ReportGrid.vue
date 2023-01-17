@@ -222,7 +222,6 @@ export default defineComponent({
     const trigger = ref<boolean>(false)
     const dataSource = ref<any>(props.dataReport);
     const originData = ref()
-    const firstClickLoadNew = ref(false)
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -233,6 +232,7 @@ export default defineComponent({
     watch(() => props.dataReport,(newValue) => {
       dataSource.value = newValue
     })
+    
     const {
             refetch: refetchData,
             result,
@@ -253,7 +253,6 @@ export default defineComponent({
           }
         });
         calculateWithholdingStatusReport(wrapper,newData)
-        firstClickLoadNew.value = true
       }
     })
 
@@ -262,7 +261,6 @@ export default defineComponent({
     }
     
     const loadNew = () => {
-      if (!firstClickLoadNew.value) {
         originData.value = {
           companyId: companyId,
           input:{
@@ -278,10 +276,6 @@ export default defineComponent({
         }
         trigger.value = true;
         refetchData()
-      } else {
-        calculateWithholdingStatusReport(wrapper)
-      }
-
     }
 
     const {

@@ -82,8 +82,9 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useMutation} from "@vue/apollo-composable";
-import { mergeCells, cellsSetting, dataInit ,calculateWithholdingStatusReport,inputPosition,clearAllCellValue} from "./Gridsetting"
+import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { mergeCells, cellsSetting, dataInit, calculateWithholdingStatusReport, inputPosition, clearAllCellValue } from "./Gridsetting"
+import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
@@ -150,6 +151,8 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(props.dataReport);
+    const originData = ref()
+    const trigger = ref<boolean>(false)
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -159,7 +162,8 @@ export default defineComponent({
     })
     onMounted(() => {
       clearAllCellValue(wrapper)
-      let hot  = wrapper.value?.hotInstance; 
+      let hot = wrapper.value?.hotInstance; 
+      // fill value to table report 
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
           const rowPosition = inputPosition.find(item => item.className == data.code);
           if (data.numberOfPeople)
@@ -179,7 +183,7 @@ export default defineComponent({
           if (data.ruralSpecialTaxPaid)
             hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
       })
-
+    // fill value to table report adjustmentOfRefundTaxAmount
       const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount
       const adjustmentPosition = inputPosition.find(item => item.className == 'adjustmentOfRefundTaxAmount');
       if (adjustment?.prevMonthNonRefundableTaxAmount)
@@ -207,9 +211,45 @@ export default defineComponent({
     const actionConfirmLoadNew = ()=>{
       confirmLoadNewStatus.value = true
     }
-    
+
+    const {
+            refetch: refetchData,
+            result,
+            loading,
+        } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+    }));
+
+    watch(result, (data) => {
+      if (data) {
+        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
+          return {
+            code: item.code,
+            numberOfPeople: item.numberOfPeople,
+            totalPayment: item.totalPayment,
+            collectedIncomeTax: item.collectedIncomeTax,
+          }
+        });
+        calculateWithholdingStatusReport(wrapper,newData)
+      }
+    })
     const loadNew = () => {
-        calculateWithholdingStatusReport(wrapper)
+      originData.value = {
+          companyId: companyId,
+          input:{
+            imputedYear: dataSource.value[0].imputedYear,
+            imputedMonth: dataSource.value[0].imputedMonth,
+            paymentYear: dataSource.value[0].paymentYear,
+            paymentMonth: dataSource.value[0].paymentMonth,
+            reportType: dataSource.value[0].reportType,
+            index: dataSource.value[0].index,
+            paymentType: 1,
+            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          },
+        }
+        trigger.value = true;
+        refetchData()
     }
 
     const {
@@ -227,6 +267,7 @@ export default defineComponent({
     const updateTaxWithholding = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
+      // create data of statementAndAmountOfTaxPaids
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
         if (index >= 4 && index <= 32) {
@@ -243,7 +284,7 @@ export default defineComponent({
           });
         }
       }
-
+      // create payload to query updateTaxWithholdingStatusReport
       const variables = {
         companyId:companyId,
         reportId:dataSource.value[0].reportId,
