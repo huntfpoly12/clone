@@ -22,7 +22,7 @@
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="editData" v-model:focused-row-key="focusedRowKey"
                             :focused-row-enabled="true">
-                            <DxScrolling mode="infinite" />
+                            <DxScrolling mode="standard" show-scrollbar="always"/>
                             <DxSorting mode="none" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -76,9 +76,9 @@
                     <a-spin :spinning="loadingForm" size="large" :key="resetFormNum">
                         <a-form-item label="코드" :label-col="labelCol" class="red">
                             <div class="custom-note d-flex-center">
-                                <text-number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
+                                <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
                                     placeholder="숫자만 입력 가능" :disabled="checkForm">
-                                </text-number-box>
+                                </number-box>
                                 <div class="pl-5">
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                                     <span class="style-note">최초 저장된 이후 수정 불가</span>
@@ -162,7 +162,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, createVNode, computed } from "vue";
+import { defineComponent, ref, watch, reactive, computed } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -182,8 +182,8 @@ export default defineComponent({
         DxTooltip,
     },
     setup() {
-        // config grid
         const contentDelete = Message.getMessage('PA120', '002').message
+        // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
