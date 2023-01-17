@@ -134,7 +134,13 @@
                         </a-form-item>
                         <a-form-item :label="textResidentId" label-align="right" class="red">
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                placeholder="숫자 13자리" :required="true" :disabled="!dataAction.deletable" />
+                                v-if="!store.state.common.activeAddRow" placeholder="숫자 13자리" :required="true"
+                                :disabled="disabledInput ? !dataAction.deletable : false" />
+
+
+                            <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
+                                v-if="store.state.common.activeAddRow" placeholder="숫자 13자리" :required="true"
+                                :disabled="false" />
                         </a-form-item>
                         <a-form-item label="소득구분" label-align="right" class="red">
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
@@ -354,15 +360,22 @@ export default defineComponent({
                     refetchDataDetail()
                 }
             } else {  // Row Change Instance
-                if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction.value)) {
-                    modalChangeRow.value = true
-                }
-                else {
-                    triggerDetail.value = true
-                    valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
-                    valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
-                    refetchDataDetail()
-                }
+
+                setTimeout(() => {
+                    console.log(JSON.stringify(dataRowOld));
+                    console.log(JSON.stringify(dataAction.value));
+
+                    if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction.value)) {
+                        modalChangeRow.value = true
+                    }
+                    else {
+                        triggerDetail.value = true
+                        valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+                        valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+                        refetchDataDetail()
+                    }
+
+                }, 500);
             }
             disabledInput.value = true
         }
@@ -420,6 +433,7 @@ export default defineComponent({
             }
         }
         const addRow = () => {
+            // ** If you're not done typing, don't allow new clicks
             if (store.state.common.activeAddRow == false) {
                 store.state.common.activeAddRow = true
                 let newVal = {
@@ -498,16 +512,12 @@ export default defineComponent({
             modalHistoryStatus.value = true;
         }
         return {
-            resetFormNum,
-            dataRowOld,
-            focusedRowKey,
-            modalStatusAdd,
-            statusComfirmAdd,
-            textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
-            statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
+            store, resetFormNum, dataRowOld, focusedRowKey, modalStatusAdd, textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
+            statusComfirmAdd, statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
         };
     },
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss" >
+
 </style>
