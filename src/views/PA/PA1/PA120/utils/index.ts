@@ -21,7 +21,7 @@ export const radioCheckReductionInput = [
 ];
 export const IncomeTaxAppRate = [
   { id: 100, text: "100%" },
-  { id: 180, text: "180%" },
+  { id: 80, text: "80%" },
   { id: 120, text: "120%" },
 ];
 
@@ -40,7 +40,7 @@ export const initFormStateTab1 = {
   leavedAt: "",
   president: false,
   householder: false,
-  weeklyWorkingHours: 0,
+  weeklyWorkingHours: 40,
   department: "",
   responsibility: "",
 };
@@ -54,6 +54,7 @@ export const initFormStateTab2 = {
   incomeTaxMagnification: 100,
   payItems: [],
   deductionItems: [],
+//   employeementReductionRatePercent:50,
 };
 export const initFormStateTab3 = {
   employeeId: 0,
@@ -74,3 +75,4 @@ export const initFormStateTab3 = {
   householder: false,
   residentId: "",
 };
+export const taxWaring = '부녀자공제와 한부모공제 중 하나만 선택할수 있습니다. 공제금액이 더 많은 한부모공제를 적용합니다';

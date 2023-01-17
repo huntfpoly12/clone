@@ -1,14 +1,36 @@
 <template> 
-
-    <DxSelectBox :search-enabled="true" :width="width" :data-source="selectBoxData" :show-clear-button="clearButton"
-        v-model:value="value" :read-only="readOnly" display-expr="value" value-expr="value" :disabled="disabled"
-        :accept-custom-value="customValue" @custom-item-creating="customItemCreating" @contentReady="onContentReady"
-        @value-changed="updateValue($event ,value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="직접입력" >
+    <DxSelectBox 
+      :height="$config_styles.HeightInput" 
+      :name="nameInput" 
+      placeholder="직접입력"
+      :search-enabled="false"
+      :width="width" 
+      :data-source="selectBoxData" 
+      :show-clear-button="clearButton"
+      v-model:value="value" 
+      :read-only="readOnly" 
+      display-expr="value" 
+      value-expr="value" 
+      :disabled="disabled"
+      :accept-custom-value="true" 
+      @custom-item-creating="customItemCreating" 
+      @contentReady="onContentReady"
+      @value-changed="updateValue($event ,value)" 
+      @item-click="onItemClick"
+      >
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
     </DxSelectBox>
+    <!-- v-model:selectedItem="editBoxValue"
+              :value="product"
+              :accept-custom-value="true"
+              :data-source="productsDataSource"
+              display-expr="Name"
+              value-expr="ID"
+              @customItemCreating="customItemCreating($event)" -->
 </template>
+
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance, nextTick  } from "vue";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
@@ -112,7 +134,14 @@ export default defineComponent({
                 ele.focus();
                 ele.select();
             }
-        }; 
+        };
+        const onItemClick = (e:any) => {
+          if(e.itemData.id==1){
+                let ele = e.element.children[0].children[1].children[0].children[0];
+                ele.focus();
+                ele.select();
+            }
+        }
         return {
             value,
             customValue,
@@ -121,6 +150,7 @@ export default defineComponent({
             customItemCreating,
             selectBoxData,
             onContentReady,
+            onItemClick
         };
     },
 });

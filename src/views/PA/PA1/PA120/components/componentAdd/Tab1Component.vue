@@ -36,30 +36,49 @@
     
           <a-form-item label="내/외국인" label-align="right">
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner"
-              layoutCustom="horizontal"></radio-group>
+              layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-          <a-form-item label="외국인 국적" label-align="right" :class="{red: foreigner==1}">
-            <country-code-select-box v-if="formStateTab1.foreigner" style="width: 200px"
+          <a-row>
+              <a-form-item label="외국인 국적" label-align="right" :class="{red: foreigner==1}">
+                <country-code-select-box v-if="formStateTab1.foreigner" style="width: 200px"
                 v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
                 :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner"
                 :hiddenOptionKR="true" />
-            <country-code-select-box v-else style="width: 200px"
+                <country-code-select-box v-else style="width: 200px"
                 v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
                 :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner" />
-          </a-form-item>
-  
-          <a-form-item label="외국인 체류자격" label-align="right" :class="{red: foreigner==1}">
-            <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" :disabled="foreigner == 0" />
-          </a-form-item>
+            </a-form-item>
+            
+            <a-form-item label="외국인 체류자격" label-align="right" :class="{red: foreigner==1}">
+                <stay-qualification-select-box v-model:valueStayQualifiction="formStateTab1.stayQualification" :disabled="foreigner == 0" />
+            </a-form-item>
+          </a-row>
       
           <a-form-item :label="labelResidebId" label-align="right" class="red">
             <id-number-text-box :required="true" v-model:valueInput="residentId" width="150px"></id-number-text-box>
           </a-form-item>
+
+
+        <a-form-item label="주소정근무시간" label-align="right" class="red">
+          <div class="input-text">
+              <number-box :required="true" :spinButtons="true" v-model:valueInput="formStateTab1.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
+              <span style="color: #888888; font-size:12px">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 급여명세서 및 4대보험 취득신고시 이용됩니다.
+              </span>
+          </div>
+        </a-form-item>
+
+        <a-form-item label="세대주여부" label-align="right" class="red">
+            <switch-basic v-model:valueSwitch="formStateTab1.householder " textCheck="O" textUnCheck="X"
+              style="width: 80px"></switch-basic>
+        </a-form-item>
+
+
         <a-form-item label="주소" class="clr" label-align="left">
             <div class="zip-code">
               <default-text-box v-model:valueInput="postCode" width="120px" :disabled="true" />
               <div style="margin-left: 5px">
-                <post-code-button @dataAddress="funcAddress" />
+                <post-code-button @dataAddress="funcAddress" text="주소검색"/>
               </div>
             </div>
             <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true" class="roadAddress"
@@ -156,6 +175,7 @@ export default defineComponent({
         isForeigner.value = false;
         labelResidebId.value = "주민등록번호";
       }
+      store.state.common.isForeignerPA120 = formStateTab1.foreigner;
     });
 
     /**
@@ -249,7 +269,6 @@ export default defineComponent({
             leavedAt: +dayjs(formStateTab1.leavedAt).format("YYYYMMDD"),
           },
         };
-        console.log(`output->dataNew`,dataNew)
         createEmployeeWage(dataNew);
       }
     };

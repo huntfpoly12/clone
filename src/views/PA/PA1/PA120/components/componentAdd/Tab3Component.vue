@@ -281,6 +281,7 @@
       :idRowIndex="idRowIndex"
       :idRowEdit="idRowEdit"
       :dataSourceLen="dataSource.length"
+      :key="idRowIndex"
     >
     </PopupEditUpdateDependent>
   </div>
@@ -343,7 +344,7 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
     const idRowIndex = ref();
-
+    
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,

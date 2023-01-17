@@ -15,7 +15,7 @@
                   v-model:valueInput="formState.name"></default-text-box>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
-                <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
+                <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
                 <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
@@ -28,10 +28,10 @@
                   :required="true" />
               </a-form-item>
               <a-form-item label="부녀자" label-align="right">
-                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="women" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
               </a-form-item>
               <a-form-item label="한부모" label-align="right">
-                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="singleParent" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
               </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -78,6 +78,7 @@ import {
   companyId,
   convertAge,
 } from '@/helpers/commonFunction';
+import { taxWaring } from '../../utils';
 export default defineComponent({
   components: {},
   props: {
@@ -94,12 +95,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
     const ageCount = ref();
-    const labelResidebId = ref('주민(외국인)번호');
+    const labelResidebId = ref('주민등록번호');
     const initialFormState = {
       relation: null,
       name: '',
-      foreigner: false,
+    //   foreigner: false,
       residentId: '',
       basicDeduction: null,
       women: false,
@@ -111,27 +113,26 @@ export default defineComponent({
       consignmentRelationship: '',
       index: 2,
     };
-    const formState = reactive<any>({ ...initialFormState });
+    const formState = reactive<any>({ ...initialFormState, foreigner: !isForeignerPA120.value });
     const setModalVisible = () => {
       emit('closePopup', false);
     };
-
-    const women = ref(formState.women == true ? 1 : 0);
-    watch(women, (newValue) => {
-      if (newValue == 1) {
-        formState.women = true;
-      } else {
-        formState.women = false;
-      }
-    });
-    const singleParent = ref(formState.singleParent == true ? 1 : 0);
-    watch(singleParent, (newValue) => {
-      if (newValue == 1) {
-        formState.singleParent = true;
-      } else {
-        formState.singleParent = false;
-      }
-    });
+    const notifcationTax = () => {
+            notification('warning', taxWaring);
+            setTimeout(()=> {
+                formState.women = false;
+            }, 200)
+    }
+    watch(()=>formState.women, (newValue) => {
+        if (newValue == true  && formState.singleParent == true) {
+            notifcationTax();
+        }
+    },{deep:true});
+    watch(()=>formState.singleParent, (newValue) => {
+        if (newValue == true  && formState.women == true) {
+            notifcationTax();
+        }
+    },{deep:true});
     const senior = ref(formState.senior == true ? 1 : 0);
     watch(senior, (newValue) => {
       if (newValue == 1) {
@@ -156,14 +157,14 @@ export default defineComponent({
     //     formState.householder = false;
     // }
     // });
-    const foreigner = ref(formState.foreigner == true ? 1 : 0);
-    watch(foreigner, (newValue) => {
-      if (newValue == 1) {
+    // const foreigner = ref<Number|Boolean>(formState.foreigner == true ? 1 : 0);
+    watch(formState.foreigner, (newValue) => {
+      if (newValue) {
         formState.foreigner = true;
-        labelResidebId.value = '외국인번호 유효성';
-      } else {
-        formState.foreigner = false;
         labelResidebId.value = '주민등록번호';
+    } else {
+        formState.foreigner = false;
+        labelResidebId.value = '외국인번호 유효성';
       }
     });
     const residentId = ref('');
@@ -246,21 +247,23 @@ export default defineComponent({
                 count  = newVal.toString();
                 ageCount.value = convertAge(count);
             }
-        },{deep: true})
+    },{deep: true})
+    watch(isForeignerPA120,(newVal: any)=>{
+        formState.foreigner = !newVal;
+    })
     return {
-      women,
       loading,
-      singleParent,
       householder,
       senior,
       descendant,
       formState,
       ageCount,
-      foreigner,
+    //   foreigner,
       residentId,
       setModalVisible,
       labelResidebId,
       createNewEmployeeWageDependent,
+      isForeignerPA120
     };
   },
 });
