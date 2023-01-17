@@ -396,6 +396,7 @@ export default defineComponent({
         };
         //submit
         const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
+        const actionSaveTypePA720 = computed(() => store.getters['common/actionSaveTypePA720']);
         const onSubmit = () => {
             store.commit('common/actionSavePA720');
             setTimeout(() => {
@@ -405,9 +406,15 @@ export default defineComponent({
                 }
             }, 100);
         };
-        const onSave = () => {
+        const onSave = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+                // focusedRowKey.value = formState.employeeId
+            } else {
             store.commit('common/actionSaveTypePA720', 1);
             onSubmit();
+            }
         };
         const onFormDone = () => {
             changeFommDone.value++;
@@ -481,11 +488,14 @@ export default defineComponent({
                 formInputInit = store.state.common.formInputInit;
             }
             let formInputData = formTaxRef.value.dataAction.input;
-            if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
-                isLoadNewForm.value = false;
-                titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
-                popupAddStatus.value = true;
-            }
+            if(actionSaveTypePA720.value == 0) {
+                
+                if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
+                    isLoadNewForm.value = false;
+                    titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
+                    popupAddStatus.value = true;
+                }
+            } 
         };
         //compute data function
         const checkLen = (text: String) => {

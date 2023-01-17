@@ -4,14 +4,14 @@
             <a-row class="row-1">
                 <a-col :span="12">
                     <a-form-item label="사원">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem" :required = "true"
                             v-model:valueEmploy="dataIW.employee.employeeId" width="316px" @onChange="onUpdateValue"/>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="지급일">
                         <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31" :disabled="!actionAddItem"
-                            :spinButtons="true" />
+                            :spinButtons="true" :required = "true"/>
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -43,27 +43,27 @@
                     </div>
                     <a-form-item label="근무일수" label-align="right">
                         <div style="display: flex;align-items: center;">
-                            <number-box :max="31" :min="0" width="70px" v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :spinButtons="true" :max="31" :min="0" width="70px" v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
-                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :spinButtons="true" :max="999" :min="0" width="70px" v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :spinButtons="true" :max="999" :min="0" width="70px" v-model:valueInput="dataIW.overtimeWorkingHours" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item> 
                     <a-form-item label="야간근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
+                            <number-box :spinButtons="true" :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursAtNight"/><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item> 
                     <a-form-item label="휴일근로시간" label-align="right">
                          <div style="display: flex;align-items: center;">
-                            <number-box :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
+                            <number-box :spinButtons="true" :max="999" :min="0" width="70px" v-model:valueInput="dataIW.workingHoursOnHolidays" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                 </a-col>
@@ -470,8 +470,7 @@ export default defineComponent({
         })
 
         actionUpdateDone(res => {
-            emit('createdDone', true)
-            emit("loadingTableInfo", true)
+            emit("loadingTableInfo", dataIW.value.employee.employeeId)
             // emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
@@ -484,15 +483,14 @@ export default defineComponent({
         } = useMutation(mutations.createIncomeWage);
 
         doneCreated(res => {
-            emit('createdDone', true)
-            emit("loadingTableInfo", true)
+            emit("loadingTableInfo", dataIW.value.employee.employeeId)
             notification('success', `업데이트 완료!`)
             // triggerDetail.value = true
             // refetchValueDetail()
         })
 
         errorCreated(res => {
-            emit("loadingTableInfo", true)
+            emit("loadingTableInfo", dataIW.value.employee.employeeId)
             notification('error', res.message)
         })
         // refresh value
@@ -804,6 +802,7 @@ export default defineComponent({
     }
 
     .summary {
+        padding-left: 10px;
         span {
             font-weight: bold;
         }

@@ -216,6 +216,8 @@
     font-size: 12px;
   }
   .red {
-    color: red;
+    :deep label{
+        color: red;
+    }
   }
 }
