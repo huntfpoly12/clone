@@ -102,7 +102,7 @@
                 </a-col>
                 <a-col :span="9" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate || loadingCreated"
-                        size="large" :key="resetFormNum"> 
+                        size="large" :key="resetFormNum">
                         <a-form-item label="코드" label-align="right" class="red">
                             <div class="custom-note ">
                                 <text-number-box width="200px" v-model:valueInput="dataAction.employeeId"
@@ -285,10 +285,10 @@ export default defineComponent({
             loading: loadingCreated,
             onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        createdDone(() => {
+        createdDone((res) => { 
             store.state.common.activeAddRow = false
             refetchData()
-            focusedRowKey.value = parseInt(dataAction.value.employeeId)
+            focusedRowKey.value = res.data.createEmployeeBusiness.employeeId
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.value.incomeTypeCode
