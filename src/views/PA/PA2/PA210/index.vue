@@ -9,6 +9,7 @@
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                     <DxItem location="after" template="button-history" css-class="cell-button-add" />
                 </DxToolbar>
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <template #button-history>
                     <DxButton>
                         <HistoryOutlined @click="openModalHistory" class="fz-18" />
@@ -162,7 +163,7 @@ import AddPA210Popup from "./components/AddPA210Popup.vue";
 import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxColumn, DxToolbar, DxItem,DxScrolling } from "devextreme-vue/data-grid"
 import { HistoryOutlined } from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
@@ -171,7 +172,7 @@ import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/i
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxToolbar, DxItem, DxButton, HistoryOutlined,
+        DxDataGrid, DxColumn, DxToolbar,DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
         ReportGridModify
     },
@@ -319,7 +320,7 @@ export default defineComponent({
                 detailId: value.detailId,
                 ...value.detail,
             }];
-            if (icon == 'iconEdit') {
+            if (icon == 'iconEdit' && value.index == 0) {
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
             } else {

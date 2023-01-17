@@ -215,6 +215,7 @@ export default defineComponent({
     const loadIndexInit = ref<number>(0);
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
+      store.commit('common/actionSaveTypePA720', 0);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,

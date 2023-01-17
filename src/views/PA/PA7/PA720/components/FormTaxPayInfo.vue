@@ -1,130 +1,132 @@
 <template>
-  <standard-form name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px">
-    <a-spin :spinning="newDateLoading" size="large">
-      <a-row>
-        <a-col :span="24">
-          <a-form-item label="사업소득자" label-align="right">
-            <employ-type-select
-              :disabled="isEdit || !isColumnData"
-              :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
-              v-model:valueEmploy="dataAction.input.employeeId"
-              width="350px"
-              :required="true"
-              @incomeTypeCode="changeIncomeTypeCode"
-            />
-            <div v-if="validations.employeeId" class="validate">this must be filled</div>
-          </a-form-item>
-        </a-col>
-        <a-col span="24">
-          <div class="header-text-1 mb-10">소득내역</div>
-        </a-col>
-        <a-col :span="12" style="padding-right: 5px">
-          <a-form-item label="귀속/지급연월" style="display: flex">
-            <div class="d-flex-center">
-              <div class="month-custom-1 d-flex-center" v-if="isColumnData">
-                귀
-                <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
-              </div>
-              <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" :disabled="true" v-else/>
-              <div class="month-custom-2 d-flex-center" v-if="isColumnData">
-                지
-                <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
-              </div>
-              <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" :disabled="true" v-else/>
+  <a-spin :spinning="newDateLoading" size="large">
+    <a-row>
+      <a-col :span="24">
+        <a-form-item label="사업소득자" label-align="right" class="red">
+          <employ-type-select
+            :disabled="isEdit || !isColumnData"
+            :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
+            v-model:valueEmploy="dataAction.input.employeeId"
+            width="350px"
+            :required="true"
+            @incomeTypeCode="changeIncomeTypeCode"
+          />
+          <!-- <div v-if="validations.employeeId" class="validate">this must be filled</div> -->
+        </a-form-item>
+      </a-col>
+      <a-col span="24">
+        <div class="header-text-1 mb-10">소득내역</div>
+      </a-col>
+      <a-col :span="12" style="padding-right: 5px">
+        <a-form-item label="귀속/지급연월" style="display: flex">
+          <div class="d-flex-center">
+            <div class="month-custom-1 d-flex-center" v-if="isColumnData">
+              귀
+              <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
             </div>
-          </a-form-item>
-          <a-form-item label="지급일">
-            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" />
-            <div v-if="validations.paymentDay" class="validate">this must be filled</div>
-          </a-form-item>
-          <a-form-item label="지급액">
-            <number-box-money
-              width="150px"
-              :min="0"
-              :max="2147483647"
-              @changeInput="onChangeInput"
-              v-model:valueInput="dataAction.input.paymentAmount"
-              :required="true"
-              :disabled="!isColumnData"
-            ></number-box-money>
-            <div v-if="validations.paymentAmount" class="validate">this must be filled</div>
-          </a-form-item>
-          <a-form-item label="필요경비" class="red">
-            <number-box-money
-              width="150px"
-              :min="0"
-              max="2147483647"
-              :required="true"
-              @changeInput="onChangeInput"
-              v-model:valueInput="dataAction.input.requiredExpenses"
-              :disabled="!isColumnData"
-              class="red"
-            ></number-box-money>
-            <div v-if="validations.requiredExpenses" class="validate">this must be filled</div>
-          </a-form-item>
-          <a-form-item label="세율">
-            <DxSelectBox
-              width="200px"
-              valueExpr="value"
-              :data-source="taxRateOptions"
-              :value="dataAction.input.taxRate"
-              placeholder="선택"
-              item-template="item"
-              display-expr="label"
-              :height="$config_styles.HeightInput"
-              @value-changed="updateValue"
-            >
-              <template #item="{ data }">
-                <a-tooltip placement="top" zIndex="9999">
-                  <template #title v-if="data?.tooltip">
-                    <span>{{ data.tooltip }}</span>
-                  </template>
-                  <span>{{ data.label }}</span>
-                </a-tooltip>
-              </template>
-            </DxSelectBox>
-            <div v-if="validations.taxRate" class="validate">this must be filled</div>
-          </a-form-item>
-        </a-col>
-        <a-col class="input-group-4" :span="12" style="padding-left: 5px">
-          <div class="">
-            <div class="header-text-2 mb-10">
-              공제합계원
-              <b>{{ $filters.formatCurrency(dataAction.input.withholdingIncomeTax + dataAction.input.withholdingLocalIncomeTax) }}</b
-              >원
+            <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" :disabled="true" v-else />
+            <div class="month-custom-2 d-flex-center" v-if="isColumnData">
+              지
+              <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
             </div>
+            <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" :disabled="true" v-else />
           </div>
-          <div class="input-text">
-            <a-form-item label="소득세(공제)">
-              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
-              <span>원</span>
-            </a-form-item>
+        </a-form-item>
+        <a-form-item label="지급일" class="red">
+          <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData" width="150px" class="mr-5" v-model:valueInput="dataAction.input.paymentDay" :required="true" />
+          <!-- <div v-if="validations.paymentDay" class="validate">this must be filled</div> -->
+        </a-form-item>
+        <a-form-item label="지급액" class="red">
+          <number-box-money
+            width="150px"
+            :min="0"
+            :max="2147483647"
+            @changeInput="onChangeInput"
+            v-model:valueInput="dataAction.input.paymentAmount"
+            :required="true"
+            :disabled="!isColumnData"
+          ></number-box-money>
+          <!-- <div v-if="validations.paymentAmount" class="validate">this must be filled</div> -->
+        </a-form-item>
+        <a-form-item label="필요경비" class="red">
+          <number-box-money
+            width="150px"
+            :min="0"
+            max="2147483647"
+            :required="true"
+            @changeInput="onChangeInput"
+            v-model:valueInput="dataAction.input.requiredExpenses"
+            :disabled="!isColumnData"
+            class="red"
+          ></number-box-money>
+          <!-- <div v-if="validations.requiredExpenses" class="validate">this must be filled</div> -->
+        </a-form-item>
+        <a-form-item label="세율" class="red">
+          <DxSelectBox
+            width="200px"
+            valueExpr="value"
+            :data-source="taxRateOptions"
+            :value="dataAction.input.taxRate"
+            placeholder="선택"
+            item-template="item"
+            display-expr="label"
+            :height="$config_styles.HeightInput"
+            @value-changed="updateValue"
+            :required="true"
+          >
+            <template #item="{ data }">
+              <a-tooltip placement="top" zIndex="9999">
+                <template #title v-if="data?.tooltip">
+                  <span>{{ data.tooltip }}</span>
+                </template>
+                <span>{{ data.label }}</span>
+              </a-tooltip>
+            </template>
+            <DxValidator>
+              <DxRequiredRule :message="messageRequired" />
+            </DxValidator>
+          </DxSelectBox>
+          <!-- <div v-if="validations.taxRate" class="validate">this must be filled</div> -->
+        </a-form-item>
+      </a-col>
+      <a-col class="input-group-4" :span="12" style="padding-left: 5px">
+        <div class="">
+          <div class="header-text-2 mb-10">
+            공제합계원
+            <b>{{ $filters.formatCurrency(dataAction.input.withholdingIncomeTax + dataAction.input.withholdingLocalIncomeTax) }}</b
+            >원
           </div>
-          <div class="input-text">
-            <a-form-item label="지방소득세(공제)">
-              <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" :required="true" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
-              <span>원</span>
-            </a-form-item>
+        </div>
+        <div class="input-text">
+          <a-form-item label="소득세(공제)">
+            <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" v-model:valueInput="dataAction.input.withholdingIncomeTax" />
+            <span>원</span>
+          </a-form-item>
+        </div>
+        <div class="input-text">
+          <a-form-item label="지방소득세(공제)">
+            <number-box-money :disabled="true" style="margin-left: 20px; width: 150px" v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" />
+            <span>원</span>
+          </a-form-item>
+        </div>
+        <div class="top-con">
+          <div class="header-text-2 mb-10">
+            차인지급액
+            <b>{{
+              $filters.formatCurrency(dataAction.input.paymentAmount - dataAction.input.requiredExpenses - dataAction.input.withholdingIncomeTax - dataAction.input.withholdingLocalIncomeTax)
+            }}</b>
+            원
+            <img src="@/assets/images/iconInfo.png" style="width: 16px" />
+            <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 필요경비 - 공제합계</span>
           </div>
-          <div class="top-con">
-            <div class="header-text-2 mb-10">
-              차인지급액
-              <b>{{
-                $filters.formatCurrency(dataAction.input.paymentAmount - dataAction.input.requiredExpenses - dataAction.input.withholdingIncomeTax - dataAction.input.withholdingLocalIncomeTax)
-              }}</b>
-              원
-              <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-              <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 필요경비 - 공제합계</span>
-            </div>
-          </div>
-        </a-col>
-      </a-row>
-    </a-spin>
-  </standard-form>
+        </div>
+      </a-col>
+    </a-row>
+  </a-spin>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, reactive, computed } from 'vue';
+import { ref, defineComponent, watch, reactive, computed, getCurrentInstance } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
@@ -134,11 +136,14 @@ import notification from '@/utils/notification';
 import { companyId } from '@/helpers/commonFunction';
 import { Formula } from '@bankda/jangbuda-common';
 import { useStore } from 'vuex';
-import DxButton from "devextreme-vue/button";
+import DxButton from 'devextreme-vue/button';
+import DxValidator, { DxRequiredRule } from 'devextreme-vue/validator';
 export default defineComponent({
   components: {
     DxSelectBox,
-    DxButton
+    DxButton,
+    DxValidator,
+    DxRequiredRule,
   },
   props: {
     editTax: {
@@ -153,7 +158,7 @@ export default defineComponent({
     },
     isColumnData: {
       type: Boolean,
-      default: false
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -187,7 +192,7 @@ export default defineComponent({
       },
     });
     const isEdit = ref(false);
-    const getEmployeeExtrasTrigger = ref<boolean>(false);
+    const getEmployeeExtrasTrigger = ref<boolean>(true);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: parseInt(dayjs().format('YYYY')),
@@ -199,6 +204,10 @@ export default defineComponent({
     let incomeAmount = ref(0);
     let incomeTax = ref(0);
     let localIncomeTax = ref(0);
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
+    const messageRequired = ref(messages.getCommonMessage('102').message);
+
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
     //watch for changes
@@ -357,7 +366,6 @@ export default defineComponent({
     // GET FORM
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
-      getEmployeeExtrasTrigger.value = false;
     });
 
     const checkLen = (text: String) => {
@@ -439,6 +447,7 @@ export default defineComponent({
       resultIncomeExtra,
       onChangeInput,
       actionSavePA720,
+      messageRequired,
     };
   },
 });

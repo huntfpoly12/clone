@@ -3,7 +3,7 @@
       <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
       <a-spin :spinning="loading" size="large">
         <a-row :gutter="16">
-          <a-col span="24" style="display: flex">
+          <a-col span="24" style="display: flex; flex-wrap: wrap; column-gap: 20px;">
             <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
               <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
               <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
@@ -629,7 +629,7 @@
     }
   
     .empl-ins {
-      margin-left: 37px;
+        padding-left: 10px;
       > div {
         width: fit-content;
       }

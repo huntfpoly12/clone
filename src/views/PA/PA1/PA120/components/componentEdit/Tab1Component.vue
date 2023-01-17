@@ -25,13 +25,18 @@
             <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 마지막 근무한 날 </span>
           </div>
         </a-form-item>
-
         <a-form-item label="내/외국인" label-align="right">
           <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"> </radio-group>
         </a-form-item>
 
         <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
-          <country-code-select-box v-model:valueCountry="formStateTab1.nationalityCode" :disabled="foreigner == 0" />
+            <country-code-select-box v-if="formStateTab1.foreigner" style="width: 200px"
+                v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
+                :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner"
+                :hiddenOptionKR="true" />
+            <country-code-select-box v-else style="width: 200px"
+                v-model:valueCountry="formStateTab1.nationalityCode" @textCountry="changeTextCountry"
+                :required="formStateTab1.foreigner" :disabled="!formStateTab1.foreigner" />
         </a-form-item>
 
         <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
@@ -295,6 +300,24 @@ export default defineComponent({
       };
       mutate(dataCallCreat);
     };
+    // convert formStateTab1.name to uppercase
+    watch(()=> formStateTab1.name,(newVal)=> {
+        formStateTab1.name = newVal.toUpperCase();
+    },{deep: true})
+    const changeTextCountry = (text: any) => {
+        formStateTab1.nationality = text
+    }
+    watch(() => formStateTab1.foreigner, (newValue) => {
+        if (!newValue) {
+            formStateTab1.nationalityCode = 'KR';
+            formStateTab1.stayQualification = null;
+            foreigner.value = 0;
+        } else {
+            foreigner.value = 1;
+            // resetFormNum.value++;
+            formStateTab1.nationalityCode = formStateTab1.nationalityCode == 'KR' ? null : formStateTab1.nationalityCode
+        }
+    });
     return {
       loading,
       formStateTab1,
@@ -309,6 +332,7 @@ export default defineComponent({
       arrDepartments,
       arrResponsibility,
       actionUpdated,
+      changeTextCountry
     };
   },
 });
