@@ -256,11 +256,11 @@ export default defineComponent({
             if (valueConvert.input.employeementInsuranceSupportPercent == null)
                 valueConvert.input.employeementInsuranceSupportPercent = 0
             if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
-                store.state.common.checkStatusChangeValue = false
+                store.state.common.checkStatusChangeValuePA520 = false
             } else {
                 console.log(JSON.stringify(newVal));
                 console.log(JSON.stringify(valueConvert));
-                store.state.common.checkStatusChangeValue = true
+                store.state.common.checkStatusChangeValuePA520 = true
             }
         }, { deep: true })
         // Event change value default
@@ -284,7 +284,7 @@ export default defineComponent({
             originDataDetail.value.employeeId = store.state.common.idRowChangePa520
             trigger.value = true
             refectchDetail()
-            store.state.common.checkStatusChangeValue = false
+            store.state.common.checkStatusChangeValuePA520 = false
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -299,7 +299,7 @@ export default defineComponent({
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
-            store.state.common.checkStatusChangeValue = false
+            store.state.common.checkStatusChangeValuePA520 = false
         }
         const callFuncCalculate = () => {
             let dataDefault = originDataUpdate.value.input

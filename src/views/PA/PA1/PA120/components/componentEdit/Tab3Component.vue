@@ -160,10 +160,11 @@
                 </div>
             </a-col>
         </a-row>
-        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
-            :employeeId="employeeId" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
+      
+        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false" :key="newForm"
+            :employeeId="idRowEdit" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
         </PopupAddNewDependent>
-        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :key="idRowIndex"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
         </PopupUpdateDependent>
     </div>
@@ -204,10 +205,6 @@ export default defineComponent({
         idRowEdit: {
             type: Number
         },
-        employeeId: {
-            type: Number,
-            default: 0,
-        },
     },
     setup(props, { emit }) {
         const dataSource = ref([]);
@@ -236,8 +233,10 @@ export default defineComponent({
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
+        const newForm = ref(0)
         const openAddDependent = () => {
             modalAddNewDependent.value = true;
+            newForm.value++;
         };
         const actionEdit = (val: any) => {
             idRowIndex.value = val
@@ -354,7 +353,8 @@ export default defineComponent({
             womenSummary2,
             singleParentSummary,
             maternityAdoptionSummary,
-            convertAge
+            convertAge,
+            newForm
         }
     },
 });
