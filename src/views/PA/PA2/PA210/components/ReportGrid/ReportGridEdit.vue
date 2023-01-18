@@ -7,7 +7,7 @@
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 40"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -59,13 +59,13 @@
             </template>
             <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
             <template #submission-date="{ data }">
-              <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status == 40"></date-time-box>
+              <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10"></date-time-box>
             </template>
             <DxScrolling column-rendering-mode="virtual"/>
           </DxDataGrid>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status == 40"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
         </div> 
       </div>
     </a-spin>
@@ -136,6 +136,11 @@ export default defineComponent({
           hot.setDataAtCell(row, hot.propToCol(prop), 0);
         }
       },
+      afterChange: (changes: any,source : string)=>{
+        if(source == 'edit'){
+          calculateWithholdingStatusReport(wrapper)
+        }
+      },
       hotRef: null,
       data: dataInit,
       mergeCells: mergeCells,
@@ -161,95 +166,81 @@ export default defineComponent({
       dataSource.value = newValue
     })
     onMounted(() => {
-      clearAllCellValue(wrapper)
-      let hot = wrapper.value?.hotInstance; 
-      // fill value to table report 
-      dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
-          const rowPosition = inputPosition.find(item => item.className == data.code);
-          if (data.numberOfPeople)
-            hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople);
-          if (data.totalPayment)
-            hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment);
-          if (data.collectedIncomeTax)
-            hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax);
-          if (data.collectedRuralSpecialTax)
-            hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax);
-          if (data.collectedExtraTax)
-            hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax);
-          if (data.thisMonthAdjustedRefundTaxAmount)
-            hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount);
-          if (data.incomeTaxPaid)
-            hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
-          if (data.ruralSpecialTaxPaid)
-            hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
-      })
-    // fill value to table report adjustmentOfRefundTaxAmount
-      const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount
-      const adjustmentPosition = inputPosition.find(item => item.className == 'adjustmentOfRefundTaxAmount');
-      if (adjustment?.prevMonthNonRefundableTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value[0][0], adjustmentPosition?.value[0][1], adjustment?.prevMonthNonRefundableTaxAmount);
-      if (adjustment?.preRefundApplicationTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value[1][0], adjustmentPosition?.value[1][1], adjustment?.preRefundApplicationTaxAmount);
-      if (adjustment?.deductibleBalance)
-        hot.setDataAtCell(adjustmentPosition?.value[2][0], adjustmentPosition?.value[2][1], adjustment?.deductibleBalance);
-      if (adjustment?.thisMonthRefundTaxGeneral)
-        hot.setDataAtCell(adjustmentPosition?.value[3][0], adjustmentPosition?.value[3][1], adjustment?.thisMonthRefundTaxGeneral);
-      if (adjustment?.thisMonthRefundTaxOtherFinancialCompany)
-        hot.setDataAtCell(adjustmentPosition?.value[4][0], adjustmentPosition?.value[4][1], adjustment?.thisMonthRefundTaxOtherFinancialCompany);
-      if (adjustment?.thisMonthRefundTaxOtherMerge)
-        hot.setDataAtCell(adjustmentPosition?.value[5][0], adjustmentPosition?.value[5][1], adjustment?.thisMonthRefundTaxOtherMerge);
-      if (adjustment?.refundTaxSubjectToAdjustment)
-        hot.setDataAtCell(adjustmentPosition?.value[6][0], adjustmentPosition?.value[6][1], adjustment?.refundTaxSubjectToAdjustment);
-      if (adjustment?.thisMonthTotalAdjustedRefundTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value[7][0], adjustmentPosition?.value[7][1], adjustment?.thisMonthTotalAdjustedRefundTaxAmount);
-      if (adjustment?.nextMonthRefundTaxAmount)
-        hot.setDataAtCell(adjustmentPosition?.value[8][0], adjustmentPosition?.value[8][1], adjustment?.nextMonthRefundTaxAmount);
-      if (adjustment?.refundApplicationAmount)
-        hot.setDataAtCell(adjustmentPosition?.value[9][0], adjustmentPosition?.value[9][1], adjustment?.refundApplicationAmount);
+        loadNew()
     })
 
     const actionConfirmLoadNew = ()=>{
       confirmLoadNewStatus.value = true
     }
 
-    const {
-            refetch: refetchData,
-            result,
-            loading,
-        } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-    }));
+    // const {
+    //         refetch: refetchData,
+    //         result,
+    //         loading,
+    //     } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
+    //         enabled: trigger.value,
+    //         fetchPolicy: "no-cache",
+    // }));
 
-    watch(result, (data) => {
-      if (data) {
-        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
-          return {
-            code: item.code,
-            numberOfPeople: item.numberOfPeople,
-            totalPayment: item.totalPayment,
-            collectedIncomeTax: item.collectedIncomeTax,
-          }
-        });
-        calculateWithholdingStatusReport(wrapper,newData)
-      }
-    })
+    // watch(result, (data) => {
+    //   if (data) {
+    //     const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
+    //       return {
+    //         code: item.code,
+    //         numberOfPeople: item.numberOfPeople,
+    //         totalPayment: item.totalPayment,
+    //         collectedIncomeTax: item.collectedIncomeTax,
+    //       }
+    //     });
+    //     calculateWithholdingStatusReport(wrapper,newData)
+    //   }
+    // })
     const loadNew = () => {
-      originData.value = {
-          companyId: companyId,
-          input:{
-            imputedYear: dataSource.value[0].imputedYear,
-            imputedMonth: dataSource.value[0].imputedMonth,
-            paymentYear: dataSource.value[0].paymentYear,
-            paymentMonth: dataSource.value[0].paymentMonth,
-            reportType: dataSource.value[0].reportType,
-            index: dataSource.value[0].index,
-            paymentType: 1,
-            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
-          },
-        }
-        trigger.value = true;
-        refetchData()
+      clearAllCellValue(wrapper)
+      let hot = wrapper.value?.hotInstance; 
+      // fill value to table report 
+      dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data : any)=>{
+          const rowPosition = inputPosition.find(item => item.className == data.code);
+          if (data.numberOfPeople)
+            hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople,'initTable');
+          if (data.totalPayment)
+            hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment,'initTable');
+          if (data.collectedIncomeTax)
+            hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'initTable');
+          if (data.collectedRuralSpecialTax)
+            hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax,'initTable');
+          if (data.collectedExtraTax)
+            hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax,'initTable');
+          if (data.thisMonthAdjustedRefundTaxAmount)
+            hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount,'initTable');
+          if (data.incomeTaxPaid)
+            hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid,'initTable');
+          if (data.ruralSpecialTaxPaid)
+            hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid,'initTable');
+      })
+    // fill value to table report adjustmentOfRefundTaxAmount
+      const adjustment = dataSource.value[0]?.adjustmentOfRefundTaxAmount
+      const adjustmentPosition = inputPosition.find(item => item.className == 'adjustmentOfRefundTaxAmount');
+      if (adjustment?.prevMonthNonRefundableTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[0][0], adjustmentPosition?.value[0][1], adjustment?.prevMonthNonRefundableTaxAmount,'initTable');
+      if (adjustment?.preRefundApplicationTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[1][0], adjustmentPosition?.value[1][1], adjustment?.preRefundApplicationTaxAmount,'initTable');
+      if (adjustment?.deductibleBalance)
+        hot.setDataAtCell(adjustmentPosition?.value[2][0], adjustmentPosition?.value[2][1], adjustment?.deductibleBalance,'initTable');
+      if (adjustment?.thisMonthRefundTaxGeneral)
+        hot.setDataAtCell(adjustmentPosition?.value[3][0], adjustmentPosition?.value[3][1], adjustment?.thisMonthRefundTaxGeneral,'initTable');
+      if (adjustment?.thisMonthRefundTaxOtherFinancialCompany)
+        hot.setDataAtCell(adjustmentPosition?.value[4][0], adjustmentPosition?.value[4][1], adjustment?.thisMonthRefundTaxOtherFinancialCompany,'initTable');
+      if (adjustment?.thisMonthRefundTaxOtherMerge)
+        hot.setDataAtCell(adjustmentPosition?.value[5][0], adjustmentPosition?.value[5][1], adjustment?.thisMonthRefundTaxOtherMerge,'initTable');
+      if (adjustment?.refundTaxSubjectToAdjustment)
+        hot.setDataAtCell(adjustmentPosition?.value[6][0], adjustmentPosition?.value[6][1], adjustment?.refundTaxSubjectToAdjustment,'initTable');
+      if (adjustment?.thisMonthTotalAdjustedRefundTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[7][0], adjustmentPosition?.value[7][1], adjustment?.thisMonthTotalAdjustedRefundTaxAmount,'initTable');
+      if (adjustment?.nextMonthRefundTaxAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[8][0], adjustmentPosition?.value[8][1], adjustment?.nextMonthRefundTaxAmount,'initTable');
+      if (adjustment?.refundApplicationAmount)
+        hot.setDataAtCell(adjustmentPosition?.value[9][0], adjustmentPosition?.value[9][1], adjustment?.refundApplicationAmount,'initTable');
     }
 
     const {

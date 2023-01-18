@@ -7,16 +7,16 @@
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="연말관계" label-align="right" class="red">
-                                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
+                                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation" :readOnly="formState.relation == 0"
                                     :required="true"></dependants-relation-select-box>
                             </a-form-item>
                             <a-form-item label="성명" label-align="right" class="red">
-                                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
+                                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true" :disabled="disabledButton"
                                     v-model:valueInput="formState.name"></default-text-box>
                             </a-form-item>
                             <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
                                 <switch-basic textCheck="내국인" textUnCheck="외국인"
-                                    v-model:valueSwitch="formState.foreigner" />
+                                    v-model:valueSwitch="formState.foreigner" :disabled="disabledButton"/>
                             </a-form-item>
                             <a-form-item :label="labelResidebId" label-align="right" class="red">
                                 <id-number-text-box :required="true" width="150px"
@@ -29,13 +29,13 @@
                             </a-form-item>
                             <a-form-item label="기본공제" label-align="right" class="red">
                                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
-                                    :required="true" />
+                                    :required="true" :readOnly="true" :disabled="disabledButton"/>
                             </a-form-item>
-                            <a-form-item label="부녀자" label-align="right">
-                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="women" />
+                            <a-form-item label="부녀자women" label-align="right">
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
                             </a-form-item>
                             <a-form-item label="한부모" label-align="right">
-                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="singleParent" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
@@ -84,8 +84,9 @@ import mutations from "@/graphql/mutations/PA/PA1/PA120";
 import queries from "@/graphql/queries/PA/PA1/PA120";
 import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
+import {taxWaring} from '../../utils/index'
 const contentDelete = Message.getMessage('PA120', '002').message
-import { Message } from "@/configs/enum"
+import { Message } from "@/configs/enum";
 
 export default defineComponent({
     components: {},
@@ -107,14 +108,14 @@ export default defineComponent({
         const modalStatusDelete = ref(false)
         const idAction = ref()
         let disabledButton = ref<boolean>(false);
-        const labelResidebId = ref("주민(외국인)번호 ");
+        const labelResidebId = ref("주민등록번호");
         let initialFormState = {
             relation: null,
             name: '',
             foreigner: false,
             residentId: '',
             basicDeduction: null,
-            women: false,
+            women: true,
             singleParent: false,
             senior: false,
             disabled: 0,
@@ -127,23 +128,23 @@ export default defineComponent({
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
-        }
-        const women = ref(formState.women == true ? 1 : 0);
-        watch(women, (newValue) => {
-            if (newValue == 1) {
-                formState.women = true;
-            } else {
+        };
+        const notifcationTax = () => {
+            notification('warning', taxWaring);
+            setTimeout(()=> {
                 formState.women = false;
+            }, 200)
+        }
+        watch(()=>formState.women, (newValue) => {
+            if (newValue == true  && formState.singleParent == true) {
+                notifcationTax();
             }
-        });
-        const singleParent = ref(formState.singleParent == true ? 1 : 0);
-        watch(singleParent, (newValue) => {
-            if (newValue == 1) {
-                formState.singleParent = true;
-            } else {
-                formState.singleParent = false;
+        },{deep:true});
+        watch(()=>formState.singleParent, (newValue) => {
+            if (newValue == true  && formState.women == true) {
+                notifcationTax();
             }
-        });
+        },{deep:true});
         const senior = ref(formState.senior == true ? 1 : 0);
         watch(senior, (newValue) => {
             if (newValue == 1) {
@@ -172,10 +173,10 @@ export default defineComponent({
         watch(foreigner, (newValue) => {
             if (newValue == 1) {
                 formState.foreigner = true;
-                labelResidebId.value = "외국인번호 유효성";
+                labelResidebId.value = "주민등록번호";
             } else {
                 formState.foreigner = false;
-                labelResidebId.value = "주민등록번호";
+                labelResidebId.value = "외국인번호 유효성";
             }
         });
         watch(() => props.modalStatus, (newValue: any) => {
@@ -206,7 +207,7 @@ export default defineComponent({
                 formState.name = formState2[props.idRowIndex - 1].name
                 formState.relation = formState2[props.idRowIndex - 1].relation
                 formState.foreigner = formState2[props.idRowIndex - 1].foreigner
-                formState.residentId = formState2[props.idRowIndex - 1].residentId
+                formState.residentId = formState2[props.idRowIndex - 1].residentId.replace('-', '');
                 formState.basicDeduction = formState2[props.idRowIndex - 1].basicDeduction
                 formState.women = formState2[props.idRowIndex - 1].women
                 formState.singleParent = formState2[props.idRowIndex - 1].singleParent
@@ -265,7 +266,8 @@ export default defineComponent({
         }
         watch(() => formState.relation, (value) => {
             if (value == 0) {
-                disabledButton.value = true
+                disabledButton.value = true;
+
             } else disabledButton.value = false
         })
         watch(() => props.idRowIndex, (value) => {
@@ -308,9 +310,11 @@ export default defineComponent({
             trigger.value = true
             refetchValueDetail()
         })
+        //
         return {
-            women,
-            singleParent, loading,
+            // women,
+            // singleParent,
+            loading,
             householder,
             senior,
             descendant,
