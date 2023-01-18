@@ -58,18 +58,15 @@
                                 <HistoryOutlined @click="modalHistory" class="fz-18" />
                             </DxButton>
                         </template>
-                        <DxPaging :page-size="15" />
                         <DxColumn caption="성명" cell-template="company-name" width="250" />
-                        <template #company-name="{ data }">
+                        <template #company-name="{ data }"> 
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false"
                                 v-if="store.state.common.activeAddRowPA520 == false" />
-
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false"
                                 v-else />
-
                         </template>
                         <DxColumn caption="주민등록번호" cell-template="residentId" width="150" />
                         <template #residentId="{ data }" class="custom-action">
@@ -205,9 +202,19 @@ export default defineComponent({
         watch(result, (value) => {
             if (value) {
                 store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
+
                 // Total number of employees who have quit
                 totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
                 totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
+ 
+                if (store.state.common.rowIdSaveDonePa520 != 0) {
+                    // Get index row change 
+                    let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
+                    // active row change
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[indexChange] as HTMLInputElement).click();
+                }
+
                 trigger.value = false
             }
         })
@@ -283,6 +290,7 @@ export default defineComponent({
             idAction.value = data
             modalStatus.value = true
         }
+        // A function that is called when the user clicks on the delete button.
         const statusComfirm = (res: any) => {
             if (res == true)
                 actionDelete({
@@ -299,6 +307,7 @@ export default defineComponent({
             actionSave.value++
             store.state.common.actionSavePA520++
         }
+        // A function that is called when the user clicks on the save button.
         const statusComfirmSave = (res: any) => {
             if (res == true)
                 actionSaveFunc()
@@ -307,18 +316,21 @@ export default defineComponent({
         }
 
         const confirmSaveAdd = (res: any) => {
-            // if (res == true) {
+            if (res == true) {
+                store.state.common.actionSaveAddPA520++
 
-            // } else {
-            //     actionChangeComponent.value = 2
-            //     focusedRowKey.value = val.data.employeeId 
-            //     if (store.state.common.checkStatusChangeValuePA520 == true) {
-            //         modalStatusChange.value = true
-            //         dataChange.value = val.data.employeeId
-            //     } else {
-            //         idRowEdit.value = val.data.employeeId
-            //     }
-            // }
+            } else { //Not save
+                // Delete row add demo
+                store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+                // Change status switch in store
+                store.state.common.activeAddRowPA520 = false
+                store.state.common.checkChangeValueAddPA520 = false
+                // Get index row change 
+                let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
+                // active row change
+                let a = document.body.querySelectorAll('[aria-rowindex]');
+                (a[indexChange] as HTMLInputElement).click();
+            }
 
         }
         return {
