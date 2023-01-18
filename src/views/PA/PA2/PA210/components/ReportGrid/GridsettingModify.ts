@@ -1214,42 +1214,42 @@ export const setValueDataTable = (wrapper: any,code: string, data: any) => {
   let hot = wrapper?.value.hotInstance;
   const rowPosition = inputPositionModified.find(item => item.className == code);
   if (data.numberOfPeople)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.numberOfPeople);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.numberOfPeople,'setdata');
   if (data.totalPayment)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.totalPayment);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.totalPayment,'setdata');
   if (data.collectedIncomeTax)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.collectedIncomeTax);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.collectedIncomeTax,'setdata');
   if (data.collectedRuralSpecialTax)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.collectedRuralSpecialTax);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.collectedRuralSpecialTax,'setdata');
   if (data.collectedExtraTax)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.collectedExtraTax);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.collectedExtraTax,'setdata');
   if (data.thisMonthAdjustedRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthAdjustedRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
   if (data.incomeTaxPaid)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.incomeTaxPaid);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.incomeTaxPaid,'setdata');
   if (data.ruralSpecialTaxPaid)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.ruralSpecialTaxPaid);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.ruralSpecialTaxPaid,'setdata');
 
   if (data.prevMonthNonRefundableTaxAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.prevMonthNonRefundableTaxAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[0][0], rowPosition?.value.modifiedPosition[0][1], data.prevMonthNonRefundableTaxAmount,'setdata');
   if (data.preRefundApplicationTaxAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.preRefundApplicationTaxAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[1][0], rowPosition?.value.modifiedPosition[1][1], data.preRefundApplicationTaxAmount,'setdata');
   if (data.deductibleBalance)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.deductibleBalance);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[2][0], rowPosition?.value.modifiedPosition[2][1], data.deductibleBalance,'setdata');
   if (data.thisMonthRefundTaxGeneral)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.thisMonthRefundTaxGeneral);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[3][0], rowPosition?.value.modifiedPosition[3][1], data.thisMonthRefundTaxGeneral,'setdata');
   if (data.thisMonthRefundTaxOtherFinancialCompany)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.thisMonthRefundTaxOtherFinancialCompany);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[4][0], rowPosition?.value.modifiedPosition[4][1], data.thisMonthRefundTaxOtherFinancialCompany,'setdata');
   if (data.thisMonthRefundTaxOtherMerge)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthRefundTaxOtherMerge);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[5][0], rowPosition?.value.modifiedPosition[5][1], data.thisMonthRefundTaxOtherMerge,'setdata');
   if (data.refundTaxSubjectToAdjustment)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.refundTaxSubjectToAdjustment);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[6][0], rowPosition?.value.modifiedPosition[6][1], data.refundTaxSubjectToAdjustment,'setdata');
   if (data.thisMonthTotalAdjustedRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.thisMonthTotalAdjustedRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[7][0], rowPosition?.value.modifiedPosition[7][1], data.thisMonthTotalAdjustedRefundTaxAmount,'setdata');
   if (data.nextMonthRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[8][0], rowPosition?.value.modifiedPosition[8][1], data.nextMonthRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[8][0], rowPosition?.value.modifiedPosition[8][1], data.nextMonthRefundTaxAmount,'setdata');
   if (data.refundApplicationAmount)
-    hot.setDataAtCell(rowPosition?.value.modifiedPosition[9][0], rowPosition?.value.modifiedPosition[9][1], data.refundApplicationAmount);
+    hot.setDataAtCell(rowPosition?.value.modifiedPosition[9][0], rowPosition?.value.modifiedPosition[9][1], data.refundApplicationAmount,'setdata');
 }
 
 export const calculateWithholdingStatusReportModified = (wrapper: any,data: any = []) => {

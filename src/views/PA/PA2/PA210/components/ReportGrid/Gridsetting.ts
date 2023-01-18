@@ -610,42 +610,42 @@ export const setValueDataTable = (wrapper: any,code: string, data: any) => {
   let hot = wrapper?.value.hotInstance;
   const rowPosition = inputPosition.find(item => item.className == code);
   if (data.numberOfPeople)
-    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople);
+    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.numberOfPeople,'setdata');
   if (data.totalPayment)
-    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment);
+    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.totalPayment,'setdata');
   if (data.collectedIncomeTax)
-    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax);
+    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.collectedIncomeTax,'setdata');
   if (data.collectedRuralSpecialTax)
-    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax);
+    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.collectedRuralSpecialTax,'setdata');
   if (data.collectedExtraTax)
-    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax);
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.collectedExtraTax,'setdata');
   if (data.thisMonthAdjustedRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthAdjustedRefundTaxAmount,'setdata');
   if (data.incomeTaxPaid)
-    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid);
+    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.incomeTaxPaid,'setdata');
   if (data.ruralSpecialTaxPaid)
-    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid);
+    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.ruralSpecialTaxPaid,'setdata');
 
   if (data.prevMonthNonRefundableTaxAmount)
-    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount);
+    hot.setDataAtCell(rowPosition?.value[0][0], rowPosition?.value[0][1], data.prevMonthNonRefundableTaxAmount,'setdata');
   if (data.preRefundApplicationTaxAmount)
-    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount);
+    hot.setDataAtCell(rowPosition?.value[1][0], rowPosition?.value[1][1], data.preRefundApplicationTaxAmount,'setdata');
   if (data.deductibleBalance)
-    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance);
+    hot.setDataAtCell(rowPosition?.value[2][0], rowPosition?.value[2][1], data.deductibleBalance,'setdata');
   if (data.thisMonthRefundTaxGeneral)
-    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral);
+    hot.setDataAtCell(rowPosition?.value[3][0], rowPosition?.value[3][1], data.thisMonthRefundTaxGeneral,'setdata');
   if (data.thisMonthRefundTaxOtherFinancialCompany)
-    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany);
+    hot.setDataAtCell(rowPosition?.value[4][0], rowPosition?.value[4][1], data.thisMonthRefundTaxOtherFinancialCompany,'setdata');
   if (data.thisMonthRefundTaxOtherMerge)
-    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge);
+    hot.setDataAtCell(rowPosition?.value[5][0], rowPosition?.value[5][1], data.thisMonthRefundTaxOtherMerge,'setdata');
   if (data.refundTaxSubjectToAdjustment)
-    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment);
+    hot.setDataAtCell(rowPosition?.value[6][0], rowPosition?.value[6][1], data.refundTaxSubjectToAdjustment,'setdata');
   if (data.thisMonthTotalAdjustedRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value[7][0], rowPosition?.value[7][1], data.thisMonthTotalAdjustedRefundTaxAmount,'setdata');
   if (data.nextMonthRefundTaxAmount)
-    hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount);
+    hot.setDataAtCell(rowPosition?.value[8][0], rowPosition?.value[8][1], data.nextMonthRefundTaxAmount,'setdata');
   if (data.refundApplicationAmount)
-    hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount);
+    hot.setDataAtCell(rowPosition?.value[9][0], rowPosition?.value[9][1], data.refundApplicationAmount,'setdata');
 }
 
 export const calculateWithholdingStatusReport = (wrapper: any,data: any = []) => {
@@ -666,11 +666,8 @@ export const calculateWithholdingStatusReport = (wrapper: any,data: any = []) =>
       }
     }
   }
-  console.log(cellData);
   
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
-    console.log(output);
-    
     if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
       output.incomeWages.forEach((item) => {
         setValueDataTable(wrapper,item.code,item)
