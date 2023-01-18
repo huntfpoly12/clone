@@ -70,7 +70,7 @@
       </div>
     </a-spin>
   </a-modal>
-  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
   <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
 </template>
 

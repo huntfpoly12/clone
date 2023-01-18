@@ -6,7 +6,7 @@
         <div class="action-right">
           <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -64,11 +64,11 @@
           </DxDataGrid>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :disabled="dataSource[0].status != 10"></hot-table>
         </div> 
       </div>
   </a-modal>
-  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource.imputedYear" :reportId="dataSource.reportId"></confirm-delete>
+  <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
   <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
 </template>
 
