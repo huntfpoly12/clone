@@ -469,8 +469,7 @@ export default defineComponent({
         }
         const statusComfirmChange = (res: any) => {
             if (res) {
-                // anticon-save   
-                if (store.state.common.activeAddRowPA610 == false) {
+                if (store.state.common.activeAddRowPA610 == true) {
                     let dataCreat = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
