@@ -240,13 +240,11 @@ export default defineComponent({
     const onSubmit = (e: any) => {
         var res = e.validationGroup.validate();
         if (!res.isValid) {
-            console.log(`output->res`,res)
             // res.brokenRules[0].validator.focus();
             // focusedRowKey.value = formState.employeeId
         } else {
             emit('actionSave',actionSaveItem.value++);
         }
-        console.log(`output->res`,res)
     }
     /**
      *  Update value 

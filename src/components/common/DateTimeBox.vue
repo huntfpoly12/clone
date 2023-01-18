@@ -59,7 +59,7 @@ export default defineComponent({
             if (date.value)
             {
                 let newDate = typeof date.value == 'object' ? dayjs(date.value).format('YYYY-MM-DD') : filters.formatDateToInterger(date.value);
-                emit("update:valueDate", filters.formatDateToInterger(date.value));
+                emit("update:valueDate", newDate);
             }
             else
                 emit("update:valueDate", date.value);
