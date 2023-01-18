@@ -33,7 +33,7 @@
                                                 {{ $filters.formatCurrency(formState.info.withholdingPrice) }}
                                             </p>
                                         </a-form-item>
-                                    </a-col> 
+                                    </a-col>
                                 </a-row>
                                 <hr />
                                 <a-row>
@@ -78,9 +78,9 @@
                                             <DxLookup :data-source="facilityBizType" value-expr="v" display-expr="n" />
                                         </DxColumn>
                                         <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date" />
-                                            <template #startYearMonth="{ data }">
-                                                {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
-                                                </template>
+                                        <template #startYearMonth="{ data }">
+                                            {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
+                                        </template>
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
                                         <template #totalPrice="{ data }">
@@ -116,7 +116,7 @@
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
-                                                <a-form-item label="서비스 시작년월" class="red">  
+                                                <a-form-item label="서비스 시작년월" class="red">
                                                     <month-picker-box style="float:right" width="150px" :required="true"
                                                         v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
@@ -341,6 +341,7 @@ export default defineComponent({
 
         const formStateMomes = ref([{ ...initialFormStateMomes }]);
         const formState: any = reactive({ ...initialState });
+        const formStateExtraOld: any = ref({});
         const resetFormNum = ref(1);
         const dataSource = ref([]);
         const dataActiveRow = ref<any>(JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] })))
@@ -435,6 +436,7 @@ export default defineComponent({
                 formState.info.usedWithholding = data.usedWithholding;
                 formState.extra.salesRepresentativeId = data.salesRepresentativeId;
                 formState.extra.manageUserId = data.manageUserId;
+                formStateExtraOld.value = { ...formState.extra };
                 if (formState.info.withholding.options[0]?.withholdingServiceType) {
                     withholdingServiceType.value = true
                 }
@@ -528,6 +530,15 @@ export default defineComponent({
                 if (!variables.info.usedWithholding) {
                     delete variables.info.withholding
                 }
+                if (JSON.stringify(formState.extra) === JSON.stringify(formStateExtraOld.value) == false) {
+                    var variablesNotInfo = {
+                        id: formState.id,
+                        extra: JSON.parse(JSON.stringify({ ...formState.extra }))
+
+                    }
+                    actionUpdate(variablesNotInfo);
+                }
+                delete variables.extra
                 actionUpdate(variables);
             }
         };
@@ -685,6 +696,5 @@ export default defineComponent({
     },
 });
 </script>   
-
 
 <style src="../style/stylePopup.scss" scoped />

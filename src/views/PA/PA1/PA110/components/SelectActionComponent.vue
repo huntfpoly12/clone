@@ -238,7 +238,13 @@ export default defineComponent({
         popupDataHistoryStatus.value = { ...processKey.value }
     }
     const onSubmit = (e: any) => {
-        emit('actionSave',actionSaveItem.value++)
+        var res = e.validationGroup.validate();
+        if (!res.isValid) {
+            // res.brokenRules[0].validator.focus();
+            // focusedRowKey.value = formState.employeeId
+        } else {
+            emit('actionSave',actionSaveItem.value++);
+        }
     }
     /**
      *  Update value 

@@ -14,14 +14,13 @@
                     </div>
                 </a-col>
                 <a-col :span="21"></a-col>
-                <a-col :span="16" class="custom-layout">
+                <a-col :span="15" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="employeeId" @exporting="onExporting"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            v-model:focused-row-key="focusedRowKey" :column-auto-width="true" :onRowClick="actionEdit"
+                            v-model:focused-row-key="focusedRowKey" :onRowClick="actionEdit"
                             :focused-row-enabled="true">
-                            <DxScrolling column-rendering-mode="virtual" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
                             <DxToolbar>
@@ -46,32 +45,45 @@
                                         :total="rowTable" show-less-items />
                                 </div>
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="tag" />
+                            <DxColumn caption="성명 (상호)" cell-template="tag" data-field="name" />
                             <template #tag="{ data }" class="custom-action">
-                                <div class="custom-action">
+                                <div class="custom-action" v-if="data.data.__typename">
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                         :idCardNumber="data.data.residentId" :status="data.data.status"
                                         :foreigner="data.data.foreigner" :checkStatus="false" />
                                 </div>
+                                <div class="custom-action" v-else>
+                                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                        :status="data.data.status" :foreigner="data.data.foreigner"
+                                        :checkStatus="false" />
+                                </div>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="resident-id" width="200px" />
+                            <DxColumn caption="주민등록번호" data-field="residentId" cell-template="resident-id"
+                                width="150" />
                             <template #resident-id="{ data }" class="custom-action">
-                                <a-tooltip placement="top"
-                                    v-if="data.data.residentId?.length == 14
-                                    && parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                    key="black">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
-                                <a-tooltip placement="top" v-else title="ERROR">
-                                    {{ data.data.residentId }}
-                                </a-tooltip>
+                                <div v-if="data.data.residentId?.length == 14">
+                                    <a-tooltip placement="top"
+                                        v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                        key="black">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+                                </div>
+                                <div v-else>
+                                    <a-tooltip placement="top" key="black">
+                                        {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
+                                    </a-tooltip>
+                                </div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" width="200px" />
+                            <DxColumn caption="소득부분" cell-template="grade-cell" width="300"
+                                data-field="incomeTypeCode" />
                             <template #grade-cell="{ data }" class="custom-action">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName" />
                             </template>
-                            <DxColumn :width="70" cell-template="pupop" />
+                            <DxColumn :width="50" cell-template="pupop" />
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action" style="text-align: center;">
                                     <a-tooltip placement="top" v-if="data.data.deletable == true"
@@ -88,7 +100,7 @@
                         </div>
                     </a-spin>
                 </a-col>
-                <a-col :span="8" class="custom-layout">
+                <a-col :span="9" class="custom-layout">
                     <a-spin :spinning="loadingGetEmployeeBusinessesDetail || loadingUpdate || loadingCreated"
                         size="large" :key="resetFormNum">
                         <a-form-item label="코드" label-align="right" class="red">
@@ -122,7 +134,10 @@
                         </a-form-item>
                         <a-form-item :label="textResidentId" label-align="right" class="red">
                             <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px"
-                                placeholder="숫자 13자리" :required="true" :disabled="!dataAction.deletable" />
+                                v-if="store.state.common.activeAddRowPA610 == false" placeholder="숫자 13자리"
+                                :required="true" :disabled="disabledInput == true && !dataAction.deletable" />
+                            <id-number-text-box v-model:valueInput="dataAction.residentId" width="200px" v-else
+                                placeholder="숫자 13자리" :required="true" />
                         </a-form-item>
                         <a-form-item label="소득구분" label-align="right" class="red">
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
@@ -158,7 +173,7 @@ import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA610/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { onExportingCommon } from "@/helpers/commonFunction"
 import { origindata, ArrForeigner, valueDefaultAction } from "./utils";
@@ -169,7 +184,7 @@ import HistoryPopup from '@/components/HistoryPopup.vue';
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, ArrForeigner, DxButton, HistoryPopup
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, EditOutlined, HistoryOutlined, DxToolbar, DxEditing, DxGrouping, DxItem, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, ArrForeigner, DxButton, HistoryPopup
     },
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -200,8 +215,7 @@ export default defineComponent({
             employeeId: null
         })
         const modalChangeRow = ref(false)
-        let dataAction: any = reactive({
-            // imputedYear: globalYear,
+        let dataAction: any = ref({
             ...valueDefaultAction
         })
         let dataRowOld = reactive({
@@ -212,14 +226,14 @@ export default defineComponent({
         let disabledInput2 = ref(true)
         const modalStatus = ref(false)
         const textResidentId = ref('주민등록번호')
-        // let changeValueEit = ref(false)
+        let rowEdit = ref()
         // ================GRAPQL==============================================
         const { refetch: refetchData, loading: loadingGetEmployeeBusinesses, onError: errorGetEmployeeBusinesses, onResult: resEmployeeBusinesses } = useQuery(queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resEmployeeBusinesses(res => {
-            dataSource.value = res.data.getEmployeeBusinesses
+            store.state.common.dataSourcePA610 = res.data.getEmployeeBusinesses
         })
         errorGetEmployeeBusinesses(res => {
             notification('error', res.message)
@@ -230,23 +244,20 @@ export default defineComponent({
         }));
         resEmployeeBusinessesDetail(res => {
             if (res.data) {
-                console.log(res.data);
-
-                dataAction.employeeId = res.data.getEmployeeBusiness.employeeId
-                dataAction.name = res.data.getEmployeeBusiness.name
-                dataAction.foreigner = res.data.getEmployeeBusiness.foreigner
-                dataAction.nationality = res.data.getEmployeeBusiness.nationality
-                dataAction.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
-                dataAction.stayQualification = res.data.getEmployeeBusiness.stayQualification
-                dataAction.residentId = res.data.getEmployeeBusiness.residentId
-                dataAction.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataAction.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
-                dataAction.email = res.data.getEmployeeBusiness.email
-                dataAction.deletable = res.data.getEmployeeBusiness.deletable
-
+                dataAction.value.employeeId = res.data.getEmployeeBusiness.employeeId
+                dataAction.value.name = res.data.getEmployeeBusiness.name
+                dataAction.value.foreigner = res.data.getEmployeeBusiness.foreigner
+                dataAction.value.nationality = res.data.getEmployeeBusiness.nationality
+                dataAction.value.nationalityCode = res.data.getEmployeeBusiness.nationalityCode
+                dataAction.value.stayQualification = res.data.getEmployeeBusiness.stayQualification
+                dataAction.value.residentId = res.data.getEmployeeBusiness.residentId
+                dataAction.value.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
+                dataAction.value.incomeTypeName = res.data.getEmployeeBusiness.incomeTypeName
+                dataAction.value.email = res.data.getEmployeeBusiness.email
+                dataAction.value.deletable = res.data.getEmployeeBusiness.deletable
                 dataRowOld.employeeId = res.data.getEmployeeBusiness.employeeId
                 dataRowOld.incomeTypeCode = res.data.getEmployeeBusiness.incomeTypeCode
-                dataRowOld = { ...dataAction }
+                dataRowOld = { ...dataAction.value }
             }
         })
         errorGetEmployeeBusinessesDetail(res => {
@@ -274,13 +285,14 @@ export default defineComponent({
             loading: loadingCreated,
             onDone: createdDone,
         } = useMutation(mutations.createEmployeeBusiness);
-        createdDone(() => {
+        createdDone((res) => {
+            store.state.common.activeAddRowPA610 = false
             refetchData()
-            focusedRowKey.value = parseInt(dataAction.employeeId)
+            focusedRowKey.value = res.data.createEmployeeBusiness.employeeId
             disabledInput.value = true
             triggerDetail.value = true
-            valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.incomeTypeCode
-            valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataAction.employeeId)
+            valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.value.incomeTypeCode
+            valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataAction.value.employeeId)
             refetchDataDetail()
             notification('success', `업데이트 완료!`)
         })
@@ -301,18 +313,33 @@ export default defineComponent({
             resetFormNum.value++;
             focusedRowKey.value = null;
             disabledInput.value = false
-            Object.assign(dataAction, valueDefaultAction);
+            Object.assign(dataAction.value, valueDefaultAction);
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        watch(() => dataAction.foreigner, (newValue) => {
+        watch(() => dataAction.value, (newVal) => {
+            if (store.state.common.activeAddRowPA610 == true) {
+                newVal.residentId = newVal.residentId
+                store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1] = newVal
+            }
+        }, { deep: true })
+        watch(() => store.state.common.dataSourcePA610, (newVal) => {
+            dataSource.value = newVal
+        }, { deep: true })
+        watch(() => store.state.common.activeAddRowPA610, (newVal) => {
+            if (newVal == true)
+                dataAction.value = {
+                    ...store.state.common.dataSourcePA610[store.state.common.dataSourcePA610.length - 1]
+                }
+        }, { deep: true })
+        watch(() => dataAction.value.foreigner, (newValue) => {
             if (newValue == false) {
-                dataAction.nationalityCode = 'KR'
-                dataAction.stayQualification = null
+                dataAction.value.nationalityCode = 'KR'
+                dataAction.value.stayQualification = null
                 disabledInput2.value = true
                 textResidentId.value = '주민등록번호'
             } else {
-                dataAction.nationalityCode = dataAction.nationalityCode == 'KR' ? null : dataAction.nationalityCode
+                dataAction.value.nationalityCode = dataAction.value.nationalityCode == 'KR' ? null : dataAction.value.nationalityCode
                 disabledInput2.value = false
                 textResidentId.value = '외국인번호 유효성'
             }
@@ -321,48 +348,63 @@ export default defineComponent({
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
         };
-        let rowEdit = ref()
         const actionEdit = (data: any) => {
             rowEdit.value = data.data
-            if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction))
-                modalChangeRow.value = true
-            else {
-                triggerDetail.value = true
-                valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
-                valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
-                refetchDataDetail()
+            // Checking if the activeAddRowPA610 is true. If it is true, it will display the Vue HTML.
+            if (store.state.common.activeAddRowPA610 == true) {// *** If new and unsaved row is added  
+                if (JSON.stringify(valueDefaultAction) !== JSON.stringify(dataAction.value)) {
+                    modalChangeRow.value = true
+                    return
+                } else {
+                    store.state.common.dataSourcePA610 = store.state.common.dataSourcePA610.splice(0, store.state.common.dataSourcePA610.length - 1)
+                    store.state.common.activeAddRowPA610 = false
+                    triggerDetail.value = true
+                    valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+                    valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+                    refetchDataDetail()
+                }
+            } else {  // Row Change Instance
+                if (JSON.stringify(dataRowOld) !== JSON.stringify(dataAction.value)) {
+                    modalChangeRow.value = true
+                }
+                else {
+                    triggerDetail.value = true
+                    valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
+                    valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
+                    refetchDataDetail()
+                }
             }
             disabledInput.value = true
         }
         const changeTextCountry = (text: any) => {
-            dataAction.nationality = text
+            dataAction.value.nationality = text
         }
         const changeTextTypeCode = (text: any) => {
-            dataAction.incomeTypeName = text
+            dataAction.value.incomeTypeName = text
         }
         const saving = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
-                focusedRowKey.value = dataAction.employeeId
+                focusedRowKey.value = dataAction.value.employeeId
                 res.brokenRules[0].validator.focus();
             } else {
                 // if form disabled => action edit 
                 if (disabledInput.value == true) {
-                    let residentId = dataAction.residentId.replace('-', '')
+                    let residentId = dataAction.value.residentId.replace('-', '')
                     let dataActionedit = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
-                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                        incomeTypeCode: dataAction.incomeTypeCode,
+                        employeeId: parseInt(dataAction.value.employeeId ? dataAction.value.employeeId : ''),
+                        incomeTypeCode: dataAction.value.incomeTypeCode,
                         input: {
-                            name: dataAction.name,
-                            foreigner: dataAction.foreigner,
-                            nationality: dataAction.nationality,
-                            nationalityCode: dataAction.nationalityCode,
-                            stayQualification: dataAction.stayQualification,
+                            name: dataAction.value.name,
+                            foreigner: dataAction.value.foreigner,
+                            nationality: dataAction.value.nationality,
+                            nationalityCode: dataAction.value.nationalityCode,
+                            stayQualification: dataAction.value.stayQualification,
                             residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: dataAction.email,
-                            incomeTypeName: dataAction.incomeTypeName,
+                            email: dataAction.value.email,
+                            incomeTypeName: dataAction.value.incomeTypeName,
                         }
                     }
                     actionUpdate(dataActionedit)
@@ -371,16 +413,16 @@ export default defineComponent({
                         companyId: companyId,
                         imputedYear: globalYear.value,
                         input: {
-                            name: dataAction.name,
-                            foreigner: dataAction.foreigner,
-                            nationality: dataAction.nationality,
-                            nationalityCode: dataAction.nationalityCode,
-                            stayQualification: dataAction.stayQualification,
-                            residentId: dataAction.residentId.slice(0, 6) + '-' + dataAction.residentId.slice(6, 13),
-                            email: dataAction.email,
-                            employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                            incomeTypeCode: dataAction.incomeTypeCode,
-                            incomeTypeName: dataAction.incomeTypeName,
+                            name: dataAction.value.name,
+                            foreigner: dataAction.value.foreigner,
+                            nationality: dataAction.value.nationality,
+                            nationalityCode: dataAction.value.nationalityCode,
+                            stayQualification: dataAction.value.stayQualification,
+                            residentId: dataAction.value.residentId.slice(0, 6) + '-' + dataAction.value.residentId.slice(6, 13),
+                            email: dataAction.value.email,
+                            employeeId: parseInt(dataAction.value.employeeId ? dataAction.value.employeeId : ''),
+                            incomeTypeCode: dataAction.value.incomeTypeCode,
+                            incomeTypeName: dataAction.value.incomeTypeName,
                         }
                     }
                     actionCreated(dataCreat)
@@ -388,19 +430,32 @@ export default defineComponent({
             }
         }
         const addRow = () => {
-            if (JSON.stringify({ ...valueDefaultAction }) !== JSON.stringify(dataAction) && disabledInput.value == false) {
-                modalStatusAdd.value = true
+            if (store.state.common.activeAddRowPA610 == false) {
+                store.state.common.activeAddRowPA610 = true
+                let newVal = {
+                    ...valueDefaultAction
+                }
+                store.state.common.dataSourcePA610 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA610)).concat(newVal)
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+                if (JSON.stringify({ ...valueDefaultAction }) !== JSON.stringify(dataAction.value) && disabledInput.value == false) {
+                    modalStatusAdd.value = true
+                } else {
+                    resetFormNum.value++;
+                    focusedRowKey.value = null;
+                    disabledInput.value = false
+                    Object.assign(dataAction.value, valueDefaultAction);
+                }
             } else {
-                resetFormNum.value++;
-                focusedRowKey.value = null;
-                disabledInput.value = false
-                Object.assign(dataAction, valueDefaultAction);
+                notification('error', "Hoàn thành thao tác nhập trước đó")
             }
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 resetFormNum.value++;
-                Object.assign(dataAction, valueDefaultAction);
+                Object.assign(dataAction.value, valueDefaultAction);
             }
         }
         const actionDelete = (employeeId: any, incomeTypeCode: any) => {
@@ -414,26 +469,31 @@ export default defineComponent({
         }
         const statusComfirmChange = (res: any) => {
             if (res) {
-                let dataCreat = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    input: {
-                        name: dataAction.name,
-                        foreigner: dataAction.foreigner,
-                        nationality: dataAction.nationality,
-                        nationalityCode: dataAction.nationalityCode,
-                        stayQualification: dataAction.stayQualification,
-                        residentId: dataAction.residentId.slice(0, 6) + '-' + dataAction.residentId.slice(6, 13),
-                        email: dataAction.email,
-                        employeeId: parseInt(dataAction.employeeId ? dataAction.employeeId : ''),
-                        incomeTypeCode: dataAction.incomeTypeCode,
-                        incomeTypeName: dataAction.incomeTypeName,
+                // anticon-save   
+                if (store.state.common.activeAddRowPA610 == false) {
+                    let dataCreat = {
+                        companyId: companyId,
+                        imputedYear: globalYear.value,
+                        input: {
+                            name: dataAction.value.name,
+                            foreigner: dataAction.value.foreigner,
+                            nationality: dataAction.value.nationality,
+                            nationalityCode: dataAction.value.nationalityCode,
+                            stayQualification: dataAction.value.stayQualification,
+                            residentId: dataAction.value.residentId.slice(0, 6) + '-' + dataAction.value.residentId.slice(6, 13),
+                            email: dataAction.value.email,
+                            employeeId: parseInt(dataAction.value.employeeId ? dataAction.value.employeeId : ''),
+                            incomeTypeCode: dataAction.value.incomeTypeCode,
+                            incomeTypeName: dataAction.value.incomeTypeName,
+                        }
                     }
+                    actionCreated(dataCreat)
+                } else {
+                    (document.querySelector('.anticon-save') as HTMLInputElement).click();
                 }
-                actionCreated(dataCreat)
-                // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
-                console.log('2');
+                store.state.common.dataSourcePA610 = store.state.common.dataSourcePA610.splice(0, store.state.common.dataSourcePA610.length - 1)
+                store.state.common.activeAddRowPA610 = false
                 valueCallApiGetEmployeeBusiness.incomeTypeCode = rowEdit.value.incomeTypeCode
                 valueCallApiGetEmployeeBusiness.employeeId = rowEdit.value.employeeId
                 triggerDetail.value = true
@@ -444,7 +504,7 @@ export default defineComponent({
             modalHistoryStatus.value = true;
         }
         return {
-            resetFormNum,
+            store, resetFormNum,
             dataRowOld,
             focusedRowKey,
             modalStatusAdd,

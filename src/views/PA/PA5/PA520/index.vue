@@ -44,8 +44,8 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        :onRowClick="openEditModal">
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
+                        v-model:focused-row-key="focusedRowKey">
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -59,13 +59,37 @@
                             </DxButton>
                         </template>
                         <DxPaging :page-size="15" />
-                        <DxColumn caption="성명" cell-template="company-name" width="300px" />
+                        <DxColumn caption="성명" cell-template="company-name" width="250" />
                         <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :foreigner="data.data.foreigner" :checkStatus="false"
+                                v-if="store.state.common.activeAddRowPA520 == false" />
+
+                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false"
+                                v-else />
+
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="120px" />
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="150" />
+                        <template #residentId="{ data }" class="custom-action">
+                            <div v-if="data.data.residentId?.length == 14">
+                                <a-tooltip placement="top"
+                                    v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                    key="black">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+                                <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+                            </div>
+                            <div v-else>
+                                <a-tooltip placement="top" key="black">
+                                    {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
+                                </a-tooltip>
+                            </div>
+                        </template>
+
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">
@@ -104,6 +128,8 @@
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
         content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+    <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue"
@@ -118,6 +144,8 @@ import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
 import PA520PopupEdit from "./components/PA520PopupEdit.vue"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index"
+import { DataCreatedTable } from "./utils/index"
+
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
@@ -125,6 +153,7 @@ export default defineComponent({
         PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
+        const focusedRowKey = ref()
         const modalStatusChange = ref(false)
         const actionChangeComponent = ref(1)
         const actionSave = ref(0)
@@ -148,6 +177,7 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
+        const resetAddComponent = ref<number>(1);
         let dataChange = ref(0)
         // ======================= GRAPQL ================================
         const {
@@ -174,16 +204,10 @@ export default defineComponent({
         // ======================= WATCH ================================== 
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWageDailies
-                totalUserOnl.value = 0
-                totalUserOff.value = 0
-                dataSource.value.map((val: any) => {
-                    if (val.status != 0) {
-                        totalUserOnl.value++
-                    } else {
-                        totalUserOff.value++
-                    }
-                })
+                store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
+                // Total number of employees who have quit
+                totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
+                totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
                 trigger.value = false
             }
         })
@@ -199,25 +223,58 @@ export default defineComponent({
             originData.value.imputedYear = value
             refetchData()
         });
+
+        // get datasource from store to client
+        watch(() => store.state.common.dataSourcePA520, (value) => {
+            dataSource.value = value
+        }, { deep: true });
+        watch(() => store.state.common.rowIdSaveDonePa520, (value) => {
+            trigger.value = true
+            refetchData()
+        }, { deep: true });
         // ======================= FUNCTION ================================
-        const resetAddComponent = ref<number>(1);
+
+        // Opening a modal window.
         const openAddNewModal = () => {
-            resetAddComponent.value++;
-            actionChangeComponent.value = 1
-            modalAddNewStatus.value = true
-            //remove active row edit
-            const element = document.querySelector('.dx-row-focused');
-            (element as HTMLInputElement).classList.remove("dx-row-focused");
-        }
-        const openEditModal = (val: any) => {
-            actionChangeComponent.value = 2
-            if (store.state.common.checkStatusChangeValue == true) {
-                modalStatusChange.value = true
-                dataChange.value = val.data.employeeId
+            // Adding a new row to the table.
+            if (store.state.common.activeAddRowPA520 == false) {
+                let valueAddDefault = { ...DataCreatedTable }
+                store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
+
+                focusedRowKey.value = null
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+
+                store.state.common.activeAddRowPA520 = true
+                resetAddComponent.value++;
+                actionChangeComponent.value = 1
+                modalAddNewStatus.value = true
             } else {
-                store.state.common.idRowChangePa520 = val.data.employeeId
-                idRowEdit.value = val.data.employeeId
+                notification('error', "Hoàn thành thao tác nhập trước đó")
             }
+        }
+        const modalChangeValueAdd = ref(false)
+        const openEditModal = (val: any) => { 
+            focusedRowKey.value = null
+            if (store.state.common.checkChangeValueAddPA520 == true) { 
+                modalChangeValueAdd.value = true
+            } else {
+                focusedRowKey.value = val.data.employeeId
+                if (store.state.common.activeAddRowPA520 == true) {
+                    store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+                    store.state.common.activeAddRowPA520 = false
+                }
+                actionChangeComponent.value = 2
+                if (store.state.common.checkStatusChangeValuePA520 == true) {
+                    modalStatusChange.value = true
+                    dataChange.value = val.data.employeeId
+                } else {
+                    store.state.common.idRowChangePa520 = val.data.employeeId
+                    idRowEdit.value = val.data.employeeId
+                }
+            } 
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -249,11 +306,12 @@ export default defineComponent({
             idRowEdit.value = dataChange.value
         }
         return {
-            modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
             statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },
 })
 </script> 
 <style lang="scss" scoped src="./style/style.scss" >
+
 </style>

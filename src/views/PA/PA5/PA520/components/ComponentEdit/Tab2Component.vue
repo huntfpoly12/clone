@@ -27,6 +27,7 @@
                         v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance" />
                 </a-form-item>
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
+                    {{ originDataUpdate.input.nationalPensionSupportPercent }} -------
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport" />
@@ -125,7 +126,6 @@
                 id="action-update" />
         </div>
     </div>
-
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
@@ -144,7 +144,6 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let dataReturn = ref()
-
         const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수');
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
@@ -180,11 +179,14 @@ export default defineComponent({
         resWithholdingConfigPayItems(res => {
             arrDeduction.value = []
             res.data.getWithholdingConfigDeductionItems.map((val: any) => {
-                let price = funcCheckPrice(val.itemCode)
-                arrDeduction.value.push({
-                    ...val,
-                    price: price
-                })
+                if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode)) {
+                    let price = funcCheckPrice(val.itemCode)
+                    arrDeduction.value.push({
+                        ...val,
+                        price: price
+                    })
+                }
+                    
             })
         })
         const {
@@ -194,7 +196,6 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
-
         resApiGetEmployeeWageDaily((e: any) => {
             trigger.value = false
             if (e.data) {
@@ -209,6 +210,8 @@ export default defineComponent({
                     originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
                     originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
                 }, 100);
+                originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent
+                originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent
                 originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
                 originDataUpdate.value.input.workingDays = res.workingDays
                 originDataUpdate.value.input.dailyWage = res.dailyWage
@@ -231,7 +234,6 @@ export default defineComponent({
                 dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
             }
         })
-
         const {
             mutate,
             onError,
@@ -247,6 +249,20 @@ export default defineComponent({
             notification('success', '업그레이드가 완료되었습니다!')
         })
         // ================== WATCH ====================================
+        watch(() => originDataUpdate.value, (newVal) => {
+            let valueConvert = JSON.parse(dataDefaultGet.value)
+            if (valueConvert.input.nationalPensionSupportPercent == null)
+                valueConvert.input.nationalPensionSupportPercent = 0
+            if (valueConvert.input.employeementInsuranceSupportPercent == null)
+                valueConvert.input.employeementInsuranceSupportPercent = 0
+            if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
+                store.state.common.checkStatusChangeValuePA520 = false
+            } else {
+                console.log(JSON.stringify(newVal));
+                console.log(JSON.stringify(valueConvert));
+                store.state.common.checkStatusChangeValuePA520 = true
+            }
+        }, { deep: true })
         // Event change value default
         watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
             if (newVal == false) {
@@ -255,14 +271,6 @@ export default defineComponent({
             } else {
                 originDataUpdate.value.input.nationalPensionSupportPercent = 0
                 originDataUpdate.value.input.employeementInsuranceSupportPercent = 0
-            }
-        }, { deep: true })
-
-        watch(() => originDataUpdate.value, (newVal) => { 
-            if (JSON.stringify(newVal) === dataDefaultGet.value) {
-                store.state.common.checkStatusChangeValue = false
-            } else {
-                store.state.common.checkStatusChangeValue = true
             }
         }, { deep: true })
         // call api on tab 2 for the first time
@@ -276,7 +284,7 @@ export default defineComponent({
             originDataDetail.value.employeeId = store.state.common.idRowChangePa520
             trigger.value = true
             refectchDetail()
-            store.state.common.checkStatusChangeValue = false
+            store.state.common.checkStatusChangeValuePA520 = false
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -291,10 +299,10 @@ export default defineComponent({
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
-            store.state.common.checkStatusChangeValue = false
+            store.state.common.checkStatusChangeValuePA520 = false
         }
-        const callFuncCalculate = () => { 
-            let dataDefault = originDataUpdate.value.input 
+        const callFuncCalculate = () => {
+            let dataDefault = originDataUpdate.value.input
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
             let total2 = calculateHealthInsuranceEmployee(dataDefault.monthlyWage)
             let total3 = calculateLongTermCareInsurance(dataDefault.monthlyWage)
@@ -363,8 +371,6 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = dailyWage;
             }
         }
-
-
         return {
             store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
             callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,
@@ -373,5 +379,4 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../../style/tab2.scss">
-
 </style>

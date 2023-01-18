@@ -28,5 +28,5 @@ export const valueDefaultAction = {
     incomeTypeCode: '940100',
     incomeTypeName: '저술가',
     email: '',
-    deletable : true,
+    deletable : false,
 } 

@@ -3,33 +3,37 @@
       <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
       <a-spin :spinning="loading" size="large">
         <a-row :gutter="16">
-          <a-col span="24" style="display: flex">
-            <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
+          <a-col span="24" style="display: flex; flex-wrap: wrap;">
+            <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
               <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
               <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
             </a-form-item>
-            <div class="input-text empl-ins">
-              <checkbox-basic size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"></checkbox-basic>
-              <span>
-                <img src="@/assets/images/iconInfo.png" style="width: 14px" />
-                <p>본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
-              </span>
-            </div>
+              <checkbox-basic class="mb-4 ml-15" size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"></checkbox-basic>
+                
+            <p class="text-note mt-7 ml-7">
+                <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
+                본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.</p>
           </a-col>
           <a-col :span="12">
-            <div class="header-text-2">두루누리사회보험 공제</div>
+            <div class="header-text-4 d-flex">
+                <a-col :span="13">
+                    두루누리사회보험 공제
+                </a-col>
+                <a-col :span="11" class="switch-bg">
+                     공제 여부: 
+                        <switch-basic
+                        switch-basic
+                        textCheck="Y"
+                        textUnCheck="N"
+                        class="switch-insurance ml-20"
+                        v-model:valueSwitch="formStateTab2.longTermCareInsuranceDeduction"
+                        @onChange="onChangeSwitch1"
+                        ></switch-basic>
+                    
+                </a-col>
+            </div>
             <a-row :gutter="[0, 10]">
-              <a-col span="10"> 두루누리사회보험 공제 여부: </a-col>
-              <a-col span="12">
-                <switch-basic
-                  switch-basic
-                  textCheck="Y"
-                  textUnCheck="N"
-                  class="switch-insurance"
-                  v-model:valueSwitch="formStateTab2.longTermCareInsuranceDeduction"
-                  @onChange="onChangeSwitch1"
-                ></switch-basic>
-              </a-col>
+              
               <a-col span="10"> 국민연금 적용율: </a-col>
               <a-col span="12">
                 <radio-group
@@ -51,11 +55,22 @@
             </a-row>
           </a-col>
           <a-col :span="12">
-            <div class="header-text-2">중소기업취업 감면</div>
-            <a-row :gutter="[0, 10]">
-              <a-col span="10"> 중소기업취업 감면 여부: </a-col>
-              <a-col span="12">
-                <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" v-model:valueSwitch="formStateTab2.employeementReduction" @onChange="onChangeSwitch2"></switch-basic>
+            <div class="header-text-4 d-flex">
+                <a-col :span="13">
+                    중소기업취업 감면
+                </a-col>
+                <a-col :span="11" class="switch-bg">
+                    감면 여부: 
+                    <switch-basic
+                        switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance ml-19" v-model:valueSwitch="formStateTab2.employeementReduction" @onChange="onChangeSwitch2"
+                    ></switch-basic>
+                    
+                </a-col>
+            </div>
+            <a-row :gutter="[5, 10]">
+              <a-col :span="24">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5"/>
+                <span class="text-note">15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세 70%(청년 90%, 150만원 한도) 감면</span>
               </a-col>
               <a-col span="10"> 감면기간: </a-col>
               <a-col span="12">
@@ -101,12 +116,17 @@
           <a-col :span="8">
             <div class="header-text-2">요약</div>
             <div class="summary">
-              <div class="text0">소득수당 합계 <span>{{ $filters.formatCurrency(totalPayItem) }}</span>원</div>
-              <div class="text1">수당 과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTax) }} </span>원</div>
-              <div class="text2">수당 비과세 합계 <span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span>원</div>
-              <div class="text3">공제 합계 <span>{{ $filters.formatCurrency(totalDeduction) }}</span>원</div>
-              <div class="text4">차인지급액 <span>{{ $filters.formatCurrency(subPayment) }}</span>원</div>
-              <div class="text5">
+                <a-col :span="20">소득수당 합계:</a-col>
+                <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItem) }}</span> 원</a-col>
+                <a-col :span="20">수당 과세 합계:</a-col>
+                <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
+                <a-col :span="20">수당 비과세 합계:</a-col>
+                <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
+                <a-col :span="20">공제 합계:</a-col>
+                <a-col :span="4"><span>{{ $filters.formatCurrency(totalDeduction) }}</span> 원</a-col>
+                <a-col :span="20">차인지급액:</a-col>
+                <a-col :span="4"><span>{{ $filters.formatCurrency(subPayment) }}</span> 원</a-col>
+              <div class="text5 pl-8">
                 <span>
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
                   <p>차인지급액 = 수당 합계 - 공제 합계</p>
@@ -230,6 +250,7 @@
       const originDataDetail = ref({
         companyId: companyId,
         imputedYear: globalYear.value,
+        useOnly: true,
       });
   
       watch(
@@ -274,6 +295,11 @@
       });
   
       // get WithouthouldingConfigdeduction
+      const parseConfigDeduction = (item: any, itemCodeAble: any) => {
+        if(item.itemCode == itemCodeAble){
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
+        }
+      }
       const {
         result: resConfigDeduction,
         loading: loading2,
@@ -283,8 +309,27 @@
       }));
       watch(resConfigDeduction, (value) => {
         if (value) {
-          dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.map((item: any) => {
-            return { itemCode: item.itemCode, name: item.name, value: 0 };
+          dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.filter((item: any) => {
+            // parseConfigDeduction(item, '1001')
+            if(item.itemCode == 1001){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            if(item.itemCode == 1002){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            if(item.itemCode == 1003){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            if(item.itemCode == 1004){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            if(item.itemCode == 1011){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            if(item.itemCode == 1012){
+                return { itemCode: item.itemCode, name: item.name, value: 0 };
+            }
+            // return { itemCode: item.itemCode, name: item.name, value: 0 };
           });
         }
       });
@@ -588,6 +633,16 @@
       font-weight: bold;
       font-size: 14px;
       margin-bottom: 10px;
+      flex-wrap:nowrap;
+    }
+    .header-text-4{
+      background-color: #c6d9f1;
+      padding: 5px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .switch-bg {
+        background-color: white;
     }
   
     .header-text-3 {
@@ -614,7 +669,7 @@
       display: flex;
   
       .check-box-tab1 {
-        margin-left: 35px;
+        margin-left: 20px;
       }
     }
   
@@ -629,10 +684,6 @@
     }
   
     .empl-ins {
-      margin-left: 37px;
-      > div {
-        width: fit-content;
-      }
       span {
         display: flex;
         align-items: center;
@@ -700,6 +751,9 @@
     }
   
     .summary {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 4px;
       div {
         margin-bottom: 5px;
         span{
@@ -716,6 +770,15 @@
           }
         }
       }
+    }
+    .text-note {
+        font-size: 11px;
+        &p{
+    margin-bottom: 0;
+    margin-top: 7px;
+        }
+    // margin-left: 5px;
+    // margin-bottom: 0px;
     }
   }
   </style>

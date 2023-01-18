@@ -48,15 +48,19 @@ export default defineComponent({
         watch(
             () => props.valueDate,
             (newValue) => {
-                if (newValue)
+                if (newValue){
                     date.value = filters.formatDate(newValue?.toString());
+                }
                 else
                     date.value = newValue;
             }
         );
         const updateValue = () => {
             if (date.value)
-                emit("update:valueDate", filters.formatDateToInterger(date.value));
+            {
+                let newDate = typeof date.value == 'object' ? dayjs(date.value).format('YYYY-MM-DD') : filters.formatDateToInterger(date.value);
+                emit("update:valueDate", newDate);
+            }
             else
                 emit("update:valueDate", date.value);
         };

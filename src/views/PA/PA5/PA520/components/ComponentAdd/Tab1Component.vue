@@ -34,17 +34,20 @@
             <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataCreated.foreigner"
                 layoutCustom="horizontal" />
         </a-form-item>
-        <a-form-item label="외국인 국적" label-align="right"
-            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
-                :hiddenOptionKR="dataCreated.foreigner" @textCountry="(res: any) => { dataCreated.nationality = res }"
-                :disabled="disabledSelectBox" width="200px" />
-        </a-form-item>
-        <a-form-item label="외국인 체류자격" label-align="right"
-            :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-            <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification" width="200px"
-                :disabled="disabledSelectBox" />
-        </a-form-item>
+        <div class="d-flex">
+            <a-form-item label="외국인 국적" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
+                    :hiddenOptionKR="dataCreated.foreigner"
+                    @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
+                    width="180px" />
+            </a-form-item>
+            <a-form-item label="외국인 체류자격" label-align="right"
+                :class="{ 'label-red': activeLabel, 'label-custom-width': true, 'pl-10': true }">
+                <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification"
+                    width="180px" :disabled="disabledSelectBox" />
+            </a-form-item>
+        </div>
         <a-form-item :label="labelResident" label-align="right" class="label-red">
             <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
         </a-form-item>
@@ -63,10 +66,12 @@
                     </div>
                 </a-col>
             </a-row>
-            <a-row style="display: inherit;">
-                <default-text-box width="357px" :disabled="true" placeholder="주소1"
-                    v-model:valueInput="dataCreated.roadAddress" style="margin: 5px 0 5px 0" />
-                <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataCreated.addressExtend" />
+            <a-row class="d-flex mt-5">
+                <default-text-box width="50%" :disabled="true" placeholder="주소1"
+                    v-model:valueInput="dataCreated.roadAddress" />
+                <div style="width: 50%;padding-left: 5px;">
+                    <default-text-box placeholder="주소2" v-model:valueInput="dataCreated.addressExtend" />
+                </div>
             </a-row>
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
@@ -106,7 +111,6 @@ export default defineComponent({
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
-        const countryInfo = ref()
         const selectBoxData1 = ref([])
         const selectBoxData2 = ref([])
         let dataCreated: any = reactive({
@@ -158,8 +162,10 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
-            emit("closePopup", dataCreated.employeeId)
+            // emit("closePopup", dataCreated.employeeId)
             notification('success', '업데이트 완료!');
+            store.state.common.activeAddRowPA520 = false
+            store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId
         })
         //============ WATCH =================================
         watch(() => dataCreated.foreigner, (value: any) => {
@@ -176,6 +182,23 @@ export default defineComponent({
                 dataCreated.stayQualification = 'C-4'
             }
         })
+        watch(() => dataCreated, (value) => {
+            if (store.state.common.activeAddRowPA520 == true) {
+                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
+                dataTable.employeeId = value.employeeId
+                dataTable.name = value.name
+                dataTable.foreigner = value.foreigner
+                dataTable.status = value.retirementIncome
+                dataTable.residentId = value.residentId
+            }
+
+            if (JSON.stringify(DataCreated) !== JSON.stringify(value))
+                store.state.common.checkChangeValueAddPA520 = true
+            else
+                store.state.common.checkChangeValueAddPA520 = false
+
+
+        }, { deep: true })
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
@@ -189,10 +212,12 @@ export default defineComponent({
                 let newValDataCreat = {
                     ...dataCreated,
                     employeeId: parseInt(dataCreated.employeeId),
+                    weeklyWorkingHours: parseInt(dataCreated.weeklyWorkingHours),
                     joinedAt: dataCreated.joinedAt,
                     leavedAt: dataCreated.leavedAt,
                     residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
                 };
+
                 delete newValDataCreat.zipcode;
                 let dataCallCreat = {
                     companyId: companyId,
@@ -203,20 +228,12 @@ export default defineComponent({
             }
         }
         return {
-            activeLabel,
-            labelResident,
-            disabledSelectBox,
-            actionCreated,
-            countryInfo,
-            dataCreated,
-            funcAddress,
-            radioCheckForeigner,
-            activeKey: ref("1"),
-            selectBoxData1,
-            selectBoxData2
+            activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionCreated, funcAddress,
         };
     },
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>

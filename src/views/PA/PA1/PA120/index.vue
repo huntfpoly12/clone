@@ -49,6 +49,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="actionEdit"
                         :focused-row-enabled="true" id="pa-120-gridContainer" :auto-navigate-to-focused-row="true"
                         v-model:focused-row-key="focusedRowKey">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -214,6 +215,7 @@ export default defineComponent({
         }
         const openAddNewModal = async () => {
             actionChangeComponent.value = 1;
+            console.log(`output->dataSource.value`,dataSource.value)
             // if (!addNew.value.compareData()) {
             //     popupStatus.value = true;
             // }
@@ -284,11 +286,11 @@ export default defineComponent({
             isResidentIdError[val.id] = val.isError;
         }
         //focus Row
-        const focusedRowKey = ref<Number>(0);
+        const focusedRowKey = ref<String | Number>(0);
         const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
         const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
         watch(keyActivePA120, (newval: number) => {
-            focusedRowKey.value = newval;
+            focusedRowKey.value = +newval;
         })
         return {
             loading,

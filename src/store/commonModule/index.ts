@@ -5,6 +5,7 @@ import statesPA110 from "./screenStates/screenStatePA110";
 import statesPA120 from "./screenStates/screenStatePA120";
 import statesPA410 from "./screenStates/screenStatePA410";
 import statesPA510 from "./screenStates/screenStatePA510";
+import statesPA610 from "./screenStates/screenStatePA610";
 import statesPA620 from "./screenStates/screenStatePA620";
 import statesPA720 from "./screenStates/screenStatePA720";
 import layputState from "./screenStates/layoutState";
@@ -16,6 +17,7 @@ const commonModule = {
         ...statesPA120,
         ...statesPA410,
         ...statesPA510,
+        ...statesPA610,
         ...statesPA620,
         ...statesPA720,
         ...statesPA520,

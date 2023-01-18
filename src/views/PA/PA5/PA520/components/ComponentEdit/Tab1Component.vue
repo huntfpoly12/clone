@@ -39,20 +39,22 @@
                     </span>
                 </div>
             </a-form-item>
-            <a-form-item label="내/외국인" label-align="right" class="label-custom-width"> 
+            <a-form-item label="내/외국인" label-align="right" class="label-custom-width">
                 <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
                     layoutCustom="horizontal" />
             </a-form-item>
-            <a-form-item label="외국인 국적" label-align="right"
-                :class="{ 'label-red': activeLabel, 'label-custom-width': true }"> 
-                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                    :hiddenOptionKR="dataEdited.foreigner" />
-            </a-form-item>
-            <a-form-item label="외국인 체류자격" label-align="right"
-                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-                <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                    :disabled="disabledSelectBox" />
-            </a-form-item>
+            <div class="d-flex">
+                <a-form-item label="외국인 국적" label-align="right"
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                    <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" />
+                </a-form-item>
+                <a-form-item label="외국인 체류자격" label-align="right"
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
+                    <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
+                        :disabled="disabledSelectBox" width="180px" />
+                </a-form-item>
+            </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
                 <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
@@ -71,10 +73,12 @@
                         </div>
                     </a-col>
                 </a-row>
-                <a-row style="display: inherit;">
-                    <default-text-box width="357px" :disabled="true" placeholder="주소1"
-                        v-model:valueInput="dataEdited.roadAddress" class="mt-5 mb-5" />
-                    <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                <a-row class="d-flex-center pt-5">
+                    <default-text-box :disabled="true" placeholder="주소1" v-model:valueInput="dataEdited.roadAddress"
+                        style="width: 50%;" />
+                    <div style="width: 50%; padding-left: 10px;">
+                        <default-text-box placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                    </div>
                 </a-row>
             </a-form-item>
             <a-form-item label="이메일" label-align="right">
@@ -198,9 +202,7 @@ export default defineComponent({
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
-
                 dataDefault = JSON.stringify(dataEdited)
-
             }
         })
         const {
@@ -217,9 +219,6 @@ export default defineComponent({
         })
         // ============ WATCH ================================ 
         watch(() => props.idRowEdit, (newVal) => {
-            console.log(dataDefault);
-            console.log(JSON.stringify(dataEdited));
-
             if (dataDefault === JSON.stringify(dataEdited)) {
                 originDataDetail.value.employeeId = newVal
                 refetchValueDetail()

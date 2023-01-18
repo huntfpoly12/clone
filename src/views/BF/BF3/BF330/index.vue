@@ -47,6 +47,7 @@
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -74,7 +75,10 @@
                     <DxColumn data-field="phone" caption="연락처" />
                     <DxColumn data-field="presidentMobilePhone" caption="휴대폰" />
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
-                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="manageStartDate" cell-template="manageStartDate" caption="관리시작일" data-type="date" />
+                    <template #manageStartDate="{ data }">
+                        {{ data.data.manageStartDate ? $filters.formatDate(data.data.manageStartDate) : '' }}
+                    </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }" class="custom-action" >
@@ -112,7 +116,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem} from "devextreme-vue/data-grid";
+import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem, DxScrolling} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
@@ -140,7 +144,8 @@ export default defineComponent({
         SearchOutlined,
         SaveOutlined,
         DeleteOutlined,
-        PrinterOutlined
+        PrinterOutlined,
+        DxScrolling,
     },
     setup() {
         // config grid
