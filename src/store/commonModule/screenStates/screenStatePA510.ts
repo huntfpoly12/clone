@@ -14,6 +14,8 @@ const statesPA510 = {
     statusChangeFormEdit: false,
     loadingTableInfo: 0,
     focusedRowKey: 1,
+    statusRowAdd: true,
+    dataTaxPayInfo: [],
 };
   
 export default statesPA510;

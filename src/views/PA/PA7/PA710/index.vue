@@ -77,8 +77,7 @@
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action">
                                     <a-space :size="10">
-                                        <DeleteOutlined v-if="data.data.deletable"
-                                            @click="modalStatusDelete = true" />
+                                        <DeleteOutlined v-if="data.data.deletable" @click="statusRowAdd ? modalStatusDelete = true : ''" />
                                     </a-space>
                                 </div>
                             </template>
@@ -143,6 +142,9 @@
                                 </span>
                             </div>
                         </a-form-item>
+                        <div class="text-align-center mt-20">
+                            <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="actionSave($event)" />
+                        </div>
                         <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
                             id="active-save" />
                     </a-spin>
@@ -382,12 +384,9 @@ export default defineComponent({
                 confirmSave.value = true
         }
         const onSelectionClick = (data: any) => {
-            if (data.data.employeeId) {
-                dataRow = data.data
-                // originDataDetail.value.employeeId = dataRow.employeeId
-                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+            dataRow = data.data
+            if (dataRow.employeeId) {
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
-                    // document.getElementById('active-save')?.click()
                     modalStatus.value = true;
                 } else {
                     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
@@ -501,7 +500,7 @@ export default defineComponent({
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete,
+            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete, statusRowAdd,
         };
     },
 });
