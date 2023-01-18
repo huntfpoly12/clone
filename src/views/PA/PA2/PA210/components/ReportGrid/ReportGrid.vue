@@ -205,6 +205,11 @@ export default defineComponent({
           hot.setDataAtCell(row, hot.propToCol(prop), 0);
         }
       },
+      afterChange: (changes: any,source : string)=>{
+        if(source == 'edit'){
+          calculateWithholdingStatusReport(wrapper)
+        }
+      },
       hotRef: null,
       data: [...dataInit],
       mergeCells: mergeCells,
