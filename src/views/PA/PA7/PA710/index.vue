@@ -270,7 +270,6 @@ export default defineComponent({
         );
         onDoneAdd(() => {
             trigger.value = true;
-            refetchData();
             focusedRowKey.value = parseInt(formState.value.employeeId)
             dataRowOld = { ...formState.value }
             statusFormUpdate.value = true;
@@ -285,16 +284,18 @@ export default defineComponent({
             resetFormNum.value++;
             statusFormUpdate.value = false;
             focusedRowKey.value = null;
-            refetchData();
+
             Object.assign(formState.value, initialState);
         });
         onDoneUpdate(() => {
             trigger.value = true;
-            refetchData();
-            if (formState.value.employeeId != dataRow.employeeId) {
+            if (formState.value.employeeId == focusedRowKey.value) {
+                originDataDetail.value.employeeId = formState.value.employeeId
+                originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode
+                dataRowOld = { ...formState.value }
+            } else {
                 originDataDetail.value.employeeId = dataRow.employeeId
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
-                dataRowOld = { ...formState.value }
             }
             triggerDetail.value = true;
             notification('success', `업데이트 완료되었습니다!`)
@@ -309,6 +310,8 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
                 focusedRowKey.value = parseInt(formState.value.employeeId)
+                // dataRow.employeeId = formState.value.employeeId
+                // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
                 if (statusFormUpdate.value) {
@@ -381,8 +384,8 @@ export default defineComponent({
         const onSelectionClick = (data: any) => {
             if (data.data.employeeId) {
                 dataRow = data.data
-                originDataDetail.value.employeeId = dataRow.employeeId
-                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                // originDataDetail.value.employeeId = dataRow.employeeId
+                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     // document.getElementById('active-save')?.click()
                     modalStatus.value = true;
