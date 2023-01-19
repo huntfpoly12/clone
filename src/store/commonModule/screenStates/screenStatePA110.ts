@@ -6,6 +6,9 @@ const statesPA110 = {
     paymentYear: dayjs().year(),
     paymentMonth: dayjs().month() + 1,
   },
+  actionAddItem: false,
+  actionSubmit: 0,
+  loadingTableInfo: 0,
 };
 
 export default statesPA110;

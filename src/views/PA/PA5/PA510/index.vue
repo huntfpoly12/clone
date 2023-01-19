@@ -196,7 +196,7 @@
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :modalStatus="true" :dataRows="dataRows" @onSubmit="onSubmit($event)" />
+                <SelectActionComponent :dataRows="dataRows" @onSubmit="onSubmit($event)" />
             </a-col>
         </a-row>
         <a-row>

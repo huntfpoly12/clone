@@ -60,8 +60,28 @@ export const dataGetDetailEdit = {
     incomeId: 0
 }
 
-export const arrDropDownUtil =[
-        { id: 1, url: '520', event: '520', title: '' },
-        { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
-        { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
-    ]
+export const arrDropDownUtil = [
+    { id: 1, url: '520', event: '520', title: '' },
+    { id: 2, function: 'History', event: 'History', title: '일용직근로소득자료 변경이력' },
+    { id: 2, function: 'HistoryStatus', event: 'HistoryStatus', title: '일용직근로소득 마감상태 변경이력' },
+]
+
+
+export const DataAddNew = {
+    "incomeId": null,
+    "paymentDay": null,
+    "employeeType": null,
+    "employeeId": null,
+    "incomeTypeCode": "",
+    "incomePayment": null,
+    "withholdingIncomeTax": null,
+    "withholdingLocalIncomeTax": null,
+    "withholdingRuralSpecialTax": null,
+    "prevPaymentDay": null,
+    "paymentAmount": null,
+    "taxRate": null,
+    "actualPayment": null,
+    "employee": {
+        "name": "", "incomeTypeName": "",
+    },
+}

@@ -34,7 +34,7 @@ export default defineComponent({
             default: []
         },
         processKey: {
-            type: Array,
+            type: [Array || Object],
             default: []
         },
     },

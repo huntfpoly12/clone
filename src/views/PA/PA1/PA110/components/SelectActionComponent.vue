@@ -4,7 +4,7 @@
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" />
     <DxButton class="ml-3" icon="edit" @click="editItem" />
-    <DxButton @click="actionAddItem1 ? onSubmit($event) : updateData($event)" size="large" class="ml-4" :disabled="false">
+    <DxButton @click="store.state.common.actionAddItem ? onSubmit($event) : updateData($event)" size="large" class="ml-4" :disabled="false">
         <SaveOutlined style="font-size: 17px" />
     </DxButton>
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
@@ -41,7 +41,7 @@
         </template>
     </DxDropDownButton>
     
-    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" @loadingTableInfo="loadingTableInfo"
+    <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" 
         :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
@@ -61,7 +61,7 @@ import { defineComponent, ref, computed, watch, reactive } from "vue";
 import DxButton from "devextreme-vue/button"
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import PrintPayrollRegisterPopup from "./Popup/PrintPayrollRegisterPopup.vue"
-import DeletePopup from "./Popup/DeletePopupIncomeWages.vue"
+import DeletePopupIncomeWages from "./Popup/DeletePopupIncomeWages.vue"
 import EditPopup from "./Popup/EditPopup.vue"
 import EmailSinglePayrollRegisterPopup from "./Popup/EmailSinglePayrollRegisterPopup.vue"
 import EmailMultiPopup from "./Popup/EmailMultiPopup.vue"
@@ -78,7 +78,7 @@ export default defineComponent({
         DxButton,
         DxDropDownButton,
         PrintPayrollRegisterPopup,
-        DeletePopup,
+        DeletePopupIncomeWages,
         EditPopup,
         EmailSinglePayrollRegisterPopup,
         EmailMultiPopup,
@@ -87,14 +87,14 @@ export default defineComponent({
         SaveOutlined
     },
     props: {
-        modalStatus: {
-            type: Boolean
-        },
+        // modalStatus: {
+        //     type: Boolean
+        // },
         dataRows: {
             type: Array,
             default: []
         },
-        actionAddItem: Boolean,
+        // actionAddItem: Boolean,
     },
   setup(props, { emit }) {
     const store = useStore()
@@ -126,7 +126,7 @@ export default defineComponent({
     const popupDataEmailSingle: any = ref({})
     const popupDataEmailSinglePayrollRegister: any = ref({})
     const popupDataEmailMulti: any = ref({})
-    const actionAddItem1 = ref<Boolean>(false)
+    // const actionAddItem1 = ref<Boolean>(false)
     const actionSaveItem= ref<number>(0)
     const actionUpdateItem = ref<number>(0)
     watch(() => props.dataRows, (value) => {
@@ -134,9 +134,9 @@ export default defineComponent({
             popupDataDelete.value = value
         }
     })
-    watch(()=> props.actionAddItem,(newVal: Boolean)=> {
-        actionAddItem1.value = newVal;
-    })
+    // watch(()=> props.actionAddItem,(newVal: Boolean)=> {
+    //     actionAddItem1.value = newVal;
+    // })
     const deleteItem = (value: any) => {
         if (props.dataRows.length) {
             modalDelete.value = true;
@@ -147,8 +147,7 @@ export default defineComponent({
         }
     };
     const onActionAddItem = (value: any) => {
-        actionAddItem1.value = true;
-        emit("actionAddItem", true)
+        store.state.common.actionAddItem = true;
     }
     const editItem = (value: any) => {
         if (props.dataRows.length == 1) {
@@ -208,9 +207,6 @@ export default defineComponent({
                     notification('error', `항목을 최소 하나 이상 선택해야합니다`)
                 }
                 break;
-            case 'EmailPayrollRegister':
-                modalPrintPayrollRegister.value = true;
-                break;
         }
     }
     const { refetch, result, loading
@@ -224,9 +220,9 @@ export default defineComponent({
             window.open(value.getIncomeWageSalaryStatementViewUrl)
         }
     })
-    const loadingTableInfo = () => {
-        emit("loadingTableInfo", true)
-    }
+    // const loadingTableInfo = () => {
+    //     emit("loadingTableInfo", true)
+    // }
 
     const showHistory = () => {
         modalHistory.value = true;
@@ -250,7 +246,8 @@ export default defineComponent({
      *  Update value 
      */
     const updateData = (e: any) => {
-        emit('actionUpdate',actionUpdateItem.value++)
+        store.state.common.actionSubmit++
+        // emit('actionUpdate',actionUpdateItem.value++)
     }
     return {
         deleteItem,
@@ -275,12 +272,13 @@ export default defineComponent({
         popupDataDelete,
         onActionAddItem,
         popupDataEdit,
-        loadingTableInfo,
+        // loadingTableInfo,
         showHistory,
         showHistoryStatus,
-        actionAddItem1,
+        // actionAddItem1,
         onSubmit,
-        updateData
+        updateData,
+        store,
     };
     },
 });
