@@ -200,13 +200,14 @@
         <a-row>
             <a-col :span="14" class="custom-layout">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
-                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
-                        :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId"
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
+                        :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
+                        :allow-column-reordering="move_column" :focused-row-enabled="true"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employee.employeeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                        <DxColumn  caption="일용직사원" cell-template="tag" />
+                        <DxColumn caption="일용직사원" cell-template="tag" width="150" />
                         <template #tag="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId"
@@ -259,7 +260,6 @@
                         </DxSummary>
                     </DxDataGrid>
                 </a-spin>
-
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
                 <FormDataComponent :actionSubmit="actionSubmit" />
@@ -319,7 +319,6 @@ export default defineComponent({
         const dataRows: any = ref([])
         const dataSource: any = ref([])
         let status: any = ref()
-        const dataTaxPayInfo: any = ref([])
         const dataModalCopy: any = ref()
         const IncomeWageDailiesTrigger = ref<boolean>(false)
         const originData = ref({
@@ -428,7 +427,7 @@ export default defineComponent({
         })
         watch(resultTaxPayInfo, (value) => {
             IncomeWageDailiesTrigger.value = false;
-            dataTaxPayInfo.value = value.getIncomeWageDailies;
+            store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
             if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
                 if (store.state.common.employeeId && value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
                     store.state.common.focusedRowKey = store.state.common.employeeId
@@ -470,14 +469,20 @@ export default defineComponent({
         // action click row table 2
         let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
-            if (data.rowType == "data") {
-                rowEdit.value = data.data
-                store.state.common.actionAddItem = false
+            rowEdit.value = data.data
+            if (rowEdit.value.employeeId) {
                 if (store.state.common.statusChangeFormEdit) {
                     modalChangeRow.value = true;
                 } else {
+                    if (!store.state.common.statusRowAdd) {
+                        store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                        store.state.common.statusRowAdd = true
+                    }
                     store.state.common.incomeId = data.data.incomeId
                     store.state.common.employeeId = data.data.employeeId
+                }
+                if (store.state.common.statusRowAdd) {
+                    store.state.common.actionAddItem = false
                 }
             }
         }
@@ -500,13 +505,17 @@ export default defineComponent({
             if (res) {
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
-                store.state.common.incomeId = rowEdit.value.incomeId
-                store.state.common.employeeId = rowEdit.value.employeeId
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
             }
+            store.state.common.incomeId = rowEdit.value.incomeId
+            store.state.common.employeeId = rowEdit.value.employeeId
         }
         const customizeTotalMonthly = (data: any) => {
             let total: any = 0
-            dataTaxPayInfo.value.map((val: any) => {
+            store.state.common.dataTaxPayInfo.map((val: any) => {
                 total += val.workingDays * val.dailyWage
             })
             return `월급여합계: ${filters.formatCurrency(total)}`;
@@ -517,8 +526,6 @@ export default defineComponent({
             modalCopy.value = true
         }
         const dataAddIncomeProcess = (data: any) => {
-            console.log(data);
-            
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
         }
@@ -533,7 +540,6 @@ export default defineComponent({
             selectionChanged,
             dataCustomRes,
             showDetailSelected,
-            dataTaxPayInfo,
             actionEditTaxPay,
             dataRows,
             actionSubmit,

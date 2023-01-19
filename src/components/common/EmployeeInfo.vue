@@ -4,10 +4,8 @@
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
-            <a-tooltip 
-                placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
-                v-if="idCardNumber && name && convertBirthDay(idCardNumber)"
-            >
+            <a-tooltip placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
+                v-if="idCardNumber && name && convertBirthDay(idCardNumber)">
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
                 </template>
@@ -56,26 +54,28 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const convertBirthDay = (birthDay: any) => {
-            let newBirthDay = birthDay.split("-")[0]
-            let typeYear = birthDay.split("-")[1].charAt(0)
-            if (props.idCardNumber?.length == 14
-                && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32) {
-                if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
-                    return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-                else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
-                    return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            if (props.idCardNumber) {
+                let newBirthDay = birthDay.split("-")[0]
+                let typeYear = birthDay.split("-")[1].charAt(0)
+                if (props.idCardNumber?.length == 14
+                    && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32) {
+                    if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
+                        return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+                    else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
+                        return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+                }
             }
             return null;
         }
         const employeeId = ref(props.employeeId);
         const onMouseover = () => {
-            if(!convertBirthDay(props.idCardNumber)) {
-                emit('toolTopErorr', {isError:true, id: employeeId.value})
+            if (!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', { isError: true, id: employeeId.value })
             }
         }
         const onMouseOut = () => {
-            if(!convertBirthDay(props.idCardNumber)) {
-                emit('toolTopErorr', {isError:false, id: employeeId.value})
+            if (!convertBirthDay(props.idCardNumber)) {
+                emit('toolTopErorr', { isError: false, id: employeeId.value })
             }
         }
         return {

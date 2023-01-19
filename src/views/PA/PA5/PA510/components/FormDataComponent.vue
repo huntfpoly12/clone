@@ -179,6 +179,7 @@ export default defineComponent({
         const modalInsurance = ref<boolean>(false)
         const dataIncomeWageDaily: any = ref({ ...sampleDataIncomeWageDaily })
         const arrayEmploySelect: any = ref([])
+        const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref('0')
         const triggerCalculateIncome: any = ref<boolean>(false)
@@ -246,9 +247,6 @@ export default defineComponent({
             onDone: onDoneUpdate,
             onError: onerrorUpdate,
         } = useMutation(mutations.updateIncomeWageDaily);
-        const { mutate: actionUpdateIncomeWageDaily, onDone: onDoneUpdated, onError: errorUpdate } = useMutation(
-            mutations.updateIncomeWageDaily
-        );
         const { result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading } = useQuery(query520.getEmployeeWageDaily, employeeWageDailyParam.value, () => ({
             enabled: employeeWageDailyTrigger.value,
             fetchPolicy: 'no-cache'
@@ -274,7 +272,16 @@ export default defineComponent({
         })
 
         resEmployeeWage(value => {
-            arrayEmploySelect.value = value.data.getEmployeeWageDailies
+            dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
+            if (store.state.common.actionAddItem) {
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        arrayEmploySelect.value.push(dataEmployee)
+                    }
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
+            }
         })
         resWithholdingConfigPayItems(res => {
             arrDeduction.value = []
@@ -303,12 +310,6 @@ export default defineComponent({
             triggerIncomeWageDaily.value = false;
         })
 
-        errorUpdate((error) => {
-            notification('error', error.message)
-        })
-        onDoneUpdated(() => {
-            notification('success', `업데이트 성공되었습니다!`)
-        });
 
         // ===================WATCH==================================
         watch(() => store.state.common.actionAddItem, (value) => {
@@ -319,18 +320,34 @@ export default defineComponent({
                 arrDeduction.value.map((data: any) => {
                     data.price = 0
                 })
+                arrayEmploySelect.value = []
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        arrayEmploySelect.value.push(dataEmployee)
+                    }
+
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
         })
         watch(() => dataIncomeWageDaily.value, (value) => {
-            if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
-                store.state.common.statusChangeFormAdd = true
-            } else {
-                store.state.common.statusChangeFormAdd = false
-            }
-            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && store.state.common.actionAddItem == false && store.state.common.dataRowOld) {
+            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.actionAddItem && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
             } else {
                 store.state.common.statusChangeFormEdit = false
+            }
+            if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
+                store.state.common.statusChangeFormAdd = true
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.statusChangeFormEdit = true
+                }
+            } else {
+                store.state.common.statusChangeFormAdd = false
+            }
+            if (!store.state.common.statusRowAdd) {
+                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1] = dataIncomeWageDaily.value
+                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
             }
         }, { deep: true })
         watch(() => store.state.common.incomeId, (value) => {
@@ -387,7 +404,6 @@ export default defineComponent({
         watch(resultEmployeeWageDaily, (res: any) => {
             employeeWageDailyTrigger.value = false;
             let data = res.getEmployeeWageDaily;
-            dataIncomeWageDaily.value.actualPayment = data.actualPayment;
             dataIncomeWageDaily.value.monthlyWage = data.monthlyWage;
             dataIncomeWageDaily.value.dailyWage = data.dailyWage;
             dataIncomeWageDaily.value.workingDays = data.workingDays;
@@ -395,7 +411,6 @@ export default defineComponent({
             dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
             dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
             dataIncomeWageDaily.value.employee.name = data.name;
-            dataIncomeWageDaily.value.paymentDay = data.paymentDay;
             arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
                 data.deductionItems?.forEach((val: any) => {
@@ -405,6 +420,18 @@ export default defineComponent({
                 })
             })
         }, { deep: true })
+        watch(() => store.state.common.statusRowAdd, (newVal) => {
+            if (!newVal) {
+                store.state.common.dataTaxPayInfo = JSON.parse(JSON.stringify(store.state.common.dataTaxPayInfo)).concat({ ...sampleDataIncomeWageDaily })
+                dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+            } else {
+
+            }
+        })
 
         // ===================FUNCTION==================================
         const funcCheckPrice = (id: any) => {
