@@ -4,10 +4,10 @@
         <a-row>
             <a-col :span="24">
                 <a-spin :spinning="loading" size="large">
-
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" id="gridContainer">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -36,6 +36,8 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
+                        <DxColumn alignment="left" caption="세대주여부 " data-field="householder"
+                        cell-template="householderChange" />
                         <DxColumnFixing :enabled="true"/>
                         <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
                         <template #pupop="{ data }" class="custom-action">
@@ -80,6 +82,9 @@
                             <div v-if="cellData.value">{{ cellData.value }}</div>
                         </template>
                         <template #consignmentRelationshipChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #householderChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
                         </template>
                     </DxDataGrid>
@@ -173,7 +178,7 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxColumnFixing } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem,DxScrolling, DxColumnFixing } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
@@ -192,6 +197,7 @@ export default defineComponent({
         PopupUpdateDependent,
         DxDataGrid,
         DxColumn,
+        DxScrolling,
         DxToolbar,
         DxItem, BtnCheck,
         DxButton, EditOutlined, DeleteOutlined,

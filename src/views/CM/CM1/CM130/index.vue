@@ -223,6 +223,7 @@
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowPrepared="changeColorRow">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -275,6 +276,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="editData">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -374,7 +376,7 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem,
+    DxItem,DxScrolling,
 } from "devextreme-vue/data-grid";
 import notification from "@/utils/notification";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
@@ -394,6 +396,7 @@ export default defineComponent({
         DxDataGrid,
         DxColumn,
         DxExport,
+        DxScrolling,
         DxSearchPanel,
         DxButton,
         DxToolbar,

@@ -76,7 +76,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxScrolling mode="virtual" />
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="출력 메일" cell-template="action" />
                     <template #action="{ data }">

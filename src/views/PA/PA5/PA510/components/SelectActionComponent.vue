@@ -101,9 +101,6 @@ export default defineComponent({
         SaveOutlined,
     },
     props: {
-        modalStatus: {
-            type: Boolean
-        },
         dataRows: {
             type: Array,
             default: []
@@ -226,9 +223,6 @@ export default defineComponent({
                     } else {
                         notification('error', `항목을 최소 하나 이상 선택해야합니다`)
                     }
-                    break;
-                case 'EmailPayrollRegister':
-                    modalPrintPayrollRegister.value = true;
                     break;
                 case 'History':
                     modalHistory.value = true;

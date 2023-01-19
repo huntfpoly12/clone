@@ -15,7 +15,7 @@
                   v-model:valueInput="formState.name"></default-text-box>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
-                <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="formState.foreigner" />
+                <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
                 <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
@@ -52,9 +52,9 @@
                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                   v-model:valueInput="formState.consignmentRelationship"></default-text-box>
               </a-form-item>
-              <a-form-item label="세대주여부" label-align="right">
+              <!-- <a-form-item label="세대주여부" label-align="right">
                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="householder" />
-              </a-form-item>
+              </a-form-item> -->
             </a-col>
           </a-row>
         </div>
@@ -113,7 +113,7 @@ export default defineComponent({
       consignmentRelationship: '',
       index: 2,
     };
-    const formState = reactive<any>({ ...initialFormState, foreigner: !isForeignerPA120.value });
+    const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
     const setModalVisible = () => {
       emit('closePopup', false);
     };
@@ -150,13 +150,13 @@ export default defineComponent({
       }
     });
     const householder = ref(formState.householder == true ? 1 : 0);
-    // watch(householder, (newValue) => {
-    // if (newValue == 1) {
-    //     formState.householder = true;
-    // } else {
-    //     formState.householder = false;
-    // }
-    // });
+    watch(householder, (newValue) => {
+    if (newValue == 1) {
+        formState.householder = true;
+    } else {
+        formState.householder = false;
+    }
+    });
     // const foreigner = ref<Number|Boolean>(formState.foreigner == true ? 1 : 0);
     watch(formState.foreigner, (newValue) => {
       if (newValue) {
@@ -249,7 +249,7 @@ export default defineComponent({
             }
     },{deep: true})
     watch(isForeignerPA120,(newVal: any)=>{
-        formState.foreigner = !newVal;
+        formState.foreigner = newVal;
     })
     return {
       loading,
@@ -263,7 +263,6 @@ export default defineComponent({
       setModalVisible,
       labelResidebId,
       createNewEmployeeWageDependent,
-      isForeignerPA120
     };
   },
 });

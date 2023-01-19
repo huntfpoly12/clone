@@ -55,7 +55,7 @@
                     </id-number-text-box>
                 </a-form-item>
 
-                <a-form-item label="주소정근무시간" label-align="right" class="red">
+                <a-form-item label="주소정근무시간" label-align="right">
                     <div class="input-text">
                         <number-box :required="true" :spinButtons="true"
                             v-model:valueInput="formStateTab1.weeklyWorkingHours" width="150px" :min="1"
@@ -66,20 +66,19 @@
                     </div>
                 </a-form-item>
 
-                <a-form-item label="세대주여부" label-align="right" class="red">
+                <a-form-item label="세대주여부" label-align="right">
                     <switch-basic v-model:valueSwitch="formStateTab1.householder" textCheck="O" textUnCheck="X"
                         style="width: 80px"></switch-basic>
                 </a-form-item>
 
                 <a-form-item label="주소" class="clr" label-align="left">
                     <div class="zip-code">
-                        <default-text-box v-model:valueInput="formStateTab1.postCode" width="120px" :disabled="true" />
+                        <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true"
+                            class="roadAddress" placeholder="주소1" />
                         <div style="margin-left: 5px">
                             <post-code-button @dataAddress="funcAddress" />
                         </div>
                     </div>
-                    <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true"
-                        class="roadAddress" placeholder="주소1" />
 
                     <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="300px"
                         placeholder="주소2" />
@@ -138,7 +137,6 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
-        let arrDataEdit = Array();
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         let isForeigner = ref(false);
@@ -346,7 +344,11 @@ export default defineComponent({
                 formStateTab1.nationalityCode = formStateTab1.nationalityCode == 'KR' ? null : formStateTab1.nationalityCode
             }
             store.state.common.isForeignerPA120 = formStateTab1.foreigner;
-        });
+        },{deep:true});
+        store.commit('common/presidentPA120', formStateTab1.president);
+        watch(()=> formStateTab1.president, (newValue) => {
+            store.commit('common/presidentPA120', newValue);
+        },{deep: true})
         return {
             loading,
             formStateTab1,

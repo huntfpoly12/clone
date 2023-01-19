@@ -215,7 +215,6 @@ export default defineComponent({
         }
         const openAddNewModal = async () => {
             actionChangeComponent.value = 1;
-            console.log(`output->dataSource.value`,dataSource.value)
             // if (!addNew.value.compareData()) {
             //     popupStatus.value = true;
             // }

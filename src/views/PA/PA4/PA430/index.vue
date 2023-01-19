@@ -57,6 +57,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true" @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
@@ -174,7 +175,7 @@ import {
     DxPaging,
     DxSelection,
     DxSearchPanel,
-    DxToolbar,
+    DxToolbar,DxScrolling,
     DxItem, DxSummary, DxTotalItem
 } from "devextreme-vue/data-grid";
 import {
@@ -190,7 +191,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
-        DxButton, DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
+        DxButton, DxDataGrid,DxScrolling, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
     },
     setup() {
         const popupDataEmailSingle = ref({})

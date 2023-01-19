@@ -9,12 +9,13 @@
       :allow-column-resizing="colomn_resize"
       :column-auto-width="true"
       focused-row-enabled="true"
-      key-expr="incomeId"
+      key-expr="employeeId"
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
       :onRowClick="onRowClick"
     >
+      <DxScrolling mode="standard" show-scrollbar="always"/>
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="170" />
@@ -108,6 +109,7 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    addItemClick: Boolean,
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -142,10 +144,10 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
-      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
-        focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
+      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.employeeId) {
+        focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.incomeId ?? 1);
+        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -204,7 +206,7 @@ export default defineComponent({
     // set key again
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
-    const focusedRowKey = ref<Number>(1);
+    const focusedRowKey = ref<Number|null>(1);
     watch(actionSavePA720, () => {
       setTimeout(() => {
         if (isErrorFormPA720.value || store.state.common.actionSaveTypePA720 === 1) {
@@ -212,10 +214,13 @@ export default defineComponent({
         }
       }, 100);
     });
-    const loadIndexInit = ref<number>(0);
+    const loadIndexInit = ref<Number>(0); // check click same row?
+    watch(()=>props.addItemClick,()=>{
+        loadIndexInit.value = -1;
+        focusedRowKey.value = null;
+    },{deep: true})
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      store.commit('common/actionSaveTypePA720', 0);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,

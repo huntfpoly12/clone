@@ -6,6 +6,7 @@
                 <h3>공제 재계산 결과</h3>
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
                         :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxColumn caption="항목" data-field="name" />
                         <DxColumn caption="계산후" data-field="priceNew" />
                         <DxColumn caption="원본" data-field="price" />
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid"
+import { DxDataGrid,DxScrolling, DxColumn } from "devextreme-vue/data-grid"
 import { defineComponent, watch, ref } from 'vue'
 export default defineComponent({
     props: {
@@ -35,7 +36,7 @@ export default defineComponent({
 
     },
     components: {
-        DxDataGrid,
+        DxDataGrid,DxScrolling,
         DxColumn
     },
     setup(props, { emit }) {
