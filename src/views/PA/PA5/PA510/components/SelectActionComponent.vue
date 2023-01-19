@@ -227,9 +227,6 @@ export default defineComponent({
                         notification('error', `항목을 최소 하나 이상 선택해야합니다`)
                     }
                     break;
-                case 'EmailPayrollRegister':
-                    modalPrintPayrollRegister.value = true;
-                    break;
                 case 'History':
                     modalHistory.value = true;
                     popupDataHistory.value = { ...processKey.value };
