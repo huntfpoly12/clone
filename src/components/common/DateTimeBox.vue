@@ -2,7 +2,7 @@
     <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd"
         :format-locale="ko" @update:modelValue="updateValue"
         :style="{ height: $config_styles.HeightInput, width: width }" :max-date="birthDay ? new Date() : ''"
-        :placeholder="placeholder">
+        :placeholder="placeholder" :range="range" :multi-calendars="multiCalendars">
     </Datepicker>
 </template>
 <script lang="ts">
@@ -12,6 +12,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
 import filters from "@/helpers/filters";
 import dayjs from 'dayjs';
+import { range } from "lodash";
 export default defineComponent({
     props: {
         width: {
@@ -19,7 +20,7 @@ export default defineComponent({
             type: String,
         },
         valueDate: {
-            type: [Number, String],
+            type: [Number, String, Array],
             default: parseInt(dayjs().format("YYYYMMDD")),
         },
         id: {
@@ -39,6 +40,14 @@ export default defineComponent({
         },
         startDate: Number,
         finishDate: Number,
+        range:{
+            type: Boolean,
+            default: false
+        },
+        multiCalendars:{
+            type: Boolean,
+            default: false
+        },
     },
     components: {
         Datepicker,
@@ -48,17 +57,34 @@ export default defineComponent({
         watch(
             () => props.valueDate,
             (newValue) => {
-                if (newValue){
-                    date.value = filters.formatDate(newValue?.toString());
-                }
-                else
+                if(!props.range) {
+                    if (newValue){
+                        date.value = filters.formatDate(newValue?.toString());
+                    }
+                    else
                     date.value = newValue;
+                }else {
+                    if (newValue.constructor == Array){
+                        date.value = newValue.map((item: any) => {
+
+                            return filters.formatDate(item);
+                        });
+                    }else {
+                        date.value = []
+                    }
+                }
             }
         );
         const updateValue = () => {
-            if (date.value)
-            {
-                let newDate = typeof date.value == 'object' ? dayjs(date.value).format('YYYY-MM-DD') : filters.formatDateToInterger(date.value);
+            if (date.value) {
+                if(props.range) {
+                    let newDate = date.value.map((item: any) => {
+                        return +dayjs(item).format('YYYYMMDD')
+                    });
+                    emit("update:valueDate", newDate);
+                    return;
+                }
+                let newDate = typeof date.value == 'object' ? +dayjs(date.value).format('YYYYMMDD') : filters.formatDateToInterger(date.value);
                 emit("update:valueDate", newDate);
             }
             else
