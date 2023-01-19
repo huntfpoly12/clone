@@ -5,6 +5,7 @@
             <a-spin tip="Loading..." :spinning="loadingCM110">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
                     <template #creactedAt="{ data }"> 
                         {{ formarDate(data.value) }}
@@ -36,6 +37,7 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -47,6 +49,7 @@ export default defineComponent({
         DxDataGrid,
         DxColumn,
         DxPaging, 
+        DxScrolling
     },
 
     setup(props) {

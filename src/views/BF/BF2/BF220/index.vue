@@ -24,6 +24,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -88,7 +89,7 @@
 import { defineComponent, ref, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { dataSearchUtils, buttonSearchUtils } from "./utils";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem,DxScrolling } from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
@@ -105,6 +106,7 @@ export default defineComponent({
         DxButton,
         DxPaging,
         DxSelection,
+        DxScrolling,
         DxExport,
         DxSearchPanel,
         BF220PopupAddNew,

@@ -49,6 +49,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -149,7 +150,7 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
 import { SearchOutlined, EditOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem,DxScrolling } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
@@ -162,7 +163,8 @@ export default defineComponent({
         DxColumn,
         DxPaging,
         DxSelection,
-        DxExport,
+      DxExport,
+      DxScrolling,
         DxSearchPanel,
         BF310Popup,
         SearchOutlined,

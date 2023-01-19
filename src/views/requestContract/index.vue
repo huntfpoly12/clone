@@ -159,6 +159,7 @@
                                 @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
                                 :auto-navigate-to-focused-row="true">
+                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
                                     template="button-template" mode="cell" new-row-position="pageBottom">
                                     <!-- <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" /> -->
@@ -337,7 +338,7 @@ import { useStore } from "vuex";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxMasterDetail } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxScrolling,DxMasterDetail } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -347,7 +348,7 @@ import { useRouter } from "vue-router";
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
 import dayjs from 'dayjs';
 export default {
-    components: { CheckOutlined, EditOutlined, DxDataGrid, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
+    components: { CheckOutlined, EditOutlined, DxDataGrid,DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
         let modalStatus = ref(false)
         const store = useStore();

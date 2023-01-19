@@ -14,6 +14,7 @@
             :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" 
             :focused-row-enabled="true">
+            <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
             <template #status="{ data }">
               <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
@@ -61,7 +62,6 @@
             <template #submission-date="{ data }">
               <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10"></date-time-box>
             </template>
-            <DxScrolling column-rendering-mode="virtual"/>
           </DxDataGrid>
         </div>
         <div class="table-grid">

@@ -13,6 +13,7 @@
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" focused-row-enabled="true" v-model:focused-row-key="focusedRowKey"
                         :onRowClick="onSelectionChanged">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxColumn caption="선택" cell-template="radioCheck" />
                         <template #radioCheck="{ data }">
                             <div class="text-align-center pt-8">
@@ -79,7 +80,7 @@ import { ref, defineComponent, watch, computed } from "vue";
 import dayjs from "dayjs";
 import ReportGrid from "./ReportGrid/ReportGrid.vue";
 import DxButton from "devextreme-vue/button";
-import { DxDataGrid, DxColumn, DxSelection } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxColumn,DxScrolling, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
 import { getReportType, showTooltipYearMonth } from "../utils/index"
 export default defineComponent({
@@ -90,7 +91,7 @@ export default defineComponent({
         }
     },
     components: {
-        DxDataGrid, DxColumn, DxButton, DxSelection,
+        DxDataGrid, DxColumn, DxButton, DxSelection,DxScrolling,
         ReportGrid
     },
 

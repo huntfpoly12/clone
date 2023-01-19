@@ -57,6 +57,7 @@
                                         :show-row-lines="true" :focused-row-enabled="true" @row-removing="removingRow"
                                         @focused-row-changed="onFocusedRowChanged" :focused-row-key="focusedRowKey"
                                         @init-new-row="onInitRow">
+                                        <DxScrolling mode="standard" show-scrollbar="always"/>
                                         <DxEditing :use-icons="true" :allow-adding="true" template="button-template"
                                             new-row-position="pageBottom" :allow-deleting="true" mode="cell">
                                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -89,6 +90,7 @@
                                     </DxDataGrid>
                                     <DxDataGrid v-else id="gridContainer" :show-borders="true" ref="gridRefName"
                                         disabled="true">
+                                        <DxScrolling mode="standard" show-scrollbar="always"/>
                                         <DxEditing :use-icons="true" :allow-adding="true">
                                         </DxEditing>
                                         <DxColumn :allow-editing="false" :width="50" caption="#" />
@@ -304,7 +306,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import { DxDataGrid, DxColumn, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxEditing, DxLookup, DxToolbar, DxItem, DxScrolling,DxTexts } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import { DeleteOutlined, PlusSquareOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import queries from "@/graphql/queries/BF/BF3/BF330/index";
@@ -315,7 +317,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
+        DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar,DxScrolling, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
     },
     props: {
         modalStatus: Boolean,
