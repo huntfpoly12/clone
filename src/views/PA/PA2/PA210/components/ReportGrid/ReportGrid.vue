@@ -287,10 +287,11 @@ export default defineComponent({
             mutate: actionCreateTaxWithholding,
             onDone: doneChangeStatus,
             onError: errChangeStatus
-        } = useMutation(mutations.createTaxWithholdingStatusReport);
+    } = useMutation(mutations.createTaxWithholdingStatusReport);
+        
     doneChangeStatus(() => {
         notification('success', `업부상태 변경되었습니다!`)
-        refetchData()
+        setModalVisible()
     })
     errChangeStatus((error) => {
         notification('error', error.message)
@@ -301,7 +302,7 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 32) {
+        if ( index >= 4 && index <= 32 && (arrData[index][5] != '' || arrData[index][6] != '' || arrData[index][7] != '' || arrData[index][8] != '' || arrData[index][9] != '' || arrData[index][10] != '' || arrData[index][11] != '' ||  arrData[index][12] != '')) {
           statement.push({
             code: arrData[index][4],
             numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
@@ -315,7 +316,6 @@ export default defineComponent({
           });
         }
       }
-
       const variables = {
         companyId:companyId,
         key:{
