@@ -3,64 +3,60 @@
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="actionAddItem" />
-    <DxButton @click="onSubmit($event)" size="large" class="ml-4" >
-        <SaveOutlined style="font-size: 17px"/>
+    <DxButton @click="onSubmit($event)" size="large" class="ml-4">
+        <SaveOutlined style="font-size: 17px" />
     </DxButton>
-    
-    <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;" @click="onItemClick({itemData:{event:'History'}})">
+    <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
+        @click="onItemClick({ itemData: { event: 'History' } })">
         <a-tooltip placement="top">
-        <template #title>근로소득자료 변경이력</template>
-        <div class="text-center">
-            <HistoryOutlined style="font-size: 16px" />
-        </div>
+            <template #title>근로소득자료 변경이력</template>
+            <div class="text-center">
+                <HistoryOutlined style="font-size: 16px" />
+            </div>
         </a-tooltip>
     </DxButton>
-    <DxButton class="ml-4" style="cursor: pointer" @click="onItemClick({itemData:{event:'HistoryStatus'}})">
+    <DxButton class="ml-4" style="cursor: pointer" @click="onItemClick({ itemData: { event: 'HistoryStatus' } })">
         <a-tooltip placement="top">
-        <template #title>근로소득 마감상태 변경이력</template>
-        <div class="text-center">
-            <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history"/>
-        </div>
+            <template #title>근로소득 마감상태 변경이력</template>
+            <div class="text-center">
+                <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
+            </div>
         </a-tooltip>
     </DxButton>
     <DxButton @click="editItem" class="ml-4 custom-button-checkbox">
         <div class="d-flex-center">
-        <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
-        <span class="fz-12 pl-5">지급일변경</span>
+            <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+            <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <button class="button-open-tab" @click="openTab({url: '/dashboard/pa-520',name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
+    <button class="button-open-tab"
+        @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
-                <img v-if="data.id == 1" src="@/assets/images/print.svg" alt=""
-                    style="width: 25px; height: 25px;" />
-                <img v-if="data.id == 2" src="@/assets/images/email.png" alt=""
-                    style="width: 25px; height: 25px;" />
-                </div>
+                <img v-if="data.id == 1" src="@/assets/images/print.svg" alt="" style="width: 25px; height: 25px;" />
+                <img v-if="data.id == 2" src="@/assets/images/email.png" alt="" style="width: 25px; height: 25px;" />
+            </div>
         </template>
     </DxDropDownButton>
-    
+
     <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
-                <img v-if="data.id == 1" src="@/assets/images/print.svg" alt=""
-                    style="width: 25px; height: 25px;" />
-                <img v-if="data.id == 2" src="@/assets/images/email.png" alt=""
-                    style="width: 25px; height: 25px;" />
+                <img v-if="data.id == 1" src="@/assets/images/print.svg" alt="" style="width: 25px; height: 25px;" />
+                <img v-if="data.id == 2" src="@/assets/images/email.png" alt="" style="width: 25px; height: 25px;" />
                 <img v-if="data.id == 3" src="@/assets/images/group_email.png" alt=""
                     style="width: auto; height: 25px; margin-left: 6px;" />
-                </div>
+            </div>
         </template>
     </DxDropDownButton>
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
         title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
 
-    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false"
-        :data="popupDataDelete" />
+    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
@@ -157,14 +153,18 @@ export default defineComponent({
             }
         };
         const actionAddItem = () => {
-            if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+            if (store.state.common.statusRowAdd) {
+                if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
                     modalStatusAdd.value = true
+                } else {
+                    store.state.common.statusRowAdd = false;
+                    store.state.common.actionAddItem = true;
+                    store.state.common.incomeId = null;
+                    store.state.common.focusedRowKey = null;
+                }
             } else {
-                store.state.common.actionAddItem = true;
-                store.state.common.incomeId = null;
-                store.state.common.focusedRowKey = null;
+                notification('error', "nhập vàooooo")
             }
-            
         }
         const editItem = (value: any) => {
             if (props.dataRows.length) {
@@ -232,11 +232,11 @@ export default defineComponent({
                     break;
                 case 'History':
                     modalHistory.value = true;
-                    popupDataHistory.value = {...processKey.value};
+                    popupDataHistory.value = { ...processKey.value };
                     break;
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
-                    popupDataHistoryStatus.value = {...processKey.value}
+                    popupDataHistoryStatus.value = { ...processKey.value }
                     break;
                 case 'open-tab-520':
                     openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
