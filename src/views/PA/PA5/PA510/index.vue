@@ -7,6 +7,7 @@
                     key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
                     :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
                     <template #imputed-year="{}">
                         <span>지급연월</span>
@@ -123,6 +124,7 @@
                     <template #row-detail="{}">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
                             :show-borders="true" :column-auto-width="true" :show-column-headers="false">
+                            <DxScrolling mode="standard" show-scrollbar="always"/>
                             <DxColumn cell-template="col-first" data-type="string" />
                             <template #col-first="{ data }">
                                 <b>{{ data.data.name }}</b><br>
@@ -278,7 +280,7 @@ import dayjs from 'dayjs';
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxSelection, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxColumn, DxSelection, DxSummary, DxTotalItem,DxScrolling, DxMasterDetail } from "devextreme-vue/data-grid"
 import notification from "@/utils/notification"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
 import FormDataComponent from "./components/FormDataComponent.vue"
@@ -291,6 +293,7 @@ export default defineComponent({
         DxMasterDetail,
         DxDataGrid,
         DxColumn,
+        DxScrolling,
         DxSelection,
         DxButton,
         DxSummary,

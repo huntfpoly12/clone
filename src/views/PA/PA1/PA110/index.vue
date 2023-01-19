@@ -7,6 +7,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
           :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
+          <DxScrolling mode="standard" show-scrollbar="always"/>
           <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year="{ }">
             <span>지급연월</span>
@@ -221,6 +222,7 @@
             :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
             :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId" id="pa-110-gridContainer"
             :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
+            <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" width="40"/>
             <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
             <template #tag="{ data }" class="custom-action">

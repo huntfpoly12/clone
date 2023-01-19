@@ -47,6 +47,7 @@
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
@@ -130,7 +131,7 @@ import {
     DxSearchPanel,
     DxToolbar,
     DxItem,
-    DxTotalItem,
+    DxTotalItem,DxScrolling,
     DxSummary,
 } from "devextreme-vue/data-grid";
 import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
@@ -151,6 +152,7 @@ export default defineComponent({
         DxExport,
         DxSearchPanel,
         DxTotalItem,
+        DxScrolling,
         DxToolbar,
         DxItem,
         EmailSinglePopup,

@@ -14,6 +14,7 @@
             :column-auto-width="true"
             id="gridContainer"
           >
+          <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxToolbar>
               <DxItem
                 location="after"
@@ -299,6 +300,7 @@ import {
   DxColumn,
   DxToolbar,
   DxItem,
+  DxScrolling,
   DxColumnFixing
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
@@ -320,6 +322,7 @@ export default defineComponent({
     DxColumn,
     DxToolbar,
     DxItem,
+    DxScrolling,
     DxButton,
     BtnCheck,
     DxColumnFixing,

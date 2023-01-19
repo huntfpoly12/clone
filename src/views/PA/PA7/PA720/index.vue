@@ -8,6 +8,7 @@
                     :show-borders="true" :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     :focused-row-enabled="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
                     <template #imputed-year>
                         <span>지급연월 </span>
@@ -103,6 +104,7 @@
                                 :column-auto-width="true" :allow-column-reordering="move_column"
                                 :show-column-headers="false" :allow-column-resizing="colomn_resize"
                                 :focused-row-enabled="true">
+                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                 <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                                 <template #col-first="{ data }">
                                     <b>{{ data.data.name }}</b><br />
@@ -277,7 +279,7 @@ import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import { companyId, openTab } from '@/helpers/commonFunction';
-import { DxDataGrid, DxColumn, DxMasterDetail } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling,DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import DeletePopup from './components/Popup/DeletePopup.vue';
 import EditPopup from './components/Popup/EditPopup.vue';
@@ -296,6 +298,7 @@ export default defineComponent({
     components: {
         DxMasterDetail,
         DxDataGrid,
+        DxScrolling,
         DxColumn,
         DxButton,
         DeletePopup,

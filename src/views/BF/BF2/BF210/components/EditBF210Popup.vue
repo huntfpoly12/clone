@@ -102,6 +102,7 @@
                             :show-bordes="true" :selected-row-keys="checkedNames" :allow-column-reordering="move_column"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
                             key-expr="id" @selection-changed="onSelectionChanged">
+                            <DxScrolling mode="standard" show-scrollbar="always"/>
                             <DxSelection mode="multiple" />
                             <DxColumn data-field="id" caption="코드" :width="200" />
                             <DxColumn data-field="name" caption="권한그룹명" />
@@ -137,6 +138,7 @@ import {
     DxDataGrid,
     DxColumn,
     DxSelection,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import {
     SearchOutlined,
@@ -147,7 +149,7 @@ import {
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
     components: {
-        MenuOutlined, SearchOutlined, WarningOutlined, MailOutlined, DxDataGrid, DxColumn, DxSelection, DxSelectBox,
+        MenuOutlined, SearchOutlined, WarningOutlined, MailOutlined, DxDataGrid, DxColumn, DxSelection, DxSelectBox,DxScrolling,
         Field,
     },
     setup(props, { emit }) {

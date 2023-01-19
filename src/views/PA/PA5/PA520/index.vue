@@ -46,6 +46,7 @@
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
                         v-model:focused-row-key="focusedRowKey">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />

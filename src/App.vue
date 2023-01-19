@@ -67,9 +67,7 @@ export default {
   .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active {
     background-color: #1890ff !important;
   }
-  .ant-menu-dark .ant-menu-item-selected > a, .ant-menu-dark .ant-menu-item-selected > span > a, .ant-menu-dark .ant-menu-item-selected > a:hover, .ant-menu-dark .ant-menu-item-selected > span > a:hover {
-    color:rgba(255, 255, 255, 0.65) !important;
-  }
+
   .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected-active a {
     color: #fff !important;
   }

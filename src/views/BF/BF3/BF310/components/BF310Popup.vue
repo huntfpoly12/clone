@@ -216,6 +216,7 @@
                                                 key-expr="rowIndex" @init-new-row="onInitRow"
                                                 :auto-navigate-to-focused-row="true" :focused-row-key="focusedRowKey"
                                                 @focused-row-changed="onFocusedRowChanged" id="bf-320-popup-datagrid">
+                                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                                 <DxPaging :enabled="false" />
                                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                                     cell-template="indexCell" />
@@ -241,7 +242,7 @@
                                                 <template #button-template>
                                                     <DxButton icon="plus" @click="addRow" text="추가" />
                                                 </template>
-                                                <DxScrolling column-rendering-mode="virtual" />
+                                                
                                             </DxDataGrid>
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow" :key="dataActiveRow.rowIndex ?? 99">
                                                 <a-col :span="12">

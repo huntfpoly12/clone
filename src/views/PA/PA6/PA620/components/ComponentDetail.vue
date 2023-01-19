@@ -53,7 +53,7 @@
                 :column-auto-width="true" :focused-row-enabled="true" @selection-changed="selectionChanged"
                 v-model:focused-row-key="focusedRowKey" ref="gridRefName">
                 <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                <DxScrolling column-rendering-mode="virtual" />
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                 <template #tag="{ data }" class="custom-action">
                     <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"

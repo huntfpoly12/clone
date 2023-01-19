@@ -55,6 +55,7 @@
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="성명" cell-template="employee-info" width="300" />
                     <template #employee-info="{ data }">
@@ -136,7 +137,7 @@ import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
 import { companyId, userId } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
@@ -146,7 +147,7 @@ import notification from "@/utils/notification";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
+        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
     },
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
