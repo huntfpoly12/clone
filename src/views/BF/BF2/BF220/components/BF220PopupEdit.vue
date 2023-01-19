@@ -50,6 +50,7 @@
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
                                 key-expr="enumKey" class="table-sevice" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize">
+                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }">
@@ -84,7 +85,8 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection
+    DxSelection,
+    DxScrolling
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -100,6 +102,7 @@ export default defineComponent({
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,
+        DxScrolling,
         DxPaging,
         DxColumn,
         DxSelection,

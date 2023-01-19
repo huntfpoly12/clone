@@ -10,6 +10,7 @@
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxPaging page-size="15"/>
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn caption="기록일시" data-field="loggedAt" data-type="text" />
                     <DxColumn caption="비고" data-field="remark" />
                     <DxColumn caption="생성일시" data-field="createdAt" cell-template="createdAtCell" />
@@ -50,6 +51,7 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
@@ -61,6 +63,7 @@ export default defineComponent({
         DxDataGrid,
         DxColumn,
         DxPaging,
+        DxScrolling,
         ZoomInOutlined
     },
 

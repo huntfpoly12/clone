@@ -137,6 +137,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
                         <DxItem template="group-print" />

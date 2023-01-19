@@ -4,6 +4,7 @@
         <a-spin :spinning="loadingTable || loadingChangeStatus" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="wf-100" :column-auto-width="true">
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxColumn caption="귀속연월" cell-template="imputedYear" />
                 <template #imputedYear="{ data }">
                     <span class="tag-custom-1">
