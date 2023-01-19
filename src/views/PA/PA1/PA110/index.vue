@@ -286,7 +286,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem, DxMasterDetail } from "devextreme-vue/data-grid"
 import SelectActionComponent from "./components/SelectActionComponent.vue"
-import FormDataComponent from "./components/FormDataComponent2.vue"
+import FormDataComponent from "./components/FormDataComponent.vue"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import filters from "@/helpers/filters";
