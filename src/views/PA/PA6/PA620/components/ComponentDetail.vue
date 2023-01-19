@@ -552,13 +552,10 @@ export default defineComponent({
         let arrCallApiDelete: any = ref([])
         const deleteItem = () => {
             arrCallApiDelete.value = []
-            dataSourceDetail.value.map((val: any) => {
-                // console.log(checkValue(val));
-                let dataReturn = checkValue(val)
-                // console.log(Object.keys(dataReturn).length);
-
-                if (checkValue(val))
-                    arrCallApiDelete.value.push(checkValue(val))
+            dataSourceDetail.value.map((val: any) => { 
+                let dataReturn = checkValue(val)  
+                if (JSON.stringify(dataReturn) != '{}')
+                    arrCallApiDelete.value.push(dataReturn)
             })
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
