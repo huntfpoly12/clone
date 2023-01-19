@@ -220,10 +220,6 @@ export default defineComponent({
             incomeExtraParam.value = newValue;
             dataAction.companyId = newValue.companyId;
             triggerIncomeExtra.value = true;
-            // let date1 = newValue.processKey.imputedYear + '-' + newValue.processKey.imputedMonth;
-            // let date2 = newValue.processKey.paymentYear + '-' + newValue.processKey.paymentMonth;
-            // month1.value = dayjs(date1).format('YYYY-MM');
-            // month2.value = dayjs(date2).format('YYYY-MM');
             incomeArr.value = [];
             isEdit.value = true;
             refetchIncomeExtra();
@@ -265,7 +261,7 @@ export default defineComponent({
     // get data
 
     onResultIncomeExtra((res) => {
-      let data = res.data.getIncomeExtra;
+        let data = res.data.getIncomeExtra;
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
       dataAction.input = {
@@ -324,9 +320,8 @@ export default defineComponent({
     // SUBMIT FORM
 
     watch(actionSavePA720, () => {
-      store.commit('common/keyActivePA720', dataAction.input.employeeId);
-      // store.commit('pending');
-      if (!dataAction.input.employeeId) {
+        // store.commit('pending');
+        if (!dataAction.input.employeeId) {
         validations.employeeId = true;
       }
       if (!dataAction.input.paymentDay) {
@@ -334,17 +329,18 @@ export default defineComponent({
       }
       if (!dataAction.input.paymentAmount) {
         validations.paymentAmount = true;
-      }
-      if (!dataAction.input.requiredExpenses) {
-        validations.requiredExpenses = true;
-      }
+        }
+        if (!dataAction.input.requiredExpenses) {
+            validations.requiredExpenses = true;
+        }
       if (!dataAction.input.taxRate) {
         validations.taxRate = true;
       }
       if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-        store.commit('common/isErrorFormPA720', true);
-        return;
-      }
+          store.commit('common/isErrorFormPA720', true);
+          store.commit('common/keyActivePA720', dataAction.input.employeeId);
+          return;
+        }
       store.commit('common/isErrorFormPA720', false);
       dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
       dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0]);

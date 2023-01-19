@@ -4,7 +4,6 @@
         <a-row>
             <a-col :span="24">
                 <a-spin :spinning="loading" size="large">
-
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" id="gridContainer">
@@ -37,6 +36,8 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
+                        <DxColumn alignment="left" caption="세대주여부 " data-field="householder"
+                        cell-template="householderChange" />
                         <DxColumnFixing :enabled="true"/>
                         <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
                         <template #pupop="{ data }" class="custom-action">
@@ -81,6 +82,9 @@
                             <div v-if="cellData.value">{{ cellData.value }}</div>
                         </template>
                         <template #consignmentRelationshipChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #householderChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
                         </template>
                     </DxDataGrid>
