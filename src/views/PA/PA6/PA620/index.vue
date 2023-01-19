@@ -389,6 +389,19 @@ export default defineComponent({
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
+        // get config to check default date type
+        const dateType = ref<number>(1)
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig } = useQuery(
+            queriesHolding.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig, (newVal) => {
+            dateType.value = newVal.paymentType;
+        });
         // ================FUNCTION============================================   
         const showDetailSelected = (data: any) => {
             store.commit("common/processKeyPA620", { imputedMonth: data.imputedMonth });
@@ -420,30 +433,21 @@ export default defineComponent({
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
         }
+
+        // ======================================== WATCH =========================================
         watch(globalYear, (newVal) => {
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
             store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value })
             refetchData()
-        })
-        // get config to check default date type
-        const dateType = ref<number>(1)
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-        const { result: resultConfig } = useQuery(
-            queriesHolding.getWithholdingConfig,
-            dataQuery,
-            () => ({
-                fetchPolicy: "no-cache",
-            })
-        );
-        watch(resultConfig, (newVal) => {
-            dateType.value = newVal.paymentType;
-        });
+        }) 
+
         return {
-            modalCopy,actionSave,statusButton,dataCustomRes,globalYear,loadingGetIncomeProcessBusinesses,rowTable,dataSource,per_page, move_column, colomn_resize,originData,dataModalCopy,dateType,isDisabledForm,
-            setUnderline,createdDone,addMonth,saving,showDetailSelected,loadingTable,dataAddIncomeProcess,
+            modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
+            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,
         };
     },
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss" >
+
 </style>

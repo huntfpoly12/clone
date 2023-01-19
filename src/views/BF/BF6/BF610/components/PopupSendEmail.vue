@@ -39,16 +39,12 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from "vue";
-import { useQuery } from "@vue/apollo-composable";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { useQuery } from "@vue/apollo-composable"; 
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
-export default defineComponent({
-    components: {
-        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
-    },
+export default defineComponent({ 
     props: {
         modalStatus: Boolean,
         dataCall: {

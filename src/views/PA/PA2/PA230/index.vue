@@ -289,6 +289,7 @@ export default defineComponent({
         const printFunc = (val: any) => {
             triggerPrint.value = true
             dataPrint.value = {
+                ...dataPrint.value,
                 "input": {
                     "imputedYear": globalYear.value,
                     "printOption": checkBoxOption2.value,
