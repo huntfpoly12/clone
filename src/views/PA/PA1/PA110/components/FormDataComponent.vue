@@ -4,14 +4,14 @@
             <a-row class="row-1">
                 <a-col :span="12">
                     <a-form-item label="사원">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!actionAddItem" :required="true"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem" :required="true"
                             v-model:valueEmploy="dataIW.employee.employeeId" width="316px" @onChange="onUpdateValue" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="지급일">
                         <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31"
-                            :disabled="!actionAddItem" :spinButtons="true" :required="true" />
+                            :disabled="!store.state.common.actionAddItem" :spinButtons="true" :required="true" />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -208,18 +208,18 @@ export default defineComponent({
             type: Object,
             default: []
         },
-        actionUpdateItem: {
-            type: Number,
-            default: 0
-        },
-        actionAddItem: {
-            type: Boolean,
-            default: false
-        },
-        actionSaveItem: {
-            type: Number,
-            default: 0
-        },
+        // actionUpdateItem: {
+        //     type: Number,
+        //     default: 0
+        // },
+        // actionAddItem: {
+        //     type: Boolean,
+        //     default: false
+        // },
+        // actionSaveItem: {
+        //     type: Number,
+        //     default: 0
+        // },
         modalStatus: Boolean,
         keyForm: Number,
     },
@@ -377,17 +377,20 @@ export default defineComponent({
 
 
         actionUpdateDone(res => {
-            emit("loadingTableInfo", dataIW.value.employee.employeeId)
+            store.state.common.loadingTableInfo++
+            // emit("loadingTableInfo", dataIW.value.employee.employeeId)
             // emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
         doneCreated(res => {
-            emit("loadingTableInfo", dataIW.value.employee.employeeId)
+            store.state.common.loadingTableInfo++
+            // emit("loadingTableInfo", dataIW.value.employee.employeeId)
             notification('success', `업데이트 완료!`)
         })
 
         errorCreated(res => {
-            emit("loadingTableInfo", dataIW.value.employee.employeeId)
+            store.state.common.loadingTableInfo++
+            // emit("loadingTableInfo", dataIW.value.employee.employeeId)
             notification('error', res.message)
         })
 
@@ -413,24 +416,28 @@ export default defineComponent({
                 // refetchValueDetail();
             }
         })
-        watch(() => props.actionAddItem, (value) => {
-            if (value) {
-                switchAction.value = true
-            }
-        })
+        // watch(() => props.actionAddItem, (value) => {
+        //     if (value) {
+        //         switchAction.value = true
+        //     }
+        // })
         // action update
-        watch(() => props.actionUpdateItem, () => {
+        // watch(() => props.actionUpdateItem, () => {
+        //     updateIncomeWage()
+        // })
+        // watch(() => props.actionSaveItem, () => {
+        //     calculateTax()
+        //     // refetchConfigPayItems()
+        //     triggerConfigPayItems.value = true;
+        //     // refetchConfigDeduction()
+        //     triggerConfigDeductions.value = true;
+        //     // createWage()
+
+        // })
+        watch(() => store.state.common.actionSubmit, () => {
             updateIncomeWage()
         })
-        watch(() => props.actionSaveItem, () => {
-            calculateTax()
-            // refetchConfigPayItems()
-            triggerConfigPayItems.value = true;
-            // refetchConfigDeduction()
-            triggerConfigDeductions.value = true;
-            // createWage()
-
-        })
+        
 
 
         watch(result, (value) => {
@@ -662,7 +669,7 @@ export default defineComponent({
             popupCompareData, onUpdateValue,
             companyId, dataConfigPayItems, dataConfigDeductions,
             // month1, month2,
-            addRow
+            addRow, store
         };
     },
 });
