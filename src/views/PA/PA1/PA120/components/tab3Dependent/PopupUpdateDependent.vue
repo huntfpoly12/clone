@@ -15,11 +15,11 @@
                                     v-model:valueInput="formState.name"></default-text-box>
                             </a-form-item>
                             <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
-                                <switch-basic textCheck="내국인" textUnCheck="외국인"
+                                <switch-basic textCheck="외국인" textUnCheck="내국인"
                                     v-model:valueSwitch="formState.foreigner" :disabled="disabledButton"/>
                             </a-form-item>
                             <a-form-item :label="labelResidebId" label-align="right" class="red">
-                                <id-number-text-box :required="true" width="150px"
+                                <id-number-text-box :required="true" width="150px" :disabled="disabledButton"
                                     v-model:valueInput="formState.residentId">
                                 </id-number-text-box>
                             </a-form-item>
@@ -31,7 +31,7 @@
                                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
                                     :required="true" :readOnly="true" :disabled="disabledButton"/>
                             </a-form-item>
-                            <a-form-item label="부녀자women" label-align="right">
+                            <a-form-item label="부녀자" label-align="right">
                                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
                             </a-form-item>
                             <a-form-item label="한부모" label-align="right">
@@ -57,9 +57,9 @@
                                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                                     v-model:valueInput="formState.consignmentRelationship"></default-text-box>
                             </a-form-item>
-                            <a-form-item label="세대주여부" label-align="right">
+                            <!-- <a-form-item label="세대주여부" label-align="right">
                                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="householder" />
-                            </a-form-item>
+                            </a-form-item> -->
                         </a-col>
                     </a-row>
 
@@ -104,6 +104,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
+        const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
         const ageCount = ref();
         const modalStatusDelete = ref(false)
         const idAction = ref()
@@ -124,7 +125,7 @@ export default defineComponent({
             consignmentRelationship: '',
         };
         const residentId = ref<String | Number>(1)
-        let formState = reactive<any>({ ...initialFormState });
+        let formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value  });
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
@@ -170,14 +171,23 @@ export default defineComponent({
             }
         });
         const foreigner = ref(formState.foreigner == true ? 1 : 0);
-        watch(foreigner, (newValue) => {
-            if (newValue == 1) {
-                formState.foreigner = true;
-                labelResidebId.value = "주민등록번호";
-            } else {
-                formState.foreigner = false;
-                labelResidebId.value = "외국인번호 유효성";
-            }
+        // watch(foreigner, (newValue) => {
+        //     if (newValue == 0) {
+        //         formState.foreigner = true;
+        //         labelResidebId.value = "주민등록번호";
+        //     } else {
+        //         formState.foreigner = false;
+        //         labelResidebId.value = "외국인번호 유효성";
+        //     }
+        // });
+        watch(formState.foreigner, (newValue) => {
+        if (newValue) {
+            formState.foreigner = true;
+            labelResidebId.value = '주민등록번호';
+        } else {
+            formState.foreigner = false;
+            labelResidebId.value = '외국인번호 유효성';
+        }
         });
         watch(() => props.modalStatus, (newValue: any) => {
             if (newValue) {
@@ -311,6 +321,9 @@ export default defineComponent({
             refetchValueDetail()
         })
         //
+        watch(isForeignerPA120,(newVal: any)=>{
+            formState.foreigner = !newVal;
+        })
         return {
             // women,
             // singleParent,

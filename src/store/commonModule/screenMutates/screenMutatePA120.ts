@@ -7,6 +7,9 @@ const screenMutatePA120 = {
     },
     resetTabPA120(state: any, payload: any){
         state.resetTabPA120 = payload;
+    },
+    presidentPA120(state: any,payload: any){
+        state.presidentPA120 = payload;
     }
 };
   
