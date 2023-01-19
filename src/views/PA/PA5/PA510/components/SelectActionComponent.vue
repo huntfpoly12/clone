@@ -101,9 +101,6 @@ export default defineComponent({
         SaveOutlined,
     },
     props: {
-        modalStatus: {
-            type: Boolean
-        },
         dataRows: {
             type: Array,
             default: []
