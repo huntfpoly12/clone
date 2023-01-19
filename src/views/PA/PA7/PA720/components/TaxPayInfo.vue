@@ -15,6 +15,7 @@
       @selection-changed="selectionChanged"
       :onRowClick="onRowClick"
     >
+      <DxScrolling mode="standard" show-scrollbar="always"/>
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="170" />

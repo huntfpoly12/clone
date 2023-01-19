@@ -143,6 +143,7 @@
                         :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true" key-expr="id"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true" style="width: 100%;">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxPager :visible="false" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />

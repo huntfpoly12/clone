@@ -19,7 +19,7 @@
                             :show-borders="true" key-expr="companyId" :allow-column-reordering="move_column"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             :focused-row-enabled="true">
-                            <DxScrolling column-rendering-mode="virtual" />
+                            <DxScrolling mode="standard" show-scrollbar="always"/>
                             <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                             <template #col-first="{ data }">
                                 <b>지급연월</b>
@@ -150,6 +150,7 @@
                                     :column-auto-width="true" :allow-column-reordering="move_column"
                                     :show-column-headers="false" :allow-column-resizing="colomn_resize"
                                     :focused-row-enabled="true">
+                                    <DxScrolling mode="standard" show-scrollbar="always"/>
                                     <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
                                         data-type="string" />
                                     <template #col-first="{ data }">

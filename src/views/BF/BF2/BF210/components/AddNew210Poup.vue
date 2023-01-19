@@ -70,6 +70,7 @@
                                 :show-borders="true" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
                                 @selection-changed="onSelectionChanged">
+                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                 <DxPaging :page-size="0" />
                                 <DxSelection data-field="active" mode="multiple" />
                                 <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
@@ -103,6 +104,7 @@ import {
     DxExport,
     DxSelection,
     DxSearchPanel,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import {
     DxValidator,
@@ -129,6 +131,7 @@ export default defineComponent({
         WarningOutlined,
         MailOutlined,
         DxDataGrid,
+        DxScrolling,
         DxColumn,
         DxPaging,
         DxSelection,

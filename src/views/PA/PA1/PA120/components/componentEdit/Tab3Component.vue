@@ -8,6 +8,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" id="gridContainer">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -173,7 +174,7 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxColumnFixing } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem,DxScrolling, DxColumnFixing } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
@@ -192,6 +193,7 @@ export default defineComponent({
         PopupUpdateDependent,
         DxDataGrid,
         DxColumn,
+        DxScrolling,
         DxToolbar,
         DxItem, BtnCheck,
         DxButton, EditOutlined, DeleteOutlined,

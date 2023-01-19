@@ -46,7 +46,7 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxScrolling mode="virtual" />
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사원" cell-template="tag" width="300px" />
                 <DxColumn caption="구분" cell-template="retirementType" data-type="string" />

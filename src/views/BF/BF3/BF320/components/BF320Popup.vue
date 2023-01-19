@@ -205,12 +205,6 @@ import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
 import notification from '@/utils/notification';
 import dayjs from 'dayjs';
 import {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxSelection,
-} from "devextreme-vue/data-grid";
-import {
     UploadOutlined,
     MinusCircleOutlined,
     ZoomInOutlined,
@@ -234,10 +228,6 @@ export default defineComponent({
     },
     components: {
         DxDropDownBox,
-        DxDataGrid,
-        DxColumn,
-        DxPaging,
-        DxSelection,
         UploadOutlined,
         MinusCircleOutlined,
         ZoomInOutlined,
