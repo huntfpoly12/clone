@@ -7,9 +7,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button >
+                              <DxButton @click="search">
                                   <SearchOutlined />
-                              </a-button>
+                              </DxButton>
                           </a-tooltip>
                       </div>
                   </div>
@@ -17,9 +17,9 @@
                       <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button>
+                              <DxButton @click="search">
                                   <SearchOutlined />
-                              </a-button>
+                              </DxButton>
                           </a-tooltip>
                       </div>
                   </div>
@@ -27,9 +27,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button>
+                              <DxButton @click="search">
                                   <SearchOutlined />
-                              </a-button>
+                              </DxButton>
                           </a-tooltip>
                       </div>
                   </div>
@@ -37,9 +37,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button>
+                              <DxButton @click="search">
                                   <SearchOutlined />
-                              </a-button>
+                              </DxButton>
                           </a-tooltip>
                       </div>
                   </div>
@@ -47,9 +47,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button>
+                              <DxButton @click="search">
                                   <SearchOutlined />
-                              </a-button>
+                              </DxButton>
                           </a-tooltip>
                       </div>
                   </div>
@@ -79,6 +79,7 @@ import { defineComponent, ref } from "vue";
 import {
     SearchOutlined,
 } from "@ant-design/icons-vue";
+import DxButton from "devextreme-vue/button";
 import Tab1Component from "./Components/Tab1Component.vue";
 import Tab2Component from "./Components/Tab2Component.vue";
 import Tab3Component from "./Components/Tab3Component.vue";
@@ -93,11 +94,35 @@ export default defineComponent({
       Tab3Component,
       Tab4Component,
       Tab5Component,
+      DxButton
     },
     setup() {
       const activeKey = ref("1")
+      const tab1 = ref(0)
+      const search = (tabName: string) => {
+        switch (tabName) {
+          case 'tab1':
+            
+            break;
+          case 'tab2':
+            
+            break;
+          case 'tab3':
+            
+            break;
+          case 'tab4':
+            
+            break;
+          case 'tab5':
+            
+            break;
+          default:
+            break;
+        }
+      }
       return {
-        activeKey
+        activeKey,
+        search
       }
     }
 })
