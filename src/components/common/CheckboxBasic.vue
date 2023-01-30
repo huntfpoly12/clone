@@ -1,5 +1,7 @@
 <template>
-    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label"/>
+    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label">
+    </DxCheckBox>
+    <slot></slot>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";
@@ -19,7 +21,7 @@ export default defineComponent({
             type: String,
             default: '12'
         },
-        label:String
+        label: String
     },
     components: {
         DxCheckBox

@@ -39,3 +39,29 @@ export default defineComponent({
     },
 });
 </script> 
+
+<style lang="scss" scoped>
+.month-custom-1 {
+    padding-left: 30px;
+    border-radius: 5px;
+    margin-right: 10px;
+    color: white;
+    background-color: black;
+    width: 120px;
+
+    ::v-deep .dp__input {
+        color: white;
+        padding: 0px;
+        border: none;
+        height: 30px;
+    }
+
+    ::v-deep .dp__icon {
+        display: none;
+    }
+
+    ::v-deep .dp__input {
+        background-color: black;
+    }
+}
+</style>

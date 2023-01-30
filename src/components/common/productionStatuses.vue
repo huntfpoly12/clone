@@ -24,40 +24,51 @@ export default defineComponent({
 .tag-status-1 {
     background-color: gray;
     color: white;
-    padding: 4px 20px;
+    padding: 4px 0;
+    text-align: center;
     border-radius: 5px;
     margin-right: 5px;
+    width: 100px;
 }
 
 .tag-status-2 {
     background-color: #93CDDD;
     color: white;
-    padding: 4px 20px;
+    padding: 4px 0;
+    text-align: center;
     border-radius: 5px;
     margin-right: 5px;
+    width: 100px;
 }
 
 .tag-status-3 {
     background-color: #0070C0;
     color: white;
-    padding: 4px 20px;
+    padding: 4px 0;
+    text-align: center;
     border-radius: 5px;
     margin-right: 5px;
+    width: 100px;
 }
+
 
 .tag-status-4 {
     background-color: #9BBB59;
     color: white;
-    padding: 4px 20px;
+    padding: 4px 0;
+    text-align: center;
     border-radius: 5px;
     margin-right: 5px;
+    width: 100px;
 }
 
 .tag-status-5 {
     background-color: red;
     color: white;
-    padding: 4px 20px;
+    padding: 4px 0;
+    text-align: center;
     border-radius: 5px;
     margin-right: 5px;
+    width: 100px;
 }
 </style> 

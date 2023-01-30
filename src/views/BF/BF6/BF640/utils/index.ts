@@ -1,6 +1,17 @@
 export const checkBoxSearchStep1 = [
-    { id: 0, text: 'Low' },
-    { id: 1, text: 'Normal' },
-    { id: 2, text: 'Urgent' },
-    { id: 3, text: 'High' }
+    { id: 1, text: '상반기' },
+    { id: 2, text: '하반기' },
 ]
+
+import dayjs from "dayjs";
+export const dataSearchUtils = {
+    "beforeProduction": false,
+    "productionStatuses": [],
+    "companyCode": '',
+    "companyName": '',
+    "manageUserId": null,
+    "salesRepresentativeId": null,
+    "excludeCancel": false,
+    "paymentYear": dayjs().format('YYYY'),
+    "paymentHalfYear": null
+} 
