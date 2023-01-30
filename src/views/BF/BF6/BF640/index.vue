@@ -6,9 +6,11 @@
                 <a-tab-pane key="1" tab="근로소득">
                     <Tab1 />
                 </a-tab-pane>
-                <a-tab-pane key="3" tab="거주자의사업소득">
+                <a-tab-pane key="2" tab="거주자의사업소득">
+                    <Tab2 />
                 </a-tab-pane>
-                <a-tab-pane key="2" tab="전자신고파일제작내역">
+                <a-tab-pane key="3" tab="전자신고파일제작내역">
+                    <Tab3 />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -26,7 +28,7 @@ export default defineComponent({
         Tab2,
         Tab3,
     },
-    setup() { 
+    setup() {
         return {
             activeKey: ref("1"),
         }

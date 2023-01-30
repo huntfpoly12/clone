@@ -76,18 +76,46 @@
                 </div>
             </a-form-item>
             <a-form-item label="제출연월일" label-align="left">
-                <date-time-box width="300px" dateFormat="YYYY-MM-DD" />
+                <div class="d-flex-center">
+                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                    <a-tooltip placement="topLeft" color="black">
+                        <template #title>전자신고파일 제작 요청</template>
+                        <SaveOutlined class="fz-24 ml-5 action-save" @click="modalConfirmMail = true" />
+                    </a-tooltip>
+                </div>
             </a-form-item>
         </div>
+        <div class="form-table">
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxSelection mode="multiple" :fixed="true" />
+                <DxColumn caption="사업자코드" />
+                <DxColumn caption="상호 주소" />
+                <DxColumn caption="사업자등록번호" />
+                <DxColumn caption="최종제작요청일시" />
+                <DxColumn caption="제작현황" />
+            </DxDataGrid>
+        </div>
+        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
     </div>
 </template>
-
 <script lang="ts">
 import dayjs from "dayjs";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
+import {
+    SaveOutlined
+} from "@ant-design/icons-vue";
+import { useStore } from 'vuex'
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+
 export default defineComponent({
-    components: {},
+    components: {
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        PopupConfirmSaveStep1,
+    },
     setup() {
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
@@ -99,9 +127,17 @@ export default defineComponent({
             checkbox3: false,
             checkbox4: false,
         })
+        let dataSource: any = ref([])
+        const store = useStore()
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
+        let modalConfirmMail = ref(false)
+
+
         return {
             activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch,
-            dayjs, checkBoxSearch, typeCheckbox, dataSearch
+            dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
         }
     }
 })
