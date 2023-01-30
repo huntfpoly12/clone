@@ -93,7 +93,7 @@
                                 <div class="form-item">
                                     <label></label>
                                     <default-text-box v-model:valueInput="contractCreacted.addressExtend"
-                                        :required="true" placeholder="상세주소(입력)" width="100%" />
+                                        placeholder="상세주소(입력)" width="100%" />
                                 </div>
                                 <div class="form-item">
                                     <label class="red">연락처 :</label>
@@ -159,7 +159,7 @@
                                 @selection-changed="onSelectionChanged" :onRowClick="onSelectionClick"
                                 :focused-row-enabled="true" key-expr="rowIndex" :focused-row-key="focusedRowKey"
                                 :auto-navigate-to-focused-row="true">
-                                <DxScrolling mode="standard" show-scrollbar="always"/>
+                                <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxEditing :use-icons="true" :allow-adding="true" :allow-deleting="false"
                                     template="button-template" mode="cell" new-row-position="pageBottom">
                                     <!-- <DxTexts confirmDeleteMessage="삭제하겠습니까?" cancelRowChanges="123124" /> -->
@@ -188,10 +188,10 @@
                                 </template>
                                 <DxColumn :width="100" data-field="capacity" data-type="number" caption="정원수 (명)" />
                                 <DxColumn cell-template="delete" />
-                                <template #delete="{ data }"> 
+                                <template #delete="{ data }">
                                     <DeleteOutlined class="fz-14" @click="deleteRow(data.data.rowIndex)" />
                                 </template>
-                            </DxDataGrid> 
+                            </DxDataGrid>
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
                                 :key="dataActiveRow.rowIndex">
                                 <a-col :span="12">
@@ -242,12 +242,12 @@
                                     layoutCustom="horizontal" />
                             </div>
                             <div class="form-item" style="margin-bottom: 10px">
-                                <label>서비스 시작년월 :</label>
+                                <label class="red">서비스 시작년월 :</label>
                                 <month-picker-box width="170px" :disabled="disableFormVal"
                                     v-model:valueDate="contractCreacted.startYearMonthHolding" />
                             </div>
                             <div class="form-item">
-                                <label>직 원 수:</label>
+                                <label class="red">직 원 수:</label>
                                 <number-box width="170px" v-model:valueInput="contractCreacted.capacityHolding"
                                     :disabled="disableFormVal" :min="0" :spinButtons="true" />
                             </div>
@@ -329,8 +329,8 @@
             </div>
         </div>
     </a-spin>
-    <popup-message :modalStatus="modalStatus" @closePopup="modalStatus = false" title="삭제하겠습니까?"
-        content="" okText="네" cancelText="아니오" @checkConfirm="statusComfirm" typeModal="confirm" />
+    <popup-message :modalStatus="modalStatus" @closePopup="modalStatus = false" title="삭제하겠습니까?" content="" okText="네"
+        cancelText="아니오" @checkConfirm="statusComfirm" typeModal="confirm" />
 </template>
 <script lang="ts">
 import { reactive, ref, watch, computed } from "vue";
@@ -338,7 +338,7 @@ import { useStore } from "vuex";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { CheckOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxScrolling,DxMasterDetail } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxRequiredRule, DxAsyncRule, DxScrolling, DxMasterDetail } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import imgUpload from "../../components/UploadImage.vue";
 import mutations from "../../graphql/mutations/RqContract/index";
@@ -348,7 +348,7 @@ import { useRouter } from "vue-router";
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
 import dayjs from 'dayjs';
 export default {
-    components: { CheckOutlined, EditOutlined, DxDataGrid,DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
+    components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
         let modalStatus = ref(false)
         const store = useStore();
@@ -366,7 +366,7 @@ export default {
         const checkAll = ref(false);
         const optionSale = ref();
         const statusMailValidate = ref(false);
-        const contractCreacted:any = reactive({ ...dataDefaultsUtil });
+        const contractCreacted: any = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
             dossier: 1,
             applicationService: 1,
@@ -429,7 +429,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            //step.value = val - 1 // Debug
+            step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
@@ -768,4 +768,5 @@ export default {
 };
 </script>  
 <style lang="scss" scoped src="./style.scss">
+
 </style>
