@@ -162,10 +162,6 @@ export default defineComponent({
         InsurancePopup,
     },
     props: {
-        actionSubmit: {
-            type: Number,
-            default: 0
-        },
         isTaxhasData: Boolean,
     },
     setup(props, { emit }) {
@@ -361,7 +357,7 @@ export default defineComponent({
                 dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             }
         })
-        watch(() => props.actionSubmit, (value) => {
+        watch(() => store.state.common.actionSubmit, (value) => {
             let arrDeductionItems: any = []
             arrDeduction.value.forEach((value: any) => {
                 arrDeductionItems.push({

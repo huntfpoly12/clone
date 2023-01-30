@@ -196,7 +196,7 @@
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :dataRows="dataRows" @onSubmit="onSubmit($event)" />
+                <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
         <a-row>
@@ -264,7 +264,7 @@
                 </a-spin>
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :actionSubmit="actionSubmit" />
+                <FormDataComponent />
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
@@ -317,7 +317,6 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
         const modalChangeRow = ref(false)
-        const actionSubmit: any = ref<number>(0)
         let dataCustomRes: any = ref([])
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -464,10 +463,6 @@ export default defineComponent({
                 status: status.value
             })
         }
-        // action click save
-        const onSubmit = (e: any) => {
-            actionSubmit.value++
-        }
 
         // action click row table 2
         let rowEdit = ref()
@@ -539,13 +534,11 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             refetchData,
-            onSubmit,
             selectionChanged,
             dataCustomRes,
             showDetailSelected,
             actionEditTaxPay,
             dataRows,
-            actionSubmit,
             loadingTaxPayInfo,
             customizeTotalMonthly,
             copyMonth,

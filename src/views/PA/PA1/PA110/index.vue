@@ -1,279 +1,286 @@
 <template>
   <div>
-  <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" />
-  <div id="pa-110" class="page-content">
-    <a-row>
-      <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
-          :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true">
-          <DxScrolling mode="standard" show-scrollbar="always"/>
-          <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
-          <template #imputed-year="{ }">
-            <span>지급연월</span>
-          </template>
-          <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
-          <template #imputed-month1="{ data }">
-            <div v-if="data.data.month1">
-              <colorful-badge class="hover-underlined" :value="data.data.month1.status"
-              :class="setUnderline(data.data.month1.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
-                :month="data.data.month1.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="02" cell-template="imputed-month2" />
-          <template #imputed-month2="{ data }">
-            <div v-if="data.data.month2">
-              <colorful-badge class="hover-underlined" :value="data.data.month2.status"
-              :class="setUnderline(data.data.month2.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
-                :month="data.data.month2.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="03" cell-template="imputed-month3" />
-          <template #imputed-month3="{ data }">
-            <div v-if="data.data.month3">
-              <colorful-badge class="hover-underlined" :value="data.data.month3.status"
-              :class="setUnderline(data.data.month3.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
-                :month="data.data.month3.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="04" cell-template="imputed-month4" />
-          <template #imputed-month4="{ data }">
-            <div v-if="data.data.month4">
-              <colorful-badge class="hover-underlined" :value="data.data.month4.status"
-              :class="setUnderline(data.data.month4.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
-                :month="data.data.month4.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="05" cell-template="imputed-month5" />
-          <template #imputed-month5="{ data }">
-            <div v-if="data.data.month5">
-              <colorful-badge class="hover-underlined" :value="data.data.month5.status"
-              :class="setUnderline(data.data.month5.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
-                :month="data.data.month5.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="06" cell-template="imputed-month6" />
-          <template #imputed-month6="{ data }">
-            <div v-if="data.data.month6">
-              <colorful-badge class="hover-underlined" :value="data.data.month6.status"
-              :class="setUnderline(data.data.month6.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
-                :month="data.data.month6.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="07" cell-template="imputed-month7" />
-          <template #imputed-month7="{ data }">
-            <div v-if="data.data.month7">
-              <colorful-badge class="hover-underlined" :value="data.data.month7.status"
-              :class="setUnderline(data.data.month7.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
-                :month="data.data.month7.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="08" cell-template="imputed-month8" />
-          <template #imputed-month8="{ data }">
-            <div v-if="data.data.month8">
-              <colorful-badge class="hover-underlined" :value="data.data.month8.status"
-              :class="setUnderline(data.data.month8.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
-                :month="data.data.month8.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="09" cell-template="imputed-month9" />
-          <template #imputed-month9="{ data }">
-            <div v-if="data.data.month9">
-              <colorful-badge class="hover-underlined" :value="data.data.month9.status"
-              :class="setUnderline(data.data.month9.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
-                :month="data.data.month9.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="10" cell-template="imputed-month10" />
-          <template #imputed-month10="{ data }">
-            <div v-if="data.data.month10">
-              <colorful-badge class="hover-underlined" :value="data.data.month10.status"
-              :class="setUnderline(data.data.month10.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
-                :month="data.data.month10.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="11" cell-template="imputed-month11" />
-          <template #imputed-month11="{ data }">
-            <div v-if="data.data.month11">
-              <colorful-badge class="hover-underlined" :value="data.data.month11.status"
-              :class="setUnderline(data.data.month11.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
-                :month="data.data.month11.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
-          </template>
-          <DxColumn width="100px" caption="12" cell-template="imputed-month12" />
-          <template #imputed-month12="{ data }">
-            <div v-if="data.data.month12">
-              <colorful-badge class="hover-underlined" :value="data.data.month12.status"
-              :class="setUnderline(data.data.month12.imputedMonth) ?'current-underlined':''"
-                @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
-                :month="data.data.month12.paymentMonth" />
-            </div>
-            <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
-          </template>
-          <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
-          <template #row-detail="{ }">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
-              :show-borders="true" :column-auto-width="true" :show-column-headers="false">
-              <DxColumn cell-template="col-first" data-type="string" />
-              <template #col-first="{ data }">
-                <b>{{ data.data.name }}</b><br>
-              </template>
-              <DxColumn width="100px" cell-template="month-1" />
-              <template #month-1="{ data }">
-                <div v-if="(data.data.month1)">{{ data.data.month1.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-2" />
-              <template #month-2="{ data }">
-                <div v-if="(data.data.month2)">{{ data.data.month2.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-3" />
-              <template #month-3="{ data }">
-                <div v-if="(data.data.month3)">{{ data.data.month3.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-4" />
-              <template #month-4="{ data }">
-                <div v-if="(data.data.month4)">{{ data.data.month4.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-5" />
-              <template #month-5="{ data }">
-                <div v-if="(data.data.month5)">{{ data.data.month5.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-6" />
-              <template #month-6="{ data }">
-                <div v-if="(data.data.month6)">{{ data.data.month6.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-7" />
-              <template #month-7="{ data }">
-                <div v-if="(data.data.month7)">{{ data.data.month7.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-8" />
-              <template #month-8="{ data }">
-                <div v-if="(data.data.month8)">{{ data.data.month8.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-9" />
-              <template #month-9="{ data }">
-                <div v-if="(data.data.month9)">{{ data.data.month9.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-10" />
-              <template #month-10="{ data }">
-                <div v-if="data.data.month10">{{ data.data.month10.value }}</div>
-              </template>
-              <DxColumn width="100px" cell-template="month-11" />
-              <template #month-11="{ data }">
-                <div v-if="(data.data.month11)">{{ data.data.month11.value }}
-                </div>
-              </template>
-              <DxColumn width="100px" cell-template="month-12" />
-              <template #month-12="{ data }">
-                <div v-if="(data.data.month12)">{{ data.data.month12.value }}
-                </div>
-              </template>
+    <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
+      :buttonPrint="false" />
+    <div id="pa-110" class="page-content">
+      <a-row>
+        <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
+          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
+            :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
+            :allow-column-resizing="colomn_resize" :column-auto-width="true">
+            <DxScrolling mode="standard" show-scrollbar="always" />
+            <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
+            <template #imputed-year="{}">
+              <span>지급연월</span>
+            </template>
+            <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
+            <template #imputed-month1="{ data }">
+              <div v-if="data.data.month1">
+                <colorful-badge class="hover-underlined" :value="data.data.month1.status"
+                  :class="setUnderline(data.data.month1.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
+                  :month="data.data.month1.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="02" cell-template="imputed-month2" />
+            <template #imputed-month2="{ data }">
+              <div v-if="data.data.month2">
+                <colorful-badge class="hover-underlined" :value="data.data.month2.status"
+                  :class="setUnderline(data.data.month2.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
+                  :month="data.data.month2.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="03" cell-template="imputed-month3" />
+            <template #imputed-month3="{ data }">
+              <div v-if="data.data.month3">
+                <colorful-badge class="hover-underlined" :value="data.data.month3.status"
+                  :class="setUnderline(data.data.month3.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
+                  :month="data.data.month3.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="04" cell-template="imputed-month4" />
+            <template #imputed-month4="{ data }">
+              <div v-if="data.data.month4">
+                <colorful-badge class="hover-underlined" :value="data.data.month4.status"
+                  :class="setUnderline(data.data.month4.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
+                  :month="data.data.month4.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="05" cell-template="imputed-month5" />
+            <template #imputed-month5="{ data }">
+              <div v-if="data.data.month5">
+                <colorful-badge class="hover-underlined" :value="data.data.month5.status"
+                  :class="setUnderline(data.data.month5.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
+                  :month="data.data.month5.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="06" cell-template="imputed-month6" />
+            <template #imputed-month6="{ data }">
+              <div v-if="data.data.month6">
+                <colorful-badge class="hover-underlined" :value="data.data.month6.status"
+                  :class="setUnderline(data.data.month6.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
+                  :month="data.data.month6.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="07" cell-template="imputed-month7" />
+            <template #imputed-month7="{ data }">
+              <div v-if="data.data.month7">
+                <colorful-badge class="hover-underlined" :value="data.data.month7.status"
+                  :class="setUnderline(data.data.month7.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
+                  :month="data.data.month7.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="08" cell-template="imputed-month8" />
+            <template #imputed-month8="{ data }">
+              <div v-if="data.data.month8">
+                <colorful-badge class="hover-underlined" :value="data.data.month8.status"
+                  :class="setUnderline(data.data.month8.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
+                  :month="data.data.month8.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="09" cell-template="imputed-month9" />
+            <template #imputed-month9="{ data }">
+              <div v-if="data.data.month9">
+                <colorful-badge class="hover-underlined" :value="data.data.month9.status"
+                  :class="setUnderline(data.data.month9.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
+                  :month="data.data.month9.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="10" cell-template="imputed-month10" />
+            <template #imputed-month10="{ data }">
+              <div v-if="data.data.month10">
+                <colorful-badge class="hover-underlined" :value="data.data.month10.status"
+                  :class="setUnderline(data.data.month10.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
+                  :month="data.data.month10.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="11" cell-template="imputed-month11" />
+            <template #imputed-month11="{ data }">
+              <div v-if="data.data.month11">
+                <colorful-badge class="hover-underlined" :value="data.data.month11.status"
+                  :class="setUnderline(data.data.month11.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
+                  :month="data.data.month11.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
+            </template>
+            <DxColumn width="100px" caption="12" cell-template="imputed-month12" />
+            <template #imputed-month12="{ data }">
+              <div v-if="data.data.month12">
+                <colorful-badge class="hover-underlined" :value="data.data.month12.status"
+                  :class="setUnderline(data.data.month12.imputedMonth) ? 'current-underlined' : ''"
+                  @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
+                  :month="data.data.month12.paymentMonth" />
+              </div>
+              <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
+            </template>
+            <DxMasterDetail class="table-detail" :enabled="true" template="row-detail" />
+            <template #row-detail="{}">
+              <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataCustomRes"
+                :show-borders="true" :column-auto-width="true" :show-column-headers="false">
+                <DxColumn cell-template="col-first" data-type="string" />
+                <template #col-first="{ data }">
+                  <b>{{ data.data.name }}</b><br>
+                </template>
+                <DxColumn width="100px" cell-template="month-1" />
+                <template #month-1="{ data }">
+                  <div v-if="(data.data.month1)">{{ data.data.month1.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-2" />
+                <template #month-2="{ data }">
+                  <div v-if="(data.data.month2)">{{ data.data.month2.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-3" />
+                <template #month-3="{ data }">
+                  <div v-if="(data.data.month3)">{{ data.data.month3.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-4" />
+                <template #month-4="{ data }">
+                  <div v-if="(data.data.month4)">{{ data.data.month4.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-5" />
+                <template #month-5="{ data }">
+                  <div v-if="(data.data.month5)">{{ data.data.month5.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-6" />
+                <template #month-6="{ data }">
+                  <div v-if="(data.data.month6)">{{ data.data.month6.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-7" />
+                <template #month-7="{ data }">
+                  <div v-if="(data.data.month7)">{{ data.data.month7.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-8" />
+                <template #month-8="{ data }">
+                  <div v-if="(data.data.month8)">{{ data.data.month8.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-9" />
+                <template #month-9="{ data }">
+                  <div v-if="(data.data.month9)">{{ data.data.month9.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-10" />
+                <template #month-10="{ data }">
+                  <div v-if="data.data.month10">{{ data.data.month10.value }}</div>
+                </template>
+                <DxColumn width="100px" cell-template="month-11" />
+                <template #month-11="{ data }">
+                  <div v-if="(data.data.month11)">{{ data.data.month11.value }}
+                  </div>
+                </template>
+                <DxColumn width="100px" cell-template="month-12" />
+                <template #month-12="{ data }">
+                  <div v-if="(data.data.month12)">{{ data.data.month12.value }}
+                  </div>
+                </template>
 
-            </DxDataGrid>
-          </template>
-        </DxDataGrid>
-      </a-spin>
-    </a-row>
-    <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
-      <a-col :span="5">
-        <div style="display: flex;">
-          <DxButton
-            :text="'귀' + inputDateTax" :disabled="false"
-            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-          <DxButton
-            :text="'지' + paymentDateTax" :disabled="false"
-            :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-          <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
-        </div>
-      </a-col>
-      <a-col :span="9">
-        <div style="float: right;display: flex;">
-          <SelectActionComponent :dataRows="dataRows"/>
-        </div>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="12" class="custom-layout">
-        <a-spin :spinning="(loadingTaxPayInfo)" size="large">
-          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTaxPayInfo"
-            :show-borders="true" :allow-column-reordering="move_column" :focused-row-enabled="true"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employeeId" id="pa-110-gridContainer"
-            :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey">
-            <DxScrolling mode="standard" show-scrollbar="always"/>
-            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" width="40"/>
-            <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
-            <template #tag="{ data }" class="custom-action">
-              <div class="custom-action">
-                <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                  :status="data.data.employee.status" :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                  :midTermSettlement="data.data.midTermSettlement" />
-              </div>
+              </DxDataGrid>
             </template>
-            <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay" :customize-text="formateMoney"/>
-            <DxColumn alignment="left" width="75" caption="공제" data-field="totalDeduction" :customize-text="formateMoney" />
-            <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" />
-            <DxColumn alignment="left" class="min-w-240" caption="비고" cell-template="four-major-insurance" />
-            <template #four-major-insurance="{ data }" class="custom-action">
-              <div class="custom-action">
-                <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
-                  :typeValue="1" />
-                <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
-                  :ratio="data.data.employee.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
-                  :ratio="data.data.employee.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
-                  :ratio="data.data.employee.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
-                  :ratio="data.data.employee.incomeTaxMagnification" />
-              </div>
-            </template>
-            <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay" cell-template="paymentDay" />
-            <template #paymentDay="{ data }" class="custom-action">
-                <div class="text-center">{{ data.data.paymentDay }}</div>
-            </template>
-            <DxSummary>
-              <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
-              <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}" />
-              <DxTotalItem column="totalDeduction" summary-type="sum" display-format="공제합계: {0}" />
-              <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
-            </DxSummary>
           </DxDataGrid>
+        </a-spin>
+      </a-row>
+      <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
+        <a-col :span="5">
+          <div style="display: flex;">
+            <DxButton :text="'귀' + inputDateTax" :disabled="false" :style="{ color: 'white', backgroundColor: 'gray' }"
+              :height="'33px'" />
+            <DxButton :text="'지' + paymentDateTax" :disabled="false"
+              :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+            <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
+          </div>
+        </a-col>
+        <a-col :span="9">
+          <div style="float: right;display: flex;">
+            <SelectActionComponent :dataRows="dataRows" />
+          </div>
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col :span="12" class="custom-layout">
+          <a-spin :spinning="loadingTaxPayInfo" size="large">
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
+              :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
+              :allow-column-reordering="move_column" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
+              :column-auto-width="true" key-expr="employee.employeeId" id="pa-110-gridContainer"
+              :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
+              v-model:focused-row-key="store.state.common.focusedRowKey">
+              <DxScrolling mode="standard" show-scrollbar="always" />
+              <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" width="40" />
+              <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
+              <template #tag="{ data }" class="custom-action">
+                <div class="custom-action">
+                  <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                    :status="data.data.employee.status" :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                    :midTermSettlement="data.data.midTermSettlement" />
+                </div>
+              </template>
+              <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay" :customize-text="formateMoney" />
+              <DxColumn alignment="left" width="75" caption="공제" data-field="totalDeduction"
+                :customize-text="formateMoney" />
+              <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment"
+                :customize-text="formateMoney" />
+              <DxColumn alignment="left" class="min-w-240" caption="비고" cell-template="four-major-insurance" />
+              <template #four-major-insurance="{ data }" class="custom-action">
+                <div class="custom-action">
+                  <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
+                    :typeValue="1" />
+                  <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
+                    :typeValue="1" />
+                  <four-major-insurance v-if="data.data.employee.employeementInsuranceDeduction" :typeTag="4"
+                    :typeValue="1" />
+                  <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
+                    :ratio="data.data.employee.nationalPensionSupportPercent" />
+                  <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                    :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                  <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                    :ratio="data.data.employee.employeementReductionRatePercent" />
+                  <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
+                    :ratio="data.data.employee.incomeTaxMagnification" />
+                </div>
+              </template>
+              <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay" cell-template="paymentDay" />
+              <template #paymentDay="{ data }" class="custom-action">
+                <div class="text-center">{{ data.data.paymentDay }}</div>
+              </template>
+              <DxSummary>
+                <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
+                <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}" />
+                <DxTotalItem column="totalDeduction" summary-type="sum" display-format="공제합계: {0}" />
+                <DxTotalItem column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" />
+              </DxSummary>
+            </DxDataGrid>
           </a-spin>
-      </a-col>
-      <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-        <FormDataComponent :dataIncomeWage="dataIncomeWage" :keyForm="keyForm" ref="formRef"/>
-      </a-col>
-      <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
-        @closePopup="modalCopy = false"
-        @dataAddIncomeProcess="dataAddIncomeProcess" :dateType="dateType"/>
-    </a-row>
+        </a-col>
+        <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+          <!-- <FormDataComponent :dataIncomeWage="dataIncomeWage" /> -->
+          <FormDataComponent />
+        </a-col>
+        <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
+          title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
+          @closePopup="modalCopy = false" @dataAddIncomeProcess="dataAddIncomeProcess" :dateType="dateType" />
+      </a-row>
+    </div>
+
   </div>
-  
-</div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from "vue"
@@ -319,7 +326,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    const globalYear = computed(()=> store.state.settings.globalYear)
+    const globalYear = computed(() => store.state.settings.globalYear)
     const per_page = computed(() => store.state.settings.per_page)
     const move_column = computed(() => store.state.settings.move_column)
     const colomn_resize = computed(() => store.state.settings.colomn_resize)
@@ -327,35 +334,36 @@ export default defineComponent({
     const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
     const dataSource = ref<any>([])
     const dataCustomRes = ref<any>([])
-    const dataTaxPayInfo = ref<any>([])
+    // const dataTaxPayInfo = ref<any>([])
     const arrDataPoint = ref<any>([])
     const dataModalCopy = ref()
-    const dataIncomeWage = ref({...sampleDataIncomeWage})
+    // const dataIncomeWage = ref({ ...sampleDataIncomeWage })
     // const actionAddItem = ref<boolean>(false)
     const modalCopy = ref<boolean>(false);
+    const modalChangeRow = ref(false)
     const dataRows = ref([])
-    const actionSaveItem= ref<number>(0)
+    const actionSaveItem = ref<number>(0)
     const actionUpdateItem = ref<number>(0)
-    const focusedRowKey = ref(null);
+    // const focusedRowKey = ref(null);
     let status = ref();
     const isDisabledForm = ref<boolean>(false);
     const dateType = ref<number>(1)
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
     const formatMonth = (month: any) => {
       if (+month < 10) {
-          return '0' + month;
+        return '0' + month;
       }
       return month;
     };
-    const inputDateTax = computed(()=> {
-        if(!isDisabledForm.value){
-            return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
-        }
-        return '';
-      })
-    const paymentDateTax = computed(()=> {
-      if(!isDisabledForm.value){
-          return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
+    const inputDateTax = computed(() => {
+      if (!isDisabledForm.value) {
+        return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
+      }
+      return '';
+    })
+    const paymentDateTax = computed(() => {
+      if (!isDisabledForm.value) {
+        return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
       }
       return '';
     })
@@ -373,7 +381,7 @@ export default defineComponent({
     // get data table detail getIncomeProcessWages
     watch(resIncomeProcessWages, (value) => {
       arrDataPoint.value = [];
-      if (value) { 
+      if (value) {
         // set first row in table Income Process Wages
         dataSource.value = [{
           companyId: companyId,
@@ -388,7 +396,7 @@ export default defineComponent({
             paymentYear: data.paymentYear,
             paymentMonth: data.paymentMonth,
           })
-          
+
           let dataAdd = {
             imputedYear: data.imputedYear,
             imputedMonth: data.imputedMonth,
@@ -396,7 +404,7 @@ export default defineComponent({
             paymentMonth: data.paymentMonth,
           }
           dataSource.value[0]['month' + data.imputedMonth] = data
-         // data table detail
+          // data table detail
           dataCustomRes.value[0]['month' + data.imputedMonth] = {
             value: `${[data.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[data].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
             ...dataAdd
@@ -451,15 +459,15 @@ export default defineComponent({
             ...dataAdd
           }
           if (data.imputedMonth == (dayjs().month() + 1)) {
-                status.value = data.status
-                // if(actionUpdateItem.value == 0){
-                //     store.state.common.processKeyPA110.imputedYear = data.imputedYear
-                //     store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
-                //     store.state.common.processKeyPA110.paymentYear = data.paymentYear
-                //     store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
-                // }          
-              }
-          
+            status.value = data.status
+            // if(actionUpdateItem.value == 0){
+            //     store.state.common.processKeyPA110.imputedYear = data.imputedYear
+            //     store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
+            //     store.state.common.processKeyPA110.paymentYear = data.paymentYear
+            //     store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
+            // }          
+          }
+
         });
       }
     }
@@ -476,35 +484,75 @@ export default defineComponent({
     }, () => ({
       fetchPolicy: "no-cache",
     }))
-    const formRef = ref();
+    // const formRef = ref();
     watch(resultTaxPayInfo, (value) => {
-        if(value?.getIncomeWages[0]) {
-            if (actionUpdateItem.value == 0) {
-              store.state.common.actionAddItem = false
-            }
-            if (actionUpdateItem.value == 1) {
-              store.state.common.actionAddItem = false
-            }
-            else {
-                focusedRowKey.value = value.getIncomeWages[0]?.employeeId ?? 1;
-                dataIncomeWage.value = value.getIncomeWages[0]
-            }
-            dataTaxPayInfo.value = value.getIncomeWages
-        }else {
-            dataTaxPayInfo.value = value.getIncomeWages;
-            formRef.value.addRow()
-        }
-        
+      // if (value?.getIncomeWages[0]) {
+      //   if (actionUpdateItem.value == 0) {
+      //     store.state.common.actionAddItem = false
+      //   }
+      //   if (actionUpdateItem.value == 1) {
+      //     store.state.common.actionAddItem = false
+      //   }
+      //   else {
+      //     store.state.common.focusedRowKey = value.getIncomeWages[0]?.employeeId ?? 1;
+      //     // dataIncomeWage.value = value.getIncomeWages[0]
+      //   }
+      //   store.state.common.dataTaxPayInfo = value.getIncomeWages
+      // } else {
+      //   store.state.common.dataTaxPayInfo = value.getIncomeWages;
+      //   // formRef.value.addRow()
+      // }
+      store.state.common.dataTaxPayInfo = value.getIncomeWages;
+      if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
+          if (store.state.common.employeeId && value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
+              store.state.common.focusedRowKey = store.state.common.employeeId
+              store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+          } else {
+              store.state.common.focusedRowKey = value.getIncomeWages[0].employeeId
+              store.state.common.incomeId = value.getIncomeWages[0].incomeId
+              store.state.common.employeeId = value.getIncomeWages[0].employeeId
+          }
+      } else {
+          store.state.common.actionAddItem = true
+          store.state.common.focusedRowKey = null;
+          store.state.common.incomeId = null;
+          store.state.common.employeeId = null;
+      }
+
+    })
+    watch(() => store.state.common.loadingTableInfo, (newVal) => {
+      refetchDataProcessIncomeWages() //reset data table 1
+      // IncomeWageDailiesTrigger.value = true;
+      refetchDataTaxPayInfo() //reset data table 2
     })
 
     /**
      * action edit employ tax pay
      */
+     let rowEdit = ref()
     const actionEditTaxPay = (data: any) => {
-      dataIncomeWage.value = data.data
-      store.state.common.actionAddItem = false
+      // dataIncomeWage.value = data.data
+      // store.state.common.actionAddItem = false
+      rowEdit.value = data.data
+      if (rowEdit.value.employeeId) {
+        if (store.state.common.statusChangeFormEdit) {
+          modalChangeRow.value = true;
+        } else {
+          if (!store.state.common.statusRowAdd) {
+            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+            store.state.common.statusRowAdd = true
+          }
+          store.state.common.incomeId = data.data.incomeId
+          store.state.common.employeeId = data.data.employeeId
+        }
+        if (store.state.common.statusRowAdd) {
+          store.state.common.actionAddItem = false
+        }
+      }
     }
     const selectionChanged = (data: any) => {
+      store.state.common.actionAddItem = true
+      store.state.common.focusedRowKey = null
       dataRows.value = data.selectedRowsData
     }
     // 
@@ -512,7 +560,7 @@ export default defineComponent({
      *  Add new value
      *  Add one to change the props.
      *  When the prop changes, the action will be taken to add or update the data 
-     *  */ 
+     *  */
     // const onSubmit = (e: any) => {
     //   actionSaveItem.value++
     // }
@@ -538,9 +586,9 @@ export default defineComponent({
      * @param month 
      */
     const copyMonth = (month: number) => {
-        dataModalCopy.value = month;
-        modalCopy.value = true;
-        
+      dataModalCopy.value = month;
+      modalCopy.value = true;
+
     }
 
     // const loadingTableInfo = (emit: any) => {
@@ -572,10 +620,10 @@ export default defineComponent({
       actionChangeIncomeProcess({
         companyId: companyId,
         processKey: {
-        imputedYear: globalYear.value,
-        imputedMonth: dayjs().month() + 1,
-        paymentYear: globalYear.value,
-        paymentMonth: dayjs().month() + 1,
+          imputedYear: globalYear.value,
+          imputedMonth: dayjs().month() + 1,
+          paymentYear: globalYear.value,
+          paymentMonth: dayjs().month() + 1,
         },
         status: status.value
       })
@@ -590,25 +638,37 @@ export default defineComponent({
      * underlined set of selected month
      * @param monthInputed 
      */
-    const setUnderline = (monthInputed : any)=>{
-        return monthClicked.value == monthInputed;
+    const setUnderline = (monthInputed: any) => {
+      return monthClicked.value == monthInputed;
     }
 
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
     // get config to check default date type
-    const { result: resultConfig} = useQuery(
-        queriesHolding.getWithholdingConfig,
-        dataQuery,
-        () => ({
-            fetchPolicy: "no-cache",
-        })
+    const { result: resultConfig } = useQuery(
+      queriesHolding.getWithholdingConfig,
+      dataQuery,
+      () => ({
+        fetchPolicy: "no-cache",
+      })
     );
-    watch(resultConfig,(newVal)=> {
-        dateType.value = newVal.paymentType;
+    watch(resultConfig, (newVal) => {
+      dateType.value = newVal.paymentType;
     });
-    const keyForm = ref(1);
+    // const keyForm = ref(1);
+    const statusComfirmChange = (res: any) => {
+      if (res) {
+        (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+      } else {
+        if (!store.state.common.statusRowAdd) {
+          store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+          store.state.common.statusRowAdd = true
+        }
+      }
+      store.state.common.incomeId = rowEdit.value.incomeId
+      store.state.common.employeeId = rowEdit.value.employeeId
+    }
     // const onActionAddItem = (emit: any) => {
     //   store.state.common.actionAddItem = true;
     //     keyForm.value ++;
@@ -620,6 +680,7 @@ export default defineComponent({
       move_column,
       colomn_resize,
       processKey,
+      store,
       // onSubmit,
       // updateData,
       dataSource,
@@ -629,12 +690,12 @@ export default defineComponent({
       loadingIncomeProcessWages,
       copyMonth,
       loadingTaxPayInfo,
-      dataTaxPayInfo,
+      // dataTaxPayInfo,
       dataModalCopy,
       modalCopy,
       actionEditTaxPay,
       selectionChanged,
-      dataIncomeWage,
+      // dataIncomeWage,
       // loadingTableInfo,
       dataRows,
       statusComfirm,
@@ -644,14 +705,15 @@ export default defineComponent({
       dataAddIncomeProcess,
       status,
       setUnderline,
-      focusedRowKey,
+      // focusedRowKey,
       formateMoney,
       dateType,
       inputDateTax,
       paymentDateTax,
       // onActionAddItem,
-      keyForm,
-      formRef
+      // keyForm,
+      // formRef,
+      modalChangeRow, statusComfirmChange
     }
 
   },
