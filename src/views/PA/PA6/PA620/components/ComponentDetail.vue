@@ -1,166 +1,170 @@
 <template>
-    <a-col :span="24">
-        <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
-            <a-col class="d-flex">
-                <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
-                    :style="{ color: 'white', backgroundColor: 'gray' }" height="33px" />
-                <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
-                    :style="{ color: 'white', backgroundColor: 'black' }" height="33px" />
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm"
-                    v-if="!isDisabledForm" />
-            </a-col>
-            <a-col style="display: inline-flex; align-items: center">
-                <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm" />
-                <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm" /> 
-                <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm">
-                    <SaveOutlined style="font-size: 17px" />
-                </DxButton>
-                <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
-                    :disabled="isDisabledForm">
-                    <a-tooltip placement="top">
-                        <template #title>사업소득자료 변경이력</template>
-                        <div style="text-align: center;" @click="onItemClick('history')">
-                            <HistoryOutlined style="font-size: 16px" />
-                        </div>
-                    </a-tooltip>
-                </DxButton>
-                <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true"
-                    :disabled="isDisabledForm">
-                    <a-tooltip placement="top">
-                        <template #title>사업소득 마감상태 변경이력</template>
-                        <div style="text-align: center;" @click="onItemClick('historyEdit')">
-                            <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
-                        </div>
-                    </a-tooltip>
-                </DxButton>
-                <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
-                    <div class="d-flex-center">
-                        <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
-                        <span class="fz-12 pl-5">지급일변경</span>
+    <div class="d-flex-center mt-10 title-action">
+        <div class="d-flex">
+            <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
+                :style="{ color: 'white', backgroundColor: 'gray' }" height="33px" />
+            <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
+                :style="{ color: 'white', backgroundColor: 'black' }" height="33px" />
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
+        </div>
+        <div class="d-flex">
+            <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm" />
+            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm" />
+            <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm">
+                <SaveOutlined style="font-size: 17px" />
+            </DxButton>
+            <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
+                :disabled="isDisabledForm">
+                <a-tooltip placement="top">
+                    <template #title>사업소득자료 변경이력</template>
+                    <div style="text-align: center;" @click="onItemClick('history')">
+                        <HistoryOutlined style="font-size: 16px" />
                     </div>
-                </DxButton>
-                <div class="custom-select-tab ml-4">
-                    <button class="button-open-tab" @click="onItemClick('openTab')">사업소득자등록</button>
+                </a-tooltip>
+            </DxButton>
+            <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true"
+                :disabled="isDisabledForm">
+                <a-tooltip placement="top">
+                    <template #title>사업소득 마감상태 변경이력</template>
+                    <div style="text-align: center;" @click="onItemClick('historyEdit')">
+                        <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
+                    </div>
+                </a-tooltip>
+            </DxButton>
+            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
+                <div class="d-flex-center">
+                    <checkbox-basic size="13" :valueCheckbox="true" :disabled="true" />
+                    <span class="fz-12 pl-5">지급일변경</span>
                 </div>
-            </a-col>
-        </a-row>
-    </a-col>
-    <a-col :span="14" class="custom-layout ">
-        <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit)" size="large">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-                :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                @focused-row-changed="onFocusedRowChanged" :allow-column-resizing="colomn_resize"
-                :column-auto-width="true" :focused-row-enabled="true" @selection-changed="selectionChanged"
-                v-model:focused-row-key="focusedRowKey" ref="gridRefName">
-                <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
-                <template #tag="{ data }" class="custom-action">
-                    <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
-                        :incomeTypeName="data.data.employee.incomeTypeName" />
-                </template>
-                <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
-                    :format="amountFormat" />
-                <DxColumn caption="지급액" width="100px" data-field="paymentAmount" data-type="string"
-                    :format="amountFormat" />
-                <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string" :format="amountFormat" />
-                <DxColumn caption="공제" cell-template="income-tax" width="100px" />
-                <template #income-tax="{ data }" class="custom-action">
-                    {{
-                        $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
-                    }}
-                </template>
-                <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string"
-                    :format="amountFormat" />
-                <DxSummary>
-                    <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
-                    <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
-                        value-format="#,###" />
-                    <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-                    <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum"
-                        display-format="차인지급액합계: {0}" value-format="#,###" />
-                </DxSummary>
-            </DxDataGrid>
-        </a-spin>
-    </a-col>
-    <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
-        <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
-            <a-form-item label="사업소득자" label-align="right">
-                <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
-                    width="350px" :required="true" @incomeTypeCode="changeIncomeTypeCode"
-                    :disabled="disabledInput || isDisabledForm" />
-            </a-form-item>
-            <div class="header-text-1 mb-10">소득내역</div>
-            <div class="income-details">
-                <a-row>
-                    <a-col :span="13">
-                        <a-form-item label="귀속/지급연월" label-align="right">
-                            <div class="d-flex-center">
-                                <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
-                                    귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5"
-                                        :readonly="true" />
-                                </div>
-                                <DxButton :text="'귀'" :disabled="isDisabledForm"
-                                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else />
-                                <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
-                                    지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px"
-                                        :readonly="true" />
-                                </div>
-                                <DxButton :text="'지'" :disabled="isDisabledForm"
-                                    :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
-                            </div>
-                        </a-form-item>
-                        <a-form-item label="지급일" label-align="right">
-                            <number-box :max="31" :min="1" width="150px" class="mr-5"
-                                v-model:valueInput="dataAction.input.paymentDay"
-                                :disabled="disabledInput || isDisabledForm" />
-                        </a-form-item>
-                        <a-form-item label="지급액" label-align="right">
-                            <number-box-money min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
-                                v-model:valueInput="dataAction.input.paymentAmount" @changeInput="changeInput" />
-                        </a-form-item>
-                        <a-form-item label="세율" label-align="right">
-                            3%
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="11">
-                        <div class="header-text-2 mb-10">공제합계 <b>{{
-                        ($filters.formatCurrency(dataAction.input.withholdingIncomeTax +
-                            dataAction.input.withholdingLocalIncomeTax))
-                        }}</b>원</div>
-                        <div>
-                            <a-form-item label="소득세(공제)" label-align="right">
-                                <div class="d-flex-center">
-                                    <number-box-money min="0" width="150px" class="mr-5" :disabled="true"
-                                        v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="지방소득세(공제)" label-align="right">
-                                <div class="d-flex-center">
-                                    <number-box-money min="0" width="150px" class="mr-5" :disabled="true"
-                                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" /> 원
-                                </div>
-                            </a-form-item>
-                        </div>
-                        <div class="header-text-2 mb-10">
-                            <div>
-                                공제합계 <b class="ml-5"> {{ ($filters.formatCurrency(dataAction.input.paymentAmount -
-                                    dataAction.input.withholdingIncomeTax -
-                                    dataAction.input.withholdingLocalIncomeTax))
-                                }}</b>원
-                                <span class="fz-11 ml-10" style="color: gray;">
-                                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                        class="mr-5">
-                                    지급액 - 공제합계
-                                </span>
-                            </div>
-                        </div>
-                    </a-col>
-                </a-row>
+            </DxButton>
+            <div class="custom-select-tab ml-4">
+                <button class="button-open-tab" @click="onItemClick('openTab')">사업소득자등록</button>
             </div>
-        </a-spin>
-    </a-col>
-    <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+        </div>
+    </div>
+    <a-row>
+        <a-col :span="14" class="custom-layout">
+            <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit || loadingOption)" size="large">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
+                    :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
+                    @focused-row-changed="onFocusedRowChanged" :allow-column-resizing="colomn_resize"
+                    :column-auto-width="true" :focused-row-enabled="true" @selection-changed="selectionChanged"
+                    v-model:focused-row-key="focusedRowKey" ref="gridRefName">
+                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
+                    <template #tag="{ data }" class="custom-action">
+                        <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
+                            :incomeTypeName="data.data.employee.incomeTypeName" />
+                    </template>
+                    <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
+                        :format="amountFormat" />
+                    <DxColumn caption="지급액" width="100px" data-field="paymentAmount" data-type="string"
+                        :format="amountFormat" />
+                    <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string"
+                        :format="amountFormat" />
+                    <DxColumn caption="공제" cell-template="income-tax" width="100px" />
+                    <template #income-tax="{ data }" class="custom-action">
+                        {{
+                            $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax)
+                        }}
+                    </template>
+                    <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string"
+                        :format="amountFormat" />
+                    <DxSummary>
+                        <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
+                        <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
+                            value-format="#,###" />
+                        <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
+                        <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum"
+                            display-format="차인지급액합계: {0}" value-format="#,###" />
+                    </DxSummary>
+                </DxDataGrid>
+            </a-spin>
+        </a-col>
+        <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
+            <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
+                <a-form-item label="사업소득자" label-align="right">
+                    <employ-type-select :arrayValue="arrayEmploySelect"
+                        v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
+                        @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || isDisabledForm" />
+                </a-form-item>
+                <div class="header-text-1 mb-10">소득내역</div>
+                <div class="income-details">
+                    <a-row>
+                        <a-col :span="13">
+                            <a-form-item label="귀속/지급연월" label-align="right">
+                                <div class="d-flex-center">
+                                    <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
+                                        귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5"
+                                            :readonly="true" />
+                                    </div>
+                                    <DxButton :text="'귀'" :disabled="isDisabledForm"
+                                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else />
+                                    <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
+                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px"
+                                            :readonly="true" />
+                                    </div>
+                                    <DxButton :text="'지'" :disabled="isDisabledForm"
+                                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
+                                </div>
+                            </a-form-item>
+                            <a-form-item label="지급일" label-align="right">
+                                <number-box :max="31" :min="1" width="150px" class="mr-5"
+                                    v-model:valueInput="dataAction.input.paymentDay"
+                                    :disabled="disabledInput || isDisabledForm" />
+                            </a-form-item>
+                            <a-form-item label="지급액" label-align="right">
+                                <number-box-money :min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
+                                    v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" />
+                            </a-form-item>
+                            <a-form-item label="세율" label-align="right">
+                                3%
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="11">
+                            <div class="header-text-2 mb-10">공제합계
+                                <b>
+                                    {{
+                                        $filters.formatCurrency(dataAction.input.withholdingIncomeTax +
+                                            dataAction.input.withholdingLocalIncomeTax)
+                                    }}
+                                </b>원
+                            </div>
+                            <div>
+                                <a-form-item label="소득세(공제)" label-align="right">
+                                    <div class="d-flex-center">
+                                        <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
+                                            v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
+                                    </div>
+                                </a-form-item>
+                                <a-form-item label="지방소득세(공제)" label-align="right">
+                                    <div class="d-flex-center">
+                                        <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
+                                            v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" /> 원
+                                    </div>
+                                </a-form-item>
+                            </div>
+                            <div class="header-text-2 mb-10">
+                                <div>
+                                    공제합계 <b class="ml-5"> {{ ($filters.formatCurrency(dataAction.input.paymentAmount -
+                                        dataAction.input.withholdingIncomeTax -
+                                        dataAction.input.withholdingLocalIncomeTax))
+                                    }}</b>원
+                                    <span class="fz-11 ml-10" style="color: gray;">
+                                        <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
+                                            class="mr-5">
+                                        지급액 - 공제합계
+                                    </span>
+                                </div>
+                            </div>
+                        </a-col>
+                    </a-row>
+                </div>
+            </a-spin>
+        </a-col>
+    </a-row>
+    <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="arrCallApiDelete"
         :processKey="dataTableDetail.processKey" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
         title="변경이력" typeHistory="pa-620" />
@@ -168,34 +172,32 @@
         title="변경이력" typeHistory="pa-620-status" />
     <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <PopupMessage :modalStatus="popupAddStatus" @closePopup="popupAddStatus = false" :typeModal="'confirm'"
-        :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onPopupComfirm"
+    <PopupMessage :modalStatus="popupAddStatus" @closePopup="popupAddStatus = false" typeModal="confirm"
+        :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onPopupComfirm"
         :isConfirmIcon="false" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive, computed } from "vue";
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxToolbar, DxEditing, DxScrolling, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { EditOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { companyId, openTab } from "@/helpers/commonFunction";
+import { dataActionUtils, dataGetDetailEdit, arrDropDownUtil, DataAddNew } from "../utils/index";
+import { Formula } from '@bankda/jangbuda-common';
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA6/PA620/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index";
 import DxButton from "devextreme-vue/button";
-import { companyId, openTab } from "@/helpers/commonFunction";
-import { dataActionUtils, dataGetDetailEdit, arrDropDownUtil } from "../utils/index";
 import dayjs from "dayjs";
-import DxDropDownButton from 'devextreme-vue/drop-down-button';
-import type { DropdownProps } from "ant-design-vue";
 import DeletePopup from "./DeletePopup.vue"
 import EditPopup from "./EditPopup.vue"
 import filters from "@/helpers/filters";
-import { Formula } from '@bankda/jangbuda-common';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
-        EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
-        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxScrolling, DxToolbar, DxEditing, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
+        EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined,
+        MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined,
         DeletePopup, EditPopup
     },
     props: {
@@ -231,10 +233,12 @@ export default defineComponent({
         const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         let arrayEmploySelect: any = ref([])
-        let placements = ["bottomRight"] as DropdownProps["placement"][];
         let dataAction: any = reactive({
             ...dataActionUtils
         })
+        let dataAddDefaul: any = ref(
+            JSON.parse(JSON.stringify(dataActionUtils))
+        )
         let dataCallApiGetOption = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -252,6 +256,13 @@ export default defineComponent({
         const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
         const focusedRowKey = ref();
         const gridRefName: any = ref();
+        const popupAddStatus = ref<boolean>(false);
+        const titleModalConfirm = ref();
+        const popupAddType = ref(1);
+        const dataActionEditInit = ref({});
+        const isCompare = ref(false);
+        const copyFocusRowKey = ref();
+        const oldIncomeId = ref(1);
         const inputDateTax = computed(() => {
             if (!props.isDisabledForm) {
                 return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
@@ -272,9 +283,8 @@ export default defineComponent({
         }));
         const isFirstChange = ref(true);
         resIncomeProcessBusinessesDetail(res => {
-            const val = res.data.getIncomeBusinesses; 
-            store.state.common.actionAddRow.dataSource = val;  
-
+            const val = res.data.getIncomeBusinesses;
+            store.state.common.actionAddRow.dataSource = val;
             //If you change the current year and no data, return the values to empty
             if (isFirstChange.value) {
                 isCompare.value = false;
@@ -341,6 +351,7 @@ export default defineComponent({
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeBusiness);
         doneCreated(res => {
+            focusedRowKey.value = res.data.createIncomeBusiness.employeeId
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
             triggerDetail.value = true
@@ -379,11 +390,33 @@ export default defineComponent({
             notification('success', `업데이트 완료!`);
             emit('createdDone', true)
         })
-        // ================WATCHING============================================  
+        // ===================================== WATCHING ============================================  
+        watch(() => dataAction, (newValue) => {
+            if (store.state.common.actionAddRow.activeRowAdd == true) {
+                //update data newly entered in row add by table
+                let dataEmploy = arrayEmploySelect.value.filter((val: any) => val.employeeId == newValue.input.employeeId)
+                let rowNewInTable = store.state.common.actionAddRow.dataSource[store.state.common.actionAddRow.dataSource.length - 1]
+                if (dataEmploy.length > 0) {
+                    rowNewInTable.incomeTypeCode = dataEmploy[0].incomeTypeCode
+                    rowNewInTable.employee.incomeTypeName = dataEmploy[0].incomeTypeName
+                    rowNewInTable.employee.name = dataEmploy[0].name
+                }
+                rowNewInTable.paymentDay = newValue.input.paymentDay
+                rowNewInTable.paymentAmount = newValue.input.paymentAmount
+                rowNewInTable.taxRate = newValue.input.taxRate
+                rowNewInTable.withholdingIncomeTax = newValue.input.withholdingIncomeTax
+                rowNewInTable.withholdingLocalIncomeTax = newValue.input.withholdingLocalIncomeTax
+                rowNewInTable.actualPayment = newValue.input.paymentAmount - newValue.input.withholdingIncomeTax - newValue.input.withholdingLocalIncomeTax
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+            }
+        }, { deep: true })
         watch(() => props.statusBt, (newValue) => {
             statusButton.value = newValue
         })
-        watch(() => store.state.common.actionAddRow.dataSource, (newValue) => {  
+        watch(() => store.state.common.actionAddRow.dataSource, (newValue) => {
             dataSourceDetail.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
@@ -405,25 +438,6 @@ export default defineComponent({
             dataAction.input.withholdingIncomeTax = objIncomeTax.incomeTax;
             dataAction.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
         };
-        const changeInput = () => {
-            caclInput();
-        }
-        const popupAddStatus = ref<boolean>(false);
-        const titleModalConfirm = ref('Do you want to reset your form?');
-        const dataActionToCompare = ref({
-            paymentDay: null,
-            employeeId: 0,
-            incomeTypeCode: "",
-            paymentAmount: 0,
-            taxRate: 3,
-            withholdingIncomeTax: 0,
-            withholdingLocalIncomeTax: 0,
-        });
-        const popupAddType = ref(1);
-        const dataActionEditInit = ref({});
-        const isCompare = ref(false);
-        const copyFocusRowKey = ref();
-        const oldIncomeId = ref(1);
         const resetForm = () => {
             disabledInput.value = false
             dataAction.input.paymentDay = null
@@ -437,65 +451,96 @@ export default defineComponent({
         }
         const onPopupComfirm = (e: any) => {
             if (e) {
-                if (popupAddType.value == 2) {
-                    onSave();
-                    // isCompare.value = true;
-                    focusedRowKey.value = copyFocusRowKey.value;
-                    triggerDetailDetailEdit.value = true;
-                    refetchDetailEdit()
+                if (store.state.common.actionAddRow.activeRowAdd == false) {
+                    if (popupAddType.value == 2) {
+                        onSave();
+                        // isCompare.value = true;
+                        focusedRowKey.value = copyFocusRowKey.value;
+                        triggerDetailDetailEdit.value = true;
+                        refetchDetailEdit()
+                        return
+                    } else {
+                        resetForm();
+                        return
+                    }
                 } else {
-                    resetForm();
+                    dataAction.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
+                    dataAction.processKey.imputedYear = parseInt(month1.value.split('-')[0])
+                    dataAction.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
+                    dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
+                    actionCreated(dataAction)
                 }
             } else {
                 if (popupAddType.value == 2) {
-                    // isCompare.value = true;
+                    isCompare.value = true;
                     dataCallApiDetailEdit.incomeId = oldIncomeId.value;
                     triggerDetailDetailEdit.value = true
                     refetchDetailEdit()
                 }
                 // isLoadNewForm.value = true;
             }
+            dataCallApiDetailEdit.processKey = processKey.value
+            dataCallApiDetailEdit.incomeId = store.state.common.actionAddRow.incomeIdStore;
+            triggerDetailDetailEdit.value = true
+            refetchDetailEdit();
+            setTimeout(() => {
+                isCompare.value = true;
+            }, 100)
+            store.state.common.actionAddRow.activeRowAdd = false
+            store.state.common.actionAddRow.dataSource = store.state.common.actionAddRow.dataSource.splice(0, store.state.common.actionAddRow.dataSource.length - 1)
+
         };
         const addRow = () => {
-            if (!disabledInput.value) {
-                if (JSON.stringify(dataAction.input) != JSON.stringify(dataActionToCompare.value)) {
-                    popupAddStatus.value = true;
-                    titleModalConfirm.value = 'Do you want to reset your form?';
+            // If row new is not created
+            if (store.state.common.actionAddRow.activeRowAdd == false) {
+                store.state.common.actionAddRow.activeRowAdd = true
+                let newVal = {
+                    ...DataAddNew
                 }
-            } else {
+                store.state.common.actionAddRow.dataSource = JSON.parse(JSON.stringify(store.state.common.actionAddRow.dataSource)).concat(newVal)
                 resetForm();
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+            } else {
+                notification('error', "Hoàn thành thao tác nhập trước đó")
             }
         }
         const onFocusedRowChanged = (data: any) => {
-            const dataRow = data.row && data.row.data;
-            if (!dataRow) {
-                disabledInput.value = false;
-            }
-            if (dataRow) {
+            let dataRow: any = dataSourceDetail.value.filter((val: any) => val.employeeId === data.key)[0]
+            if (dataRow.incomeId) {
                 disabledInput.value = true;
                 switchAction.value = false
-                if (isCompare.value) {
-                    if (JSON.stringify(dataAction.input) != JSON.stringify(dataActionEditInit.value)) {
+                store.state.common.actionAddRow.incomeIdStore = dataRow?.incomeId;
+                if (store.state.common.actionAddRow.activeRowAdd == true) {
+                    if (JSON.stringify(dataAction.input) === JSON.stringify(dataAddDefaul.value.input)) {
+                        store.state.common.actionAddRow.activeRowAdd = false
+                        store.state.common.actionAddRow.dataSource = store.state.common.actionAddRow.dataSource.splice(0, store.state.common.actionAddRow.dataSource.length - 1)
+                    } else {
+                        popupAddStatus.value = true;
+                        titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
+                        return
+                    }
+                } else {
+                    if (isCompare.value && JSON.stringify(dataAction.input) != JSON.stringify(dataActionEditInit.value)) {
                         popupAddType.value = 2
                         popupAddStatus.value = true;
                         titleModalConfirm.value = '변경 내용을 저장하시겠습니까?';
                         copyFocusRowKey.value = dataRow.employeeId;
-                        oldIncomeId.value = dataRow?.incomeId
-                    } else {
-                        dataCallApiDetailEdit.processKey = processKey.value
-                        dataCallApiDetailEdit.incomeId = dataRow?.incomeId;
-                        triggerDetailDetailEdit.value = true
-                        refetchDetailEdit();
+                        oldIncomeId.value = dataRow.incomeId
+                        return
                     }
-                } else {
-                    dataCallApiDetailEdit.processKey = processKey.value
-                    dataCallApiDetailEdit.incomeId = dataRow?.incomeId;
-                    triggerDetailDetailEdit.value = true
-                    refetchDetailEdit();
-                    setTimeout(() => {
-                        isCompare.value = true;
-                    }, 100)
                 }
+                dataCallApiDetailEdit.processKey = processKey.value
+                dataCallApiDetailEdit.incomeId = dataRow?.incomeId;
+                triggerDetailDetailEdit.value = true
+                refetchDetailEdit();
+                setTimeout(() => {
+                    isCompare.value = true;
+                }, 100)
+            } else {
+                resetForm()
             }
         }
         const changeIncomeTypeCode = (res: string) => {
@@ -504,11 +549,26 @@ export default defineComponent({
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys
         }
+        let arrCallApiDelete: any = ref([])
         const deleteItem = () => {
+            arrCallApiDelete.value = []
+            dataSourceDetail.value.map((val: any) => { 
+                let dataReturn = checkValue(val)  
+                if (JSON.stringify(dataReturn) != '{}')
+                    arrCallApiDelete.value.push(dataReturn)
+            })
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
             }
         };
+        const checkValue = (data: any) => {
+            let valueReturn = {}
+            popupDataDelete.value.map((val: any) => {
+                if (val == data.employeeId)
+                    valueReturn = data.incomeId;
+            })
+            return valueReturn
+        }
         const actionDeleteSuccess = () => {
             modalDelete.value = false
             modalEdit.value = false
@@ -560,8 +620,7 @@ export default defineComponent({
             dataAction.processKey.paymentYear = parseInt(month2.value.split('-')[0])
             if (switchAction.value == true) {
                 actionCreated(dataAction)
-            }
-            else {
+            } else {
                 let inputEdit = {
                     ...dataAction,
                     incomeId: dataCallApiDetailEdit.incomeId,
@@ -582,8 +641,8 @@ export default defineComponent({
             return month;
         };
         return {
-            month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, placements, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare,
-            addRow, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onFocusedRowChanged, changeInput, onPopupComfirm,
+            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare,
+            caclInput, addRow, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onFocusedRowChanged, onPopupComfirm,
         }
     }
 });

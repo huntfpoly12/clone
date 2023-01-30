@@ -4,6 +4,7 @@ const statesPA120 = {
     keyActivePA120: 0,
     resetTabPA120:'1',
     isForeignerPA120:false,
+    presidentPA120:false,
 };
   
 export default statesPA120;

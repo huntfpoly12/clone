@@ -77,7 +77,8 @@
                             <template #pupop="{ data }" class="custom-action">
                                 <div class="custom-action">
                                     <a-space :size="10">
-                                        <DeleteOutlined v-if="data.data.deletable" @click="statusRowAdd ? modalStatusDelete = true : ''" />
+                                        <DeleteOutlined v-if="data.data.deletable"
+                                            @click="statusRowAdd ? modalStatusDelete = true : ''" />
                                     </a-space>
                                 </div>
                             </template>
@@ -143,7 +144,8 @@
                             </div>
                         </a-form-item>
                         <div class="text-align-center mt-20">
-                            <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="actionSave($event)" />
+                            <button-basic :text="'저장'" type="default" :mode="'contained'"
+                                @onClick="actionSave($event)" />
                         </div>
                         <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
                             id="active-save" />
@@ -386,6 +388,8 @@ export default defineComponent({
         const onSelectionClick = (data: any) => {
             dataRow = data.data
             if (dataRow.employeeId) {
+                originDataDetail.value.employeeId = data.data.employeeId
+                originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
                 } else {
@@ -396,8 +400,6 @@ export default defineComponent({
                             listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
                             statusRowAdd.value = true
                         }
-                        originDataDetail.value.employeeId = data.data.employeeId
-                        originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
                         triggerDetail.value = true;
                     }
                     statusFormUpdate.value = true;

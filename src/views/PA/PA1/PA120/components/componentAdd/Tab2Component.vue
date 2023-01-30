@@ -1,13 +1,13 @@
 <template>
   <div id="tab2-pa120">
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
-    <a-row :gutter="16">
+    <a-row :gutter="16" class="mb-7">
       <a-col span="24" style="display: flex; flex-wrap: wrap;">
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
             <checkbox-basic size="18px" label="국민연금" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
             <checkbox-basic size="18px" label="건강보험" class="check-box-tab1" v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
         </a-form-item>
-            <checkbox-basic class="mb-4 ml-15" size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction"></checkbox-basic>
+            <checkbox-basic class="mb-4 ml-15" size="18px" label="고용보험" v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction" :disabled="presidentPA120"></checkbox-basic>
             
         <p class="text-note mt-7 ml-7">
             <img class="mt-2 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
@@ -22,7 +22,7 @@
                     공제 여부: 
                     <switch-basic
                     class="switch-insurance ml-20"
-                    switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.longTermCareInsuranceDeduction"
+                    switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.insuranceSupport"
                     ></switch-basic>
             </a-col>
         </div>
@@ -32,14 +32,19 @@
             국민연금 적용율:
            </a-col> 
            <a-col span="12">
-               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.longTermCareInsuranceDeduction"></radio-group>
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport"></radio-group>
            </a-col>
            <a-col span="10">
             고용보험 적용율:
            </a-col> 
            <a-col span="12">
-               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.longTermCareInsuranceDeduction"></radio-group>
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport"></radio-group>
            </a-col>
+           <a-col span="10"><span class="header-text-4"> 소득세 적용율: </span></a-col>
+            <a-col span="14" class="income-tax-app-rate">
+              <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification"
+                layoutCustom="horizontal"></radio-group>
+            </a-col>
         </a-row>
       </a-col>
       <a-col :span="12">
@@ -64,7 +69,7 @@
             감면기간:
            </a-col> 
            <a-col span="12">
-               <a-range-picker v-model:value="rangeDate" :placeholder="['Start', 'End']" :disabled="!formStateTab2.employeementReduction"/>
+             <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate" :disabled="!formStateTab2.employeementReduction"> </date-time-box>
            </a-col>
            <a-col span="10">
             감면율:
@@ -81,16 +86,6 @@
         </a-row>
       </a-col>
     </a-row>
-    <a-col span="24">
-        <a-row>
-            <a-col span="5">
-                소득세 적용율:
-           </a-col> 
-           <a-col span="19" class="income-tax-app-rate">
-               <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification" layoutCustom="horizontal"></radio-group>
-           </a-col>
-        </a-row>
-      </a-col >
     <div class="header-text-3">
       급여 (기본값)
       <span>
@@ -102,16 +97,16 @@
       <a-col :span="8">
         <div class="header-text-2">요약</div>
         <div class="summary">
-            <a-col :span="20">소득수당 합계:</a-col>
-            <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItem) }}</span> 원</a-col>
-            <a-col :span="20">수당 과세 합계:</a-col>
-            <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
-            <a-col :span="20">수당 비과세 합계:</a-col>
-            <a-col :span="4"><span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
-            <a-col :span="20">공제 합계:</a-col>
-            <a-col :span="4"><span>{{ $filters.formatCurrency(totalDeduction) }}</span> 원</a-col>
-            <a-col :span="20">차인지급액:</a-col>
-            <a-col :span="4"><span>{{ $filters.formatCurrency(subPayment) }}</span> 원</a-col>
+            <a-col :span="14">소득수당 합계:</a-col>
+            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalPayItem) }}</span> 원</a-col>
+            <a-col :span="14">수당 과세 합계:</a-col>
+            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
+            <a-col :span="14">수당 비과세 합계:</a-col>
+            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
+            <a-col :span="14">공제 합계:</a-col>
+            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(totalDeduction) }}</span> 원</a-col>
+            <a-col :span="14">차인지급액:</a-col>
+            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{ $filters.formatCurrency(subPayment) }}</span> 원</a-col>
           <div class="text5 pl-8">
             <span>
               <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
@@ -188,9 +183,10 @@ import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
+import Datepicker from "@vuepic/vue-datepicker";
 type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
-  components: {},
+  components: {Datepicker},
   props: {
     employeeId: {
       type: String,
@@ -210,6 +206,7 @@ export default defineComponent({
     const store = useStore();
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
+    const presidentPA120 = computed(()=>store.state.common.presidentPA120);
 
     const globalYear = computed(() => store.state.settings.globalYear);
     const formStateTab2 = reactive<any>({
@@ -469,6 +466,7 @@ export default defineComponent({
       companyId,
       dataConfigPayItems,
       dataConfigDeduction,
+      presidentPA120
     };
   },
 });
@@ -553,8 +551,7 @@ export default defineComponent({
 
   .income-tax-app-rate {
     ::v-deep .dx-radiobutton {
-        margin-right: 40px;
-        margin-left: -2px;
+        margin-right: 13%;
     }
   }
 

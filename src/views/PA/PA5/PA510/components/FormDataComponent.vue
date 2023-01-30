@@ -181,7 +181,7 @@ export default defineComponent({
         const arrayEmploySelect: any = ref([])
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
-        const totalDeduction = ref('0')
+        const totalDeduction = ref(0)
         const triggerCalculateIncome: any = ref<boolean>(false)
         const triggerWithholdingConfigDeductionItems: any = ref<boolean>(true)
         const triggerIncomeWageDaily: any = ref<boolean>(false)

@@ -8,7 +8,8 @@ const statesPA620 = {
     },
     actionAddRow: {
         dataSource: [],
-        activeRowAdd: false
+        activeRowAdd: false, 
+        incomeIdStore : 0
     },
 };
 

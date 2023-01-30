@@ -1,7 +1,7 @@
 <template>
-    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기"
-        cancelText="그냥 나가기" @cancel="setModalVisible" width="576px">
-        <a-row :gutter="24"  class="mt-20">
+    <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="저장하고 나가기" cancelText="그냥 나가기"
+        @cancel="setModalVisible" width="576px">
+        <a-row :gutter="24" class="mt-20">
             <a-col :span="12">
                 <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>
@@ -38,16 +38,12 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, reactive } from "vue";
-import { useQuery } from "@vue/apollo-composable";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { useQuery } from "@vue/apollo-composable"; 
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
-export default defineComponent({
-    components: {
-        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
-    },
+export default defineComponent({ 
     props: {
         modalStatus: Boolean,
         dataCall: {
@@ -110,19 +106,19 @@ export default defineComponent({
 
         watch(() => dataForm, (newVal: any) => {
             if (newVal.row1.checkbox == true)
-                newVal.row1.date =filters.formatDateToInterger(dayjs())
+                newVal.row1.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row1.date = ""
             if (newVal.row2.checkbox == true)
-                newVal.row2.date =filters.formatDateToInterger(dayjs())
+                newVal.row2.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row2.date = ""
             if (newVal.row3.checkbox == true)
-                newVal.row3.date =filters.formatDateToInterger(dayjs())
+                newVal.row3.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row3.date = ""
             if (newVal.row4.checkbox == true)
-                newVal.row4.date =filters.formatDateToInterger(dayjs())
+                newVal.row4.date = filters.formatDateToInterger(dayjs())
             else
                 newVal.row4.date = ""
         }, { deep: true })

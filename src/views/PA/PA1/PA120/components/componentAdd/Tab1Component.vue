@@ -59,7 +59,7 @@
           </a-form-item>
 
 
-        <a-form-item label="주소정근무시간" label-align="right" class="red">
+        <a-form-item label="주소정근무시간" label-align="right">
           <div class="input-text">
               <number-box :required="true" :spinButtons="true" v-model:valueInput="formStateTab1.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
               <span style="color: #888888; font-size:12px">
@@ -68,7 +68,7 @@
           </div>
         </a-form-item>
 
-        <a-form-item label="세대주여부" label-align="right" class="red">
+        <a-form-item label="세대주여부" label-align="right">
             <switch-basic v-model:valueSwitch="formStateTab1.householder " textCheck="O" textUnCheck="X"
               style="width: 80px"></switch-basic>
         </a-form-item>
@@ -76,13 +76,12 @@
 
         <a-form-item label="주소" class="clr" label-align="left">
             <div class="zip-code">
-              <default-text-box v-model:valueInput="postCode" width="120px" :disabled="true" />
-              <div style="margin-left: 5px">
-                <post-code-button @dataAddress="funcAddress" text="주소검색"/>
-              </div>
+                <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true" class="roadAddress"
+                placeholder="도로명주소" />
+                <div style="margin-left: 5px">
+                    <post-code-button @dataAddress="funcAddress" text="주소검색"/>
+                </div>
             </div>
-            <default-text-box v-model:valueInput="formStateTab1.roadAddress" width="300px" :disabled="true" class="roadAddress"
-              placeholder="도로명주소" />
 
             <default-text-box v-model:valueInput="formStateTab1.addressExtend" width="300px" placeholder="상세 주소 입력" />
         </a-form-item>
@@ -304,6 +303,9 @@ export default defineComponent({
             formStateTab1.nationalityCode = formStateTab1.nationalityCode == 'KR' ? null : formStateTab1.nationalityCode
         }
     });
+    watch(()=> formStateTab1.president, (newValue) => {
+        store.commit('common/presidentPA120', newValue);
+    })
     return {
       companyId,
       loading,
