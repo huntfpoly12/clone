@@ -2,6 +2,7 @@
     <action-header title="계약정보관리&심사" />
     <div id="bf-640">
         <div class="search-form">
+            
         </div>
         <div class="page-content">
             
