@@ -25,6 +25,17 @@ export default [
   { name: "지급명세서전자신고(연말정산)", url: "#", id: "bf-630" },
   { name: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
   { name: "일용직근로소득지급명세서전자신고", url: "#", id: "bf-650" },
+  {
+    name: "지급명세서전자신고(연말정산)",
+    url: "/dashboard/bf-630",
+    id: "bf-630",
+  },
+  { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },
+  {
+    name: "일용직근로소득지급명세서전자신고",
+    url: "#",
+    id: "bf-650",
+  },
 
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
   { name: "회계설정", url: "#", id: "cm-120" },
