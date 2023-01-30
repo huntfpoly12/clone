@@ -2,6 +2,24 @@
     <form ref="formTest" action="your-action">
         <table id="customers">
             <tr>
+                <td>
+                    <p><b> Production Statuses</b></p>
+                    <production-statuses :typeTag="1" />
+                    <production-statuses :typeTag="2" />
+                    <br><br>
+                    <production-statuses :typeTag="3" />
+                    <production-statuses :typeTag="4" />
+                    <production-statuses :typeTag="5" />
+                </td>
+                <td>
+                    - <b> typeTag (number)</b> : 1,2,3,4,5 Numbers corresponding to colors
+                </td>
+
+                <td>
+                    <pre class="mycode"> &lt;production-statuses :typeTag="1" /&gt;</pre>
+                </td>
+            </tr>
+            <tr>
                 <th style="width: 25%">Example</th>
                 <th style="width: 40%">Props</th>
                 <th style="width: 40%">Code Example</th>
@@ -88,7 +106,7 @@
                     <b>- name (String):</b> Name <br />
                     <b>- type (Number):</b> Number : 1,2,3,4 <br />
                     <b>- subName (Number):</b> Text tooltip <br />
-                    <b>- width (String):</b> Set width text  <br />
+                    <b>- width (String):</b> Set width text <br />
                 </td>
                 <td>
                     <pre class="mycode"> &lt;deduction-items name="940904" :type="1" subName="과세" /&gt;
@@ -127,6 +145,7 @@
                     </pre>
                 </td>
             </tr>
+
         </table>
     </form>
 </template>

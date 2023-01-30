@@ -47,20 +47,19 @@
             <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit || loadingOption)" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                    @focused-row-changed="onFocusedRowChanged" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true" :focused-row-enabled="true" @selection-changed="selectionChanged"
+                    :onRowClick="onFocusedRowChanged" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    :focused-row-enabled="true" @selection-changed="selectionChanged"
                     v-model:focused-row-key="focusedRowKey" ref="gridRefName">
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                     <template #tag="{ data }" class="custom-action">
                         <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
                             :incomeTypeName="data.data.employee.incomeTypeName" />
                     </template>
-                    <DxColumn width="80px" caption="지급일" data-field="paymentDay" data-type="string"
-                        :format="amountFormat" />
-                    <DxColumn caption="지급액" width="100px" data-field="paymentAmount" data-type="string"
-                        :format="amountFormat" />
+                    <DxColumn width="80px" caption="지급일" data-field="paymentDay" :format="amountFormat"
+                        data-type="string" />
+                    <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat"
+                        data-type="string" />
                     <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string"
                         :format="amountFormat" />
                     <DxColumn caption="공제" cell-template="income-tax" width="100px" />
@@ -275,6 +274,7 @@ export default defineComponent({
             }
             return '';
         })
+        let arrCallApiDelete: any = ref([])
         // ================GRAPQL==============================================
         // API QUERY TABLE SMALL LEFT SIDE
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
@@ -488,7 +488,6 @@ export default defineComponent({
             }, 100)
             store.state.common.actionAddRow.activeRowAdd = false
             store.state.common.actionAddRow.dataSource = store.state.common.actionAddRow.dataSource.splice(0, store.state.common.actionAddRow.dataSource.length - 1)
-
         };
         const addRow = () => {
             // If row new is not created
@@ -549,13 +548,11 @@ export default defineComponent({
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys
         }
-        let arrCallApiDelete: any = ref([])
         const deleteItem = () => {
             arrCallApiDelete.value = []
-            dataSourceDetail.value.map((val: any) => { 
-                let dataReturn = checkValue(val)  
-                if (JSON.stringify(dataReturn) != '{}')
-                    arrCallApiDelete.value.push(dataReturn)
+            dataSourceDetail.value.map((val: any) => {
+                if (JSON.stringify(checkValue(val)) != "{}")
+                    arrCallApiDelete.value.push(checkValue(val))
             })
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
@@ -648,5 +645,4 @@ export default defineComponent({
 });
 </script>
 <style scoped src="../style/style.scss" >
-
 </style>
