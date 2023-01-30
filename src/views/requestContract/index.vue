@@ -429,7 +429,7 @@ export default {
             else return "finish";
         });
         const changeStep = (val: number) => {
-            step.value = val - 1 // Debug
+            //step.value = val - 1 // Debug
             if (val == 1) {
                 step.value = 0
             }
