@@ -91,37 +91,16 @@
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사업자코드" cell-template="action" />
-       
                 <DxColumn caption="상호 주소" data-field="company.code" />
-                <DxColumn caption="상호 주소" cell-template="company" width="100" />
+                <DxColumn caption="사업자등록번호" cell-template="company"/>
                 <template #company="{ data }">
-          
                 </template>
-                <DxColumn caption="마감 현황" cell-template="status" width="140" />
+                <DxColumn caption="최종제작요청일시" cell-template="status"/>
                 <template #status="{ data }">
-            
                 </template>
-                <DxColumn caption="귀속연월" cell-template="imputed" />
-                <template #imputed="{ data }">
-                 
+                <DxColumn caption="제작현황" cell-template="imputed" />
+                <template #imputed="{ data }"> 
                 </template>
-                <DxColumn caption="지급연월" cell-template="payment" />
-                <template #payment="{ data }">
-                
-                </template>
-                <DxColumn caption="신고 주기" cell-template="reportType" />
-                <template #reportType="{ data }">
-              
-                </template>
-                <DxColumn caption="신고 종류" cell-template="afterDeadline" />
-                <template #afterDeadline="{ data }">
-            
-                </template>
-                <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
-                <template #yearEndTaxAdjustment="{ data }">
-                   
-                </template>
-                
             </DxDataGrid>
         </a-spin>
     </div>
@@ -131,10 +110,14 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import {SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
+import queries from "@/graphql/queries/BF/BF6/BF630/index";
+import {companyId} from "@/helpers/commonFunction"
+import notification from "@/utils/notification";
 export default defineComponent({
   components: {
     DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
@@ -150,8 +133,36 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    const trigger = ref<boolean>(true);
     const dataSource = ref([])
     const date = ref(2022)
+
+    // ============ GRAPQL ===============================
+    const {
+        result: resElectronicFilings,
+        loading: loadingElectronicFilings,
+        refetch: refetchElectronicFilings,
+        onError: onErrorElectronicFilings
+    } = useQuery(queries.getElectronicFilingsByIncomeWagePaymentStatement,
+      {
+        input: {
+          companyId: companyId,
+          imputedYear: globalYear.value,
+        }
+      }, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+    }))
+
+    // ===================DONE GRAPQL==================================
+    watch(() => resElectronicFilings, (value) => {
+      if (value) {
+        console.log(value,'fdgdfg')
+      }
+    })
+    onErrorElectronicFilings(e => {
+            notification('error', e.message)
+    })
     return {
       globalYear,move_column,colomn_resize,dataSource,date
     }
@@ -159,7 +170,6 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss">
-  
   .header-grid-form{
     .custom-flex {
         display: flex;
