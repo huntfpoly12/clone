@@ -163,7 +163,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch, computed } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -175,6 +175,8 @@ import {
   BF340,
   BF210,
   BF610,
+  BF620,
+  BF640,
   BF220,
   CM110,
   CM130,
@@ -187,7 +189,7 @@ import {
   PA420,
   PA410,
   PA610,
-  PA620,
+  PA620, 
   PA630,
   PA530,
   PA520,
@@ -228,6 +230,8 @@ export default defineComponent({
     BF340,
     BF210,
     BF610,
+    BF620,
+    BF640,
     BF220,
     CM110,
     CM130,
@@ -372,6 +376,8 @@ export default defineComponent({
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
       if (this.activeTab.id === "bf-610") return 'BF610';
+      if (this.activeTab.id === "bf-620") return 'BF620';
+      if (this.activeTab.id === "bf-640") return 'BF640';
       if (this.activeTab.id === "cm-110") return 'CM110';
       if (this.activeTab.id === "cm-130") return 'CM130';
       if (this.activeTab.id === "pa-110") return 'PA110';

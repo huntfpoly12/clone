@@ -20,20 +20,11 @@ export default [
   { name: "원천업무마감관리", url: "#", id: "bf-520" },
   { name: "4대보험업무관리", url: "#", id: "bf-530" },
   { name: "제본/배송관리", url: "#", id: "bf-540" },
-
   { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
   { name: "원천세/지방소득세전자신고", url: "#", id: "bf-620" },
-  {
-    name: "지급명세서전자신고(연말정산)",
-    url: "#",
-    id: "bf-630",
-  },
-  { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },
-  {
-    name: "일용직근로소득지급명세서전자신고",
-    url: "#",
-    id: "bf-650",
-  },
+  { name: "지급명세서전자신고(연말정산)", url: "#", id: "bf-630" },
+  { name: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
+  { name: "일용직근로소득지급명세서전자신고", url: "#", id: "bf-650" },
 
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
   { name: "회계설정", url: "#", id: "cm-120" },
@@ -63,7 +54,7 @@ export default [
   { name: "세출결산서", url: "#", id: "ac-410" },
   { name: "예비비사용조서", url: "#", id: "ac-420" },
   { name: "정부보조금명세서", url: "#", id: "ac-430" },
-  { name: "후원금수입및사용결고보고서", url: "#", id: "ac-440"},
+  { name: "후원금수입및사용결고보고서", url: "#", id: "ac-440" },
   { name: "후원금계좌거래내역", url: "#", id: "ac-450" },
   { name: "사업비명세서", url: "#", id: "ac-460" },
   { name: "사업비명세서", url: "#", id: "ac-470" },
