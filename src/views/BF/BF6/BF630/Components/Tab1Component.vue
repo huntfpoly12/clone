@@ -5,13 +5,13 @@
         <a-row>
           <a-col :span="8">
             <a-form-item  label="귀속연도">
-              <year-picker-box-custom v-model:valueDate="date"></year-picker-box-custom>
+              <year-picker-box-custom v-model:valueDate="originData.imputedYear"></year-picker-box-custom>
             </a-form-item>
           </a-col>
           <a-col :span="16">
             <div class="custom-note">
               <a-form-item  label="최종제작상태">
-                <switch-basic  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
+                <switch-basic v-model:valueSwitch="originData.beforeProduction"  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
               </a-form-item>
               <span>
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic :valueCheckbox="true" :disabled="false" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="false" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic :valueCheckbox="true" :disabled="false" :size="'20'"/><div class="check-box-tag-2">제작중</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="false" :size="'20'"/><div class="check-box-tag-2">제작중</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic :valueCheckbox="true" :disabled="false" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="false" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic :valueCheckbox="true" :disabled="false" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="false" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
                 </div>
               </div>
           </div>
@@ -41,23 +41,23 @@
       </a-col>
       <a-col :span="12">
         <a-form-item  label="사업자코드">
-            <biz-number-text-box width="150px"/>
+            <biz-number-text-box width="150px" v-model:valueInput="originData.companyName"/>
         </a-form-item>
         <a-form-item  label="상호">
-          <default-text-box width="150px"></default-text-box >
+          <default-text-box width="150px" v-model:valueInput="originData.companyName"></default-text-box >
         </a-form-item>
         <a-row>
             <a-col :span="12">
               <a-form-item  label="매니저리스트">
-                <list-manager-dropdown width="150px" />
+                <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId"/>
               </a-form-item>
             </a-col>
             <a-col :span="12">
-              <switch-basic  :textCheck="'해지제외'" :textUnCheck="'해지포함'"/>
+              <switch-basic  :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="originData.excludeCancel"/>
             </a-col>
         </a-row>
         <a-form-item  label="영업자리스트">
-          <list-sales-dropdown width="150px" :required="true"/>
+          <list-sales-dropdown width="150px" :required="true" v-model:valueInput="originData.salesRepresentativeId"/>
         </a-form-item>
       </a-col>
     </a-row>
@@ -107,7 +107,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -118,6 +118,7 @@ import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
+import dayjs , { Dayjs }  from "dayjs";
 export default defineComponent({
   components: {
     DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
@@ -134,10 +135,40 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(true);
+
+    // for checkbox 
+    const checkbox1 = ref<boolean>(false);
+    const checkbox2 = ref<boolean>(false);
+    const checkbox3 = ref<boolean>(false);
+    const checkbox4 = ref<boolean>(false);
+      
+    const originData = reactive(
+      {
+        beforeProduction:'',
+        productionStatuses:Array(),
+        companyCode:'',
+        companyName:'',
+        manageUserId:'',
+        salesRepresentativeId:'',
+        excludeCancel:'',
+        imputedYear: dayjs().year(),
+      }
+    )
     const dataSource = ref([])
     const date = ref(2022)
 
     // ============ GRAPQL ===============================
+    const {
+        result: resIncomeWagePayment,
+        loading: loadingIncomeWagePayment,
+        refetch: refetchIncomeWagePayment,
+        onError: onErrorIncomeWagePayment
+    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings,originData, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache",
+    }))
+
+    
     const {
         result: resElectronicFilings,
         loading: loadingElectronicFilings,
@@ -163,8 +194,55 @@ export default defineComponent({
     onErrorElectronicFilings(e => {
             notification('error', e.message)
     })
+
+    // watch checkbox change
+    watch(checkbox1, (value) => {
+      if (value) {
+        originData.productionStatuses.push(0)
+      } else {
+        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
+            return item !== 0
+        })
+      };
+    })
+    watch(checkbox2, (value) => {
+      if (value) {
+        originData.productionStatuses.push(1)
+      } else {
+        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
+            return item !== 1
+        })
+      };
+    })
+    watch(checkbox3, (value) => {
+      if (value) {
+        originData.productionStatuses.push(2)
+      } else {
+        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
+            return item !== 2
+        })
+      };
+    })
+    watch(checkbox4, (value) => {
+      if (value) {
+        originData.productionStatuses.push(-1)
+      } else {
+        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
+            return item !== -1
+        })
+      };
+    })
+
     return {
-      globalYear,move_column,colomn_resize,dataSource,date
+      globalYear,
+      originData,
+      move_column,
+      colomn_resize,
+      dataSource,
+      checkbox1,
+      checkbox2,
+      checkbox3,
+      checkbox4
     }
   }
 })
