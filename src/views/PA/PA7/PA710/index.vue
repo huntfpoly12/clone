@@ -128,7 +128,7 @@
                         </a-form-item>
                         <a-form-item label="소득구분" :label-col="labelCol" class="red">
                             <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
-                                @textTypeCode="textTypeCode" :required="true" :disabled="formState.deletable">
+                                @textTypeCode="textTypeCode" :required="true" :disabled="true">
                             </type-code-select-box>
                         </a-form-item>
                         <a-form-item label="이메일" class="red" :label-col="labelCol">
@@ -305,6 +305,7 @@ export default defineComponent({
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorUpdate((e) => {
+            triggerDetail.value = true;
             notification('error', e.message)
         });
 
