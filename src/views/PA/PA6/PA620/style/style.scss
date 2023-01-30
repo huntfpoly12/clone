@@ -1,8 +1,6 @@
 #pa-620 {
     margin-top: 10px;
 
-
-
     .total-user {
         background-color: #17375E;
         color: white;
@@ -25,20 +23,6 @@
         margin-bottom: 10px;
     }
 
-    ::v-deep .custom-layout {
-        padding: 10px 10px 10px 0;
-
-        >div {
-            border: 1px solid #d7d7d7;
-            padding: 10px;
-            min-height: 300px;
-        }
-    }
-
-    ::v-deep .custom-layout:last-child {
-        padding-right: 0px;
-    }
-
     .custom-note {
         >span {
             font-size: 11px;
@@ -52,15 +36,12 @@
         color: white;
     }
 
-
     // ::v-deep .table-detail .dx-datagrid-headers {
     //     display: none;
     // }
-
     ::v-deep .dx-master-detail-cell {
         padding: 0px;
     }
-
 
     .text-box-1 {
         padding: 5px 10px;
@@ -81,7 +62,6 @@
             margin-left: 5px;
         }
     }
-
 
     .hover-underlined:hover {
         text-decoration: underline;
@@ -161,8 +141,6 @@
         height: 35px;
         padding: 0 5px;
     }
-
-
 }
 
 .button-open-tab {
@@ -231,4 +209,21 @@
     padding: 5px 10px;
     border-radius: 5px;
     border: 1px solid gray;
+}
+
+.title-action {
+    border: 1px solid #d7d7d7;
+    padding: 10px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+::v-deep .custom-layout {
+    padding: 10px 10px 10px 0;
+
+    >div {
+        border: 1px solid #d7d7d7;
+        padding: 10px;
+        height: 100%;
+    }
 }

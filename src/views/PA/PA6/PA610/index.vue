@@ -504,13 +504,8 @@ export default defineComponent({
             modalHistoryStatus.value = true;
         }
         return {
-            store, resetFormNum,
-            dataRowOld,
-            focusedRowKey,
-            modalStatusAdd,
-            statusComfirmAdd,
-            textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
-            statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
+            store, resetFormNum, dataRowOld, focusedRowKey, modalStatusAdd, textResidentId, disabledInput2, popupData, modalHistoryStatus, loadingCreated, disabledInput, loadingGetEmployeeBusinessesDetail, loadingGetEmployeeBusinesses, arrForeigner, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataAction, loadingUpdate, loadingDelete, modalStatus, contentDelete, modalChangeRow,
+            statusComfirmAdd, statusComfirm, actionDelete, addRow, changeTextTypeCode, actionEdit, onExporting, changeTextCountry, modalHistory, saving, statusComfirmChange
         };
     },
 });

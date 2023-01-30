@@ -25,7 +25,7 @@ export default [
   { name: "원천세/지방소득세전자신고", url: "#", id: "bf-620" },
   {
     name: "지급명세서전자신고(연말정산)",
-    url: "#",
+    url: "/dashboard/bf-630",
     id: "bf-630",
   },
   { name: "간이지급명세서전자신고", url: "#", id: "bf-640" },
