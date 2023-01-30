@@ -1,6 +1,9 @@
 <template>
-    <Datepicker v-model="newDate" auto-apply year-picker :style="{ height: $config_styles.HeightInput, width: width }"
-        @update:modelValue="handleDate" />
+    <div class="month-custom-1 d-flex-center">
+        <span class="mr-5">{{ text }}</span>
+        <Datepicker v-model="newDate" auto-apply year-picker
+            :style="{ height: $config_styles.HeightInput, width: width }" @update:modelValue="handleDate" />
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
@@ -15,6 +18,10 @@ export default defineComponent({
         },
         valueDate: {
             type: [Number, String],
+        },
+        text: {
+            type: String,
+            default: "귀",
         },
     },
     components: {
