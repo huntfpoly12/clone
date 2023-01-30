@@ -274,6 +274,7 @@ export default defineComponent({
             }
             return '';
         })
+        let arrCallApiDelete: any = ref([])
         // ================GRAPQL==============================================
         // API QUERY TABLE SMALL LEFT SIDE
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
@@ -487,7 +488,6 @@ export default defineComponent({
             }, 100)
             store.state.common.actionAddRow.activeRowAdd = false
             store.state.common.actionAddRow.dataSource = store.state.common.actionAddRow.dataSource.splice(0, store.state.common.actionAddRow.dataSource.length - 1)
-
         };
         const addRow = () => {
             // If row new is not created
@@ -548,15 +548,10 @@ export default defineComponent({
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys
         }
-        let arrCallApiDelete: any = ref([])
         const deleteItem = () => {
             arrCallApiDelete.value = []
             dataSourceDetail.value.map((val: any) => {
-                // console.log(checkValue(val));
-                let dataReturn = checkValue(val)
-                // console.log(Object.keys(dataReturn).length);
-                
-                if (checkValue(val))
+                if (JSON.stringify(checkValue(val)) != "{}")
                     arrCallApiDelete.value.push(checkValue(val))
             })
             if (popupDataDelete.value.length > 0) {
@@ -650,5 +645,4 @@ export default defineComponent({
 });
 </script>
 <style scoped src="../style/style.scss" >
-
 </style>
