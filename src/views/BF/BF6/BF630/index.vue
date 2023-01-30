@@ -56,19 +56,19 @@
               </div>
           </template>
           <a-tab-pane key="1" tab="근로소득지급명세서(기부금, 의료비)">
-            <tab-1></tab-1>
+            <tab-1-component></tab-1-component>
           </a-tab-pane>
           <a-tab-pane key="2" tab="퇴직소득지급명세서">
-            <tab-2></tab-2>
+            <tab-2-component></tab-2-component>
           </a-tab-pane>
           <a-tab-pane key="3" tab="거주자사업소득지급명세서">
-            <tab-3></tab-3>
+            <tab-3-component></tab-3-component>
           </a-tab-pane>
           <a-tab-pane key="4" tab="거주자기타소득지급명세서">
-            <tab-4></tab-4>
+            <tab-4-component></tab-4-component>
           </a-tab-pane>
           <a-tab-pane key="5" tab="전자신고파일제작내역">
-            <tab-5></tab-5>
+            <tab-5-component></tab-5-component>
           </a-tab-pane>
       </a-tabs>
     </div>
@@ -79,20 +79,20 @@ import { defineComponent, ref } from "vue";
 import {
     SearchOutlined,
 } from "@ant-design/icons-vue";
-import Tab1 from "./Components/Tab1.vue";
-import Tab2 from "./Components/Tab2.vue";
-import Tab3 from "./Components/Tab3.vue";
-import Tab4 from "./Components/Tab4.vue";
-import Tab5 from "./Components/Tab5.vue";
+import Tab1Component from "./Components/Tab1Component.vue";
+import Tab2Component from "./Components/Tab2Component.vue";
+import Tab3Component from "./Components/Tab3Component.vue";
+import Tab4Component from "./Components/Tab4Component.vue";
+import Tab5Component from "./Components/Tab5Component.vue";
 
 export default defineComponent({
     components: {
       SearchOutlined,
-      Tab1,
-      Tab2,
-      Tab3,
-      Tab4,
-      Tab5,
+      Tab1Component,
+      Tab2Component,
+      Tab3Component,
+      Tab4Component,
+      Tab5Component,
     },
     setup() {
       const activeKey = ref("1")
