@@ -1,0 +1,7 @@
+import requestCreationIncomeWagePaymentStatementElectronicFilingFile from "./requestCreationIncomeWagePaymentStatementElectronicFilingFile";
+
+const mutations = {
+  requestCreationIncomeWagePaymentStatementElectronicFilingFile:requestCreationIncomeWagePaymentStatementElectronicFilingFile
+};
+
+export default mutations;
