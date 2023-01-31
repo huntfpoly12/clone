@@ -87,7 +87,7 @@
       </a-row>
     </div>
     <div class="content-grid">
-      <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
+      <a-spin :spinning="loadingIncomeRetirementPayment" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -111,7 +111,7 @@
         </a-spin>
     </div>
   </div>
-  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
+  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile" tabName="tab2"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -167,12 +167,12 @@ export default defineComponent({
     const dataSource = ref([])
     // ============ GRAPQL ===============================
     const {
-        result:  resIncomeWagePayment,
-        onResult: onResIncomeWagePayment,
-        loading: loadingIncomeWagePayment,
-        refetch: refetchIncomeWagePayment,
-        onError: onErrorIncomeWagePayment
-    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings, {
+        result:  resIncomeRetirementPayment,
+        onResult: onResIncomeRetirementPayment,
+        loading: loadingIncomeRetirementPayment,
+        refetch: refetchIncomeRetirementPayment,
+        onError: onErrorIncomeRetirementPayment
+    } = useQuery(queries.searchIncomeRetirementPaymentStatementElectronicFilings, {
       filter: originData
     }, () => ({
             enabled: trigger.value,
@@ -198,19 +198,19 @@ export default defineComponent({
 
     // ===================DONE GRAPQL==================================
     // watch result  api searchIncomeWagePaymentStatementElectronicFilings
-    onResIncomeWagePayment(() => {
+    onResIncomeRetirementPayment(() => {
       trigger.value = false
     })
-    watch(resIncomeWagePayment, (value) => {
+    watch(resIncomeRetirementPayment, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+        dataSource.value = value.searchIncomeRetirementPaymentStatementElectronicFilings
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)
         })
       }
     })
-    onErrorIncomeWagePayment(e => {
+    onErrorIncomeRetirementPayment(e => {
             notification('error', e.message)
     })
 
@@ -265,7 +265,7 @@ export default defineComponent({
     // watch active searching
     watch(() => props.activeSearch, (value) => {
       trigger.value = true;
-      refetchIncomeWagePayment()
+      refetchIncomeRetirementPayment()
     })
 
     // request file popup action
@@ -291,7 +291,7 @@ export default defineComponent({
       checkbox3,
       checkbox4,
       loadingElectronicFilings,
-      loadingIncomeWagePayment,
+      loadingIncomeRetirementPayment,
       trigger,
       userInfor,
       requestIncomeFile,

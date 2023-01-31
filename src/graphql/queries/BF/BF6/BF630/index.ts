@@ -1,8 +1,11 @@
 import getElectronicFilingsByIncomeWagePaymentStatement from "./getElectronicFilingsByIncomeWagePaymentStatement";
 import searchIncomeWagePaymentStatementElectronicFilings from "./searchIncomeWagePaymentStatementElectronicFilings";
+import searchIncomeRetirementPaymentStatementElectronicFilings from "./searchIncomeRetirementPaymentStatementElectronicFilings";
 const queries = {
   getElectronicFilingsByIncomeWagePaymentStatement: getElectronicFilingsByIncomeWagePaymentStatement,
-  searchIncomeWagePaymentStatementElectronicFilings: searchIncomeWagePaymentStatementElectronicFilings
+  searchIncomeWagePaymentStatementElectronicFilings: searchIncomeWagePaymentStatementElectronicFilings,
+  searchIncomeRetirementPaymentStatementElectronicFilings: searchIncomeRetirementPaymentStatementElectronicFilings,
+
 };
 
 export default queries;
