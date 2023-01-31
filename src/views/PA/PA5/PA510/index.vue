@@ -185,7 +185,7 @@
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
+        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <DxButton
                     :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
@@ -199,7 +199,7 @@
                 <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
-        <a-row>
+        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'">
             <a-col :span="14" class="custom-layout">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
@@ -472,7 +472,7 @@ export default defineComponent({
                 if (store.state.common.statusChangeFormEdit) {
                     modalChangeRow.value = true;
                 } else {
-                    if (!store.state.common.statusRowAdd) {
+                    if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                         store.state.common.statusRowAdd = true
                     }
@@ -526,6 +526,7 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
+            // IncomeWageDailiesTrigger.value = true;
         }
         return {
             processKey,

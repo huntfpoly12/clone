@@ -144,3 +144,7 @@
 ::v-deep .dx-button-mode-contained {
     height: 34px;
 }
+.disabledBlock {
+    pointer-events: none;
+    opacity: 0.8;
+}

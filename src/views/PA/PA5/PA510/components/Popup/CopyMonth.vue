@@ -99,6 +99,7 @@ export default defineComponent({
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
         const trigger = ref<boolean>(false)
+        const triggerFindIncome = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
             originData.value.filter = {
@@ -106,14 +107,15 @@ export default defineComponent({
                 finishImputedYearMonth: parseInt(`${globalYear.value}12`),
             }
             trigger.value = true
+            triggerFindIncome.value = true
         });
         const updateValue = (value: any) => {
             dataApiCopy.value.paymentYear = value.value.paymentYear,
-            dataApiCopy.value.paymentMonth = value.value.paymentMonth,
-            dataApiCopy.value.imputedMonth = value.value.imputedMonth
+                dataApiCopy.value.paymentMonth = value.value.paymentMonth,
+                dataApiCopy.value.imputedMonth = value.value.imputedMonth
             dataApiCopy.value.imputedYear = value.value.imputedYear
         };
-        
+
         // const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
         const month2: any = ref<number>()
         const modalCopy = ref(false)
@@ -135,7 +137,7 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value+1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
             trigger.value = false;
         });
         const originData: any = ref({
@@ -148,10 +150,11 @@ export default defineComponent({
         const {
             onResult: onResult
         } = useQuery(queries.findIncomeProcessWageDailyStatViews, originData, () => ({
-            enabled: trigger.value,
+            enabled: triggerFindIncome.value,
             fetchPolicy: "no-cache",
         }));
         onResult((value: any) => {
+            triggerFindIncome.value = false;
             arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
         })
 
@@ -181,8 +184,12 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
+            store.state.common.processKeyPA510.imputedMonth = month.value
+            store.state.common.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.loadingTableInfo++
             emit("dataAddIncomeProcess", {
-                imputedYear: processKey.value.imputedYear,
+                imputedYear: globalYear.value,
                 imputedMonth: month.value,
                 paymentYear: parseInt(month2.value.toString().slice(0, 4)),
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
