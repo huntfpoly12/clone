@@ -111,7 +111,7 @@
         </a-spin>
     </div>
   </div>
-  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
+  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile" tabName="tab1"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
