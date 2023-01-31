@@ -627,4 +627,7 @@ export default defineComponent({
 .not-done{
   color: red;
 }
+::v-deep .dx-datagrid .dx-row>td {
+    padding: 5px;
+}
 </style>

@@ -10,6 +10,18 @@ const screenMutatePA120 = {
     },
     presidentPA120(state: any,payload: any){
         state.presidentPA120 = payload;
+    },
+    initFormStateTabPA120(state: any, payload: any){
+        state.initFormStateTabPA120 = {
+            ...state.initFormStateTabPA120,
+            ...payload
+        }
+    },
+    editRowPA120(state: any, payload: any){
+        state.editRowPA120 = {
+            ...state.editRowPA120,
+            ...payload
+        }
     }
 };
   
