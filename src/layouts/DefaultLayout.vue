@@ -51,7 +51,7 @@
         <div class="right">
           <nav class="nav-tabs" v-if="menuTab.length > 0">
             <!-- hide or show scroll arrows left when page width is exceeded -->
-            <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"    @click="tabLeft"/>
+            <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"  @click="tabLeft"/>
             <ul ref="scroll_container" class="list-menu-tab">
               <li
                 v-for="(item, index) in menuTab"
@@ -99,44 +99,54 @@
               </template>
               <template #title>{{ menuItem.title }}</template>
               <!-- list sub menu level 1 -->
-              <a-sub-menu
-                v-for="subMenu in menuItem.subMenus"
-                :key="subMenu.id"
-                :title="subMenu.title"
-              >
-                <!-- list sub menu level 3 if have subMenus --> 
-                <template v-for="item in subMenu.items"  :key="'sub-'+item.id">
-                  <a-menu-item
-                      v-if="!item.hasOwnProperty('subMenus')"
-                      :class="[
-                      item.id === activeTab.id
-                        ? 'ant-menu-item-selected-active'
-                      : '',
-                      item.url == '#' ? 'not-done' : ''
-                        ]
-                      "
-                      @click.enter="addMenuTab(item.id)"
-                    > 
-                    <router-link :to="item.url" >{{ item.name }}</router-link>
-                  </a-menu-item>
-                  <a-sub-menu v-else  :title="item.name"> 
-                    <a-menu-item 
-                      v-for="subMenu1 in item.subMenus"
-                      :key="subMenu1.id"
-                      :class="[
-                        subMenu1.id === activeTab.id
+              <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
+                <a-menu-item v-if="!itemLevel1.hasOwnProperty('subMenus')"
+                        :class="[
+                        itemLevel1.id === activeTab.id
                           ? 'ant-menu-item-selected-active'
                         : '',
-                        subMenu1.url == '#' ? 'not-done' : ''
+                        itemLevel1.url == '#' ? 'not-done' : ''
                           ]
                         "
-                      @click.enter="addMenuTab(subMenu1.id)"
-                    >
-                      <router-link :to="subMenu1.url" >{{ subMenu1.name }}</router-link>
+                        @click.enter="addMenuTab(itemLevel1.id)"
+                      > 
+                      <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
+                </a-menu-item>
+                <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
+                  <!-- list sub menu level 2 if have subMenus --> 
+                  <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
+                    <a-menu-item
+                        v-if="!itemLevel2.hasOwnProperty('subMenus')"
+                        :class="[
+                        itemLevel2.id === activeTab.id
+                          ? 'ant-menu-item-selected-active'
+                        : '',
+                        itemLevel2.url == '#' ? 'not-done' : ''
+                          ]
+                        "
+                        @click.enter="addMenuTab(itemLevel2.id)"
+                      > 
+                      <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
                     </a-menu-item>
-                  </a-sub-menu>
-                </template>
-              </a-sub-menu>
+                    <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id"> 
+                      <a-menu-item 
+                        v-for="subMenu1 in itemLevel2.subMenus"
+                        :key="subMenu1.id"
+                        :class="[
+                          subMenu1.id === activeTab.id
+                            ? 'ant-menu-item-selected-active'
+                          : '',
+                          subMenu1.url == '#' ? 'not-done' : ''
+                            ]
+                          "
+                        @click.enter="addMenuTab(subMenu1.id)"
+                      >
+                        <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
+                      </a-menu-item>
+                    </a-sub-menu>
+                  </template>
+                </a-sub-menu>
+              </template>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
@@ -408,7 +418,7 @@ export default defineComponent({
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);
-    const rootSubmenuKeys = ref(["bf-000", "cm-000", "ac-000", "pa-000"]);
+    const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
     let menuDatas = menuData;
@@ -553,7 +563,7 @@ export default defineComponent({
         if (latestOpenKey && latestOpenKey.includes("bf")) {
           openKeys.value = ["bf-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("cm")) {
-          openKeys.value = ["cm-000", latestOpenKey];
+          openKeys.value = ["cm-100", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("ac")) {
           openKeys.value = ["ac-000", latestOpenKey];
         } else if (latestOpenKey && latestOpenKey.includes("pa")) {

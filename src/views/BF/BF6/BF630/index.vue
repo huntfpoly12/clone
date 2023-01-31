@@ -37,9 +37,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search('tab4')">
+                              <a-button @click="search('tab4')">
                                   <SearchOutlined />
-                              </DxButton>
+                              </a-button>
                           </a-tooltip>
                       </div>
                   </div>
@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import {
     SearchOutlined,
 } from "@ant-design/icons-vue";
@@ -85,6 +85,7 @@ import Tab2Component from "./Components/Tab2Component.vue";
 import Tab3Component from "./Components/Tab3Component.vue";
 import Tab4Component from "./Components/Tab4Component.vue";
 import Tab5Component from "./Components/Tab5Component.vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
     components: {
@@ -97,6 +98,10 @@ export default defineComponent({
       DxButton
     },
     setup() {
+      const store = useStore();
+      const token = computed(()=>sessionStorage.getItem("token"))
+      store.dispatch('auth/getUserInfor', token.value);
+      
       const activeKey = ref("1")
       const activeSearch1 = ref(0)
       const activeSearch2 = ref(0)
@@ -125,6 +130,7 @@ export default defineComponent({
             break;
         }
       }
+  
       return {
         activeKey,
         search,

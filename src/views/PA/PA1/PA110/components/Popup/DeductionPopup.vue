@@ -4,13 +4,13 @@
         <div class="custom-modal">
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
-                    :column-auto-width="true">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
-                    <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="price" format="fixedPoint"/>
-                    <DxColumn caption="원본" data-field="oldValue" format="fixedPoint"/>
-                </DxDataGrid>
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
+                        :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                        <DxColumn caption="항목" data-field="name" />
+                        <DxColumn caption="계산후" data-field="amountNew" format="fixedPoint"/>
+                        <DxColumn caption="원본" data-field="amount" format="fixedPoint"/>
+                    </DxDataGrid>
             </div>
         </div>
         <div class="text-align-center mt-40">
@@ -36,23 +36,31 @@ export default defineComponent({
 
     },
     components: {
-      DxDataGrid,
-      DxScrolling,
-      DxColumn
+        DxDataGrid,DxScrolling,
+        DxColumn
     },
     setup(props, { emit }) {
         const setModalVisible = () => {
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            emit("updateCaculate", true)
+            emit("updateDate", true)
             emit("closePopup", false)
         };
-
+        const changeColorRow = (e: any) => {
+            if (e.data) {
+                if (e.data.amount == e.data.amountNew) {
+                    e.rowElement.style.color = 'black';
+                } else {
+                    e.rowElement.style.color = 'red';
+                }
+            }
+        }
 
         return {
             setModalVisible,
             onSubmit,
+            changeColorRow,
         }
     },
 })
@@ -64,7 +72,6 @@ export default defineComponent({
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-
     .title {
         background-color: #e6f7ff;
     }

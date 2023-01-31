@@ -7,19 +7,19 @@ import sendIncomeWageSalaryStatementReportEmail from "./sendIncomeWageSalaryStat
 import updateIncomeWage from "./updateIncomeWage";
 import copyIncomeWages from "./copyIncomeWages";
 import findIncomeProcessWageStatViews from "./findIncomeProcessWageStatViews";
+import deleteMidTermSettlement from "./deleteMidTermSettlement";
 
 const mutations = {
-  changeIncomeProcessWageStatus: changeIncomeProcessWageStatus,
-  deleteIncomeWages: deleteIncomeWages,
-  createIncomeWage: createIncomeWage,
-  changeIncomeWagePaymentDay: changeIncomeWagePaymentDay,
-  sendIncomeWagePayrollRegisterReportEmail:
-    sendIncomeWagePayrollRegisterReportEmail,
-  sendIncomeWageSalaryStatementReportEmail:
-    sendIncomeWageSalaryStatementReportEmail,
-  updateIncomeWage: updateIncomeWage,
-  copyIncomeWages: copyIncomeWages,
-  findIncomeProcessWageStatViews: findIncomeProcessWageStatViews,
+    changeIncomeProcessWageStatus: changeIncomeProcessWageStatus,
+    deleteIncomeWages: deleteIncomeWages,
+    createIncomeWage: createIncomeWage,
+    changeIncomeWagePaymentDay: changeIncomeWagePaymentDay,
+    sendIncomeWagePayrollRegisterReportEmail: sendIncomeWagePayrollRegisterReportEmail,
+    sendIncomeWageSalaryStatementReportEmail: sendIncomeWageSalaryStatementReportEmail,
+    updateIncomeWage: updateIncomeWage,
+    copyIncomeWages: copyIncomeWages,
+    findIncomeProcessWageStatViews: findIncomeProcessWageStatViews,
+    deleteMidTermSettlement: deleteMidTermSettlement,
 };
 
 export default mutations;

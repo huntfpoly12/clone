@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="false" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="false" :size="'20'"/><div class="check-box-tag-2">제작중</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-2">제작중</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="false" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="false" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
                 </div>
               </div>
           </div>
@@ -73,13 +73,13 @@
           </span>
         </a-col>
         <a-col class="custom-flex">
-          <label class="lable-item">소속명:</label>
+          <label class="lable-item">제출연월일:</label>
           <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
         </a-col>
         <a-col class="custom-flex">
           <a-tooltip  color="black">
             <template #title>전자신고파일 제작 요청</template>
-            <a-button class="ml-4">
+            <a-button class="ml-4" @click="requestIncomeFile">
                 <SaveOutlined style="font-size: 17px" />
             </a-button>
           </a-tooltip>
@@ -99,10 +99,7 @@
                   {{ data.data.company.name }}
                   {{ data.data.company.address }}
                 </template>
-                <DxColumn caption="사업자등록번호" cell-template="inputYearMonth"/>
-                <template #inputYearMonth="{ data }">
-                  {{ data.data.imputedYear }}
-                </template>
+                <DxColumn caption="사업자등록번호" data-field="company.bizNumber"/>
                 <DxColumn caption="최종제작요청일시" cell-template="lastProductionRequestedAt"/>
                 <template #lastProductionRequestedAt="{ data }">
                   {{ data.data.lastProductionRequestedAt }}
@@ -114,6 +111,7 @@
         </a-spin>
     </div>
   </div>
+  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -127,10 +125,11 @@ import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
-import dayjs , { Dayjs }  from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
+import RequestFilePopup from "./RequestFilePopup.vue"
 export default defineComponent({
   components: {
-    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
+    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,RequestFilePopup
   },
   props: {
     activeSearch: {
@@ -140,19 +139,22 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
+    const userInfor = computed(() => (store.state.auth.userInfor))
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(false);
-    const triggerElecFilings = ref<boolean>(true);
+    const triggerElecFilings = ref<boolean>(false);
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
     const checkbox2 = ref<boolean>(false);
     const checkbox3 = ref<boolean>(false);
     const checkbox4 = ref<boolean>(false);
-      
+    const modalRequestFile = ref<boolean>(false);
+    let companyIds = Array();
+    const dataRequestFile = ref()
     const originData = reactive({
-          beforeProduction:true,
+          beforeProduction:false,
           productionStatuses:Array(),
           companyCode:'',
           companyName:'',
@@ -163,8 +165,6 @@ export default defineComponent({
       }
     )
     const dataSource = ref([])
-    const date = ref(2022)
-
     // ============ GRAPQL ===============================
     const {
         result:  resIncomeWagePayment,
@@ -204,6 +204,10 @@ export default defineComponent({
     watch(resIncomeWagePayment, (value) => {
       if (value) {
         dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+        // create list company ID for request file
+        dataSource.value.map((item : any) => {
+          companyIds.push(item.companyId)
+        })
       }
     })
     onErrorIncomeWagePayment(e => {
@@ -263,6 +267,19 @@ export default defineComponent({
       trigger.value = true;
       refetchIncomeWagePayment()
     })
+
+    // request file popup action
+    const requestIncomeFile = () => {
+      dataRequestFile.value = {
+        companyIds : companyIds,
+        filter: originData,
+        emailInput: {
+          receiverName: userInfor.value.name,
+          receiverAddress: userInfor.value.email
+        }
+      }
+      modalRequestFile.value = true
+    }
     return {
       globalYear,
       originData,
@@ -275,85 +292,15 @@ export default defineComponent({
       checkbox4,
       loadingElectronicFilings,
       loadingIncomeWagePayment,
-      trigger
+      trigger,
+      userInfor,
+      requestIncomeFile,
+      modalRequestFile,
+      dataRequestFile
     }
   }
 })
 </script>
-<style  scoped lang="scss">
-  .header-grid-form{
-    .custom-flex {
-        display: flex;
-        align-items: center;
-        margin-top: 10px;
-        .infor-icon{
-          margin-left: 10px;
-        }
-    }
-  }  
-  .text-box-1 {
-        padding: 5px 10px;
-        border-radius: 5px;
-        color: white;
-        background-color: gray;
-        width: 80px;
-    }
-  .custom-note{
-    display: flex;
-    align-items: center;
-    span{
-      margin-left: 10px;
-    }
-  }
-  .checkbox-tab-1{
-    display: flex;
-    margin-top: 5px;
-    span{
-      padding-right: 10px;
-    }
-    .group-checkbox{
-      .checkbox-item{
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-        .check-box-tag-1{
-          margin-left: 10px;
-          background-color: #93CDDD;
-          border-radius: 5px;
-          color: white;
-          text-align: center;
-          width: 90px;
-        }
-        .check-box-tag-2{
-          margin-left: 10px;
-          background-color: #0070C0;
-          border-radius: 5px;
-          color: white;
-          text-align: center;
-          width: 90px;
-        }
-        .check-box-tag-3{
-          margin-left: 10px;
-          background-color: #9BBB59;
-          border-radius: 5px;
-          color: white;
-          text-align: center;
-          width: 90px;
-        }
-        .check-box-tag-4{
-          margin-left: 10px;
-          background-color: #C00000;
-          border-radius: 5px;
-          color: white;
-          text-align: center;
-          width: 90px;
-        }
-      }
-    }
-  }
-  ::v-deep .ant-form-item-label>label {
-        width: 120px;
-        padding-left: 10px;
-  }
+<style  scoped lang="scss" src="../style/styleTabs.scss">
 </style>
 
