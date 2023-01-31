@@ -41,7 +41,7 @@
       </a-col>
       <a-col :span="12">
         <a-form-item  label="사업자코드">
-            <biz-number-text-box width="150px" v-model:valueInput="originData.companyName"/>
+            <biz-number-text-box width="150px" v-model:valueInput="originData.companyCode"/>
         </a-form-item>
         <a-form-item  label="상호">
           <default-text-box width="150px" v-model:valueInput="originData.companyName"></default-text-box >
@@ -77,26 +77,35 @@
           <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
         </a-col>
         <a-col class="custom-flex">
-            <DxButton  size="large" class="ml-4">
+          <a-tooltip  color="black">
+            <template #title>전자신고파일 제작 요청</template>
+            <a-button class="ml-4">
                 <SaveOutlined style="font-size: 17px" />
-            </DxButton>
+            </a-button>
+          </a-tooltip>
         </a-col>
       </a-row>
     </div>
     <div class="content-grid">
-      <a-spin :spinning="false" size="large">
+      <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사업자코드" cell-template="action" />
-                <DxColumn caption="상호 주소" data-field="company.code" />
-                <DxColumn caption="사업자등록번호" cell-template="company"/>
-                <template #company="{ data }">
+                <DxColumn caption="사업자코드" data-field="company.code" />
+                <DxColumn caption="상호 주소" cell-template="companyName" />
+                <template #companyName="{ data }">
+                  {{ data.data.company.name }}
+                  {{ data.data.company.address }}
                 </template>
-                <DxColumn caption="최종제작요청일시" cell-template="status"/>
-                <template #status="{ data }">
+                <DxColumn caption="사업자등록번호" cell-template="inputYearMonth"/>
+                <template #inputYearMonth="{ data }">
+                  {{ data.data.imputedYear }}
+                </template>
+                <DxColumn caption="최종제작요청일시" cell-template="lastProductionRequestedAt"/>
+                <template #lastProductionRequestedAt="{ data }">
+                  {{ data.data.lastProductionRequestedAt }}
                 </template>
                 <DxColumn caption="제작현황" cell-template="imputed" />
                 <template #imputed="{ data }"> 
@@ -124,34 +133,33 @@ export default defineComponent({
     DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
   },
   props: {
-      modalStatus: Boolean,
-      dataCall: {
-          type: Object,
-      },
+    activeSearch: {
+      type: Number,
+      default: 0,
+    }
   },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const trigger = ref<boolean>(true);
-
+    const trigger = ref<boolean>(false);
+    const triggerElecFilings = ref<boolean>(true);
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
     const checkbox2 = ref<boolean>(false);
     const checkbox3 = ref<boolean>(false);
     const checkbox4 = ref<boolean>(false);
       
-    const originData = reactive(
-      {
-        beforeProduction:'',
-        productionStatuses:Array(),
-        companyCode:'',
-        companyName:'',
-        manageUserId:'',
-        salesRepresentativeId:'',
-        excludeCancel:'',
-        imputedYear: dayjs().year(),
+    const originData = reactive({
+          beforeProduction:true,
+          productionStatuses:Array(),
+          companyCode:'',
+          companyName:'',
+          manageUserId:0,
+          salesRepresentativeId:0,
+          excludeCancel:true,
+          imputedYear: dayjs().year(),
       }
     )
     const dataSource = ref([])
@@ -159,11 +167,14 @@ export default defineComponent({
 
     // ============ GRAPQL ===============================
     const {
-        result: resIncomeWagePayment,
+        result:  resIncomeWagePayment,
+        onResult: onResIncomeWagePayment,
         loading: loadingIncomeWagePayment,
         refetch: refetchIncomeWagePayment,
         onError: onErrorIncomeWagePayment
-    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings,originData, () => ({
+    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings, {
+      filter: originData
+    }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
     }))
@@ -181,11 +192,25 @@ export default defineComponent({
           imputedYear: globalYear.value,
         }
       }, () => ({
-            enabled: trigger.value,
+            enabled: triggerElecFilings.value,
             fetchPolicy: "no-cache",
     }))
 
     // ===================DONE GRAPQL==================================
+    // watch result  api searchIncomeWagePaymentStatementElectronicFilings
+    onResIncomeWagePayment(() => {
+      trigger.value = false
+    })
+    watch(resIncomeWagePayment, (value) => {
+      if (value) {
+        dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+      }
+    })
+    onErrorIncomeWagePayment(e => {
+            notification('error', e.message)
+    })
+
+    // watch result  api getElectronicFilingsByIncomeWagePaymentStatement
     watch(() => resElectronicFilings, (value) => {
       if (value) {
         console.log(value,'fdgdfg')
@@ -233,6 +258,11 @@ export default defineComponent({
       };
     })
 
+    // watch active searching
+    watch(() => props.activeSearch, (value) => {
+      trigger.value = true;
+      refetchIncomeWagePayment()
+    })
     return {
       globalYear,
       originData,
@@ -242,7 +272,10 @@ export default defineComponent({
       checkbox1,
       checkbox2,
       checkbox3,
-      checkbox4
+      checkbox4,
+      loadingElectronicFilings,
+      loadingIncomeWagePayment,
+      trigger
     }
   }
 })

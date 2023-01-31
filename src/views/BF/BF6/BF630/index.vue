@@ -7,9 +7,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search">
+                              <a-button class="ml-4" @click="search('tab1')">
                                   <SearchOutlined />
-                              </DxButton>
+                              </a-button>
                           </a-tooltip>
                       </div>
                   </div>
@@ -17,9 +17,9 @@
                       <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search">
+                              <a-button class="ml-4" @click="search('tab2')">
                                   <SearchOutlined />
-                              </DxButton>
+                              </a-button>
                           </a-tooltip>
                       </div>
                   </div>
@@ -27,9 +27,9 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search">
+                              <a-button class="ml-4" @click="search('tab3')">
                                   <SearchOutlined />
-                              </DxButton>
+                              </a-button>
                           </a-tooltip>
                       </div>
                   </div>
@@ -37,7 +37,7 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search">
+                              <DxButton @click="search('tab4')">
                                   <SearchOutlined />
                               </DxButton>
                           </a-tooltip>
@@ -47,28 +47,28 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <DxButton @click="search">
+                              <a-button class="ml-4" @click="search('tab5')">
                                   <SearchOutlined />
-                              </DxButton>
+                              </a-button>
                           </a-tooltip>
                       </div>
                   </div>
               </div>
           </template>
           <a-tab-pane key="1" tab="근로소득지급명세서(기부금, 의료비)">
-            <tab-1-component></tab-1-component>
+            <tab-1-component :activeSearch="activeSearch1"></tab-1-component>
           </a-tab-pane>
           <a-tab-pane key="2" tab="퇴직소득지급명세서">
-            <tab-2-component></tab-2-component>
+            <tab-2-component :activeSearch="activeSearch2"></tab-2-component>
           </a-tab-pane>
           <a-tab-pane key="3" tab="거주자사업소득지급명세서">
-            <tab-3-component></tab-3-component>
+            <tab-3-component :activeSearch="activeSearch3"></tab-3-component>
           </a-tab-pane>
           <a-tab-pane key="4" tab="거주자기타소득지급명세서">
-            <tab-4-component></tab-4-component>
+            <tab-4-component :activeSearch="activeSearch4"></tab-4-component>
           </a-tab-pane>
           <a-tab-pane key="5" tab="전자신고파일제작내역">
-            <tab-5-component></tab-5-component>
+            <tab-5-component :activeSearch="activeSearch5"></tab-5-component>
           </a-tab-pane>
       </a-tabs>
     </div>
@@ -98,23 +98,28 @@ export default defineComponent({
     },
     setup() {
       const activeKey = ref("1")
-      const tab1 = ref(0)
+      const activeSearch1 = ref(0)
+      const activeSearch2 = ref(0)
+      const activeSearch3 = ref(0)
+      const activeSearch4 = ref(0)
+      const activeSearch5 = ref(0)
+
       const search = (tabName: string) => {
         switch (tabName) {
           case 'tab1':
-            
+            activeSearch1.value++
             break;
           case 'tab2':
-            
+            activeSearch2.value++
             break;
           case 'tab3':
-            
+            activeSearch3.value++
             break;
           case 'tab4':
-            
+            activeSearch4.value++
             break;
           case 'tab5':
-            
+            activeSearch5.value++
             break;
           default:
             break;
@@ -122,7 +127,12 @@ export default defineComponent({
       }
       return {
         activeKey,
-        search
+        search,
+        activeSearch1,
+        activeSearch2,
+        activeSearch3,
+        activeSearch4,
+        activeSearch5,
       }
     }
 })
