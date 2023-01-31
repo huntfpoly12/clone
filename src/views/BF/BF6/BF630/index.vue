@@ -7,7 +7,7 @@
                     <div class="btn-action">
                           <a-tooltip  color="black">
                               <template #title>삭제</template>
-                              <a-button>
+                              <a-button >
                                   <SearchOutlined />
                               </a-button>
                           </a-tooltip>

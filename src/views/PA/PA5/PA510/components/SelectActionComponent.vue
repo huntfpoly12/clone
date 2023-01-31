@@ -254,7 +254,7 @@ export default defineComponent({
             }
         }
         const onSubmit = (e: any) => {
-            emit('onSubmit')
+            store.state.common.actionSubmit++
         };
 
         return {

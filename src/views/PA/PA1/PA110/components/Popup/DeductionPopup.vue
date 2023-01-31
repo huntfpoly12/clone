@@ -8,8 +8,8 @@
                     :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="value" />
-                    <DxColumn caption="원본" data-field="oldValue" />
+                    <DxColumn caption="계산후" data-field="price" format="fixedPoint"/>
+                    <DxColumn caption="원본" data-field="oldValue" format="fixedPoint"/>
                 </DxDataGrid>
             </div>
         </div>

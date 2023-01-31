@@ -24,11 +24,12 @@
           <button style="margin-right: 5px">
             {{ data.data.incomeTypeCode }}
           </button>
+          {{ data.data.employee.name }}
           <a-tooltip placement="top">
             <template #title v-if="data.data.employee.incomeTypeName.length > 10">
               <span>{{ data.data.employee.incomeTypeName }}</span>
             </template>
-
+            
             {{ checkLen(data.data.employee.incomeTypeName) }}
           </a-tooltip>
         </div>
