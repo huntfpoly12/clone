@@ -507,7 +507,7 @@ export default defineComponent({
         if (store.state.common.statusChangeFormEdit) {
           modalChangeRow.value = true;
         } else {
-          if (!store.state.common.statusRowAdd) {
+          if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
             store.state.common.statusRowAdd = true
           }
