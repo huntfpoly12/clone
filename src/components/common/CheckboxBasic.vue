@@ -1,7 +1,9 @@
 <template>
-    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label">
-    </DxCheckBox>
-    <slot></slot>
+    <span>
+        <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label">
+        </DxCheckBox>
+        <slot></slot>
+    </span>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";

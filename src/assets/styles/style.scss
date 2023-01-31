@@ -81,6 +81,14 @@ $lenght: 50;
   .pb-#{$i} {
     padding-bottom: $i+ px;
   }
+  .px-#{$i}{
+    padding-left: $i+ px;
+    padding-right: $i+ px;
+  }
+  .py-#{$i}{
+    padding-top: $i+ px;
+    padding-bottom: $i+ px;
+  }
 
   .ml-#{$i} {
     margin-left: $i+ px;
