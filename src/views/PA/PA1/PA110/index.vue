@@ -270,7 +270,6 @@
           </a-spin>
         </a-col>
         <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
-          <!-- <FormDataComponent :dataIncomeWage="dataIncomeWage" /> -->
           <FormDataComponent />
         </a-col>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
@@ -299,7 +298,7 @@ import notification from "@/utils/notification"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
-import { sampleDataIncomeWage, initDataCustomRes } from "./utils/index"
+import { initDataCustomRes } from "./utils/index"
 import queriesHolding from "@/graphql/queries/CM/CM130/index";
 export default defineComponent({
   components: {
@@ -334,17 +333,13 @@ export default defineComponent({
     const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
     const dataSource = ref<any>([])
     const dataCustomRes = ref<any>([])
-    // const dataTaxPayInfo = ref<any>([])
     const arrDataPoint = ref<any>([])
     const dataModalCopy = ref()
-    // const dataIncomeWage = ref({ ...sampleDataIncomeWage })
-    // const actionAddItem = ref<boolean>(false)
     const modalCopy = ref<boolean>(false);
     const modalChangeRow = ref(false)
     const dataRows = ref([])
     const actionSaveItem = ref<number>(0)
     const actionUpdateItem = ref<number>(0)
-    // const focusedRowKey = ref(null);
     let status = ref();
     const isDisabledForm = ref<boolean>(false);
     const dateType = ref<number>(1)
@@ -459,13 +454,7 @@ export default defineComponent({
             ...dataAdd
           }
           if (data.imputedMonth == (dayjs().month() + 1)) {
-            status.value = data.status
-            // if(actionUpdateItem.value == 0){
-            //     store.state.common.processKeyPA110.imputedYear = data.imputedYear
-            //     store.state.common.processKeyPA110.imputedMonth = data.imputedMonth
-            //     store.state.common.processKeyPA110.paymentYear = data.paymentYear
-            //     store.state.common.processKeyPA110.paymentMonth = data.paymentMonth
-            // }          
+            status.value = data.status        
           }
 
         });
@@ -484,24 +473,7 @@ export default defineComponent({
     }, () => ({
       fetchPolicy: "no-cache",
     }))
-    // const formRef = ref();
     watch(resultTaxPayInfo, (value) => {
-      // if (value?.getIncomeWages[0]) {
-      //   if (actionUpdateItem.value == 0) {
-      //     store.state.common.actionAddItem = false
-      //   }
-      //   if (actionUpdateItem.value == 1) {
-      //     store.state.common.actionAddItem = false
-      //   }
-      //   else {
-      //     store.state.common.focusedRowKey = value.getIncomeWages[0]?.employeeId ?? 1;
-      //     // dataIncomeWage.value = value.getIncomeWages[0]
-      //   }
-      //   store.state.common.dataTaxPayInfo = value.getIncomeWages
-      // } else {
-      //   store.state.common.dataTaxPayInfo = value.getIncomeWages;
-      //   // formRef.value.addRow()
-      // }
       store.state.common.dataTaxPayInfo = value.getIncomeWages;
       if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
           if (store.state.common.employeeId && value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
@@ -522,7 +494,6 @@ export default defineComponent({
     })
     watch(() => store.state.common.loadingTableInfo, (newVal) => {
       refetchDataProcessIncomeWages() //reset data table 1
-      // IncomeWageDailiesTrigger.value = true;
       refetchDataTaxPayInfo() //reset data table 2
     })
 
@@ -531,8 +502,6 @@ export default defineComponent({
      */
      let rowEdit = ref()
     const actionEditTaxPay = (data: any) => {
-      // dataIncomeWage.value = data.data
-      // store.state.common.actionAddItem = false
       rowEdit.value = data.data
       if (rowEdit.value.employeeId) {
         if (store.state.common.statusChangeFormEdit) {
@@ -555,21 +524,6 @@ export default defineComponent({
       store.state.common.focusedRowKey = null
       dataRows.value = data.selectedRowsData
     }
-    // 
-    /**
-     *  Add new value
-     *  Add one to change the props.
-     *  When the prop changes, the action will be taken to add or update the data 
-     *  */
-    // const onSubmit = (e: any) => {
-    //   actionSaveItem.value++
-    // }
-    /**
-     *  Update value 
-     */
-    // const updateData = (e: any) => {
-    //   actionUpdateItem.value++
-    // }
     /**
      * show detail value of month
      * @param month 
@@ -588,14 +542,7 @@ export default defineComponent({
     const copyMonth = (month: number) => {
       dataModalCopy.value = month;
       modalCopy.value = true;
-
     }
-
-    // const loadingTableInfo = (emit: any) => {
-    //     refetchDataTaxPayInfo()
-    //     refetchDataProcessIncomeWages();
-    //     focusedRowKey.value = emit;
-    // }
 
     /**
      * change income process wage status
@@ -619,12 +566,7 @@ export default defineComponent({
     const statusComfirm = () => {
       actionChangeIncomeProcess({
         companyId: companyId,
-        processKey: {
-          imputedYear: globalYear.value,
-          imputedMonth: dayjs().month() + 1,
-          paymentYear: globalYear.value,
-          paymentMonth: dayjs().month() + 1,
-        },
+        processKey: store.state.common.processKeyPA110,
         status: status.value
       })
     }
@@ -656,7 +598,6 @@ export default defineComponent({
     watch(resultConfig, (newVal) => {
       dateType.value = newVal.paymentType;
     });
-    // const keyForm = ref(1);
     const statusComfirmChange = (res: any) => {
       if (res) {
         (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
@@ -669,11 +610,6 @@ export default defineComponent({
       store.state.common.incomeId = rowEdit.value.incomeId
       store.state.common.employeeId = rowEdit.value.employeeId
     }
-    // const onActionAddItem = (emit: any) => {
-    //   store.state.common.actionAddItem = true;
-    //     keyForm.value ++;
-    //     focusedRowKey.value = null;
-    // }
     return {
       globalYear,
       per_page,
@@ -681,22 +617,16 @@ export default defineComponent({
       colomn_resize,
       processKey,
       store,
-      // onSubmit,
-      // updateData,
       dataSource,
       dataCustomRes,
       showDetailSelected,
-      // actionAddItem,
       loadingIncomeProcessWages,
       copyMonth,
       loadingTaxPayInfo,
-      // dataTaxPayInfo,
       dataModalCopy,
       modalCopy,
       actionEditTaxPay,
       selectionChanged,
-      // dataIncomeWage,
-      // loadingTableInfo,
       dataRows,
       statusComfirm,
       actionSaveItem,
@@ -705,14 +635,10 @@ export default defineComponent({
       dataAddIncomeProcess,
       status,
       setUnderline,
-      // focusedRowKey,
       formateMoney,
       dateType,
       inputDateTax,
       paymentDateTax,
-      // onActionAddItem,
-      // keyForm,
-      // formRef,
       modalChangeRow, statusComfirmChange
     }
 

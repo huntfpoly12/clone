@@ -304,6 +304,9 @@ export default defineComponent({
                 })
             })
             triggerIncomeWageDaily.value = false;
+            setTimeout(() => {
+                store.state.common.statusChangeFormEdit = false;
+            }, 500);
         })
 
 
