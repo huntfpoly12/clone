@@ -11,6 +11,9 @@
                     <a-range-picker v-model:value="rangeDate" width="200px"
                         :placeholder="['Start', 'End']" /></a-form-item>
             </a-col>
+            <a-col>
+                <production-statuses :typeTag="1" />
+            </a-col>
         </a-row>
 
         <div class="form-table">
@@ -25,7 +28,6 @@
                 <DxColumn caption="제작현황" />
             </DxDataGrid>
         </div>
-        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
     </div>
 </template>
 <script lang="ts">
@@ -37,12 +39,9 @@ import {
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
-import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
-
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSaveStep1,
     },
     setup() {
         let checkBoxSearch = [...checkBoxSearchStep1]
