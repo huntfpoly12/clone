@@ -3,7 +3,7 @@
         <a-row gutter="24" class="search-form-step-1 mt-10">
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <list-manager-dropdown :required="true" />
+                    <electronic-filing-type-common />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -12,7 +12,16 @@
                         :placeholder="['Start', 'End']" /></a-form-item>
             </a-col>
             <a-col>
-                <production-statuses :typeTag="1" />
+                <a-form-item label="신고구분" label-align="left">
+                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" :value="valueType"
+                        layout="horizontal" :icon-size="12">
+                        <template #radio="{ data }">
+                            <production-statuses :typeTag="0" v-if="data == 0" />
+                            <production-statuses :typeTag="4" v-if="data == 4" />
+                            <production-statuses :typeTag="5" v-if="data == 5" />
+                        </template>
+                    </DxRadioGroup>
+                </a-form-item>
             </a-col>
         </a-row>
 
@@ -32,43 +41,62 @@
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, getCurrentInstance } from "vue";
 import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import {
     SaveOutlined
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxRadioGroup } from 'devextreme-vue/radio-group';
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup
     },
     setup() {
+        const app: any = getCurrentInstance()
+        const styleCheckBox = app.appContext.config.globalProperties.$config_styles
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
         let dataSearch = ref({ ...dataSearchUtils })
-        let typeCheckbox = ref({
-            checkbox1: true,
-            checkbox2: false,
-            checkbox3: false,
-            checkbox4: false,
-        })
+        let typeCheckbox = ref([0, 4, 5])
         let dataSource: any = ref([])
+        let valueType = ref(0)
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
-        let modalConfirmMail = ref(false)
         const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
 
         return {
-            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, rangeDate,
-            dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
+            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, rangeDate, valueType, styleCheckBox,
+            checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column,
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
 
+</style>
+    
+<style lang="scss" scoped>
+::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
+    background: v-bind("styleCheckBox.ColorCheckBox");
+    margin-top: -13px;
+    margin-left: 3px;
+}
+
+::v-deep .dx-radiobutton-icon::before {
+    border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
+    width: 14px;
+    height: 14px;
+}
+
+::v-deep .dx-radio-value-container {
+    padding-right: 0px
+}
+
+::v-deep .dx-radiobutton {
+    line-height: 18px;
+}
 </style>

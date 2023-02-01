@@ -13,7 +13,7 @@ export default defineComponent({
             required: true
         },
         valueRadioCheck: {
-            type: [Number , Object , String, Boolean]
+            type: [Number, Object, String, Boolean]
         },
         layoutCustom: {
             type: String

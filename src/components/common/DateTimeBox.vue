@@ -1,8 +1,9 @@
-<template> 
-    <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd"
-        :format-locale="ko" @update:modelValue="updateValue"
-        :style="{ height: $config_styles.HeightInput, width: width }" :max-date="birthDay ? new Date() : ''"
-        :placeholder="placeholder" :range="range" :multi-calendars="multiCalendars">
+<template>
+    <!-- check a birthday not later than the current date (if any) -->
+    <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
+        @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
+        :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
+        :multi-calendars="multiCalendars">
     </Datepicker>
 </template>
 <script lang="ts">
@@ -38,13 +39,11 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        startDate: Number,
-        finishDate: Number,
-        range:{
+        range: {
             type: Boolean,
             default: false
         },
-        multiCalendars:{
+        multiCalendars: {
             type: Boolean,
             default: false
         },
@@ -57,19 +56,19 @@ export default defineComponent({
         watch(
             () => props.valueDate,
             (newValue) => {
-                if(!props.range) {
-                    if (newValue){
+                if (!props.range) {
+                    if (newValue) {
                         date.value = filters.formatDate(newValue?.toString());
                     }
                     else
-                    date.value = newValue;
-                }else {
-                    if (newValue.constructor == Array){
+                        date.value = newValue;
+                } else {
+                    if (newValue.constructor == Array) {
                         date.value = newValue.map((item: any) => {
 
                             return filters.formatDate(item);
                         });
-                    }else {
+                    } else {
                         date.value = []
                     }
                 }
@@ -77,7 +76,7 @@ export default defineComponent({
         );
         const updateValue = () => {
             if (date.value) {
-                if(props.range) {
+                if (props.range) {
                     let newDate = date.value.map((item: any) => {
                         return +dayjs(item).format('YYYYMMDD')
                     });
