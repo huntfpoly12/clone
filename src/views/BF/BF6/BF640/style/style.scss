@@ -1,6 +1,4 @@
 #bf-640 {
-  
-
     .custom-note {
         span {
             font-size: 11px;
@@ -24,8 +22,8 @@
             >div {
                 margin-right: 5px;
             }
-        } 
-        
+        }
+
         ::v-deep .fix-width-label {
             label {
                 width: 110px;
@@ -59,8 +57,6 @@
             }
         }
 
-
-
         ::v-deep .fix-width-label {
             label {
                 width: 110px;
@@ -88,20 +84,15 @@
                 color: white;
                 padding: 0px;
                 border: none;
-                height: 30px;
+                height: 23px;
+                background-color: black;
             }
 
             ::v-deep .dp__icon {
                 display: none;
             }
-
-            ::v-deep .dp__input {
-                background-color: black;
-            }
         }
     }
 
-    #step3{
-    
-    }
+    #step3 {}
 }

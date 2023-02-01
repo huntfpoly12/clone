@@ -50,7 +50,7 @@
             </a-col>
             <div class="header-text-1">근속연수</div>
             <a-col :span="24">
-                <checkbox-basic size="13" label="중간지급여부" class="mb-10"
+                <checkbox-basic  label="중간지급여부" class="mb-10"
                     v-model:valueCheckbox="dataForm.checkBoxCallApi" />
             </a-col>
             <a-col :span="12">

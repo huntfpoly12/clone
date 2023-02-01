@@ -23,25 +23,25 @@
                 <div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox1">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox1">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox2">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox3">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox4">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>

@@ -3,7 +3,7 @@
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
                 <a-form-item label="귀속연도" label-align="left">
-                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5 ml-5" />
+                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5" />
                 </a-form-item>
                 <a-form-item label="제출대상구분" label-align="left">
                     <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
@@ -24,25 +24,25 @@
                 <div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox1">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox1">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox2">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox3">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox4">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>

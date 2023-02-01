@@ -1,5 +1,5 @@
 <template>
-    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label">
+    <DxCheckBox class="mr-5" v-model:value="valueCheck" :disabled="disabled" icon-size="16" :text="label">
     </DxCheckBox>
     <slot></slot>
 </template>
