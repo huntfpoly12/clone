@@ -7,16 +7,16 @@
                         귀
                         <month-picker-box v-model:valueDate="dataSearch.paymentYear" class="mr-5 ml-5 " />
                     </div>
-                </a-form-item> 
+                </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="최종제작상태" label-align="left">
-                    <div class="custom-note">
+                    <div class="custom-note d-flex-center">
                         <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="제작전" textUnCheck="제작후" />
-                        <span>
-                            <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                            제작전은 제작요청되지 않은 상태입니다.
-                        </span>
+                        <div class="d-flex-center ml-5">
+                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                            <span>제작전은 제작요청되지 않은 상태입니다.</span>
+                        </div>
                     </div>
                 </a-form-item>
                 <div>
