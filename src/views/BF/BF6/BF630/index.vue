@@ -78,7 +78,7 @@ export default defineComponent({
         }
       }
 
-      const saving = () => {
+      const saving = (tabNumber: any) => {
         activeSavingTab5.value++
       }
       return {
