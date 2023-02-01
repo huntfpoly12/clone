@@ -70,7 +70,7 @@
                 5년간) 근로소득세 70%(청년 90%, 150만원 한도) 감면</span>
             </a-col>
             <a-col span="10"> 감면기간: </a-col>
-            <a-col span="12">
+            <a-col span="12">{{ rangeDate }}
               <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate"
                 :disabled="!formStateTab2.employeementReduction">
               </date-time-box>
