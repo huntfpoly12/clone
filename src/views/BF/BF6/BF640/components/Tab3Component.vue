@@ -3,7 +3,7 @@
         <a-row gutter="24" class="search-form-step-1 mt-10">
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <electronic-filing-type-common />
+                    <electronic-filing-type />
                 </a-form-item>
             </a-col>
             <a-col>
