@@ -1,60 +1,7 @@
 <template>
+    <action-header title="계약정보관리&심사"  @actionSearch="searching(activeKey)" @actionSave="saving(activeKey)" :buttonDelete="false" :buttonPrint="false" :buttonSave="activeKey == '5'"/>
     <div id="bf-630" style="padding: 10px;">
       <a-tabs v-model:activeKey="activeKey" type="card">
-        <template #rightExtra>
-              <div class="list-action">
-                  <div v-if="activeKey == '1'">
-                    <div class="btn-action">
-                          <a-tooltip  color="black">
-                              <template #title>삭제</template>
-                              <a-button class="ml-4" @click="search('tab1')">
-                                  <SearchOutlined />
-                              </a-button>
-                          </a-tooltip>
-                      </div>
-                  </div>
-                  <div v-if="activeKey == '2'">
-                      <div class="btn-action">
-                          <a-tooltip  color="black">
-                              <template #title>삭제</template>
-                              <a-button class="ml-4" @click="search('tab2')">
-                                  <SearchOutlined />
-                              </a-button>
-                          </a-tooltip>
-                      </div>
-                  </div>
-                  <div v-if="activeKey == '3'">
-                    <div class="btn-action">
-                          <a-tooltip  color="black">
-                              <template #title>삭제</template>
-                              <a-button class="ml-4" @click="search('tab3')">
-                                  <SearchOutlined />
-                              </a-button>
-                          </a-tooltip>
-                      </div>
-                  </div>
-                  <div v-if="activeKey == '4'">
-                    <div class="btn-action">
-                          <a-tooltip  color="black">
-                              <template #title>삭제</template>
-                              <a-button @click="search('tab4')">
-                                  <SearchOutlined />
-                              </a-button>
-                          </a-tooltip>
-                      </div>
-                  </div>
-                  <div v-if="activeKey == '5'">
-                    <div class="btn-action">
-                          <a-tooltip  color="black">
-                              <template #title>삭제</template>
-                              <a-button class="ml-4" @click="search('tab5')">
-                                  <SearchOutlined />
-                              </a-button>
-                          </a-tooltip>
-                      </div>
-                  </div>
-              </div>
-          </template>
           <a-tab-pane key="1" tab="근로소득지급명세서(기부금, 의료비)">
             <tab-1-component :activeSearch="activeSearch1"></tab-1-component>
           </a-tab-pane>
@@ -68,7 +15,7 @@
             <tab-4-component :activeSearch="activeSearch4"></tab-4-component>
           </a-tab-pane>
           <a-tab-pane key="5" tab="전자신고파일제작내역">
-            <tab-5-component :activeSearch="activeSearch5"></tab-5-component>
+            <tab-5-component :activeSearch="activeSearch5" :active-save="activeSavingTab5"></tab-5-component>
           </a-tab-pane>
       </a-tabs>
     </div>
@@ -108,37 +55,42 @@ export default defineComponent({
       const activeSearch3 = ref(0)
       const activeSearch4 = ref(0)
       const activeSearch5 = ref(0)
-
-      const search = (tabName: string) => {
-        switch (tabName) {
-          case 'tab1':
+      const activeSavingTab5 = ref(0)
+      const searching = (tabNumber: any) => {
+        switch (tabNumber) {
+          case '1':
             activeSearch1.value++
             break;
-          case 'tab2':
+          case '2':
             activeSearch2.value++
             break;
-          case 'tab3':
+          case '3':
             activeSearch3.value++
             break;
-          case 'tab4':
+          case '4':
             activeSearch4.value++
             break;
-          case 'tab5':
+          case '5':
             activeSearch5.value++
             break;
           default:
             break;
         }
       }
-  
+
+      const saving = (tabNumber: any) => {
+        activeSavingTab5.value++
+      }
       return {
         activeKey,
-        search,
+        searching,
+        saving,
         activeSearch1,
         activeSearch2,
         activeSearch3,
         activeSearch4,
         activeSearch5,
+        activeSavingTab5
       }
     }
 })

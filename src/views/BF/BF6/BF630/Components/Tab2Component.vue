@@ -87,7 +87,7 @@
       </a-row>
     </div>
     <div class="content-grid">
-      <a-spin :spinning="loadingIncomeRetirementPayment" size="large">
+      <a-spin :spinning="loadingIncomeRetirementPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -197,7 +197,7 @@ export default defineComponent({
     }))
 
     // ===================DONE GRAPQL==================================
-    // watch result  api searchIncomeWagePaymentStatementElectronicFilings
+    // watch result  api searchIncomeRetirementPaymentStatementElectronicFilings
     onResIncomeRetirementPayment(() => {
       trigger.value = false
     })
