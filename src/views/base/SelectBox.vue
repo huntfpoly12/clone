@@ -38,6 +38,19 @@
             <tr>
                 <td>
                     <div class="dx-field">
+                        <b>ElectronicFilingType Common</b>
+                    </div>
+                    <electronic-filing-type-common />
+                </td>
+                <td> 
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;electronic-filing-type-common /&gt; </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
                         <div class="dx-field-label">
                             Common Select Box
                             <br>
@@ -59,7 +72,7 @@
                             <strong>valueInput:</strong> {type: Number}
                         </li>
                         <li><strong>dataSelect:</strong> {type: Array}</li>
-                        <li><strong>type:</strong> {type: String}  1 : backgroud -> gray </li>
+                        <li><strong>type:</strong> {type: String} 1 : backgroud -> gray </li>
                     </ul>
                 </td>
                 <td>

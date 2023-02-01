@@ -8,8 +8,8 @@
                         :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxColumn caption="항목" data-field="name" />
-                        <DxColumn caption="계산후" data-field="priceNew" />
-                        <DxColumn caption="원본" data-field="price" />
+                        <DxColumn caption="계산후" data-field="priceNew" format="fixedPoint"/>
+                        <DxColumn caption="원본" data-field="price" format="fixedPoint"/>
                     </DxDataGrid>
             </div>
         </div>

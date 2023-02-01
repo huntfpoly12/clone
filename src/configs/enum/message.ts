@@ -30,6 +30,8 @@ export class Message extends BaseType {
         '402': { "message" : "삭제되었습니다", "icon": "iconInfo"}, // Deleted!
         '403': { "message" : "삭제가 불가능합니다. 관리자에게 문의하세요", "icon": "iconError"}, // Not possible to delete this data. Contact the manager.
         '404': { "message" : "항목을 최소 하나 선택해야합니다"}, // You must select at least one item.
+      // Popup confirm 
+        '501': { "message" : "변경 내용을 저장하시겠습니까?","yes": "네","no":"아니요"}, // Are you sure you want to save your changes?
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 

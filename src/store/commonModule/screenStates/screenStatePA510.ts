@@ -16,6 +16,7 @@ const statesPA510 = {
     focusedRowKey: 1,
     statusRowAdd: true,
     dataTaxPayInfo: [],
+    actionSubmit: 0,
 };
   
 export default statesPA510;

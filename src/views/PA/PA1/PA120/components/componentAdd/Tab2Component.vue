@@ -19,11 +19,11 @@
                 두루누리사회보험 공제
             </a-col>
             <a-col :span="11" class="switch-bg">
-                    공제 여부: 
-                    <switch-basic
-                    class="switch-insurance ml-20"
-                    switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.insuranceSupport"
-                    ></switch-basic>
+                공제 여부: 
+                <switch-basic
+                class="switch-insurance ml-20"
+                switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.insuranceSupport"
+                ></switch-basic>
             </a-col>
         </div>
 
@@ -198,7 +198,6 @@ export default defineComponent({
     const totalPayItemTaxFree = ref(0);
     const totalPayItemTax = ref(0);
     const totalPayItem = ref(0);
-    const dependentCount = ref(0);
     const totalDeduction = ref(0);
     const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
 
@@ -215,12 +214,50 @@ export default defineComponent({
       employeementReductionFinishDate:filters.formatDateToInterger(dayjs()),
     });
     const triggerCalcIncome = ref<boolean>(false);
-    const calculateVariables = {
+    const calculateVariables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
       totalTaxPay: totalPayItem.value,
       dependentCount: 1,
-    };
+    });
+    /**
+     * Calculate Income Wage Tax API
+     */
+    const {
+      result: resCalcIncomeWageTax,
+      loading: loading3,
+      refetch: refetchCalcIncomeWageTax,
+      onError: onIncomeWageTaxError,
+    } = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
+      enabled: triggerCalcIncome.value,
+      fetchPolicy: 'no-cache',
+    }));
+    onIncomeWageTaxError((e) => {
+      notification('error', e.message);
+    });
+
+    watch(resCalcIncomeWageTax, (value) => {
+      if (value) {
+        let itemValue11: Number ;
+        dataConfigDeduction.value?.forEach((item: any) => {
+          if (item.itemCode == 1011) {
+            item.value = value.calculateIncomeWageTax;
+            itemValue11 = value.calculateIncomeWageTax
+            formStateTab2.deductionItems[4] = {
+              itemCode: 1011,
+              amount: value.calculateIncomeWageTax,
+            };
+          }
+          if (item.itemCode == 1012) {
+            item.value = itemValue11? Math.floor(+itemValue11 / 10) * 10 : 0;
+            formStateTab2.deductionItems[4] = {
+              itemCode: 1012,
+              amount: value.calculateIncomeWageTax,
+            };
+          }
+        });
+      }
+    });
 
     /**
      * get WithholdingConfigPayItems
@@ -256,11 +293,6 @@ export default defineComponent({
     const { result: resConfigDeduction, loading: loading2 } = useQuery(queries.getWithholdingConfigDeductionItems, originDataDetail, () => ({
       fetchPolicy: 'no-cache',
     }));
-    const parseConfigDeduction = (item: any, itemCodeAble: any) => {
-        if(item.itemCode == itemCodeAble){
-            return { itemCode: item.itemCode, name: item.name, value: 0 };
-        }
-    }
     watch(resConfigDeduction, (value) => {
       if (value) {
         dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.filter((item: any) => {
@@ -284,37 +316,7 @@ export default defineComponent({
             }
         });
       }
-    });
-
-    /**
-     * Calculate Income Wage Tax API
-     */
-    const {
-      result: resCalcIncomeWageTax,
-      loading: loading3,
-      refetch: refetchCalcIncomeWageTax,
-      onError: onIncomeWageTaxError,
-    } = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
-      enabled: triggerCalcIncome.value,
-      fetchPolicy: 'no-cache',
-    }));
-    onIncomeWageTaxError((e) => {
-      notification('error', e.message);
-    });
-
-    watch(resCalcIncomeWageTax, (value) => {
-      if (value) {
-        dataConfigDeduction.value?.map((item: any) => {
-          if (item.itemCode == 1011) {
-            item.value = value.calculateIncomeWageTax;
-            formStateTab2.deductionItems[4] = {
-              itemCode: 1001,
-              amount: value.calculateIncomeWageTax,
-            };
-          }
-          parseConfigDeduction(item, '1001');
-        });
-      }
+      console.log(`output->item`,dataConfigDeduction)
     });
 
     /**
@@ -347,7 +349,7 @@ export default defineComponent({
           };
         }
         if (item.itemCode == 1004) {
-          let total4 = formStateTab2.longTermCareInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPayItem.value, formStateTab2.employeementInsuranceSupportPercent) : 0;
+          let total4 = formStateTab2.insuranceSupport == true ? calculateEmployeementInsuranceEmployee(totalPayItem.value, formStateTab2.employeementInsuranceSupportPercent) : 0;
           item.value = total4;
           formStateTab2.deductionItems[3] = {
             itemCode: 1004,
@@ -364,6 +366,7 @@ export default defineComponent({
       totalPayItem.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
+      console.log(`output->totalPayItem`,totalPayItem, dataConfigPayItems.value)
       totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (object.tax) {
           accumulator += object.value;
@@ -379,6 +382,8 @@ export default defineComponent({
       totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
+    //   refetchCalcIncomeWageTax();
+        triggerCalcIncome.value = true;
     };
     /**
      * Calculate Income Wage Tax if totalPayItem != 0
@@ -390,7 +395,7 @@ export default defineComponent({
           companyId: companyId,
           imputedYear: globalYear.value,
           totalTaxPay: newValue,
-          dependentCount: dependentCount.value,
+          dependentCount: 1,
         });
       }
     });
@@ -412,6 +417,10 @@ export default defineComponent({
     });
 
     const createDeduction = () => {
+        if (rangeDate.value) {
+        formStateTab2.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
+        formStateTab2.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
+        }
       const variables = {
         companyId: companyId,
         imputedYear: globalYear.value,
@@ -422,7 +431,7 @@ export default defineComponent({
       };
       mutate(variables);
     };
-    watch(()=>formStateTab2.longTermCareInsuranceDeduction,(newVal)=> {
+    watch(()=>formStateTab2.insuranceSupport,(newVal)=> {
         if(newVal) {
             formStateTab2.nationalPensionSupportPercent = 0;
             formStateTab2.employeementInsuranceSupportPercent=0
@@ -556,8 +565,8 @@ export default defineComponent({
   }
 
   .deduction-main {
-    max-height: 200px;
-    overflow: scroll;
+    // max-height: 200px;
+    // overflow: scroll;
     border: 1px solid #ddd;
     padding-left: 5px;
     padding-top: 5px;
@@ -567,7 +576,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    max-width: 97%;
     > span {
       margin-right: 10px;
       min-width: 117px;

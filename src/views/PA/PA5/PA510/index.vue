@@ -185,7 +185,7 @@
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
+        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <DxButton
                     :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
@@ -196,10 +196,10 @@
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
             </a-col>
             <a-col class="">
-                <SelectActionComponent :dataRows="dataRows" @onSubmit="onSubmit($event)" />
+                <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
-        <a-row>
+        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'">
             <a-col :span="14" class="custom-layout">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
@@ -264,7 +264,7 @@
                 </a-spin>
             </a-col>
             <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
-                <FormDataComponent :actionSubmit="actionSubmit" />
+                <FormDataComponent />
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
@@ -317,7 +317,6 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
         const modalChangeRow = ref(false)
-        const actionSubmit: any = ref<number>(0)
         let dataCustomRes: any = ref([])
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -464,10 +463,6 @@ export default defineComponent({
                 status: status.value
             })
         }
-        // action click save
-        const onSubmit = (e: any) => {
-            actionSubmit.value++
-        }
 
         // action click row table 2
         let rowEdit = ref()
@@ -477,7 +472,7 @@ export default defineComponent({
                 if (store.state.common.statusChangeFormEdit) {
                     modalChangeRow.value = true;
                 } else {
-                    if (!store.state.common.statusRowAdd) {
+                    if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                         store.state.common.statusRowAdd = true
                     }
@@ -531,6 +526,7 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
+            // IncomeWageDailiesTrigger.value = true;
         }
         return {
             processKey,
@@ -539,13 +535,11 @@ export default defineComponent({
             dataSource,
             per_page, move_column, colomn_resize,
             refetchData,
-            onSubmit,
             selectionChanged,
             dataCustomRes,
             showDetailSelected,
             actionEditTaxPay,
             dataRows,
-            actionSubmit,
             loadingTaxPayInfo,
             customizeTotalMonthly,
             copyMonth,
