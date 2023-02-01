@@ -1,55 +1,40 @@
 <template>
   <div class="search-form">
-    <a-row>
-      <a-col :span="12">
-        <a-row>
-          <a-col :span="8">
-            <a-form-item  label="귀속연도">
-              <date-time-box :range="true" :multiCalendars="true" valueDate="2020-01-01"></date-time-box>
-            </a-form-item>
-          </a-col>
-          <a-col :span="16">
-            <div class="custom-note">
-              <a-form-item  label="최종제작상태">
-                <switch-basic v-model:valueSwitch="originData.beforeProduction"  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
-              </a-form-item>
-              <span>
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
-              </span>
-            </div>
-          </a-col>
-        </a-row>
+      <div id="components-grid-demo-flex">
+          <a-row justify="start" :gutter="[16, 8]">
+              <a-col>
+                  <a-form-item  label="신고구분 :"> 
+                    <electronic-filing-type v-model:valueInput="test" width="200px"></electronic-filing-type> 
+                  </a-form-item>
+              </a-col>
+              <a-col>
+                  <a-form-item  label="제작요청일(기간)"> 
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"></range-date-time-box>
+                  </a-form-item>
+              </a-col>
+              <a-autocomplete>
+                <a-form-item  label="제작상태"> 
 
-      </a-col>
-      <a-col :span="12">
-        
-      </a-col>
-    </a-row>
+                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" :value="valueType"
+                        layout="horizontal" :icon-size="12">
+                        <template #radio="{ data }">
+                            <production-statuses :typeTag="0" v-if="data == 0" />
+                            <production-statuses :typeTag="4" v-if="data == 4" />
+                            <production-statuses :typeTag="5" v-if="data == 5" />
+                        </template>
+                    </DxRadioGroup>
+            
+                </a-form-item>
+              </a-autocomplete>
+              <a-col>
+                <a-form-item  label="매니저리스트"> 
+                  <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId"/>
+                </a-form-item>
+              </a-col>
+          </a-row>
+      </div>
   </div>
   <div class="grid-view">
-    <div class="header-grid-form">
-      <a-row justify="start" :gutter="[16, 8]">
-        <a-col class="custom-flex">
-          <label class="lable-item">파일 제작 설정 :</label>
-          <switch-basic  :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'"/>
-          <span class="infor-icon">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
-          </span>
-        </a-col>
-        <a-col class="custom-flex">
-          <label class="lable-item">제출연월일:</label>
-          <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
-        </a-col>
-        <a-col class="custom-flex">
-          <a-tooltip  color="black">
-            <template #title>전자신고파일 제작 요청</template>
-            <a-button class="ml-4" @click="requestIncomeFile">
-                <SaveOutlined style="font-size: 17px" />
-            </a-button>
-          </a-tooltip>
-        </a-col>
-      </a-row>
-    </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeExtraPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -57,19 +42,22 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사업자코드" data-field="company.code" />
-                <DxColumn caption="상호 주소" cell-template="companyName" />
+                <DxColumn caption="코드명" data-field="company.code" />
+                <DxColumn caption="신고구분" cell-template="companyName" />
                 <template #companyName="{ data }">
                   {{ data.data.company.name }}
                   {{ data.data.company.address }}
                 </template>
-                <DxColumn caption="사업자등록번호" data-field="company.bizNumber"/>
-                <DxColumn caption="최종제작요청일시" cell-template="lastProductionRequestedAt"/>
+                <DxColumn caption="제작요청일시" data-field="company.bizNumber"/>
+                <DxColumn caption="아이디" cell-template="lastProductionRequestedAt"/>
                 <template #lastProductionRequestedAt="{ data }">
                   {{ data.data.lastProductionRequestedAt }}
                 </template>
                 <DxColumn caption="제작현황" cell-template="imputed" />
                 <template #imputed="{ data }"> 
+                </template>
+                <DxColumn caption="상세보기" cell-template="action" />
+                <template #action="{ data }"> 
                 </template>
             </DxDataGrid>
         </a-spin>
@@ -84,6 +72,7 @@ import DxCheckBox from 'devextreme-vue/check-box';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import {SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -91,9 +80,11 @@ import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import RequestFilePopup from "./RequestFilePopup.vue"
+import filters from "@/helpers/filters";
+
 export default defineComponent({
   components: {
-    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,RequestFilePopup
+    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup,RequestFilePopup
   },
   props: {
     activeSearch: {
@@ -113,23 +104,21 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(false);
     const triggerElecFilings = ref<boolean>(false);
+    const test = ref(null)
+    const typeCheckbox = ref([0, 4, 5])
+    const valueType = ref(0)
+    const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
     // for checkbox 
-    const checkbox1 = ref<boolean>(false);
-    const checkbox2 = ref<boolean>(false);
-    const checkbox3 = ref<boolean>(false);
-    const checkbox4 = ref<boolean>(false);
+
     const modalRequestFile = ref<boolean>(false);
     let companyIds = Array();
     const dataRequestFile = ref()
     const originData = reactive({
-          beforeProduction:true,
-          productionStatuses:Array(),
-          companyCode:'',
-          companyName:'',
-          manageUserId:0,
-          salesRepresentativeId:0,
-          excludeCancel:true,
-          imputedYear: dayjs().year(),
+        type:0,
+        requesteStartDate: rangeDate.value[0],
+        requesteFinishDate: rangeDate.value[1],
+        productionStatuses: Array(),
+        manageUserId: 0
       }
     )
     const dataSource = ref([])
@@ -140,7 +129,7 @@ export default defineComponent({
         loading: loadingIncomeExtraPayment,
         refetch: refetchIncomeExtraPayment,
         onError: onErrorIncomeExtraPayment
-    } = useQuery(queries.searchIncomeExtraPaymentStatementElectronicFilings, {
+    } = useQuery(queries.searchElectronicFilingFileProductions, {
       filter: originData
     }, () => ({
             enabled: trigger.value,
@@ -192,43 +181,7 @@ export default defineComponent({
             notification('error', e.message)
     })
 
-    // watch checkbox change
-    watch(checkbox1, (value) => {
-      if (value) {
-        originData.productionStatuses.push(0)
-      } else {
-        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
-            return item !== 0
-        })
-      };
-    })
-    watch(checkbox2, (value) => {
-      if (value) {
-        originData.productionStatuses.push(1)
-      } else {
-        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
-            return item !== 1
-        })
-      };
-    })
-    watch(checkbox3, (value) => {
-      if (value) {
-        originData.productionStatuses.push(2)
-      } else {
-        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
-            return item !== 2
-        })
-      };
-    })
-    watch(checkbox4, (value) => {
-      if (value) {
-        originData.productionStatuses.push(-1)
-      } else {
-        originData.productionStatuses = originData.productionStatuses.filter(function(item) {
-            return item !== -1
-        })
-      };
-    })
+   
 
     // watch active searching
     watch(() => props.activeSearch, (value) => {
@@ -248,19 +201,16 @@ export default defineComponent({
       }
       modalRequestFile.value = true
     }
-    return {
+    return {test,
       globalYear,
       originData,
       move_column,
       colomn_resize,
-      dataSource,
-      checkbox1,
-      checkbox2,
-      checkbox3,
-      checkbox4,
+      dataSource,typeCheckbox,valueType,
       loadingElectronicFilings,
       loadingIncomeExtraPayment,
       trigger,
+      rangeDate,
       requestIncomeFile,
       modalRequestFile,
       dataRequestFile
@@ -269,5 +219,9 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
+ ::v-deep .ant-form-item-label>label {
+        width: 100px;
+        padding-left: 10px;
+  }
 </style>
 
