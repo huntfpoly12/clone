@@ -6,7 +6,6 @@ const actions = {
     
 /* A function that gets the user information from the server. */
   getUserInfor: (context: any, token: string) => {
-        console.log(token)
         const jwtObject = getJwtObject(token);
         let dataInfor: any = ref([]);
         const {
