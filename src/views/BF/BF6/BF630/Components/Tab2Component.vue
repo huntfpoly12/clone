@@ -13,7 +13,7 @@
               <a-form-item  label="최종제작상태">
                 <switch-basic v-model:valueSwitch="originData.beforeProduction"  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
               </a-form-item>
-              <span>
+              <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
               </span>
             </div>
@@ -68,7 +68,7 @@
         <a-col class="custom-flex">
           <label class="lable-item">파일 제작 설정 :</label>
           <switch-basic  :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'"/>
-          <span class="infor-icon">
+          <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
           </span>
         </a-col>
@@ -302,5 +302,10 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
+  ::v-deep .ant-form-item-label>label {
+        width: 120px;
+        padding-left: 10px;
+  }
+
 </style>
 
