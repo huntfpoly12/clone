@@ -6,20 +6,20 @@
         <div class="btn-action">
           <a-tooltip color="black">
             <template #title>삭제</template>
-            <a-button class="ml-4" @click="search('tab1')">
+            <a-button class="ml-4" @click="onSearch()">
               <SearchOutlined />
             </a-button>
           </a-tooltip>
         </div>
       </template>
       <a-tab-pane key="1" tab="원천세">
-        <tab-1-component></tab-1-component>
+        <tab-1-component :search1="search1"></tab-1-component>
       </a-tab-pane>
       <a-tab-pane key="2" tab="지방소득세">
-        <tab-2-component></tab-2-component>
+        <tab-2-component :search1="search2"></tab-2-component>
       </a-tab-pane>
       <a-tab-pane key="3" tab="전자신고파일제작내역">
-        <tab-3-component></tab-3-component>
+        <tab-3-component :search1="search3"></tab-3-component>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -39,12 +39,28 @@ export default defineComponent({
     SearchOutlined,
   },
   setup() {
-    const activeKey = ref<String>('1');
-    const search = (tabName: string) => { };
+    const activeKey = ref<string|number>('1');
+    const search1 = ref<number>(1);
+    const search2 = ref<number>(1);
+    const search3 = ref<number>(1);
+    const onSearch = () => {
+        if(activeKey.value == 1) {
+            search1.value ++;
+        }
+        if(activeKey.value == 1) {
+            search2.value ++;
+        }
+        if(activeKey.value == 1) {
+            search3.value ++;
+        }
+    };
 
     return {
       activeKey,
-      search,
+      onSearch,
+      search1,
+      search2,
+      search3,
     };
   },
 });

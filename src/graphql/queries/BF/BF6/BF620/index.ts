@@ -1,9 +1,9 @@
 import getCompaniesInElectronicFilingFile from "./getCompaniesInElectronicFilingFile";
-import getElectronicFilingsByLocalIncomeTax from "./getCompaniesInElectronicFilingFile";
-import getElectronicFilingsByWithholdingTax from "./getCompaniesInElectronicFilingFile";
-import searchElectronicFilingFileProductions from "./getCompaniesInElectronicFilingFile";
-import searchLocalIncomeTaxElectronicFilings from "./getCompaniesInElectronicFilingFile";
-import searchWithholdingTaxElectronicFilings from "./getCompaniesInElectronicFilingFile";
+import getElectronicFilingsByLocalIncomeTax from "./getElectronicFilingsByLocalIncomeTax";
+import getElectronicFilingsByWithholdingTax from "./getElectronicFilingsByWithholdingTax";
+import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
+import searchLocalIncomeTaxElectronicFilings from "./searchLocalIncomeTaxElectronicFilings";
+import searchWithholdingTaxElectronicFilings from "./searchWithholdingTaxElectronicFilings";
 
 const queries = {
     getCompaniesInElectronicFilingFile,

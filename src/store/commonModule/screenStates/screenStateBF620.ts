@@ -1,19 +1,19 @@
 import dayjs from "dayjs";
 let statesBF620 = {
   filterBF620: {
-    beforeProduction: true,
-    productionStatuses: [],
+    beforeProduction: false,
+    productionStatuses: [0],
     companyCode: "",
     companyName: "",
     manageUserId: 0,
     salesRepresentativeId: 0,
     excludeCancel: true,
-    imputedYear: dayjs().format("YYYY"),
-    imputedMonth: dayjs().format("MM"),
-    paymentYear: dayjs().format("YYYY"),
-    paymentMonth: dayjs().format("DD"),
+    imputedYear: +dayjs().format("YYYY"),
+    imputedMonth: +dayjs().format("MM"),
+    paymentYear: +dayjs().format("YYYY"),
+    paymentMonth: +dayjs().format("MM"),
     reportType: 0,
-    withholdingTaxType: 0,
+    withholdingTaxType: 1,
   },
 };
 
