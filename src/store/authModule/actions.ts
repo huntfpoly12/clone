@@ -4,8 +4,10 @@ import queries from "@/graphql/queries/common/index";
 import { getJwtObject } from "@bankda/jangbuda-common";
 const actions = {
     
-    getUserInfor: (context: any) => {
-        const jwtObject = getJwtObject(context.state.authData);
+/* A function that gets the user information from the server. */
+  getUserInfor: (context: any, token: string) => {
+        console.log(token)
+        const jwtObject = getJwtObject(token);
         let dataInfor: any = ref([]);
         const {
             loading,

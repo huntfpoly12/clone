@@ -8,11 +8,10 @@
                 <div class="total-user">
                     <div>
                         <span>{{ dataSource.length }}</span>
-                        <br>
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 39px">
                     </div>
                 </div>
             </a-col>
@@ -20,11 +19,10 @@
                 <div class="current-user">
                     <div>
                         <span>{{ totalUserOnl }}</span>
-                        <br>
                         <span>재직</span>
                     </div>
                     <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 39px">
                     </div>
                 </div>
             </a-col>
@@ -32,15 +30,17 @@
                 <div class="leave-user">
                     <div>
                         <span>{{ totalUserOff }}</span>
-                        <br>
                         <span>퇴사</span>
                     </div>
                     <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
+                        <img src="@/assets/images/user.svg" alt="" style="width: 39px">
                     </div>
                 </div>
             </a-col>
         </a-row>
+        <!-- {{ isRefreshDataEditPA120 }}
+        {{ initFormStateTabPA120 }}
+        {{ compareType }} -->
         <a-row>
             <a-col :span="10" class="custom-layout">
                 <a-spin :spinning="loading" size="large">
@@ -117,13 +117,16 @@
                     :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
             </a-col>
         </a-row>
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+        <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm"
             :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
             :idRowEdit="idRowEdit" typeHistory="pa-120" />
         <PopupMessage :modalStatus="popupStatus" @closePopup="popupStatus = false" :typeModal="'confirm'"
             :title="'ban co muon xoa khong'" :content="'Content notification'" :keyAccept="'1234'" :okText="'확인'"
             @checkConfirm="onPopupComfirm" />
+        <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
+        :title="'ban co muon luu khong'" :content="'Content notification'" :keyAccept="'1234'" :okText="'확인'"
+        @checkConfirm="onRowChangeComfirm" />
     </div>
 </template>
 <script lang="ts">
@@ -140,7 +143,7 @@ import PA120PopupAddNewVue from "./components/PA120PopupAddNew.vue";
 import PA120PopupEdit from "./components/PA120PopupEdit.vue";
 import { Message } from "@/configs/enum"
 import { DxTooltip } from 'devextreme-vue/tooltip';
-
+import {initFormStateTab1} from './utils/index'
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
 export default defineComponent({
@@ -156,8 +159,8 @@ export default defineComponent({
         const actionChangeComponent = ref(1)
         const addNew = ref();
         const contentDelete = Message.getMessage('PA120', '002').message
-        const modalStatus = ref(false)
-        const dataSource = ref([]);
+        const delStatus = ref(false)
+        const dataSource = ref<any[]>([]);
         const store = useStore();
         const totalUserOnl = ref(0)
         const totalUserOff = ref(0)
@@ -166,6 +169,9 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const arrRowEdit = computed(() => store.state.common.arrayRoweditedPA120);
+        const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120);
+        const editRowPA120 = computed(() => store.state.common.editRowPA120);
+        const isCompareEditPA120 = computed(() => store.state.common.isCompareEditPA120);
         const trigger = ref<boolean>(true);
         const originData = ref({
             companyId: companyId,
@@ -176,7 +182,11 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false);
         const defaultVisible = ref<boolean>(false);
-        const idRowEdit = ref()
+        const idRowEdit = ref();
+        const isAdding = ref<Boolean>(false);
+        const rowChangeStatus = ref<Boolean>(false);
+        const isRefreshDataEditPA120 = computed(() => store.state.common.isRefreshDataEditPA120);
+        const idRow = ref()
         const {
             refetch: refetchData,
             result,
@@ -211,16 +221,14 @@ export default defineComponent({
             if (params) {
                 popupStatus.value = false;
                 addComponentKey.value++;
+                store.commit('common/initFormStateTabPA120',initFormStateTab1);
+                isAdding.value = false;
+                if(isAdding.value){
+                    delNewRow();
+                }
             }
         }
-        const openAddNewModal = async () => {
-            actionChangeComponent.value = 1;
-            // if (!addNew.value.compareData()) {
-            //     popupStatus.value = true;
-            // }
-            addComponentKey.value++;
-        };
-
+        //delete row
         watch(() => store.state.common.reloadEmployeeList, () => {
             trigger.value = true
             refetchData()
@@ -230,7 +238,7 @@ export default defineComponent({
         }
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
-            modalStatus.value = true
+            delStatus.value = true
         }
         const statusComfirm = (res: any) => {
             if (res == true) {
@@ -241,6 +249,82 @@ export default defineComponent({
                 })
                 actionChangeComponent.value = 1
             }
+        }
+        //compare Data
+        const compareType = ref(1);     //0 is row change. 1 is add button;
+        const compareType1 = () => {
+            if (!isCompareEditPA120.value) {
+                return true;
+            }
+            // console.log(JSON.stringify(initFormStateTab1))
+            // console.log(JSON.stringify(initFormStateTabPA120.value))
+            if(JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value)){
+                return true;
+            }else {
+                return false;
+            }
+        }
+        const compareType2 = () => {
+            if (!isCompareEditPA120.value) {
+                return true;
+            }
+            if(JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value)){
+                return true;
+            }else {
+                return false;
+            }
+        }
+        //on add row
+        const openAddNewModal = async () => {
+            actionChangeComponent.value = 1;
+            if(compareType.value == 2) {
+                store.commit('common/initFormStateTabPA120',initFormStateTab1);
+            }
+            if(!isAdding.value) {
+                setTimeout(()=> {
+                    initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
+                }, 100)
+            }
+            if(!compareType1() && compareType.value == 1){
+                popupStatus.value = true;
+                return;
+            }
+            store.commit('common/initFormStateTabPA120',initFormStateTab1);
+            if(!isAdding.value) {
+                dataSource.value=dataSource.value.concat([initFormStateTabPA120.value])
+                focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+                isAdding.value = true;
+            }else{
+                delNewRow();
+                isAdding.value = false;
+            }
+        };
+
+        //row change confirm 
+        const onRowChangeComfirm = (res: any) => {
+            
+            if (res) {
+                if(compareType.value == 1) {
+                    let ele = document.getElementById("btn-save") as HTMLInputElement;
+                    ele.click();
+                }else{
+                    let ele = document.getElementById("btn-save-edit");
+                    ele?.click();
+                }
+            }else {
+                if(compareType.value == 1) {
+                    store.state.common.isRefreshDataEditPA120 = true;
+                    dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);                    
+                    idRowEdit.value = idRow.value;
+                    isAdding.value = false;
+                    actionChangeComponent.value = 2
+                }else{
+                    idRowEdit.value = idRow.value;
+                    isAdding.value = false;
+                    actionChangeComponent.value = 2
+                }
+            }
+            compareType.value = 2;
         }
         watch(result, (value) => {
             if (value) {
@@ -266,12 +350,43 @@ export default defineComponent({
         })
         //rest resetActiveKey
         const resetActiveKey = ref("1");
+        //edit row
         const actionEdit = (data: any) => {
-            actionChangeComponent.value = 2
-            idRowEdit.value = data.data.employeeId
+            store.state.common.isRefreshDataEditPA120 = false;
             modalEditStatus.value = true;
-            resetActiveKey.value = "1";
-            store.commit('common/resetTabPA120', "1")
+            idRow.value = data.data.employeeId;
+            if(isAdding.value) {
+                compareType.value = 1;
+                if(!compareType1()){
+                    rowChangeStatus.value = true;
+                    store.state.common.isRefreshDataEditPA120 = false;
+                    return;
+                }else {
+                    delNewRow();
+                    focusedRowKey.value = data.data.employeeId;
+                    store.state.common.isRefreshDataEditPA120 = true;
+                    actionChangeComponent.value = 2
+                    return;
+                }
+            }
+            // setTimeout(() =>{
+                compareType.value = 2;
+                // idRowEdit.value = data.data.employeeId;
+                if(!compareType2()){
+                    rowChangeStatus.value = true;
+                    return;
+                }else {
+                    store.state.common.isCompareEditPA120 = true;
+                    idRowEdit.value = data.data.employeeId;
+                    actionChangeComponent.value = 2
+                }
+                resetActiveKey.value = "1";
+                store.commit('common/resetTabPA120', "1");
+                modalEditStatus.value = true;
+                isAdding.value = false;
+                // store.state.common.isRefreshDataEditPA120 = true;
+
+            // },100)
         }
         // when submit form done
         const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
@@ -285,18 +400,27 @@ export default defineComponent({
             isResidentIdError[val.id] = val.isError;
         }
         //focus Row
-        const focusedRowKey = ref<String | Number>(0);
+        const focusedRowKey = ref<String | Number | null>(0);
         const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
         const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
         watch(keyActivePA120, (newval: number) => {
             focusedRowKey.value = +newval;
         })
+        // del row when add row
+        const delNewRow = () => {
+            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+            store.commit('common/initFormStateTabPA120',initFormStateTab1);
+            addComponentKey.value++;
+            focusedRowKey.value = null;
+            isAdding.value = false;
+            compareType.value = 2;
+        }
         return {
             loading,
             idRowEdit,
             actionChangeComponent,
             modalEditStatus,
-            modalStatus,
+            delStatus,
             dataSource,
             actionEdit,
             actionDelete,
@@ -321,6 +445,14 @@ export default defineComponent({
             resetTabPA120,
             keyActivePA120,
             defaultVisible,
+            initFormStateTabPA120,
+            isAdding,
+            initFormStateTab1,
+            rowChangeStatus,
+            onRowChangeComfirm,
+            editRowPA120,
+            isRefreshDataEditPA120,
+            compareType
         }
     },
 });

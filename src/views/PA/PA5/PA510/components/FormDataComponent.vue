@@ -95,7 +95,7 @@
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
                     <div class="top-content">
-                        <a-typography-title :level="5" style="margin-bottom: 0;">월급여 {{ totalDeduction }}
+                        <a-typography-title :level="5" style="margin-bottom: 0;">공제 항목 {{ totalDeduction }}
                             원</a-typography-title>
                     </div>
                     <a-spin :spinning="loadingDeductionItem" size="large">
@@ -162,10 +162,6 @@ export default defineComponent({
         InsurancePopup,
     },
     props: {
-        actionSubmit: {
-            type: Number,
-            default: 0
-        },
         isTaxhasData: Boolean,
     },
     setup(props, { emit }) {
@@ -308,6 +304,9 @@ export default defineComponent({
                 })
             })
             triggerIncomeWageDaily.value = false;
+            setTimeout(() => {
+                store.state.common.statusChangeFormEdit = false;
+            }, 500);
         })
 
 
@@ -346,7 +345,7 @@ export default defineComponent({
                 store.state.common.statusChangeFormAdd = false
             }
             if (!store.state.common.statusRowAdd) {
-                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1] = dataIncomeWageDaily.value
+                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIncomeWageDaily.value
                 store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
             }
         }, { deep: true })
@@ -361,7 +360,7 @@ export default defineComponent({
                 dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             }
         })
-        watch(() => props.actionSubmit, (value) => {
+        watch(() => store.state.common.actionSubmit, (value) => {
             let arrDeductionItems: any = []
             arrDeduction.value.forEach((value: any) => {
                 arrDeductionItems.push({
