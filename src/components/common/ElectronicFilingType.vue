@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, PropType, ref, watch } from "vue";
 
 export default defineComponent({
   props: {
@@ -12,8 +12,8 @@ export default defineComponent({
         type: String,
     },
     valueInput: {
-      type: Number,
-      default: "",
+      type: Number as PropType<number | null>,
+      default: null,
     },
   },
   setup(props, { emit }) {
