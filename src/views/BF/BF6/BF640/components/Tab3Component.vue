@@ -13,14 +13,21 @@
             </a-col>
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" :value="valueType"
-                        layout="horizontal" :icon-size="12">
-                        <template #radio="{ data }">
-                            <production-statuses :typeTag="0" v-if="data == 0" />
-                            <production-statuses :typeTag="4" v-if="data == 4" />
-                            <production-statuses :typeTag="5" v-if="data == 5" />
-                        </template>
-                    </DxRadioGroup>
+                    <div class="mt-7">
+                        <DxRadioGroup :data-source="typeCheckbox" item-template="radio" :value="valueType"
+                            layout="horizontal" :icon-size="12">
+                            <template #radio="{ data }">
+                                <production-statuses :typeTag="0" v-if="data == 0" />
+                                <production-statuses :typeTag="4" v-if="data == 4" />
+                                <production-statuses :typeTag="5" v-if="data == 5" />
+                            </template>
+                        </DxRadioGroup>
+                    </div>
+                </a-form-item>
+            </a-col>
+            <a-col>
+                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+                    <list-manager-dropdown :required="true" />
                 </a-form-item>
             </a-col>
         </a-row>
@@ -29,12 +36,15 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사업자코드" />
-                <DxColumn caption="상호 주소" />
-                <DxColumn caption="사업자등록번호" />
-                <DxColumn caption="최종제작요청일시" />
+                <DxColumn caption="코드명" />
+                <DxColumn caption="신고구분" />
+                <DxColumn caption="제작요청일시" />
+                <DxColumn caption="아이디" />
                 <DxColumn caption="제작현황" />
+                <DxColumn caption="상세보기" width="80px" cell-template="action" />
+                <template #action="{ data }">
+                    <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;" />
+                </template>
             </DxDataGrid>
         </div>
     </div>
@@ -98,5 +108,9 @@ export default defineComponent({
 
 ::v-deep .dx-radiobutton {
     line-height: 18px;
+}
+
+::v-deep .dx-radiogroup-horizontal .dx-radiobutton {
+    margin-right: 0px;
 }
 </style>

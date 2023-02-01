@@ -12,6 +12,17 @@ export const dataSearchUtils = {
     "manageUserId": null,
     "salesRepresentativeId": null,
     "excludeCancel": false,
-    "paymentYear": dayjs().format('YYYY'),
-    "paymentHalfYear": null
+    "paymentYear": parseInt(dayjs().format('YYYY')),
+    "paymentHalfYear": 1
+}
+export const dataSearchStep2Utils = {
+    "beforeProduction": false,
+    "productionStatuses": [],
+    "companyCode": '',
+    "companyName": '',
+    "manageUserId": null,
+    "salesRepresentativeId": null,
+    "excludeCancel": false,
+    "paymentYear": parseInt(dayjs().format('YYYY')),
+    "paymentHalfYear": 1
 } 

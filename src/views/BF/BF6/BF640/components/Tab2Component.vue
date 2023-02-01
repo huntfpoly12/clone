@@ -12,7 +12,8 @@
             <a-col>
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="제작전" textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
+                            textUnCheck="제작후" />
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -54,10 +55,10 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" />
+                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" />
+                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -96,30 +97,36 @@
                 <DxColumn caption="제작현황" />
             </DxDataGrid>
         </div>
-        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
+        <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
     </div>
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { defineComponent, ref, computed } from "vue";
-import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
+import { defineComponent, ref, computed, watch } from "vue";
+import { checkBoxSearchStep1, dataSearchStep2Utils } from "../utils";
 import {
     SaveOutlined
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
-import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
 
+import queries from "@/graphql/queries/BF/BF6/BF640/index";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import notification from "@/utils/notification"
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSaveStep1,
+        PopupConfirmSave,
     },
-    setup() {
+    props: {
+        searchStep: Number,
+    },
+    setup(props) {
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
-        let dataSearch = ref({ ...dataSearchUtils })
+        let dataSearch = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref({
             checkbox1: true,
             checkbox2: false,
@@ -134,6 +141,10 @@ export default defineComponent({
         let modalConfirmMail = ref(false)
 
 
+        watch(() => props.searchStep, (val: any) => {
+            console.log(val);
+
+        }, { deep: true })
         return {
             activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch,
             dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
