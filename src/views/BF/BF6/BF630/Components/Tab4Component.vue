@@ -87,7 +87,7 @@
       </a-row>
     </div>
     <div class="content-grid">
-      <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
+      <a-spin :spinning="loadingIncomeExtraPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -139,6 +139,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
+    const userInfor = computed(() => (store.state.auth.userInfor))
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -166,12 +167,12 @@ export default defineComponent({
     const dataSource = ref([])
     // ============ GRAPQL ===============================
     const {
-        result:  resIncomeWagePayment,
-        onResult: onResIncomeWagePayment,
-        loading: loadingIncomeWagePayment,
-        refetch: refetchIncomeWagePayment,
-        onError: onErrorIncomeWagePayment
-    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings, {
+        result:  resIncomeExtraPayment,
+        onResult: onResIncomeExtraPayment,
+        loading: loadingIncomeExtraPayment,
+        refetch: refetchIncomeExtraPayment,
+        onError: onErrorIncomeExtraPayment
+    } = useQuery(queries.searchIncomeExtraPaymentStatementElectronicFilings, {
       filter: originData
     }, () => ({
             enabled: trigger.value,
@@ -196,20 +197,20 @@ export default defineComponent({
     }))
 
     // ===================DONE GRAPQL==================================
-    // watch result  api searchIncomeWagePaymentStatementElectronicFilings
-    onResIncomeWagePayment(() => {
+    // watch result  api searchIncomeExtraPaymentStatementElectronicFilings
+    onResIncomeExtraPayment(() => {
       trigger.value = false
     })
-    watch(resIncomeWagePayment, (value) => {
+    watch(resIncomeExtraPayment, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+        dataSource.value = value.searchIncomeExtraPaymentStatementElectronicFilings
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)
         })
       }
     })
-    onErrorIncomeWagePayment(e => {
+    onErrorIncomeExtraPayment(e => {
             notification('error', e.message)
     })
 
@@ -264,7 +265,7 @@ export default defineComponent({
     // watch active searching
     watch(() => props.activeSearch, (value) => {
       trigger.value = true;
-      refetchIncomeWagePayment()
+      refetchIncomeExtraPayment()
     })
 
     // request file popup action
@@ -273,8 +274,8 @@ export default defineComponent({
         companyIds : companyIds,
         filter: originData,
         emailInput: {
-          receiverName:'',
-          receiverAddress: '',
+          receiverName: userInfor.value.name,
+          receiverAddress: userInfor.value.email
         }
       }
       modalRequestFile.value = true
@@ -290,7 +291,7 @@ export default defineComponent({
       checkbox3,
       checkbox4,
       loadingElectronicFilings,
-      loadingIncomeWagePayment,
+      loadingIncomeExtraPayment,
       trigger,
       requestIncomeFile,
       modalRequestFile,
