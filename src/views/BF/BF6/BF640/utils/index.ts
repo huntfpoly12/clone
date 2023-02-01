@@ -24,5 +24,5 @@ export const dataSearchStep2Utils = {
     "salesRepresentativeId": null,
     "excludeCancel": false,
     "paymentYear": parseInt(dayjs().format('YYYY')),
-    "paymentHalfYear": 1
+    "paymentMonth": parseInt(dayjs().format('MM'))
 } 

@@ -111,11 +111,9 @@ import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
-
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
-
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
@@ -142,7 +140,6 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -157,7 +154,6 @@ export default defineComponent({
         resTable((val: any) => {
             dataSource.value = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings
             trigger.value = false
-
             // call api get productionStatus
             if (dataSource.value.length > 0) {
                 dataSource.value.map((val: any) => {
@@ -174,8 +170,6 @@ export default defineComponent({
         errorTable((error: any) => {
             notification('error', error.message)
         })
-
-
         //  QUERY : getElectronicFilingsByIncomeWageSimplifiedPaymentStatement
         // let {
         //     refetch: refetchType,
@@ -186,9 +180,8 @@ export default defineComponent({
         //     enabled: trigger.value,
         //     fetchPolicy: "no-cache"
         // }));
-
         // ================= WATHCH ===================
-        watch(() => props.searchStep, () => {
+        watch(() => props.searchStep, (val: any) => { 
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
                 dataSearch.value.productionStatuses.push(0)
@@ -198,12 +191,11 @@ export default defineComponent({
                 dataSearch.value.productionStatuses.push(2)
             if (typeCheckbox.value.checkbox4 == true)
                 dataSearch.value.productionStatuses.push(-1)
-            if (dataSearch) {
+            if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()
             }
         }, { deep: true })
-
         return {
             activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable,
             dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
@@ -212,5 +204,4 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>
