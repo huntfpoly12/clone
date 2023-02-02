@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
@@ -24,25 +24,25 @@
                 <div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox1">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -81,7 +81,7 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="modalConfirmMail = true" />
+                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
                     </a-tooltip>
                 </div>
             </a-form-item>
@@ -92,15 +92,19 @@
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxSelection mode="multiple" :fixed="true" />
-                    <DxColumn caption="사업자코드" />
-                    <DxColumn caption="상호 주소" />
-                    <DxColumn caption="사업자등록번호" />
-                    <DxColumn caption="최종제작요청일시" />
-                    <DxColumn caption="제작현황" />
+                    <DxColumn caption="사업자코드" data-field="company.code" />
+                    <DxColumn caption="상호 주소" cell-template="상호" />
+                    <template #상호="{ data }">
+                        {{ data.data.company.name }} - {{ data.data.company.address }}
+                    </template>
+                    <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="제작현황" data-field="lastProductionRequestedAt" />
                 </DxDataGrid>
             </a-spin>
         </div>
-        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
+        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false"
+            :data="dataModalSave" />
     </div>
 </template>
 <script lang="ts">
@@ -137,9 +141,12 @@ export default defineComponent({
         let dataSource: any = ref([])
         let modalConfirmMail = ref(false)
         let dataCallApiGetElectronic = ref()
-        const store = useStore()
+        const store = useStore();
+        const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
+        let dataModalSave = ref()
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -180,8 +187,25 @@ export default defineComponent({
         //     enabled: trigger.value,
         //     fetchPolicy: "no-cache"
         // }));
+
+        // ================== FUNCTION ================== 
+        const openModalSave = () => {
+            console.log(userInfor.value.name);
+
+            modalConfirmMail.value = true
+            dataModalSave.value = {
+                filter: dataSearch.value,
+                emailInput: {
+                    receiverName: userInfor.value.name,
+                    receiverAddress: userInfor.value.email
+                },
+                companyIds: []
+            }
+        }
+
+
         // ================= WATHCH ===================
-        watch(() => props.searchStep, (val: any) => { 
+        watch(() => props.searchStep, (val: any) => {
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
                 dataSearch.value.productionStatuses.push(0)
@@ -197,11 +221,13 @@ export default defineComponent({
             }
         }, { deep: true })
         return {
-            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable,
-            dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
+            userInfor,
+            dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
+            openModalSave
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
+
 </style>
