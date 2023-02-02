@@ -1,5 +1,5 @@
-<template> 
-    <span class="tag-status-0" v-if="typeTag == 0">전체</span>
+<template>
+    <span class="tag-status-0" :style="{ padding: padding }" v-if="typeTag == 0">전체</span>
     <span class="tag-status-1" :style="{ padding: padding }" v-if="typeTag == 1">제작대전</span>
     <span class="tag-status-2" :style="{ padding: padding }" v-if="typeTag == 2">제작대기</span>
     <span class="tag-status-3" :style="{ padding: padding }" v-if="typeTag == 3">제작중</span>
