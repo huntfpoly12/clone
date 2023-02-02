@@ -6,7 +6,7 @@
                 <span class="mr-10">
                     선택된 내역들의 전자신고파일 제작요청하고, 결과를
                 </span>
-                <mail-text-box width="200" />
+                <mail-text-box width="250" />
             </div>
             <span>
                 로 메일을 발송하시겠습니까?
@@ -21,8 +21,16 @@ export default defineComponent({
     },
     props: {
         modalStatus: Boolean,
+        data: Object
     },
     setup(props, { emit }) {
+        watch(() => props.modalStatus, (newVal) => { 
+            if (newVal == true) {
+                // console.log(props.data);
+                
+            }
+        })
+
         const setModalVisible = () => {
             emit("closePopup", true)
         }
