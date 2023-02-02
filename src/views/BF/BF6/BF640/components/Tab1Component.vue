@@ -98,8 +98,8 @@
                         {{ data.data.company.name }} - {{ data.data.company.address }}
                     </template>
                     <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
-                    <DxColumn caption="제작현황" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="최종제작요청일시" />
+                    <DxColumn caption="제작현황" />
                 </DxDataGrid>
             </a-spin>
         </div>
@@ -127,6 +127,11 @@ export default defineComponent({
         searchStep: Number,
     },
     setup(props, { emit }) {
+        const store = useStore();
+        const userInfor = computed(() => (store.state.auth.userInfor))
+        const move_column = computed(() => store.state.settings.move_column);
+        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
@@ -141,10 +146,6 @@ export default defineComponent({
         let dataSource: any = ref([])
         let modalConfirmMail = ref(false)
         let dataCallApiGetElectronic = ref()
-        const store = useStore();
-        const userInfor = computed(() => (store.state.auth.userInfor))
-        const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
         let dataModalSave = ref()
         // ================== GRAPHQL=================
@@ -190,8 +191,6 @@ export default defineComponent({
 
         // ================== FUNCTION ================== 
         const openModalSave = () => {
-            console.log(userInfor.value.name);
-
             modalConfirmMail.value = true
             dataModalSave.value = {
                 filter: dataSearch.value,
@@ -202,7 +201,6 @@ export default defineComponent({
                 companyIds: []
             }
         }
-
 
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
