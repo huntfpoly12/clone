@@ -17,9 +17,9 @@
                     <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                         layout="horizontal" :icon-size="12">
                         <template #radio="{ data }">
-                            <production-statuses :typeTag="0" v-if="data == 0" />
-                            <production-statuses :typeTag="4" v-if="data == 4" />
-                            <production-statuses :typeTag="5" v-if="data == 5" />
+                            <production-statuses :typeTag="0" padding="3px 20px" v-if="data == 0" />
+                            <production-statuses :typeTag="4" padding="3px 20px" v-if="data == 4" />
+                            <production-statuses :typeTag="5" padding="3px 20px" v-if="data == 5" />
                         </template>
                     </DxRadioGroup>
                 </a-form-item>
