@@ -18,8 +18,8 @@
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
                                 <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                                <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
-                                <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
+                                <production-statuses :typeTag="2" v-if="data == 2" padding="1px 10px" />
+                                <production-statuses :typeTag="-1" v-if="data == -1" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>
@@ -80,7 +80,7 @@ export default defineComponent({
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
         let dataSearch = ref({ ...dataSearchStep3Utils })
-        let typeCheckbox = ref([0, 4, 5])
+        let typeCheckbox = ref([0, 2, -1])
         let dataSource: any = ref([])
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
