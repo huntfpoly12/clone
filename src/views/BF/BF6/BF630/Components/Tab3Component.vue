@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="2" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-2">제작중</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="3" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="4" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="5" padding="0px 5px" />
                 </div>
               </div>
           </div>
