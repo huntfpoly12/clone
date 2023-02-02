@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-query searchElectronicFilingFileProductions($input: ElectronicFilingFileSearchFilter !) { 
-  searchElectronicFilingFileProductions(input: $input) {
+query searchElectronicFilingFileProductions($filter: ElectronicFilingFileSearchFilter !) { 
+  searchElectronicFilingFileProductions(filter: $filter) {
     electronicFilingId
     imputedYear
     imputedMonth
