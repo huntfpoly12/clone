@@ -12,15 +12,15 @@
           </a-tooltip>
         </div>
       </template>
-      <a-tab-pane key="1" tab="원천세">
-        <tab-1-component :search1="search1"></tab-1-component>
-      </a-tab-pane>
-      <a-tab-pane key="2" tab="지방소득세">
-        <tab-2-component :search1="search2"></tab-2-component>
-      </a-tab-pane>
-      <a-tab-pane key="3" tab="전자신고파일제작내역">
-        <tab-3-component :search1="search3"></tab-3-component>
-      </a-tab-pane>
+      <!-- <a-tab-pane key="1" tab="원천세">
+        <tab-1-component :search="search1"></tab-1-component>
+      </a-tab-pane> -->
+      <!-- <a-tab-pane key="2" tab="지방소득세">
+        <tab-2-component :search="search2"></tab-2-component>
+      </a-tab-pane> -->
+      <!-- <a-tab-pane key="3" tab="전자신고파일제작내역">
+        <tab-3-component :search="search3"></tab-3-component>
+      </a-tab-pane> -->
     </a-tabs>
   </div>
 </template>
@@ -28,14 +28,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
-import Tab1Component from './components/Tab1Component.vue';
-import Tab2Component from './Components/Tab2Component.vue';
-import Tab3Component from './Components/Tab3Component.vue';
+// import Tab1Component from './components/Tab1Component.vue';
+// import Tab2Component from './Components/Tab2Component.vue';
+// import Tab3Component from './Components/Tab3Component.vue';
 export default defineComponent({
   components: {
-    Tab1Component,
-    Tab2Component,
-    Tab3Component,
+    // Tab1Component,
+    // Tab2Component,
+    // Tab3Component,
     SearchOutlined,
   },
   setup() {
