@@ -3,9 +3,9 @@
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
                 <a-form-item label="귀속연도" label-align="left">
-                    <div class="month-custom-1 d-flex-center ml-5">
+                    <div class="month-custom-1 d-flex-center">
                         귀
-                        <month-picker-box v-model:valueDate="datePayment" class="mr-5 ml-5 " />
+                        <month-picker-box v-model:valueDate="datePayment" class="mr-5 ml-5" width="80px" />
                     </div>
                 </a-form-item>
             </a-col>
@@ -23,25 +23,25 @@
                 <div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox1">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic  v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -62,7 +62,7 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel"/>
+                <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
             </a-col>
         </a-row>
         <div class="title-table d-flex">
