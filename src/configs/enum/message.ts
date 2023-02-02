@@ -70,6 +70,12 @@ export class Message extends BaseType {
         '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?", "icon": "iconWarning"}, //Do you really want to delele this data?
         '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
     });
+  
+  //근로소득-일용직소득  계산   
+  public static PA110 = new Message({
+        '001': { "message" : "변경 항목에 대해 공제 제계산하시겠습니까?","yes": "네. 공제 재계산하겠습니다","no":"그냥 나가기"}, // Do you want to deduct the change?
+      
+    });
    
       //기초정보설정
     public static CM110 = new Message({
