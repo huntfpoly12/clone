@@ -140,7 +140,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const trigger = ref<boolean>(false);
+    const trigger = ref<boolean>(true);
     const triggerElecFilings = ref<boolean>(false);
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
