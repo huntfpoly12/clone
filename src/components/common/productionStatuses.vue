@@ -29,7 +29,7 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 .tag-status-1 {
     background-color: gray;
@@ -37,7 +37,7 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 
 .tag-status-2 {
@@ -46,7 +46,7 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 
 .tag-status-3 {
@@ -55,7 +55,7 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 
 
@@ -65,7 +65,7 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 
 .tag-status-5 {
@@ -74,6 +74,6 @@ export default defineComponent({
     text-align: center;
     border-radius: 5px;
     margin-right: 5px;
-    width: 90px;
+    width: 80px;;
 }
 </style> 

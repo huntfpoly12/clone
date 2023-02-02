@@ -62,7 +62,7 @@
                     <DxColumn caption="상태" data-field="status" data-type="text" cell-template="grid-cell" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
-                            {{ data.value == 1 ? "정상" : data.value == 2 ? "해지" : "전체" }}
+                            {{ data.value == 1 ? "정상" : data.value == 2 ? "해지" : "숨김" }}
                         </a-tag>
                     </template>
                     <DxColumn caption="영업자명" data-field="name" />

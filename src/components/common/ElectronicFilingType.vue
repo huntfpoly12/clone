@@ -1,10 +1,8 @@
 <template>
     <a-select v-model:value="value" :options="options" :style="{ width: width }" @change="updateValue" placeholder="선택"/>
 </template>
-
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from "vue";
-
 export default defineComponent({
   props: {
     width: {
@@ -79,7 +77,6 @@ export default defineComponent({
         options,
         value,
         updateValue
-
       }
   }
 })

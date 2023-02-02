@@ -26,8 +26,8 @@
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="상태" :label-col="labelCol">
-                            <switch-basic v-if="formState.type == 'c'" v-model:valueSwitch="formState.active"
-                                textCheck="이용중" textUnCheck="이용중지" :disabled="formState.type == 'c' ? true : false" />
+                            <switch-basic v-model:valueSwitch="formState.active" textCheck="이용중" textUnCheck="이용중지"
+                                :disabled="formState.type == 'c' ? true : false" />
                         </a-form-item>
                         <a-form-item label="회원종류" class="red" :label-col="labelCol">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
@@ -83,9 +83,9 @@
                                     <a-col :span="4"></a-col>
                                     <a-col :span="20">
                                         <div class="custom-button-modal">
-                                            <button-basic :width="120" text="아니오" :type="'default'" :mode="'outlined'"
-                                                @onClick="closePopupEmail" style="margin-right: 10px;" />
-                                            <button-basic text="네. 발송합니다" :type="'default'" :mode="'contained'"
+                                            <button-basic :width="120" text="아니오" type="default" mode="outlined"
+                                                @onClick="closePopupEmail" class="mr-10" />
+                                            <button-basic text="네. 발송합니다" type="default" mode="contained"
                                                 @onClick="sendMessToGmail" />
                                         </div>
                                     </a-col>
@@ -102,7 +102,7 @@
                             :show-bordes="true" :selected-row-keys="checkedNames" :allow-column-reordering="move_column"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
                             key-expr="id" @selection-changed="onSelectionChanged">
-                            <DxScrolling mode="standard" show-scrollbar="always"/>
+                            <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSelection mode="multiple" />
                             <DxColumn data-field="id" caption="코드" :width="200" />
                             <DxColumn data-field="name" caption="권한그룹명" />
@@ -112,10 +112,10 @@
                 </div>
                 <a-row>
                     <a-col :offset="8" style="text-align: center; margin-top: 20px;">
-                        <button-basic text="취소" :type="'default'" :mode="'outlined'" @onClick="setModalVisible"
-                            style="margin-right: 10px;" />
-                        <button-basic text="저장하고 나가기" :type="'default'" :mode="'contained'"
-                            @onClick="confirmUpdate($event)" />
+                        <button-basic text="취소" type="default" mode="outlined" @onClick="setModalVisible"
+                            class="mr-10" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="confirmUpdate($event)"
+                            :disabled="formState.type == 'c' ? true : false" />
                     </a-col>
                 </a-row>
             </standard-form>
@@ -149,7 +149,7 @@ import {
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
     components: {
-        MenuOutlined, SearchOutlined, WarningOutlined, MailOutlined, DxDataGrid, DxColumn, DxSelection, DxSelectBox,DxScrolling,
+        MenuOutlined, SearchOutlined, WarningOutlined, MailOutlined, DxDataGrid, DxColumn, DxSelection, DxSelectBox, DxScrolling,
         Field,
     },
     setup(props, { emit }) {
@@ -299,9 +299,11 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     trigger.value = true;
+                    triggerSearchRoleGroup.value = true;
                     if (dataQuery) {
                         dataQuery.value = { id: props.idRowEdit };
                         refetch();
+                        reqRoleGroup()
                     }
                 }
             }
@@ -376,6 +378,16 @@ export default defineComponent({
     },
 });
 </script>  
+
+
+
+
+
+
+
+
+
+
 
 
 
