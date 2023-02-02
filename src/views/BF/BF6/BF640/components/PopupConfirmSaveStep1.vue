@@ -26,7 +26,7 @@ export default defineComponent({
     setup(props, { emit }) {
         watch(() => props.modalStatus, (newVal) => { 
             if (newVal == true) {
-                console.log(props.data);
+                // console.log(props.data);
                 
             }
         })
