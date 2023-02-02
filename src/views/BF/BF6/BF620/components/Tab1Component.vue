@@ -91,7 +91,7 @@ export default defineComponent({
     SaveOutlined
 },
   props: {
-    search1: {
+    search: {
       type: Number,
     },
   },
@@ -125,15 +125,24 @@ export default defineComponent({
     });
         //on Search
     watch(
-      () => props.search1,
+      () => props.search,
       () => {
-        console.log(`output->props.search1`, props.search1);
+        console.log(`output->props.search`, props.search);
         variables.value = { filter: filterBF620.value };
         searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();
       },
       { deep: true }
     );
+    //produtionStatus
+    const eletroFillingParam = ref();
+    const eletroFillingTrigger = ref(false);
+    const {
+        result: getElectronicFilingsByWithholdingTax,
+    } = useQuery(queries.getElectronicFilingsByWithholdingTax,eletroFillingParam.value,()=> ({
+        enabled: eletroFillingTrigger.value,
+        fetchPolicy: 'no-cache',
+    }))
     return {
       filterBF620,
       variables,

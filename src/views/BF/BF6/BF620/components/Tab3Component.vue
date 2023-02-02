@@ -91,7 +91,7 @@
       SaveOutlined
   },
     props: {
-      search1: {
+      search: {
         type: Number,
       },
     },
@@ -125,9 +125,9 @@
       });
           //on Search
       watch(
-        () => props.search1,
+        () => props.search,
         () => {
-          console.log(`output->props.search1`, props.search1);
+          console.log(`output->props.search`, props.search);
           variables.value = { filter: filterBF620.value };
           searchWithholdingTrigger.value = true;
           searchWithholdingRefetch();
