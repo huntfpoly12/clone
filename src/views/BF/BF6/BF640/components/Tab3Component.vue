@@ -100,7 +100,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dataSource.value = val.data.searchElectronicFilingFileProductions 
+            dataSource.value = val.data.searchElectronicFilingFileProductions
             trigger.value = false
         })
         errorTable((error: any) => {
@@ -109,11 +109,10 @@ export default defineComponent({
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
             if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [4, 5]
-            if (typeStatus.value == 4)
-                dataSearch.value.productionStatuses = [4]
-            if (typeStatus.value == 5)
-                dataSearch.value.productionStatuses = [5]
+                dataSearch.value.productionStatuses = [2, -1]
+            else
+                dataSearch.value.productionStatuses = [val]
+
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {
@@ -123,7 +122,7 @@ export default defineComponent({
         }, { deep: true })
 
         // ============== FUNCTION =====================
-        const openPopupDetail = (data: any) => { 
+        const openPopupDetail = (data: any) => {
             modalDetail.value = true
             dataModalDetail.value = data
         }
