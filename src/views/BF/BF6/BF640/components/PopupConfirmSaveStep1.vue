@@ -1,5 +1,5 @@
 <template>
-    <a-modal :visible="modalStatus" :mask-closable="false" title="" okText="네. 발송합니다" cancelText="아니요" width="600px"
+    <a-modal :visible="modalStatus" :mask-closable="false" title="" okText="네. 발송합니다" cancelText="아니요" width="650px"
         @cancel="setModalVisible">
         <div class="mt-25">
             <div class="d-flex-center">

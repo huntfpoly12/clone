@@ -5,9 +5,9 @@
       <a-row :gutter="16" class="mb-7">
         <a-col span="24" style="display: flex; flex-wrap: wrap;">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
-            <checkbox-basic size="18px" label="국민연금" class="check-box-tab1"
+            <checkbox-basic  label="국민연금" class="check-box-tab1"
               v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
-            <checkbox-basic size="18px" label="건강보험" class="check-box-tab1"
+            <checkbox-basic  label="건강보험" class="check-box-tab1"
               v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
           </a-form-item>
           <checkbox-basic class="mb-4 ml-15" size="18px" label="고용보험"

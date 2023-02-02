@@ -1,9 +1,10 @@
 <template>
   <div>
     <DxSelectBox :search-enabled="true" :width="width"
-      :data-source="dataSource"
+      :data-source="result?.searchUsers?.datas.length > 0 ? result.searchUsers.datas.filter((item: any) => item.managerGrade == 3) : []"
       :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" display-expr="name" value-expr="id"
-      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택" :name="nameInput">
+      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
+      :name="nameInput">
       <DxValidator :name="nameInput">
         <DxRequiredRule v-if="required" :message="messageRequired" />
       </DxValidator>
@@ -52,19 +53,21 @@ export default defineComponent({
       messageRequired.value = props.messRequired;
     }
     const dataSource = ref([])
-   
+
     const value = ref(props.valueInput);
     const { result } = useQuery(
       queries.searchUsers, {
-        filter: {
-          rows: 10000,
-          type: 'm'
-        }
+      filter: {
+        rows: 10000,
+        type: 'm'
       }
+    }
     );
-    watch(result, (valueData) => {
-      dataSource.value = valueData.searchUsers.datas.filter((item : any)=> item.managerGrade == 3);
-    })
+    // watch(result, (valueData) => {
+    //   // console.log(valueData.searchUsers.datas);
+
+    //   dataSource.value = valueData.searchUsers.datas.filter((item : any)=> item.managerGrade == 3);
+    // })
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -77,7 +80,7 @@ export default defineComponent({
     return {
       result,
       value,
-      updateValue,dataSource,
+      updateValue, dataSource,
       messageRequired
     };
   },

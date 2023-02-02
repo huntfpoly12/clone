@@ -34,7 +34,7 @@
                 </DxButton>
                 <DxButton @click="editPaymentDate" class="custom-button-checkbox">
                     <div class="d-flex-center">
-                        <checkbox-basic size="13" :valueCheckbox="true" disabled="true" />
+                        <checkbox-basic  :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
                     </div>
                 </DxButton>

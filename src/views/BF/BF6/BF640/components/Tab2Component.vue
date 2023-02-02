@@ -3,16 +3,17 @@
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
                 <a-form-item label="귀속연도" label-align="left">
-                    <div class="month-custom-1 d-flex-center ml-5">
+                    <div class="month-custom-1 d-flex-center">
                         귀
-                        <month-picker-box v-model:valueDate="dataSearch.paymentYear" class="mr-5 ml-5 " />
+                        <month-picker-box v-model:valueDate="datePayment" class="mr-5 ml-5" width="80px" />
                     </div>
                 </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="제작전" textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
+                            textUnCheck="제작후" />
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -22,25 +23,25 @@
                 <div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox1">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic size="16" v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -54,14 +55,14 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" />
+                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" />
+                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col>
-                <switch-basic textCheck="해지제외" textUnCheck="해지포함" />
+                <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
             </a-col>
         </a-row>
         <div class="title-table d-flex">
@@ -96,30 +97,37 @@
                 <DxColumn caption="제작현황" />
             </DxDataGrid>
         </div>
-        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
+        <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
     </div>
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import { defineComponent, ref, computed } from "vue";
-import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
+import { defineComponent, ref, computed, watch } from "vue";
+import { checkBoxSearchStep1, dataSearchStep2Utils } from "../utils";
 import {
     SaveOutlined
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
-import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
 
+import queries from "@/graphql/queries/BF/BF6/BF640/index";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import notification from "@/utils/notification"
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSaveStep1,
+        PopupConfirmSave,
     },
-    setup() {
+    props: {
+        searchStep: Number,
+    },
+    setup(props) {
+        let datePayment = ref(parseInt(dayjs().format('YYYYMM')))
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
-        let dataSearch = ref({ ...dataSearchUtils })
+        let dataSearch: any = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref({
             checkbox1: true,
             checkbox2: false,
@@ -130,12 +138,51 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+        let trigger = ref(true)
         let modalConfirmMail = ref(false)
 
+        // ================== GRAPHQL=================
+        //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
+        let {
+            refetch: refetchTable,
+            loading: loadingTable,
+            onError: errorTable,
+            onResult: resTable
+        } = useQuery(queries.searchStep2, { filter: dataSearch.value }, () => ({
+            enabled: trigger.value,
+            fetchPolicy: "no-cache"
+        }));
+        resTable((val: any) => {
+            dataSource.value = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings
+            trigger.value = false
+        })
+        errorTable((error: any) => {
+            notification('error', error.message)
+        })
 
+
+        // =================== WATCH ====================
+        watch(() => props.searchStep, () => {
+            dataSearch.value.productionStatuses = []
+            if (typeCheckbox.value.checkbox1 == true)
+                dataSearch.value.productionStatuses.push(0)
+            if (typeCheckbox.value.checkbox2 == true)
+                dataSearch.value.productionStatuses.push(1)
+            if (typeCheckbox.value.checkbox3 == true)
+                dataSearch.value.productionStatuses.push(2)
+            if (typeCheckbox.value.checkbox4 == true)
+                dataSearch.value.productionStatuses.push(-1)
+            dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
+            dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
+
+            if (dataSearch.value) {
+                trigger.value = true
+                refetchTable()
+            }
+
+        }, { deep: true })
         return {
-            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch,
+            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,
             dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
         }
     }
