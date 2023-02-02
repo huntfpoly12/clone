@@ -1,5 +1,10 @@
+import searchIncomeWageSimplifiedPaymentStatementElectronicFilings from "./searchIncomeWageSimplifiedPaymentStatementElectronicFilings";
+import getElectronicFilingsByIncomeWageSimplifiedPaymentStatement from "./getElectronicFilingsByIncomeWageSimplifiedPaymentStatement";
+import searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings from "./searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings";
 const queries = {
-
+    search: searchIncomeWageSimplifiedPaymentStatementElectronicFilings,
+    searchStep2: searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings,
+    getElectronicFilingsByIncomeWageSimplifiedPaymentStatement: getElectronicFilingsByIncomeWageSimplifiedPaymentStatement,
 };
 
 export default queries;

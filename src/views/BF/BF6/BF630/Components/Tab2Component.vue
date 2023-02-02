@@ -13,7 +13,7 @@
               <a-form-item  label="최종제작상태">
                 <switch-basic v-model:valueSwitch="originData.beforeProduction"  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
               </a-form-item>
-              <span>
+              <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
               </span>
             </div>
@@ -68,7 +68,7 @@
         <a-col class="custom-flex">
           <label class="lable-item">파일 제작 설정 :</label>
           <switch-basic  :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'"/>
-          <span class="infor-icon">
+          <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
           </span>
         </a-col>
@@ -87,7 +87,7 @@
       </a-row>
     </div>
     <div class="content-grid">
-      <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
+      <a-spin :spinning="loadingIncomeRetirementPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -111,7 +111,7 @@
         </a-spin>
     </div>
   </div>
-  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
+  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile" tabName="tab2"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -167,12 +167,12 @@ export default defineComponent({
     const dataSource = ref([])
     // ============ GRAPQL ===============================
     const {
-        result:  resIncomeWagePayment,
-        onResult: onResIncomeWagePayment,
-        loading: loadingIncomeWagePayment,
-        refetch: refetchIncomeWagePayment,
-        onError: onErrorIncomeWagePayment
-    } = useQuery(queries.searchIncomeWagePaymentStatementElectronicFilings, {
+        result:  resIncomeRetirementPayment,
+        onResult: onResIncomeRetirementPayment,
+        loading: loadingIncomeRetirementPayment,
+        refetch: refetchIncomeRetirementPayment,
+        onError: onErrorIncomeRetirementPayment
+    } = useQuery(queries.searchIncomeRetirementPaymentStatementElectronicFilings, {
       filter: originData
     }, () => ({
             enabled: trigger.value,
@@ -197,20 +197,20 @@ export default defineComponent({
     }))
 
     // ===================DONE GRAPQL==================================
-    // watch result  api searchIncomeWagePaymentStatementElectronicFilings
-    onResIncomeWagePayment(() => {
+    // watch result  api searchIncomeRetirementPaymentStatementElectronicFilings
+    onResIncomeRetirementPayment(() => {
       trigger.value = false
     })
-    watch(resIncomeWagePayment, (value) => {
+    watch(resIncomeRetirementPayment, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+        dataSource.value = value.searchIncomeRetirementPaymentStatementElectronicFilings
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)
         })
       }
     })
-    onErrorIncomeWagePayment(e => {
+    onErrorIncomeRetirementPayment(e => {
             notification('error', e.message)
     })
 
@@ -265,7 +265,7 @@ export default defineComponent({
     // watch active searching
     watch(() => props.activeSearch, (value) => {
       trigger.value = true;
-      refetchIncomeWagePayment()
+      refetchIncomeRetirementPayment()
     })
 
     // request file popup action
@@ -291,7 +291,7 @@ export default defineComponent({
       checkbox3,
       checkbox4,
       loadingElectronicFilings,
-      loadingIncomeWagePayment,
+      loadingIncomeRetirementPayment,
       trigger,
       userInfor,
       requestIncomeFile,
@@ -302,5 +302,10 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
+  ::v-deep .ant-form-item-label>label {
+        width: 120px;
+        padding-left: 10px;
+  }
+
 </style>
 

@@ -1,14 +1,16 @@
 <template>
-    <action-header title="계약정보관리&심사" />
+    <action-header title="계약정보관리&심사" @actionSearch="searching" />
     <div id="bf-640">
         <div class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="근로소득">
-                    <Tab1 />
+                    <Tab1 :searchStep="searchStep1" />
                 </a-tab-pane>
-                <a-tab-pane key="3" tab="거주자의사업소득">
+                <a-tab-pane key="2" tab="거주자의사업소득">
+                    <Tab2 :searchStep="searchStep2" />
                 </a-tab-pane>
-                <a-tab-pane key="2" tab="전자신고파일제작내역">
+                <a-tab-pane key="3" tab="전자신고파일제작내역">
+                    <Tab3 :searchStep="searchStep3" />
                 </a-tab-pane>
             </a-tabs>
         </div>
@@ -26,9 +28,24 @@ export default defineComponent({
         Tab2,
         Tab3,
     },
-    setup() { 
+    setup() {
+        let activeKey = ref('1')
+        let searchStep1 = ref(0)
+        let searchStep2 = ref(0)
+        let searchStep3 = ref(0)
+        const searching = () => {
+            // console.log('1');
+            if (activeKey.value == '1')
+                searchStep1.value++
+            else if (activeKey.value == '2')
+                searchStep2.value++
+            else if (activeKey.value == '3')
+                searchStep3.value++
+
+        }
         return {
-            activeKey: ref("1"),
+            activeKey, searchStep1, searchStep2, searchStep3,
+            searching,
         }
     }
 })

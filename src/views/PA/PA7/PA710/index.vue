@@ -45,7 +45,7 @@
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                         :idCardNumber="data.data.residentId" :status="data.data.status"
                                         :employeeId="data.data.employeeId" :foreigner="data.data.foreigner"
-                                        :checkStatus="false" @toolTopErorr="toolTopErorr" />
+                                        :checkStatus="false" />
                                 </div>
                                 <div class="custom-action" v-else>
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -56,17 +56,20 @@
                             <DxColumn caption="주민등록번호" cell-template="residentId" />
                             <template #residentId="{ data }">
                                 <div v-if="data.data.residentId?.length == 14">
-                                    <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
+                                    <a-tooltip placement="top"
+                                        v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                        key="black">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
+                                    <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                        {{ data.data.residentId }}
+                                    </a-tooltip>
                                 </div>
                                 <div v-else>
-                                    <div :id="`residentId${data.data.residentId}`">
+                                    <a-tooltip placement="top" key="black">
                                         {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
-                                    </div>
+                                    </a-tooltip>
                                 </div>
-                                <DxTooltip v-if="isResidentIdError[`${data.data.employeeId}`]" position="top"
-                                    v-model:visible="isResidentIdError[`${data.data.employeeId}`]"
-                                    :hide-on-outside-click="false" :target="`#residentId${data.data.residentId}`">Error
-                                </DxTooltip>
                             </template>
                             <DxColumn caption="소득부분" cell-template="grade-cell" />
                             <template #grade-cell="{ data }" class="custom-action">
@@ -78,7 +81,7 @@
                                 <div class="custom-action">
                                     <a-space :size="10">
                                         <DeleteOutlined v-if="data.data.deletable"
-                                            @click="statusRowAdd ? modalStatusDelete = true : ''" />
+                                            @click="statusRemoveRow ? modalStatusDelete = true : ''" />
                                     </a-space>
                                 </div>
                             </template>
@@ -128,14 +131,13 @@
                         </a-form-item>
                         <a-form-item label="소득구분" :label-col="labelCol" class="red">
                             <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
-                                @textTypeCode="textTypeCode" :required="true" :disabled="true">
+                                @textTypeCode="textTypeCode" :required="true" :disabled="statusFormUpdate">
                             </type-code-select-box>
                         </a-form-item>
-                        <a-form-item label="이메일" class="red" :label-col="labelCol">
+                        <a-form-item label="이메일" :label-col="labelCol">
                             <div class="custom-note">
                                 <mail-text-box placeholder="abc@example.com" v-model:valueInput="formState.email"
-                                    :required="true" id="email">
-                                </mail-text-box>
+                                    id="email" />
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요
                                     서류를
@@ -217,12 +219,12 @@ export default defineComponent({
         let dataRowOld = reactive({ ...initialState })
         let trigger = ref(true);
         let triggerDetail = ref(false);
-        const isResidentIdError = reactive<any>({});
         const listEmployeeExtra: any = ref([])
         let formState: any = ref({ ...initialState });
         let dataRow = reactive({ ...initialState });
         const resetFormNum = ref(1);
-        const statusRowAdd = ref(true);
+        const statusRemoveRow = ref(true);
+        // const statusRemoveRow = ref(true);
         const originData = {
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -368,10 +370,7 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.value.incomeTypeName = e
         }
-        //tooltip residentId
-        const toolTopErorr = (val: any) => {
-            isResidentIdError[val.id] = val.isError;
-        }
+        
 
         // When changing the value in the input form then moving to another row, check the valid form and display the popup
         const actionToAddFromEdit = (e: any) => {
@@ -397,9 +396,9 @@ export default defineComponent({
                     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
                         modalStatus.value = true;
                     } else {
-                        if (!statusRowAdd.value) {
+                        if (!statusRemoveRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
                             listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-                            statusRowAdd.value = true
+                            statusRemoveRow.value = true
                         }
                         triggerDetail.value = true;
                     }
@@ -408,11 +407,11 @@ export default defineComponent({
             }
         }
         const formCreate = (e: any) => {
-            if (statusRowAdd.value) {
+            if (statusRemoveRow.value) {
                 if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
                     modalStatusAdd.value = true
                 } else {
-                    statusRowAdd.value = false;
+                    statusRemoveRow.value = false;
                     listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
                     formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
                     setTimeout(() => {
@@ -441,9 +440,9 @@ export default defineComponent({
             if (val) {
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
-                if (!statusRowAdd.value) {
+                if (!statusRemoveRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-                    statusRowAdd.value = true
+                    statusRemoveRow.value = true
                 }
                 statusFormUpdate.value = true
                 triggerDetail.value = true;
@@ -503,7 +502,7 @@ export default defineComponent({
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            toolTopErorr, isResidentIdError, contentDelete, modalStatusDelete, onSubmitDelete, statusRowAdd,
+            contentDelete, modalStatusDelete, onSubmitDelete, statusRemoveRow,
         };
     },
 });
