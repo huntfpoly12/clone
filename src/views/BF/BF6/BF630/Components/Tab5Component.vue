@@ -17,9 +17,9 @@
                     <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                         layout="horizontal" :icon-size="12">
                         <template #radio="{ data }">
-                            <production-statuses :typeTag="0" padding="3px 20px" v-if="data == 0" />
-                            <production-statuses :typeTag="4" padding="3px 20px" v-if="data == 4" />
-                            <production-statuses :typeTag="5" padding="3px 20px" v-if="data == 5" />
+                          <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                          <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
+                          <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
                         </template>
                     </DxRadioGroup>
                 </a-form-item>
@@ -175,9 +175,8 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
- ::v-deep .ant-form-item-label>label {
-        width: 100px;
-        padding-left: 10px;
-  }
+
 </style>
+
+
 
