@@ -25,4 +25,11 @@ export const dataSearchStep2Utils = {
     "excludeCancel": false,
     "paymentYear": parseInt(dayjs().format('YYYY')),
     "paymentMonth": parseInt(dayjs().format('MM'))
+}
+export const dataSearchStep3Utils = {
+    "type": 1,
+    "requesteStartDate": 20220101,
+    "requesteFinishDate": 20230505,
+    "productionStatuses": [4, 5],
+    "manageUserId": null
 } 
