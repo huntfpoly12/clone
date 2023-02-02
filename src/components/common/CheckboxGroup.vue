@@ -13,7 +13,7 @@ export default defineComponent({
   props: {
     valueCheckbox: {
       type: Array,
-      default: () => [],
+      required: true
     },
     disabled: {
       default: false,
@@ -39,6 +39,7 @@ export default defineComponent({
 
     const onValueChanged = (e: any, id: Number) => {
       let valueCheck: any = [];
+    //   let valueCheck: any = [...props.valueCheckbox];
       if (e.value) {
         console.log(`output->valueCheck.indexOf(id)>0`,valueCheck.indexOf(id))
         if(valueCheck.indexOf(id)>-1){
