@@ -44,7 +44,8 @@ export default defineComponent({
       Tab5Component,
       DxButton
     },
-    setup() {
+  setup() {
+      // set user infor to state vuex
       const store = useStore();
       const token = computed(()=>sessionStorage.getItem("token"))
       store.dispatch('auth/getUserInfor', token.value);

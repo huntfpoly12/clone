@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="2" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-2">제작중</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="3" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="4" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="5" padding="0px 5px" />
                 </div>
               </div>
           </div>
@@ -140,7 +140,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const trigger = ref<boolean>(false);
+    const trigger = ref<boolean>(true);
     const triggerElecFilings = ref<boolean>(false);
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
@@ -298,10 +298,12 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
-  ::v-deep .ant-form-item-label>label {
-        width: 120px;
+
+</style>
+<style scoped lang="scss">
+ ::v-deep .ant-form-item-label>label {
+        width: 100px;
         padding-left: 10px;
   }
-
 </style>
 
