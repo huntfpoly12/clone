@@ -1,10 +1,10 @@
-<template> 
+<template>
     <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="소득별 마감현황" okText="저장하고 나가기"
         cancelText="그냥 나가기" @cancel="setModalVisible" width="992px">
         <a-spin :spinning="loadingTable || loadingChangeStatus" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="wf-100" :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always"/>
+                <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxColumn caption="귀속연월" cell-template="imputedYear" />
                 <template #imputedYear="{ data }">
                     <span class="tag-custom-1">
@@ -21,9 +21,9 @@
                 <DxColumn caption="총지급액" data-field="totalPayment" />
                 <DxColumn caption="인원" cell-template="인원" />
                 <DxColumn caption="마감현황" cell-template="status" />
-                <template #status="{ data }">
-                    <process-status v-model:valueStatus="data.data.status" @dataRow="changeStatus"
-                        :dataRow="data.data" />
+                <template #status="{ data }"> 
+                    <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
+                        :dataRow="data.data" @dataRow="changeStatus" />
                 </template>
                 <DxColumn caption="마감일" cell-template="마감일" />
             </DxDataGrid>

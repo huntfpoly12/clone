@@ -1,9 +1,11 @@
 import searchIncomeWageSimplifiedPaymentStatementElectronicFilings from "./searchIncomeWageSimplifiedPaymentStatementElectronicFilings";
 import getElectronicFilingsByIncomeWageSimplifiedPaymentStatement from "./getElectronicFilingsByIncomeWageSimplifiedPaymentStatement";
 import searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings from "./searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings";
+import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
 const queries = {
     search: searchIncomeWageSimplifiedPaymentStatementElectronicFilings,
     searchStep2: searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings,
+    searchStep3: searchElectronicFilingFileProductions,
     getElectronicFilingsByIncomeWageSimplifiedPaymentStatement: getElectronicFilingsByIncomeWageSimplifiedPaymentStatement,
 };
 

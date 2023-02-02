@@ -329,15 +329,16 @@ export default defineComponent({
             formState,
             visible,
             receiptOrNot,
-            funcAddress,
             loading,
-            updateSale,
             loadingUpdate,
             canChangeCompanyName,
+            funcAddress,
+            updateSale,
             setModalVisible
         }
     }
 })
 </script>
 <style lang="scss" scoped src="../style/editStyle.scss">
+
 </style>

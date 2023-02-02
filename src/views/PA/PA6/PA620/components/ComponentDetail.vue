@@ -33,7 +33,7 @@
             </DxButton>
             <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
                 <div class="d-flex-center">
-                    <checkbox-basic  :valueCheckbox="true" :disabled="true" />
+                    <checkbox-basic :valueCheckbox="true" :disabled="true" />
                     <span class="fz-12 pl-5">지급일변경</span>
                 </div>
             </DxButton>
@@ -95,14 +95,13 @@
                             <a-form-item label="귀속/지급연월" label-align="right">
                                 <div class="d-flex-center">
                                     <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
-                                        귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5"
+                                        귀 <month-picker-box v-model:valueDate="month1" class="mr-5 ml-5"
                                             :readonly="true" />
                                     </div>
                                     <DxButton :text="'귀'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else />
                                     <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
-                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px"
-                                            :readonly="true" />
+                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" :readonly="true" />
                                     </div>
                                     <DxButton :text="'지'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
@@ -645,4 +644,5 @@ export default defineComponent({
 });
 </script>
 <style scoped src="../style/style.scss" >
+
 </style>

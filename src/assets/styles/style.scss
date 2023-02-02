@@ -81,11 +81,13 @@ $lenght: 50;
   .pb-#{$i} {
     padding-bottom: $i+ px;
   }
-  .px-#{$i}{
+
+  .px-#{$i} {
     padding-left: $i+ px;
     padding-right: $i+ px;
   }
-  .py-#{$i}{
+
+  .py-#{$i} {
     padding-top: $i+ px;
     padding-bottom: $i+ px;
   }
@@ -184,3 +186,4 @@ $lenght: 50;
 .ant-tabs-top>.ant-tabs-nav {
   margin: 0px;
 }
+ 

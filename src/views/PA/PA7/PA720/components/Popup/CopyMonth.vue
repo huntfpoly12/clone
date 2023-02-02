@@ -246,7 +246,7 @@ export default defineComponent({
     color: white;
     padding: 0px;
     border: none;
-    height: 30px;
+    height: 24px;
     background-color: #a6a6a6;
   }
 
@@ -266,7 +266,7 @@ export default defineComponent({
     color: white;
     padding: 0px;
     border: none;
-    height: 30px;
+    height: 24px;
     background-color: black;
   }
 

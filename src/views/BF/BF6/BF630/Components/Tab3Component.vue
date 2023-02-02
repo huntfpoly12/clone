@@ -63,28 +63,25 @@
     </a-row>
   </div>
   <div class="grid-view">
-    <div class="header-grid-form">
-      <a-row justify="start" :gutter="[16, 8]">
-        <a-col class="custom-flex">
-          <label class="lable-item">파일 제작 설정 :</label>
-          <switch-basic  :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'"/>
-          <span class="style-note">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
-          </span>
-        </a-col>
-        <a-col class="custom-flex">
-          <label class="lable-item">제출연월일:</label>
-          <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
-        </a-col>
-        <a-col class="custom-flex">
-          <a-tooltip  color="black">
-            <template #title>전자신고파일 제작 요청</template>
-            <a-button class="ml-4" @click="requestIncomeFile">
-                <SaveOutlined style="font-size: 17px" />
-            </a-button>
-          </a-tooltip>
-        </a-col>
-      </a-row>
+    <div class="title-table d-flex">
+        <a-form-item label="파일 제작 설정" label-align="left">
+            <div class="custom-note d-flex-center">
+                <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                <span class="style-note">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+                </span>
+            </div>
+        </a-form-item>
+        <a-form-item label="제출연월일" label-align="left">
+            <div class="d-flex-center">
+                <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                <a-tooltip placement="topLeft" color="black">
+                    <template #title>전자신고파일 제작 요청</template>
+                    <SaveOutlined class="fz-24 ml-5 action-save" @click="requestIncomeFile" />
+                </a-tooltip>
+            </div>
+        </a-form-item>
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeBusinessPayment || loadingElectronicFilings" size="large">
@@ -105,7 +102,7 @@
                   {{ data.data.lastProductionRequestedAt }}
                 </template>
                 <DxColumn caption="제작현황" cell-template="imputed" />
-                <template #imputed="{ data }"> 
+                <template #imputed="{ }"> 
                 </template>
             </DxDataGrid>
         </a-spin>
