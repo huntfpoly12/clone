@@ -15,7 +15,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const value = ref(props.valueInput);
+    const value = ref(props.valueInput == 0 ? null : props.valueInput);
     watch(
           () => props.valueInput,
           (newValue) => {
