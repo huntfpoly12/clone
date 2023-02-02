@@ -18,10 +18,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import Tab1 from "./components/Tab1Component.vue";
 import Tab2 from "./components/Tab2Component.vue";
 import Tab3 from "./components/Tab3Component.vue";
+import { useStore } from 'vuex'
 export default defineComponent({
     components: {
         Tab1,
@@ -29,6 +30,9 @@ export default defineComponent({
         Tab3,
     },
     setup() {
+        const store = useStore();
+        const token = computed(() => sessionStorage.getItem("token"))
+        store.dispatch('auth/getUserInfor', token.value);
         let activeKey = ref('1')
         let searchStep1 = ref(0)
         let searchStep2 = ref(0)
