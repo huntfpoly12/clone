@@ -36,7 +36,7 @@
   </div>
   <div class="grid-view">
     <div class="content-grid">
-      <a-spin :spinning="loadingIncomeExtraPayment || loadingElectronicFilings" size="large">
+      <a-spin :spinning="loadingElectronicFiling" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -63,28 +63,22 @@
         </a-spin>
     </div>
   </div>
-  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
-import "@vuepic/vue-datepicker/dist/main.css";
-import DxCheckBox from 'devextreme-vue/check-box';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
-import {SaveOutlined } from "@ant-design/icons-vue";
-import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
-import RequestFilePopup from "./RequestFilePopup.vue"
 import filters from "@/helpers/filters";
 
 export default defineComponent({
   components: {
-    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup,RequestFilePopup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup
   },
   props: {
     activeSearch: {
@@ -98,19 +92,16 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const userInfor = computed(() => (store.state.auth.userInfor))
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(false);
-    const triggerElecFilings = ref<boolean>(false);
     const test = ref(null)
     const typeCheckbox = ref([0, 4, 5])
     const valueType = ref(0)
     const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
-    // for checkbox 
-
-    const modalRequestFile = ref<boolean>(false);
+  
+ 
     let companyIds = Array();
     const dataRequestFile = ref()
     const originData = reactive({
@@ -124,11 +115,11 @@ export default defineComponent({
     const dataSource = ref([])
     // ============ GRAPQL ===============================
     const {
-        result:  resIncomeExtraPayment,
-        onResult: onResIncomeExtraPayment,
-        loading: loadingIncomeExtraPayment,
-        refetch: refetchIncomeExtraPayment,
-        onError: onErrorIncomeExtraPayment
+        result:  resElectronicFiling,
+        onResult: onResElectronicFiling,
+        loading: loadingElectronicFiling,
+        refetch: refetchElectronicFiling,
+        onError: onErrorElectronicFiling
     } = useQuery(queries.searchElectronicFilingFileProductions, {
       filter: originData
     }, () => ({
@@ -137,82 +128,40 @@ export default defineComponent({
     }))
 
     
-    const {
-        result: resElectronicFilings,
-        loading: loadingElectronicFilings,
-        refetch: refetchElectronicFilings,
-        onError: onErrorElectronicFilings
-    } = useQuery(queries.getElectronicFilingsByIncomeWagePaymentStatement,
-      {
-        input: {
-          companyId: companyId,
-          imputedYear: globalYear.value,
-        }
-      }, () => ({
-            enabled: triggerElecFilings.value,
-            fetchPolicy: "no-cache",
-    }))
-
+    
     // ===================DONE GRAPQL==================================
-    // watch result  api searchIncomeExtraPaymentStatementElectronicFilings
-    onResIncomeExtraPayment(() => {
+    // watch result  api searchElectronicFilingFileProductions
+    onResElectronicFiling(() => {
       trigger.value = false
     })
-    watch(resIncomeExtraPayment, (value) => {
+    watch(resElectronicFiling, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeExtraPaymentStatementElectronicFilings
+        dataSource.value = value.searchElectronicFilingFileProductions
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)
         })
       }
     })
-    onErrorIncomeExtraPayment(e => {
+    onErrorElectronicFiling(e => {
             notification('error', e.message)
     })
-
-    // watch result  api getElectronicFilingsByIncomeWagePaymentStatement
-    watch(() => resElectronicFilings, (value) => {
-      if (value) {
-        console.log(value,'fdgdfg')
-      }
-    })
-    onErrorElectronicFilings(e => {
-            notification('error', e.message)
-    })
-
-   
 
     // watch active searching
     watch(() => props.activeSearch, (value) => {
       trigger.value = true;
-      refetchIncomeExtraPayment()
+      refetchElectronicFiling()
     })
-
-    // request file popup action
-    const requestIncomeFile = () => {
-      dataRequestFile.value = {
-        companyIds : companyIds,
-        filter: originData,
-        emailInput: {
-          receiverName: userInfor.value.name,
-          receiverAddress: userInfor.value.email
-        }
-      }
-      modalRequestFile.value = true
-    }
+   
     return {test,
       globalYear,
       originData,
       move_column,
       colomn_resize,
       dataSource,typeCheckbox,valueType,
-      loadingElectronicFilings,
-      loadingIncomeExtraPayment,
+      loadingElectronicFiling,
       trigger,
       rangeDate,
-      requestIncomeFile,
-      modalRequestFile,
       dataRequestFile
     }
   }
