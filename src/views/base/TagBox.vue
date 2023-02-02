@@ -4,15 +4,17 @@
             <tr>
                 <td>
                     <p><b> Production Statuses</b></p>
-                    <production-statuses :typeTag="1" />
-                    <production-statuses :typeTag="2" />
+                    <production-statuses :typeTag="0" padding="1px 10px" />
+                    <production-statuses :typeTag="1" padding="2px 10px" />
+                    <production-statuses :typeTag="2" padding="2px 10px" />
                     <br><br>
-                    <production-statuses :typeTag="3" />
-                    <production-statuses :typeTag="4" />
-                    <production-statuses :typeTag="5" />
+                    <production-statuses :typeTag="3" padding="2px 10px" />
+                    <production-statuses :typeTag="4" padding="2px 10px" />
+                    <production-statuses :typeTag="5" padding="2px 10px" />
                 </td>
                 <td>
-                    - <b> typeTag (number)</b> : 1,2,3,4,5 Numbers corresponding to colors
+                    - <b>typeTag (number)</b> : 0(all), 1,2,3,4,5 Numbers corresponding to colors <br>
+                    - <b>padding (String)</b> : Ex: "10px 10px 10px 10px" || "10px 10px" || "10px"
                 </td>
 
                 <td>

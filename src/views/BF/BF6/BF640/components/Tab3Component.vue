@@ -17,9 +17,9 @@
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
-                                <production-statuses :typeTag="0" v-if="data == 0" />
-                                <production-statuses :typeTag="4" v-if="data == 4" />
-                                <production-statuses :typeTag="5" v-if="data == 5" />
+                                <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                                <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
+                                <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>
@@ -119,6 +119,7 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
+
 </style>
 <style lang="scss" scoped>
 ::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
@@ -126,29 +127,22 @@ export default defineComponent({
     margin-top: -13px;
     margin-left: 3px;
 }
+
 ::v-deep .dx-radiobutton-icon::before {
     border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
     width: 14px;
     height: 14px;
 }
+
 ::v-deep .dx-radio-value-container {
     padding-right: 0px
 }
+
 ::v-deep .dx-radiobutton {
     line-height: 18px;
 }
+
 ::v-deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
 }
-</style>
-<style>
-.tag-status-0 {
-    padding: 0px 10px !important;
-}
-.tag-status-4 {
-    padding: 1px 10px;
-}
-.tag-status-5 {
-    padding: 1px 10px;
-}
-</style>
+</style> 
