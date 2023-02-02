@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 export default gql`
 mutation requestCreationIncomeRetirementPaymentStatementElectronicFilingFile( 
     $companyIds: [Int!]!
-    $filter: ElectronicFilingIncomeWagePaymentStatementSearchFilter!
+    $filter: ElectronicFilingIncomeRetirementPaymentStatementSearchFilter!
     $emailInput: ReceiveEmailRequestInput!
     ) {
       requestCreationIncomeRetirementPaymentStatementElectronicFilingFile( 

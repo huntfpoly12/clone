@@ -4,7 +4,7 @@
           <a-row justify="start" :gutter="[16, 8]">
               <a-col>
                   <a-form-item  label="신고구분 :"> 
-                    <electronic-filing-type v-model:valueInput="test" width="200px"></electronic-filing-type> 
+                    <electronic-filing-type v-model:valueInput="originData.type" width="200px"></electronic-filing-type> 
                   </a-form-item>
               </a-col>
               <a-col>
@@ -14,8 +14,7 @@
               </a-col>
               <a-autocomplete>
                 <a-form-item  label="제작상태"> 
-
-                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" :value="valueType"
+                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                         layout="horizontal" :icon-size="12">
                         <template #radio="{ data }">
                             <production-statuses :typeTag="0" v-if="data == 0" />
@@ -23,7 +22,6 @@
                             <production-statuses :typeTag="5" v-if="data == 5" />
                         </template>
                     </DxRadioGroup>
-            
                 </a-form-item>
               </a-autocomplete>
               <a-col>
@@ -41,28 +39,20 @@
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="코드명" data-field="company.code" />
-                <DxColumn caption="신고구분" cell-template="companyName" />
-                <template #companyName="{ data }">
-                  {{ data.data.company.name }}
-                  {{ data.data.company.address }}
-                </template>
-                <DxColumn caption="제작요청일시" data-field="company.bizNumber"/>
-                <DxColumn caption="아이디" cell-template="lastProductionRequestedAt"/>
-                <template #lastProductionRequestedAt="{ data }">
-                  {{ data.data.lastProductionRequestedAt }}
-                </template>
-                <DxColumn caption="제작현황" cell-template="imputed" />
-                <template #imputed="{ data }"> 
-                </template>
-                <DxColumn caption="상세보기" cell-template="action" />
-                <template #action="{ data }"> 
+                <DxColumn caption="코드명" data-field="fileStorageId" />
+                <DxColumn caption="신고구분" data-field="fileStorageId" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt"/>
+                <DxColumn caption="아이디" data-field="productionRequestUserId"/>
+                <DxColumn caption="제작현황" data-field="productionStatus" />
+                <DxColumn caption="상세보기" data-field="action" />
+                <template #action="{ }"> 
+                     <img src="@/assets/images/searchPlus.png" style="width: 14px;" />
                 </template>
             </DxDataGrid>
         </a-spin>
     </div>
   </div>
+  <companies-popup v-if="modalCompanies" :modalStatus="modalCompanies"  @closePopup="modalCompanies = false" :data="dataPopup"></companies-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -75,10 +65,11 @@ import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import filters from "@/helpers/filters";
+import CompaniesPopup from "./CompaniesPopup.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup,CompaniesPopup
   },
   props: {
     activeSearch: {
@@ -96,23 +87,38 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(false);
-    const test = ref(null)
     const typeCheckbox = ref([0, 4, 5])
     const valueType = ref(0)
     const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
-  
- 
+    const productionStatuses =  ref(0)
+    const dataSource = ref([])
     let companyIds = Array();
-    const dataRequestFile = ref()
+    const dataPopup = ref()
+    const modalCompanies = ref<boolean>(false)
     const originData = reactive({
         type:0,
         requesteStartDate: rangeDate.value[0],
         requesteFinishDate: rangeDate.value[1],
-        productionStatuses: Array(),
+        productionStatuses: [4,5],
         manageUserId: 0
       }
     )
-    const dataSource = ref([])
+
+    // watch range date time
+    watch(productionStatuses, (newValue) => {
+      if (newValue == 0) {
+        originData.productionStatuses = [4,5]
+      } else {
+        originData.productionStatuses =  [newValue]
+      }
+    })
+    // watch range picker change
+    watch(rangeDate, (newValue) => {
+      originData.requesteStartDate = newValue[0]
+      originData.requesteFinishDate = newValue[1]
+    })
+    
+
     // ============ GRAPQL ===============================
     const {
         result:  resElectronicFiling,
@@ -153,16 +159,17 @@ export default defineComponent({
       refetchElectronicFiling()
     })
    
-    return {test,
+    return {
       globalYear,
       originData,
       move_column,
       colomn_resize,
-      dataSource,typeCheckbox,valueType,
+      dataSource,typeCheckbox,valueType,modalCompanies,
       loadingElectronicFiling,
       trigger,
       rangeDate,
-      dataRequestFile
+      dataPopup,
+      productionStatuses
     }
   }
 })
