@@ -79,6 +79,7 @@ import {
   convertAge,
 } from '@/helpers/commonFunction';
 import { taxWaring } from '../../utils';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
   props: {
@@ -114,6 +115,8 @@ export default defineComponent({
       index: 2,
     };
     const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
+    const messageSave = Message.getMessage('COMMON', '106').message
+
     const setModalVisible = () => {
       emit('closePopup', false);
     };
@@ -192,7 +195,7 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeWageDependent);
 
     onDoneAdd((res) => {
-      notification('success', `Create employee wage successfully! `);
+      notification('success', messageSave);
     });
 
     onError((error) => {
