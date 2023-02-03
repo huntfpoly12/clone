@@ -102,7 +102,8 @@
                   {{ data.data.lastProductionRequestedAt }}
                 </template>
                 <DxColumn caption="제작현황" cell-template="imputed" />
-                <template #imputed="{ }"> 
+                <template #imputed="{data}"> 
+                  <get-status-table v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab3"/>
                 </template>
             </DxDataGrid>
         </a-spin>
@@ -123,10 +124,11 @@ import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
-import RequestFilePopup from "./RequestFilePopup.vue"
+import RequestFilePopup from "./RequestFilePopup.vue";
+import GetStatusTable from "./GetStatusTable.vue";
 export default defineComponent({
   components: {
-    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,RequestFilePopup
+    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,RequestFilePopup,GetStatusTable
   },
   props: {
     activeSearch: {
@@ -300,9 +302,8 @@ export default defineComponent({
 <style  scoped lang="scss" src="../style/styleTabs.scss">
 </style>
 <style scoped lang="scss">
- ::v-deep .ant-form-item-label>label {
+ :deep(.ant-form-item-label>label) {
         width: 110px;
         padding-left: 10px;
   }
 </style>
-
