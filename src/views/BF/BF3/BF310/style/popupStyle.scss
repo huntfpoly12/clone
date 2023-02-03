@@ -180,7 +180,7 @@
     .ant-form-item{
         label {
             color: red;
-            width: 170px;
+            // width: 170px;
         }
     }
     .text-color{
@@ -202,7 +202,7 @@
 }
 ::v-deep img.ant-image-img{
     min-width: 60%;
-    width: auto !important;
+    // width: auto !important;
     margin-top: 0;
     max-height: 255px;
 }
@@ -211,4 +211,7 @@
 }
 ::v-deep input.dp__input.dp__input_icon_pad {
     height: 34px;
+}
+::v-deep .ant-form-item-control {
+    display: table;
 }
