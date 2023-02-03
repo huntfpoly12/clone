@@ -85,9 +85,13 @@
                     <DxColumn caption="지급총액" data-field="paymentAmount" :format="amountFormat" />
                     <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" :format="amountFormat" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat" />
-                    <DxColumn caption="원천징수세액 계" data-field="employee.withholdingRuralSpecialTax"
-                        :format="amountFormat" />
-                    <DxSummary>
+                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax"/>
+                    <template #sumWithholdingRuralSpecialTax="{ data }" >
+                        <div style="text-align: right;">
+                            {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
+                        </div>
+                    </template>
+                    <DxSummary v-if="dataSource.length > 0">
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
                         <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}"
                             value-format="#,###" />
@@ -95,8 +99,7 @@
                             value-format="#,###" />
                         <DxTotalItem column="원천징수세액 지방소득세" summary-type="sum" display-format="원천징수세액 지방소득세합계: {0}"
                             value-format="#,###" />
-                        <DxTotalItem column="원천징수세액 계" summary-type="sum" display-format="원천징수세액 계합계: {0}"
-                            value-format="#,###" />
+                        <DxTotalItem column="원천징수세액 계" :customize-text="customTextSummaryWRST"/>
                     </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
@@ -117,10 +120,11 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
+import { ref, defineComponent, reactive, watch, computed, getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import { useQuery } from "@vue/apollo-composable";
+import filters from "@/helpers/filters";
 import DxButton from "devextreme-vue/button";
 import {
     DxDataGrid,
@@ -159,6 +163,8 @@ export default defineComponent({
         EmailMultiPopup
     },
     setup() {
+        const app: any = getCurrentInstance();
+        const messages = app.appContext.config.globalProperties.$messages;
         const valueSwitch = ref(true);
         const popupDataEmailSingle = ref({})
         const popupDataEmailMulti = ref({})
@@ -252,7 +258,7 @@ export default defineComponent({
                 }
                 modalEmailMulti.value = true
             } else {
-                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+                notification('error', messages.getCommonMessage('601').message)
             }
         }
         const onPrintGroup = () => {
@@ -267,7 +273,7 @@ export default defineComponent({
                 valueDefaultIncomeBusiness.value.employeeKeys = array
                 triggerPrint.value = true;
             } else {
-                notification('error', '항목을 최소 하나 이상 선택해야합니다')
+                notification('error', messages.getCommonMessage('601').message)
             }
         };
         const selectionChanged = (data: any) => {
@@ -317,6 +323,16 @@ export default defineComponent({
             ]
             triggerPrint.value = true;
         }
+        const customTextSummaryWRST = () => {
+            let sum = 0
+            console.log(dataSource.value);
+            
+            dataSource.value?.map((value: any) => {
+                console.log(value);
+                sum+= value.withholdingLocalIncomeTax + value.withholdingIncomeTax
+            })
+            return "원천징수세액 계합계: " + filters.formatCurrency(sum)
+        }
 
         return {
             valueDefaultIncomeBusiness,
@@ -340,6 +356,7 @@ export default defineComponent({
             emailUserLogin,
             actionPrint, onPrintGroup,
             amountFormat,
+            customTextSummaryWRST,
         };
     },
 });

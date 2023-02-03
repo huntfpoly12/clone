@@ -1,5 +1,5 @@
 <template>
-    <DxButton :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
+    <DxButton :disabled="disabled" :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
         :style="{ color: color, backgroundColor: backGround, border: border }"  :height="$config_styles.HeightInput"/>
 </template>
 <script lang="ts">
@@ -15,6 +15,10 @@ export default defineComponent({
             type: String,
             required: true
 
+        },
+        disabled: {
+            type: Boolean,
+            required: false
         },
         mode: {
             type: String,

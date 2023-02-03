@@ -17,6 +17,8 @@ const statesPA510 = {
     statusRowAdd: true,
     dataTaxPayInfo: [],
     actionSubmit: 0,
+    paymentDayCopy: 1,
+    statusDisabledStatus: true,
 };
   
 export default statesPA510;

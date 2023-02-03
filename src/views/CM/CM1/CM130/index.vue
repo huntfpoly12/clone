@@ -88,7 +88,7 @@
                                         <a-col :span="24">
                                             <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
-                                                    <number-box :width="150" :required="true" :min="0" :max="30"
+                                                    <number-box :width="150" :min="0" :max="30"
                                                         v-model:valueInput="formState.paymentDay" :spinButtons="true">
                                                     </number-box>
                                                     <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
@@ -304,7 +304,7 @@
                                 <a-space>
                                     <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
+                                        <HistoryOutlined @click="modalHistoryDeduction(data)" />
                                     </a-tooltip>
                                 </a-space>
                             </div>
@@ -348,7 +348,7 @@
                             </a-col>
                         </a-row>
                     </standard-form>
-                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
                 </a-tab-pane>
             </a-tabs>
@@ -425,6 +425,8 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false);
         const modalAddNewStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
+        const modalHistoryStatusDeduction = ref<boolean>(false);
+            
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
         const formState = reactive({ ...initialFormState });
@@ -668,6 +670,11 @@ export default defineComponent({
             modalHistoryStatus.value = true;
             popupData.value = data;
         }
+        const modalHistoryDeduction = (data: any) => {
+            idRowEdit.value = data.data.itemCode;
+            modalHistoryStatusDeduction.value = true;
+            popupData.value = data;
+        }
         const getAbleDisable = (data: any) => {
             if (data) {
                 return "gray";
@@ -740,6 +747,7 @@ export default defineComponent({
             modalEditStatus,
             modalAddNewStatus,
             modalHistoryStatus,
+            modalHistoryStatusDeduction,
             onSubmitConfigDeduction,
             modalSetting,
             openAddNewModal,
@@ -747,6 +755,7 @@ export default defineComponent({
             setModalEditVisible,
             onCloseEditModal,
             modalHistory,
+            modalHistoryDeduction,
             getAbleDisable,
             onExporting,
             dataPublicInstitution,
