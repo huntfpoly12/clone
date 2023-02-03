@@ -323,6 +323,10 @@ export default defineComponent({
             dataCustomRes.value = [...dataAddTableBigUtils]
             if (respon)
                 respon.map((val: any) => {
+                    // if(val)
+                    console.log(val.paymentMonth);
+                    
+
                     // data table minify  
                     let dataAdd = {
                         imputedMonth: val.imputedMonth,

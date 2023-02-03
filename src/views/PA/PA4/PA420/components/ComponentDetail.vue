@@ -34,7 +34,7 @@
                 </DxButton>
                 <DxButton @click="editPaymentDate" class="custom-button-checkbox">
                     <div class="d-flex-center">
-                        <checkbox-basic  :valueCheckbox="true" disabled="true" />
+                        <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
                     </div>
                 </DxButton>
@@ -46,7 +46,7 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always"/>
+                <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사원" cell-template="tag" width="300px" />
                 <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
@@ -179,7 +179,7 @@ export default defineComponent({
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
-        const triggerDetail = ref<boolean>(true);
+        const triggerDetail = ref<boolean>(false);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -221,10 +221,12 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        watch(() => props.dataCallTableDetail, (newValue) => {
-            dataTableDetail.value = newValue
-            triggerDetail.value = true
-            refetchTableDetail()
+        watch(() => props.dataCallTableDetail, (newValue) => { 
+            dataTableDetail.value = newValue 
+            if (newValue) {
+                triggerDetail.value = true
+                refetchTableDetail()
+            }
         }, { deep: true })
         watch(() => dataTableDetail, (newValue) => {
         }, { deep: true })
