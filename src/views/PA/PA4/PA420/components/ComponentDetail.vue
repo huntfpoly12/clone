@@ -11,11 +11,11 @@
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">
-                <DxButton @click="deleteItem">
+                <DxButton @click="deleteItem" :disabled="checkActionValue">
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" />
-                <DxButton @click="onItemClick('history')">
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
+                <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -23,7 +23,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="onItemClick('historyEdit')">
+                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -32,7 +32,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editPaymentDate" class="custom-button-checkbox">
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue">
                     <div class="d-flex-center">
                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -65,10 +65,10 @@
                 <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
                 <DxColumn caption="" cell-template="action" width="50px" />
                 <template #joinedAt="{ data }">
-                    <div>{{ $filters.formatDate(data.data.employee.joinedAt) }}</div>
+                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
                 </template>
                 <template #leavedAt="{ data }">
-                    <div>{{ $filters.formatDate(data.data.employee.leavedAt) }}</div>
+                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
                 </template>
                 <template #retirementType="{ data }">
                     <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
@@ -190,6 +190,7 @@ export default defineComponent({
         const modalUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
         const resetFormNum = ref(1);
+        let checkActionValue = ref(true) // disabeld button
         let dataAction: any = reactive({
             ...dataActionUtils
         })
@@ -221,9 +222,10 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
         })
         // ================WATCHING============================================
-        watch(() => props.dataCallTableDetail, (newValue) => { 
-            dataTableDetail.value = newValue 
+        watch(() => props.dataCallTableDetail, (newValue) => {
+            dataTableDetail.value = newValue
             if (newValue) {
+                checkActionValue.value = false
                 triggerDetail.value = true
                 refetchTableDetail()
             }
@@ -318,6 +320,7 @@ export default defineComponent({
             modalHistory,
             modalHistoryStatus,
             modalEdit,
+            checkActionValue,
             statusComfirm,
             addRow,
             deleteItem,

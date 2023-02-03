@@ -5,7 +5,7 @@
                 <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
-                            <a-tooltip  color="black">
+                            <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfig">
                                     <SaveOutlined />
@@ -14,19 +14,19 @@
                         </div>
                         <div v-if="activeKey == '2'">
                             <div class="btn-action">
-                                <a-tooltip  color="black">
+                                <a-tooltip color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <SearchOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip  color="black">
+                                <a-tooltip color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <DeleteOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip  color="black">
+                                <a-tooltip color="black">
                                     <template #title>출력</template>
                                     <a-button>
                                         <PrinterOutlined />
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div v-if="activeKey == '3'">
-                            <a-tooltip  color="black">
+                            <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
@@ -88,9 +88,8 @@
                                         <a-col :span="24">
                                             <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
-                                                    <number-box :width="150" :required="true"
-                                                        :min="0" :max="30" v-model:valueInput="formState.paymentDay"
-                                                        :spinButtons="true">
+                                                    <number-box :width="150" :required="true" :min="0" :max="30"
+                                                        v-model:valueInput="formState.paymentDay" :spinButtons="true">
                                                     </number-box>
                                                     <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
                                                 </div>
@@ -164,7 +163,9 @@
                                                                     관할세무서 : {{ dataPublicInstitution.taxOfficeName }}
                                                                 </p>
                                                                 <p style="margin: 0; font-weight: 600">
-                                                                    지방소득세 납세지 : {{ dataPublicInstitution.localIncomeTaxArea }}
+                                                                    지방소득세 납세지 : {{
+                                                                        dataPublicInstitution.localIncomeTaxArea
+                                                                    }}
                                                                 </p>
                                                                 <p style="margin: 0">
                                                                     위 자동으로 선택된 결과로 적용하시겠습니까?
@@ -223,7 +224,7 @@
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowPrepared="changeColorRow">
-                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                        <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -253,11 +254,11 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip  color="black" v-if="data.data.editable" placement="top">
+                                    <a-tooltip color="black" v-if="data.data.editable" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="setModalEditVisible(data)" />
                                     </a-tooltip>
-                                    <a-tooltip  color="black" placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
@@ -266,7 +267,8 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum" @closePopup="onCloseAddNewModal" title="원천설정" />
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum"
+                        @closePopup="onCloseAddNewModal" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -274,9 +276,10 @@
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
-                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column" :focused-row-enabled="true"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="editData">
-                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowClick="editData">
+                        <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -299,7 +302,7 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space>
-                                    <a-tooltip  color="black" placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
@@ -376,7 +379,7 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem,DxScrolling,
+    DxItem, DxScrolling,
 } from "devextreme-vue/data-grid";
 import notification from "@/utils/notification";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
@@ -786,5 +789,4 @@ export default defineComponent({
     margin-left: 2%;
     color: #c3baba;
 }
-
 </style>
