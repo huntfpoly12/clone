@@ -18,8 +18,8 @@
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
                                 <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                                <production-statuses :typeTag="2" v-if="data == 2" padding="1px 10px" />
-                                <production-statuses :typeTag="-1" v-if="data == -1" padding="1px 10px" />
+                                <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                                <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>

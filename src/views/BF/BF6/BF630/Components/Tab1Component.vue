@@ -87,7 +87,7 @@
       <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true"  @content-ready="onCellPrepared">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사업자코드" data-field="company.code" />
@@ -277,6 +277,13 @@ export default defineComponent({
       }
       modalRequestFile.value = true
     }
+
+    const onCellPrepared = (e: any) => {
+      console.log(e);
+      
+      alert('xx');
+    }
+
     return {
       globalYear,
       originData,
@@ -293,7 +300,8 @@ export default defineComponent({
       userInfor,
       requestIncomeFile,
       modalRequestFile,
-      dataRequestFile
+      dataRequestFile,
+      onCellPrepared
     }
   }
 })
@@ -302,7 +310,7 @@ export default defineComponent({
 </style>
 <style scoped lang="scss">
  ::v-deep .ant-form-item-label>label {
-        width: 100px;
+        width: 110px;
         padding-left: 10px;
   }
 </style>

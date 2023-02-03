@@ -239,7 +239,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
+                <ComponentDetail :dataCallTableDetail="dataCallTableSmall" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
                     :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
@@ -384,6 +384,11 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.processKey.imputedYear = imputedYear
             valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear
             valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
+
+            dataCallTableSmall.processKey.imputedMonth = imputedMonth
+            dataCallTableSmall.processKey.imputedYear = imputedYear
+            dataCallTableSmall.processKey.paymentYear = paymentYear
+            dataCallTableSmall.processKey.paymentMonth = paymentMonth
         }
         const saving = () => {
             actionSave.value++;
@@ -404,7 +409,7 @@ export default defineComponent({
             modalCopy.value = false
         }
         return {
-            modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,
+            dataCallTableSmall, modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,
             createdDone, addMonth, saving, showDetailSelected, actionCopySuccess, dataAddIncomeProcess
         };
     },

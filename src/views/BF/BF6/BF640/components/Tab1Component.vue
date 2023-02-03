@@ -97,9 +97,25 @@
                     <template #상호="{ data }">
                         {{ data.data.company.name }} - {{ data.data.company.address }}
                     </template>
-                    <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
-                    <DxColumn caption="최종제작요청일시" />
+                    <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+                    <template #bizNumber="{ data }"> 
+                        <span>
+                            {{
+                                data.data.company.bizNumber.toString().slice(0, 3)
+                            }}-{{
+    data.data.company.bizNumber.toString().slice(3, 5)
+}}-{{
+    data.data.company.bizNumber.toString().slice(5, 10)
+}}
+                        </span>
+                    </template>
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
                     <DxColumn caption="제작현황" />
+                    <DxSummary>
+                        <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                        <DxTotalItem class="custom-sumary" column="제작현황" :customize-text="customTextSummary"
+                            className="antu" />
+                    </DxSummary>
                 </DxDataGrid>
             </a-spin>
         </div>
@@ -113,14 +129,16 @@ import { defineComponent, ref, computed, watch } from "vue";
 import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
+
+
 import notification from "@/utils/notification"
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
         PopupConfirmSaveStep1,
     },
     props: {
@@ -198,6 +216,10 @@ export default defineComponent({
                 companyIds: []
             }
         }
+
+        const customTextSummary = () => {
+            return "제작전 ({sum})"
+        }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
             dataSearch.value.productionStatuses = []
@@ -217,10 +239,11 @@ export default defineComponent({
         return {
             userInfor,
             dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
-            openModalSave
+            openModalSave, customTextSummary,
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
+
 </style>
