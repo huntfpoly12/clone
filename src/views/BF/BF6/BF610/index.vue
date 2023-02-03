@@ -4,13 +4,12 @@
         <div class="search-form">
             <a-row :gutter="[24, 8]">
                 <a-col>
-                    <a-form-item label="귀속연월" label-align="left" class="clr mb-0 label-select">
-                        <imputed-year-month-select-box :dataSelect="arraySelectBox" width="150px" :required="true"
-                            v-model:valueInput="dataSearch.filter.imputedYearMonth" type="1" />
-                    </a-form-item>
                     <a-form-item label="지급연월" label-align="left" class="clr mb-0 label-select">
                         <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
                             v-model:valueInput="dataSearch.filter.paymentYearMonth" type="2" />
+                    </a-form-item>
+                    <a-form-item label="" label-align="left" class="clr mb-0 label-select">
+                        
                     </a-form-item>
                 </a-col>
                 <a-col>
@@ -209,8 +208,7 @@ export default defineComponent({
         let dataSearch: any = reactive({
             "filter": {
                 "page": 1,
-                "rows": 10,
-                "imputedYearMonth": parseInt(globalYear.value + "01"),
+                "rows": 10, 
                 "paymentYearMonth": parseInt(globalYear.value + "01"),
                 "reportType": null, //1 or 6
                 "regular": false,
@@ -397,8 +395,7 @@ export default defineComponent({
             dataSearch.filter.revised = newVal.value
             dataSearch.filter.afterDeadline = newVal.value
         }, { deep: true })
-        watch(() => globalYear, (newVal: any) => {
-            dataSearch.filter.imputedYearMonth = parseInt(newVal.value + "01")
+        watch(() => globalYear, (newVal: any) => { 
             dataSearch.filter.paymentYearMonth = parseInt(newVal.value + "01")
             trigger.value = true
             refetchTable()

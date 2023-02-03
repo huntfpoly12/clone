@@ -20,16 +20,16 @@ export default defineComponent({
             input: {
                 companyId: props.data?.companyId,
                 paymentYear: props.data?.paymentYear,
-                paymentHalfYear: props.data?.paymentHalfYear,
+                paymentMonth: props.data?.paymentMonth,
             }
         })
         let {
             onResult, loading
-        } = useQuery(queries.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement, dataSearch, () => ({
+        } = useQuery(queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, dataSearch, () => ({
             fetchPolicy: "no-cache"
         }));
         onResult((res: any) => {
-            arrStatus.value = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement
+            arrStatus.value = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement
         })
         const checkStatus = (status: any) => {
             if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0)

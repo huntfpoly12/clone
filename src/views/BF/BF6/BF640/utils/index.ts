@@ -27,8 +27,8 @@ export const dataSearchStep2Utils = {
 }
 export const dataSearchStep3Utils = {
     "type": 1,
-    "requesteStartDate": 20220101,
-    "requesteFinishDate": 20230505,
-    "productionStatuses": [4, 5],
+    "requesteStartDate": parseInt(dayjs().format('YYYYMMDD')) - 10000,
+    "requesteFinishDate": parseInt(dayjs().format('YYYYMMDD')),
+    "productionStatuses": [2, -1],
     "manageUserId": null
 } 

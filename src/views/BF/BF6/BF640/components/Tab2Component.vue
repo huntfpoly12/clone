@@ -86,20 +86,44 @@
             </a-form-item>
         </div>
         <div class="form-table">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사업자코드" />
-                <DxColumn caption="상호 주소" />
-                <DxColumn caption="사업자등록번호" />
-                <DxColumn caption="최종제작요청일시" />
-                <DxColumn caption="제작현황" />
-            </DxDataGrid>
+            <a-spin :spinning="loadingTable">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    @selection-changed="selectionChanged">
+                    <DxSelection mode="multiple" :fixed="true" />
+                    <DxColumn caption="사업자코드" data-field="company.code" />
+                    <DxColumn caption="상호 주소" cell-template="상호" />
+                    <template #상호="{ data }">
+                        {{ data.data.company.name }} - {{ data.data.company.address }}
+                    </template>
+                    <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+                    <template #bizNumber="{ data }">
+                        <span>
+                            {{
+                                data.data.company.bizNumber.toString().slice(0, 3)
+                            }}-{{
+    data.data.company.bizNumber.toString().slice(3, 5)
+}}-{{
+    data.data.company.bizNumber.toString().slice(5, 10)
+}}
+                        </span>
+                    </template>
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="제작현황" cell-template="제작현황" />
+                    <template #제작현황="{ data }">
+                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
+                    </template>
+                    <!-- <DxSummary>
+                    <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                    <DxTotalItem class="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
+                </DxSummary> -->
+                </DxDataGrid>
+            </a-spin>
         </div>
-        <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" :data="dataModalSave"
-            :step="2" />
     </div>
+    <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" :data="dataModalSave"
+        :step="2" />
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -111,13 +135,14 @@ import {
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
+import GetStatusTable from "./GetStatusTableStep2.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSave,
+        PopupConfirmSave,GetStatusTable
     },
     props: {
         searchStep: Number,
@@ -127,6 +152,7 @@ export default defineComponent({
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
+        let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref({
             checkbox1: true,
@@ -154,7 +180,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dataSource.value = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings
+            dataSource.value = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
             trigger.value = false
         })
         errorTable((error: any) => {
@@ -187,12 +213,15 @@ export default defineComponent({
                     receiverName: userInfor.value.name,
                     receiverAddress: userInfor.value.email
                 },
-                companyIds: []
+                companyIds: keySelect.value
             }
         }
+        const selectionChanged = (res: any) => {
+            keySelect.value = res.selectedRowKeys
+        }
         return {
-            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
-            openModalSave
+            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
+            selectionChanged, openModalSave
         }
     }
 })
