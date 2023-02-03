@@ -8,8 +8,7 @@
                         <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
                             v-model:valueInput="dataSearch.filter.paymentYearMonth" type="2" />
                     </a-form-item>
-                    <a-form-item label="" label-align="left" class="clr mb-0 label-select">
-                        
+                    <a-form-item label="" label-align="left" class="clr mb-0 label-select"> 
                     </a-form-item>
                 </a-col>
                 <a-col>
