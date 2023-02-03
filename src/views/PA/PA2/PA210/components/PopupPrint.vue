@@ -3,25 +3,25 @@
         @cancel="setModalVisible" width="576px">
         <a-row :gutter="24" class="pt-20 mt-20">
             <a-col :span="12">
-                <checkbox-basic size="14" label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
+                <checkbox-basic  label="원천징수이행상황신고서" v-model:valueCheckbox="dataForm.row1.checkbox" />
             </a-col>
             <a-col :span="12">
                 <date-time-box :disabled="!dataForm.row1.checkbox" class="mb-5" v-model:valueDate="dataForm.row1.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
-                <checkbox-basic size="14" label="소득세납부서" v-model:valueCheckbox="dataForm.row2.checkbox" />
+                <checkbox-basic  label="소득세납부서" v-model:valueCheckbox="dataForm.row2.checkbox" />
             </a-col>
             <a-col :span="12">
                 <date-time-box :disabled="!dataForm.row2.checkbox" class="mb-5" v-model:valueDate="dataForm.row2.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
-                <checkbox-basic size="14" label="지방소득세납부서" v-model:valueCheckbox="dataForm.row3.checkbox" />
+                <checkbox-basic  label="지방소득세납부서" v-model:valueCheckbox="dataForm.row3.checkbox" />
             </a-col>
             <a-col :span="12">
                 <date-time-box :disabled="!dataForm.row3.checkbox" class="mb-5" v-model:valueDate="dataForm.row3.date" :placeholder="'작성일(YYYY-MM-DD)'" />
             </a-col>
             <a-col :span="12">
-                <checkbox-basic size="14" label="지방소득세환급청구서/납부내역서" v-model:valueCheckbox="dataForm.row4.checkbox" />
+                <checkbox-basic  label="지방소득세환급청구서/납부내역서" v-model:valueCheckbox="dataForm.row4.checkbox" />
             </a-col>
             <a-col :span="12">
                 <date-time-box :disabled="!dataForm.row4.checkbox" class="mb-5" v-model:valueDate="dataForm.row4.date" :placeholder="'작성일(YYYY-MM-DD)'" />

@@ -1,4 +1,4 @@
-<template>
+<template>{{ tabName }} 
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="644">
         <standard-form action="" name="request-file-630">
@@ -36,6 +36,10 @@ export default defineComponent({
         data: {
             type: Object,
             default: {}
+        },
+        tabName: {
+            type: String,
+            default: ''
         }
     },
     components: {
@@ -46,25 +50,87 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+        // query send request file tab 1
         const {
-            mutate: sendRequestFile,
-            onDone,
-            onError,
-            error,
+            mutate: sendRequestFileTab1,
+            onDone: onDoneTab1,
+            onError: onErrorTab1,
         } = useMutation(mutations.requestCreationIncomeWagePaymentStatementElectronicFilingFile);
+        // query send request file tab 2
+        const {
+            mutate: sendRequestFileTab2,
+            onDone: onDoneTab2,
+            onError: onErrorTab2,
+        } = useMutation(mutations.requestCreationIncomeRetirementPaymentStatementElectronicFilingFile);
+        // query send request file tab 3
+        const {
+            mutate: sendRequestFileTab3,
+            onDone: onDoneTab3,
+            onError: onErrorTab3,
+        } = useMutation(mutations.requestCreationIncomeBusinessPaymentStatementElectronicFilingFile);
+        // query send request file tab 4
+        const {
+            mutate: sendRequestFileTab4,
+            onDone: onDoneTab4,
+            onError: onErrorTab4,
+        } = useMutation(mutations.requestCreationIncomeExtraPaymentStatementElectronicFilingFile);
+
+
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-              sendRequestFile(dataRequestFile.value);
+              switch (props.tabName) {
+                case 'tab1':
+                  sendRequestFileTab1(dataRequestFile.value);
+                  break;
+                case 'tab2':
+                  sendRequestFileTab2(dataRequestFile.value);
+                  break;
+                case 'tab3':
+                  sendRequestFileTab3(dataRequestFile.value);
+                  break;
+                case 'tab4':
+                  sendRequestFileTab4(dataRequestFile.value);
+                  break;
+                default:
+                  break;
+              }
+
             }
         };
-        onDone(() => {
+
+        // onDone tab 1
+        onDoneTab1(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
         })
-        onError((e: any) => {
+        onErrorTab1((e: any) => {
+            notification('error', e.message)
+        })
+        // onDone tab 2
+        onDoneTab2(() => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+        })
+        onErrorTab2((e: any) => {
+            notification('error', e.message)
+        })
+        // onDone tab 3
+        onDoneTab3(() => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+        })
+        onErrorTab3((e: any) => {
+            notification('error', e.message)
+        }) 
+        // onDone tab 4
+        onDoneTab4(() => {
+            notification('success', `업데이트 완료!`)
+            emit("closePopup", false)
+        })
+        onErrorTab4((e: any) => {
             notification('error', e.message)
         })
 

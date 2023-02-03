@@ -230,7 +230,7 @@ export default defineComponent({
             types: ["r"],
         });
         let trigger = ref<boolean>(true);
-        let triggerDuplication = ref<boolean>(true);
+        let triggerDuplication = ref<boolean>(false);
         let triggerGroup = ref<boolean>(true);
        
               

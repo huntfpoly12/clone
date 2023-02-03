@@ -13,7 +13,7 @@
               <a-form-item  label="최종제작상태">
                 <switch-basic v-model:valueSwitch="originData.beforeProduction"  :textCheck="'제작후'" :textUnCheck="'제작전'"/>
               </a-form-item>
-              <span>
+              <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
               </span>
             </div>
@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-1">제작대기</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="2" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-2">제작중</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="3" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-3">제작성공</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="4" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/><div class="check-box-tag-4">제작실패</div>
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="5" padding="0px 5px" />
                 </div>
               </div>
           </div>
@@ -63,28 +63,25 @@
     </a-row>
   </div>
   <div class="grid-view">
-    <div class="header-grid-form">
-      <a-row justify="start" :gutter="[16, 8]">
-        <a-col class="custom-flex">
-          <label class="lable-item">파일 제작 설정 :</label>
-          <switch-basic  :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'"/>
-          <span class="infor-icon">
-                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.
-          </span>
-        </a-col>
-        <a-col class="custom-flex">
-          <label class="lable-item">제출연월일:</label>
-          <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
-        </a-col>
-        <a-col class="custom-flex">
-          <a-tooltip  color="black">
-            <template #title>전자신고파일 제작 요청</template>
-            <a-button class="ml-4" @click="requestIncomeFile">
-                <SaveOutlined style="font-size: 17px" />
-            </a-button>
-          </a-tooltip>
-        </a-col>
-      </a-row>
+    <div class="title-table d-flex">
+        <a-form-item label="파일 제작 설정" label-align="left">
+            <div class="custom-note d-flex-center">
+                <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                <span class="style-note">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+                </span>
+            </div>
+        </a-form-item>
+        <a-form-item label="제출연월일" label-align="left">
+            <div class="d-flex-center">
+                <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                <a-tooltip placement="topLeft" color="black">
+                    <template #title>전자신고파일 제작 요청</template>
+                    <SaveOutlined class="fz-24 ml-5 action-save" @click="requestIncomeFile" />
+                </a-tooltip>
+            </div>
+        </a-form-item>
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
@@ -111,13 +108,13 @@
         </a-spin>
     </div>
   </div>
-  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile"></request-file-popup>
+  <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile"  @closePopup="modalRequestFile = false" :data="dataRequestFile" tabName="tab1"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import {SaveOutlined } from "@ant-design/icons-vue";
@@ -143,7 +140,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const trigger = ref<boolean>(false);
+    const trigger = ref<boolean>(true);
     const triggerElecFilings = ref<boolean>(false);
     // for checkbox 
     const checkbox1 = ref<boolean>(false);
@@ -303,4 +300,9 @@ export default defineComponent({
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
 </style>
-
+<style scoped lang="scss">
+ ::v-deep .ant-form-item-label>label {
+        width: 100px;
+        padding-left: 10px;
+  }
+</style>

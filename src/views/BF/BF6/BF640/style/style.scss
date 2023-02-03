@@ -1,18 +1,10 @@
 #bf-640 {
-    ::v-deep .ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab-active {
-        background-color: #DCE6F2;
-    }
-
-    ::v-deep .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-        color: black;
-    }
-
-    ::v-deep .ant-tabs-tab-btn {
-        color: gray;
-    }
-
-    ::v-deep .ant-tabs-top>.ant-tabs-nav {
-        margin: 0px;
+    .custom-note {
+        span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
     }
 
     #step1 {
@@ -32,11 +24,36 @@
             }
         }
 
-        .custom-note {
-            >span {
-                font-size: 11px;
-                color: #666666;
-                padding-left: 5px;
+        ::v-deep .fix-width-label {
+            label {
+                width: 110px;
+            }
+        }
+
+        .title-table {
+            justify-content: space-between;
+            margin-top: 10px;
+
+            .action-save {
+                cursor: pointer;
+            }
+        }
+    }
+
+    #step2 {
+        .search-form-step-1 {
+            background-color: #f1f3f4;
+            padding-top: 10px;
+            padding-left: 10px;
+            padding-bottom: 5px;
+        }
+
+        ::v-deep .custom-checkbox-search {
+            margin-bottom: 4px;
+            cursor: pointer;
+
+            >div {
+                margin-right: 5px;
             }
         }
 
@@ -49,7 +66,37 @@
         .title-table {
             justify-content: space-between;
             margin-top: 10px;
+
+            .action-save {
+                cursor: pointer;
+            }
         }
 
+        .month-custom-1 {
+            padding-left: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+            color: white;
+            background-color: black;
+            width: 90px;
+            font-size: 12px;
+
+            ::v-deep .dp__input {
+                color: white;
+                padding: 0px;
+                border: none;
+                height: 24px;
+                background-color: black;
+                font-size: 14px;
+            }
+
+            ::v-deep .dp__icon {
+                display: none;
+            }
+        }
+    }
+
+    #step3 {
+       
     }
 }

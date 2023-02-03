@@ -14,14 +14,14 @@
                             <!-- ================== Row 1 =========================== -->
                             <a-col :span="6">
                                 <div @click="checkAll">
-                                    <checkbox-basic size="14" label="전체" v-model:valueCheckbox="checkAllValue" />
+                                    <checkbox-basic  label="전체" v-model:valueCheckbox="checkAllValue" />
                                 </div>
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="year1.value" :label="year1.label" />
+                                <checkbox-basic  v-model:valueCheckbox="year1.value" :label="year1.label" />
                             </a-col>
                             <a-col :span="4">
-                                <checkbox-basic size="14" v-model:valueCheckbox="year2.value" :label="year2.label" />
+                                <checkbox-basic  v-model:valueCheckbox="year2.value" :label="year2.label" />
                             </a-col>
                             <a-col :span="8" class="custom-info">
                                 <div>
@@ -34,68 +34,68 @@
                             </a-col>
                             <!-- ================== Row 2 =========================== -->
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
                                     :label="arrCheckBoxSearch.quarter1.label" />
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter2.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter2.value"
                                     :label="arrCheckBoxSearch.quarter2.label" />
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter3.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter3.value"
                                     :label="arrCheckBoxSearch.quarter3.label" />
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
                                     :label="arrCheckBoxSearch.quarter4.label" />
                             </a-col>
                             <!-- ================== Row 3 =========================== -->
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
                                     :label="arrCheckBoxSearch.month1.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month2.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month2.value"
                                     :label="arrCheckBoxSearch.month2.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month3.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month3.value"
                                     :label="arrCheckBoxSearch.month3.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
                                     :label="arrCheckBoxSearch.month4.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
                                     :label="arrCheckBoxSearch.month5.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month6.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month6.value"
                                     :label="arrCheckBoxSearch.month6.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month7.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month7.value"
                                     :label="arrCheckBoxSearch.month7.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
                                     :label="arrCheckBoxSearch.month8.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
                                     :label="arrCheckBoxSearch.month9.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month10.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month10.value"
                                     :label="arrCheckBoxSearch.month10.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month11.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month11.value"
                                     :label="arrCheckBoxSearch.month11.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic size="14" v-model:valueCheckbox="arrCheckBoxSearch.month12.value"
+                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month12.value"
                                     :label="arrCheckBoxSearch.month12.label" />
                             </a-col>
                         </a-row>

@@ -1,4 +1,11 @@
+  .title-table {
+    justify-content: space-between;
+    margin-top: 10px;
 
+    .action-save {
+        cursor: pointer;
+    }
+  }
   .header-grid-form{
     .custom-flex {
         display: flex;
@@ -68,8 +75,4 @@
         }
       }
     }
-  }
-  ::v-deep .ant-form-item-label>label {
-        width: 120px;
-        padding-left: 10px;
   }

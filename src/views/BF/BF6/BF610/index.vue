@@ -15,34 +15,34 @@
                 </a-col>
                 <a-col>
                     <a-form-item label="신고주기" label-align="left" class="mb-0">
-                        <checkbox-basic size="14" label="전체" class="mr-10"
+                        <checkbox-basic  label="전체" class="mr-10"
                             v-model:valueCheckbox="reportType.checkbox1" />
-                        <checkbox-basic size="14" label="정기" class="mr-10"
+                        <checkbox-basic  label="정기" class="mr-10"
                             v-model:valueCheckbox="reportType.checkbox2" />
-                        <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
+                        <checkbox-basic  label="반기" v-model:valueCheckbox="reportType.checkbox3" />
                     </a-form-item>
                     <a-form-item label="신고구분" label-align="left" class="mb-0">
-                        <checkbox-basic size="14" label="전체" class="mr-10"
+                        <checkbox-basic  label="전체" class="mr-10"
                             v-model:valueCheckbox="checkAllTypeFication" />
-                        <checkbox-basic size="14" label="정기" class="mr-10"
+                        <checkbox-basic  label="정기" class="mr-10"
                             v-model:valueCheckbox="dataSearch.filter.regular" />
-                        <checkbox-basic size="14" label="수정" class="mr-10"
+                        <checkbox-basic  label="수정" class="mr-10"
                             v-model:valueCheckbox="dataSearch.filter.revised" />
-                        <checkbox-basic size="14" label="기한후" v-model:valueCheckbox="dataSearch.filter.afterDeadline" />
+                        <checkbox-basic  label="기한후" v-model:valueCheckbox="dataSearch.filter.afterDeadline" />
                     </a-form-item>
                 </a-col>
                 <a-col>
                     <a-form-item label="마감상태" label-align="left" class="mb-0">
                         <div class="mb-10">
-                            <checkbox-basic size="14" label="입력중" class="mr-10 custom-checkbox1"
+                            <checkbox-basic  label="입력중" class="mr-10 custom-checkbox1"
                                 v-model:valueCheckbox="statuses.checkbox1" />
-                            <checkbox-basic size="14" label="입력마감" class="mr-10 custom-checkbox2"
+                            <checkbox-basic  label="입력마감" class="mr-10 custom-checkbox2"
                                 v-model:valueCheckbox="statuses.checkbox2" />
                         </div>
                         <div>
-                            <checkbox-basic size="14" label="조정중" class="mr-10 custom-checkbox3"
+                            <checkbox-basic  label="조정중" class="mr-10 custom-checkbox3"
                                 v-model:valueCheckbox="statuses.checkbox3" />
-                            <checkbox-basic size="14" label="조정마감" class="mr-10 custom-checkbox4"
+                            <checkbox-basic  label="조정마감" class="mr-10 custom-checkbox4"
                                 v-model:valueCheckbox="statuses.checkbox4" />
                         </div>
                     </a-form-item>

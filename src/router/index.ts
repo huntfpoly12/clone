@@ -99,6 +99,10 @@ const routes = [
         component: () => import("../views/BF/BF6/BF610/index.vue"),
       },
       {
+        path: "bf-620",
+        component: () => import("../views/BF/BF6/BF620/index.vue"),
+      },
+      {
         path: "bf-640",
         component: () => import("../views/BF/BF6/BF640/index.vue"),
       },
