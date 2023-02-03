@@ -175,7 +175,6 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
-
 </style>
 
 

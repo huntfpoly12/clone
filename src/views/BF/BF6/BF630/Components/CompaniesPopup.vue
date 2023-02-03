@@ -46,7 +46,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear)
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const setModalVisible = () => {
@@ -77,7 +76,6 @@ export default defineComponent({
     })
 
     return {
-        globalYear,
         move_column,
         colomn_resize,
         dataSource,
