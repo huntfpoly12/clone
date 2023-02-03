@@ -110,9 +110,9 @@ export default defineComponent({
             triggerFindIncome.value = true
         });
         const updateValue = (value: any) => {
-            dataApiCopy.value.paymentYear = value.value.paymentYear,
-                dataApiCopy.value.paymentMonth = value.value.paymentMonth,
-                dataApiCopy.value.imputedMonth = value.value.imputedMonth
+            dataApiCopy.value.paymentYear = value.value.paymentYear
+            dataApiCopy.value.paymentMonth = value.value.paymentMonth
+            dataApiCopy.value.imputedMonth = value.value.imputedMonth
             dataApiCopy.value.imputedYear = value.value.imputedYear
         };
 
@@ -187,7 +187,6 @@ export default defineComponent({
             store.state.common.processKeyPA510.imputedMonth = month.value
             store.state.common.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
             store.state.common.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
-            store.state.common.loadingTableInfo++
             emit("dataAddIncomeProcess", {
                 imputedYear: globalYear.value,
                 imputedMonth: month.value,
@@ -195,6 +194,7 @@ export default defineComponent({
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
+            store.state.common.paymentDayCopy = paymentDayCopy.value
         };
 
         const openModalCopy = () => {

@@ -12,7 +12,7 @@
             </div>
         </div>
         <div v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"  @onClick="clickButton"></button-basic>
+            <button-basic :disabled="disabled" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"   @onClick="clickButton"></button-basic>
         </div>
     </div>
 </template>
@@ -25,6 +25,10 @@ export default defineComponent({
         valueStatus: {
             type: Number,
             required: true
+        },
+        disabled: {
+            type: Boolean,
+            required: false
         },
     },
     setup(props, { emit }) {
