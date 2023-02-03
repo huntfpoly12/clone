@@ -80,7 +80,7 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="modalConfirmMail = true" />
+                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
                     </a-tooltip>
                 </div>
             </a-form-item>
@@ -97,7 +97,8 @@
                 <DxColumn caption="제작현황" />
             </DxDataGrid>
         </div>
-        <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" />
+        <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" :data="dataModalSave"
+            :step="2" />
     </div>
 </template>
 <script lang="ts">
@@ -110,7 +111,6 @@ import {
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
-
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
@@ -136,11 +136,12 @@ export default defineComponent({
         })
         let dataSource: any = ref([])
         const store = useStore()
+        const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         let trigger = ref(true)
         let modalConfirmMail = ref(false)
-
+        let dataModalSave = ref()
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
         let {
@@ -159,8 +160,6 @@ export default defineComponent({
         errorTable((error: any) => {
             notification('error', error.message)
         })
-
-
         // =================== WATCH ====================
         watch(() => props.searchStep, () => {
             dataSearch.value.productionStatuses = []
@@ -174,16 +173,26 @@ export default defineComponent({
                 dataSearch.value.productionStatuses.push(-1)
             dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
             dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
-
             if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()
             }
-
         }, { deep: true })
+        // ================== FUNCTION ================== 
+        const openModalSave = () => {
+            modalConfirmMail.value = true
+            dataModalSave.value = {
+                filter: dataSearch.value,
+                emailInput: {
+                    receiverName: userInfor.value.name,
+                    receiverAddress: userInfor.value.email
+                },
+                companyIds: []
+            }
+        }
         return {
-            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,
-            dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail
+            activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
+            openModalSave
         }
     }
 })

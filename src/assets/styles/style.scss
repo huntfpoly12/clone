@@ -186,4 +186,8 @@ $lenght: 50;
 .ant-tabs-top>.ant-tabs-nav {
   margin: 0px;
 }
- 
+
+
+.dx-scrollable-scrollbars-alwaysvisible.dx-scrollable-both>.dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
+  padding-bottom: 0px !important;
+}

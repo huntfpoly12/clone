@@ -1,4 +1,4 @@
-<template> 
+<template>
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
@@ -104,7 +104,7 @@
             </a-spin>
         </div>
         <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false"
-            :data="dataModalSave" />
+            :data="dataModalSave" :step="1" />
     </div>
 </template>
 <script lang="ts">
@@ -131,7 +131,6 @@ export default defineComponent({
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
@@ -146,7 +145,6 @@ export default defineComponent({
         let dataSource: any = ref([])
         let modalConfirmMail = ref(false)
         let dataCallApiGetElectronic = ref()
-
         let dataModalSave = ref()
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
@@ -188,7 +186,6 @@ export default defineComponent({
         //     enabled: trigger.value,
         //     fetchPolicy: "no-cache"
         // }));
-
         // ================== FUNCTION ================== 
         const openModalSave = () => {
             modalConfirmMail.value = true
@@ -201,7 +198,6 @@ export default defineComponent({
                 companyIds: []
             }
         }
-
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
             dataSearch.value.productionStatuses = []
@@ -227,5 +223,4 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>

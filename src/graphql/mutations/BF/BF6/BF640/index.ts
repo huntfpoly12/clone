@@ -1,5 +1,9 @@
-const mutations = {
+import requestCreationIncomeWageSimplifiedPaymentStatementElectronicFilingFile from "./requestCreationIncomeWageSimplifiedPaymentStatementElectronicFilingFile";
+import requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile from "./requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile"; 
 
+const mutations = {
+    requestCreationIncomeWageSimplifiedPaymentStatementElectronicFilingFile : requestCreationIncomeWageSimplifiedPaymentStatementElectronicFilingFile,
+    requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile : requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile 
 };
 
 export default mutations;
