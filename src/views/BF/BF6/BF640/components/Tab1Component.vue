@@ -90,21 +90,41 @@
             <a-spin :spinning="loadingTable">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    @selection-changed="selectionChanged">
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="상호" />
                     <template #상호="{ data }">
                         {{ data.data.company.name }} - {{ data.data.company.address }}
                     </template>
-                    <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
-                    <DxColumn caption="최종제작요청일시" />
-                    <DxColumn caption="제작현황" />
+                    <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+                    <template #bizNumber="{ data }">
+                        <span>
+                            {{
+                                data.data.company.bizNumber.toString().slice(0, 3)
+                            }}-{{
+    data.data.company.bizNumber.toString().slice(3, 5)
+}}-{{
+    data.data.company.bizNumber.toString().slice(5, 10)
+}}
+                        </span>
+                    </template>
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="제작현황" cell-template="제작현황" />
+                    <template #제작현황="{ data }">
+                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data"/>
+                    </template>
+                    <DxSummary>
+                        <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                        <DxTotalItem class="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
+                    </DxSummary>
                 </DxDataGrid>
             </a-spin>
         </div>
         <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false"
-            :data="dataModalSave" :step="1" />
+            :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
+
     </div>
 </template>
 <script lang="ts">
@@ -113,15 +133,16 @@ import { defineComponent, ref, computed, watch } from "vue";
 import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSaveStep1,
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
+        PopupConfirmSaveStep1, GetStatusTable
     },
     props: {
         searchStep: Number,
@@ -146,6 +167,7 @@ export default defineComponent({
         let modalConfirmMail = ref(false)
         let dataCallApiGetElectronic = ref()
         let dataModalSave = ref()
+        let keySelect = ref([])
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -175,17 +197,7 @@ export default defineComponent({
         })
         errorTable((error: any) => {
             notification('error', error.message)
-        })
-        //  QUERY : getElectronicFilingsByIncomeWageSimplifiedPaymentStatement
-        // let {
-        //     refetch: refetchType,
-        //     loading: loadingType,
-        //     onError: errorType,
-        //     onResult: resType
-        // } = useQuery(queries.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement, { filter: dataSearch.value }, () => ({
-        //     enabled: trigger.value,
-        //     fetchPolicy: "no-cache"
-        // }));
+        }) 
         // ================== FUNCTION ================== 
         const openModalSave = () => {
             modalConfirmMail.value = true
@@ -195,8 +207,19 @@ export default defineComponent({
                     receiverName: userInfor.value.name,
                     receiverAddress: userInfor.value.email
                 },
-                companyIds: []
+                companyIds: keySelect.value
             }
+        }
+        const customTextSummary = () => {
+            return "제작전 ({sum})"
+        }
+        const selectionChanged = (res: any) => {
+            keySelect.value = res.selectedRowKeys
+        }
+        const actionSaveDone = () => {
+            modalConfirmMail.value = false
+            trigger.value = true
+            refetchTable()
         }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
@@ -215,12 +238,12 @@ export default defineComponent({
             }
         }, { deep: true })
         return {
-            userInfor,
-            dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
-            openModalSave
+            userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
+            actionSaveDone, selectionChanged, openModalSave, customTextSummary,
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
+
 </style>
