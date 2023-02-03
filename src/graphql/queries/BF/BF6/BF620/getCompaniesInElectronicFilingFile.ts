@@ -1,7 +1,13 @@
 import gql from "graphql-tag";
 export default gql`
-  query getCompaniesInElectronicFilingFile($electronicFilingId: Int!) {
-    getCompaniesInElectronicFilingFile(filter: $filter) {
+  query getCompaniesInElectronicFilingFile(
+    $electronicFilingId: Int!
+    $type: Int!
+  ) {
+    getCompaniesInElectronicFilingFile(
+      electronicFilingId: $electronicFilingId
+      type: $type
+    ) {
       id
       code
       name

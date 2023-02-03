@@ -17,9 +17,9 @@
                     <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                         layout="horizontal" :icon-size="12">
                         <template #radio="{ data }">
-                            <production-statuses :typeTag="0" padding="3px 20px" v-if="data == 0" />
-                            <production-statuses :typeTag="4" padding="3px 20px" v-if="data == 4" />
-                            <production-statuses :typeTag="5" padding="3px 20px" v-if="data == 5" />
+                          <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                          <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
+                          <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
                         </template>
                     </DxRadioGroup>
                 </a-form-item>
@@ -40,7 +40,7 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxColumn caption="코드명" data-field="fileStorageId" />
-                <DxColumn caption="신고구분" data-field="fileStorageId" />
+                <DxColumn caption="신고구분" data-field="reportType" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt"/>
                 <DxColumn caption="아이디" data-field="productionRequestUserId"/>
                 <DxColumn caption="제작현황" data-field="productionStatus" />
@@ -175,9 +175,8 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
- ::v-deep .ant-form-item-label>label {
-        width: 100px;
-        padding-left: 10px;
-  }
+
 </style>
+
+
 

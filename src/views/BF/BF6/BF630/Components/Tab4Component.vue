@@ -298,10 +298,12 @@ export default defineComponent({
 })
 </script>
 <style  scoped lang="scss" src="../style/styleTabs.scss">
-  ::v-deep .ant-form-item-label>label {
-        width: 120px;
+
+</style>
+<style scoped lang="scss">
+ ::v-deep .ant-form-item-label>label {
+        width: 110px;
         padding-left: 10px;
   }
-
 </style>
 

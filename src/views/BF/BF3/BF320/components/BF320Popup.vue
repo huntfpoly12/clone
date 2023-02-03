@@ -1,91 +1,89 @@
 <template>
     <div id="components-modal-demo-position">
-        <a-modal :mask-closable="false" footer="" centered :visible="visible" title="사업자관리 " width="1000px"
+        <a-modal :mask-closable="false" footer="" centered :visible="visible" title="사업자관리 " width="1280px"
             @cancel="setModalVisible()">
             <a-spin tip="Loading..." :spinning="loading">
                 <standard-form action="your-action" name="edit-page-320">
                     <a-collapse v-model:activeKey="activeKey" accordion>
                         <a-collapse-panel key="1" header="사업자정보">
                             <a-form :label-col="labelCol">
-                                <a-row>
-                                    <a-col :span="18">
-                                        <a-form-item label="상 호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.name" :required="true"
-                                                nameInput="formState-name" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="6"></a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="사업자등록번호" class="clr">
-                                            <default-text-box v-model:valueInput="formState.bizNumber" :required="true"
-                                                nameInput="formState-bizNumber" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="14">
-                                        <a-form-item label="사업자유형" class="clr">
-                                            <radio-group :arrayValue="arrRadioType" :disabled="true"
-                                                v-model:valueRadioCheck="formState.bizType"
-                                                :layoutCustom="'horizontal'" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="10">
-                                        <a-form-item :label="changeTypeCompany(formState.bizType)">
-                                            <id-number-text-box v-model:valueInput="formState.residentId"
-                                                :disabled="true" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="24">
-                                        <a-form-item label="주소" class="custom-flex clr">
-                                            <a-row>
-                                                <a-col :span="17" style="display: flex; margin-bottom: 5px;">
-                                                    <default-text-box style="width: 100%;"
-                                                        v-model:valueInput="formState.extendInfoDetailZipcode"
-                                                        autocomplete="off" :required="true" :disabled="true"
-                                                        nameInput="formState-extendInfoDetailZipcode">
-                                                    </default-text-box>
-                                                    <post-code-button @dataAddress="funcAddress" />
-                                                </a-col>
-                                                <a-col :span="24" style="margin-bottom: 5px">
+                                <a-row :gutter="24">
+                                    <a-col span="10">
+                                        <a-row>
+                                            <a-col :span="24">
+                                                <a-form-item label="상 호" class="clr">
+                                                    <default-text-box v-model:valueInput="formState.name"
+                                                        :required="true" nameInput="formState-name" width="200px" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="8">
+                                                <a-form-item label="사업자등록번호" class="clr">
+                                                    <biz-number-text-box v-model:valueInput="formState.bizNumber"
+                                                        :required="true" nameInput="formState-bizNumber"
+                                                        width="200px" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="24">
+                                                <a-form-item label="사업자유형" class="clr">
+                                                    <radio-group :arrayValue="arrRadioType" :disabled="true"
+                                                        v-model:valueRadioCheck="formState.bizType"
+                                                        :layoutCustom="'horizontal'" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="24">
+                                                <a-form-item :label="changeTypeCompany(formState.bizType)">
+                                                    <id-number-text-box v-model:valueInput="formState.residentId"
+                                                        :disabled="true" width="145px" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="24">
+                                                <a-form-item label="주소" class="custom-flex clr">
                                                     <a-row>
-                                                        <a-col :span="12" style="padding-right: 5px;">
+                                                        <a-col :span="17" style="display: flex; margin-bottom: 5px;">
+                                                            <default-text-box
+                                                                v-model:valueInput="formState.extendInfoDetailZipcode"
+                                                                autocomplete="off" :required="true" :disabled="true"
+                                                                nameInput="formState-extendInfoDetailZipcode">
+                                                            </default-text-box>
+                                                            <post-code-button @dataAddress="funcAddress" />
+                                                        </a-col>
+                                                        <a-col :span="24" style="margin-bottom: 5px">
                                                             <default-text-box
                                                                 v-model:valueInput="formState.extendInfoDetailRoadAddress"
-                                                                autocomplete="off" width="100%" :required="true"
+                                                                autocomplete="off" width="233" :required="true"
                                                                 nameInput="formState-extendInfoDetailRoadAddress"
                                                                 :disabled="true">
                                                             </default-text-box>
                                                         </a-col>
-                                                        <a-col :span="12">
+                                                        <a-col :span="24">
                                                             <default-text-box
                                                                 v-model:valueInput="formState.extendInfoDetailAddressExtend"
-                                                                autocomplete="off" width="100%">
+                                                                autocomplete="off" width="233">
                                                             </default-text-box>
                                                         </a-col>
                                                     </a-row>
-                                                </a-col>
-                                            </a-row>
-                                        </a-form-item>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="8">
+                                                <a-form-item label="연락처" class="clr">
+                                                    <default-text-box
+                                                        v-model:valueInput="formState.extendInfoDetailPhone"
+                                                        nameInput="formState-extendInfoDetailPhone" :required="true"
+                                                        placeholder="‘-’없이 숫자만 입력" width="150">
+                                                    </default-text-box>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="16"></a-col>
+                                            <a-col :span="8">
+                                                <a-form-item label="팩 스">
+                                                    <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
+                                                        autocomplete="off" width="150" placeholder="‘-’없이 숫자만 입력" />
+                                                </a-form-item>
+                                            </a-col>
+                                        </a-row>
                                     </a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="연락처" class="clr">
-                                            <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
-                                                nameInput="formState-extendInfoDetailPhone" :required="true"
-                                                placeholder="‘-’없이 숫자만 입력">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="8">
-                                        <a-form-item label="팩 스">
-                                            <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
-                                                autocomplete="off" width="100%" placeholder="‘-’없이 숫자만 입력">
-                                            </default-text-box>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="16"></a-col>
-                                    <a-col :span="24">
-                                        <div style="display: flex">
+                                    <a-col span="14">
+                                        <div class="d-flex">
                                             <div>
                                                 <imgUpload :title="titleModal" @update-img="getImgUrl"
                                                     style="margin-top: 10px" />
@@ -482,9 +480,8 @@ export default defineComponent({
                 notification('error', "필수 항목 다 입력해주세요")
                 res.brokenRules[0].validator.focus();
                 inputInCollapse.map((value: any) => {
-                    if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
+                    if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1)
                         activeKey.value = value.key;
-                    }
                 })
             }
             else {
@@ -554,31 +551,8 @@ export default defineComponent({
             formState.extendInfoDetailLicenseFileStorageId = resImg.id
         }
         return {
-            arrayRadioWithdrawDay,
-            removeImg,
-            setModalVisible,
-            fileList,
-            loading,
-            previewTitle,
-            activeKey,
-            formState,
-            labelCol,
-            titleModal,
-            visible,
-            changeTypeCompany,
-            funcAddress,
-            formStateMomes,
-            formarDate,
-            handleAdd,
-            handleDeleteMemo,
-            handleAddMemo,
-            loadingUpdate,
-            updateCompany,
-            fileName,
-            imageValue,
-            dataImg,
-            getImgUrl,
-            arrRadioType
+            arrayRadioWithdrawDay, fileList, loading, previewTitle, activeKey, formState, labelCol, titleModal, visible, formStateMomes, loadingUpdate, fileName, imageValue, dataImg, arrRadioType,
+            removeImg, setModalVisible, changeTypeCompany, funcAddress, formarDate, handleAdd, handleDeleteMemo, handleAddMemo, updateCompany, getImgUrl,
         };
     },
 });

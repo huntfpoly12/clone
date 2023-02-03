@@ -18,8 +18,8 @@
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
                                 <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                                <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
-                                <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
+                                <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                                <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>
@@ -35,18 +35,24 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="코드명" data-field="fileStorageId" />
-                <DxColumn caption="신고구분" data-field="reportType" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" />
-                <DxColumn caption="아이디" data-field="productionRequestUserId" />
-                <DxColumn caption="제작현황" data-field="productionStatus" />
+                <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
+                <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="string" />
+                <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
+                <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
+
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
-                    <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;" />
+                    <div style="text-align: center">
+                        <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
+                            @click="openPopupDetail(data.data)" />
+                    </div>
                 </template>
             </DxDataGrid>
         </div>
     </div>
+    <ElectronicFilingFileProductions :modalStatus="modalDetail" @closePopup="modalDetail = false"
+        :data="dataModalDetail" />
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -57,29 +63,33 @@ import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
+import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup,
+        ElectronicFilingFileProductions
     },
     props: {
         searchStep: Number,
     },
     setup(props) {
+        let modalDetail = ref(false)
         let typeStatus = ref(0)
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
         let dataSearch = ref({ ...dataSearchStep3Utils })
-        let typeCheckbox = ref([0, 4, 5])
+        let typeCheckbox = ref([0, 2, -1])
         let dataSource: any = ref([])
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
         let trigger = ref(true)
+        let dataModalDetail = ref()
         // ================== GRAPHQL=================
-        //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
+        //  QUERY : searchElectronicFilingFileProductions
         let {
             refetch: refetchTable,
             loading: loadingTable,
@@ -99,11 +109,10 @@ export default defineComponent({
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
             if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [4, 5]
-            if (typeStatus.value == 4)
-                dataSearch.value.productionStatuses = [4]
-            if (typeStatus.value == 5)
-                dataSearch.value.productionStatuses = [5]
+                dataSearch.value.productionStatuses = [2, -1]
+            else
+                dataSearch.value.productionStatuses = [val]
+
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {
@@ -111,9 +120,16 @@ export default defineComponent({
                 refetchTable()
             }
         }, { deep: true })
+
+        // ============== FUNCTION =====================
+        const openPopupDetail = (data: any) => {
+            modalDetail.value = true
+            dataModalDetail.value = data
+        }
         return {
-            typeStatus, activeKey: ref("1"), rangeDate, styleCheckBox,
-            typeCheckbox, dataSearch, dataSource, colomn_resize, move_column,
+            dataModalDetail, typeStatus, activeKey: ref("1"), rangeDate, styleCheckBox,
+            typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalDetail,
+            openPopupDetail,
         }
     }
 })

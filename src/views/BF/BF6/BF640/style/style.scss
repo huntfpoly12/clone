@@ -81,6 +81,10 @@
             width: 90px;
             font-size: 12px;
 
+            ::v-deep .dp__main {
+                height: 25px!important;
+            }
+
             ::v-deep .dp__input {
                 color: white;
                 padding: 0px;
@@ -96,7 +100,5 @@
         }
     }
 
-    #step3 {
-       
-    }
+    #step3 {}
 }

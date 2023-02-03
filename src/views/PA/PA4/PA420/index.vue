@@ -19,7 +19,7 @@
                             :show-borders="true" key-expr="companyId" :allow-column-reordering="move_column"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             :focused-row-enabled="true">
-                            <DxScrolling mode="standard" show-scrollbar="always"/>
+                            <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                             <template #col-first="{ data }">
                                 <b>지급연월</b>
@@ -150,7 +150,7 @@
                                     :column-auto-width="true" :allow-column-reordering="move_column"
                                     :show-column-headers="false" :allow-column-resizing="colomn_resize"
                                     :focused-row-enabled="true">
-                                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                                    <DxScrolling mode="standard" show-scrollbar="always" />
                                     <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
                                         data-type="string" />
                                     <template #col-first="{ data }">
@@ -238,8 +238,8 @@
                             </template>
                         </DxDataGrid>
                     </a-spin>
-                </a-col> 
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
+                </a-col>
+                <ComponentDetail :dataCallTableDetail="dataCallTableSmall" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
                     :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
@@ -303,7 +303,7 @@ export default defineComponent({
             companyId: companyId,
             processKey: {
                 imputedYear: globalYear.value,
-                imputedMonth: dayjs().month()+ 1,
+                imputedMonth: dayjs().month() + 1,
                 paymentYear: globalYear.value,
                 paymentMonth: dayjs().month() + 1
             }
@@ -384,6 +384,11 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.processKey.imputedYear = imputedYear
             valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear
             valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
+
+            dataCallTableSmall.processKey.imputedMonth = imputedMonth
+            dataCallTableSmall.processKey.imputedYear = imputedYear
+            dataCallTableSmall.processKey.paymentYear = paymentYear
+            dataCallTableSmall.processKey.paymentMonth = paymentMonth
         }
         const saving = () => {
             actionSave.value++;
@@ -404,11 +409,12 @@ export default defineComponent({
             modalCopy.value = false
         }
         return {
-            modalCopy,actionSave,statusButton,valueCallApiGetEmployeeBusiness,dataCustomRes,globalYear,loadingGetIncomeProcessBusinesses,rowTable,dataSource,per_page, move_column, colomn_resize,originData,dataModalCopy,
-            createdDone,addMonth,saving,showDetailSelected,actionCopySuccess,dataAddIncomeProcess
+            dataCallTableSmall, modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,
+            createdDone, addMonth, saving, showDetailSelected, actionCopySuccess, dataAddIncomeProcess
         };
     },
 });
 </script>  
 <style scoped lang="scss" src="./style/style.scss" >
+
 </style>

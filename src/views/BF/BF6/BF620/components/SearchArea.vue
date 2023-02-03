@@ -73,8 +73,6 @@ import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
 import { reportTypeCheckbox, productionStatusesCheckbox } from '../utils/index';
-import queries from "@/graphql/queries/BF/BF6/BF620/index";
-import { useQuery } from '@vue/apollo-composable';
 export default defineComponent({
   components: { DxButton },
   setup() {
@@ -151,18 +149,6 @@ export default defineComponent({
         filterBF620.value.productionStatuses = [0];
       }
     }, {deep: true})
-    // dx-radio-value-container
-    // const {
-    //     result:  searchWithholdingResult,
-    //     loading: searchWithholdingLoading,
-    //     refetch: searchWithholdingRefetch,
-    //     onError: searchWithholdingError
-    // } = useQuery(queries.searchWithholdingTaxElectronicFilings, {
-    //   filterBF620
-    // }, () => ({
-    //         enabled: searchWithholdingTrigger.value,
-    //         fetchPolicy: "no-cache",
-    // }))
     return {
       radioCheckForeigner,
       foreigner,
