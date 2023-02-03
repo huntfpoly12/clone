@@ -1,4 +1,6 @@
 // grid scss
+$fontSize : 14;
+
 .dx-datagrid-headers .dx-header-row {
   background-color: #F2F5F7;
 }
@@ -175,6 +177,14 @@ $lenght: 50;
   padding-bottom: 0px !important;
 }
 
-.ant-select-item-group { 
+.ant-select-item-group {
   font-size: 14px;
+}
+
+div,
+span,
+input,
+label,
+table {
+  font-size: $fontSize+px;
 }

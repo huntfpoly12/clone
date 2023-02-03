@@ -9,6 +9,10 @@ query getIncomProcessesInTaxWithholdingStatusReport($companyId: Int!, $reportId:
       paymentYear
       paymentMonth
       status   
+      updatedAt
+      employeeStat {
+        employeeCount
+      }
     }
   }
   `

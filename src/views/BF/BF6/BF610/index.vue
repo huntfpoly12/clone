@@ -8,39 +8,47 @@
                         <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
                             v-model:valueInput="dataSearch.filter.paymentYearMonth" type="2" />
                     </a-form-item>
-                    <a-form-item label="" label-align="left" class="clr mb-0 label-select"> 
+                    <a-form-item label="" label-align="left" class="clr mb-0 label-select">
                     </a-form-item>
                 </a-col>
                 <a-col>
                     <a-form-item label="신고주기" label-align="left" class="mb-0">
-                        <checkbox-basic  label="전체" class="mr-10"
-                            v-model:valueCheckbox="reportType.checkbox1" />
-                        <checkbox-basic  label="정기" class="mr-10"
-                            v-model:valueCheckbox="reportType.checkbox2" />
-                        <checkbox-basic  label="반기" v-model:valueCheckbox="reportType.checkbox3" />
+                        <div class="d-flex-center">
+                            <div @click="checkAll1">
+                                <checkbox-basic label="전체" v-model:valueCheckbox="reportType.checkbox1"
+                                    @click="checkAll1" />
+                            </div>
+                            <div>
+                                <checkbox-basic label="정기" v-model:valueCheckbox="reportType.checkbox2" />
+                                <checkbox-basic label="반기" v-model:valueCheckbox="reportType.checkbox3" />
+                            </div>
+                        </div>
                     </a-form-item>
                     <a-form-item label="신고구분" label-align="left" class="mb-0">
-                        <checkbox-basic  label="전체" class="mr-10"
-                            v-model:valueCheckbox="checkAllTypeFication" />
-                        <checkbox-basic  label="정기" class="mr-10"
-                            v-model:valueCheckbox="dataSearch.filter.regular" />
-                        <checkbox-basic  label="수정" class="mr-10"
-                            v-model:valueCheckbox="dataSearch.filter.revised" />
-                        <checkbox-basic  label="기한후" v-model:valueCheckbox="dataSearch.filter.afterDeadline" />
+                        <div class=" d-flex-center">
+                            <div @click="checkAll2">
+                                <checkbox-basic label="전체" v-model:valueCheckbox="reportType.checkAllTypeFication" />
+                            </div>
+                            <div>
+                                <checkbox-basic label="정기" v-model:valueCheckbox="dataSearch.filter.regular" />
+                                <checkbox-basic label="수정" v-model:valueCheckbox="dataSearch.filter.revised" />
+                                <checkbox-basic label="기한후" v-model:valueCheckbox="dataSearch.filter.afterDeadline" />
+                            </div>
+                        </div>
                     </a-form-item>
                 </a-col>
                 <a-col>
                     <a-form-item label="마감상태" label-align="left" class="mb-0">
                         <div class="mb-10">
-                            <checkbox-basic  label="입력중" class="mr-10 custom-checkbox1"
+                            <checkbox-basic label="입력중" class="mr-10 custom-checkbox1"
                                 v-model:valueCheckbox="statuses.checkbox1" />
-                            <checkbox-basic  label="입력마감" class="mr-10 custom-checkbox2"
+                            <checkbox-basic label="입력마감" class="mr-10 custom-checkbox2"
                                 v-model:valueCheckbox="statuses.checkbox2" />
                         </div>
                         <div>
-                            <checkbox-basic  label="조정중" class="mr-10 custom-checkbox3"
+                            <checkbox-basic label="조정중" class="mr-10 custom-checkbox3"
                                 v-model:valueCheckbox="statuses.checkbox3" />
-                            <checkbox-basic  label="조정마감" class="mr-10 custom-checkbox4"
+                            <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4"
                                 v-model:valueCheckbox="statuses.checkbox4" />
                         </div>
                     </a-form-item>
@@ -74,7 +82,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="출력 메일" cell-template="action" />
                     <template #action="{ data }">
@@ -107,14 +115,18 @@
                     <DxColumn caption="귀속연월" cell-template="imputed" />
                     <template #imputed="{ data }">
                         <div class="tag-custom-1">
-                            {{ data.data.imputedYear + "-" + data.data.imputedMonth }}
-                        </div>
+                            {{ data.data.imputedYear }}-{{
+                                data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
+                            }}
+                                </div>
                     </template>
                     <DxColumn caption="지급연월" cell-template="payment" />
                     <template #payment="{ data }">
                         <div class="tag-custom-2">
-                            {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
-                        </div>
+                            {{ data.data.paymentYear }}-{{
+                                data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
+                            }}
+                                </div>
                     </template>
                     <DxColumn caption="신고 주기" cell-template="reportType" />
                     <template #reportType="{ data }">
@@ -207,7 +219,7 @@ export default defineComponent({
         let dataSearch: any = reactive({
             "filter": {
                 "page": 1,
-                "rows": 10, 
+                "rows": 10,
                 "paymentYearMonth": parseInt(globalYear.value + "01"),
                 "reportType": null, //1 or 6
                 "regular": false,
@@ -335,12 +347,12 @@ export default defineComponent({
             checkbox3: true,
             checkbox4: true,
         })
-        let reportType = reactive({
+        let reportType = ref({
+            checkAllTypeFication: false,
             checkbox1: true,
             checkbox2: true,
             checkbox3: true,
         })
-        let checkAllTypeFication = ref(false)
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const modalStatus = ref(false)
@@ -388,50 +400,55 @@ export default defineComponent({
         /*
          * ============== WATCHING ============== 
          */
-
-        watch(() => checkAllTypeFication, (newVal: any) => {
-            dataSearch.filter.regular = newVal.value
-            dataSearch.filter.revised = newVal.value
-            dataSearch.filter.afterDeadline = newVal.value
-        }, { deep: true })
-        watch(() => globalYear, (newVal: any) => { 
+        watch(() => globalYear, (newVal: any) => {
             dataSearch.filter.paymentYearMonth = parseInt(newVal.value + "01")
             trigger.value = true
             refetchTable()
 
         }, { deep: true })
-        watch(() => [
-            dataSearch.filter.regular,
-            dataSearch.filter.revised,
-            dataSearch.filter.afterDeadline
-        ], ([val1, val2, val3]) => {
-            if (val1 == true && val2 == true && val3 == true)
-                checkAllTypeFication.value = true
+        watch(() => dataSearch.filter.regular, (val: any) => {
+            if (val == true && dataSearch.filter.revised == true && dataSearch.filter.afterDeadline == true)
+                reportType.value.checkAllTypeFication = true
             else
-                checkAllTypeFication.value = false
+                reportType.value.checkAllTypeFication = false
         }, { deep: true })
-        watch(() => reportType.checkbox1, (newVal: any) => {
-            reportType.checkbox2 = newVal
-            reportType.checkbox3 = newVal
-        }, { deep: true })
-        watch(() => reportType, (newVal: any) => {
-            if (newVal.checkbox2 == true && newVal.checkbox3 == true)
-                newVal.checkbox1 = true
+        watch(() => dataSearch.filter.revised, (val: any) => {
+            if (val == true && dataSearch.filter.regular == true && dataSearch.filter.afterDeadline == true)
+                reportType.value.checkAllTypeFication = true
             else
-                newVal.checkbox1 = false
+                reportType.value.checkAllTypeFication = false
+        }, { deep: true })
+        watch(() => dataSearch.filter.afterDeadline, (val: any) => {
+            if (val == true && dataSearch.filter.revised == true && dataSearch.filter.regular == true)
+                reportType.value.checkAllTypeFication = true
+            else
+                reportType.value.checkAllTypeFication = false
+        }, { deep: true })
+
+        watch(() => reportType.value.checkbox2, (val: any) => {
+            if (val == true && reportType.value.checkbox3 == true)
+                reportType.value.checkbox1 = true
+            else
+                reportType.value.checkbox1 = false
+        }, { deep: true })
+        watch(() => reportType.value.checkbox3, (val: any) => {
+            if (val == true && reportType.value.checkbox2 == true)
+                reportType.value.checkbox1 = true
+            else
+                reportType.value.checkbox1 = false
         }, { deep: true })
 
         /*
          * ============== FUNCTION ============== 
          */
-        const searching = () => { 
+        const searching = () => {
             // Import data to reportType (1, 6, null)
-            if (reportType.checkbox2 == true && reportType.checkbox3 == false)
+            if (reportType.value.checkbox2 == true && reportType.value.checkbox3 == false)
                 dataSearch.filter.reportType = 1
-            else if (reportType.checkbox3 == true && reportType.checkbox2 == false)
+            else if (reportType.value.checkbox3 == true && reportType.value.checkbox2 == false)
                 dataSearch.filter.reportType = 6
             else
-                dataSearch.filter.reportType = null 
+                dataSearch.filter.reportType = null
             // Add value to array statuses
             dataSearch.filter.statuses = []
             if (statuses.checkbox1 == true)
@@ -495,13 +512,23 @@ export default defineComponent({
             }
             modalSendEmail.value = true
         }
+
+        const checkAll1 = () => {
+            reportType.value.checkbox2 = reportType.value.checkbox1
+            reportType.value.checkbox3 = reportType.value.checkbox1
+        }
+        const checkAll2 = () => {
+            dataSearch.filter.regular = reportType.value.checkAllTypeFication
+            dataSearch.filter.revised = reportType.value.checkAllTypeFication
+            dataSearch.filter.afterDeadline = reportType.value.checkAllTypeFication
+        }
         return {
-            modalSendEmail, arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, checkAllTypeFication, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
-            searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
+            modalSendEmail, arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
+            checkAll1, checkAll2, searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
 })
 </script>
 <style scoped lang="scss" src="./style/style.scss">
 
-</style>
+</style> 
