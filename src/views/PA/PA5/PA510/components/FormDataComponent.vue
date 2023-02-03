@@ -427,11 +427,12 @@ export default defineComponent({
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
                 }, 100);
-            } else {
-
             }
         })
-
+        
+        watch(() => store.state.common.paymentDayCopy, (newVal) => {
+            dataIncomeWageDaily.value.paymentDay = newVal
+        })
         // ===================FUNCTION==================================
         const funcCheckPrice = (id: any) => {
             let price = 0

@@ -56,7 +56,7 @@ export default defineComponent({
         } = useMutation(mutations.requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile);
         onDoneTab2(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("sendActionSaveDone", false) 
         })
         onErrorTab2(e => {
             notification('error', e.message)

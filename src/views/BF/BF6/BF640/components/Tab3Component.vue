@@ -8,8 +8,8 @@
             </a-col>
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <a-range-picker v-model:value="rangeDate" width="200px"
-                        :placeholder="['Start', 'End']" /></a-form-item>
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
@@ -112,9 +112,8 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [2, -1]
             else
                 dataSearch.value.productionStatuses = [val]
-
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()
