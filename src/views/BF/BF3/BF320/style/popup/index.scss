@@ -28,10 +28,9 @@
 
 ::v-deep img {
   position: relative;
-  width: 100%;
+  width: 270px;
   height: 345px;
   margin-top: 20px;
-
 }
 
 .anticon {
@@ -43,7 +42,7 @@
 }
 
 .ant-row {
-  align-items: center;
+  align-items: flex-start;
 }
 
 .ant-form-item {
@@ -118,6 +117,11 @@
   justify-content: center;
   margin-top: 15px;
 }
-::v-deep .ant-form-item-label {
-  width: 150px;
+
+::v-deep label {
+  float: left;
 }
+
+// ::v-deep .ant-form-item-label {
+//   width: 120px !important;
+// }
