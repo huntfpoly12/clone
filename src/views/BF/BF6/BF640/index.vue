@@ -2,7 +2,7 @@
     <action-header title="계약정보관리&심사" @actionSearch="searching" />
     <div id="bf-640">
         <div class="page-content">
-            <a-tabs v-model:activeKey="activeKey" type="card" animated>
+            <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="근로소득">
                     <Tab1 :searchStep="searchStep1" />
                 </a-tab-pane>
