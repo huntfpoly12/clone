@@ -3,6 +3,8 @@ export default gql`
 query SearchIncomeWageSimplifiedPaymentStatementElectronicFilings($filter: ElectronicFilingIncomeWageSimplifiedPaymentStatementSearchFilter!) {
     searchIncomeWageSimplifiedPaymentStatementElectronicFilings(filter: $filter) {
       companyId
+      paymentYear
+      paymentHalfYear
       lastProductionRequestedAt 
       company {
         code
