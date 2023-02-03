@@ -40,7 +40,6 @@
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="string" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
-
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
                     <div style="text-align: center">
@@ -119,7 +118,6 @@ export default defineComponent({
                 refetchTable()
             }
         }, { deep: true })
-
         // ============== FUNCTION =====================
         const openPopupDetail = (data: any) => {
             modalDetail.value = true
@@ -134,7 +132,6 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>
 <style lang="scss" scoped>
 :deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
@@ -142,21 +139,17 @@ export default defineComponent({
     margin-top: -13px;
     margin-left: 3px;
 }
-
 :deep .dx-radiobutton-icon::before {
     border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
     width: 14px;
     height: 14px;
 }
-
 :deep .dx-radio-value-container {
     padding-right: 0px
 }
-
 :deep .dx-radiobutton {
     line-height: 18px;
 }
-
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
 }
