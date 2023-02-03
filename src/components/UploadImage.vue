@@ -264,4 +264,7 @@ export default defineComponent({
     text-align: left;
     border-radius: 5px;
 }
+.custom-flex {
+    margin-left: 0 !important;
+}
 </style>
