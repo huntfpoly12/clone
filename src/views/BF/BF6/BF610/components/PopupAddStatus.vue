@@ -8,24 +8,32 @@
                 <DxColumn caption="귀속연월" cell-template="imputedYear" />
                 <template #imputedYear="{ data }">
                     <span class="tag-custom-1">
-                        {{ data.data.imputedYear + "-" + data.data.imputedMonth }}
-                    </span>
+                        {{ data.data.imputedYear }}-{{
+                            data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
+                        }} </span>
                 </template>
                 <DxColumn caption="지급연월" cell-template="payment" />
                 <template #payment="{ data }">
                     <span class="tag-custom-2">
-                        {{ data.data.paymentYear + "-" + data.data.paymentMonth }}
-                    </span>
+                        {{ data.data.paymentYear }}-{{
+                            data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
+                        }} </span>
                 </template>
-                <DxColumn caption="소득종류" data-field="type" data-type="string" />
+                <DxColumn caption="소득종류" cell-template="type" />
+                <template #type="{ data }">
+                    {{ EmployeeType[data.data.type] }}
+                </template>
                 <DxColumn caption="총지급액" data-field="totalPayment" />
-                <DxColumn caption="인원" cell-template="인원" />
+                <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" />
                 <DxColumn caption="마감현황" cell-template="status" />
-                <template #status="{ data }"> 
+                <template #status="{ data }">
                     <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                         :dataRow="data.data" @dataRow="changeStatus" />
                 </template>
-                <DxColumn caption="마감일" cell-template="마감일" />
+                <DxColumn caption="마감일" cell-template="마감일"/>
+                <template #마감일="{ data }">
+                    <span v-if="data.data.status == 40">{{ dayjs(data.data.updatedAt).format("YYYY-MM-DD") }}</span>
+                </template>
             </DxDataGrid>
         </a-spin>
     </a-modal>
@@ -37,9 +45,11 @@ import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } fro
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
+import { EmployeeType } from "@bankda/jangbuda-common";
+import dayjs from "dayjs";
 export default defineComponent({
     components: {
-        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
+        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
     },
     props: {
         modalStatus: Boolean,
@@ -118,9 +128,11 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", true)
         }
+
+
         return {
-            dataSource, loadingTable, loadingChangeStatus,
-            setModalVisible, changeStatus,
+            dataSource, loadingTable, loadingChangeStatus, EmployeeType, dayjs,
+            setModalVisible, changeStatus
         }
     }
 })

@@ -109,7 +109,7 @@
 }}
                         </span>
                     </template>
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd"/>
                     <DxColumn caption="제작현황" cell-template="제작현황" />
                     <template #제작현황="{ data }">
                         <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
@@ -227,5 +227,4 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>
