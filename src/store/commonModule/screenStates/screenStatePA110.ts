@@ -15,6 +15,7 @@ const statesPA110 = {
   dataTaxPayInfo: [],
   statusChangeFormAdd: false,
   statusChangeFormEdit: false,
+  statusDisabledStatus: true,
 };
 
 export default statesPA110;

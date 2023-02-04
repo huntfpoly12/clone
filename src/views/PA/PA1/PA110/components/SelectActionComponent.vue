@@ -1,11 +1,11 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" />
-    <DxButton class="ml-3" icon="edit" @click="editItem" />
+    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
+    <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/>
     <DxButton @click="onSubmit($event)" size="large"
-        class="ml-4" :disabled="false">
+        class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
     </DxButton>
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
@@ -61,7 +61,7 @@
         :data="popupDataHistoryStatus" title="업무상태 변경이력" typeHistory="pa-status-110" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch, reactive } from "vue";
+import { defineComponent, ref, computed, watch, reactive, getCurrentInstance } from "vue";
 import DxButton from "devextreme-vue/button"
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import PrintPayrollRegisterPopup from "./Popup/PrintPayrollRegisterPopup.vue"
@@ -101,6 +101,8 @@ export default defineComponent({
         // actionAddItem: Boolean,
     },
     setup(props, { emit }) {
+        const app: any = getCurrentInstance();
+        const messages = app.appContext.config.globalProperties.$messages;
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const processKey = computed(() => store.state.common.processKeyPA110)
@@ -167,12 +169,12 @@ export default defineComponent({
             }
         }
         const editItem = (value: any) => {
-            if (props.dataRows.length == 1) {
+            if (props.dataRows.length) {
                 modalEdit.value = true;
-                popupDataEdit.value = props.dataRows[0]
+                popupDataEdit.value = props.dataRows
 
             } else {
-                notification('error', `항목을 하나 이상 선택해야합니다`)
+                notification('error', messages.getCommonMessage('404').message)
             }
         };
         const arrDropDownPayrollRegister = [
