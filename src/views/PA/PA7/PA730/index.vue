@@ -43,7 +43,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="onSelectionChanged">
-          <DxScrolling mode="standard" show-scrollbar="always"/>
+          <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
           <DxExport :enabled="true" :allow-export-selected-data="true" />
           <DxToolbar>
@@ -123,19 +123,19 @@
         <EmailGroupPopup :modalStatus="modalEmailGroup" :emailUserLogin="emailUserLogin"
           @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
-      <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
-        :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" />
+      <!-- <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
+        :title="'Warning'" :content="'항목을 1개 이상 선택해야합니다'" /> -->
     </div>
   </a-spin>
 </template>
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from 'vue';
+import { ref, defineComponent, reactive, watch, computed, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import notification from "@/utils/notification";
 import { useQuery } from '@vue/apollo-composable';
 import DxButton from 'devextreme-vue/button';
 import dayjs, { Dayjs } from 'dayjs';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling,DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem } from 'devextreme-vue/data-grid';
 import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
 import queries from '../../../../graphql/queries/PA/PA7/PA730/index';
 import EmailSinglePopup from './components/PA730PopupSendSingleEmail.vue';
@@ -160,6 +160,8 @@ export default defineComponent({
     EmailGroupPopup,
   },
   setup() {
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
     const valueSwitch = ref(true);
     const popupSingleData = ref({});
     const popupGroupData = ref({});
@@ -222,47 +224,34 @@ export default defineComponent({
       modalEmailSingle.value = false;
     };
     const actionOpenPopupEmailGroup = () => {
-      if (!isClickRow.value) {
-        popupMailGroup.value = true;
-        return;
+      if (dataSelect.value.length > 1) {
+        popupGroupData.value = {
+          companyId: companyId,
+          input: {
+            imputedYear: globalYear,
+            type: valueDefaultIncomeExtra.value.input.type,
+            receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
+          },
+          employeeInputs: dataSelect.value,
+        };
+        modalEmailGroup.value = true;
+      } else {
+        notification('error', messages.getCommonMessage('601').message)
       }
-      if (isOnlyEmployee.value) {
-        popupMailGroup.value = true;
-        return;
-      }
-      popupGroupData.value = {
-        companyId: companyId,
-        input: {
-          imputedYear: globalYear,
-          type: valueDefaultIncomeExtra.value.input.type,
-          receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
-        },
-        employeeInputs: dataSelect.value,
-      };
-      modalEmailGroup.value = true;
     };
-    //popupMailGroup
-    const isOnlyEmployee = ref<boolean>(false);
-    const popupMailGroup = ref<boolean>(false);
-    const isClickRow = ref<boolean>(false);
     const onSelectionChanged = (data: any) => {
-      isClickRow.value = true;
-      isOnlyEmployee.value = data.selectedRowKeys.length < 1;
-      if (!isOnlyEmployee.value) {
-        dataSelect.value = data.selectedRowKeys.map((val: any) => {
-          return {
-            senderName: sessionStorage.getItem('username'),
-            receiverName: val.employee.name,
-            receiverAddress: val.employee.email,
-            employeeId: val.employee.employeeId,
-            incomeTypeCode: val.employee.incomeTypeCode,
-          };
-        });
-        data.selectedRowKeys.value = dataSelect;
-      }
+      dataSelect.value = []
+      data.selectedRowKeys.forEach((data: any) => {
+        dataSelect.value.push({
+          senderName: sessionStorage.getItem('username'),
+          receiverName: data.employee.name,
+          receiverAddress: data.employee.email,
+          employeeId: data.employee.employeeId,
+          incomeTypeCode: data.employee.incomeTypeCode,
+        })
+      })
     };
     const onCloseEmailGroupModal = () => {
-      // dataSelect = ref<any>([]);
       modalEmailGroup.value = false;
     };
     watch(result, (value) => {
@@ -320,7 +309,7 @@ export default defineComponent({
       { deep: true }
     );
     const onPrintGroup = () => {
-      if (dataSelect.value.length) {
+      if (dataSelect.value.length > 1) {
         var array: any = [];
         dataSelect.value.map((val: any) => {
           array.push({
@@ -333,7 +322,7 @@ export default defineComponent({
         receiptReportViewUrlTrigger.value = true;
         refetchReceiptViewUrl();
       } else {
-        notification('error', '항목을 최소 하나 이상 선택해야합니다')
+        notification('error', messages.getCommonMessage('601').message)
       }
     };
     // group mail
@@ -375,14 +364,14 @@ export default defineComponent({
       onSelectionChanged,
       onPrint, onPrintGroup,
       emailUserLogin,
-      isOnlyEmployee,
-      popupMailGroup,
       receiptReportViewUrlParam,
       customTextSummary,
     };
   },
 });
 </script>
+
+
 
 
 

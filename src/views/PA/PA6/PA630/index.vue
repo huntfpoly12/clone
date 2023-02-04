@@ -246,7 +246,7 @@ export default defineComponent({
         }
 
         const actionOpenPopupEmailMulti = () => {
-            if (dataSelect.value.length) {
+            if (dataSelect.value.length > 1) {
                 popupDataEmailMulti.value = {
                     companyId: companyId,
                     input: {
@@ -262,7 +262,7 @@ export default defineComponent({
             }
         }
         const onPrintGroup = () => {
-            if (dataSelect.value.length) {
+            if (dataSelect.value.length > 1) {
                 var array: any = [];
                 dataSelect.value.map((val: any) => {
                     array.push({
