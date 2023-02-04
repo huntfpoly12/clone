@@ -8,7 +8,7 @@
                     <!-- <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" /> -->
                 </div>
                 <div class="month-custom-2 d-flex-center">
-                    지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
+                    <span>지</span> <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
                 </div>
             </div>
         </a-form-item>
@@ -32,7 +32,8 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지 {{ data.paymentYear }}-{{ data.paymentMonth
+                        귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지 {{ data.paymentYear }}-{{
+                            data.paymentMonth
                         }}
                         <DxTextBox style="display: none;" />
                     </span>
@@ -65,8 +66,9 @@ import { companyId } from "@/helpers/commonFunction"
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
 import notification from "@/utils/notification";
-import { useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import queries from "@/graphql/queries/PA/PA1/PA110/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -94,24 +96,38 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA110)
         const globalYear = computed(() => store.state.settings.globalYear)
         const month: any = ref<number>()
+        const month2: any = ref<number>()
+        const modalCopy = ref(false)
+        const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
+        const trigger = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
-        let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
-        if (props.dateType == 2 && props.data) {
-          yearMonth = `${processKey.value.paymentYear}${props.data + 1}`;
-        }
-        if (props.dateType == 1) {
-          yearMonth = `${processKey.value.paymentYear}${props.data}`;
-        }
-        month2.value = yearMonth;
+            trigger.value = true
+        });
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig } = useQuery(
+            queries.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                enabled: trigger.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig, (value) => {
+            let paymentMonth = month.value
+            if (value) {
+                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                if (value.getWithholdingConfig.paymentType == 2) {
+                    paymentMonth = month.value + 1
+                }
+            }
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            trigger.value = false;
         });
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value
         };
-        const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
-        const modalCopy = ref(false)
-        const paymentDayCopy = ref()
 
         const {
             mutate,
@@ -139,13 +155,13 @@ export default defineComponent({
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
-                paymentYear: parseInt(month2.value.toString().slice(0,4)),
-                paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             store.state.common.processKeyPA110.imputedYear = globalYear.value
             store.state.common.processKeyPA110.imputedMonth = month.value
-            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0,4))
-            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4,6))
+            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("closePopup", false)
         };
 
@@ -163,11 +179,11 @@ export default defineComponent({
                     target: {
                         imputedYear: processKey.value.imputedYear,
                         imputedMonth: month.value,
-                        paymentYear: parseInt(month2.value.toString().slice(0,4)),
-                        paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+                        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
                     },
                 })
-                
+
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
@@ -231,6 +247,7 @@ export default defineComponent({
     margin-right: 10px;
     color: white;
     font-size: 16px;
+
     .dp__input {
         color: white;
         padding: 0px;
