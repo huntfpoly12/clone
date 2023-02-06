@@ -95,7 +95,7 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import { DxButton } from 'devextreme-vue/select-box';
-import DxDataGrid, { DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
+import  { DxDataGrid,DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import DxRadioGroup from 'devextreme-vue/radio-group';
@@ -236,6 +236,7 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 @import '../style/style.scss';
+</style>
 ::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
   background: v-bind('styleCheckBox.ColorCheckBox');
   margin-top: -13px;
