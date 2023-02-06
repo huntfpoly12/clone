@@ -230,10 +230,10 @@ export default defineComponent({
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
-                labelResident.value = '주민등록번호'
+                labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
             } else {
-                labelResident.value = '외국인번호 유효성'
+                labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
@@ -275,11 +275,13 @@ export default defineComponent({
             }
         }
         const statusComfirm = (res: any) => {
-            if (res == true)
-                document.getElementById('action-update')?.click()
+          if (res == true) {
+            document.getElementById('action-update')?.click()
             originDataDetail.value.employeeId = props.idRowEdit
             refetchValueDetail()
             indexChange.value = 1
+          }
+        
         }
         return {
             modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,

@@ -27,7 +27,6 @@
                         v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance" />
                 </a-form-item>
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
-                    {{ originDataUpdate.input.nationalPensionSupportPercent }} -------
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport" />

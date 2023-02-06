@@ -1,43 +1,40 @@
 <template>
-    <action-header title="일용직사원등록" @actionSave="actionSaveFunc" />
+    <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
     <div id="pa-520" class="page-content">
         <a-row>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="total-user">
-                    <div>
-                        <span>{{ dataSource.length }}</span>
-                        <br>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="current-user">
-                    <div>
-                        <span>{{ totalUserOnl }}</span>
-                        <br>
-                        <span>재직</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
-            <a-col :span="3" style="padding-right: 10px">
-                <div class="leave-user">
-                    <div>
-                        <span>{{ totalUserOff }}</span>
-                        <br>
-                        <span>퇴사</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" alt="" style="width: 70px">
-                    </div>
-                </div>
-            </a-col>
+          <a-col :span="3" style="padding-right: 10px">
+            <div class="total-user">
+              <div>
+                <span>{{ dataSource.length }}</span>
+                <span>전체</span>
+              </div>
+              <div>
+                <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
+              </div>
+            </div>
+          </a-col>
+          <a-col :span="3" style="padding-right: 10px">
+            <div class="current-user">
+              <div>
+                <span>{{ totalUserOnl }}</span>
+                <span>재직</span>
+              </div>
+              <div>
+                <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
+              </div>
+            </div>
+          </a-col>
+          <a-col :span="3" style="padding-right: 10px">
+            <div class="leave-user">
+              <div>
+                <span>{{ totalUserOff }}</span>
+                <span>퇴사</span>
+              </div>
+              <div>
+                <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
+              </div>
+            </div>
+          </a-col>
         </a-row>
         <a-row>
             <a-col :span="13" class="custom-layout">
@@ -125,7 +122,7 @@
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+        content="변경 내용을 저장하시겠습니까?xx" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
         content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
@@ -310,10 +307,12 @@ export default defineComponent({
         }
         // A function that is called when the user clicks on the save button.
         const statusComfirmSave = (res: any) => {
-            if (res == true)
-                actionSaveFunc()
+          if (res == true) {
+            actionSaveFunc()
             store.state.common.idRowChangePa520 = dataChange.value
             idRowEdit.value = dataChange.value
+          }
+
         }
 
         const confirmSaveAdd = (res: any) => {
