@@ -17,7 +17,6 @@
                 </a-col>
             </a-row>
             <a-row :gutter="16" :spinning="loadingGetEmployeeWage">
-
                 <a-col :span="14">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
@@ -113,15 +112,15 @@
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
                                 <span>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" subName="과세" />
+                                        :name="item.name" :type="1" subName="과세" :width="'130px'" />
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" />
+                                        :name="item.name" :type="2" subName="상여(과세)" :width="'130px'" />
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" :width="'130px'" />
                                     <deduction-items
                                         v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :type="4" subName="과세" />
+                                        :name="item.name" :type="4" subName="과세" :width="'130px'" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
@@ -146,7 +145,7 @@
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3"
                                         :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
-                                    <deduction-items :name="item.name" :type="4" subName="과세" />
+                                    <deduction-items :name="item.name" :width="'130px'" :type="4" subName="과세" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
@@ -447,8 +446,20 @@ export default defineComponent({
                 store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1] = dataIW.value
                 store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
             }
-
         }, { deep: true })
+        watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
+            arrayEmploySelect.value = []
+            if (store.state.common.actionAddItem) {
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        arrayEmploySelect.value.push(dataEmployee)
+                    }
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
+            }
+        })
+        
         watch(() => store.state.common.actionSubmit, () => {
             submitForm();
         })
@@ -535,6 +546,12 @@ export default defineComponent({
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
             
         })
+        watch(() => store.state.common.paymentDayCopy, (newVal) => {
+            setTimeout(() =>{
+                dataIW.value.paymentDay = newVal
+            }, 1000)
+        })
+        // ======================= FUNCTION ================================
         //  Calculate Pension Employee 
         const calculateTax = () => {
             dataIW.value.payItems = dataConfigPayItems.value?.map((item: any) => {
@@ -562,6 +579,7 @@ export default defineComponent({
             dataIW.value.totalDeduction = dataConfigDeductions.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
             }, 0);
+            dataIW.value.subPayment = dataIW.value.totalPayItem - dataIW.value.totalDeduction
         }
         const submitForm = () => {
             const variables: any = {
@@ -611,8 +629,6 @@ export default defineComponent({
             modalDeductions.value = true
         }
         const updateDataDeduction = () => {
-            console.log(dataIW.value.deductionItems);
-            
             dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew

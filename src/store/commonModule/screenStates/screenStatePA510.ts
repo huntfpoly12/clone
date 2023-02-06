@@ -19,6 +19,7 @@ const statesPA510 = {
     actionSubmit: 0,
     paymentDayCopy: 1,
     statusDisabledStatus: true,
+    resetArrayEmploySelect: 1,
 };
   
 export default statesPA510;

@@ -1,5 +1,5 @@
 <template>
-    <a-tooltip  color="black" placement="top" key="black" @visibleChange="visibleChange">
+    <a-tooltip color="black" placement="top" key="black" @visibleChange="visibleChange">
         <template #title>
             <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
                 v-model:valueRadioCheck="value" layoutCustom="horizontal" />
@@ -12,8 +12,8 @@
             </div>
         </template>
         <div v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="100" :height="height" :text="item.text" :class="item.class"
-                class="buttonModal" @onClick="clickButton" />
+            <button-basic v-if="(currentBt == item.id)" :width="100" :height="height" :text="item.text"
+                :class="item.class" class="buttonModal" @onClick="clickButton" />
         </div>
     </a-tooltip>
 </template>
@@ -79,11 +79,11 @@ export default defineComponent({
             currentBt,
             arrayRadioUser,
             arrayRadioManager,
+            showModal,
+            userType,
             setModalVisible,
             clickButton, visibleChange,
-            showModal,
             submit,
-            userType
         }
     },
 });

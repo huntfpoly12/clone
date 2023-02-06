@@ -54,6 +54,7 @@ export default defineComponent({
                 } else {
                     e.rowElement.style.color = 'red';
                 }
+                e.cells[0].cellElement.style.color = 'black';
             }
         }
 

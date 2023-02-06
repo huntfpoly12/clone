@@ -163,7 +163,7 @@ export default defineComponent({
           imputedYear: dayjs().year(),
       }
     )
-    const dataSource = ref([])
+    const dataSource = ref<any>([])
     // ============ GRAPQL ===============================
     const {
         result:  resIncomeWagePayment,
@@ -200,9 +200,9 @@ export default defineComponent({
     onResIncomeWagePayment(() => {
       trigger.value = false
     })
-    watch(resIncomeWagePayment, (value) => {
+    watch(resIncomeWagePayment, (value : any) => {
       if (value) {
-        dataSource.value = value.searchIncomeWagePaymentStatementElectronicFilings
+        dataSource.value = [value.searchIncomeWagePaymentStatementElectronicFilings[0]]
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)

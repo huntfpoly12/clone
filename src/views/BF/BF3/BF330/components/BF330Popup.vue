@@ -124,7 +124,7 @@
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
-                                                <a-form-item label="정원수" class="red">
+                                                <a-form-item label="정원수 (명)" class="red">
                                                     <number-box style="float:right" :width="150" :required="true"
                                                         v-model:valueInput="dataActiveRow.capacity" />
                                                 </a-form-item>

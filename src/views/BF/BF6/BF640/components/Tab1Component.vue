@@ -110,10 +110,11 @@
 }}
                         </span>
                     </template>
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
+                        format="yyyy-MM-dd" />
                     <DxColumn caption="제작현황" cell-template="제작현황" />
                     <template #제작현황="{ data }">
-                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data"/>
+                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
                     </template>
                     <DxSummary>
                         <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -124,7 +125,6 @@
         </div>
         <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
-
     </div>
 </template>
 <script lang="ts">
@@ -197,7 +197,7 @@ export default defineComponent({
         })
         errorTable((error: any) => {
             notification('error', error.message)
-        }) 
+        })
         // ================== FUNCTION ================== 
         const openModalSave = () => {
             modalConfirmMail.value = true
@@ -245,5 +245,4 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>
