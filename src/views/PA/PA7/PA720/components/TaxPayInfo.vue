@@ -1,5 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
+    {{ focusedRowKey }} 
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
@@ -116,9 +117,7 @@ export default defineComponent({
     let dataSourceDetail = ref([]);
     const triggerDetail = ref<boolean>(false);
     const store = useStore();
-    const per_page = computed(() => store.state.settings.per_page);
-    const move_column = computed(() => store.state.settings.move_column);
-    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    const { per_page, move_column, colomn_resize } = store.state.settings;
     const rowTable = ref(0);
     let updateParam = reactive<any>({});
     let dataAction: any = reactive({
