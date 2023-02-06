@@ -1,0 +1,8 @@
+import getElectronicFilingsByIncomeWageDailyPaymentStatement from "./getElectronicFilingsByIncomeWageDailyPaymentStatement"
+import searchIncomeWageDailyPaymentStatementElectronicFilings from "./searchIncomeWageDailyPaymentStatementElectronicFilings"
+const queries = {
+    getElectronicFilingsByIncomeWageDailyPaymentStatement: getElectronicFilingsByIncomeWageDailyPaymentStatement,
+    searchIncomeWageDailyPaymentStatementElectronicFilings: searchIncomeWageDailyPaymentStatementElectronicFilings
+};
+
+export default queries;

@@ -24,7 +24,7 @@ export default [
   { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620" },
   { name: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-630", id: "bf-630" },
   { name: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
-  { name: "일용직근로소득지급명세서전자신고", url: "#", id: "bf-650" },
+  { name: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-650", id: "bf-650" },
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
   { name: "회계설정", url: "#", id: "cm-120" },
   { name: "통장관리", url: "#", id: "cm-121" },
