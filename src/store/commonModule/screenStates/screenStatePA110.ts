@@ -15,7 +15,9 @@ const statesPA110 = {
   dataTaxPayInfo: [],
   statusChangeFormAdd: false,
   statusChangeFormEdit: false,
+  paymentDayCopy: 1,
   statusDisabledStatus: true,
+  resetArrayEmploySelect: 1,
 };
 
 export default statesPA110;

@@ -437,7 +437,8 @@ export default defineComponent({
         watch(resultTaxPayInfo, (value) => {
             IncomeWageDailiesTrigger.value = false;
             store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
-            if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
+            // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
+            if (value.getIncomeWageDailies[0]) { // if have data
                 if (store.state.common.employeeId && value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
                     store.state.common.focusedRowKey = store.state.common.employeeId
                     store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
@@ -446,12 +447,14 @@ export default defineComponent({
                     store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
                     store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
                 }
+                store.state.common.actionAddItem = false
             } else {
                 store.state.common.actionAddItem = true
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
                 store.state.common.employeeId = null;
             }
+            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             refetchData() //reset data table 1
@@ -512,6 +515,7 @@ export default defineComponent({
             store.state.common.processKeyPA510.paymentYear = data.paymentYear
             store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
             statusDisabledBlock.value = false;
+            store.state.common.statusRowAdd = true;
         }
         const statusComfirmChange = (res: any) => {
             if (res) {

@@ -169,11 +169,11 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', ` 완료!`)
-            store.state.common.loadingTableInfo++
+            notification('success', `완료!`)
             store.state.common.processKeyPA510.imputedMonth = month.value
-            store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
-            store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
+            store.state.common.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.loadingTableInfo++
         })
 
         const setModalVisible = () => {
@@ -195,6 +195,7 @@ export default defineComponent({
             })
             emit("closePopup", false)
             store.state.common.paymentDayCopy = paymentDayCopy.value
+            store.state.common.resetArrayEmploySelect++
         };
 
         const openModalCopy = () => {
