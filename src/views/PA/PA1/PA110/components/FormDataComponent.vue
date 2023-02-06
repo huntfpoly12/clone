@@ -17,7 +17,6 @@
                 </a-col>
             </a-row>
             <a-row :gutter="16" :spinning="loadingGetEmployeeWage">
-
                 <a-col :span="14">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
@@ -447,8 +446,20 @@ export default defineComponent({
                 store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1] = dataIW.value
                 store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
             }
-
         }, { deep: true })
+        watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
+            arrayEmploySelect.value = []
+            if (store.state.common.actionAddItem) {
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        arrayEmploySelect.value.push(dataEmployee)
+                    }
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
+            }
+        })
+        
         watch(() => store.state.common.actionSubmit, () => {
             submitForm();
         })
@@ -535,6 +546,12 @@ export default defineComponent({
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
             
         })
+        watch(() => store.state.common.paymentDayCopy, (newVal) => {
+            setTimeout(() =>{
+                dataIW.value.paymentDay = newVal
+            }, 1000)
+        })
+        // ======================= FUNCTION ================================
         //  Calculate Pension Employee 
         const calculateTax = () => {
             dataIW.value.payItems = dataConfigPayItems.value?.map((item: any) => {
@@ -612,8 +629,6 @@ export default defineComponent({
             modalDeductions.value = true
         }
         const updateDataDeduction = () => {
-            console.log(dataIW.value.deductionItems);
-            
             dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew

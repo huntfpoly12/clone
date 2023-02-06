@@ -324,7 +324,6 @@ export default defineComponent({
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
-
                 })
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
@@ -349,7 +348,7 @@ export default defineComponent({
                 store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
             }
         }, { deep: true })
-        watch(() => store.state.common.incomeId, (value) => {
+        watch(() => store.state.common.incomeId, (value) => {      
             if (value) {
                 originDataIncomeWageDaily.value.incomeId = store.state.common.incomeId
                 triggerIncomeWageDaily.value = true;
@@ -431,8 +430,23 @@ export default defineComponent({
         })
         
         watch(() => store.state.common.paymentDayCopy, (newVal) => {
-            dataIncomeWageDaily.value.paymentDay = newVal
+            setTimeout(() =>{
+                dataIncomeWageDaily.value.paymentDay = newVal
+            }, 1000)
         })
+        watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
+            arrayEmploySelect.value = []
+            if (store.state.common.actionAddItem) {
+                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                        arrayEmploySelect.value.push(dataEmployee)
+                    }
+                })
+            } else {
+                arrayEmploySelect.value = dataEmployeeWageDailies.value
+            }
+        })
+        
         // ===================FUNCTION==================================
         const funcCheckPrice = (id: any) => {
             let price = 0
