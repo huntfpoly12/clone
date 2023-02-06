@@ -5,60 +5,66 @@
       <a-row :gutter="16" class="mb-7">
         <a-col span="24" style="display: flex; flex-wrap: wrap;">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
-            <checkbox-basic  label="국민연금" class="check-box-tab1"
-              v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
-            <checkbox-basic  label="건강보험" class="check-box-tab1"
-              v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
+            <span class="check-box-tab1">
+                <checkbox-basic  label="국민연금"
+                v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
+            </span>
+            <span class="check-box-tab1">
+                <checkbox-basic  label="건강보험" class="check-box-tab1"
+                v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
+            </span>
+            <span class="check-box-tab1 mb-4 ml-15">
+                <checkbox-basic class="" size="18px" label="고용보험"
+                v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction" :disabled="presidentPA120"></checkbox-basic>
+            </span>
+            
+            <p class="text-note mt-7 ml-7">
+                <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
+                본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+            </p>
           </a-form-item>
-          <checkbox-basic class="mb-4 ml-15" size="18px" label="고용보험"
-            v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction" :disabled="presidentPA120"></checkbox-basic>
-
-          <p class="text-note mt-7 ml-7">
-            <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
-            본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
-          </p>
         </a-col>
-        <a-col :span="12">
-          <div class="header-text-4 d-flex">
-            <a-col :span="13">
+        <a-col :span="11">
+          <div class="header-text-4 d-flex" style="justify-content: space-around;">
+            <a-col :span="12">
               두루누리사회보험 공제
             </a-col>
-            <a-col :span="11" class="switch-bg">
+            <a-col :span="12" class="switch-bg">
               공제 여부:
-              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance ml-20"
+              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
                 v-model:valueSwitch="formStateTab2.insuranceSupport" @onChange="onChangeSwitch1"></switch-basic>
 
             </a-col>
           </div>
-          <a-row :gutter="[0, 10]">
+          <a-row :gutter="[0, 10]" >
 
-            <a-col span="10"> 국민연금 적용율: </a-col>
+            <a-col span="7"> 국민연금 적용율: </a-col>
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal"
                 :disabled="!formStateTab2.insuranceSupport"></radio-group>
             </a-col>
-            <a-col span="10"> 고용보험 적용율: </a-col>
+            <a-col span="7"> 고용보험 적용율: </a-col>
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal"
                 :disabled="!formStateTab2.insuranceSupport"></radio-group>
             </a-col>
-            <a-col span="10"><span class="header-text-4"> 소득세 적용율: </span></a-col>
-            <a-col span="14" class="income-tax-app-rate">
+            <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
+            <a-col span="17" class="income-tax-app-rate">
               <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification"
                 layoutCustom="horizontal"></radio-group>
             </a-col>
           </a-row>
         </a-col>
-        <a-col :span="12">
-          <div class="header-text-4 d-flex">
+        <a-col :span="13">
+          <div class="header-text-4 d-flex"  style="justify-content: space-around;">
             <a-col :span="13">
               중소기업취업 감면
             </a-col>
-            <a-col :span="11" class="switch-bg">
+            <a-col :span="10" class="switch-bg">
               감면 여부:
-              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance ml-19"
+              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
                 v-model:valueSwitch="formStateTab2.employeementReduction" @onChange="onChangeSwitch2"></switch-basic>
 
             </a-col>
@@ -69,20 +75,20 @@
               <span class="text-note">15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년
                 5년간) 근로소득세 70%(청년 90%, 150만원 한도) 감면</span>
             </a-col>
-            <a-col span="10"> 감면기간: </a-col>
-            <a-col span="12">{{ rangeDate }}
+            <a-col span="7"> 감면기간: </a-col>
+            <a-col span="15">
               <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate"
                 :disabled="!formStateTab2.employeementReduction">
               </date-time-box>
             </a-col>
-            <a-col span="10"> 감면율: </a-col>
-            <a-col span="12">
+            <a-col span="7"> 감면율: </a-col>
+            <a-col span="15">
               <radio-group :arrayValue="radioCheckReductioRate"
                 v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal"
                 :disabled="!formStateTab2.employeementReduction"></radio-group>
             </a-col>
-            <a-col span="10"> 감면입력: </a-col>
-            <a-col span="12">
+            <a-col span="7"> 감면입력: </a-col>
+            <a-col span="15">
               <radio-group :arrayValue="radioCheckReductionInput"
                 v-model:valueRadioCheck="formStateTab2.employeementReductionInput" layoutCustom="horizontal"
                 :disabled="!formStateTab2.employeementReduction"></radio-group>
@@ -99,30 +105,30 @@
         </span>
       </div>
       <a-row :gutter="16">
-        <a-col :span="8">
+        <a-col style="flex: 0 0 28%;">
           <div class="header-text-2">요약</div>
           <div class="summary">
-            <a-col :span="14">소득수당 합계:</a-col>
-            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{
+            <a-col :span="13">소득수당 합계:</a-col>
+            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
               $filters.formatCurrency(totalPayItem)
             }}</span> 원</a-col>
-            <a-col :span="14">수당 과세 합계:</a-col>
-            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{
+            <a-col :span="13">수당 과세 합계:</a-col>
+            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
               $filters.formatCurrency(totalPayItemTax)
             }}</span> 원</a-col>
-            <a-col :span="14">수당 비과세 합계:</a-col>
-            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{
+            <a-col :span="13">수당 비과세 합계:</a-col>
+            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
               $filters.formatCurrency(totalPayItemTaxFree)
             }}</span> 원</a-col>
-            <a-col :span="14">공제 합계:</a-col>
-            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{
+            <a-col :span="13">공제 합계:</a-col>
+            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
               $filters.formatCurrency(totalDeduction)
             }}</span> 원</a-col>
-            <a-col :span="14">차인지급액:</a-col>
-            <a-col :span="10" style="display: inline-flex; justify-content: flex-end;"><span>{{
+            <a-col :span="13">차인지급액:</a-col>
+            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
               $filters.formatCurrency(subPayment)
             }}</span> 원</a-col>
-            <div class="text5 pl-8">
+            <div class="text5">
               <span>
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
                 <p>차인지급액 = 수당 합계 - 공제 합계</p>
@@ -130,7 +136,7 @@
             </div>
           </div>
         </a-col>
-        <a-col :span="8" style="display: flex;flex-direction: column;">
+        <a-col class="col-2" style="display: flex;flex-direction: column;">
           <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세</div>
           <a-spin :spinning="loading1" size="large" style="height: 100%;">
             <div class="deduction-main">
@@ -154,7 +160,7 @@
             </div>
           </a-spin>
         </a-col>
-        <a-col :span="8">
+        <a-col class="col-3">
           <div class="header-text-2">공제 항목 <span style="float: right;">{{ $filters.formatCurrency(totalDeduction) }} 원</span></div>
           <a-spin :spinning="loading1 || loading3" size="large">
             <div class="deduction-main">
@@ -614,7 +620,8 @@ export default defineComponent({
       dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
-      presidentPA120
+      presidentPA120,
+      dependentCount
     };
   },
 });
@@ -687,7 +694,8 @@ export default defineComponent({
     display: flex;
 
     .check-box-tab1 {
-      margin-left: 20px;
+      display: inline;
+      margin-left: 10px;
     }
   }
 
@@ -700,6 +708,7 @@ export default defineComponent({
 
   .switch-insurance {
     width: 100px;
+    float: right;
   }
 
   .empl-ins {
@@ -723,7 +732,7 @@ export default defineComponent({
 
   .income-tax-app-rate {
     ::v-deep .dx-radiobutton {
-      margin-right: 13%;
+        margin-right: 12%;
     }
   }
 
@@ -752,7 +761,7 @@ export default defineComponent({
 
     >span {
       margin-right: 10px;
-      min-width: 117px;
+      min-width: 100px;
     }
 
     >div {
@@ -782,6 +791,10 @@ export default defineComponent({
     display: flex;
     flex-wrap: wrap;
     row-gap: 4px;
+    justify-content: space-between;
+    :deep .ant-col{
+        padding: 0 !important;
+    }
 
     div {
       margin-bottom: 5px;
@@ -796,7 +809,7 @@ export default defineComponent({
         display: flex;
 
         p {
-          margin-left: 10px;
+          margin-left: 3px;
           font-size: 12px;
         }
       }
@@ -805,7 +818,7 @@ export default defineComponent({
 
   .text-note {
     font-size: 11px;
-
+    display: inline;
     &p {
       margin-bottom: 0;
       margin-top: 7px;
@@ -813,6 +826,18 @@ export default defineComponent({
 
     // margin-left: 5px;
     // margin-bottom: 0px;
+  }
+  :deep .col-2 {
+    flex: 1 1 30%;
+    .dx-numberbox {
+        width: 111px !important;
+    }
+    .deducation-name {
+        width: 50px !important;
+    }
+  }
+  :deep .col-3{
+    flex: 1 1 35%;
   }
 }
 </style>

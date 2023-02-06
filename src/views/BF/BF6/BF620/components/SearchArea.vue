@@ -7,7 +7,7 @@
           <div class="search-date">
             <div class="month-custom d-flex-center">
               귀
-              <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
+              <month-picker-box v-model:valueDate="month1" style="width:60px" class="mr-5 ml-5" />
             </div>
           </div>
           <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10">
@@ -21,7 +21,7 @@
           <div class="search-date">
             <div class="month-custom month-black d-flex-center">
               지
-              <month-picker-box v-model:valueDate="month2" width="65px" class="mr-5 ml-5" />
+              <month-picker-box v-model:valueDate="month2" style="width:60px" class="mr-5 ml-5" />
             </div>
           </div>
           <a-form-item label="내/외국인" label-align="right" class=" ml-10">
@@ -36,7 +36,7 @@
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
             <div class="mt-5">
               <div class="production-check">
-                <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox" v-model:valueCheckbox="filterBF620.productionStatuses" :size="'14'"> </CheckboxGroup>
+                <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox" v-model:valueCheckbox="filterBF620.productionStatuses" :size="18"> </CheckboxGroup>
               </div>
             </div>
           </a-form-item>

@@ -102,7 +102,7 @@
                 <a-row class="mt-15">
                     <a-col :span="8" :offset="8" style="text-align: center">
                         <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit"
-                            @onClick="actionUpdated()" />
+                            @onClick="actionUpdated" />
                     </a-col>
                 </a-row>
             </standard-form>
@@ -139,7 +139,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
-        const isRefreshDataEditPA120 = computed(() => store.state.common.isRefreshDataEditPA120);
         let isForeigner = ref(false);
         const triggerDepartments = ref(true);
         const arrDepartments = ref([]);
@@ -239,7 +238,6 @@ export default defineComponent({
         }));
         watch(getValueDefault, (value: any) => {
             console.log(`output-`)
-            // if(isRefreshDataEditPA120.value) {
                 let data = value.getEmployeeWage;
                 let editRowData: any = {};
                 editRowData.name = data.name;
@@ -306,7 +304,7 @@ export default defineComponent({
         //   }
         // },{deep:true})
 
-        const actionUpdated = () => {
+        const actionUpdated = (e: any) => {
             // arrDataEdit.forEach(rowData => {
             //   let newValDataEdit = {
             //       ...rowData,
@@ -325,16 +323,21 @@ export default defineComponent({
             // })
             // console.log(`output->arrDataEdit`,arrDataEdit)
             //   delete formStateTab1.input.employeeId;
-            let editData = initFormStateTabPA120.value;
-            delete editData.employeeId
-            let dataCallCreat = {
-                ...originDataDetail.value,
-                input: {
-                    ...editData,
-                    residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
-                },
-            };
-            mutate(dataCallCreat);
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let editData = initFormStateTabPA120.value;
+                delete editData.employeeId
+                let dataCallCreat = {
+                    ...originDataDetail.value,
+                    input: {
+                        ...editData,
+                        residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
+                    },
+                };
+                mutate(dataCallCreat);
+            }
         };
         // convert initFormStateTabPA120.value.name to uppercase
         watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
@@ -359,9 +362,6 @@ export default defineComponent({
         store.commit('common/presidentPA120', initFormStateTabPA120.value.president);
         watch(()=> initFormStateTabPA120.value.president, (newValue) => {
             store.commit('common/presidentPA120', newValue);
-        },{deep: true})
-        watch(()=>isRefreshDataEditPA120, (newVal) => {
-            refetchValueDetail();
         },{deep: true})
         return {
             loading,
