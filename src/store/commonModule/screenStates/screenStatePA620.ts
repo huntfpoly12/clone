@@ -11,6 +11,7 @@ const statesPA620 = {
         activeRowAdd: false, 
         incomeIdStore : 0
     },
+    paymentDayPA620:1,
 };
 
 export default statesPA620;
