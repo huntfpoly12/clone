@@ -4,12 +4,16 @@
         <div class="search-form">
             <a-row :gutter="[24, 8]">
                 <a-col>
+                    <!-- <a-form-item label="귀속연월" label-align="left" class="clr mb-0 label-select">
+                        <imputed-year-month-select-box :dataSelect="arraySelectBox" width="150px" :required="true"
+                            v-model:valueInput="dataSearch.filter.imputedYearMonth" type="1" />
+                    </a-form-item> -->
                     <a-form-item label="지급연월" label-align="left" class="clr mb-0 label-select">
                         <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
                             v-model:valueInput="dataSearch.filter.paymentYearMonth" type="2" />
                     </a-form-item>
-                    <a-form-item label="" label-align="left" class="clr mb-0 label-select">
-                    </a-form-item>
+                    <!-- <a-form-item label="" label-align="left" class="clr mb-0 label-select">
+                    </a-form-item> -->
                 </a-col>
                 <a-col>
                     <a-form-item label="신고주기" label-align="left" class="mb-0">
@@ -21,8 +25,8 @@
                             <div>
                                 <checkbox-basic label="정기" v-model:valueCheckbox="reportType.checkbox2" />
                                 <checkbox-basic label="반기" v-model:valueCheckbox="reportType.checkbox3" />
-                            </div>
                         </div>
+                    </div>
                     </a-form-item>
                     <a-form-item label="신고구분" label-align="left" class="mb-0">
                         <div class=" d-flex-center">
@@ -63,11 +67,11 @@
                 </a-col>
                 <a-col>
                     <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
-                        <list-manager-dropdown :arrSelect="arraySelectBox"
+                        <list-manager-dropdown
                             v-model:valueInput="dataSearch.filter.manageUserId" width="150px" />
                     </a-form-item>
                     <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
-                        <list-sales-dropdown :arrSelect="arraySelectBox"
+                        <list-sales-dropdown
                             v-model:valueInput="dataSearch.filter.salesRepresentativeId" width="150px" />
                     </a-form-item>
                 </a-col>
@@ -146,39 +150,39 @@
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
                     <template #yearEndTaxAdjustment="{ data }">
-                        {{ data.data.yearEndTaxAdjustment == false ? '' : 'o' }}
+                        {{ data.data.yearEndTaxAdjustment == false ? '' : '어' }}
                     </template>
                     <DxColumn caption="환급" cell-template="refund" />
                     <template #refund="{ data }">
-                        {{ data.data.refund == false ? '' : 'o' }}
+                        {{ data.data.refund == false ? '' : '어' }}
                     </template>
                     <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" />
                     <template #wageIncomeSimplified="{ data }">
-                        {{ data.data.wageIncomeSimplified == 0 ? '' : 'o' }}
+                        {{ data.data.wageIncomeSimplified == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" />
                     <template #yearEndAdjustmentRetirement="{ data }">
-                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'o' }}
+                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="근로 일용" cell-template="dailyWageIncome" />
                     <template #dailyWageIncome="{ data }">
-                        {{ data.data.dailyWageIncome == 0 ? '' : 'o' }}
+                        {{ data.data.dailyWageIncome == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" />
                     <template #yearEndAdjustment="{ data }">
-                        {{ data.data.yearEndAdjustment == 0 ? '' : 'o' }}
+                        {{ data.data.yearEndAdjustment == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="퇴직 소득" cell-template="retirementIncome" />
                     <template #retirementIncome="{ data }">
-                        {{ data.data.retirementIncome == 0 ? '' : 'o' }}
+                        {{ data.data.retirementIncome == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="사업 소득" cell-template="businessIncome" />
                     <template #businessIncome="{ data }">
-                        {{ data.data.businessIncome == 0 ? '' : 'o' }}
+                        {{ data.data.businessIncome == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="기타 소득" cell-template="extraIncome" />
                     <template #extraIncome="{ data }">
-                        {{ data.data.extraIncome == 0 ? '' : 'o' }}
+                        {{ data.data.extraIncome == 0 ? '' : '어' }}
                     </template>
                     <DxColumn caption="총지급액 (A99)" data-field="totalPayment" format="#,###" />
                     <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
@@ -233,60 +237,60 @@ export default defineComponent({
                 "excludeCancel": true
             }
         })
-        let arraySelectBox = computed(() => [
-            {
-                key: parseInt(globalYear.value + "01"),
-                value: "귀 " + globalYear.value + "-01"
-            },
-            {
-                key: parseInt(globalYear.value + "02"),
-                value: "귀 " + globalYear.value + "-02"
-            },
-            {
-                key: parseInt(globalYear.value + "03"),
-                value: "귀 " + globalYear.value + "-03"
-            },
-            {
-                key: parseInt(globalYear.value + "04"),
-                value: "귀 " + globalYear.value + "-04"
-            },
-            {
-                key: parseInt(globalYear.value + "05"),
-                value: "귀 " + globalYear.value + "-05"
-            },
-            {
-                key: parseInt(globalYear.value + "06"),
-                value: "귀 " + globalYear.value + "-06"
-            },
-            {
-                key: parseInt(globalYear.value + "07"),
-                value: "귀 " + globalYear.value + "-07"
-            },
-            {
-                key: parseInt(globalYear.value + "08"),
-                value: "귀 " + globalYear.value + "-08"
-            },
-            {
-                key: parseInt(globalYear.value + "09"),
-                value: "귀 " + globalYear.value + "-09"
-            },
-            {
-                key: parseInt(globalYear.value + "10"),
-                value: "귀 " + globalYear.value + "-10"
-            },
-            {
-                key: parseInt(globalYear.value + "11"),
-                value: "귀 " + globalYear.value + "-11"
-            },
-            {
-                key: parseInt(globalYear.value + "12"),
-                value: "귀 " + globalYear.value + "-12"
-            },
-            {
-                key: parseInt(globalYear.value + 1 + "01"),
-                value: "귀 " + globalYear.value + 1 + "01"
-            },
-        ])
+        // let arraySelectBox = computed(() => [
+        //     {
+        //         key: parseInt(globalYear.value + "01"),
+        //         value: "귀 " + globalYear.value + "-01"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "02"),
+        //         value: "귀 " + globalYear.value + "-02"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "03"),
+        //         value: "귀 " + globalYear.value + "-03"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "04"),
+        //         value: "귀 " + globalYear.value + "-04"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "05"),
+        //         value: "귀 " + globalYear.value + "-05"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "06"),
+        //         value: "귀 " + globalYear.value + "-06"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "07"),
+        //         value: "귀 " + globalYear.value + "-07"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "08"),
+        //         value: "귀 " + globalYear.value + "-08"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "09"),
+        //         value: "귀 " + globalYear.value + "-09"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "10"),
+        //         value: "귀 " + globalYear.value + "-10"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "11"),
+        //         value: "귀 " + globalYear.value + "-11"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + "12"),
+        //         value: "귀 " + globalYear.value + "-12"
+        //     },
+        //     {
+        //         key: parseInt(globalYear.value + 1 + "01"),
+        //         value: "귀 " + globalYear.value + 1 + "01"
+        //     },
+        // ])
         let arraySelectBox2 = computed(() => [
             {
                 key: parseInt(globalYear.value + "01"),
@@ -523,7 +527,9 @@ export default defineComponent({
             dataSearch.filter.afterDeadline = reportType.value.checkAllTypeFication
         }
         return {
-            modalSendEmail, arraySelectBox, dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
+            modalSendEmail, 
+            // arraySelectBox, 
+            dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
             checkAll1, checkAll2, searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
