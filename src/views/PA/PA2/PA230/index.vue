@@ -23,10 +23,10 @@
                         </a-row>
                     </a-col>
                     <a-col :span="12" style="text-align: right;">
-                        <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
-                            @click="sendMail" />
-                        <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
+                      <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
                             @click="printFunc" />
+                      <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
+                            @click="sendMail" />
                     </a-col>
                 </a-row>
             </div>
@@ -46,7 +46,7 @@
                     </a-col>
                     <a-col :span="12">
                         <div class="created-date">
-                            <label class="lable-item">구분 :</label>
+                            <label class="lable-item">작성일 :</label>
                             <date-time-box v-model:valueDate="createDate" width="150px" />
                         </div>
                     </a-col>
@@ -64,8 +64,8 @@
                             :foreigner="data.data.employee.foreigner" :checkStatus="false"
                             :employeeId="data.data.employeeId" />
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" />
-                    <DxColumn caption="비고" cell-template="four-major-insurance" width="300" />
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150"/>
+                    <DxColumn caption="비고" cell-template="four-major-insurance"  />
                     <template #four-major-insurance="{ data }">
                         <div>
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -84,12 +84,12 @@
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
                     </template>
-                    <DxColumn caption="구분" cell-template="status" />
+                    <DxColumn caption="구분" cell-template="status" width="100"/>
                     <template #status="{ data }">
-                        <span class="status-red" v-if="data.data.status != 0">중도</span>
+                        <span class="status-red" v-if="data.data.status != 0">계속</span>
                         <span class="status-blue" v-else>중도</span>
                     </template>
-                    <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" />
+                    <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" width="160"/>
                     <DxColumn caption="" cell-template="pupop" width="100" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
@@ -100,11 +100,16 @@
                                 @click="printFunc(data.data.employeeId)" />
                         </div>
                     </template>
+                    <DxSummary>
+                        <DxTotalItem :customize-text="customTextSummaryInfo" show-in-column="성명"/>
+                        <DxTotalItem column="totalPay" summary-type="sum" display-format="총급여계합계: {0}"
+                            value-format="#,###" />        
+                    </DxSummary>
                 </DxDataGrid>
             </div>
         </div>
     </a-spin>
-    <a-modal :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
+    <a-modal  v-if="modalSendMail == true" :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
         <standard-form>
             <div class="d-flex-center mt-20" v-if="switchTypeSendMail == true">
                 <img src="@/assets/images/email.svg" alt="" style="width: 50px;">
@@ -112,17 +117,19 @@
                     placeholder="abc@example.com" />
                 <span class="ml-5">로 메일을 발송하시겠습니까?</span>
             </div>
-            <div v-else>
-                <img src="@/assets/images/emailGroup.png" alt="" style="width: 50px;">
-                <div class="ml-40 mt-10">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div>
-                <div class="ml-40 d-flex-center">
-                    <mail-text-box :required="true" width="200px" class="ml-5" v-model:valueInput="emailAddress"
-                        placeholder="abc@example.com" />
-                    <span class="ml-5">로 메일을 발송하시겠습니까?</span>
+            <div v-else class="form-mail-2">
+                <img src="@/assets/images/emailGroup.png" alt="" >
+                <div>
+                  <div class="ml-40 mt-10">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div>
+                  <div class="ml-40 d-flex-center">
+                      <mail-text-box :required="true" width="200px" class="ml-5" v-model:valueInput="emailAddress"
+                          placeholder="abc@example.com" />
+                      <span class="ml-5">로 메일을 발송하시겠습니까?</span>
+                  </div>
                 </div>
             </div>
             <a-row style="margin-top: 50px;">
-                <a-col :span="16" :offset="8">
+                <a-col :span="16" :offset="6">
                     <button-basic text="아니요" type="default" mode="outlined" :width="100" style="margin-right: 10px;"
                         @onClick="modalSendMail = false" />
                     <button-basic text="네. 발송합니다" type="default" mode="contained" :width="150"
@@ -137,7 +144,7 @@ import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
-import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { companyId, userId } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
@@ -145,9 +152,10 @@ import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA2/PA230/index";
 import notification from "@/utils/notification";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,
+        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem
     },
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -239,9 +247,9 @@ export default defineComponent({
             if (checkBoxOption.value == 1)
                 originData.value.filter.leaved = null
             if (checkBoxOption.value == 2)
-                originData.value.filter.leaved = true
-            if (checkBoxOption.value == 3)
                 originData.value.filter.leaved = false
+            if (checkBoxOption.value == 3)
+                originData.value.filter.leaved = true
 
             if (originData.value.companyId)
                 refetchData();
@@ -268,8 +276,8 @@ export default defineComponent({
                 switchTypeSendMail.value = true
             } else {
                 switchTypeSendMail.value = false
-                if (selectedItemKeys.value.length == 0) {
-                    notification('error', "항목을 1개 이상 선택해야합니다")
+                if (selectedItemKeys.value.length < 2) {
+                    notification('error', Message.getCommonMessage('601').message)
                     return;
                 } else {
                     selectedItemKeys.value.map((val: any) => {
@@ -336,9 +344,26 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
         }
+
+        const customTextSummaryInfo = () => {
+          let total = 0;
+          let 계속 = 0;
+          let 중도 = 0;
+          dataSource.value.map((val: any) => {
+            total++
+            if (val.status != 0) {
+              계속++
+            } else {
+              중도++
+            }
+
+          })
+          return '전체: ' + total + " (계속: " + 계속 + ", 중도: " + 중도 + ")"
+        }
+
         return {
             loadingSendEmail, switchTypeSendMail, emailAddress, modalSendMail, loadingPrint, createDate, loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, checkBoxOption, checkBoxOption2,
-            selectionChanged, confirmSendMail, searching, sendMail, printFunc
+            selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo
         };
     },
 });
