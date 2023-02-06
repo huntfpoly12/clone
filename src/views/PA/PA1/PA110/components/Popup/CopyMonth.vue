@@ -5,7 +5,6 @@
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month }}
-                    <!-- <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" /> -->
                 </div>
                 <div class="month-custom-2 d-flex-center">
                     <span>지</span> <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
@@ -141,7 +140,10 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', ` 완료!`)
-            emit('loadingTableInfo', true)
+            store.state.common.processKeyPA110.imputedMonth = month.value
+            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.loadingTableInfo++
         })
 
         const setModalVisible = () => {
@@ -152,17 +154,19 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
+            store.state.common.processKeyPA110.imputedYear = globalYear.value
+            store.state.common.processKeyPA110.imputedMonth = month.value
+            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
                 paymentYear: parseInt(month2.value.toString().slice(0, 4)),
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
-            store.state.common.processKeyPA110.imputedYear = globalYear.value
-            store.state.common.processKeyPA110.imputedMonth = month.value
-            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
-            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("closePopup", false)
+            store.state.common.paymentDayCopy = paymentDayCopy.value
+            store.state.common.resetArrayEmploySelect++
         };
 
         const openModalCopy = () => {

@@ -508,7 +508,10 @@ export default defineComponent({
         }))
         watch(resultTaxPayInfo, (value) => {
             store.state.common.dataTaxPayInfo = value.getIncomeWages;
-            if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
+            console.log(value.getIncomeWages, !store.state.common.actionAddItem);
+            
+            // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
+            if (value.getIncomeWages[0]) { // if have data
                 if (store.state.common.employeeId && value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
                     store.state.common.focusedRowKey = store.state.common.employeeId
                     store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
@@ -517,13 +520,13 @@ export default defineComponent({
                     store.state.common.incomeId = value.getIncomeWages[0].incomeId
                     store.state.common.employeeId = value.getIncomeWages[0].employeeId
                 }
+                store.state.common.actionAddItem = false
             } else {
                 store.state.common.actionAddItem = true
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
                 store.state.common.employeeId = null;
             }
-
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             refetchDataProcessIncomeWages() //reset data table 1
@@ -575,6 +578,7 @@ export default defineComponent({
             store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
             store.state.common.processKeyPA110.imputedYear = globalYear.value;
             statusDisabledBlock.value = false;
+            store.state.common.statusRowAdd = true;
         }
         /**
          * copy data from other month
