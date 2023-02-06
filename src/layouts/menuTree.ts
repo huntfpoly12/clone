@@ -53,7 +53,7 @@ export default [
           { title: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620" },
           { title: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-630", id: "bf-630" },
           { title: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" }, 
-          { title: "일용직근로소득지급명세서전자신고", url: "#", id: "bf-650" },
+          { title: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-650", id: "bf-650" },
         ],
       },
       
