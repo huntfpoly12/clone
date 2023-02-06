@@ -93,73 +93,107 @@
                     <div class="header-text-3">부양가족 요약</div>
                     <a-row :gutter="12">
                         <a-col :span="12">
-                            <div class="header-text-2">기본공제</div>
+                        <div class="header-text-2">기본공제</div>
 
-                            <a-form-item label="본인" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="relationSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="배우자" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="womenSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="20세이하" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="basicDeductionSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="60세이하" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="basicDeductionSummary2" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <div class="header-text-2">자녀세액공제</div>
-                            <a-form-item label="자녀세액공제" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="descendantSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
+                        <a-form-item label="본인" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="relationSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="배우자" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="womenSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="20세이하" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="60세이하" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <div class="header-text-2">자녀세액공제</div>
+                        <a-form-item label="자녀세액공제" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="descendantSummary == 0 ?'': descendantSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
                         </a-col>
 
                         <a-col :span="12">
-                            <div class="header-text-2">추가/세액공제</div>
-                            <a-form-item label="경로우대" class="display-flex" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="seniorSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="장애인" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="disabledSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="부녀자" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="womenSummary2" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="한부모" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="singleParentSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="출산입양" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="maternityAdoptionSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
+                        <div class="header-text-2">추가/세액공제</div>
+                        <a-form-item
+                            label="경로우대"
+                            class="display-flex"
+                            label-align="right"
+                        >
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="seniorSummary == 0 ?'': seniorSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="장애인" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="disabledSummary == 0 ?'': disabledSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="부녀자" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="womenSummary2 == 0 ?'': womenSummary2"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="한부모" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="singleParentSummary == 0 ?'': singleParentSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="출산입양" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
                         </a-col>
                     </a-row>
                 </div>

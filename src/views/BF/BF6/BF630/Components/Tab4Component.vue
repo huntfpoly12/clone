@@ -163,7 +163,7 @@ export default defineComponent({
           imputedYear: dayjs().year(),
       }
     )
-    const dataSource = ref([])
+    const dataSource = ref<any>([])
     // ============ GRAPQL ===============================
     const {
         result:  resIncomeExtraPayment,
@@ -202,7 +202,7 @@ export default defineComponent({
     })
     watch(resIncomeExtraPayment, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeExtraPaymentStatementElectronicFilings
+        dataSource.value = [value.searchIncomeExtraPaymentStatementElectronicFilings[0]]
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)

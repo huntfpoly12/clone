@@ -17,9 +17,9 @@
                     <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                         layout="horizontal" :icon-size="12">
                         <template #radio="{ data }">
-                          <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                          <production-statuses :typeTag="4" v-if="data == 4" padding="1px 10px" />
-                          <production-statuses :typeTag="5" v-if="data == 5" padding="1px 10px" />
+                            <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px"/>
+                            <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px"/>
+                            <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px"/>
                         </template>
                     </DxRadioGroup>
                 </a-form-item>
@@ -87,7 +87,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(true);
-    const typeCheckbox = ref([0, 4, 5])
+    const typeCheckbox = ref([0, 2, -1])
     const valueType = ref(0)
     const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
     const productionStatuses =  ref(0)
@@ -99,7 +99,7 @@ export default defineComponent({
         type:0,
         requesteStartDate: rangeDate.value[0],
         requesteFinishDate: rangeDate.value[1],
-        productionStatuses: [4,5],
+        productionStatuses: [2,-1],
         manageUserId: 0
       }
     )
@@ -107,7 +107,7 @@ export default defineComponent({
     // watch range date time
     watch(productionStatuses, (newValue) => {
       if (newValue == 0) {
-        originData.productionStatuses = [4,5]
+        originData.productionStatuses = [2,-1]
       } else {
         originData.productionStatuses =  [newValue]
       }
