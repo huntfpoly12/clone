@@ -41,7 +41,6 @@ export default defineComponent({
       valueCheck = valueCheck.concat(props.valueCheckbox.filter((item) => valueCheck.indexOf(item) < 0));
       //   let valueCheck: any = [...props.valueCheckbox];
       if (e.value) {
-        console.log(`output->valueCheck.indexOf(id)>0`, valueCheck.indexOf(id));
         if (valueCheck.indexOf(id) > -1) {
           return;
         }
@@ -50,7 +49,6 @@ export default defineComponent({
         valueCheck.splice(valueCheck.indexOf(id), 1);
       }
       emit('update:valueCheckbox', valueCheck);
-      console.log(`output->e`, e.value, id);
     };
     return {
       styleCheckBox,

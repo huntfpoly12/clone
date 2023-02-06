@@ -157,7 +157,6 @@
                     width="200px"
                     :value="relationSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -167,7 +166,6 @@
                     width="200px"
                     :value="womenSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -177,7 +175,6 @@
                     width="200px"
                     :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -187,7 +184,6 @@
                     width="200px"
                     :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -198,7 +194,6 @@
                     width="200px"
                     :value="descendantSummary == 0 ?'': descendantSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -216,7 +211,6 @@
                     width="200px"
                     :value="seniorSummary == 0 ?'': seniorSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -226,7 +220,6 @@
                     width="200px"
                     :value="disabledSummary == 0 ?'': disabledSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -236,7 +229,6 @@
                     width="200px"
                     :value="womenSummary2 == 0 ?'': womenSummary2"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -246,7 +238,6 @@
                     width="200px"
                     :value="singleParentSummary == 0 ?'': singleParentSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -256,7 +247,6 @@
                     width="200px"
                     :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>

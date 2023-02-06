@@ -10,7 +10,13 @@ const screenMutatePA720 = {
     },
     actionSaveTypePA720(state:any, payload: 0 | 1) {
         state.actionSaveTypePA720 = payload;
-    }
+    },
+    formPA720(state: any, payload: any){
+        state.formPA720.input = {
+            ...state.formPA720.input,
+            ...payload
+        }
+    },
 };
   
 export default screenMutatePA720;

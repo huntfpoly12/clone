@@ -393,7 +393,7 @@ export default defineComponent({
         watch(() => dataAction, (newValue) => {
             if (store.state.common.actionAddRow.activeRowAdd == true) {
                 //update data newly entered in row add by table
-                let dataEmploy = arrayEmploySelect.value.filter((val: any) => val.employeeId == newValue.input.employeeId)
+                let dataEmploy = arrayEmploySelect.value.filter((val: any) => val.employeeId == newValue.input.employeeId);
                 let rowNewInTable = store.state.common.actionAddRow.dataSource[store.state.common.actionAddRow.dataSource.length - 1]
                 if (dataEmploy.length > 0) {
                     rowNewInTable.incomeTypeCode = dataEmploy[0].incomeTypeCode
@@ -542,6 +542,7 @@ export default defineComponent({
             }
         }
         const changeIncomeTypeCode = (res: string) => {
+            console.log(`output->`,res)
             dataAction.input.incomeTypeCode = res
         }
         const selectionChanged = (event: any) => {

@@ -3,10 +3,18 @@
     .search-group {
       background: #f1f3f4;
       padding: 8px 5px;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
     .top-table {
       justify-content: space-between;
     }
+  }
+  .tab-3 {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    :deep .ant-form-item {
+        margin-bottom: 0;
+      }
   }
 }

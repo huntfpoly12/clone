@@ -138,7 +138,7 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(eletroFillingResult, (newVal) => {
-      console.log(`output->newVal`, newVal);
+    //   console.log(`output->newVal`, newVal);
       let data = newVal.getElectronicFilingsByWithholdingTax;
       productionStatus.value = data;
     });
@@ -158,7 +158,7 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(searchWithholdingResult, (newVal) => {
-      console.log(`output->newVal`, newVal);
+    //   console.log(`output->newVal`, newVal);
       let data = newVal.searchWithholdingTaxElectronicFilings;
       searchWithholdingTrigger.value = false;
       dataSource.value = data;
@@ -174,7 +174,7 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        console.log(`output->props.search`, props.search);
+        // console.log(`output->props.search`, props.search);
         variables.value = { filter: filterBF620.value };
         searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();

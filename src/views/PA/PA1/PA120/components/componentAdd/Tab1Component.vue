@@ -243,6 +243,7 @@ export default defineComponent({
        store.commit('common/actionFormDonePA120')
        store.commit('common/keyActivePA120', employeeId.value);
        store.state.common.isCompareEditPA120 = false;
+       store.state.common.isNewRowPA120 = false;
     });
 
     onError((error) => {

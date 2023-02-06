@@ -130,7 +130,7 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(eletroFillingResult, (newVal) => {
-      console.log(`output->newVal`, newVal);
+    //   console.log(`output->newVal`, newVal);
       let data = newVal.getElectronicFilingsByLocalIncomeTax;
       productionStatus.value = data;
     });

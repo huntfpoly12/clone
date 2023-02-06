@@ -17,7 +17,7 @@
                         <div v-if="data.data.month1">
                             <colorful-badge class="hover-underlined" :value="data.data.month1.status"
                                 @click="showDetailSelected(data.data.month1)" :year="data.data.month1.paymentYear"
-                                :month="data.data.month1.paymentMonth" :isUnder="month == 1" />
+                                :month="data.data.month1.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 1" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
@@ -26,7 +26,7 @@
                         <div v-if="data.data.month2">
                             <colorful-badge class="hover-underlined" :value="data.data.month2.status"
                                 @click="showDetailSelected(data.data.month2)" :year="data.data.month2.paymentYear"
-                                :month="data.data.month2.paymentMonth" :isUnder="month == 2" />
+                                :month="data.data.month2.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 2" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
@@ -35,7 +35,7 @@
                         <div v-if="data.data.month3">
                             <colorful-badge class="hover-underlined" :value="data.data.month3.status"
                                 @click="showDetailSelected(data.data.month3)" :year="data.data.month3.paymentYear"
-                                :month="data.data.month3.paymentMonth" :isUnder="month == 3" />
+                                :month="data.data.month3.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 3" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
@@ -44,7 +44,7 @@
                         <div v-if="data.data.month4">
                             <colorful-badge class="hover-underlined" :value="data.data.month4.status"
                                 @click="showDetailSelected(data.data.month4)" :year="data.data.month4.paymentYear"
-                                :month="data.data.month4.paymentMonth" :isUnder="month == 4" />
+                                :month="data.data.month4.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 4" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
@@ -53,7 +53,7 @@
                         <div v-if="data.data.month5">
                             <colorful-badge class="hover-underlined" :value="data.data.month5.status"
                                 @click="showDetailSelected(data.data.month5)" :year="data.data.month5.paymentYear"
-                                :month="data.data.month5.paymentMonth" :isUnder="month == 5" />
+                                :month="data.data.month5.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 5" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
@@ -62,7 +62,7 @@
                         <div v-if="data.data.month6">
                             <colorful-badge class="hover-underlined" :value="data.data.month6.status"
                                 @click="showDetailSelected(data.data.month6)" :year="data.data.month6.paymentYear"
-                                :month="data.data.month6.paymentMonth" :isUnder="month == 6" />
+                                :month="data.data.month6.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 6" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
@@ -71,7 +71,7 @@
                         <div v-if="data.data.month7">
                             <colorful-badge class="hover-underlined" :value="data.data.month7.status"
                                 @click="showDetailSelected(data.data.month7)" :year="data.data.month7.paymentYear"
-                                :month="data.data.month7.paymentMonth" :isUnder="month == 7" />
+                                :month="data.data.month7.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 7" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
@@ -80,7 +80,7 @@
                         <div v-if="data.data.month8">
                             <colorful-badge class="hover-underlined" :value="data.data.month8.status"
                                 @click="showDetailSelected(data.data.month8)" :year="data.data.month8.paymentYear"
-                                :month="data.data.month8.paymentMonth" :isUnder="month == 8" />
+                                :month="data.data.month8.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 8" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
@@ -89,7 +89,7 @@
                         <div v-if="data.data.month9">
                             <colorful-badge class="hover-underlined" :value="data.data.month9.status"
                                 @click="showDetailSelected(data.data.month9)" :year="data.data.month9.paymentYear"
-                                :month="data.data.month9.paymentMonth" :isUnder="month == 9" />
+                                :month="data.data.month9.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 9" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
@@ -98,7 +98,7 @@
                         <div v-if="data.data.month10">
                             <colorful-badge class="hover-underlined" :value="data.data.month10.status"
                                 @click="showDetailSelected(data.data.month10)" :year="data.data.month10.paymentYear"
-                                :month="data.data.month10.paymentMonth" :isUnder="month == 10" />
+                                :month="data.data.month10.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 10" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
@@ -107,7 +107,7 @@
                         <div v-if="data.data.month11">
                             <colorful-badge class="hover-underlined" :value="data.data.month11.status"
                                 @click="showDetailSelected(data.data.month11)" :year="data.data.month11.paymentYear"
-                                :month="data.data.month11.paymentMonth" :isUnder="month == 11" />
+                                :month="data.data.month11.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 11" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
@@ -116,7 +116,7 @@
                         <div v-if="data.data.month12">
                             <colorful-badge class="hover-underlined" :value="data.data.month12.status"
                                 @click="showDetailSelected(data.data.month12)" :year="data.data.month12.paymentYear"
-                                :month="data.data.month12.paymentMonth" :isUnder="month == 12" />
+                                :month="data.data.month12.paymentMonth" :isUnder="store.state.common.processKeyPA510.imputedMonth == 12" />
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(12)">[+]</div>
                     </template>
@@ -185,7 +185,7 @@
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
+        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <DxButton
                     :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
@@ -193,13 +193,13 @@
                 <DxButton
                     :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-                <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" />
+                <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" :disabled="store.state.common.statusDisabledStatus"/>
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
-        <a-row :class="store.state.common.dataTaxPayInfo.length ? '' : 'disabledBlock'">
+        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
             <a-col :span="14" class="custom-layout">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
@@ -288,6 +288,7 @@ import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import filters from "@/helpers/filters";
+import { userType } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -332,7 +333,7 @@ export default defineComponent({
             processKey: processKey.value,
         })
         const isRunOnce = ref<boolean>(true);
-        const month = ref<number>(0);
+        const statusDisabledBlock = ref<boolean>(true);
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -419,9 +420,15 @@ export default defineComponent({
                     }
                 })
             }
+            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
+            if (obj) {
+                statusDisabledBlock.value = false;
+            } else {
+                status.value = null
+                statusDisabledBlock.value = true;
+            }
             if (isRunOnce.value) {
                 isRunOnce.value = false;
-                const obj = dataSource.value[0]['month' + `${dayjs().month() + 1}`]
                 if (obj) {
                     showDetailSelected(obj)
                 }
@@ -450,6 +457,13 @@ export default defineComponent({
             refetchData() //reset data table 1
             IncomeWageDailiesTrigger.value = true;
             refetchDataTaxPayInfo() //reset data table 2
+        })
+        watch(() => status.value, (newVal) => {
+            if (userType != 'm' && (newVal == 30 || newVal == 40)) {
+                store.state.common.statusDisabledStatus = true;
+            } else {
+                store.state.common.statusDisabledStatus = false;
+            }
         })
         watch(globalYear, (newVal) => {
             IncomeWageDailiesTrigger.value = true;
@@ -497,7 +511,7 @@ export default defineComponent({
             store.state.common.processKeyPA510.imputedMonth = data.imputedMonth
             store.state.common.processKeyPA510.paymentYear = data.paymentYear
             store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
-            month.value = data.imputedMonth;
+            statusDisabledBlock.value = false;
         }
         const statusComfirmChange = (res: any) => {
             if (res) {
@@ -526,7 +540,10 @@ export default defineComponent({
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
-            // IncomeWageDailiesTrigger.value = true;
+            status.value = 10
+            refetchDataTaxPayInfo()
+            IncomeWageDailiesTrigger.value = true;
+            statusDisabledBlock.value = false;
         }
         return {
             processKey,
@@ -547,9 +564,9 @@ export default defineComponent({
             dataModalCopy,
             dataAddIncomeProcess,
             statusComfirm,
-            month,
             store,
             modalChangeRow, statusComfirmChange,
+            statusDisabledBlock,
         }
 
     },

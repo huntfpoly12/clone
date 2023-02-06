@@ -8,8 +8,8 @@
             </a-col>
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <a-range-picker v-model:value="rangeDate" width="200px"
-                        :placeholder="['Start', 'End']" /></a-form-item>
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
@@ -33,14 +33,13 @@
         </a-row>
         <div class="form-table">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
                 <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="string" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
-
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
                     <div style="text-align: center">
@@ -112,15 +111,13 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [2, -1]
             else
                 dataSearch.value.productionStatuses = [val]
-
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()
             }
         }, { deep: true })
-
         // ============== FUNCTION =====================
         const openPopupDetail = (data: any) => {
             modalDetail.value = true
@@ -135,30 +132,25 @@ export default defineComponent({
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
-
 </style>
 <style lang="scss" scoped>
-::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
+:deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
     background: v-bind("styleCheckBox.ColorCheckBox");
     margin-top: -13px;
     margin-left: 3px;
 }
-
-::v-deep .dx-radiobutton-icon::before {
+:deep .dx-radiobutton-icon::before {
     border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
     width: 14px;
     height: 14px;
 }
-
-::v-deep .dx-radio-value-container {
+:deep .dx-radio-value-container {
     padding-right: 0px
 }
-
-::v-deep .dx-radiobutton {
+:deep .dx-radiobutton {
     line-height: 18px;
 }
-
-::v-deep .dx-radiogroup-horizontal .dx-radiobutton {
+:deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
 }
 </style> 

@@ -1,9 +1,10 @@
 <template>
     <a-row class="container_upload custom-flex clr" :gutter="[24]">
-        <a-form-item :label="title" v-if="!customrow">
+        <a-form-item :label="title" v-if="!customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
                     <input class="custom-file-input" type="file" @change="onFileChange" width="100px" />
+                    <img src="@/assets/images/iconUpload.png" alt="" style="width: 20px;">
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
                 <p v-if="messageUpload">{{ messageUpload }}</p>
@@ -14,8 +15,9 @@
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
             </div>
+            <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
         </a-form-item>
-        <a-form-item :label="title" v-if="customrow">
+        <a-form-item :label="title" v-if="customrow" style="position: relative;">
             <div v-if="disabledImg == false">
                 <div class="d-flex">
                     <input class="custom-file-input" type="file" @change="onFileChange" />
@@ -29,8 +31,9 @@
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
             </div>
+            <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
         </a-form-item>
-
+        
         <a-space :size="10" style="margin-top: 8px">
             <div class="warring-modal">
                 <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
@@ -225,6 +228,7 @@ export default defineComponent({
     border: 1px solid #d9d9d9;
     line-height: 1.5715;
     padding: 5px 10px;
+    padding-left: 40px;
     white-space: nowrap;
     -webkit-user-select: none;
     cursor: pointer;
@@ -266,5 +270,13 @@ export default defineComponent({
 }
 .custom-flex {
     margin-left: 0 !important;
+}
+.iconUpload {
+    width: 20px; 
+    height: 20px; 
+    position: absolute;  
+    top: 50%; 
+    left: 10px;
+    transform: translate(0, -50%);
 }
 </style>

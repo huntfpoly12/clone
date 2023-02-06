@@ -1,9 +1,9 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-4" icon="plus" @click="actionAddItem" />
-    <DxButton @click="onSubmit($event)" size="large" class="ml-4">
+    <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
+    <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
     </DxButton>
     <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
@@ -23,7 +23,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
         <div class="d-flex-center">
             <checkbox-basic  :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -283,6 +283,7 @@ export default defineComponent({
             modalStatusAdd, statusComfirmAdd,
             openTab,
             onSubmit,
+            store,
         };
     },
 });
