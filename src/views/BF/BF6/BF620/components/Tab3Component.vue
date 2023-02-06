@@ -237,27 +237,3 @@ export default defineComponent({
 <style scoped lang="scss">
 @import '../style/style.scss';
 </style>
-::v-deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
-  background: v-bind('styleCheckBox.ColorCheckBox');
-  margin-top: -13px;
-  margin-left: 3px;
-}
-
-::v-deep .dx-radiobutton-icon::before {
-  border: 1px solid v-bind('styleCheckBox.ColorCheckBox');
-  width: 14px;
-  height: 14px;
-}
-
-::v-deep .dx-radio-value-container {
-  padding-right: 0px;
-}
-
-::v-deep .dx-radiobutton {
-  line-height: 18px;
-}
-
-::v-deep .dx-radiogroup-horizontal .dx-radiobutton {
-  margin-top: 6px;
-}
-</style>
