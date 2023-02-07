@@ -45,7 +45,8 @@ const statesPA120 = {
         leavedAt: "",
     },
     isCompareEditPA120: true,
-    isNewRowPA120: false,
+    isNewRowPA120: true,
+    isAddFormErrorPA120: false,
 };
   
 export default statesPA120;

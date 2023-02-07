@@ -244,6 +244,8 @@ export default defineComponent({
        store.commit('common/keyActivePA120', employeeId.value);
        store.state.common.isCompareEditPA120 = false;
        store.state.common.isNewRowPA120 = false;
+       store.state.common.isAddFormErrorPA120 = false;
+    //    store.state.common.isNewRowPA120
     });
 
     onError((error) => {
@@ -254,6 +256,8 @@ export default defineComponent({
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
+        store.state.common.isAddFormErrorPA120 = true;
+        store.state.common.isNewRowPA120 = true;
       } else {
         emit('employeeId', employeeId.value);
         let dataNew = {

@@ -259,6 +259,7 @@ export default defineComponent({
                 editRowData.department = data.department;
                 editRowData.responsibility = data.responsibility;
                 store.commit('common/editRowPA120',editRowData);
+                console.log(`output->editRowData`,editRowData)
                 store.commit('common/initFormStateTabPA120',editRowData);
                 employeeId.value = data.employeeId;
         // }
@@ -272,6 +273,8 @@ export default defineComponent({
             notification('success', '업데이트 완료!');
             store.commit('common/actionFormDonePA120');
             store.state.common.isCompareEditPA120 = false;
+            store.state.common.isNewRowPA120 = false;
+            store.state.common.isAddFormErrorPA120 = false;
         });
 
         watch(() => props.idRowEdit, (value: any) => {

@@ -292,6 +292,7 @@ export default defineComponent({
             // imputedMonth: dayjs().month(),
         })
         let dataCustomRes: any = ref([])
+        const isRunOnce = ref<boolean>(true);
         const isDisabledForm = ref<boolean>(false);
         // ================GRAPQL==============================================
         // API QUERY TABLE BIG
@@ -299,6 +300,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        console.log(`output chay vao man hinh chinh`,)
         resIncomeProcessBusinesses(res => {
             if (res.data?.getIncomeProcessBusinesses) {
                 let respon = res.data.getIncomeProcessBusinesses
@@ -382,13 +384,20 @@ export default defineComponent({
                         // }          
                     }
                 })
+                if (isRunOnce.value) {
+                    isRunOnce.value = false;
+                    if (dataSource.value[0]['month' + `${dayjs().month() + 1}`]) {
+                    showDetailSelected(dataSource.value[0]['month' + `${dayjs().month() + 1}`]);
+                    }
+                }
+
             }
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)
         })
         // get config to check default date type
-        const dateType = ref<number>(1)
+        const dateType = ref<number>(1);
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
         const { result: resultConfig } = useQuery(
             queriesHolding.getWithholdingConfig,
@@ -398,7 +407,9 @@ export default defineComponent({
             })
         );
         watch(resultConfig, (newVal) => {
-            dateType.value = newVal.paymentType;
+            const data = newVal.getWithholdingConfig;
+            dateType.value = data.paymentType;
+            store.state.common.paymentDayPA620 = data.paymentDay;
         });
         // ================FUNCTION============================================   
         const showDetailSelected = (data: any) => {
@@ -414,19 +425,19 @@ export default defineComponent({
         }
         const createdDone = () => {
             trigger.value = true;
-            refetchData()
+            // refetchData()
         }
         const addMonth = (month: number) => {
             dataModalCopy.value = month
             modalCopy.value = true
         }
         const loadingTable = () => {
-            refetchData()
+            // refetchData()
         }
         const dataAddIncomeProcess = (data: any) => {
-            dataSource.value[0]['month' + data.imputedMonth] = data
-            dataSource.value[0]['month' + data.imputedMonth].status = 10
-            isDisabledForm.value = false;
+            // dataSource.value[0]['month' + data.imputedMonth] = data
+            // dataSource.value[0]['month' + data.imputedMonth].status = 10
+            // isDisabledForm.value = false;
         }
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
@@ -434,6 +445,7 @@ export default defineComponent({
 
         // ======================================== WATCH =========================================
         watch(globalYear, (newVal) => {
+            isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
             store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value })
             refetchData()
