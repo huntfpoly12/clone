@@ -283,29 +283,18 @@ export default defineComponent({
     };
     //compare Data
     const compareType = ref(1); //0 is row change. 1 is add button;
+    // Comparing the values of two objects.
     const compareType1 = () => {
-      //   if (!isCompareEditPA120.value) {
-      //     return true;
-      //   }
-      //   console.log(JSON.stringify(initFormStateTab1));/
-      //   console.log(JSON.stringify(initFormStateTabPA120.value));
       if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     };
     const compareType2 = () => {
-      if (!isCompareEditPA120.value) {
-        return true;
-      }
-      console.log(JSON.stringify(editRowPA120.value));
-      console.log(JSON.stringify(initFormStateTabPA120.value));
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     };
     //on add row
     const isFirstWeb = ref(true);
@@ -316,17 +305,17 @@ export default defineComponent({
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           addNewRow();
           compareType.value = 1;
-          console.log(`output->type =2`);
+          // console.log(`output->type =2`);
           return;
         }
         if (!compareType1()) {
-          console.log(`output->type = 1 loi`);
+          // console.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           isFirstWeb.value = false;
           return;
         }
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
-        console.log(`output->type = 1 ko loi`, compareType1());
+        // console.log(`output->type = 1 ko loi`, compareType1());
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
@@ -345,24 +334,37 @@ export default defineComponent({
     };
 
     //row change confirm
-    const onRowChangeComfirm = (ok: boolean) => {
+    const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (isNewRowPA120.value) {
-          let ele = document.getElementById('btn-save') as HTMLInputElement;
-          ele.click();
-          //   isAddFormErrorPA120
+        let promise1 = new Promise<void>((resolve) => {
+          if (isNewRowPA120.value) {
+            let ele = document.getElementById('btn-save') as HTMLInputElement;
+            ele.click();
+            resolve();
+          }
+        });
+        let promise2 = new Promise<void>((resolve) => {
+          if (compareType.value == 2) {
+            let ele = document.getElementById('btn-save-edit');
+            ele?.click();
+            idRowEdit.value = idRow.value;
+            resolve();
+          }
+        });
+        Promise.all([promise1, promise2]);
+        if (isAddFormErrorPA120.value) {
+          focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+        } else {
+          focusedRowKey.value = idRow.value;
         }
-        if (compareType.value == 2) {
-          let ele = document.getElementById('btn-save-edit');
-          ele?.click();
-        }
+        return;
       } else {
         if (isNewRowPA120.value) {
           if (!isFirstWeb.value) {
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            console.log(`output-> toi dang o so 1`);
+            // console.log(`output-> toi dang o so 1`);
             setTimeout(() => {
               addNewRow();
             }, 100);
@@ -370,27 +372,11 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          console.log(`output-> toi dang o so 2 `);
+          // console.log(`output-> toi dang o so 2 `);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
         }
-        // if (!isFirstWeb.value) {
-        //   dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-        // }
-        // if (compareType.value == 1 ) {
-        //   console.log(`output-> toi dang o so 1`);
-        //   // store.state.common.isRefreshDataEditPA120 = true;
-        //   setTimeout(() => {
-        //     addNewRow();
-        //   }, 100);
-        //   focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-        // } else {
-        //   console.log(`output-> toi dang o so 2 `);
-        //   idRowEdit.value = idRow.value;
-        //   store.state.common.isNewRowPA120 = false;
-        //   actionChangeComponent.value = 2;
-        // }
       }
       if (!isNewRowPA120.value) {
         compareType.value = 2;
