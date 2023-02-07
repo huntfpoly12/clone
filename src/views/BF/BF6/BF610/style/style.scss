@@ -78,5 +78,8 @@
             cursor: pointer;
         } 
     }
+    :deep .dx-checkbox-has-text.mr-5 {
+        margin-right: 10px;
+    }
 
 }

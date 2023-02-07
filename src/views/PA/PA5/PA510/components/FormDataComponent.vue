@@ -121,7 +121,7 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <span>
-                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal"
+                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal" id="button-action-dedution"
                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 </span>
             </a-tooltip>
@@ -250,6 +250,7 @@ export default defineComponent({
 
         // ===================DONE GRAPQL==================================
         onDoneAdd(() => {
+            store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
             store.state.common.employeeId = dataIncomeWageDaily.value.employee.employeeId
             store.state.common.loadingTableInfo++
@@ -330,6 +331,7 @@ export default defineComponent({
             }
         })
         watch(() => dataIncomeWageDaily.value, (value) => {
+            store.state.common.statusChangeFormPrice = true;
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.actionAddItem && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
             } else {
@@ -493,6 +495,7 @@ export default defineComponent({
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.deductionItemCode))
                     val.price = val.priceNew
             })
+            store.state.common.statusChangeFormPrice = false;
         }
 
         const actionInsurance = () => {
