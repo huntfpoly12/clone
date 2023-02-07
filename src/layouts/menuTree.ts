@@ -158,11 +158,7 @@ export default [
         subMenus: [
           { title: "퇴직금 시뮬레이션", url: "/dashboard/pa-410", id: "pa-410" },
           { title: "퇴직소득자료입력", url: "/dashboard/pa-420", id: "pa-420" },
-          {
-            title: "퇴직소득원천징수영수증",
-            url: "/dashboard/pa-430",
-            id: "pa-430",
-          },
+          { title: "퇴직소득원천징수영수증", url: "/dashboard/pa-430", id: "pa-430"},
         ],
       },
       {

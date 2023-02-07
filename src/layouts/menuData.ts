@@ -10,77 +10,67 @@ export default [
   { name: "서비스관리", url: "/dashboard/bf-330", id: "bf-330" },
   { name: "영업자관리", url: "/dashboard/bf-340", id: "bf-340" },
 
-  { title: "요금청구,심사", url: "#", id: "bf-410" },
-  { title: "서비스해지", url: "#", id: "bf-420" },
-  { title: "미납관리", url: "#", id: "bf-430" },
-  { title: "수납관리", url: "#", id: "bf-440" },
+  { name: "요금청구,심사", url: "#", id: "bf-410" },
+  { name: "서비스해지", url: "#", id: "bf-420" },
+  { name: "미납관리", url: "#", id: "bf-430" },
 
-  { title: "회계업무마감관리", url: "#", id: "bf-510" },
-  { title: "원천업무마감관리", url: "#", id: "bf-520" },
-  { title: "4대보험업무관리", url: "#", id: "bf-530" },
-  { title: "제본/배송관리", url: "#", id: "bf-540" },
+  { name: "회계업무마감", url: "#", id: "bf-510" },
+  { name: "4대보험업무관리", url: "#", id: "bf-530" },
 
-  { title: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
+  { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
   {
-    title: "원천세/지방소득세전자신고",
+    name: "원천세/지방소득세전자신고",
     url: "/dashboard/bf-620",
     id: "bf-620",
   },
   {
-    title: "지급명세서전자신고(연말정산)",
+    name: "지급명세서전자신고(연말정산)",
     url: "/dashboard/bf-630",
     id: "bf-630",
   },
-  { title: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
+  { name: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
   {
-    title: "일용직근로소득지급명세서전자신고",
+    name: "일용직근로소득지급명세서전자신고",
     url: "/dashboard/bf-650",
     id: "bf-650",
   },
 
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
 
-  { title: "통장관리", url: "#", id: "cm-121" },
-  { title: "수급자관리", url: "#", id: "cm-124" },
-  { title: "회계기타", url: "#", id: "cm-125" },
-  { title: "계정코드", url: "#", id: "cm-126" },
+  { name: "통장관리", url: "#", id: "cm-121" },
+  { name: "수급자관리", url: "#", id: "cm-124" },
+  { name: "회계기타", url: "#", id: "cm-125" },
+  { name: "계정코드", url: "#", id: "cm-126" },
 
-  { title: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
+  { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
 
-  { title: "통장내역", url: "#", id: "ac-110" },
-  { title: "전표", url: "#", id: "ac-120" },
-  { title: "마감", url: "#", id: "ac-130" },
+  { name: "통장내역", url: "#", id: "ac-110" },
+  { name: "전표", url: "#", id: "ac-120" },
+  { name: "마감", url: "#", id: "ac-130" },
 
   { name: "전표/결의", url: "#", id: "ac-210" },
   { name: "예산서", url: "#", id: "ac-220" },
   { name: "결산서", url: "#", id: "ac-230" },
 
-  { name: "세입예산서", url: "#", id: "ac-310" },
-  { name: "세출예산서", url: "#", id: "ac-320" },
-  { name: "예산총괄표", url: "#", id: "ac-330" },
-  { name: "임직원보수일람표", url: "#", id: "ac-340" },
-  { name: "과목전용조서", url: "#", id: "ac-350" },
-  { name: "추가경정 세입예산서", url: "#", id: "ac-360" },
-  { name: "추가경정 세출예산서", url: "#", id: "ac-370" },
   { name: "예산서 자동작성", url: "#", id: "ac-380" },
 
-  { name: "세입결산서", url: "#", id: "ac-400" },
-  { name: "세출결산서", url: "#", id: "ac-410" },
-  { name: "예비비사용조서", url: "#", id: "ac-420" },
-  { name: "정부보조금명세서", url: "#", id: "ac-430" },
-  { name: "후원금수입및사용결고보고서", url: "#", id: "ac-440" },
-  { name: "후원금계좌거래내역", url: "#", id: "ac-450" },
-  { name: "사업비명세서", url: "#", id: "ac-460" },
-  { name: "사업비명세서", url: "#", id: "ac-470" },
-  { name: "기타비용명세서", url: "#", id: "ac-480" },
-
   { name: "장부", url: "#", id: "ac-510" },
-  { name: "필요경비대장", url: "#", id: "ac-520" },
+  { name: "예산서", url: "#", id: "ac-520" },
   { name: "정부보조금명세서", url: "#", id: "ac-530" },
-  { name: "보조금정산서", url: "#", id: "ac-540" },
+  { name: "예비비사용조서", url: "#", id: "ac-540" },
+  { name: "사업비명세서", url: "#", id: "ac-550" },
+  { name: "기타비용명세서", url: "#", id: "ac-560" },
+  { name: "과목전용조서", url: "#", id: "ac-570" },
+  { name: "후원금수입 및 사용결과보고서", url: "#", id: "ac-580" },
+  { name: "후원금전용계좌의 입출금명세", url: "#", id: "ac-590" },
+
+  { name: "거래처등록", url: "#", id: "ac-610" },
+  { name: "후원자관리", url: "#", id: "ac-620" },
+  { name: "기부금영수증", url: "#", id: "ac-630" },
 
   { name: "근로소득자료입력", url: "/dashboard/pa-110", id: "pa-110" },
   { name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" },
+
   { name: "원천징수이행상황신고서", url: "/dashboard/pa-210", id: "pa-210" },
   { name: "근로소득원천징수영수증", url: "/dashboard/pa-220", id: "pa-220" },
   {
@@ -88,18 +78,13 @@ export default [
     url: "/dashboard/pa-230",
     id: "pa-230",
   },
-
   { name: "연말정산간소화입력", url: "#", id: "pa-240" },
   { name: "의료비지급명세서", url: "#", id: "pa-250" },
   { name: "기부금명세서", url: "#", id: "pa-260" },
   { name: "연말정산현황", url: "#", id: "pa-270" },
 
   { name: "원천세,지방소득세신고", url: "#", id: "pa-310" },
-  {
-    name: "지급명세서전자신고(연말정산)",
-    url: "#",
-    id: "pa-320",
-  },
+  { name: "지급명세서전자신고(연말정산)", url: "#", id: "pa-320"},
   { name: "간이지급명세서전자신고", url: "#", id: "pa-330" },
   { name: "일용직전자신고", url: "#", id: "pa-340" },
 
@@ -131,13 +116,4 @@ export default [
   { name: "보험사무대행신고", url: "#", id: "pa-860" },
   { name: "사업장가입신고", url: "#", id: "pa-870" },
   { name: "사업장탈퇴신고", url: "#", id: "pa-880" },
-  { name: "통합업무조회", url: "#", id: "pa-890" },
-
-  { name: "4대보험EDI 데이터연동", url: "#", id: "pa-910" },
-  {
-    name: "파트너십 계좌통합 데이터연동",
-    url: "#",
-    id: "pa-920",
-  },
-  { name: "뱅크다K 데이터연동", url: "#", id: "pa-930" },
 ];
