@@ -8,9 +8,9 @@
             <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
         </div>
         <div class="d-flex">
-            <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm" />
-            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm" />
-            <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm">
+            <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm || statusButton == (30 || 40)" />
+            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || statusButton == (30 || 40)" />
+            <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm || statusButton == (30 || 40)">
                 <SaveOutlined style="font-size: 17px" />
             </DxButton>
             <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
@@ -31,7 +31,7 @@
                     </div>
                 </a-tooltip>
             </DxButton>
-            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
+            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || statusButton == (30 || 40)">
                 <div class="d-flex-center">
                     <checkbox-basic :valueCheckbox="true" :disabled="true" />
                     <span class="fz-12 pl-5">지급일변경</span>
@@ -429,7 +429,7 @@ export default defineComponent({
             statusButton.value = newValue
         })
         watch(() => store.state.common.actionAddRow.dataSource, (newValue) => {
-            console.log(`output->newValue`,newValue)
+            // console.log(`output->newValue`,newValue)
             dataSourceDetail.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
