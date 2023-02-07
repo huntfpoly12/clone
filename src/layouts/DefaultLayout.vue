@@ -187,6 +187,7 @@ import {
   BF610,
   BF620,
   BF640,
+  BF650,
   BF630,
   BF220,
   CM110,
@@ -243,6 +244,7 @@ export default defineComponent({
     BF610,
     BF620,
     BF640,
+    BF650,
     BF630,
     BF220,
     CM110,
@@ -371,6 +373,7 @@ export default defineComponent({
       immediate: true,
     },
   },
+  
   computed: { 
     username() {
       if (sessionStorage.getItem("username")) {
@@ -390,6 +393,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-610") return 'BF610';
       if (this.activeTab.id === "bf-620") return 'BF620';
       if (this.activeTab.id === "bf-640") return 'BF640';
+      if (this.activeTab.id === "bf-650") return 'BF650';
       if (this.activeTab.id === "bf-630") return 'BF630';
       if (this.activeTab.id === "cm-110") return 'CM110';
       if (this.activeTab.id === "cm-130") return 'CM130';
