@@ -377,8 +377,6 @@ export default defineComponent({
         };
     },
 });
-<<<<<<< HEAD
-<<<<<<< HEAD
 </script>
 <style lang="scss" scoped>
 ::v-deep .ant-form-item-control {
