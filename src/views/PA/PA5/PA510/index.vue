@@ -269,6 +269,8 @@
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+        <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
+            :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" />
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
             @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
@@ -289,6 +291,7 @@ import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
 import filters from "@/helpers/filters";
 import { userType } from "@/helpers/commonFunction";
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -318,6 +321,7 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
         const modalChangeRow = ref(false)
+        const modalChangeRowPrice = ref(false)
         let dataCustomRes: any = ref([])
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -485,9 +489,13 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
             rowEdit.value = data.data
-            if (rowEdit.value.employeeId) {
+            if (rowEdit.value.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
-                    modalChangeRow.value = true;
+                    if (store.state.common.statusChangeFormPrice) {
+                        modalChangeRowPrice.value = true;
+                    } else {
+                        modalChangeRow.value = true;
+                    }
                 } else {
                     if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
@@ -528,6 +536,19 @@ export default defineComponent({
             }
             store.state.common.incomeId = rowEdit.value.incomeId
             store.state.common.employeeId = rowEdit.value.employeeId
+        }
+        const statusComfirmChangePrice = (res: any) => {
+            if (res) {
+                (document.getElementById("button-action-dedution") as HTMLInputElement).click();
+                store.state.common.focusedRowKey = store.state.common.employeeId
+            } else {
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
+                store.state.common.incomeId = rowEdit.value.incomeId
+                store.state.common.employeeId = rowEdit.value.employeeId
+            }
         }
         const customizeTotalMonthly = (data: any) => {
             let total: any = 0
@@ -570,7 +591,9 @@ export default defineComponent({
             statusComfirm,
             store,
             modalChangeRow, statusComfirmChange,
+            modalChangeRowPrice, statusComfirmChangePrice,
             statusDisabledBlock,
+            Message,
         }
 
     },
