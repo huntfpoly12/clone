@@ -4,7 +4,6 @@
             <div v-if="disabledImg == false">
                 <div class="d-flex">
                     <input class="custom-file-input" type="file" @change="onFileChange" width="100px" />
-                    <img src="@/assets/images/iconUpload.png" alt="" style="width: 20px;">
                     <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
                 </div>
                 <p v-if="messageUpload">{{ messageUpload }}</p>
