@@ -161,7 +161,7 @@
             <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
                     <div class="text-align-center ">
-                        <DxButton @click="actionDedution" :text="'공제 재계산'"
+                        <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                         <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
                             :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px' }" :height="'33px'" />
@@ -360,6 +360,7 @@ export default defineComponent({
             notification('success', '업데이트 완료!')
         })
         doneCreated(res => {
+            store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
             store.state.common.employeeId = dataIW.value.employee.employeeId
             store.state.common.loadingTableInfo++
@@ -374,6 +375,7 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(() => dataConfigDeductions.value, (value) => {
             calculateTax();
+            store.state.common.statusChangeFormPrice = true;
         }, { deep: true })
         watch(() => dataConfigPayItems.value, (value) => {
             calculateTax();
@@ -422,6 +424,9 @@ export default defineComponent({
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
+                setTimeout(() => {
+                    store.state.common.statusChangeFormPrice = false;
+                }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
@@ -429,14 +434,12 @@ export default defineComponent({
         watch(() => dataIW.value, (value) => {
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.actionAddItem && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
-                console.log(1);
             } else {
                 store.state.common.statusChangeFormEdit = false
             }
             if (JSON.stringify({ ...sampleDataIncomeWage }) !== JSON.stringify(dataIW.value)) {
                 store.state.common.statusChangeFormAdd = true
                 if (!store.state.common.statusRowAdd) {
-                    console.log(2);
                     store.state.common.statusChangeFormEdit = true
                 }
             } else {
@@ -634,6 +637,9 @@ export default defineComponent({
                     val.amount = val.amountNew
                     dataIW.value.deductionItems[index] = {amount: val.amountNew, itemCode: val.itemCode}
             })
+            setTimeout(() => {
+                store.state.common.statusChangeFormPrice = false;
+            }, 500);
         }
 
         const onUpdateValue = (employeeId: any) => {
