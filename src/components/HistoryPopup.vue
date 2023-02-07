@@ -154,6 +154,13 @@ export default defineComponent({
                             trigger210.value = true;
                             refetchBf210();
                             break;
+                        case 'bf-220':
+                            dataQuery.value = {
+                                id: props.idRowEdit,
+                            };
+                            trigger220.value = true;
+                            refetchCM220();
+                            break;
                         case 'cm-110':
                             if (dataQuery.value) {
                                 trigger110.value = true;

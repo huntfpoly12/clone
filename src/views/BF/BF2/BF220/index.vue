@@ -84,7 +84,7 @@
     <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" :key="keyAdd" />
     <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-        title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
+        title="변경이력" :idRowEdit="IDRow" typeHistory="bf-220" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, reactive } from 'vue';
@@ -177,6 +177,7 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '권한그룹관리')
         }
         const modalHistory = (data: any) => {
+            console.log(`output->data.data.id`,data.data)
             IDRow.value = data.data.id
             modalHistoryStatus.value = true;
             popupData.value = data;
