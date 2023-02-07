@@ -133,9 +133,6 @@ export default defineComponent({
         const popupDataEmailSingle: any = ref({})
         const popupDataEmailSinglePayrollRegister: any = ref({})
         const popupDataEmailMulti: any = ref({})
-        // const actionAddItem1 = ref<Boolean>(false)
-        const actionSaveItem = ref<number>(0)
-        const actionUpdateItem = ref<number>(0)
         watch(() => props.dataRows, (value) => {
             if (value) {
                 popupDataDelete.value = value
@@ -161,7 +158,7 @@ export default defineComponent({
                 } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
-                    // store.state.common.incomeId = null;
+                    store.state.common.incomeId = null;
                     store.state.common.focusedRowKey = null;
                 }
             } else {
