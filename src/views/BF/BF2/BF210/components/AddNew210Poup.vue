@@ -249,31 +249,47 @@ export default defineComponent({
         let dataCallGroup = ref({
             type: "r"
         })
-        const { onResult: resGroup, refetch: reqGroup } = useQuery(
+        const { result: resGroup, refetch: reqGroup } = useQuery(
             queries.findGroups, dataCallGroup,
             () => ({
                 enabled: triggerGroup.value,
                 fetchPolicy: "no-cache",
             })
         );
-        resGroup(e => {
+        // resGroup(e => {
+        //     let option: any = []
+        //     e.data.findGroups.map((val: any) => {
+        //         option.push({
+        //             label: val.groupCode + '  ' + val.groupName,
+        //             value: val.groupId
+        //         })
+        //     })
+        //     if (e.data.findGroups) {
+        //         formState.groupCode = e.data.findGroups[0].groupId
+        //         objDataDefault = {
+        //             ...objDataDefault,
+        //             groupCode: e.data.findGroups[0].groupId
+        //         }
+        //     }
+        //     selectSearch.value = option
+        // })
+        watch(resGroup, (value: any) => {
             let option: any = []
-            e.data.findGroups.map((val: any) => {
+            value.findGroups.map((val: any) => {
                 option.push({
                     label: val.groupCode + '  ' + val.groupName,
                     value: val.groupId
                 })
             })
-            if (e.data.findGroups) {
-                formState.groupCode = e.data.findGroups[0].groupId
+            if (value.findGroups) {
+                formState.groupCode = value.findGroups[0].groupId
                 objDataDefault = {
                     ...objDataDefault,
-                    groupCode: e.data.findGroups[0].groupId
+                    groupCode: value.findGroups[0].groupId
                 }
             }
             selectSearch.value = option
-        })
-        watch(resGroup, (value: any) => {
+
             if (value && value.findGroups) {
                 arrData.value = value.findGroups.datas
             }
