@@ -16,6 +16,7 @@ export class Message extends BaseType {
         '103': { "message" : "최소 글자수를 확인하세요."}, // {object} : Check minimum number of characters.
         '104': { "message" : "최대 글자수를 초과하였습니다."}, // {object} : exceeds the maximum number of characters.
         '105': { "message" : "올바른 형식이 아닙니다."}, // {object} : Incorrect format. example : email, BusinessID, PersonalID, Birthday, etc
+        '106': { "message" : "업그레이드가 완료되었습니다."}, // [Pop-message] Update successful!
         '109': { "message" : "저장이 실패하였습니다. Err : {errorCode}", "icon": "iconError"}, // [Pop-message] Save failure!
       // SEARCH Button Click
         '201': { "message" : "조회가 완료되었습니다. 결과를 확인하세요.", "icon": "iconInfo"}, // [Pop-message] Search successful! Please check results.
@@ -28,6 +29,11 @@ export class Message extends BaseType {
         '401': { "message" : "정말로 삭제하시겠습니까?", "icon": "iconWarning"}, // Do you really want to delete this data?
         '402': { "message" : "삭제되었습니다", "icon": "iconInfo"}, // Deleted!
         '403': { "message" : "삭제가 불가능합니다. 관리자에게 문의하세요", "icon": "iconError"}, // Not possible to delete this data. Contact the manager.
+        '404': { "message" : "항목을 최소 하나 선택해야합니다"}, // You must select at least one item.
+      // Popup confirm 
+        '501': { "message" : "변경 내용을 저장하시겠습니까?","yes": "네","no":"아니요"}, // Are you sure you want to save your changes?
+      // Group 
+        '601': { "message" : "항목을 2개 이상 선택해야합니다"}, // You must select 2 or more items
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
@@ -66,6 +72,12 @@ export class Message extends BaseType {
         '002': { "message" : "선택된 사원의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?", "icon": "iconWarning"}, //Do you really want to delele this data?
         '003': { "message" : "삭제되었습니다.", "icon": "iconInfo"}, // Deleted!
     });
+  
+  //근로소득-일용직소득  계산   
+  public static PA110 = new Message({
+        '001': { "message" : "변경 항목에 대해 공제 제계산하시겠습니까?","yes": "네. 공제 재계산하겠습니다","no":"그냥 나가기"}, // Do you want to deduct the change?
+      
+    });
    
       //기초정보설정
     public static CM110 = new Message({
@@ -98,7 +110,7 @@ export class Message extends BaseType {
      * @param codeMess message code
      * @returns String message
      */
-    public static getCommonMessage(codeMess : string) {
+  public static getCommonMessage(codeMess: string) {
         const items = Message.COMMON;
         let item : any = items.name;
         let resMess : any  = item[codeMess];

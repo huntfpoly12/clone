@@ -5,7 +5,7 @@
                 <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
-                            <a-tooltip>
+                            <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfig">
                                     <SaveOutlined />
@@ -14,19 +14,19 @@
                         </div>
                         <div v-if="activeKey == '2'">
                             <div class="btn-action">
-                                <a-tooltip>
+                                <a-tooltip color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <SearchOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip>
+                                <a-tooltip color="black">
                                     <template #title>삭제</template>
                                     <a-button>
                                         <DeleteOutlined />
                                     </a-button>
                                 </a-tooltip>
-                                <a-tooltip>
+                                <a-tooltip color="black">
                                     <template #title>출력</template>
                                     <a-button>
                                         <PrinterOutlined />
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div v-if="activeKey == '3'">
-                            <a-tooltip>
+                            <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
@@ -88,9 +88,8 @@
                                         <a-col :span="24">
                                             <a-form-item label="급여지급일자" :label-col="labelCol">
                                                 <div style="display: flex; align-items: center">
-                                                    <number-box :width="150" :required="true" placeholder="Number box"
-                                                        :min="0" :max="30" v-model:valueInput="formState.paymentDay"
-                                                        :spinButtons="true">
+                                                    <number-box :width="150" :min="0" :max="30"
+                                                        v-model:valueInput="formState.paymentDay" :spinButtons="true">
                                                     </number-box>
                                                     <span style="margin-left: 5px">일, ( 말일은 ‘0’을 선택하세요)</span>
                                                 </div>
@@ -164,7 +163,9 @@
                                                                     관할세무서 : {{ dataPublicInstitution.taxOfficeName }}
                                                                 </p>
                                                                 <p style="margin: 0; font-weight: 600">
-                                                                    지방소득세 납세지 : {{ dataPublicInstitution.localIncomeTaxArea }}
+                                                                    지방소득세 납세지 : {{
+                                                                        dataPublicInstitution.localIncomeTaxArea
+                                                                    }}
                                                                 </p>
                                                                 <p style="margin: 0">
                                                                     위 자동으로 선택된 결과로 적용하시겠습니까?
@@ -223,6 +224,7 @@
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         :onRowPrepared="changeColorRow">
+                        <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -252,11 +254,11 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip v-if="data.data.editable" placement="top">
+                                    <a-tooltip color="black" v-if="data.data.editable" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="setModalEditVisible(data)" />
                                     </a-tooltip>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
@@ -265,7 +267,8 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <AddCM130Popup :modalStatus="modalAddNewStatus" @closePopup="onCloseAddNewModal" title="원천설정" />
+                    <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum"
+                        @closePopup="onCloseAddNewModal" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
@@ -273,8 +276,10 @@
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="공제항목">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
-                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column" :focused-row-enabled="true"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowClick="editData">
+                        :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :onRowClick="editData">
+                        <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" :allow-export-selected-data="true" />
                         <DxToolbar>
@@ -292,15 +297,14 @@
                             공제
                         </template>
                         <DxColumn data-field="name" caption="항목명" />
-                        <DxColumn caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space>
-                                    <a-tooltip placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
-                                        <HistoryOutlined @click="modalHistory(data)" />
+                                        <HistoryOutlined @click="modalHistoryDeduction(data)" />
                                     </a-tooltip>
                                 </a-space>
                             </div>
@@ -336,22 +340,15 @@
                         </a-row>
                         <a-row>
                             <a-col :span="24">
-                                <a-form-item label="구분/유형" :label-col="labelCol">
-                                    <TaxPay style="width: 320px" placeholder="공제" :disabled="true"></TaxPay>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row>
-                            <a-col :span="24">
                                 <a-form-item label="산출방법" :label-col="labelCol">
-                                    <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                    <default-text-box style="width: 320px"
                                         v-model:valueInput="formStateDeduction.formula">
                                     </default-text-box>
                                 </a-form-item>
                             </a-col>
                         </a-row>
                     </standard-form>
-                    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+                    <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
                 </a-tab-pane>
             </a-tabs>
@@ -382,7 +379,7 @@ import {
     DxExport,
     DxSearchPanel,
     DxToolbar,
-    DxItem,
+    DxItem, DxScrolling,
 } from "devextreme-vue/data-grid";
 import notification from "@/utils/notification";
 import EditCM130Popup from "../CM130/components/EditCM130Popup.vue";
@@ -392,14 +389,9 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import AddCM130Popup from "./components/AddCM130Popup.vue";
-import dayjs, { Dayjs } from "dayjs";
 import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 import { initialFormState, initialFormStateDeduction } from "./utils/data";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxNumberBox,
@@ -407,6 +399,7 @@ export default defineComponent({
         DxDataGrid,
         DxColumn,
         DxExport,
+        DxScrolling,
         DxSearchPanel,
         DxButton,
         DxToolbar,
@@ -424,7 +417,7 @@ export default defineComponent({
     setup() {
         // config grid
         const store = useStore();
-
+        const globalYear = computed(() => store.state.settings.globalYear)
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const popupData = ref([]);
@@ -432,6 +425,8 @@ export default defineComponent({
         const modalEditStatus = ref<boolean>(false);
         const modalAddNewStatus = ref<boolean>(false);
         const modalHistoryStatus = ref<boolean>(false);
+        const modalHistoryStatusDeduction = ref<boolean>(false);
+            
         const isShow = ref<boolean>(false);
         const idRowEdit = ref(0);
         const formState = reactive({ ...initialFormState });
@@ -442,7 +437,9 @@ export default defineComponent({
         const dataQueryInstitution = ref();
         const dataSource = ref([]);
         const dataSourceDeduction = ref([]);
-        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        let itemCodeMax = ref(0);
+        const resetFormNum = ref(1);
+        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: globalYear.value });
         //================================================= FUNCTION============================================
         const showModal = () => {
             isShow.value = true;
@@ -453,10 +450,8 @@ export default defineComponent({
             isShow.value = false;
         };
         const trigger = ref(false)
-        // reportType: 1 or 6
-        // paymentType: 1 or 2
         // get config
-        const dataQuery = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
         const { result: resultConfig, loading, refetch: refetchConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -487,7 +482,7 @@ export default defineComponent({
             }
         });
 
-        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')) });
+        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: globalYear.value });
         const { result: resultConfigDeduction, loading: loadingDeduction, refetch: refetchConfigDeduction } = useQuery(
             queries.getWithholdingConfigDeductionItems,
             dataQueryDeduction,
@@ -525,7 +520,7 @@ export default defineComponent({
         const onSubmitConfig = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 input: {
                     reportType: formState.reportType,
                     paymentType: formState.paymentType,
@@ -552,7 +547,7 @@ export default defineComponent({
         const onSubmitConfigDeduction = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 itemCode: formStateDeduction.itemCode,
                 input: {
                     formula: formStateDeduction.formula
@@ -579,6 +574,9 @@ export default defineComponent({
         watch(resultWithholdingConfig, (value) => {
             dataSource.value = value.getWithholdingConfigPayItems;
             dataSource.value.map((e: any) => {
+                if (e.itemCode > itemCodeMax.value) {
+                    itemCodeMax.value = e.itemCode
+                }
                 if (e.taxPayItemCode != null) {
                     taxPayItem.map((eData: any) => {
                         if (eData.value == e.taxPayItemCode) {
@@ -618,7 +616,7 @@ export default defineComponent({
                 onOk() {
                     let variables = {
                         companyId: companyId,
-                        imputedYear: parseInt(dayjs().format('YYYY')),
+                        imputedYear: globalYear.value,
                         itemCode: data.data.itemCode
                     };
                     actionDelete(variables);
@@ -648,6 +646,7 @@ export default defineComponent({
         }
         const openAddNewModal = () => {
             if (dataSource.value.length <= 20) {
+                resetFormNum.value++;
                 modalAddNewStatus.value = true;
             } else {
                 notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
@@ -669,6 +668,11 @@ export default defineComponent({
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.itemCode;
             modalHistoryStatus.value = true;
+            popupData.value = data;
+        }
+        const modalHistoryDeduction = (data: any) => {
+            idRowEdit.value = data.data.itemCode;
+            modalHistoryStatusDeduction.value = true;
             popupData.value = data;
         }
         const getAbleDisable = (data: any) => {
@@ -743,6 +747,7 @@ export default defineComponent({
             modalEditStatus,
             modalAddNewStatus,
             modalHistoryStatus,
+            modalHistoryStatusDeduction,
             onSubmitConfigDeduction,
             modalSetting,
             openAddNewModal,
@@ -750,9 +755,12 @@ export default defineComponent({
             setModalEditVisible,
             onCloseEditModal,
             modalHistory,
+            modalHistoryDeduction,
             getAbleDisable,
             onExporting,
             dataPublicInstitution,
+            itemCodeMax,
+            resetFormNum,
         };
     },
 });
@@ -790,5 +798,4 @@ export default defineComponent({
     margin-left: 2%;
     color: #c3baba;
 }
-
 </style>

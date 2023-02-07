@@ -10,7 +10,7 @@
       <div class="text-align-center mt-50">
         <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
           @onClick="setModalVisible()" />
-        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -63,7 +63,7 @@ export default defineComponent({
       }
     };
     onDoneAdd(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", `이메일을 발송했습니다`);
       emit("closePopup", false);
     });
     errorSendEmail((e: any) => {

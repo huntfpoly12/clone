@@ -1,5 +1,10 @@
 #pa-710 {
+    .confirm {
+        color: red;
+    }
+
     margin-top: 10px;
+    // padding: 10px 10px 10px 0;
 
     .total-user {
         background-color: #17375E;
@@ -26,6 +31,10 @@
     ::v-deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
+
+    }
+
+    ::v-deep .red .ant-form-item-label>label {
         color: red;
     }
 
@@ -34,12 +43,13 @@
     }
 
     ::v-deep .custom-layout {
+        margin-top: 10px;
         padding: 10px 10px 10px 0;
 
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 500px;
+            height: 100%;
         }
     }
 
@@ -51,4 +61,41 @@
         }
     }
 
+    ::v-deep .active-row-key {
+        background-color: #337AB7;
+        color: white;
+    }
+
+    #active-save{
+        display: none;
+    }
+    
+}
+.custom-modal-delete {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
+
+    img {
+        width: 40px;
+        margin-right: 5px;
+    }
+
+    span {
+        padding: 0px 5px;
+    }
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.button-form-modal {
+    margin: 0px 5px;
 }

@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed } from 'vue'
+import { defineComponent, reactive, ref, watch, computed,onActivated, onDeactivated } from 'vue'
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import DxSelectBox from "devextreme-vue/select-box";
@@ -68,18 +68,18 @@ import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 import queries from "@/graphql/queries/PA/PA6/PA620/index"
 import { useStore } from 'vuex'
 import dayjs from "dayjs";
+
 export default defineComponent({
     props: {
         modalStatus: {
             type: Boolean,
         },
         data: {
-            type: Array,
-            default: []
+            type: Number,
         },
-        processKey: {
-            type: Object,
-            default: {}
+        dateType: {
+            type: Number,
+            default: 1,
         },
     },
     components: {
@@ -90,15 +90,33 @@ export default defineComponent({
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const month1: any = ref<number>()
+        const processKey = computed(() => store.state.common.processKeyPA620)
         watch(() => props.data, (val) => {
-            month1.value = val
+            month1.value = val;
+            let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth }`;
+            if(props.dateType == 2 && props.data) {
+                yearMonth = `${processKey.value.paymentYear}${props.data + 1}`;
+            }
+            if(props.dateType == 1) {
+                yearMonth = `${processKey.value.paymentYear}${props.data}`;
+            }
+            month2.value = yearMonth;
         });
-        let month2: any = ref(dayjs().format("YYYY-MM"))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
-
+        //covert Date Month
+        const convertToDate = (date: number | null | string) => {
+            if (date === null) {
+                return dayjs();
+            }
+            let dateStr = date.toString();
+            let dateLen = dateStr.length;
+            let dateData = dateStr.slice(0, 4) + '/' + `${dateLen==5&&0}` + dateStr.slice(4, dateLen);
+            return dayjs(dateData, 'YYYY/MM');
+        };
+        let month2: any = ref(convertToDate(`${processKey.value.paymentYear}${processKey.value.imputMonth + 1}`))
         const {
             mutate,
             onError,
@@ -111,7 +129,6 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', `완료!`)
-            emit('loadingTable', true)
         })
         const originData: any = ref({
             companyId: companyId,
@@ -136,15 +153,20 @@ export default defineComponent({
             modalCopy.value = false
         };
 
-        const onSubmit = () => {
-            emit("dataAddIncomeProcess", {
+        const commitDate = () => {
+            const dateCustom = {
                 imputedYear: globalYear.value,
                 imputedMonth: month1.value,
-                paymentYear: parseInt(month2.value.split('-')[0]),
-                paymentMonth: parseInt(month2.value.split('-')[1]),
-            })
-            emit("closePopup", false)
+                paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+            }
+            store.commit('common/processKeyPA620', dateCustom);
+            emit("dataAddIncomeProcess", dateCustom)
+        }
 
+        const onSubmit = () => {
+            commitDate();
+            emit("closePopup", false);
         };
         const updateValue = (value: any) => {
             dataApiCopy.value = {
@@ -162,10 +184,11 @@ export default defineComponent({
                     target: {
                         imputedYear: globalYear.value,
                         imputedMonth: month1.value,
-                        paymentYear: dataApiCopy.value.paymentYear,
-                        paymentMonth: dataApiCopy.value.paymentMonth,
+                        paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4,6)),
                     },
                 })
+                commitDate();
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
@@ -186,6 +209,7 @@ export default defineComponent({
             arrDataPoint,
             updateValue,
             actionCopy,
+            processKey
         }
     },
 })
@@ -220,7 +244,7 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
+        height: 24px;
         background-color: #A6A6A6;
     }
 
@@ -240,7 +264,7 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
+        height: 24px;
         background-color: black;
     }
 

@@ -26,15 +26,13 @@
                     </a-col>
                     <a-col :span="12">
                         <a-form-item label="상태" :label-col="labelCol">
-                            <switch-basic v-if="formState.type == 'c'" v-model:valueSwitch="formState.active"
-                                textCheck="이용중" textUnCheck="이용중지" disabled />
-                            <switch-basic v-if="formState.type != 'c'" v-model:valueSwitch="formState.active"
-                                textCheck="이용중" textUnCheck="이용중지" />
+                            <switch-basic v-model:valueSwitch="formState.active" textCheck="이용중" textUnCheck="이용중지"
+                                :disabled="formState.type == 'c' ? true : false" />
                         </a-form-item>
                         <a-form-item label="회원종류" class="red" :label-col="labelCol">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput"
-                                style="width:170px" field-template="field" :disabled="true" :value="typeSelect">
+                                style="width:170px" field-template="field" :value="typeSelect" :disabled="true">
                                 <template #field="{ data }">
                                     <Field :fieldData="data" />
                                 </template>
@@ -85,9 +83,9 @@
                                     <a-col :span="4"></a-col>
                                     <a-col :span="20">
                                         <div class="custom-button-modal">
-                                            <button-basic :width="120" text="아니오" :type="'default'" :mode="'outlined'"
-                                                @onClick="closePopupEmail" style="margin-right: 10px;" />
-                                            <button-basic text="네. 발송합니다" :type="'default'" :mode="'contained'"
+                                            <button-basic :width="120" text="아니오" type="default" mode="outlined"
+                                                @onClick="closePopupEmail" class="mr-10" />
+                                            <button-basic text="네. 발송합니다" type="default" mode="contained"
                                                 @onClick="sendMessToGmail" />
                                         </div>
                                     </a-col>
@@ -100,10 +98,11 @@
                     <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                     <div style="position: relative">
                         <div class="overlay" v-if="formState.type == 'c'"></div>
-                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData" :show-bordes="true" :selected-row-keys="checkedNames"
-                            :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" class="table-scroll" key-expr="id"
-                            @selection-changed="onSelectionChanged">
+                        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData"
+                            :show-bordes="true" :selected-row-keys="checkedNames" :allow-column-reordering="move_column"
+                            :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
+                            key-expr="id" @selection-changed="onSelectionChanged">
+                            <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSelection mode="multiple" />
                             <DxColumn data-field="id" caption="코드" :width="200" />
                             <DxColumn data-field="name" caption="권한그룹명" />
@@ -113,10 +112,10 @@
                 </div>
                 <a-row>
                     <a-col :offset="8" style="text-align: center; margin-top: 20px;">
-                        <button-basic text="취소" :type="'default'" :mode="'outlined'" @onClick="setModalVisible"
-                            style="margin-right: 10px;" />
-                        <button-basic text="저장하고 나가기" :type="'default'" :mode="'contained'"
-                            @onClick="confirmUpdate($event)" />
+                        <button-basic text="취소" type="default" mode="outlined" @onClick="setModalVisible"
+                            class="mr-10" />
+                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="confirmUpdate($event)"
+                            :disabled="formState.type == 'c' ? true : false" />
                     </a-col>
                 </a-row>
             </standard-form>
@@ -133,10 +132,13 @@ import mutations from "@/graphql/mutations/BF/BF2/BF210/index";
 import notification from '@/utils/notification';
 import Field from '../components/Field.vue';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { formStatePopupEdit, productsPopupEdit } from '../utils/index';
+
 import {
-  DxDataGrid,
-  DxColumn,
-  DxSelection,
+    DxDataGrid,
+    DxColumn,
+    DxSelection,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import {
   SearchOutlined,
@@ -147,14 +149,7 @@ import {
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
     components: {
-        MenuOutlined,
-        SearchOutlined,
-        WarningOutlined,
-        MailOutlined,
-        DxDataGrid,
-        DxColumn,
-        DxSelection,
-        DxSelectBox,
+        MenuOutlined, SearchOutlined, WarningOutlined, MailOutlined, DxDataGrid, DxColumn, DxSelection, DxSelectBox, DxScrolling,
         Field,
     },
     setup(props, { emit }) {
@@ -177,84 +172,8 @@ export default defineComponent({
         const arrData = ref()
         const dataQuery = ref();
         let trigger = ref<boolean>(false);
-        const formState = ref({
-            id: 1,
-            type: "",
-            username: "",
-            name: "",
-            mobilePhone: "",
-            email: "",
-            president: true,
-            managerGrade: 1,
-            accountingRole: true,
-            withholdingRole: true,
-            createdAt: 1,
-            createdBy: "",
-            updatedAt: 1,
-            updatedBy: "",
-            ip: "",
-            active: true,
-            groupId: "",
-            groupCode: "",
-            groupName: "",
-            facilityBusinesses: [],
-            screenRoleGroups: [{
-                id: "",
-                name: "",
-                type: "",
-                readAdminScreenRoles: [],
-                writeAdminScreenRoles: [],
-                readWorkScreenRoles: [],
-                writeWorkScreenRoles: [],
-                lock: true,
-                memo: "",
-                createdAt: "",
-                createdBy: "",
-                updatedAt: "",
-                updatedBy: "",
-                ip: "",
-                active: true
-            }]
-            ,
-        });
-        let products = ref([
-            {
-                id: 1,
-                color: 'white',
-                name: "중간메니저",
-                type: "m",
-                grade: "2",
-                background: 'black',
-                border: "1px solid black",
-            },
-            {
-                id: 2,
-                color: 'white',
-                name: "당당메니저",
-                type: "m",
-                grade: "3",
-                background: 'black',
-                border: "1px solid black",
-            },
-            {
-                id: 3,
-                color: 'white',
-                name: "영업자회원",
-                type: "r",
-                grade: "",
-                background: 'grey',
-                border: "1px solid grey",
-            },
-            {
-                id: 4,
-                color: 'white',
-                name: "파트너회원",
-                type: "p",
-                grade: "",
-                background: 'goldenrod',
-                border: "1px solid goldenrod",
-            }
-        ])
+        const formState = ref({ ...formStatePopupEdit });
+        let products = ref([...productsPopupEdit])
         const typeSelect = ref()
         // ===================FUNCTION==================================
         const showModal = () => {
@@ -271,6 +190,7 @@ export default defineComponent({
             onError: onErrorUpdate
         } = useMutation(mutations.updateUser);
         onDoneUpdate((e) => {
+            emit("updateDone", true)
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
         })
@@ -379,9 +299,11 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     trigger.value = true;
+                    triggerSearchRoleGroup.value = true;
                     if (dataQuery) {
                         dataQuery.value = { id: props.idRowEdit };
                         refetch();
+                        reqRoleGroup()
                     }
                 }
             }
@@ -406,8 +328,17 @@ export default defineComponent({
                 formState.value.screenRoleGroups = value.getUser.screenRoleGroups;
                 formState.value.groupCode = value.getUser.groupCode + " " + value.getUser.groupName;
                 originData.value.types = [value.getUser.type]
-                triggerSearchRoleGroup.value = true
-                typeSelect.value = value.getUser.type == 'm' ? 1 : (value.getUser.type == 'r' ? 3 : (value.getUser.type == 'p' ? 4 : 2))
+                if (value.getUser.type == 'm' && value.getUser.managerGrade == '2')
+                    typeSelect.value = 1
+                if (value.getUser.type == 'm' && value.getUser.managerGrade == '3')
+                    typeSelect.value = 2
+                if (value.getUser.type == 'r')
+                    typeSelect.value = 3
+                if (value.getUser.type == 'p')
+                    typeSelect.value = 4
+                if (value.getUser.type == 'c')
+                    typeSelect.value = 5
+
                 let arrSelect: any = []
                 formState.value.screenRoleGroups.map((e) => {
                     arrSelect.push(e.id)
@@ -441,33 +372,12 @@ export default defineComponent({
             }
         });
         return {
-            typeSelect,
-            labelCol: { style: { width: "100px" } },
-            changeValueType,
-            move_column,
-            colomn_resize,
-            products,
-            toggleActive,
-            onSelectionChanged,
-            onlyNumber,
-            setModalVisible,
-            triggerToggleEvent,
-            getColorTag,
-            closePopupEmail,
-            checkedNames,
-            layout,
-            formState,
-            showModal,
-            visible,
-            sendGmail,
-            sendMessToGmail,
-            confirmUpdate,
-            statusMailValidate,
-            arrData,
-            disabledBtn
+            typeSelect, labelCol: { style: { width: "100px" } }, move_column, colomn_resize, products, toggleActive, checkedNames, layout, formState, visible, statusMailValidate, arrData, disabledBtn,
+            changeValueType, onSelectionChanged, onlyNumber, setModalVisible, triggerToggleEvent, getColorTag, closePopupEmail, showModal, sendGmail, sendMessToGmail, confirmUpdate,
         };
     },
 });
+<<<<<<< HEAD
 <<<<<<< HEAD
 </script>
 <style lang="scss" scoped>
@@ -605,6 +515,26 @@ export default defineComponent({
 </style>
 =======
 </script> 
+=======
+</script>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> develop
 
 
 

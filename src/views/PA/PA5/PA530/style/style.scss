@@ -54,7 +54,7 @@
             }
         }
 
-        .title-body-right{
+        .title-body-right {
             float: right;
         }
     }
@@ -101,4 +101,8 @@
             text-align: center;
         }
     }
+}
+
+::v-deep .dx-datagrid-text-content {
+    white-space: break-spaces; 
 }

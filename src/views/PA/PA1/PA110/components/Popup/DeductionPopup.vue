@@ -4,12 +4,13 @@
         <div class="custom-modal">
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data" :show-borders="true"
-                    :column-auto-width="true">
-                    <DxColumn caption="항목" data-field="name" />
-                    <DxColumn caption="계산후" data-field="value" />
-                    <DxColumn caption="원본" data-field="oldValue" />
-                </DxDataGrid>
+                    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
+                        :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                        <DxColumn caption="항목" data-field="name" />
+                        <DxColumn caption="계산후" data-field="amountNew" format="fixedPoint"/>
+                        <DxColumn caption="원본" data-field="amount" format="fixedPoint"/>
+                    </DxDataGrid>
             </div>
         </div>
         <div class="text-align-center mt-40">
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { DxDataGrid, DxColumn } from "devextreme-vue/data-grid"
+import { DxDataGrid,DxScrolling, DxColumn } from "devextreme-vue/data-grid"
 import { defineComponent, watch, ref } from 'vue'
 export default defineComponent({
     props: {
@@ -35,7 +36,7 @@ export default defineComponent({
 
     },
     components: {
-        DxDataGrid,
+        DxDataGrid,DxScrolling,
         DxColumn
     },
     setup(props, { emit }) {
@@ -43,14 +44,24 @@ export default defineComponent({
             emit("closePopup", false)
         };
         const onSubmit = (e: any) => {
-            emit("updateCaculate", true)
+            emit("updateDate", true)
             emit("closePopup", false)
         };
-
+        const changeColorRow = (e: any) => {
+            if (e.data) {
+                if (e.data.amount == e.data.amountNew) {
+                    e.rowElement.style.color = 'black';
+                } else {
+                    e.rowElement.style.color = 'red';
+                }
+                e.cells[0].cellElement.style.color = 'black';
+            }
+        }
 
         return {
             setModalVisible,
             onSubmit,
+            changeColorRow,
         }
     },
 })
@@ -62,7 +73,6 @@ export default defineComponent({
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-
     .title {
         background-color: #e6f7ff;
     }

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 export const radioCheckForeigner = [
   { id: 0, text: "내국인" },
   { id: 1, text: "외국인" },
@@ -21,46 +22,40 @@ export const radioCheckReductionInput = [
 ];
 export const IncomeTaxAppRate = [
   { id: 100, text: "100%" },
-  { id: 180, text: "180%" },
+  { id: 80, text: "80%" },
   { id: 120, text: "120%" },
 ];
 
 export const initFormStateTab1 = {
-  name: "",
-  foreigner: false,
-  nationality: "",
-  nationalityCode: "KR",
-  stayQualification: "C-4",
-  residentId: "",
-  roadAddress: "",
-  addressExtend: "",
-  email: "",
-  employeeId: 0,
-  joinedAt: "",
-  leavedAt: "",
-  president: false,
-  householder: false,
-  weeklyWorkingHours: 0,
-  department: "",
-  responsibility: "",
+    name: "",
+    foreigner: false,
+    nationality: "",
+    nationalityCode: "KR",
+    stayQualification: "C-4",
+    residentId: "000000-0000000",
+    roadAddress: "",
+    addressExtend: "",
+    email: "",
+    employeeId: 0,
+    president: false,
+    householder: false,
+    weeklyWorkingHours: 40,
+    department: "",
+    responsibility: "",
+    joinedAt: dayjs().format("YYYYMMDD"),
+    leavedAt: "",
 };
-
 export const initFormStateTab2 = {
   nationalPensionDeduction: false,
   healthInsuranceDeduction: false,
   longTermCareInsuranceDeduction: false,
   employeementInsuranceDeduction: false,
   insuranceSupport: false,
-  nationalPensionSupportPercent: 0,
-  employeementInsuranceSupportPercent: 0,
   employeementReduction: false,
-  employeementReductionStartDate: "",
-  employeementReductionFinishDate: "",
-  employeementReductionRatePercent: 50,
-  employeementReductionInput: 1,
   incomeTaxMagnification: 100,
   payItems: [],
   deductionItems: [],
+//   employeementReductionRatePercent:50,
 };
 export const initFormStateTab3 = {
   employeeId: 0,
@@ -81,3 +76,26 @@ export const initFormStateTab3 = {
   householder: false,
   residentId: "",
 };
+export const taxWaring = '부녀자공제와 한부모공제 중 하나만 선택할수 있습니다. 공제금액이 더 많은 한부모공제를 적용합니다';
+export const newDataSource = {
+    type: 10,
+    employeeId: 0,
+    name: "",
+    residentId: "",
+    status: "",
+    foreigner: false,
+    incomeTypeCode: "",
+    nationalPensionDeduction: false,
+    healthInsuranceDeduction: false,
+    longTermCareInsuranceDeduction: false,
+    employeementInsuranceDeduction: false,
+    insuranceSupport: false,
+    employeementReduction: false,
+    incomeTaxMagnification: 100,
+    payItems: [],
+    deductionItems: [],
+    nationalPensionSupportPercent:false,
+    employeementInsuranceSupportPercent:false,
+    employeementReductionRatePercent:50,
+    deletable:false,
+}

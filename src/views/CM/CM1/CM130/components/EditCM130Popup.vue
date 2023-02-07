@@ -72,14 +72,10 @@
 <script lang="ts">
 import { companyId } from "@/helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
-import { ref, defineComponent, reactive, watch } from "vue";
+import { ref, defineComponent, reactive, watch, computed } from "vue";
 import notification from "@/utils/notification";
-import dayjs, { Dayjs } from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+import { useStore } from 'vuex';
 import { initialState } from "../utils/data"
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 import queries from "@/graphql/queries/CM/CM130/index";
 import mutations from "@/graphql/mutations/CM/CM130/index";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
@@ -92,6 +88,8 @@ export default defineComponent({
         TaxPay,
     },
     setup(props, { emit }) {
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
         let trigger = ref<boolean>(false);
         const dataQuery = ref();
         watch(
@@ -99,7 +97,7 @@ export default defineComponent({
             (newValue) => {
                 trigger.value = true;
                 if (newValue) {
-                    dataQuery.value = { companyId: companyId, imputedYear: parseInt(dayjs().format('YYYY')), itemCode: props.idRowEdit };
+                    dataQuery.value = { companyId: companyId, imputedYear: globalYear.value, itemCode: props.idRowEdit };
                     refetchConfigPayItem();
                 } else {
                     Object.assign(formState, initialState);
@@ -148,7 +146,7 @@ export default defineComponent({
         const onSubmit = () => {
             let variables = {
                 companyId: companyId,
-                imputedYear: parseInt(dayjs().format('YYYY')),
+                imputedYear: globalYear.value,
                 itemCode: formState.itemCode,
                 input: {
                     name: formState.name,

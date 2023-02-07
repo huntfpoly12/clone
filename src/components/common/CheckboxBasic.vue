@@ -1,10 +1,11 @@
-<template>
-    <DxCheckBox v-model:value="valueCheck" :disabled="disabled" :icon-size="size" :text="label"/>
+<template> 
+    <DxCheckBox class="mr-5" v-model:value="valueCheck" :disabled="disabled" icon-size="16" :text="label">
+    </DxCheckBox>
+    <slot></slot>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, watch, ref } from "vue";
 import DxCheckBox from 'devextreme-vue/check-box';
-
 export default defineComponent({
     props: {
         valueCheckbox: {
@@ -16,20 +17,18 @@ export default defineComponent({
             type: Boolean,
         },
         size: {
-            type: String
+            type: String,
+            default: '12'
         },
-        label:String
+        label: String
     },
     components: {
         DxCheckBox
     },
-
     setup(props, { emit }) {
         const app: any = getCurrentInstance()
         const styleCheckBox = app.appContext.config.globalProperties.$config_styles
-
         const valueCheck = ref(props.valueCheckbox)
-
         watch(
             () => valueCheck.value,
             (newValue) => {
@@ -37,7 +36,6 @@ export default defineComponent({
                 emit("change", newValue);
             }
         );
-
         watch(
             () => props.valueCheckbox,
             (newValue) => {
@@ -51,13 +49,9 @@ export default defineComponent({
     },
 });
 </script>
-
 <style lang="scss" scoped>
 ::v-deep .dx-checkbox-icon {
     color: v-bind("styleCheckBox.ColorCheckBox");
     border-color: v-bind("styleCheckBox.ColorCheckBox") !important;
 }
-
-::v-deep .dx-checkbox-icon:hover,
-.dx-checkbox-container {}
 </style>

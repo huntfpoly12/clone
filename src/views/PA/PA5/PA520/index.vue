@@ -1,6 +1,5 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <action-header title="일용직사원등록" @actionSave="onSubmit($event)" />
+    <action-header title="일용직사원등록" @actionSave="actionSaveFunc" />
     <div id="pa-520" class="page-content">
         <a-row>
             <a-col :span="3" style="padding-right: 10px">
@@ -45,8 +44,9 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        :onRowClick="openEditModal">
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
+                        v-model:focused-row-key="focusedRowKey">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -59,13 +59,35 @@
                                 <HistoryOutlined @click="modalHistory" class="fz-18" />
                             </DxButton>
                         </template>
-                        <DxColumn caption="성명" cell-template="company-name" width="300px" />
-                        <template #company-name="{ data }">
+                        <DxColumn caption="성명" cell-template="company-name" width="250" />
+                        <template #company-name="{ data }"> 
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
-                                :foreigner="data.data.foreigner" :checkStatus="false" />
+                                :foreigner="data.data.foreigner" :checkStatus="false"
+                                v-if="store.state.common.activeAddRowPA520 == false" />
+                            <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                                :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false"
+                                v-else />
                         </template>
-                        <DxColumn caption="주민등록번호" data-field="residentId" width="120px" />
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="150" />
+                        <template #residentId="{ data }" class="custom-action">
+                            <div v-if="data.data.residentId?.length == 14">
+                                <a-tooltip placement="top"
+                                    v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                                    key="black">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+                                <a-tooltip placement="top" v-else title="ERROR" color="red">
+                                    {{ data.data.residentId }}
+                                </a-tooltip>
+                            </div>
+                            <div v-else>
+                                <a-tooltip placement="top" key="black">
+                                    {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
+                                </a-tooltip>
+                            </div>
+                        </template>
+
                         <DxColumn caption="비고" cell-template="grade-cell" />
                         <template #grade-cell="{ data }" class="custom-action">
                             <div class="custom-grade-cell">
@@ -83,7 +105,7 @@
                         </template>
                         <DxColumn cell-template="pupop" width="50" />
                         <template #pupop="{ data }" class="custom-action">
-                            <div class="custom-action text-center">
+                            <div v-if="data.data.deletable" class="custom-action text-center">
                                 <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
                         </template>
@@ -92,16 +114,20 @@
             </a-col>
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
-                    v-if="actionChangeComponent == 1" />
-                <PA520PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" @closePopup="closeAction"
-                    @editRowKey="activeRowKey" v-if="actionChangeComponent == 2" />
+                    v-if="actionChangeComponent == 1" :key="resetAddComponent" />
+                <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
+                    :actionSave="actionSave" />
             </a-col>
         </a-row>
-        <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-            :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-        <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-            :idRowEdit="idRowEdit" typeHistory="pa-520" />
     </div>
+    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        :idRowEdit="idRowEdit" typeHistory="pa-520" />
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+    <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
+        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue"
@@ -109,31 +135,26 @@ import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid"
+import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
 import PA520PopupEdit from "./components/PA520PopupEdit.vue"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index"
+import { DataCreatedTable } from "./utils/index"
+
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem,
-        EditOutlined,
-        HistoryOutlined,
-        SearchOutlined,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
-        PA520PopupAddNew,
-        PA520PopupEdit
+        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
+        const focusedRowKey = ref()
+        const modalStatusChange = ref(false)
         const actionChangeComponent = ref(1)
+        const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
         const dataSource = ref([])
@@ -147,14 +168,15 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         })
         const idAction = ref()
         const modalAddNewStatus = ref<boolean>(false)
-        const modalEditStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
+        const resetAddComponent = ref<number>(1);
+        let dataChange = ref(0)
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -177,19 +199,23 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         })
-        // ======================= WATCH ==================================
+        // ======================= WATCH ================================== 
         watch(result, (value) => {
             if (value) {
-                dataSource.value = value.getEmployeeWageDailies
-                totalUserOnl.value = 0
-                totalUserOff.value = 0
-                dataSource.value.map((val: any) => {
-                    if (val.status != 0) {
-                        totalUserOnl.value++
-                    } else {
-                        totalUserOff.value++
-                    }
-                })
+                store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
+
+                // Total number of employees who have quit
+                totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
+                totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
+ 
+                if (store.state.common.rowIdSaveDonePa520 != 0) {
+                    // Get index row change 
+                    let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
+                    // active row change
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[indexChange] as HTMLInputElement).click();
+                }
+
                 trigger.value = false
             }
         })
@@ -199,21 +225,64 @@ export default defineComponent({
                 refetchData()
             }
         })
-        watch(() => modalEditStatus.value, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchData()
-            }
-        })
+        watch(globalYear, (value) => {
+            openAddNewModal()
+            trigger.value = true
+            originData.value.imputedYear = value
+            refetchData()
+        });
+
+        // get datasource from store to client
+        watch(() => store.state.common.dataSourcePA520, (value) => {
+            dataSource.value = value
+        }, { deep: true });
+        watch(() => store.state.common.rowIdSaveDonePa520, (value) => {
+            trigger.value = true
+            refetchData()
+        }, { deep: true });
         // ======================= FUNCTION ================================
+
+        // Opening a modal window.
         const openAddNewModal = () => {
-            actionChangeComponent.value = 1
-            modalAddNewStatus.value = true
+            // Adding a new row to the table.
+            if (store.state.common.activeAddRowPA520 == false) {
+                let valueAddDefault = { ...DataCreatedTable }
+                store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
+                focusedRowKey.value = null
+                setTimeout(() => {
+                    let a = document.body.querySelectorAll('[aria-rowindex]');
+                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                }, 100);
+
+                store.state.common.activeAddRowPA520 = true
+                resetAddComponent.value++;
+                actionChangeComponent.value = 1
+                modalAddNewStatus.value = true
+            } else {
+                notification('error', "Hoàn thành thao tác nhập trước đó")
+            }
         }
+        const modalChangeValueAdd = ref(false)
         const openEditModal = (val: any) => {
-            actionChangeComponent.value = 2
-            idRowEdit.value = val.data.employeeId
-            modalEditStatus.value = true
+            focusedRowKey.value = null
+            store.state.common.idRowChangePa520 = val.data.employeeId
+            if (store.state.common.checkChangeValueAddPA520 == true) {
+                modalChangeValueAdd.value = true
+            } else {
+                // change component edit
+                actionChangeComponent.value = 2
+                focusedRowKey.value = val.data.employeeId
+                if (store.state.common.activeAddRowPA520 == true) {
+                    store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+                    store.state.common.activeAddRowPA520 = false
+                }
+                if (store.state.common.checkStatusChangeValuePA520 == true) {
+                    modalStatusChange.value = true
+                    dataChange.value = val.data.employeeId
+                } else {
+                    idRowEdit.value = val.data.employeeId
+                }
+            }
         }
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
@@ -222,8 +291,7 @@ export default defineComponent({
             idAction.value = data
             modalStatus.value = true
         }
-        const onSubmit = (e: any) => {
-        }
+        // A function that is called when the user clicks on the delete button.
         const statusComfirm = (res: any) => {
             if (res == true)
                 actionDelete({
@@ -236,42 +304,39 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         }
-
-        const activeRowKey = (id: any) => {
-            let indexActive = 0
-            dataSource.value.map((val: any, index: any) => {
-                if (val.employeeId == id)
-                    indexActive = index
-            })
-            //Add class row choose
-            let a = document.body.querySelectorAll('[aria-rowindex]')
-            a[indexActive].classList.add("active-row-key");
+        const actionSaveFunc = () => {
+            actionSave.value++
+            store.state.common.actionSavePA520++
+        }
+        // A function that is called when the user clicks on the save button.
+        const statusComfirmSave = (res: any) => {
+            if (res == true)
+                actionSaveFunc()
+            store.state.common.idRowChangePa520 = dataChange.value
+            idRowEdit.value = dataChange.value
         }
 
+        const confirmSaveAdd = (res: any) => {
+            if (res == true) {
+                store.state.common.actionSaveAddPA520++
 
+            } else { //Not save
+                // Delete row add demo
+                store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+                // Change status switch in store
+                store.state.common.activeAddRowPA520 = false
+                store.state.common.checkChangeValueAddPA520 = false
+                // Get index row change 
+                let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
+                // active row change
+                let a = document.body.querySelectorAll('[aria-rowindex]');
+                (a[indexChange] as HTMLInputElement).click();
+            }
+
+        }
         return {
-            actionChangeComponent,
-            idRowEdit,
-            totalUserOff,
-            totalUserOnl,
-            modalStatus,
-            loading,
-            modalEditStatus,
-            modalDeleteStatus,
-            dataSource,
-            modalHistoryStatus,
-            modalAddNewStatus,
-            per_page, move_column, colomn_resize,
-            contentDelete,
-            closeAction,
-            refetchData,
-            onSubmit,
-            actionDeleteFuc,
-            modalHistory,
-            openAddNewModal,
-            openEditModal,
-            statusComfirm,
-            activeRowKey,
+            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
+            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
         }
     },
 })

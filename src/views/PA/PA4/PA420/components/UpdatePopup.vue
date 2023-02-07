@@ -9,37 +9,42 @@
         </a-steps>
         <div class="step-content pt-20">
             <form action="your-action">
-                <template v-if="step === 0">
-                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" :dataDetail="dataDetailValue"
-                        @closePopup="setModalVisible" />
-                </template>
-                <template v-if="step === 1">
-                    <Tab2 />
-                </template>
-                <template v-if="step === 2">
-                    <Tab3 />
-                </template>
+                <keep-alive>
+                    <template v-if="step === 0">
+                        <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                            :actionNextStep="valueNextStep" @nextPage="step++" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 1">
+                        <Tab2 v-model:dataDetail="dataDetailValue" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 2">
+                        <Tab3 v-model:dataDetail="dataDetailValue" />
+                    </template>
+                </keep-alive>
             </form>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
             <button-basic text="다음" type="default" mode="contained" @onClick="nextStep" v-if="step < 2" />
-            <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
+            <button-basic text="저장" type="default" mode="contained" @onClick="updated" v-if="step === 2" />
         </div>
     </a-modal>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation , useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
-import Tab3 from './TabEdit/Tab3.vue'; 
+import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-
+import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -62,52 +67,51 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const step = ref(0)
+        const valueNextStep = ref(0)
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
         const retirementIncome2 = ref(true)
-        const modalOption = ref(false)
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
         const dataDetailValue = ref()
-        const option1 = reactive([
-            { id: true, text: '사원' },
-            { id: false, text: '일용직사원' }
-        ])
-        const option2 = reactive([
-            { id: true, text: '퇴직소득(퇴직자)' },
-            { id: false, text: '중도정산' }
-        ])
-        const setModalVisible = () => { 
+        const setModalVisible = () => {
             statusModal.value = false
             emit("closePopup", false)
         };
-
         const requestCallDetail: any = ref({
             companyId: companyId,
             processKey: props.processKey,
             incomeId: 0
         })
-
         // =========================  GRAPQL =================================================
         const {
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
+        } = useMutation(mutations.updateIncomeRetirement);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            emit("updateSuccess", true)
         })
         onError((e: any) => {
             notification('error', e.message)
         })
 
-        const { refetch: refetchGetDetail, onError: errorGetDetail, result: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
+        const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-
-
+        resultGetDetail(newValue => {
+            dataDetailValue.value =
+            {
+                ...newValue.data.getIncomeRetirement,
+                "checkBoxCallApi": true,
+            }
+        })
+        errorGetDetail(res => {
+            notification('error', res.message)
+        })
         // ================WATCHING============================================ 
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
@@ -115,13 +119,7 @@ export default defineComponent({
             trigger.value = true
             refetchGetDetail()
         }, { deep: true })
-
-        watch(() => resultGetDetail, (newValue) => {
-            dataDetailValue.value = newValue.value.getIncomeRetirement
-        }, { deep: true })
-
-        // =========================  FUNCTION ===============================================
-        // all Computed 
+        // =========================  FUNCTION =============================================== 
         const checkStepTwo = computed(() => {
             if (step.value === 0) {
                 return "wait";
@@ -149,53 +147,85 @@ export default defineComponent({
                 return "finish";
             }
         });
-
-        const onSubmit = () => {
-
-        };
-
         const changeStep = (stepChange: any) => {
             step.value = stepChange
         }
-
-        const nextStep = (event: any) => {
-            if (step.value < 2) {
+        const nextStep = () => {
+            if (step.value == 0)
+                valueNextStep.value++
+            else if (step.value == 1)
                 step.value++
-            }
         }
-
         const prevStep = () => {
-            step.value--;
+            step.value--
         }
+        const updated = () => {
+            let dataDefault = dataDetailValue.value.specification
+            let dataCallApiUpdate =
+            {
+                "companyId": companyId,
+                "processKey": props.processKey,
+                "incomeId": props.keyRowIndex,
+                "input": {
+                    retirementType: dataDetailValue.value.retirementType,
+                    executive: dataDefault.executive,
+                    retirementReason: dataDefault.retirementReason,
+                },
+                "incomeCalculationInput": {
+                    "totalPay3Month": dataDefault.totalPay3Month,
+                    "totalAnualBonus": dataDefault.totalAnualBonus,
+                    "annualLeaveAllowance": dataDefault.annualLeaveAllowance,
+                    "settlementStartDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate,
+                    "settlementFinishDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate,
+                    "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
+                    "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
+                },
+                "taxCalculationInput": {
+                    "calculationOfDeferredRetirementIncomeTax": {
+                        "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
+                        "statements": [...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements]
+                    },
+                    "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+                    "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
+                    "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService,
+                    "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,
+                    "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
+                    "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
+                }
+            }
+            // remove all row name : __typename
+            const cleanData = JSON.parse(
+                JSON.stringify(dataCallApiUpdate, (name, val) => {
+                    if (
+                        name === "__typename"
+                    ) {
+                        delete val[name];
+                    } else {
+                        return val;
+                    }
+                })
+            );
 
-        const created = () => {
-
-        }
-
-        const openModalAdd = () => {
-            modalOption.value = false
+            mutate(cleanData)
         }
         return {
             setModalVisible,
-            onSubmit,
             changeStep,
-            nextStep, prevStep, created,
-            openModalAdd,
+            nextStep, prevStep, updated,
             checkStepTwo,
             checkStepThree,
             checkStepFour,
             step,
             dayValue,
-            option1, option2,
             retirementIncome1,
             retirementIncome2,
             statusModal,
-            dataDetailValue
+            dataDetailValue,
+            valueNextStep,
         }
     },
 })
 </script>
-
 <style lang="scss" scoped src="../style/modalAdd.scss">
 
 </style> 

@@ -9,16 +9,14 @@
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
+                <button-basic class="button-form-modal" text="네. 삭제합F니다" :width="140" type="default" mode="contained"
                     @onClick="onSubmit" />
             </div>
         </standard-form>
     </a-modal>
 </template>
-
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { useStore } from 'vuex'
+import { defineComponent } from 'vue' 
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
@@ -34,18 +32,16 @@ export default defineComponent({
             default: []
         },
         processKey: {
-            type: Array,
+            type: [Array || Object],
             default: []
         },
     },
     components: {
     },
-    setup(props, { emit }) {
-        const store = useStore()
+    setup(props, { emit }) { 
         const setModalVisible = () => {
             emit("closePopup", false)
-        };
-
+        }; 
         const {
             mutate: actionDelete,
             onError: errorDelete,
@@ -58,8 +54,8 @@ export default defineComponent({
             setModalVisible()
             notification('success', ` 완료!`)
         })
-
         const onSubmit = (e: any) => {
+            console.log(props.data);
             actionDelete({
                 companyId: companyId,
                 processKey: props.processKey,
@@ -73,7 +69,6 @@ export default defineComponent({
     },
 })
 </script>
-
 <style lang="scss" scoped>
 .custom-modal-delete {
     display: flex;
@@ -81,25 +76,20 @@ export default defineComponent({
     width: 100%;
     justify-content: center;
     margin-top: 20px;
-
     img {
         width: 40px;
         margin-right: 5px;
     }
-
     span {
         padding: 0px 5px;
     }
 }
-
 .mt-30 {
     margin-top: 30px;
 }
-
 .text-align-center {
     text-align: center;
 }
-
 .button-form-modal {
     margin: 0px 5px;
 }

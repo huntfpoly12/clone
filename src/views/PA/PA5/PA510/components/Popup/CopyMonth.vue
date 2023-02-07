@@ -7,7 +7,8 @@
                     귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
                 </div>
                 <div class="month-custom-2 d-flex-center">
-                    지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
+                    <span>지</span>
+                    <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
                 </div>
             </div>
         </a-form-item>
@@ -31,8 +32,11 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth }}
-                        지 {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        귀 {{ data.imputedYear }}-{{
+                            data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth
+                        }}
+                        지 {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}
                         <DxTextBox style="display: none;" />
                     </span>
@@ -42,10 +46,12 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth :
+                    <span>귀 {{ data.imputedYear }}-{{
+                        data.imputedMonth > 9 ? data.imputedMonth :
                             '0' + data.imputedMonth
                     }} 지
-                        {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}</span>
                 </template>
             </DxSelectBox>
@@ -92,13 +98,26 @@ export default defineComponent({
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
+        const trigger = ref<boolean>(false)
+        const triggerFindIncome = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
+            originData.value.filter = {
+                startImputedYearMonth: parseInt(`${globalYear.value}01`),
+                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+            }
+            trigger.value = true
+            triggerFindIncome.value = true
         });
         const updateValue = (value: any) => {
-            dataApiCopy.value = value.value
+            dataApiCopy.value.paymentYear = value.value.paymentYear
+            dataApiCopy.value.paymentMonth = value.value.paymentMonth
+            dataApiCopy.value.imputedMonth = value.value.imputedMonth
+            dataApiCopy.value.imputedYear = value.value.imputedYear
         };
-        const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
+
+        // const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
+        const month2: any = ref<number>()
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
@@ -106,27 +125,36 @@ export default defineComponent({
             queries.getWithholdingConfig,
             dataQuery,
             () => ({
+                enabled: trigger.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultConfig, (value) => {
+            let paymentMonth = month.value
             if (value) {
                 paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                if (value.getWithholdingConfig.paymentType == 2) {
+                    paymentMonth = month.value + 1
+                }
             }
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            trigger.value = false;
         });
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                startImputedYearMonth: parseInt(`${globalYear.value}1`),
+                startImputedYearMonth: parseInt(`${globalYear.value}01`),
                 finishImputedYearMonth: parseInt(`${globalYear.value}12`),
             }
         })
         const {
             onResult: onResult
         } = useQuery(queries.findIncomeProcessWageDailyStatViews, originData, () => ({
+            enabled: triggerFindIncome.value,
             fetchPolicy: "no-cache",
         }));
         onResult((value: any) => {
+            triggerFindIncome.value = false;
             arrDataPoint.value = value.data.findIncomeProcessWageDailyStatViews
         })
 
@@ -141,11 +169,11 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', ` 완료!`)
-            emit('loadingTableInfo', true)
+            notification('success', `완료!`)
             store.state.common.processKeyPA510.imputedMonth = month.value
-            store.state.common.processKeyPA510.paymentYear = dataApiCopy.value.paymentYear
-            store.state.common.processKeyPA510.paymentMonth = dataApiCopy.value.paymentMonth
+            store.state.common.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.loadingTableInfo++
         })
 
         const setModalVisible = () => {
@@ -156,13 +184,18 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
+            store.state.common.processKeyPA510.imputedMonth = month.value
+            store.state.common.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
-                imputedYear: processKey.value.imputedYear,
+                imputedYear: globalYear.value,
                 imputedMonth: month.value,
-                paymentYear: parseInt(month2.value.split('-')[0]),
-                paymentMonth: parseInt(month2.value.split('-')[1]),
+                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
+            store.state.common.paymentDayCopy = paymentDayCopy.value
+            store.state.common.resetArrayEmploySelect++
         };
 
         const openModalCopy = () => {
@@ -175,15 +208,14 @@ export default defineComponent({
                     source: dataApiCopy.value,
                     target: {
                         imputedYear: processKey.value.imputedYear,
-                        imputedMonth: month.value,
-                        paymentYear: dataApiCopy.value.paymentYear,
-                        paymentMonth: dataApiCopy.value.paymentMonth,
+                        imputedMonth: month?.value,
+                        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
                     },
                 })
             } else {
                 notification('error', '날짜를 선택하세요.')
             }
-
         }
         return {
             processKey,
@@ -204,15 +236,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.d-flex-center {
-    display: flex;
-    align-items: center;
-}
-
-.mt-30 {
-    margin-top: 30px;
-}
-
 .text-align-center {
     text-align: center;
 }
@@ -226,28 +249,18 @@ export default defineComponent({
 }
 
 ::v-deep .month-custom-1 {
+    font-size: 13px;
     background-color: #A6A6A6;
-    padding: 5px 10px;
+    padding: 6px 20px 6px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-
-    .dp__input {
-        color: white;
-        padding: 0px;
-        border: none;
-        height: 30px;
-        background-color: #A6A6A6;
-    }
-
-    .dp__icon {
-        display: none;
-    }
 }
 
 ::v-deep .month-custom-2 {
+    font-size: 13px;
     background-color: black;
-    padding-left: 10px;
+    padding: 2px 0px 0px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
@@ -256,8 +269,10 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
+        height: 24px;
         background-color: black;
+        padding-top: 1px;
+        font-size: 12px;
     }
 
     .dp__icon {

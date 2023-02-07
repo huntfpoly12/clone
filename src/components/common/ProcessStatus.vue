@@ -12,7 +12,7 @@
             </div>
         </div>
         <div v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(value == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"  @onClick="clickButton"></button-basic>
+            <button-basic :disabled="disabled" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"   @onClick="clickButton"></button-basic>
         </div>
     </div>
 </template>
@@ -26,9 +26,14 @@ export default defineComponent({
             type: Number,
             required: true
         },
+        disabled: {
+            type: Boolean,
+            required: false
+        },
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
+        const currentBt = ref(props.valueStatus);
         const showModal = ref(false)
         const arrayRadioUser = ref([
             { id: 10, text: '입력중', class: 'entering' },
@@ -50,7 +55,8 @@ export default defineComponent({
         }
 
         const submit = () => {
-            showModal.value = false;
+          showModal.value = false;
+          currentBt.value = value.value
             emit("update:valueStatus", value.value);
             emit("checkConfirm", true)
             
@@ -58,13 +64,14 @@ export default defineComponent({
         watch(
             () => props.valueStatus,
             (valueNew) => {
-                value.value = valueNew
-
+              value.value = valueNew
+              currentBt.value = valueNew
             }
         );
 
         return {
             value,
+            currentBt,
             arrayRadioUser,
             arrayRadioManager,
             setModalVisible,

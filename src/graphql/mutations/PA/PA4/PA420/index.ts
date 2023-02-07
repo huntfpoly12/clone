@@ -1,17 +1,21 @@
 
 import deleteIncomeRetirements from "./deleteIncomeRetirements";
-import updateIncomeBusiness from "./updateIncomeBusiness";
+import updateIncomeRetirement from "./updateIncomeRetirement";
 import createIncomeBusiness from "./createIncomeBusiness";
 import updateEmployeeBusiness from "./updateEmployeeBusiness";
 import changeIncomeBusinessPaymentDay from "./changeIncomeBusinessPaymentDay";
 import copyIncomeBusinesses from "./copyIncomeBusinesses";
+import createIncomeRetirement from "./createIncomeRetirement";
+import changeIncomeProcessRetirementStatus from "./changeIncomeProcessRetirementStatus";
 const mutations = {
     deleteIncomeRetirements: deleteIncomeRetirements,
     createIncomeBusiness: createIncomeBusiness,
-    updateIncomeBusiness: updateIncomeBusiness,
-    updateEmployeeBusiness: updateEmployeeBusiness, 
-    changeIncomeBusinessPaymentDay: changeIncomeBusinessPaymentDay, 
-    copyIncomeBusinesses: copyIncomeBusinesses, 
+    updateIncomeRetirement: updateIncomeRetirement,
+    updateEmployeeBusiness: updateEmployeeBusiness,
+    changeIncomeBusinessPaymentDay: changeIncomeBusinessPaymentDay,
+    copyIncomeBusinesses: copyIncomeBusinesses,
+    createIncomeRetirement: createIncomeRetirement,
+    changeIncomeProcessRetirementStatus : changeIncomeProcessRetirementStatus
 };
 
 export default mutations;

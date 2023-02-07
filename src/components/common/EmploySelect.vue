@@ -1,8 +1,8 @@
 <template>
     <DxSelectBox :width="width" :data-source="arrayValue" placeholder="선택" item-template="item-data"
         value-expr="employeeId" display-expr="employeeId"
-        :value="valueEmploy"
-        field-template="field-data" @value-changed="updateValue" @change="eventItemClick"
+        :value="valueEmploy" :name="nameInput"
+        field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 4px">
@@ -12,12 +12,12 @@
                 <span>{{ data.name }}</span>
                 <span
                     v-if="data.idCardNumber?.length == 14
-                    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
+    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
                     {{ convertBirthDay(data.idCardNumber) }}
                 </span>
                 <span class="tag-status" v-if="data.status == 0">퇴</span>
                 <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-                <span class="tag-type-20" v-if="data.type == 20">일용</span>
+                <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
                 <DxTextBox style="display: none;" />
             </div>
             <div v-else style="padding: 4px">
@@ -32,20 +32,24 @@
             <span>{{ data.name }}</span>
             <span
                 v-if="data.idCardNumber?.length == 14
-                && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
+    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
                 {{ convertBirthDay(data.idCardNumber) }}
             </span>
             <span class="tag-status" v-if="data.status == 0">퇴</span>
             <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-            <span class="tag-type-20" v-if="data.type == 20">일용</span>
+            <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
         </template>
+
+        <DxValidator :name="nameInput">
+            <DxRequiredRule v-if="required" :message="messageRequired" />
+        </DxValidator>
     </DxSelectBox>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
-
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 export default defineComponent({
     props: {
         width: String,
@@ -57,16 +61,41 @@ export default defineComponent({
             type: Array,
             required: true
         },
+        required: {
+            type: Boolean,
+            default: false,
+        },
+        nameInput: {
+            type: String,
+            default: '',
+        },
+        messRequired: {
+            type: String,
+            default: "",
+        },
+        activeType20: {
+            type: Boolean,
+            default: true
+        }
     },
     components: {
         DxSelectBox,
-        DxTextBox
+        DxTextBox,
+        DxValidator,
+        DxRequiredRule
     },
     setup(props, { emit }) {
+        const app: any = getCurrentInstance();
+        const messages = app.appContext.config.globalProperties.$messages;
+        const messageRequired = ref(messages.getCommonMessage('102').message);
+        if (props.messRequired != "") {
+            messageRequired.value = props.messRequired;
+        }
         const valueEmploy = ref(props.valueEmploy);
 
         const updateValue = (value: any) => {
             emit("update:valueEmploy", value.value);
+            emit("onUpdateValue", value.value)
         };
         const convertBirthDay = (birthDay: any) => {
             let newBirthDay = birthDay.split("-")[0]
@@ -83,13 +112,15 @@ export default defineComponent({
             }
         );
 
-        const eventItemClick = () => {
+        const eventItemClick = (e: any) => {
+            emit('onChange', e.itemData.employeeId)
         }
         return {
             updateValue,
             valueEmploy,
             convertBirthDay,
-            eventItemClick
+            eventItemClick,
+            messageRequired
         };
     },
 });
@@ -116,6 +147,7 @@ export default defineComponent({
     border-radius: 5px;
     margin: 0 5px;
 }
+
 .tag-type-20 {
     background-color: rgb(255, 255, 255);
     color: black;

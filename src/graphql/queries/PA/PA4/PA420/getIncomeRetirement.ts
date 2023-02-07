@@ -53,20 +53,90 @@ export default gql`
                         nationalPensionSupportPercent
                         employeementInsuranceSupportPercent 
                     }
-                } 
-                retirementBenefits
-                nonTaxableRetirementBenefits
-                taxableRetirementBenefits
+                }  
                 totalDeduction
                 specification {
                     executive
                     retirementReason
                     specificationDetail {
+                        lastRetirementBenefitStatus{
+                            retirementBenefits
+                            nonTaxableRetirementBenefits
+                            taxableRetirementBenefits
+                        }
                         prevRetiredYearsOfService {
                             settlementStartDate
                             settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        lastRetiredYearsOfService {
+                            settlementStartDate
+                            settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        prevRetirementBenefitStatus {
+                            retirementBenefits
+                            nonTaxableRetirementBenefits
+                            taxableRetirementBenefits
+                        }
+                        settlementRetiredYearsOfService {
+                            settlementStartDate
+                            settlementFinishDate
+                            paymentDate
+                            exclusionDays
+                            additionalDays
+                        }
+                        taxAmountCalculation {
+                            taxCredit
+                            prePaidDelayedTaxPaymentTaxAmount
+                            convertedTaxAmount
+                            taxAmountCalculatedForRetirementIncome 
+                            prePaidDelayedTaxPaymentTaxAmount
+                            taxAmountSubjectToReporting
+                        }
+                        calculationOfDeferredRetirementIncomeTax{
+                            totalAmount
+                            retirementIncomeTax
+                            statements{
+                                pensionAccountHolder
+                                bizNumber
+                                bankAccountNumber
+                                depositDate
+                                accountDepositAmount
+                            }
+                        }
+                        taxBaseCalculation {
+                            retirementIncome
+                            deductionForYearsOfService
+                            conversionBenefit
+                            taxBaseForRetirementIncome
+                            deductionByConversionBenefit
+                          
+                        }
+                        deductibleWithholdingTax{
+                            incomeTax
+                            localIncomeTax
+                        }
+                        taxAmountToBeReported {
+                            incomeTax
+                            localIncomeTax
+                        }
+                        retirementIncomeTax {
+                            incomeTax
+                            localIncomeTax
                         }
                     }
+                    totalPay3Month
+                    totalAnualBonus
+                    annualLeaveAllowance
+                    expectedRetirementBenefits
+                    definedRetirementBenefits
+                    nonTaxableRetirementBenefits
+                    taxableRetirementBenefits
                 }
                 imputedMonth
                 paymentYear

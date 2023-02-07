@@ -1,17 +1,21 @@
 <template>
-  <action-header title="기타소득자등록" @actionSave="onSubmit($event)" />
+  <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
     <a-row>
-      <a-spin :spinning="loadingIncomeProcessExtras" size="large">
+      <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid
           :show-row-lines="true"
           :hoverStateEnabled="true"
           :data-source="columnData"
           :show-borders="true"
           :allow-column-reordering="move_column"
+          key-expr="globalYear"
+          :key="globalYear"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          :focused-row-enabled="true"
         >
+          <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
             <span>지급연월 </span>
@@ -23,7 +27,7 @@
               :value="data.data.month_1?.status"
               :year="data.data.month_1?.paymentYear"
               :month="data.data.month_1?.paymentMonth"
-              :isUnder="true"
+              :isUnder="month == 1"
               @click="showDetailSelected(data.data.month_1)"
             />
             <div v-else @click="onAddMonth(1)">[+]</div>
@@ -36,7 +40,7 @@
               :year="data.data.month_2?.paymentYear"
               :month="data.data.month_2?.paymentMonth"
               @click="showDetailSelected(data.data.month_2)"
-              :isUnder="true"
+              :isUnder="month == 2"
             />
             <div v-else @click="onAddMonth(2)">[+]</div>
           </template>
@@ -48,7 +52,7 @@
               :year="data.data.month_3?.paymentYear"
               :month="data.data.month_3?.paymentMonth"
               @click="showDetailSelected(data.data.month_3)"
-              :isUnder="true"
+              :isUnder="month == 3"
             />
             <div v-else @click="onAddMonth(3)">[+]</div>
           </template>
@@ -60,7 +64,7 @@
               :year="data.data.month_4?.paymentYear"
               :month="data.data.month_4?.paymentMonth"
               @click="showDetailSelected(data.data.month_4)"
-              :isUnder="true"
+              :isUnder="month == 4"
             />
             <div v-else @click="onAddMonth(4)">[+]</div>
           </template>
@@ -72,7 +76,7 @@
               :year="data.data.month_5?.paymentYear"
               :month="data.data.month_5?.paymentMonth"
               @click="showDetailSelected(data.data.month_5)"
-              :isUnder="true"
+              :isUnder="month == 5"
             />
             <div v-else @click="onAddMonth(5)">[+]</div>
           </template>
@@ -84,7 +88,7 @@
               :year="data.data.month_6?.paymentYear"
               :month="data.data.month_6?.paymentMonth"
               @click="showDetailSelected(data.data.month_6)"
-              :isUnder="true"
+              :isUnder="month == 6"
             />
             <div v-else @click="onAddMonth(6)">[+]</div>
           </template>
@@ -96,7 +100,7 @@
               :year="data.data.month_7?.paymentYear"
               :month="data.data.month_7?.paymentMonth"
               @click="showDetailSelected(data.data.month_7)"
-              :isUnder="true"
+              :isUnder="month == 7"
             />
             <div v-else @click="onAddMonth(7)">[+]</div>
           </template>
@@ -108,7 +112,7 @@
               :year="data.data.month_8?.paymentYear"
               :month="data.data.month_8?.paymentMonth"
               @click="showDetailSelected(data.data.month_8)"
-              :isUnder="true"
+              :isUnder="month == 8"
             />
             <div v-else @click="onAddMonth(8)">[+]</div>
           </template>
@@ -120,7 +124,7 @@
               :year="data.data.month_9?.paymentYear"
               :month="data.data.month_9?.paymentMonth"
               @click="showDetailSelected(data.data.month_9)"
-              :isUnder="true"
+              :isUnder="month == 9"
             />
             <div v-else @click="onAddMonth(9)">[+]</div>
           </template>
@@ -132,7 +136,7 @@
               :year="data.data.month_10?.paymentYear"
               :month="data.data.month_10?.paymentMonth"
               @click="showDetailSelected(data.data.month_10)"
-              :isUnder="true"
+              :isUnder="month == 10"
             />
             <div v-else @click="onAddMonth(10)">[+]</div>
           </template>
@@ -144,7 +148,7 @@
               :year="data.data.month_11?.paymentYear"
               :month="data.data.month_11?.paymentMonth"
               @click="showDetailSelected(data.data.month_11)"
-              :isUnder="true"
+              :isUnder="month == 11"
             />
             <div v-else @click="onAddMonth(11)">[+]</div>
           </template>
@@ -156,7 +160,7 @@
               :year="data.data.month_12?.paymentYear"
               :month="data.data.month_12?.paymentMonth"
               @click="showDetailSelected(data.data.month_12)"
-              :isUnder="true"
+              :isUnder="month == 12"
             />
             <div v-else @click="onAddMonth(12)">[+]</div>
           </template>
@@ -257,81 +261,80 @@
       </a-spin>
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
-      <a-col>
-        <DxButton
-          :text="'귀' + incomeExtrasParams?.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams?.processKey?.imputedMonth)"
-          :style="{ color: 'white', backgroundColor: 'gray' }"
-          :height="'33px'"
-        />
-        <DxButton
-          :text="'지' + incomeExtrasParams?.processKey?.paymentYear + '-' + formatMonth(incomeExtrasParams?.processKey?.paymentMonth)"
-          :style="{ color: 'white', backgroundColor: 'black' }"
-          :height="'33px'"
-        />
+      <a-col style="display: flex">
+        <DxButton :text="'귀' + inputDateTax" :disabled="!isColumnData" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+        <DxButton :text="'지' + paymentDateTax" :disabled="!isColumnData" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
         <ProcessStatus v-model:valueStatus="statusParam.status" @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
-      <a-col class="">
-        <DxButton class="ml-3" @click="deleteItem">
+      <a-col style="display: inline-flex; align-items: center">
+        <DxButton class="ml-4" icon="plus" @click="addItem" :disabled="!isColumnData" />
+        <DxButton class="ml-3" @click="deleteItem" :disabled="!isColumnData">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
-        <DxButton class="ml-3" icon="plus" @click="addItem" />
-        <DxButton class="ml-3" icon="edit" @click="editItem" />
-        <template v-for="(placement, index) in placements" :key="placement">
-          <a-dropdown :placement="placement" class="ml-5">
-            <a-button class="button-open-tab">선택</a-button>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item>
-                  <div class="custom-select-tab">
-                    <a href="/dashboard/pa-610" style="color: white"> 기타소득자등록 </a>
-                  </div>
-                </a-menu-item>
-                <a-menu-item>
-                  <a-tooltip placement="left">
-                    <template #title>사업소득자료 변경이력</template>
-                    <div style="text-align: center" @click="modalHistory = true">
-                      <HistoryOutlined style="font-size: 20px" />
-                    </div>
-                  </a-tooltip>
-                </a-menu-item>
-                <a-menu-item>
-                  <a-tooltip placement="left">
-                    <template #title>사업소득 마감상태 변경이력</template>
-                    <div style="text-align: center" @click="modalHistoryStatus = true">
-                      <img src="@/assets/images/icon_status_history.png" alt="" style="width: 20px; height: 20px" />
-                    </div>
-                  </a-tooltip>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </template>
+        <DxButton @click="onSave" size="large" class="ml-4" :disabled="!isColumnData" id="save-js">
+          <SaveOutlined style="font-size: 17px" />
+        </DxButton>
+
+        <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="!isColumnData">
+          <a-tooltip placement="top">
+            <template #title>근로소득자료 변경이력</template>
+            <div class="text-center">
+              <HistoryOutlined style="font-size: 16px" />
+            </div>
+          </a-tooltip>
+        </DxButton>
+        <DxButton class="ml-4" style="cursor: pointer" @click="modalHistoryStatus = true" :disabled="!isColumnData">
+          <a-tooltip placement="top">
+            <template #title>근로소득 마감상태 변경이력</template>
+            <div class="text-center">
+              <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
+            </div>
+          </a-tooltip>
+        </DxButton>
+        <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="!isColumnData">
+          <div class="d-flex-center">
+            <checkbox-basic :valueCheckbox="true" disabled="true" />
+            <span class="fz-12 pl-5">지급일변경</span>
+          </div>
+        </DxButton>
+        <div class="custom-select-tab ml-4">
+          <button class="button-open-tab" @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">기타소득자등록</button>
+        </div>
       </a-col>
     </a-row>
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
-        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" />
+        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" :addItemClick="addItemClick" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-        <FormTaxPayInfo ref="formTaxRef" :actionSave="actionSave" :editTax="editTaxParam" @changeFommDone="onFormDone" :key="resetFormNum" :addNewIncomeExtra="dataAddIncomeProcess" />
+        <FormTaxPayInfo
+          ref="formTaxRef"
+          :editTax="editTaxParam"
+          :isLoadNewForm="isLoadNewForm"
+          :isColumnData="isColumnData"
+          @changeFommDone="onFormDone"
+          :key="resetFormNum"
+          :addNewIncomeExtra="incomeExtrasParams.processKey"
+        />
       </a-col>
     </a-row>
   </div>
   <DeletePopup @delDone="changeFommDone++" :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="deleteIncomeExtrasParam" />
 
   <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720" />
-  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
+  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
-  <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
+  <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" :dateType="dateType" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
   <PopupMessage
     :modalStatus="popupAddStatus"
     @closePopup="popupAddStatus = false"
     :typeModal="'confirm'"
-    :title="'ban co muon xoa khong'"
-    :content="'Content notification'"
-    :keyAccept="'1234'"
-    :okText="'확인'"
+    :title="titleModalConfirm"
+    :content="''"
+    :cancelText="'아니요 '"
+    :okText="'네 '"
     @checkConfirm="onPopupComfirm"
+    :isConfirmIcon="false"
   />
 </template>
 <script lang="ts">
@@ -340,27 +343,30 @@ import DxButton from 'devextreme-vue/button';
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId } from '@/helpers/commonFunction';
-import { DxDataGrid, DxColumn, DxMasterDetail } from 'devextreme-vue/data-grid';
+import { companyId, openTab } from '@/helpers/commonFunction';
+import { DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import DeletePopup from './components/Popup/DeletePopup.vue';
 import EditPopup from './components/Popup/EditPopup.vue';
 import ProcessStatus from '@/components/common/ProcessStatus.vue';
 import TaxPayInfo from './components/TaxPayInfo.vue';
 import FormTaxPayInfo from './components/FormTaxPayInfo.vue';
-import { taxDateIndex, dataActionUtils } from './utils/index';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import notification from '@/utils/notification';
-import type { DropdownProps } from 'ant-design-vue';
-import { HistoryOutlined } from '@ant-design/icons-vue';
+import { HistoryOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
-
+import { DownOutlined } from '@ant-design/icons-vue';
+import DxCheckBox from 'devextreme-vue/check-box';
+import { dataActionUtils } from './utils/index';
+import queriesHolding from '@/graphql/queries/CM/CM130/index';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
     DxMasterDetail,
     DxDataGrid,
     DxColumn,
     DxButton,
+    DxScrolling,
     DeletePopup,
     EditPopup,
     ProcessStatus,
@@ -368,45 +374,30 @@ export default defineComponent({
     FormTaxPayInfo,
     HistoryOutlined,
     CopyMonth,
+    DownOutlined,
+    DxCheckBox,
+    SaveOutlined,
   },
   setup() {
     const statusParam = ref<any>({ status: 10 });
-    const dataSource = ref<[]>([]);
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
-    const per_page = computed(() => store.state.settings.per_page);
-    const move_column = computed(() => store.state.settings.move_column);
+    const { per_page, move_column, colomn_resize } = store.state.settings;
     const trigger = ref<boolean>(true);
-    const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
-    const modalEmailSingle = ref(false);
-    const modalEmailSinglePayrollRegister = ref(false);
-    const modalEmailMulti = ref(false);
-
-    const popupDataEmailSingle = ref({});
-    const popupDataEmailSinglePayrollRegister = ref({});
-    const popupDataEmailMulti = ref({});
-
-    // const modalPrintSalaryStatement = ref<boolean>(false);
     const modalDelete = ref<boolean>(false);
     const modalEdit = ref<boolean>(false);
     const modalHistory = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
-    const originData = ref({
+    const originData = reactive({
       companyId: companyId,
-      imputedYear: globalYear,
+      imputedYear: globalYear.value,
     });
-    let actionSave = ref(0);
-    const editTaxParam = ref<any>({ ...taxDateIndex });
-    const editTax = (emit: any) => {
-      editTaxParam.value = emit;
-    };
+    const editTaxParam = ref<any>({});
     const changeFommDone = ref(1);
     const formTaxRef = ref();
     const resetFormNum = ref(1);
     const actionDeleteSuccess = () => {
       modalDelete.value = false;
-      modalEdit.value = false;
     };
     const popupDataDelete: any = ref([]);
     const taxPayRef = ref();
@@ -415,21 +406,33 @@ export default defineComponent({
     const incomeExtrasParams = reactive({
       companyId: companyId,
       processKey: {
-        imputedYear: +dayjs().format('YYYY'),
-        imputedMonth: +dayjs().format('MM'),
-        paymentYear: +dayjs().format('YYYY'),
-        paymentMonth: +dayjs().format('MM'),
+        imputedYear: globalYear.value,
+        imputedMonth: +dayjs().format('MM') + 1,
+        paymentYear: globalYear.value,
+        paymentMonth: +dayjs().format('MM') + 1,
       },
     });
-    let placements = ['bottomRight'] as DropdownProps['placement'][];
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
-    const dataAddIncomeProcess = ref({});
     const popupAddStatus = ref<boolean>(false);
+    const messageSave = Message.getMessage('COMMON', '501').message;
+    const messageDel = Message.getMessage('COMMON', '401').message;
+
+    const inputDateTax = computed(() => {
+      if (isColumnData.value) {
+        return incomeExtrasParams.processKey?.imputedYear + '-' + formatMonth(incomeExtrasParams.processKey?.imputedMonth);
+      }
+      return '';
+    });
+    const paymentDateTax = computed(() => {
+      if (isColumnData.value) {
+        return incomeExtrasParams.processKey?.paymentYear + '-' + formatMonth(incomeExtrasParams.processKey?.paymentMonth);
+      }
+      return '';
+    });
     // ======================= GRAPQL ================================
     const {
       refetch: refetchIncomeProcessExtras,
-      result: resultIncomeProcessExtras,
       loading: loadingIncomeProcessExtras,
       onResult: onResultIncomeProcessExtras,
     } = useQuery(queries.getIncomeProcessExtras, originData, () => ({
@@ -438,16 +441,100 @@ export default defineComponent({
     }));
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(mutations.changeIncomeProcessExtraStatus);
     // ======================= WATCH ==================================
-    watch(resultIncomeProcessExtras, (value) => {
-      dataSource.value = value.getIncomeProcessExtras;
-      trigger.value = false;
-    });
-    watch(changeFommDone, (value) => {
+    watch(changeFommDone, () => {
       trigger.value = true;
       refetchIncomeProcessExtras();
     });
-
     // ======================= form ================================
+    const isNewRow = ref(false);
+    const formPA720 = computed(() => store.getters['common/formPA720']);
+    const addNewRow = () => {
+      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
+      store.commit('common/formPA720', dataActionUtils.input);
+      console.log(`output->dataActionUtils.input`, formPA720.value.input.employeeId);
+      taxPayRef.value.focusedRowKey = formPA720.value.input.employeeId;
+      // focusedRowKey.value = formPA720.value.employeeId;
+      taxPayRef.value.dataSourceDetail = dataSourceDetail.value.concat([formPA720.value.input]);
+      isNewRow.value = true;
+      compareType.value = 1;
+    };
+    const delNewRow = () => {
+      taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
+      store.commit('common/formPA720', dataActionUtils.input);
+      //   addComponentKey.value++;
+      //   focusedRowKey.value = null;
+      isNewRow.value = false;
+      compareType.value = 2;
+    };
+    //compare Data
+    const compareType = ref(1); //0 is row change. 1 is add button;
+    const compareType1 = () => {
+      //   console.log(JSON.stringify(initFormStateTab1));
+      //   console.log(JSON.stringify(formPA720.value));
+      if (JSON.stringify(dataActionUtils.input) == JSON.stringify(formPA720.value.input)) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    const compareType2 = () => {
+      //   if (JSON.stringify(editRowPA120.value) == JSON.stringify(formPA720.value.input)) {
+      //     return true;
+      //   } else {
+      //     return false;
+      //   }
+    };
+    const compareAdd = computed(() => {
+      if (JSON.stringify(formPA720.value.input) != JSON.stringify(dataActionUtils.input)) {
+        return true;
+      }
+      return false;
+    });
+    const addItemClick = ref(true);
+    const addItem = () => {
+      //   addNewRow();
+      //   addItemClick.value = !addItemClick.value;
+      //   store.commit('common/actionSaveTypePA720', 1);
+      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
+      if (isNewRow.value) {
+        if (compareType.value == 2) {
+          // console.log(`output compare type 2`);
+          dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
+          addNewRow();
+          compareType.value = 1;
+          return;
+        }
+        if (!compareType1()) {
+          // console.log(`output compare type 1  looi`);
+          popupAddStatus.value = true;
+          titleModalConfirm.value = messageDel;
+          isLoadNewForm.value = true;
+          //   resetStatus.value = true;
+          return;
+        }
+        // console.log(`output compare type 1  ok`, formPA720.value.input.employeeId);
+        store.commit('common/formPA720', dataActionUtils.input);
+        dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
+        dataSourceDetail.value = dataSourceDetail.value.concat([formPA720.value.input]);
+        taxPayRef.value.focusedRowKey = formPA720.value.input.employeeId;
+        // focusedRowKey.value = formPA720.value.employeeId;
+        return;
+      }
+      //   formPA720.value.stayQualification = initFormStateTab1.stayQualification;
+      // console.log(`output compare type chua add row`);
+      resetForm();
+      addNewRow();
+      return;
+      //   if (!formTaxRef.value.isEdit) {
+      //     if (compareAdd.value) {
+      //       popupAddStatus.value = true;
+      //       titleModalConfirm.value = 'Do you want to reset your form?';
+      //       isLoadNewForm.value = true;
+      //     }
+      //   } else {
+      //     resetForm();
+      //   }
+    };
     const deleteItem = () => {
       modalDelete.value = true;
       deleteIncomeExtrasParam.value.incomeIds = taxPayRef.value.incomeIdDels;
@@ -455,25 +542,51 @@ export default defineComponent({
       deleteIncomeExtrasParam.value.processKey = incomeExtrasParams.processKey;
     };
     const editItem = () => {
-      if (Object.keys(taxPayRef.value.paymentData).length !== 0) {
-        modalEdit.value = true;
-        changeIncomeExtraPaymentDayParam.value = { ...incomeExtrasParams, ...taxPayRef.value.paymentData };
-      }
+      modalEdit.value = true;
+      changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
     };
-    const addItem = () => {
-      if (JSON.stringify(formTaxRef.value.dataAction.input) != JSON.stringify(dataActionUtils.input)) {
-        popupAddStatus.value = true;
-      }
+    const resetForm = () => {
+      store.commit('common/formPA720', dataActionUtils.input);
+      resetFormNum.value++;
+      formTaxRef.value.triggerIncomeExtra = false;
+      formTaxRef.value.newDateLoading = false;
+
+      setTimeout(() => {
+        formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
+      }, 200);
     };
-    const onSubmit = (e: any) => {
-      actionSave.value++;
+    //submit
+    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
+    const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
+    const actionSaveTypePA720 = computed(() => store.state.common.actionSaveTypePA720);
+    const onSubmit = () => {
+      store.commit('common/actionSavePA720');
+      let ele: any = document.getElementById('save-js');
+      ele?.click();
+      setTimeout(() => {
+        if (!isErrorFormPA720.value) {
+          isLoadNewForm.value = true;
+          taxPayRef.value.firsTimeRow = true;
+        } else {
+          taxPayRef.value.focusedRowKey = keyActivePA720.value;
+        }
+      }, 100);
+    };
+    const onSave = (e: any) => {
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+        // focusedRowKey.value = formState.employeeId
+      } else {
+        store.commit('common/actionSaveTypePA720', 1);
+        onSubmit();
+      }
     };
     const onFormDone = () => {
       changeFommDone.value++;
-      resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+      formTaxRef.value.isEdit = true;
     };
-    onDoneChangeIncomeProcessExtraStatusDone((res) => {
+    onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       trigger.value = true;
       refetchIncomeProcessExtras();
@@ -485,22 +598,76 @@ export default defineComponent({
       }
       modalEdit.value = false;
     };
-    const onAddMonth = (month: number) => {
-      dataModalCopy.value = month;
+    const onAddMonth = (val: number) => {
+      dataModalCopy.value = val;
       modalCopy.value = true;
+      month.value = val;
     };
     const onLoadingTable = () => {
       trigger.value = true;
       refetchIncomeProcessExtras();
     };
     const onAddIncomeProcess = (emit: any) => {
-      dataAddIncomeProcess.value = emit;
-    };
-    const onPopupComfirm = () => {
-      resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+      resetForm();
+      incomeExtrasParams.processKey = { ...emit };
+      columnData.value[0]['month_' + emit.imputedMonth] = emit;
+      columnData.value[0]['month_' + emit.imputedMonth].status = 10;
+      isColumnData.value = true;
     };
 
+    //does save when data and row change ?
+    const titleModalConfirm = ref(messageDel);
+    const onPopupComfirm = (e: any) => {
+      if (e) {
+        if (!isLoadNewForm.value) {
+          console.log(`output->submit form`);
+          onSubmit();
+          store.commit('common/actionSaveTypePA720', 0);
+        } else {
+          resetForm();
+          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
+          addNewRow();
+          console.log(`output->reset form`);
+        }
+      } else {
+        isLoadNewForm.value = true;
+      }
+    };
+    // enable load form when row change
+    const isLoadNewForm = ref(false);
+    const editTax = (emit: any, firsTimeRow: boolean) => {
+      editTaxParam.value = emit;
+      if (firsTimeRow) {
+        isLoadNewForm.value = true;
+        return;
+      }
+      let formInputInit: any;
+      if (formTaxRef.value?.resultIncomeExtra?.getIncomeExtra != undefined) {
+        let { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
+        formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
+      } else {
+        formInputInit = store.state.common.formInputInit;
+      }
+      let formInputData = formTaxRef.value.dataAction.input;
+      if (actionSaveTypePA720.value == 1) {
+        store.commit('common/actionSaveTypePA720', 0);
+        if (!compareAdd.value) {
+          return;
+        }
+        isLoadNewForm.value = false;
+        titleModalConfirm.value = messageSave;
+        popupAddStatus.value = true;
+        return;
+      }
+      store.commit('common/actionSaveTypePA720', 0);
+      if (actionSaveTypePA720.value == 0) {
+        if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
+          isLoadNewForm.value = false;
+          titleModalConfirm.value = messageSave;
+          popupAddStatus.value = true;
+        }
+      }
+    };
     //compute data function
     const checkLen = (text: String) => {
       if (text.length > 10) {
@@ -514,161 +681,180 @@ export default defineComponent({
       }
       return month;
     };
-
+    // active tab
+    const month = ref<number>(0);
+    // fnc click month
     const showDetailSelected = (obj: any) => {
-      incomeExtrasParams.processKey.imputedMonth = obj.imputedMonth;
+      taxPayRef.value.firsTimeRow = true;
+      incomeExtrasParams.processKey.imputedMonth = obj?.imputedMonth;
       incomeExtrasParams.processKey.imputedYear = obj.imputedYear;
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
       statusParam.value = { ...incomeExtrasParams, status: obj.status };
+      resetForm();
+      month.value = obj.imputedMonth;
     };
+    //custom data in top table
     const IncomeProcessExtrasCustom = ref<any>([]);
-    let columnData = ref<any>([{}]);
+    let columnData = ref<any>([
+      {
+        globalYear: globalYear.value,
+        hasData: false,
+      },
+    ]);
+    const isRunOnce = ref<boolean>(true);
+    const toNumber = (num: any) => (!num ? '' : num);
+    //columnData has data
+    const isColumnData = ref<boolean>(false);
     onResultIncomeProcessExtras((res: any) => {
-      let responeData = res.data.getIncomeProcessExtras;
-      IncomeProcessExtrasCustom.value = [
+      let responeData = res.data?.getIncomeProcessExtras ?? [];
+      columnData.value = [
         {
-          id: 1,
-          name: '인원',
-        },
-        {
-          id: 2,
-          name: '지급액',
-        },
-        {
-          id: 3,
-          name: '소득세',
-        },
-        {
-          id: 4,
-          name: '지방소득세',
-        },
-        {
-          id: 5,
-          name: '공제총액',
-        },
-        {
-          id: 6,
-          name: '차인지급액',
+          globalYear: globalYear.value,
+          hasData: false,
         },
       ];
-      const addObj = (monthNum: number, val: any) => {
-        if (val.imputedMonth == monthNum) {
-          columnData.value[0]['month_' + val.imputedMonth] = {
-            paymentYear: val.paymentYear,
-            status: val.status,
-            paymentMonth: val.paymentMonth,
+      IncomeProcessExtrasCustom.value = [
+        { id: 1, name: '인원' },
+        { id: 2, name: '지급액' },
+        { id: 3, name: '소득세' },
+        { id: 4, name: '지방소득세' },
+        { id: 5, name: '공제총액' },
+        { id: 6, name: '차인지급액' },
+      ];
+      if (responeData.length > 0) {
+        columnData.value[0].hasData = true;
+        responeData.forEach((val: any) => {
+          let dataAdd = {
             imputedMonth: val.imputedMonth,
             imputedYear: val.imputedYear,
+            paymentYear: val.paymentYear,
+            paymentMonth: val.paymentMonth,
           };
+          IncomeProcessExtrasCustom.value[0]['month' + val.imputedMonth] = {
+            value: toNumber(val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
+            ...dataAdd,
+          };
+          IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
+            value: val?.incomeStat?.incomePayment?.toLocaleString('en-US', {
+              currency: 'VND',
+            }),
+            ...dataAdd,
+          };
+          IncomeProcessExtrasCustom.value[2]['month' + val?.imputedMonth] = {
+            value: val?.incomeStat?.withholdingIncomeTax?.toLocaleString('en-US', {
+              currency: 'VND',
+            }),
+            ...dataAdd,
+          };
+          IncomeProcessExtrasCustom.value[3]['month' + val?.imputedMonth] = {
+            value: val?.incomeStat?.withholdingLocalIncomeTax?.toLocaleString('en-US', { currency: 'VND' }),
+            ...dataAdd,
+          };
+          IncomeProcessExtrasCustom.value[4]['month' + val?.imputedMonth] = {
+            value: toNumber(val?.incomeStat?.withholdingIncomeTax + val?.incomeStat?.withholdingLocalIncomeTax).toLocaleString('en-US', {
+              currency: 'VND',
+            }),
+            ...dataAdd,
+          };
+          IncomeProcessExtrasCustom.value[5]['month' + val?.imputedMonth] = {
+            value: val?.incomeStat?.actualPayment?.toLocaleString('en-US', {
+              currency: 'VND',
+            }),
+            ...dataAdd,
+          };
+          columnData.value[0]['month_' + val.imputedMonth] = val;
+        });
+      }
+      if (isRunOnce.value) {
+        isRunOnce.value = false;
+        if (columnData.value[0]['month_' + `${dayjs().month() + 1}`]) {
+          showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
         }
-      };
-
-      responeData.forEach((val: any) => {
-        let dataAdd = {
-          imputedMonth: val.imputedMonth,
-          imputedYear: val.imputedYear,
-          paymentYear: val.paymentYear,
-          paymentMonth: val.paymentMonth,
-        };
-        IncomeProcessExtrasCustom.value[0]['month' + val.imputedMonth] = {
-          value: (val?.employeeStat?.employeeCount + val?.employeeStat?.retireEmployeeCount)?.toLocaleString('en-US', { currency: 'VND' }),
-          ...dataAdd,
-        };
-        IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.incomePayment?.toLocaleString('en-US', {
-            currency: 'VND',
-          }),
-          ...dataAdd,
-        };
-        IncomeProcessExtrasCustom.value[2]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.withholdingIncomeTax?.toLocaleString('en-US', {
-            currency: 'VND',
-          }),
-          ...dataAdd,
-        };
-        IncomeProcessExtrasCustom.value[3]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.withholdingLocalIncomeTax?.toLocaleString('en-US', { currency: 'VND' }),
-          ...dataAdd,
-        };
-        IncomeProcessExtrasCustom.value[4]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.totalDeduction?.toLocaleString('en-US', {
-            currency: 'VND',
-          }),
-          ...dataAdd,
-        };
-        IncomeProcessExtrasCustom.value[5]['month' + val?.imputedMonth] = {
-          value: val?.incomeStat?.actualPayment?.toLocaleString('en-US', {
-            currency: 'VND',
-          }),
-          ...dataAdd,
-        };
-        addObj(1, val);
-        addObj(2, val);
-        addObj(3, val);
-        addObj(4, val);
-        addObj(5, val);
-        addObj(6, val);
-        addObj(7, val);
-        addObj(8, val);
-        addObj(9, val);
-        addObj(10, val);
-        addObj(11, val);
-        addObj(12, val);
-      });
-      showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+      }
+      if (!columnData.value[0].hasData) {
+        showDetailSelected({
+          imputedMonth: dayjs().month() + 1,
+          imputedYear: globalYear.value,
+          paymentMonth: dayjs().month() + 1,
+          paymentYear: globalYear.value,
+        });
+      }
+      isColumnData.value = columnData.value[0].hasData ? true : false;
+      trigger.value = false;
+    });
+    watch(globalYear, (newVal) => {
+      originData.imputedYear = newVal;
+      isRunOnce.value = true;
+      incomeExtrasParams.processKey.imputedYear = globalYear.value;
+      incomeExtrasParams.processKey.paymentYear = globalYear.value;
+      trigger.value = true;
+      refetchIncomeProcessExtras();
+    });
+    // get config to check default date type
+    const dateType = ref<number>(1);
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    const { result: resultConfig } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+      fetchPolicy: 'no-cache',
+    }));
+    watch(resultConfig, (newVal) => {
+      dateType.value = newVal.paymentType;
     });
     return {
       statusParam,
       loadingIncomeProcessExtras,
-      dataSource,
       per_page,
       move_column,
       colomn_resize,
-      onSubmit,
-      deleteItem,
       modalDelete,
       popupDataDelete,
-      editItem,
       modalEdit,
-      modalEmailSingle,
-      modalEmailSinglePayrollRegister,
-      modalEmailMulti,
-      popupDataEmailSingle,
-      popupDataEmailSinglePayrollRegister,
-      popupDataEmailMulti,
-      checkLen,
       globalYear,
-      showDetailSelected,
       IncomeProcessExtrasCustom,
       columnData,
       incomeExtrasParams,
-      actionSave,
-      editTax,
       editTaxParam,
       changeFommDone,
-      addItem,
       formTaxRef,
       resetFormNum,
-      onFormDone,
-      actionDeleteSuccess,
       taxPayRef,
       deleteIncomeExtrasParam,
-      onAddMonth,
-      mutateChangeIncomeProcessExtraStatus,
       changeIncomeExtraPaymentDayParam,
-      actionEditDaySuccess,
       modalHistory,
       modalHistoryStatus,
-      placements,
       modalCopy,
       dataModalCopy,
+      popupAddStatus,
+      isRunOnce,
+      month,
+      isLoadNewForm,
+      titleModalConfirm,
+      isColumnData,
+      onSubmit,
+      deleteItem,
+      editItem,
+      checkLen,
+      showDetailSelected,
+      editTax,
+      onFormDone,
+      actionDeleteSuccess,
+      onAddMonth,
+      mutateChangeIncomeProcessExtraStatus,
+      actionEditDaySuccess,
       onLoadingTable,
-      dataAddIncomeProcess,
       onAddIncomeProcess,
       formatMonth,
-      popupAddStatus,
+      resetForm,
+      openTab,
       onPopupComfirm,
+      addItem,
+      onSave,
+      paymentDateTax,
+      inputDateTax,
+      dateType,
+      addItemClick,
+      keyActivePA720,
+      formPA720,
     };
   },
 });

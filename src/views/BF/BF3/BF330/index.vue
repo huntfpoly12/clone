@@ -47,6 +47,7 @@
                 <DxDataGrid :data-source="listServiceContract" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     :show-row-lines="true"  :hoverStateEnabled="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -74,7 +75,10 @@
                     <DxColumn data-field="phone" caption="연락처" />
                     <DxColumn data-field="presidentMobilePhone" caption="휴대폰" />
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
-                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="manageStartDate" cell-template="manageStartDate" caption="관리시작일" data-type="date" />
+                    <template #manageStartDate="{ data }">
+                        {{ data.data.manageStartDate ? $filters.formatDate(data.data.manageStartDate) : '' }}
+                    </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }" class="custom-action" >
@@ -86,11 +90,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -112,21 +116,16 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem} from "devextreme-vue/data-grid";
+import { DxDataGrid,DxColumn,DxPaging,DxExport,DxSelection,DxSearchPanel,DxToolbar,DxItem, DxScrolling} from "devextreme-vue/data-grid";
 import BF330Popup from "./components/BF330Popup.vue";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import DxButton from "devextreme-vue/button";
 import { Workbook } from "exceljs";
 import { saveAs } from "file-saver-es";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue";
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
+import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue"; 
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF330/index"
-dayjs.extend(weekday);
-dayjs.extend(localeData);
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -145,7 +144,8 @@ export default defineComponent({
         SearchOutlined,
         SaveOutlined,
         DeleteOutlined,
-        PrinterOutlined
+        PrinterOutlined,
+        DxScrolling,
     },
     setup() {
         // config grid

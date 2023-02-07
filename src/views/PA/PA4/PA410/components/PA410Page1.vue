@@ -38,11 +38,15 @@ export default defineComponent({
             isSelected.value = newValue !== 0 ? false : true;
         })
         const globalYear = computed(() => store.state.settings.globalYear)
-        store.dispatch('auth/getUserInfor')
+        // Getting the token from the session storage and then dispatching the action to get the user
+        // information.
+        const token = computed(()=>sessionStorage.getItem("token"))
+        store.dispatch('auth/getUserInfor', token.value);
+        
         store.dispatch('common/getListEmployee', {
-                companyId: companyId,
-                imputedYear: globalYear,
-        })
+                  companyId: companyId,
+                  imputedYear: globalYear,
+          })
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
         return {
             nextPage,

@@ -172,3 +172,46 @@
     font-size: 25px;
     margin-left: 7px;
 }
+::v-deep .custom-label-master-detail {
+    border: 1px solid #ccc;
+    margin: 5px 0 10px 0 !important;
+    padding: 10px 0px;
+
+    .ant-form-item{
+        label {
+            color: red;
+            // width: 170px;
+        }
+    }
+    .text-color{
+        label{
+            color: black;
+        }
+    }
+
+    .dp__input_icon_pad {
+        padding: 3px 0px 5px 36px;
+        border-radius: 3px;
+    }
+}
+
+::v-deep .ant-form-item-control-input-content{
+    display: inline-flex;
+    align-items: center;
+    column-gap: 5px;
+}
+::v-deep img.ant-image-img{
+    min-width: 60%;
+    // width: auto !important;
+    margin-top: 0;
+    max-height: 255px;
+}
+#bf-320-popup-datagrid{
+    max-height: 141px;
+}
+::v-deep input.dp__input.dp__input_icon_pad {
+    height: 34px;
+}
+::v-deep .ant-form-item-control {
+    display: table;
+}

@@ -22,6 +22,8 @@
     ::v-deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
+    }
+    ::v-deep .red .ant-form-item-label>label {
         color: red;
     }
 
@@ -35,7 +37,7 @@
         >div {
             border: 1px solid #d7d7d7;
             padding: 10px;
-            min-height: 500px;
+            height: 100%;
         }
     }
 

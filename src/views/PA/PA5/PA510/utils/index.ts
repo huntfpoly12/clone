@@ -4,11 +4,13 @@ export const sampleDataIncomeWageDaily = {
     dailyWage: 0,
     workingDays: 0,
     totalDeduction: 0,
+    incomeId: null,
     employee: {
+        employeeId: null,
         name: '',
         monthlyPaycheck: true,
     },
-    paymentDay: 0,
+    paymentDay: 1,
     deductionItems: [{ amount: 0 }]
 }
 

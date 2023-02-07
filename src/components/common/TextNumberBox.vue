@@ -26,7 +26,7 @@ export default defineComponent({
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
-      type: Number
+      type: [Number, String]
     },
     placeholder: String,
     readOnly: Boolean,
@@ -53,14 +53,14 @@ export default defineComponent({
     const onInputValue = (e: any) => {
       var inputElement = e.event.target;
       inputElement.value = inputElement.value.replaceAll(/\D/g, '');
-      if (inputElement.value)
-        emit("update:valueInput", parseInt(inputElement.value));
+      // if (inputElement.value)
+        emit("update:valueInput", inputElement.value);
     };
 
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue;
+        value.value = newValue?.toString();
       }
     );
     return {

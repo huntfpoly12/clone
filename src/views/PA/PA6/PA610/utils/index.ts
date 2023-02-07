@@ -23,9 +23,10 @@ export const valueDefaultAction = {
     foreigner: false,
     nationality: '대한민국',
     nationalityCode: 'KR',
-    stayQualification: 'C-4',
+    stayQualification: null,
     residentId: '',
     incomeTypeCode: '940100',
     incomeTypeName: '저술가',
     email: '',
+    deletable : false,
 } 

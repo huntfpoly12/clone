@@ -51,10 +51,11 @@
             </div>
         </div>
         <div class="page-content">
-            <a-spin :spinning="spinning" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column"
+            <a-spin :spinning="loading" size="large">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -85,10 +86,11 @@
                     <DxColumn data-field="type" caption="회원종류" cell-template="grid-cell" css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)">
-                            {{ data.value == "m" ? "매니저" : (data.value == "c"
-                                    ? "고객사" :
-                                    (data.value == "p" ? "파트너" : "영업자"))
-                            }}</a-tag>
+                            {{
+                                data.value == "m" ? "매니저" : (data.value == "c" ? "고객사" : (data.value == "p" ? "파트너" :
+                                    "영업자"))
+                            }}
+                        </a-tag>
                     </template>
                     <DxColumn data-field="mobilePhone" caption="휴대폰" />
                     <DxColumn data-field="groupCode" caption="소속코드" />
@@ -97,15 +99,15 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalEditVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>로그인이력</template>
                                     <login-outlined @click="modalLogin(data)" />
                                 </a-tooltip>
@@ -120,9 +122,10 @@
             </a-spin>
         </div>
     </div>
-    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" />
+    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count"
+        @createDone="createSuccess" />
     <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
-        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" />
+        :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" @updateDone="createSuccess" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-210" />
     <PopLogin :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :data="popupData" title="로그인이력"
@@ -131,7 +134,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import EditBF210Popup from "./components/EditBF210Popup.vue";
 import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
@@ -151,6 +154,7 @@ export default defineComponent({
         DxButton,
         DxPaging,
         DxExport,
+        DxScrolling,
         DxSearchPanel,
         EditOutlined,
         HistoryOutlined,
@@ -170,12 +174,12 @@ export default defineComponent({
     },
     setup() {
         const popupData = ref([])
+        const count = ref(0)
         const modalAddNewStatus = ref(false)
         const modalHistoryStatus = ref(false)
         const modalLoginStatus = ref(false)
         const modalEditStatus = ref<boolean>(false);
         let triggerSearching = ref<boolean>(false);
-        const spinning = ref<boolean>(false);
         const checkStatus = ref({
             checkBox1: true,
             checkBox2: false
@@ -194,17 +198,15 @@ export default defineComponent({
         const originData = ref()
         let products = ref([...productsValue])
         const dataSource = ref([])
-        const { refetch: refetchData, onResult } = useQuery(queries.searchUsers, originData, () => ({
+        const { refetch: refetchData, onResult, loading: loading } = useQuery(queries.searchUsers, originData, () => ({
             enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
             rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
-            spinning.value = false;
         })
         const changePage = () => {
-            spinning.value = true;
             let dataNew = ref({
                 page: dataSearch.value.page,
                 rows: per_page,
@@ -217,12 +219,11 @@ export default defineComponent({
             })
             triggerSearching.value = true
             if (originData) {
-                originData.value = dataNew.value
+                originData.value = { filter: dataNew.value }
                 refetchData()
             }
         }
         const searching = () => {
-            spinning.value = true;
             let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
                 dataNew.value = {
@@ -259,7 +260,7 @@ export default defineComponent({
             }
             triggerSearching.value = true
             if (originData) {
-                originData.value = dataNew.value
+                originData.value = { filter: dataNew.value }
                 refetchData()
             }
         }
@@ -273,6 +274,7 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '회원관리')
         }
         const openAddNewModal = () => {
+            count.value++
             modalAddNewStatus.value = true;
         }
         const setModalEditVisible = (data: any) => {
@@ -311,6 +313,11 @@ export default defineComponent({
         const changeValueType = (e: any) => {
             dataSearch.value.type = e.value
         }
+
+        const createSuccess = () => {
+            triggerSearching.value = true
+            refetchData()
+        }
         // Watch
         watch(() => modalEditStatus.value,
             () => {
@@ -318,6 +325,7 @@ export default defineComponent({
             }
         );
         return {
+            createSuccess,
             changePage,
             rowTable,
             changeValueType,
@@ -336,7 +344,6 @@ export default defineComponent({
             modalHistoryStatus,
             changeValueCheckBox,
             modalEditStatus,
-            spinning,
             dataSource,
             idRowEdit,
             refetchData,
@@ -345,13 +352,13 @@ export default defineComponent({
             dataSearch,
             rowChoose,
             checkStatus,
-            products
+            products,
+            count,
+            loading
         }
     },
 });
-</script> 
-
-
+</script>  
 
 
 

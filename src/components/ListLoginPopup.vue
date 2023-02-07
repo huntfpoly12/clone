@@ -5,6 +5,7 @@
             <a-spin tip="Loading..." :spinning="loadingCM110">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow" :show-borders="true" key-expr="index"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn data-field="createdAt" caption="기록일시" cell-template="creactedAt" data-type="text"/>
                     <template #creactedAt="{ data }"> 
                         {{ formarDate(data.value) }}
@@ -36,22 +37,19 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
-import dayjs, { Dayjs } from 'dayjs';
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import dayjs from 'dayjs';
 
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
     components: {
         DxDataGrid,
         DxColumn,
-        DxPaging,
-        Dayjs,
+        DxPaging, 
+        DxScrolling
     },
 
     setup(props) {

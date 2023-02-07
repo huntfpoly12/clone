@@ -1,48 +1,95 @@
-.dflex {
-  display: flex;
-}
-
-.custom-flex {
-  align-items: flex-start;
-  align-items: center;
-}
-.format-settings {
-  padding-top: 15px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  .format-settings-text {
-    padding-left: 18px;
+#pa-730 {
+  .dflex {
+    display: flex;
   }
-}
-.tax-select {
-  padding-top: 15px;
-}
 
-.created-date {
-  padding-top: 15px;
-  float: right;
-  display: flex;
-  align-items: center;
-}
+  .custom-flex {
+    align-items: flex-start;
+    align-items: center;
+  }
 
-.global-year {
-  margin-top: 6px;
-}
-::v-deep .custom-mail-group {
-  .dx-button-content {
+  .format-settings {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+
+    .format-settings-text {
+      padding-left: 18px;
+      font-size: 12px;
+      color: rgb(127, 127, 127);
+      margin-left: 5px;
+      display: flex;
+      align-items: center;
+
+      img {
+        margin-right: 3px;
+      }
+    }
+  }
+
+  .tax-select {
+    padding-top: 15px;
+  }
+
+  .created-date {
+    float: right;
+    display: flex;
+    align-items: center;
+
+    .lable-item {
+      font-size: 14px;
+    }
+  }
+
+  .global-year {
+    margin-top: 6px;
+  }
+
+  ::v-deep .custom-mail-group {
+    .dx-button-content {
       padding: 3px;
+    }
   }
-}
-.group-mail-730 {
-  cursor: pointer;
-  margin: 0px 0px;
-}
-.mail-730{
+
+  .group-mail-730 {
+    cursor: pointer;
+    margin: 0px 0px;
+  }
+
+  .mail-730 {
     margin-right: 10px;
-}
-.custom-action-icon{
+  }
+
+  .custom-action-icon {
     display: flex;
     justify-content: center;
-}
+  }
 
+  .lable-item {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .page-content {
+    .header-group {
+      align-items: top;
+      margin-top: 5px;
+    }
+
+    .lable-item {
+      font-size: 14px;
+    }
+
+    ::v-deep .ant-switch-checked {
+      background-color: black;
+    }
+  }
+
+  ::v-deep .dx-datagrid-text-content {
+    white-space: break-spaces;
+    text-align: left !important;
+  }
+  .text-right {
+    text-align: right !important;
+  }
+}

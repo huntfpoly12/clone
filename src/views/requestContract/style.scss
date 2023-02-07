@@ -13,7 +13,7 @@
     width: 100%;
 }
 
-::v-deep img {
+::v-deep .preview-img img {
     position: relative;
     width: 100%;
     height: 345px;
@@ -46,15 +46,33 @@
     margin-top: 30px;
 }
 
-.form-group label {
-    margin-bottom: 5px;
+::v-deep .custom-label-master-detail {
+    border: 1px solid #ccc;
+    margin: 5px 0 10px 0 !important;
+    padding: 10px 0px;
+
+
+    label {
+        color: red;
+        width: 170px;
+    }
+
+    .dp__input_icon_pad {
+        padding: 3px 0px 5px 36px;
+        border-radius: 3px;
+    }
+}
+
+.show-animation {
+    visibility: visible;
+    opacity: 1;
 }
 
 .radio-group {
     text-align: right;
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 ::v-deep textarea {
@@ -100,14 +118,6 @@
     margin-left: 5px;
 }
 
-/* .form-item ::v-deep input,
-.form-item .ant-input-affix-wrapper ::v-deep {
-    max-width: calc(100% - 165px);
-} */
-/* ::v-deep input.dp__input.dp__input_icon_pad {
-    width: 150px;
-    max-width: 200px !important;
-} */
 ::v-deep #nest-messages_user_email {
     min-width: 350px !important;
 }
@@ -226,12 +236,6 @@
     border-radius: 2px !important;
 }
 
-
-
-.ant-form-item {
-    margin-bottom: 0px !important;
-}
-
 ::v-deep .ant-form-item-explain-error {
     min-width: 300px !important;
 }
@@ -248,11 +252,6 @@
     width: 350px;
 }
 
-.custom-checkbox-location {
-    position: absolute;
-    margin-top: -200px;
-    display: flex;
-}
 
 ::v-deep .confirm-modal {
     .ant-modal-footer {
@@ -267,4 +266,8 @@
 
 .d-flex {
     display: flex;
+}
+
+.button-plus-add{
+    
 }

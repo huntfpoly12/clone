@@ -4,6 +4,7 @@
             :mask-closable="false">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrayLog" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxPaging :page-size="rowTable" />
                 <DxColumn data-field="createdAt" caption="기록일시" />
                 <DxColumn data-field="success" caption="성공여부" cell-template="modal-table" />
@@ -27,22 +28,19 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxPaging ,DxScrolling} from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from "@ant-design/icons-vue";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'idRow']
-
-    ,
+    props: ['modalStatus', 'data', 'title', 'idRow'],
     components: {
         DxDataGrid,
         DxColumn,
         DxPaging,
+        DxScrolling,
         ZoomInOutlined,
     },
-
-
     setup(props) {
         // config grid
         const store = useStore();

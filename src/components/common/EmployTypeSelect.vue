@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :data-source="arrayValueRes" item-template="item-data" value-expr="employeeId"
+    <DxSelectBox :width="width" :data-source="arrayValue" item-template="item-data" value-expr="employeeId"
         display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
@@ -21,12 +21,16 @@
                     :incomeTypeName="data?.incomeTypeName" />
             </div>
         </template>
+        <DxValidator :name="nameInput">
+            <DxRequiredRule v-if="required" :message="messageRequired" />
+        </DxValidator>
     </DxSelectBox>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
 import DxSelectBox from "devextreme-vue/select-box";
 import DxTextBox from "devextreme-vue/text-box";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 
 export default defineComponent({
     props: {
@@ -43,10 +47,16 @@ export default defineComponent({
             type: Array,
             required: true
         },
+        nameInput: {
+            type: String,
+            default: '',
+        },
     },
     components: {
         DxSelectBox,
-        DxTextBox
+        DxTextBox,
+        DxValidator,
+        DxRequiredRule,
     },
     setup(props, { emit }) {
         let valueEmployRes: any = ref(props.valueEmploy);
@@ -54,30 +64,37 @@ export default defineComponent({
 
         const updateValue = (value: any) => {
             emit("update:valueEmploy", value.value);  
-            arrayValueRes.value.map((val:any)=>{
+            // console.log(value.value);
+            // console.log(`output->`,arrayValueRes.value)
+            props.arrayValue.forEach((val:any)=>{
                 if(val.employeeId == value.value){
+                    // console.log(val.incomeTypeCode);
                     emit("incomeTypeCode", val.incomeTypeCode);
                 }
             })
 
         };
 
-        watch(
-            () => props.arrayValue,
-            (newValue) => {
-                arrayValueRes.value = newValue;
-            }
-        ), { deep: true };
+        // watch(
+        //     () => props.arrayValue,
+        //     (newValue) => {
+        //         arrayValueRes.value = newValue;
+        //     }
+        // ), { deep: true };
         watch(
             () => props.valueEmploy,
             (newValue) => {
-                valueEmployRes.value = newValue
+                valueEmployRes.value = newValue;
             }
         );
+        const app: any = getCurrentInstance();
+        const messages = app.appContext.config.globalProperties.$messages;
+        const messageRequired = ref(messages.getCommonMessage('102').message);
         return {
             updateValue,
             valueEmployRes,
-            arrayValueRes,
+            messageRequired
+            // arrayValueRes,
         };
     },
 });

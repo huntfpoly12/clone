@@ -1,0 +1,134 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.content {
+  text-align: center;
+  margin: 5px 0px;
+  width: 100%;
+}
+
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 900px;
+}
+
+#customers td,
+#customers th {
+  border: 0.5px solid #ddd;
+}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04aa6d;
+  color: white;
+}
+
+.disable-cell {
+  background-color: gray;
+}
+
+.header-detail-1 {
+  display: flex;
+  font-size: 14px;
+  margin-left: 5px;
+  font-weight: 600;
+
+  .header-left-1 {
+    padding-right: 60%;
+  }
+}
+
+.header-detail-2 {
+  font-size: 14px;
+  margin-left: 5px;
+  font-weight: 600;
+  display: flex;
+
+  .header-left-2 {
+    padding-right: 60%;
+  }
+}
+.header-text{
+  font-size: 18px;
+  font-weight: 900;
+}
+.footer-1 {
+  text-align: left;
+  margin-left: 5px;
+  .footer-content-1{
+    p{
+      margin-bottom: 1px;
+    }
+  }
+  .date-month{
+    text-align: end;
+    letter-spacing: 16px;
+  }
+
+  .reporter-sign{
+    text-align: center;
+    .reporter{
+      margin-right: 100px;
+    }
+    .sign{
+      float: right;
+      margin-right: 20px;
+      color: gray;
+    }
+    
+  }
+}
+
+.footer-2{
+  .tax-agent{
+    display: flex;
+    padding-left: 127px;
+  }
+  .sign{
+    color: gray;
+    margin-left: 257px;
+  }
+  .dear{
+    float: left;
+    margin-left: 20px;
+    font-size: 17px;
+    font-weight: 800;
+  }
+}
+
+input{
+  border: 2px solid #5292F7;
+  outline-width: 0;
+  margin: 0;
+  padding: 1px 4px 0 2px;
+  font-family: Arial, Helvetica, sans-serif;
+  /*repeat from .handsontable (inherit doesn't work with IE<8) */
+  line-height: 1.3em;
+  /*repeat from .handsontable (inherit doesn't work with IE<8) */
+  font-size: inherit;
+  resize: none;
+  /*below are needed to overwrite stuff added by jQuery UI Bootstrap theme*/
+  display: inline-block;
+  color: #000;
+  border-radius: 0;
+  background-color: #FFF;
+  border:none;
+  width:80px;
+  height:100%;
+  font-family: Verdana, Helvetica, Arial, FreeSans, sans-serif;
+  font-size:12px;
+  padding: 0 4px 0 4px;
+}
+input:focus { 
+  border:2px solid #5292F7;
+  outline: none;
+}

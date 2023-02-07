@@ -21,9 +21,10 @@
         </div>
         <div class="page-content">
             <a-spin :spinning="spinning" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column"
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -50,7 +51,8 @@
                     <DxColumn data-field="type" caption="대상회원" cell-template="button" />
                     <template #button="{ data }" class="custom-action">
                         <a-tag :color="getColorTag(data.value)">
-                            {{ data.value == 'm' ? '매니저' : (data.value == 'r' ? '영업자' : (data.value == 'p' ? '파트너' :
+                            {{
+                                data.value == 'm' ? '매니저' : (data.value == 'r' ? '영업자' : (data.value == 'p' ? '파트너' :
                                     ''))
                             }}
                         </a-tag>
@@ -76,19 +78,19 @@
                     <a-pagination v-model:current="dataSearch.page" v-model:page-size="dataSearch.rows"
                         :total="totalRow" />
                 </div>
-                <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" />
-                <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
             </a-spin>
         </div>
     </div>
+    <BF220PopupAddNew :modalStatus="modalAddNewStatus" @closePopupAdd="closePopupAdd" :key="keyAdd" />
+    <BF220PopupEdit :modalStatus="modalEditStatus" @closePopupEdit="closePopupEdit" :idRowIndex="IDRow" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+        title="변경이력" :idRowEdit="IDRow" typeHistory="cm-220" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { dataSearchUtils, buttonSearchUtils } from "./utils";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxScrolling } from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF220PopupAddNew from "./components/BF220PopupAddNew.vue";
 import DxButton from "devextreme-vue/button";
@@ -105,6 +107,7 @@ export default defineComponent({
         DxButton,
         DxPaging,
         DxSelection,
+        DxScrolling,
         DxExport,
         DxSearchPanel,
         BF220PopupAddNew,
@@ -121,6 +124,7 @@ export default defineComponent({
         BF220PopupEdit
     },
     setup() {
+        let keyAdd = ref(0)
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -178,6 +182,7 @@ export default defineComponent({
             popupData.value = data;
         }
         const openAddNewModal = () => {
+            keyAdd.value++
             modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
@@ -208,32 +213,10 @@ export default defineComponent({
             spinning.value = false
         });
         return {
-            changeValSearch,
-            move_column,
-            colomn_resize,
-            modalAddNewStatus,
-            modalHistoryStatus,
-            closePopupAdd,
-            closePopupEdit,
-            modalEditStatus,
-            modalHistory,
-            searching,
-            getColorTag,
-            onExporting,
-            openAddNewModal,
-            openEditModal,
-            popupData,
-            spinning,
-            dataSearch,
-            resList,
-            buttonSearch,
-            totalRow,
-            IDRow,
-            dataSource
+            keyAdd, move_column, colomn_resize, modalAddNewStatus, modalHistoryStatus, modalEditStatus, popupData, spinning, dataSearch, resList, buttonSearch, totalRow, IDRow, dataSource,
+            changeValSearch, closePopupAdd, closePopupEdit, modalHistory, searching, getColorTag, onExporting, openAddNewModal, openEditModal,
         }
     },
 });
-</script>
-
-
+</script> 
 <style lang="scss" scoped src="./style/style.scss"/>

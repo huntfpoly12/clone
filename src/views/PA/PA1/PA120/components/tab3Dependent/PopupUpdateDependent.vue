@@ -7,19 +7,19 @@
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="연말관계" label-align="right" class="red">
-                                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
+                                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation" :readOnly="formState.relation == 0"
                                     :required="true"></dependants-relation-select-box>
                             </a-form-item>
                             <a-form-item label="성명" label-align="right" class="red">
-                                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
+                                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true" :disabled="disabledButton"
                                     v-model:valueInput="formState.name"></default-text-box>
                             </a-form-item>
-                            <a-form-item label="연말관계" label-align="right">
-                                <switch-basic textCheck="내국인" textUnCheck="외국인"
-                                    v-model:valueSwitch="formState.foreigner" />
+                            <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
+                                <switch-basic textCheck="외국인" textUnCheck="내국인"
+                                    v-model:valueSwitch="formState.foreigner" :disabled="disabledButton"/>
                             </a-form-item>
                             <a-form-item :label="labelResidebId" label-align="right" class="red">
-                                <id-number-text-box :required="true" width="150px"
+                                <id-number-text-box :required="true" width="150px" :disabled="disabledButton"
                                     v-model:valueInput="formState.residentId">
                                 </id-number-text-box>
                             </a-form-item>
@@ -29,18 +29,18 @@
                             </a-form-item>
                             <a-form-item label="기본공제" label-align="right" class="red">
                                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
-                                    :required="true" />
+                                    :required="true" :readOnly="true" :disabled="disabledButton"/>
                             </a-form-item>
                             <a-form-item label="부녀자" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="women" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
                             </a-form-item>
                             <a-form-item label="한부모" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="singleParent" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
                             <a-form-item label="경로우대" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" />
                             </a-form-item>
                             <a-form-item label="장애인" label-align="right">
                                 <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled">
@@ -51,26 +51,22 @@
                                 </maternity-adoption-radio-box>
                             </a-form-item>
                             <a-form-item label="자녀세액공제" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="descendant" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
                             </a-form-item>
                             <a-form-item label="위탁관계" label-align="right">
                                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                                     v-model:valueInput="formState.consignmentRelationship"></default-text-box>
                             </a-form-item>
-                            <a-form-item label="세대주여부" label-align="right">
-                                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="householder" />
-                            </a-form-item>
+                            <!-- <a-form-item label="세대주여부" label-align="right">
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="householder" />
+                            </a-form-item> -->
                         </a-col>
                     </a-row>
 
                 </div>
-                <a-row style="margin-top: 40px">
-                    <a-col :span="8" :offset="8" style="text-align: center;">
-                        <button-basic style="margin-right: 20px" text="삭제" mode="contained" :width="90"
-                            :disabled="disabledButton" @onClick="actionDeleteFuc($event)" />
-                        <button-basic text="저장" type="default" mode="contained" :width="90"
-                            @onClick="actionUpdated($event)" />
-                    </a-col>
+                <a-row style="margin-top: 40px" justify="center">
+                    <button-basic text="저장" type="default" mode="contained" :width="90"
+                        @onClick="actionUpdated($event)" />
                 </a-row>
                 <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false"
                     typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요"
@@ -88,9 +84,9 @@ import mutations from "@/graphql/mutations/PA/PA1/PA120";
 import queries from "@/graphql/queries/PA/PA1/PA120";
 import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
+import {taxWaring} from '../../utils/index'
 const contentDelete = Message.getMessage('PA120', '002').message
-import { Message } from "@/configs/enum"
-
+import { Message } from "@/configs/enum";
 
 export default defineComponent({
     components: {},
@@ -108,18 +104,19 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
+        const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
         const ageCount = ref();
         const modalStatusDelete = ref(false)
         const idAction = ref()
         let disabledButton = ref<boolean>(false);
-        const labelResidebId = ref("주민(외국인)번호 ");
+        const labelResidebId = ref("주민등록번호");
         let initialFormState = {
             relation: null,
             name: '',
             foreigner: false,
             residentId: '',
             basicDeduction: null,
-            women: false,
+            women: true,
             singleParent: false,
             senior: false,
             disabled: 0,
@@ -127,27 +124,28 @@ export default defineComponent({
             descendant: true,
             consignmentRelationship: '',
         };
-        let formState = reactive<any>({ ...initialFormState });
+        const residentId = ref<String | Number>(1)
+        let formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value  });
         let formState2 = reactive<any>({ ...initialFormState });
         const setModalVisible = () => {
             emit('closePopup', false);
-        }
-        const women = ref(formState.women == true ? 1 : 0);
-        watch(women, (newValue) => {
-            if (newValue == 1) {
-                formState.women = true;
-            } else {
+        };
+        const notifcationTax = () => {
+            notification('warning', taxWaring);
+            setTimeout(()=> {
                 formState.women = false;
+            }, 200)
+        }
+        watch(()=>formState.women, (newValue) => {
+            if (newValue == true  && formState.singleParent == true) {
+                notifcationTax();
             }
-        });
-        const singleParent = ref(formState.singleParent == true ? 1 : 0);
-        watch(singleParent, (newValue) => {
-            if (newValue == 1) {
-                formState.singleParent = true;
-            } else {
-                formState.singleParent = false;
+        },{deep:true});
+        watch(()=>formState.singleParent, (newValue) => {
+            if (newValue == true  && formState.women == true) {
+                notifcationTax();
             }
-        });
+        },{deep:true});
         const senior = ref(formState.senior == true ? 1 : 0);
         watch(senior, (newValue) => {
             if (newValue == 1) {
@@ -173,22 +171,23 @@ export default defineComponent({
             }
         });
         const foreigner = ref(formState.foreigner == true ? 1 : 0);
-        watch(foreigner, (newValue) => {
-            if (newValue == 1) {
-                formState.foreigner = true;
-                labelResidebId.value = "외국인번호 유효성";
-            } else {
-                formState.foreigner = false;
-                labelResidebId.value = "주민등록번호";
-            }
-        });
-        const residentId = ref("");
-        watch(residentId, (newValue: any) => {
-            formState.residentId =
-                newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
-            if (newValue.length >= 7) {
-                ageCount.value = convertAge(formState.residentId);
-            }
+        // watch(foreigner, (newValue) => {
+        //     if (newValue == 0) {
+        //         formState.foreigner = true;
+        //         labelResidebId.value = "주민등록번호";
+        //     } else {
+        //         formState.foreigner = false;
+        //         labelResidebId.value = "외국인번호 유효성";
+        //     }
+        // });
+        watch(formState.foreigner, (newValue) => {
+        if (newValue) {
+            formState.foreigner = true;
+            labelResidebId.value = '주민등록번호';
+        } else {
+            formState.foreigner = false;
+            labelResidebId.value = '외국인번호 유효성';
+        }
         });
         watch(() => props.modalStatus, (newValue: any) => {
             if (newValue) {
@@ -218,7 +217,7 @@ export default defineComponent({
                 formState.name = formState2[props.idRowIndex - 1].name
                 formState.relation = formState2[props.idRowIndex - 1].relation
                 formState.foreigner = formState2[props.idRowIndex - 1].foreigner
-                formState.residentId = formState2[props.idRowIndex - 1].residentId
+                formState.residentId = formState2[props.idRowIndex - 1].residentId.replace('-', '');
                 formState.basicDeduction = formState2[props.idRowIndex - 1].basicDeduction
                 formState.women = formState2[props.idRowIndex - 1].women
                 formState.singleParent = formState2[props.idRowIndex - 1].singleParent
@@ -231,6 +230,16 @@ export default defineComponent({
 
             }
         });
+        watch(()=>formState.residentId,(newVal)=> {
+            let count;
+            if(newVal.length==13){
+                count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
+                ageCount.value = convertAge(count);
+            }else if(newVal.length<13){
+                count  = newVal.toString();
+                ageCount.value = convertAge(count);
+            }
+        },{deep: true})
         const {
             mutate,
             onError,
@@ -250,6 +259,7 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
             } else {
                 delete formState.householder;
+                formState.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
                 let newValDataEdit = {
                     ...formState
                 };
@@ -266,7 +276,8 @@ export default defineComponent({
         }
         watch(() => formState.relation, (value) => {
             if (value == 0) {
-                disabledButton.value = true
+                disabledButton.value = true;
+
             } else disabledButton.value = false
         })
         watch(() => props.idRowIndex, (value) => {
@@ -309,16 +320,20 @@ export default defineComponent({
             trigger.value = true
             refetchValueDetail()
         })
+        //
+        watch(isForeignerPA120,(newVal: any)=>{
+            formState.foreigner = !newVal;
+        })
         return {
-            women,
-            singleParent, loading,
+            // women,
+            // singleParent,
+            loading,
             householder,
             senior,
             descendant,
             formState,
             ageCount,
-            foreigner,
-            residentId, disabledButton,
+            foreigner, disabledButton,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
             labelResidebId, actionDeleteFuc, modalStatusDelete,
         };
@@ -355,6 +370,11 @@ export default defineComponent({
 
     .roadAddress {
         margin-bottom: 5px;
+    }
+    .switchForeigner {
+        :deep .ant-switch {
+            background-color: #1890ff;
+        }
     }
 }
 </style>

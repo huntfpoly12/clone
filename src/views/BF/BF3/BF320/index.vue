@@ -51,10 +51,11 @@
                     </a-row>
                 </div>
             </div>
-            <div class="page-content">
+            <div class="page-content"> 
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                    <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
@@ -85,11 +86,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip placement="top">
+                                <a-tooltip  color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -112,7 +113,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel,DxToolbar,DxItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel,DxToolbar,DxScrolling,DxItem } from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
@@ -124,7 +125,7 @@ import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,DxToolbar,DxItem,
+        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,DxToolbar,DxItem,DxScrolling,
         BF320Popup, HistoryPopup,
         EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined
     },
@@ -156,7 +157,7 @@ export default defineComponent({
             spinning.value = true;
             refetchData()
         }
-        const handleClosePopup = () => {
+        const handleClosePopup = () => { 
             modalStatus.value = false
             refetchData()
         }

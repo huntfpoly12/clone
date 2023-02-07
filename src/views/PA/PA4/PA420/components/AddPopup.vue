@@ -1,20 +1,22 @@
 <template>
-
     <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         style="top: 20px">
-        <div class="mt-20">
-            <radio-group :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
-            <radio-group :arrayValue="option2" v-model:valueRadioCheck="retirementIncome2" layoutCustom="horizontal" />
-            <span>
-                퇴직소득자료 입력하시겠습니까?
-            </span>
+        <div class="block-radio ">
+            <radio-group class="radio-group one" :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
+            <radio-group class="radio-group two" :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
+                layoutCustom="horizontal" />
+            <div class="mt-10">
+                <span>
+                    퇴직소득자료 입력하시겠습니까?
+                </span>
+            </div>
         </div>
         <div class="footer mt-30">
             <button-basic class="button-form-modal mr-5" text="아니요" type="default" mode="outlined"
                 @onClick="setModalVisible" />
             <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
                 @onClick="openModalAdd" />
-        </div>
+        </div>       
     </a-modal>
 
     <a-modal :visible="modalStatusAccept" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
@@ -24,18 +26,24 @@
             <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)" />
             <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)" />
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
-        </a-steps>
+        </a-steps>  
         <div class="step-content pt-20">
             <form action="your-action">
-                <template v-if="step === 0">
-                    <Tab1 :option1="retirementIncome1" :option2="retirementIncome2" />
-                </template>
-                <template v-if="step === 1">
-                    <Tab2 />
-                </template>
-                <template v-if="step === 2">
-                    <Tab3 />
-                </template>
+                <keep-alive>
+                    <template v-if="step === 0">
+                        <Tab1 :dataForm="dataForm" :arrayEmploySelect="arrayEmploySelect" :actionNextStep="valueNextStep" @nextPage="step++"/>
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 1">
+                        <Tab2 :dataForm="dataForm" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 2">
+                        <Tab3 :dataForm="dataForm" />
+                    </template>
+                </keep-alive>
             </form>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
@@ -44,6 +52,7 @@
             <button-basic text="저장" type="default" mode="contained" @onClick="created" v-if="step === 2" />
         </div>
     </a-modal>
+    
 </template>
 
 <script lang="ts">
@@ -57,7 +66,8 @@ import Tab2 from './TabCreated/Tab2.vue';
 import Tab3 from './TabCreated/Tab3.vue';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-
+import { initialFormState } from '../utils/index'
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -79,21 +89,23 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
     setup(props, { emit }) {
-
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
         const step = ref(0)
+        const valueNextStep = ref(0)
         const dayValue = ref(1)
         const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
-        const retirementIncome2 = ref(true)
         const modalOption = ref()
         const trigger = ref(false)
+        const dataForm = reactive(JSON.parse(JSON.stringify({...initialFormState})));
         const option1 = reactive([
             { id: true, text: '사원' },
             { id: false, text: '일용직사원' }
         ])
         const option2 = reactive([
-            { id: true, text: '퇴직소득(퇴직자)' },
-            { id: false, text: '중도정산' }
+            { id: 1, text: '퇴직소득(퇴직자)' },
+            { id: 2, text: '중도정산' }
         ])
         const setModalVisible = () => {
             modalStatusAccept.value = false
@@ -105,18 +117,25 @@ export default defineComponent({
             processKey: props.processKey,
             incomeId: props.key
         })
+        store.dispatch('common/getListEmployee', {
+            companyId: companyId,
+            imputedYear: globalYear,
+        })
+        const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
 
         // =========================  GRAPQL =================================================
+
         const {
-            mutate,
-            onDone,
-            onError,
-        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
-        onDone(() => {
+            mutate: mutateCreateIncomeRetirement,
+            onDone: onDoneCreateIncomeRetirement,
+            onError: onErrorCreateIncomeRetirement,
+        } = useMutation(mutations.createIncomeRetirement);
+        onDoneCreateIncomeRetirement(() => {
             notification('success', `업데이트 완료!`)
+            modalStatusAccept.value = false
             emit("closePopup", false)
         })
-        onError((e: any) => {
+        onErrorCreateIncomeRetirement((e: any) => {
             notification('error', e.message)
         })
 
@@ -160,18 +179,15 @@ export default defineComponent({
             }
         });
 
-        const onSubmit = () => {
-
-        };
-
         const changeStep = (stepChange: any) => {
             step.value = stepChange
         }
 
         const nextStep = (event: any) => {
-            if (step.value < 2) {
+            if (step.value == 0)
+                valueNextStep.value++
+            else if (step.value == 1)
                 step.value++
-            }
         }
 
         const prevStep = () => {
@@ -179,18 +195,32 @@ export default defineComponent({
         }
 
         const created = () => {
-
+            const variables: any = reactive({
+                companyId: companyId,
+                processKey: { ...dataForm.processKey },
+                input: { ...dataForm.input },
+                incomeCalculationInput: { ...dataForm.incomeCalculationInput },
+                taxCalculationInput: { ...dataForm.taxCalculationInput },
+            })
+            if (!dataForm.checkBoxCallApi) {
+                delete variables.taxCalculationInput.prevRetiredYearsOfService
+                delete variables.taxCalculationInput.prevRetirementBenefitStatus
+            }
+            delete variables.checkBoxCallApi
+            mutateCreateIncomeRetirement(variables)
         }
 
         const openModalAdd = () => {
+            if (retirementIncome1.value) {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10)
+            } else {
+                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20)
+            }
             modalStatusAccept.value = true
             modalOption.value = false
-            console.log(props.data);
-
         }
         return {
             setModalVisible,
-            onSubmit,
             changeStep,
             nextStep, prevStep, created,
             openModalAdd,
@@ -203,7 +233,9 @@ export default defineComponent({
             option1, option2,
             modalOption,
             retirementIncome1,
-            retirementIncome2,
+            dataForm,
+            arrayEmploySelect,
+            valueNextStep,
         }
     },
 })

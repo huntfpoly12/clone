@@ -1,4 +1,4 @@
-import searchUsers from "./searchUsers";
+import searchUsers from "@/graphql/queries/common/searchUsers";
 import getUser from "./getUser";
 import isUserRegistableUsername from "./isUserRegistableUsername";
 import searchScreenRoleGroups from "./searchScreenRoleGroups";

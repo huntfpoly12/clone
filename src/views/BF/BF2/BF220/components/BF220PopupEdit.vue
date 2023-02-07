@@ -47,19 +47,21 @@
                             <span>권한그룹메뉴별 권한</span>
                         </a-col>
                         <a-col :span="24">
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :selected-row-keys="keyChecked" :show-borders="true"
-                                key-expr="enumKey" class="table-sevice" :allow-column-reordering="move_column"
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                                :selected-row-keys="keyChecked" :show-borders="true" key-expr="enumKey"
+                                class="table-sevice" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize">
+                                <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }">
-                                    <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'read')">
+                                    <div @click="changeValRoles(data.data.enumKey, 'read')">
                                         <DxCheckBox :value="setReadWrite(data.data.enumKey, 'read')" />
                                     </div>
                                 </template>
                                 <DxColumn caption="쓰기" cell-template="col2" alignment="center" :width="100" />
                                 <template #col2="{ data }">
-                                    <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'write')">
+                                    <div @click="changeValRoles(data.data.enumKey, 'write')">
                                         <DxCheckBox :value="setReadWrite(data.data.enumKey, 'write')" />
                                     </div>
                                 </template>
@@ -84,7 +86,8 @@ import {
     DxDataGrid,
     DxColumn,
     DxPaging,
-    DxSelection
+    DxSelection,
+    DxScrolling
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -100,6 +103,7 @@ export default defineComponent({
         SearchOutlined,
         WarningOutlined,
         DxDataGrid,
+        DxScrolling,
         DxPaging,
         DxColumn,
         DxSelection,
@@ -276,6 +280,8 @@ export default defineComponent({
     },
 })
 </script>
+
+
 
 
 

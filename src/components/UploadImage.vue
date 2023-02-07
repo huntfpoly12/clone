@@ -1,85 +1,57 @@
 <template>
-    <a-row class="container_upload custom-flex clr" :gutter="[16, 0]">
-        <a-col>
-            <div v-if="!customrow">
-                <a-form-item class="title" :label="title" disable="true">
-                    <a-row>
-                        <div v-if="disabledImg == false">
-                            <div style="display: flex;">
-                                <input class="custom-file-input" type="file" @change="onFileChange" />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                            </div>
-
-                            <p v-if="messageUpload">{{ messageUpload }}</p>
-
-                        </div>
-                        <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                            <div style="display: flex;">
-                                <input class="custom-file-input" type="file" disabled />
-                                <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                            </div>
-                        </div>
-                    </a-row>
-                    <a-row>
-                        <a-space :size="10" style="margin-top: 8px">
-                            <div class="warring-modal">
-                                <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                                <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
-                                <p>파일용량 : 최대 5MB</p>
-                            </div>
-                        </a-space>
-                    </a-row>
-                </a-form-item>
+    <a-row class="container_upload custom-flex clr" :gutter="[24]">
+        <a-form-item :label="title" v-if="!customrow" style="position: relative;">
+            <div v-if="disabledImg == false">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" @change="onFileChange" width="100px" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
+                <p v-if="messageUpload">{{ messageUpload }}</p>
             </div>
-            <div v-else>
-                <p><b>{{ title }}</b></p>
-                <a-row>
-                    <div v-if="disabledImg == false">
-                        <div style="display: flex;">
-                            <input class="custom-file-input" type="file" @change="onFileChange" />
-                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                        </div>
-
-                        <p v-if="messageUpload">{{ messageUpload }}</p>
-
-                    </div>
-                    <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
-                        <div style="display: flex;">
-                            <input class="custom-file-input" type="file" disabled />
-                            <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
-                        </div>
-                    </div>
-                </a-row>
-                <a-row>
-                    <a-space :size="8" style="margin-top: 8px">
-                        <div class="warring-modal">
-                            <p>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</p>
-                            <p>파일형식 : JPG(JPEG), TIF, GIF, PNG</p>
-                            <p>파일용량 : 최대 5MB</p>
-                        </div>
-                    </a-space>
-                </a-row>
+            <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" disabled width="100px" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
             </div>
-        </a-col>
-        <a-col> </a-col>
-        <a-col :span="7">
-            <!-- <div class="img-preview">
-        <img :src="imageUrl" @click="handlePreview" />
-      </div> -->
-        </a-col>
+            <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
+        </a-form-item>
+        <a-form-item :label="title" v-if="customrow" style="position: relative;">
+            <div v-if="disabledImg == false">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" @change="onFileChange" />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
+                <p v-if="messageUpload">{{ messageUpload }}</p>
+            </div>
+            <div v-if="disabledImg == true" style="background-color: #f5f5f5; cursor: no-drop;">
+                <div class="d-flex">
+                    <input class="custom-file-input" type="file" disabled />
+                    <a-spin style="padding-left: 10px;padding-top: 10px;" :spinning="loading" />
+                </div>
+            </div>
+            <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
+        </a-form-item>
+        
+        <a-space :size="10" style="margin-top: 8px">
+            <div class="warring-modal">
+                <span>아래 형식에 맞는 이미지파일을 선택한 후 업로드하십시요.</span><br>
+                <span>파일형식 : JPG(JPEG), TIF, GIF, PNG</span><br>
+                <span>파일용량 : 최대 5MB</span>
+            </div>
+        </a-space>
 
-        <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
-            <img style="width: 100%" :src="imageUrl" />
-        </a-modal>
     </a-row>
+    <a-modal :visible="previewVisible" :title="title" :footer="null" @cancel="handleCancel" :mask-closable="false">
+        <img style="width: 100%" :src="imageUrl" />
+    </a-modal>
 </template>
 
 <script src="" lang="ts">
 import { ref, defineComponent } from "vue";
-import { message, Upload, UploadProps } from "ant-design-vue";
+import { Upload, UploadProps } from "ant-design-vue";
 import Repository from "../repositories/index";
-const uploadRepository = Repository.get("upload");
-
+const uploadRepository = Repository.get("upload"); 
 import {
     UploadOutlined,
     MinusCircleOutlined,
@@ -89,6 +61,7 @@ import {
     PlusSquareOutlined,
     WarningFilled,
 } from "@ant-design/icons-vue";
+import notification from "@/utils/notification";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
@@ -126,7 +99,7 @@ export default defineComponent({
         customrow: {
             type: Number
         },
-        name:{
+        name: {
             type: String
         }
     },
@@ -139,24 +112,11 @@ export default defineComponent({
         PlusSquareOutlined,
         WarningFilled,
     },
-    data() {
-        return {
-            uploadedFileName: null,
-        };
-    },
     methods: {
         onFileChange(e: any) {
             const file = e.target.files[0];
             this.imageUrl = URL.createObjectURL(file);
-        },
-
-        typeFIle(file: any) {
-            const isJpgOrPng =
-                file.type === "image/png" ||
-                file.type === "image/jpg" ||
-                file.type === "image/jpeg";
-            return isJpgOrPng;
-        },
+        }, 
     },
     setup(props: any, { emit }) {
         const fileList = ref<UploadProps["fileList"]>([]);
@@ -166,53 +126,48 @@ export default defineComponent({
         const file = ref<any>("");
         const fileName = ref<any>("");
         const previewVisible = ref(false);
-        var showImg = ref<boolean>(true);
-
+        var showImg = ref<boolean>(true);  
         const onRemove = () => {
             showImg.value = false;
-            imageUrl.value = "";
-            //@ts-ignore
+            imageUrl.value = ""; 
             props.srcimg = "";
             fileName.value = "";
         };
         let preview = ref<any>("");
-        const onFileChange = async (e: {
-            [x: string]: any;
-            target: { files: any[] };
-        }) => {
+        const onFileChange = async (e: { [x: string]: any; target: { files: any[] } }) => { 
             const file = e.target.files[0];
             if (file.size > 1024 * 1024 * 5) {
                 e.preventDefault();
-                messageUpload = "File must smaller than 5MB!";
+                messageUpload = "File must smaller than 5MB!"; 
                 return;
             }
             const formData = new FormData();
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
-            fileName.value = file.name;
-            try {
+            fileName.value = file.name; 
+            try { 
                 loading.value = true;
                 const data = await uploadRepository.public(formData); 
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
-                    emit('update:imageId', 10)
+                    emit('update:imageId', data.data.id)
                     emit('update:imageSource', imageUrl.value)
                     emit("update-img", {
                         url: imageUrl.value,
                         id: data.data.id,
                         fileName: fileName.value,
-                        name: props.name
+                        name: fileName.value
                     });
                     emit("update-step", {
                         url: imageUrl.value,
                         id: data.data.id,
                         fileNamestep: fileName.value,
-                        
+
                     });
                 });
-            } catch (error) {
-                console.log(error);
+            } catch (error) { 
+                notification('error', '이미지를 업로드하는 동안 오류가 발생했습니다!')
             }
         };
 
@@ -229,7 +184,6 @@ export default defineComponent({
             handlePreview,
             imageUrl,
             loading,
-            // handleChange,
             messageUpload,
             fileList,
             onRemove,
@@ -273,18 +227,13 @@ export default defineComponent({
     border: 1px solid #d9d9d9;
     line-height: 1.5715;
     padding: 5px 10px;
+    padding-left: 40px;
     white-space: nowrap;
     -webkit-user-select: none;
     cursor: pointer;
     text-shadow: 1px 1px #fff;
     font-weight: 700;
     font-size: 10pt;
-}
-
-
-
-.title {
-    padding-right: 8px;
 }
 
 .button_remove {
@@ -317,5 +266,16 @@ export default defineComponent({
     width: 200px;
     text-align: left;
     border-radius: 5px;
+}
+.custom-flex {
+    margin-left: 0 !important;
+}
+.iconUpload {
+    width: 20px; 
+    height: 20px; 
+    position: absolute;  
+    top: 50%; 
+    left: 10px;
+    transform: translate(0, -50%);
 }
 </style>

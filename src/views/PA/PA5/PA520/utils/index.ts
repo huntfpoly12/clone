@@ -38,9 +38,9 @@ export const DataCreated = {
     roadAddress: '',
     addressExtend: '',
     email: '',
-    employeeId: null,
-    joinedAt: dayjs().format('YYYY-MM-DD'),
-    leavedAt: dayjs().format('YYYY-MM-DD'),
+    employeeId: '',
+    joinedAt: parseInt(dayjs().format('YYYYMMDD')),
+    leavedAt: null,
     retirementIncome: true,
     weeklyWorkingHours: null,
     department: '',
@@ -77,4 +77,18 @@ export const originDataInputUpdate = {
     dailyWage: 0,
     monthlyWage: 0,
     deductionItems: []
+}
+
+export const DataCreatedTable = {
+    "employeeId": null,
+    "name": "",
+    "foreigner": false,
+    "status": null,
+    "residentId": "",
+    "deletable": false,
+    "nationalPensionDeduction": false,
+    "healthInsuranceDeduction": false,
+    "employeementInsuranceDeduction": false,
+    "nationalPensionSupportPercent": null,
+    "employeementInsuranceSupportPercent": null,
 }

@@ -1,6 +1,6 @@
 .custom-money {
     display: flex;
-    padding-left: 60px;
+    // padding-left: 60px;
     margin-bottom: 5px;
     align-items: center;
 
@@ -148,7 +148,7 @@
     margin-top: -35px;
 }
 
-::v-deep .dx-texteditor-input {
+::v-deep .input-float-right .dx-texteditor-input {
     margin-right: 10px;
     text-align: right;
 }
@@ -196,4 +196,27 @@
 .disabled-div {
     pointer-events: none;
     opacity: 0.7;
+}
+::v-deep .red {
+    label {
+      color: red;
+    }
+  }
+
+.data-row-accounting {
+    border: 1px solid #ccc;
+    margin: 5px 0 10px 0 !important;
+    padding: 10px 0px;
+}
+::v-deep .ant-row.container_upload.custom-flex {
+    flex-direction: column;
+    width: 300px;
+    margin-left: 0 !important; 
+    margin-right: 0 !important;
+}
+::v-deep .delete_group span:first-child {
+    width: 200px;
+}
+::v-deep input.dp__input.dp__input_icon_pad {
+    height: 34px;
 }

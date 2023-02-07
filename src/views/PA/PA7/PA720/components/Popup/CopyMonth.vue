@@ -2,7 +2,7 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="500">
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
-        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month) }}</div>
+        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month1) }}</div>
         <div class="month-custom-2 d-flex-center">지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" /></div>
       </div>
     </a-form-item>
@@ -18,8 +18,8 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer="" :width="600">
     <div class="mt-30 d-flex-center">
-      <span>과거내역</span>{{ month2 }}
-      <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
+      <span>과거내역</span>
+      <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
           <span v-if="data" style="padding: 4px">
             귀 {{ data.imputedYear }}-{{ formatMonth(data.imputedMonth) }} 지 {{ data.paymentYear }}-{{ formatMonth(data.paymentMonth) }}
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import { companyId } from '@/helpers/commonFunction';
 import DxSelectBox from 'devextreme-vue/select-box';
@@ -54,7 +54,6 @@ import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import dayjs from 'dayjs';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -63,6 +62,10 @@ export default defineComponent({
     month: {
       type: Number,
       default: 0,
+    },
+    dateType: {
+      type: Number,
+      default: 1,
     },
   },
   components: {
@@ -80,25 +83,44 @@ export default defineComponent({
       delete dataApiCopy.value.incomeCount;
       delete dataApiCopy.value.__typename;
     };
-    const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`);
+    const month2 = ref<String>(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`);
     const modalCopy = ref(false);
     const paymentDayCopy = ref();
-    const findIncomeProcessExtraStatViewsParam = ref<any>({ companyId: companyId, filter: { startImputedYearMonth: +(globalYear.value + `01`), finishImputedYearMonth: +(globalYear.value + `12`) } });
+    const findIncomeProcessExtraStatViewsParam = computed(() => ({
+      companyId: companyId,
+      filter: { startImputedYearMonth: 202200, finishImputedYearMonth: +(month2.value.toString().substring(0, 4) + `12`) },
+    }));
     const findIncomeProcessExtraStatViewsTrigger = ref(true);
     const arrDataPoint = ref<[]>([]);
     const { mutate, onError, onDone } = useMutation(mutations.copyIncomeExtras);
     const {
       result: resultFindIncomeProcessExtraStatViews,
       loading: loadingFindIncomeProcessExtraStatViews,
-      onResult: onResultFindIncomeProcessExtraStatViews,
+      refetch: refetchFindIncomeProcessExtraStatViews,
     } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
       enabled: findIncomeProcessExtraStatViewsTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     // watch
     watch(resultFindIncomeProcessExtraStatViews, (value) => {
+      findIncomeProcessExtraStatViewsTrigger.value = false;
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
+    const month1 = ref(1);
+    watch(
+      () => props.month,
+      (val) => {
+        month1.value = val;
+        let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
+        if (props.dateType == 2 && props.month) {
+          yearMonth = `${processKey.value.paymentYear}${props.month + 1}`;
+        }
+        if (props.dateType == 1) {
+          yearMonth = `${processKey.value.paymentYear}${props.month}`;
+        }
+        month2.value = yearMonth;
+      }
+    );
     onError((res) => {
       notification('error', res.message);
     });
@@ -117,13 +139,20 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
+      const dateCustom = {
+        imputedYear: globalYear.value,
+        imputedMonth: month2.value,
+        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+      };
       emit('dataAddIncomeProcess', {
         imputedYear: processKey.value.imputedYear,
         imputedMonth: props.month,
-        paymentYear: parseInt(month2.value.split('-')[0]),
-        paymentMonth: parseInt(month2.value.split('-')[1]),
+        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
       });
       emit('closePopup', false);
+      //   store.commit('common/processKeyPA620', dateCustom)
     };
 
     const openModalCopy = () => {
@@ -137,8 +166,8 @@ export default defineComponent({
           target: {
             imputedYear: processKey.value.imputedYear,
             imputedMonth: props.month,
-            paymentYear: parseInt(month2.value.split('-')[0]),
-            paymentMonth: parseInt(month2.value.split('-')[1]),
+            paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+            paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
           },
         });
       } else {
@@ -151,6 +180,7 @@ export default defineComponent({
       }
       return month;
     };
+
     return {
       processKey,
       modalCopy,
@@ -165,6 +195,7 @@ export default defineComponent({
       arrDataPoint,
       dataApiCopy,
       formatMonth,
+      month1,
     };
   },
 });
@@ -215,7 +246,7 @@ export default defineComponent({
     color: white;
     padding: 0px;
     border: none;
-    height: 30px;
+    height: 24px;
     background-color: #a6a6a6;
   }
 
@@ -235,7 +266,7 @@ export default defineComponent({
     color: white;
     padding: 0px;
     border: none;
-    height: 30px;
+    height: 24px;
     background-color: black;
   }
 

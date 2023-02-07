@@ -32,7 +32,7 @@
                             <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
                                 :textUnCheck="'이용중지'" />
                         </a-form-item>
-                        <a-form-item label="회원종류2" class="red">
+                        <a-form-item label="회원종류" class="red">
                             <DxSelectBox id="custom-templates" :data-source="products" display-expr="name"
                                 value-expr="id" item-template="item" :height="$config_styles.HeightInput" width="140px"
                                 field-template="field" @value-changed="changeValueType">
@@ -66,9 +66,11 @@
                     <a-col :span="24">
                         <h2 class="title_modal">권한그룹설정 (복수선택 가능)</h2>
                         <div style="position: relative">
-                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData" :show-borders="true"
-                                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                                :column-auto-width="true" class="table-scroll" @selection-changed="onSelectionChanged">
+                            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="arrData"
+                                :show-borders="true" :allow-column-reordering="move_column"
+                                :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
+                                @selection-changed="onSelectionChanged">
+                                <DxScrolling mode="standard" show-scrollbar="always"/>
                                 <DxPaging :page-size="0" />
                                 <DxSelection data-field="active" mode="multiple" />
                                 <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
@@ -102,6 +104,7 @@ import {
     DxExport,
     DxSelection,
     DxSearchPanel,
+    DxScrolling
 } from "devextreme-vue/data-grid";
 import {
     DxValidator,
@@ -128,6 +131,7 @@ export default defineComponent({
         WarningOutlined,
         MailOutlined,
         DxDataGrid,
+        DxScrolling,
         DxColumn,
         DxPaging,
         DxSelection,
@@ -145,7 +149,7 @@ export default defineComponent({
             {
                 id: 1,
                 color: 'white',
-                name: "중간메니저",
+                name: "중간매니저",
                 type: "m",
                 grade: "2",
                 background: 'black',
@@ -154,7 +158,7 @@ export default defineComponent({
             {
                 id: 2,
                 color: 'white',
-                name: "당당메니저",
+                name: "담당매니저",
                 type: "m",
                 grade: "3",
                 background: 'black',
@@ -199,9 +203,13 @@ export default defineComponent({
                     value = 'r'
                 else if (data.value == 4)
                     value = 'p'
+
                 let dataCall: any = {
                     type: value.toString()
                 }
+
+                formState.managerGrade = parseInt(products.value.filter((val: any) => val.id === data.value)[0].grade)
+                formState.type = value
                 originData.value.types = [value.toString()]
                 dataCallGroup.value = dataCall
             }, 100);
@@ -221,25 +229,11 @@ export default defineComponent({
             rows: per_page,
             types: ["r"],
         });
-        let trigger = ref<boolean>(false);
+        let trigger = ref<boolean>(true);
         let triggerDuplication = ref<boolean>(false);
-        let triggerGroup = ref<boolean>(false);
-        watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                triggerGroup.value = true
-                trigger.value = true;
-                if (newValue) {
-                    visible.value = newValue;
-                    reqGroup();
-                    reqRoleGroup();
-                    Object.assign(formState, initialFormState);
-                } else {
-                    visible.value = newValue;
-                    trigger.value = false;
-                }
-            }
-        );
+        let triggerGroup = ref<boolean>(true);
+       
+              
         const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
             queries.searchScreenRoleGroups, originData,
             () => ({
@@ -249,38 +243,53 @@ export default defineComponent({
         );
         const arrData = ref()
         watch(resRoleGroup, (value: any) => {
-            if (value && value.searchScreenRoleGroups) {
+            if (value && value.searchScreenRoleGroups) 
                 arrData.value = value.searchScreenRoleGroups.datas
-            }
         });
         let dataCallGroup = ref({
             type: "r"
         })
-        const { onResult: resGroup, refetch: reqGroup } = useQuery(
+        const { result: resGroup, refetch: reqGroup } = useQuery(
             queries.findGroups, dataCallGroup,
             () => ({
                 enabled: triggerGroup.value,
                 fetchPolicy: "no-cache",
             })
         );
-        resGroup(e => {
+        // resGroup(e => {
+        //     let option: any = []
+        //     e.data.findGroups.map((val: any) => {
+        //         option.push({
+        //             label: val.groupCode + '  ' + val.groupName,
+        //             value: val.groupId
+        //         })
+        //     })
+        //     if (e.data.findGroups) {
+        //         formState.groupCode = e.data.findGroups[0].groupId
+        //         objDataDefault = {
+        //             ...objDataDefault,
+        //             groupCode: e.data.findGroups[0].groupId
+        //         }
+        //     }
+        //     selectSearch.value = option
+        // })
+        watch(resGroup, (value: any) => {
             let option: any = []
-            e.data.findGroups.map((val: any) => {
+            value.findGroups.map((val: any) => {
                 option.push({
                     label: val.groupCode + '  ' + val.groupName,
                     value: val.groupId
                 })
             })
-            if (e.data.findGroups) {
-                formState.groupCode = e.data.findGroups[0].groupId
+            if (value.findGroups) {
+                formState.groupCode = value.findGroups[0].groupId
                 objDataDefault = {
                     ...objDataDefault,
-                    groupCode: e.data.findGroups[0].groupId
+                    groupCode: value.findGroups[0].groupId
                 }
             }
             selectSearch.value = option
-        })
-        watch(resGroup, (value: any) => {
+
             if (value && value.findGroups) {
                 arrData.value = value.findGroups.datas
             }
@@ -326,6 +335,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         creactDone(e => {
+            emit("createDone", true)
             notification('success', `신규 사용자등록이 완료되었습니다. 비밀번호 설정을 위한 이메일을 확인해주세요.!`)
             emit("closePopup", false)
         })
@@ -333,11 +343,11 @@ export default defineComponent({
         const onSelectionChanged = (selectedRows: any) => {
             idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
         };
-       
+
         const creactUserNew = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
-                res.brokenRules[0].validator.focus(); 
+                res.brokenRules[0].validator.focus();
             } else {
                 var RoleGroup = idRoleGroup.map((row: any) => {
                     return row.id;
@@ -351,7 +361,7 @@ export default defineComponent({
                         mobilePhone: formState.mobilePhone,
                         email: formState.email,
                         groupId: formState.groupCode,
-                        managerGrade: (formState.type == '2' || formState.type == '3') ? parseInt(formState.type) : null,
+                        managerGrade: formState.managerGrade,
                     }
                 }
                 creactUser(dataCallApiCreate)
@@ -394,136 +404,16 @@ export default defineComponent({
 </script>  
 
 
-<<<<<<< HEAD
-::v-deep .ant-modal-footer {
-    padding-top: 0;
-    border: node;
-}
 
-::v-deep .ant-form-item-control {
-    display: flex;
-    flex-direction: row;
-}
 
-::v-deep .ant-modal-content {
-    height: 900px
-}
 
-::v-deep .ant-form-item-label>label {
-    width: 110px;
-}
 
-.select-search ::v-deep .ant-select-arrow .anticon>svg {
-    width: 16px;
-    height: 16px;
-}
 
-::v-deep .ant-form-item-explain-error {
-    width: 400px;
-    margin-left: 5px;
-    padding-top: 5px;
-}
 
-.dflex {
-    display: flex;
-}
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.3);
-}
 
-.action-menu {
-    text-align: center;
-}
 
-.title_modal {
-    font-weight: 700;
-    color: gray;
-}
 
-.modal_email ::v-deep .anticon svg {
-    width: 50px;
-    height: 50px;
-}
 
-.modal {
-    width: 300px;
-    padding: 30px;
-    box-sizing: border-box;
-    background-color: #fff;
-    font-size: 20px;
-    text-align: center;
-}
 
-.modal_email {
-    display: flex;
-}
-
-.btn_submitemail {
-    margin-top: 10px;
-}
-
-.confirm-button {
-    margin-left: 100px;
-}
-
-.confirm-modal p {
-    white-space: normal;
-    font-size: 13px;
-    line-height: 16px;
-}
-
-.email-input .ant-form-item-label {
-    white-space: normal;
-    display: inline-block;
-    text-align: center;
-    line-height: 16px;
-}
-
-.detail-address {
-    margin-left: 7px;
-}
-
-.result-address {
-    margin-left: 110px;
-}
-
-.ant-form-item {
-    margin-bottom: 10px;
-}
-
-.warring-modal {
-    font-size: 13px;
-    line-height: 5px;
-}
-
-.table-scroll {
-    height: 300px;
-    overflow-y: auto;
-    padding: 5px;
-}
-
-.ant-form-item-label {
-    text-align: left;
-}
-
-.ant-popover-arrow {
-    display: none;
-}
-
-// ::v-deep .dx-invalid-message.dx-overlay-wrapper {
-//   width: 100% !important;
-// }
-// ::v-deep .dx-invalid-message>.dx-overlay-content {
-//   transform: unset!important;
-// }
-</style>
-=======
 <style lang="scss" scoped src="../style/styleAdd.scss" />
->>>>>>> develop

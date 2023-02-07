@@ -4,10 +4,10 @@
         <a-row>
             <a-col :span="24">
                 <a-spin :spinning="loading" size="large">
-
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" id="gridContainer">
+                        <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
@@ -21,7 +21,7 @@
                         <DxColumn alignment="left" caption="성명" data-field="name" />
                         <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
                         <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
-                        <DxColumn alignment="left" caption="나이" data-field="Age" />
+                        <DxColumn alignment="left" caption="나이" data-field="Age" cell-template="ageChange" />
                         <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
                             cell-template="basicDeductionChange" />
                         <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
@@ -36,12 +36,14 @@
                             cell-template="maternityAdoptionChange" />
                         <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
                             cell-template="consignmentRelationshipChange" />
-         
-                        <DxColumn :width="80" cell-template="pupop" />
+                        <DxColumn alignment="left" caption="세대주여부 " data-field="householder"
+                        cell-template="householderChange" />
+                        <DxColumnFixing :enabled="true"/>
+                        <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip placement="top">
+                                    <a-tooltip  color="black" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="actionEdit(data.data.index)" />
                                     </a-tooltip>
@@ -50,11 +52,14 @@
                             </div>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
-                            <employee-info :foreigner="cellData.value" :status="hasStatus(cellData.value)">
+                            <employee-info :foreigner="cellData.value">
                             </employee-info>
                         </template>
                         <template #womenChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #ageChange="{data}">
+                            {{convertAge(data.data.residentId.toString())}}
                         </template>
                         <template #basicDeductionChange="{ data: cellData }">
                             <div v-if="cellData.value == 0">
@@ -79,88 +84,126 @@
                         <template #consignmentRelationshipChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
                         </template>
+                        <template #householderChange="{ data: cellData }">
+                            <BtnCheck :value="cellData.value" />
+                        </template>
                     </DxDataGrid>
                 </a-spin>
                 <div>
                     <div class="header-text-3">부양가족 요약</div>
                     <a-row :gutter="12">
                         <a-col :span="12">
-                            <div class="header-text-2">기본공제</div>
+                        <div class="header-text-2">기본공제</div>
 
-                            <a-form-item label="본인" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="relationSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="배우자" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="womenSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="20세이하" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="basicDeductionSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="60세이하" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="basicDeductionSummary2" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <div class="header-text-2">자녀세액공제</div>
-                            <a-form-item label="자녀세액공제" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="descendantSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
+                        <a-form-item label="본인" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="relationSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="배우자" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="womenSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="20세이하" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="60세이하" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <div class="header-text-2">자녀세액공제</div>
+                        <a-form-item label="자녀세액공제" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="descendantSummary == 0 ?'': descendantSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
                         </a-col>
 
                         <a-col :span="12">
-                            <div class="header-text-2">추가/세액공제</div>
-                            <a-form-item label="경로우대" class="display-flex" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="seniorSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="장애인" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="disabledSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="부녀자" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="womenSummary2" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="한부모" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="singleParentSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
-                            <a-form-item label="출산입양" label-align="right">
-                                <div class="display-flex">
-                                    <text-number-box width="200px" :value="maternityAdoptionSummary" :readOnly="true"
-                                        :required="false" />
-                                </div>
-                            </a-form-item>
+                        <div class="header-text-2">추가/세액공제</div>
+                        <a-form-item
+                            label="경로우대"
+                            class="display-flex"
+                            label-align="right"
+                        >
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="seniorSummary == 0 ?'': seniorSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="장애인" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="disabledSummary == 0 ?'': disabledSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="부녀자" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="womenSummary2 == 0 ?'': womenSummary2"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="한부모" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="singleParentSummary == 0 ?'': singleParentSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
+                        <a-form-item label="출산입양" label-align="right">
+                            <div class="display-flex">
+                            <text-number-box
+                                width="200px"
+                                :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
+                                :readOnly="true"
+                            />
+                            </div>
+                        </a-form-item>
                         </a-col>
                     </a-row>
                 </div>
             </a-col>
         </a-row>
-        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false"
-            :employeeId="employeeId" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
+      
+        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false" :key="newForm"
+            :employeeId="idRowEdit" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
         </PopupAddNewDependent>
-        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :key="idRowIndex"
             :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
         </PopupUpdateDependent>
     </div>
@@ -169,11 +212,11 @@
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
 
-import { DxDataGrid, DxColumn, DxToolbar, DxItem } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem,DxScrolling, DxColumnFixing } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, convertAge } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA1/PA120/index";
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue'
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue'
@@ -188,9 +231,11 @@ export default defineComponent({
         PopupUpdateDependent,
         DxDataGrid,
         DxColumn,
+        DxScrolling,
         DxToolbar,
         DxItem, BtnCheck,
-        DxButton, EditOutlined, DeleteOutlined
+        DxButton, EditOutlined, DeleteOutlined,
+        DxColumnFixing
     },
     props: {
         popupStatus: {
@@ -199,10 +244,6 @@ export default defineComponent({
         },
         idRowEdit: {
             type: Number
-        },
-        employeeId: {
-            type: String,
-            default: 0,
         },
     },
     setup(props, { emit }) {
@@ -232,8 +273,10 @@ export default defineComponent({
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
+        const newForm = ref(0)
         const openAddDependent = () => {
             modalAddNewDependent.value = true;
+            newForm.value++;
         };
         const actionEdit = (val: any) => {
             idRowIndex.value = val
@@ -350,6 +393,8 @@ export default defineComponent({
             womenSummary2,
             singleParentSummary,
             maternityAdoptionSummary,
+            convertAge,
+            newForm
         }
     },
 });

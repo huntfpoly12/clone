@@ -1,0 +1,78 @@
+  .title-table {
+    justify-content: space-between;
+    margin-top: 10px;
+
+    .action-save {
+        cursor: pointer;
+    }
+  }
+  .header-grid-form{
+    .custom-flex {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        .infor-icon{
+          margin-left: 10px;
+        }
+    }
+  }  
+  .text-box-1 {
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+        background-color: gray;
+        width: 80px;
+    }
+  .custom-note{
+    display: flex;
+    align-items: center;
+    span{
+      margin-left: 10px;
+    }
+  }
+  .checkbox-tab-1{
+    display: flex;
+    margin-top: 5px;
+    span{
+      padding-right: 10px;
+    }
+    .group-checkbox{
+      .checkbox-item{
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        .check-box-tag-1{
+          margin-left: 10px;
+          background-color: #93CDDD;
+          border-radius: 5px;
+          color: white;
+          text-align: center;
+          width: 90px;
+        }
+        .check-box-tag-2{
+          margin-left: 10px;
+          background-color: #0070C0;
+          border-radius: 5px;
+          color: white;
+          text-align: center;
+          width: 90px;
+        }
+        .check-box-tag-3{
+          margin-left: 10px;
+          background-color: #9BBB59;
+          border-radius: 5px;
+          color: white;
+          text-align: center;
+          width: 90px;
+        }
+        .check-box-tag-4{
+          margin-left: 10px;
+          background-color: #C00000;
+          border-radius: 5px;
+          color: white;
+          text-align: center;
+          width: 90px;
+        }
+      }
+    }
+  }

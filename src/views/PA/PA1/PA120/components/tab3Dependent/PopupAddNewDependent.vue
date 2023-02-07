@@ -14,8 +14,8 @@
                 <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
                   v-model:valueInput="formState.name"></default-text-box>
               </a-form-item>
-              <a-form-item label="내/외국인" label-align="right">
-                <switch-basic textCheck="내국인" textUnCheck="외국인" v-model:valueSwitch="foreigner" />
+              <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
+                <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
                 <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
@@ -28,15 +28,15 @@
                   :required="true" />
               </a-form-item>
               <a-form-item label="부녀자" label-align="right">
-                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="women" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
               </a-form-item>
               <a-form-item label="한부모" label-align="right">
-                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="singleParent" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
               </a-form-item>
             </a-col>
             <a-col :span="12">
               <a-form-item label="경로우대" label-align="right">
-                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="senior" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" />
               </a-form-item>
               <a-form-item label="장애인" label-align="right">
                 <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
@@ -46,15 +46,15 @@
                   v-model:valueRadioCheck="formState.maternityAdoption"></maternity-adoption-radio-box>
               </a-form-item>
               <a-form-item label="자녀세액공제" label-align="right">
-                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="descendant" />
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                   v-model:valueInput="formState.consignmentRelationship"></default-text-box>
               </a-form-item>
-              <a-form-item label="세대주여부" label-align="right">
-                <switch-basic textCheck="X" textUnCheck="O" v-model:valueSwitch="householder" />
-              </a-form-item>
+              <!-- <a-form-item label="세대주여부" label-align="right">
+                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="householder" />
+              </a-form-item> -->
             </a-col>
           </a-row>
         </div>
@@ -78,30 +78,31 @@ import {
   companyId,
   convertAge,
 } from '@/helpers/commonFunction';
+import { taxWaring } from '../../utils';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
   props: {
     employeeId: {
-      type: String,
+      type: Number,
       default: 0,
     },
     modalStatus: Boolean,
     dataSourceLen: {
       type: Number,
       default: 1,
-    }, idRowEdit: {
-      type: Number
     },
   },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
     const ageCount = ref();
-    const labelResidebId = ref('주민(외국인)번호');
+    const labelResidebId = ref('주민등록번호');
     const initialFormState = {
       relation: null,
       name: '',
-      foreigner: false,
+    //   foreigner: false,
       residentId: '',
       basicDeduction: null,
       women: false,
@@ -113,27 +114,28 @@ export default defineComponent({
       consignmentRelationship: '',
       index: 2,
     };
-    const formState = reactive<any>({ ...initialFormState });
+    const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
+    const messageSave = Message.getMessage('COMMON', '106').message
+
     const setModalVisible = () => {
       emit('closePopup', false);
     };
-
-    const women = ref(formState.women == true ? 1 : 0);
-    watch(women, (newValue) => {
-      if (newValue == 1) {
-        formState.women = true;
-      } else {
-        formState.women = false;
-      }
-    });
-    const singleParent = ref(formState.singleParent == true ? 1 : 0);
-    watch(singleParent, (newValue) => {
-      if (newValue == 1) {
-        formState.singleParent = true;
-      } else {
-        formState.singleParent = false;
-      }
-    });
+    const notifcationTax = () => {
+            notification('warning', taxWaring);
+            setTimeout(()=> {
+                formState.women = false;
+            }, 200)
+    }
+    watch(()=>formState.women, (newValue) => {
+        if (newValue == true  && formState.singleParent == true) {
+            notifcationTax();
+        }
+    },{deep:true});
+    watch(()=>formState.singleParent, (newValue) => {
+        if (newValue == true  && formState.women == true) {
+            notifcationTax();
+        }
+    },{deep:true});
     const senior = ref(formState.senior == true ? 1 : 0);
     watch(senior, (newValue) => {
       if (newValue == 1) {
@@ -151,21 +153,21 @@ export default defineComponent({
       }
     });
     const householder = ref(formState.householder == true ? 1 : 0);
-    // watch(householder, (newValue) => {
-    // if (newValue == 1) {
-    //     formState.householder = true;
-    // } else {
-    //     formState.householder = false;
-    // }
-    // });
-    const foreigner = ref(formState.foreigner == true ? 1 : 0);
-    watch(foreigner, (newValue) => {
-      if (newValue == 1) {
+    watch(householder, (newValue) => {
+    if (newValue == 1) {
+        formState.householder = true;
+    } else {
+        formState.householder = false;
+    }
+    });
+    // const foreigner = ref<Number|Boolean>(formState.foreigner == true ? 1 : 0);
+    watch(formState.foreigner, (newValue) => {
+      if (newValue) {
         formState.foreigner = true;
-        labelResidebId.value = '외국인번호 유효성';
-      } else {
-        formState.foreigner = false;
         labelResidebId.value = '주민등록번호';
+    } else {
+        formState.foreigner = false;
+        labelResidebId.value = '외국인번호 유효성';
       }
     });
     const residentId = ref('');
@@ -193,7 +195,7 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeWageDependent);
 
     onDoneAdd((res) => {
-      notification('success', `Create employee wage successfully! `);
+      notification('success', messageSave);
     });
 
     onError((error) => {
@@ -202,13 +204,13 @@ export default defineComponent({
 
     const createNewEmployeeWageDependent = async (e: any) => {
       var res = e.validationGroup.validate();
-      if (props.idRowEdit) {
+      if (props.employeeId) {
         if (!res.isValid) {
           res.brokenRules[0].validator.focus();
         } else {
           let dataNew = {
             companyId: companyId,
-            employeeId: ref(props.idRowEdit).value,
+            employeeId: ref(props.employeeId).value,
             imputedYear: globalYear.value,
             input: {
               ...formState,
@@ -239,16 +241,27 @@ export default defineComponent({
       }
 
     };
+    watch(()=>formState.residentId,(newVal)=> {
+            let count;
+            if(newVal.length==13){
+                count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
+                ageCount.value = convertAge(count);
+            }else if(newVal.length<13){
+                count  = newVal.toString();
+                ageCount.value = convertAge(count);
+            }
+    },{deep: true})
+    watch(isForeignerPA120,(newVal: any)=>{
+        formState.foreigner = newVal;
+    })
     return {
-      women,
       loading,
-      singleParent,
       householder,
       senior,
       descendant,
       formState,
       ageCount,
-      foreigner,
+    //   foreigner,
       residentId,
       setModalVisible,
       labelResidebId,
@@ -288,5 +301,10 @@ export default defineComponent({
   .roadAddress {
     margin-bottom: 5px;
   }
+  .switchForeigner {
+        :deep .ant-switch {
+            background-color: #1890ff;
+        }
+    }
 }
 </style>

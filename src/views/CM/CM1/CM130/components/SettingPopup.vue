@@ -20,6 +20,7 @@
 				<div style="margin: 48px 0">
 					<DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" key-expr="bcode"
 					:allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+            <DxScrolling mode="standard" show-scrollbar="always"/>
 						<DxColumn data-field="" :width="30" cell-template="grid-cell" />
 						<template #grid-cell="{ data }">
 							<a-radio-group v-model:value="modalParam.checkBox">
@@ -53,7 +54,7 @@ import queries from "@/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import {
 	DxDataGrid,
-	DxColumn,
+	DxColumn,DxScrolling,
 } from "devextreme-vue/data-grid";
 
 export default defineComponent({
@@ -61,7 +62,7 @@ export default defineComponent({
 
 	components: {
 		DxDataGrid,
-		DxColumn,
+		DxColumn,DxScrolling,
 		DxSelectBox,
 	},
 	created() { },

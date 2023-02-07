@@ -2,10 +2,10 @@
     <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521"
         @cancel="cancelModal">
         <a-row>
-            <a-col :span="4">
+            <a-col :span="4" v-if="false">
                 <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
             </a-col>
-            <a-col :span="20">
+            <a-col :span="20" class="centent-wrap">
                 <h3><b>{{ title }}</b></h3>
                 <p> {{ content }}</p>
             </a-col>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, reactive } from 'vue'
 import { Modal } from 'ant-design-vue';
 import { WarningOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
@@ -46,6 +46,10 @@ export default defineComponent({
         cancelText: {
             type: String,
             default: "이해했다"
+        },
+        isConfirmIcon: {
+            type: Boolean,
+            default: false
         }
     },
     components: {
@@ -55,6 +59,7 @@ export default defineComponent({
         const inputAccep = ref()
         const visibleConfirm = ref<boolean>(false);
         let visible = ref(false);
+        const icon = reactive(props.isConfirmIcon ? {} : { icon: null })
         watch(
             () => props.modalStatus,
             (newValue, old) => {
@@ -104,14 +109,16 @@ export default defineComponent({
                             content: props.content,
                             okText: props.okText,
                             cancelText: props.cancelText,
-                            onOk() { 
+                            ...icon,
+                            class: props.isConfirmIcon ? '' : 'noIcon',
+                            onOk() {
                                 emit("closePopup", false)
                                 emit("checkConfirm", true)
                             },
-                            onCancel() { 
+                            onCancel() {
                                 emit("closePopup", false)
                                 emit("checkConfirm", false)
-                            }, 
+                            },
                         });
                     else if (props.typeModal == "acceptInput") {
                         visibleConfirm.value = true
@@ -144,8 +151,12 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 .ant-modal-confirm-body svg {
     font-size: 50px;
+}
+
+.noIcon {
+    text-align: center;
 }
 </style>

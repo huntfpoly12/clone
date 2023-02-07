@@ -2,8 +2,16 @@
     <a-spin :spinning="loading" size="large">
         <standard-form action="" name="add-page-210">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
-                <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
-                    placeholder="숫자만 입력 가능" :disabled="true" />
+                <div class="d-flex-center">
+                    <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
+                        placeholder="숫자만 입력 가능" :disabled="true" />
+                    <div class="pl-10">
+                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                        <span class="style-note">
+                            최초 저장된 이후 수정 불가
+                        </span>
+                    </div>
+                </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
                 <default-text-box width="200px" v-model:valueInput="dataEdited.name" :required="true"
@@ -26,7 +34,7 @@
                 <div class="input-text">
                     <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataEdited.leavedAt" />
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span>
+                    <span class="style-note">
                         마지막 근무한 날
                     </span>
                 </div>
@@ -35,16 +43,18 @@
                 <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="dataEdited.foreigner"
                     layoutCustom="horizontal" />
             </a-form-item>
-            <a-form-item label="외국인 국적" label-align="right"
-                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-                <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                    @textCountry="(res: any) => { dataEdited.nationality = res }" :disabled="disabledSelectBox" />
-            </a-form-item>
-            <a-form-item label="외국인 체류자격" label-align="right"
-                :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
-                <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                    :disabled="disabledSelectBox" />
-            </a-form-item>
+            <div class="d-flex">
+                <a-form-item label="외국인 국적" label-align="right"
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
+                    <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" />
+                </a-form-item>
+                <a-form-item label="외국인 체류자격" label-align="right"
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
+                    <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
+                        :disabled="disabledSelectBox" width="180px" />
+                </a-form-item>
+            </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
                 <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
@@ -63,10 +73,12 @@
                         </div>
                     </a-col>
                 </a-row>
-                <a-row style="display: inherit;">
-                    <default-text-box width="357px" :disabled="true" placeholder="주소1"
-                        v-model:valueInput="dataEdited.roadAddress" class="mt-5 mb-5" />
-                    <default-text-box width="357px" placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                <a-row class="d-flex-center pt-5">
+                    <default-text-box :disabled="true" placeholder="주소1" v-model:valueInput="dataEdited.roadAddress"
+                        style="width: 50%;" />
+                    <div style="width: 50%; padding-left: 10px;">
+                        <default-text-box placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                    </div>
                 </a-row>
             </a-form-item>
             <a-form-item label="이메일" label-align="right">
@@ -74,7 +86,7 @@
                     <mail-text-box width="200px" v-model:valueInput="dataEdited.email" placeholder="abc@example.com">
                     </mail-text-box>
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                    <span>
+                    <span class="style-note">
                         원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                     </span>
                 </div>
@@ -87,16 +99,18 @@
                 <custom-item-select-box v-model:valueInput="dataEdited.responsibility" :arrSelect="selectBoxData2"
                     width="200px" />
             </a-form-item>
-            <div  class="wf-100 text-center mt-30">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)" />
+            <div class="wf-100 text-center mt-10">
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)"
+                    id="action-update" />
             </div>
         </standard-form>
     </a-spin>
+    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
+        content="처음부터 다시 변경 내용을 저장하시겠습니까? " okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { radioCheckForeigner, DataEdit } from "../../utils/index";
-import dayjs from 'dayjs';
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -105,15 +119,12 @@ import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        idRowEdit: {
-            type: Number
-        },
-        openPopup: {
-            type: Number
-        }
+        idRowEdit: Number,
+        openPopup: Number,
+        actionSave: Number
     },
     setup(props, { emit }) {
-        let arrEdit: any = []
+        const modalStatusChange = ref(false)
         const labelResident = ref('외국인번호 유효성')
         const activeLabel = ref(true)
         const disabledSelectBox = ref(true)
@@ -132,13 +143,15 @@ export default defineComponent({
             imputedYear: globalYear.value,
             employeeId: props.idRowEdit
         })
+        let indexChange = ref(0)
+        let dataDefault = reactive({})
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
         } = useQuery(queries.getDepartments, originData, () => ({
             fetchPolicy: "no-cache",
         }))
-        resGetDepartments(res => { 
+        resGetDepartments(res => {
             let valArr: any = []
             res.data.getDepartments.map((v: any) => {
                 valArr.push({
@@ -183,12 +196,13 @@ export default defineComponent({
                 dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
                 dataEdited.email = res.data.getEmployeeWageDaily.email
                 dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
-                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt ? dayjs(res.data.getEmployeeWageDaily.joinedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt ? dayjs(res.data.getEmployeeWageDaily.leavedAt.toString()).format('YYYY-MM-DD') : ''
+                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
+                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
                 dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
+                dataDefault = JSON.stringify(dataEdited)
             }
         })
         const {
@@ -199,54 +213,20 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(res => {
+        onDone(() => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
         })
-        // ============ WATCH ================================
-        watch(() => props.idRowEdit, (value) => {
-            let checked = 0
-            let arr: any = []
-            arrEdit.map((val: any) => {
-                if (val.employeeId == value) {
-                    checked++
-                    arr = val
-                }
-            })
-            if (checked == 0) {
-                originDataDetail.value.employeeId = value
+        // ============ WATCH ================================ 
+        watch(() => props.idRowEdit, (newVal) => {
+            if (dataDefault === JSON.stringify(dataEdited)) {
+                originDataDetail.value.employeeId = newVal
                 refetchValueDetail()
-            } else {
-                dataEdited.name = arr.name
-                dataEdited.foreigner = arr.foreigner
-                dataEdited.nationality = arr.nationality
-                dataEdited.nationalityCode = arr.nationalityCode
-                dataEdited.stayQualification = arr.stayQualification
-                dataEdited.residentId = arr.residentId.replace("-", "")
-                dataEdited.zipcode = ''
-                dataEdited.roadAddress = arr.roadAddress
-                dataEdited.addressExtend = arr.addressExtend
-                dataEdited.email = arr.email
-                dataEdited.employeeId = arr.employeeId
-                dataEdited.joinedAt = arr.joinedAt ? dayjs(arr.joinedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.leavedAt = arr.leavedAt ? dayjs(arr.leavedAt.toString()).format('YYYY-MM-DD') : ''
-                dataEdited.retirementIncome = arr.retirementIncome
-                dataEdited.weeklyWorkingHours = arr.weeklyWorkingHours
-                dataEdited.department = arr.department
-                dataEdited.responsibility = arr.responsibility
+            }
+            else {
+                modalStatusChange.value = true
             }
         })
-        watch(() => JSON.parse(JSON.stringify(dataEdited)), (newVal, oldVal) => {
-            arrEdit.map((val: any, index: any) => {
-                if (val.employeeId == newVal.employeeId) {
-                    arrEdit.splice(index, 1);
-                }
-            })
-            if (newVal.employeeId == oldVal.employeeId) { 
-                emit("editRowKey", newVal.employeeId)
-            }
-            arrEdit.push(newVal)
-        }, { deep: true })
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
@@ -261,6 +241,12 @@ export default defineComponent({
                 dataEdited.stayQualification = 'C-4'
             }
         })
+        watch(() => props.actionSave, () => {
+            document.getElementById('action-update')?.click()
+        })
+        watch(dataEdited, () => {
+            indexChange.value++
+        }, { deep: true })
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;
@@ -271,40 +257,37 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                arrEdit.map((val: any) => {
-                    let newValDataEdit = {
-                        ...val,
-                        joinedAt: typeof e.joinedAt == "string" ? parseInt(e.joinedAt.replaceAll('-', '')) : e.joinedAt,
-                        leavedAt: typeof e.leavedAt == "string" ? parseInt(e.leavedAt.replaceAll('-', '')) : e.leavedAt,
-                        residentId: e.residentId.slice(0, 6) + '-' + e.residentId.slice(6, 14)
-                    };
-                    delete newValDataEdit.employeeId;
-                    delete newValDataEdit.zipcode;
-                    let dataCallCreat = {
-                        companyId: companyId,
-                        imputedYear: globalYear.value,
-                        employeeId: e.employeeId,
-                        input: newValDataEdit
-                    };
-                    mutate(dataCallCreat)
-                })
+                let newValDataEdit = {
+                    ...dataEdited,
+                    joinedAt: dataEdited.joinedAt,
+                    leavedAt: dataEdited.leavedAt,
+                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
+                };
+                delete newValDataEdit.employeeId;
+                delete newValDataEdit.zipcode;
+                let dataCallCreat = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    employeeId: dataEdited.employeeId,
+                    input: newValDataEdit
+                };
+                mutate(dataCallCreat)
             }
         }
+        const statusComfirm = (res: any) => {
+            if (res == true)
+                document.getElementById('action-update')?.click()
+            originDataDetail.value.employeeId = props.idRowEdit
+            refetchValueDetail()
+            indexChange.value = 1
+        }
         return {
-            activeLabel,
-            labelResident,
-            disabledSelectBox,
-            loading,
-            actionUpdated,
-            dataEdited,
-            funcAddress,
-            radioCheckForeigner,
-            activeKey: 1,
-            selectBoxData1,
-            selectBoxData2
+            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionUpdated, funcAddress, statusComfirm
         };
     },
 });
 </script>
 <style lang="scss" scoped src="../../style/popupAddNew.scss" >
+
 </style>

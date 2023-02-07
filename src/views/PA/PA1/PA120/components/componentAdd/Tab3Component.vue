@@ -14,6 +14,7 @@
             :column-auto-width="true"
             id="gridContainer"
           >
+          <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxToolbar>
               <DxItem
                 location="after"
@@ -42,7 +43,7 @@
               caption="주민등록번호"
               data-field="residentId"
             />
-            <DxColumn alignment="left" caption="나이" data-field="Age" />
+            <DxColumn alignment="left" caption="나이" cell-template="ageChange" />
             <DxColumn
               alignment="left"
               caption="기본공제"
@@ -91,16 +92,13 @@
               data-field="consignmentRelationship"
               cell-template="consignmentRelationshipChange"
             />
-            <!-- <DxColumn
-              alignment="left"
-              caption="세대주 여부 "
-              data-field="householder"
-            /> -->
-            <DxColumn :width="80" cell-template="pupop" />
+            <DxColumnFixing :enabled="true"/>
+            <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
+
             <template #pupop="{ data }" class="custom-action">
               <div class="custom-action">
                 <a-space :size="10">
-                  <a-tooltip placement="top">
+                  <a-tooltip  color="black" placement="top">
                     <template #title>편집</template>
                     <EditOutlined @click="actionEdit(data.data.index)" />
                   </a-tooltip>
@@ -110,11 +108,13 @@
             <template #foreignerChange="{ data: cellData }">
               <employee-info
                 :foreigner="cellData.value"
-                :status="hasStatus(cellData.value)"
               ></employee-info>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
+            </template>
+            <template #ageChange="{data}">
+                {{convertAge(data.data.residentId)}}
             </template>
             <template #basicDeductionChange="{ data: cellData }">
               <div v-if="cellData.value == 0" key="basicDeductionChange">
@@ -157,7 +157,6 @@
                     width="200px"
                     :value="relationSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -167,7 +166,6 @@
                     width="200px"
                     :value="womenSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -177,7 +175,6 @@
                     width="200px"
                     :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -187,7 +184,6 @@
                     width="200px"
                     :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -198,7 +194,6 @@
                     width="200px"
                     :value="descendantSummary == 0 ?'': descendantSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -216,7 +211,6 @@
                     width="200px"
                     :value="seniorSummary == 0 ?'': seniorSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -226,7 +220,6 @@
                     width="200px"
                     :value="disabledSummary == 0 ?'': disabledSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -236,7 +229,6 @@
                     width="200px"
                     :value="womenSummary2 == 0 ?'': womenSummary2"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -246,7 +238,6 @@
                     width="200px"
                     :value="singleParentSummary == 0 ?'': singleParentSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -256,7 +247,6 @@
                     width="200px"
                     :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
                     :readOnly="true"
-                    :required="false"
                   />
                 </div>
               </a-form-item>
@@ -273,6 +263,7 @@
       :employeeId="employeeId"
       :dataSourceLen="dataSource.length"
       @upDateData="updateData"
+      :key="newForm"
     ></popup-add-new-dependent>
     <PopupEditUpdateDependent
       :modalStatus="modalEditStatus"
@@ -281,6 +272,7 @@
       :idRowIndex="idRowIndex"
       :idRowEdit="idRowEdit"
       :dataSourceLen="dataSource.length"
+      :key="idRowIndex"
     >
     </PopupEditUpdateDependent>
   </div>
@@ -292,13 +284,14 @@ import {
   reactive,
   watch,
   computed,
-  onMounted,
 } from 'vue';
 import {
   DxDataGrid,
   DxColumn,
   DxToolbar,
   DxItem,
+  DxScrolling,
+  DxColumnFixing
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
@@ -308,7 +301,7 @@ import { EditOutlined } from '@ant-design/icons-vue';
 
 import { useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, convertAge } from '@/helpers/commonFunction';
 import BtnCheck from '@/views/PA/PA1/PA120/components/btnCheck/BtnCheck.vue';
 export default defineComponent({
   components: {
@@ -319,12 +312,14 @@ export default defineComponent({
     DxColumn,
     DxToolbar,
     DxItem,
+    DxScrolling,
     DxButton,
     BtnCheck,
+    DxColumnFixing,
   },
   props: {
     employeeId: {
-      type: String,
+      type: Number,
       default: 0,
     },
     idRowEdit: {
@@ -342,7 +337,7 @@ export default defineComponent({
     const modalEditStatus = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
     const idRowIndex = ref();
-
+    
     const originDataDetail = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -364,6 +359,7 @@ export default defineComponent({
     const maternityAdoptionSummary = ref();
     const editForm = ref();
     const idRowEdit = ref(props.employeeId);
+    const newForm = ref(0)
     watch(result, (value) => {
       if (value) {
         dataSource.value = value.getEmployeeWage.dependents;
@@ -416,6 +412,7 @@ export default defineComponent({
     // } )
     const openAddDependent = () => {
       modalAddNewDependent.value = true;
+      newForm.value++;
       //   editForm.value.onResetForm();
     };
     const actionEdit = (val: any) => {
@@ -473,6 +470,8 @@ export default defineComponent({
       idRowIndex,
       idRowEdit,
       loading,
+      convertAge,
+      newForm
     };
   },
 });

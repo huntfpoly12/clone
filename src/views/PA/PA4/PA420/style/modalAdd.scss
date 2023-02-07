@@ -13,7 +13,7 @@
 }
 
 .step-content {
-    height: 70vh;
+    height: 72vh;
     overflow-x: hidden;
 }
 
@@ -28,7 +28,7 @@
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
+        height: 24px;
     }
 
     .dp__icon {
@@ -52,13 +52,21 @@
     }
 }
 
-
 ::v-deep .label-required {
     label {
         color: red;
     }
 }
-
+.block-radio {
+    margin: 20px 100px;
+    text-align: center;
+}
+.radio-group {
+    padding: 5px;
+    border-radius: 10px;
+    margin: 10px 0;
+    border: 1px solid #337ab7;
+}
 .modal-add {
     ::v-deep label {
         min-width: 120px;
@@ -122,4 +130,14 @@
     ::v-deep label {
         padding-left: 40px;
     }
+} 
+::v-deep .dx-radiobutton {
+    display: flex;
+    align-items: center;
+}
+::v-deep .dx-radio-value-container {
+    height: 18px;
+}
+::v-deep .one.dx-radiogroup-horizontal .dx-radiobutton:first-child{
+    margin-right: 95px;
 }

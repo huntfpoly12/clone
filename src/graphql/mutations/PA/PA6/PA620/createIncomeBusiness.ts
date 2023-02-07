@@ -11,5 +11,6 @@ mutation createIncomeBusiness(
             input: $input,
         ){
             incomeId
+            employeeId
         }
 }`

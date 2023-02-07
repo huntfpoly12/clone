@@ -1,0 +1,85 @@
+#bf-610 {
+
+    ::v-deep .custom-checkbox1 .dx-checkbox-text,
+    ::v-deep .custom-checkbox2 .dx-checkbox-text,
+    ::v-deep .custom-checkbox3 .dx-checkbox-text,
+    ::v-deep .custom-checkbox4 .dx-checkbox-text {
+        margin-left: 5px;
+        padding: 1px 20px;
+        color: white;
+        border-radius: 5px;
+    }
+
+    ::v-deep .custom-checkbox1 .dx-checkbox-text {
+        background-color: #346CB0;
+    }
+
+    ::v-deep .custom-checkbox2 .dx-checkbox-text {
+        background-color: #376092;
+    }
+
+    ::v-deep .custom-checkbox3 .dx-checkbox-text {
+        background-color: #BE4B48;
+    }
+
+    ::v-deep .custom-checkbox4 .dx-checkbox-text {
+        background-color: #953735;
+    }
+
+    ::v-deep .search-form {
+        .clr label {
+            color: red;
+        }
+
+        .label-select label {
+            width: 90px;
+        }
+
+        .ant-form-item-label {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    ::v-deep .page-content {
+        .print-group .dx-button-content {
+            padding: 2px 5px;
+        }
+
+        .tag-custom-4 {
+            background-color: white;
+            padding: 3px 24px;
+            border-radius: 5px;
+            color: black;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .tag-custom-3 {
+            background-color: orange;
+            padding: 4px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tag-custom-2 {
+            background-color: black;
+            padding: 4px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tag-custom-1 {
+            background-color: gray;
+            padding: 4px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        } 
+    }
+    :deep .dx-checkbox-has-text.mr-5 {
+        margin-right: 10px;
+    }
+
+}
