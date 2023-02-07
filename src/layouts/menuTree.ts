@@ -69,15 +69,16 @@ export default [
           id: "cm-120",
           subMenus: [
             { title: "통장관리", url: "#", id: "cm-121" },
-            { title: "거래저관리", url: "#", id: "cm-122" },
-            { title: "계정코드", url: "#", id: "cm-123" },
+            { title: "수급자관리", url: "#", id: "cm-124" },
+            { title: "회계기타", url: "#", id: "cm-125" },
+            { title: "계정코드", url: "#", id: "cm-126" },
           ]
       },
       { title: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
     ],
   },
   {
-    title: "회계모듈",
+    title: "회계관리",
     id: "ac-000",
     subMenus: [
       {
