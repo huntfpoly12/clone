@@ -656,7 +656,7 @@ export default defineComponent({
             return month;
         };
         return {
-            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,paymentDayPA620,
+            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,
             caclInput, addRow, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onFocusedRowChanged, onPopupComfirm,
         }
     }
