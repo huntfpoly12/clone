@@ -103,7 +103,7 @@
             color: white;
             padding: 0px;
             border: none;
-            height: 24px;
+            height: 30px;
             background-color: #A6A6A6;
         }
 
@@ -123,7 +123,7 @@
             color: white;
             padding: 0px;
             border: none;
-            height: 24px;
+            height: 30px;
             background-color: black;
         }
 
@@ -145,7 +145,7 @@
 
 .button-open-tab {
     height: 100%;
-    padding-bottom: 7px;
+    // padding-bottom: 7px;
     width: 100px;
 }
 
@@ -155,7 +155,7 @@
     font-size: 10px;
     border: none;
     border-radius: 5px;
-    padding: 5px 10px;
+    // padding: 5px 10px;
 }
 
 ::v-deep .dx-datagrid-text-content {
@@ -184,7 +184,7 @@
     border-radius: 5px;
     display: inline-flex;
     align-items: center;
-    height: 91.5%;
+    // height: 91.5%;
 }
 
 .button-open-tab {

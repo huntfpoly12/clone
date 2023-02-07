@@ -8,9 +8,9 @@
             <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
         </div>
         <div class="d-flex">
-            <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm" />
-            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm" />
-            <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm">
+            <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm || statusButton == (30 || 40)" />
+            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || statusButton == (30 || 40)" />
+            <DxButton @click="onSave" size="large" class="ml-4" :disabled="isDisabledForm || statusButton == (30 || 40)">
                 <SaveOutlined style="font-size: 17px" />
             </DxButton>
             <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
@@ -31,7 +31,7 @@
                     </div>
                 </a-tooltip>
             </DxButton>
-            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm">
+            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || statusButton == (30 || 40)">
                 <div class="d-flex-center">
                     <checkbox-basic :valueCheckbox="true" :disabled="true" />
                     <span class="fz-12 pl-5">지급일변경</span>
@@ -95,13 +95,13 @@
                             <a-form-item label="귀속/지급연월" label-align="right">
                                 <div class="d-flex-center">
                                     <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
-                                        귀 <month-picker-box v-model:valueDate="month1" class="mr-5 ml-5"
+                                        귀 <month-picker-box v-model:valueDate="month1" class="mr-5 ml-5" width="65px" 
                                             :readonly="true" />
                                     </div>
                                     <DxButton :text="'귀'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else />
                                     <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
-                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" :readonly="true" />
+                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" :readonly="true" width="65px" />
                                     </div>
                                     <DxButton :text="'지'" :disabled="isDisabledForm"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
@@ -168,7 +168,7 @@
         title="변경이력" typeHistory="pa-620" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="actionDeleteSuccess" :data="dataTableDetail.processKey"
         title="변경이력" typeHistory="pa-620-status" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    <EditPopup :modalStatus="modalEdit" @closePopup="actionDeleteSuccess" :data="editParam"
         :processKey="dataTableDetail.processKey" />
     <PopupMessage :modalStatus="popupAddStatus" @closePopup="popupAddStatus = false" typeModal="confirm"
         :title="titleModalConfirm" content="" cancelText="아니요" okText="네" @checkConfirm="onPopupComfirm"
@@ -191,6 +191,7 @@ import dayjs from "dayjs";
 import DeletePopup from "./DeletePopup.vue"
 import EditPopup from "./EditPopup.vue"
 import filters from "@/helpers/filters";
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxScrolling, DxToolbar, DxEditing, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
@@ -230,12 +231,17 @@ export default defineComponent({
         const processKey = computed(() => store.getters['common/processKeyPA620']);
         const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
-        let arrayEmploySelect: any = ref([])
+        let arrayEmploySelect: any = ref([]);
+        let paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
+        // watch(()=>paymentDayPA620, (newVal)=> {
+        //   dataActionUtils.input.paymentDay = paymentDayPA620.value;
+        // }, {deep: true})
+        // dataActionUtils.input.paymentDay = paymentDayPA620.value;
         let dataAction: any = reactive({
-            ...dataActionUtils
+            ...dataActionUtils,
         })
         let dataAddDefaul: any = ref(
-            JSON.parse(JSON.stringify(dataActionUtils))
+          JSON.parse(JSON.stringify(dataActionUtils))
         )
         let dataCallApiGetOption = ref({
             companyId: companyId,
@@ -250,8 +256,9 @@ export default defineComponent({
         })
         const arrDropDown = [
             ...arrDropDownUtil
-        ]
+          ]
         const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
+       
         const focusedRowKey = ref();
         const gridRefName: any = ref();
         const popupAddStatus = ref<boolean>(false);
@@ -273,7 +280,10 @@ export default defineComponent({
             }
             return '';
         })
-        let arrCallApiDelete: any = ref([])
+        let arrCallApiDelete: any = ref([]);
+        const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+        const editParam = ref([])
+
         // ================GRAPQL==============================================
         // API QUERY TABLE SMALL LEFT SIDE
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
@@ -289,6 +299,9 @@ export default defineComponent({
                 isCompare.value = false;
                 focusedRowKey.value = val[0]?.employeeId;
                 dataAction.input.paymentDay = val[0]?.paymentDay ?? '';
+                if(!props.isDisabledForm) {
+                  dataAction.input.paymentDay = val[0]?.paymentDay ?? paymentDayPA620.value;
+                }
                 dataAction.input.employeeId = val[0]?.employeeId ?? '';
                 dataAction.input.incomeTypeCode = val[0]?.incomeTypeCode;
                 dataAction.input.paymentAmount = val[0]?.paymentAmount;
@@ -416,6 +429,7 @@ export default defineComponent({
             statusButton.value = newValue
         })
         watch(() => store.state.common.actionAddRow.dataSource, (newValue) => {
+            // console.log(`output->newValue`,newValue)
             dataSourceDetail.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
@@ -501,8 +515,8 @@ export default defineComponent({
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
                 }, 100);
-            } else {
-                notification('error', "Hoàn thành thao tác nhập trước đó")
+            // } else {
+            //     notification('error', "Hoàn thành thao tác nhập trước đó")
             }
         }
         const onFocusedRowChanged = (data: any) => {
@@ -546,7 +560,9 @@ export default defineComponent({
             dataAction.input.incomeTypeCode = res
         }
         const selectionChanged = (event: any) => {
-            popupDataDelete.value = event.selectedRowKeys
+            popupDataDelete.value = event.selectedRowKeys;
+            editParam.value = event.selectedRowsData.map((item: any)=> item.incomeId)
+            console.log(`output->`,event)
         }
         const deleteItem = () => {
             arrCallApiDelete.value = []
@@ -556,6 +572,8 @@ export default defineComponent({
             })
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
+            }else {
+                notification('warning',messageDelNoItem)
             }
         };
         const checkValue = (data: any) => {
@@ -638,7 +656,7 @@ export default defineComponent({
             return month;
         };
         return {
-            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare,
+            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,
             caclInput, addRow, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onFocusedRowChanged, onPopupComfirm,
         }
     }

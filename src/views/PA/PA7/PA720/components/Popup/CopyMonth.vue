@@ -2,7 +2,7 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="500">
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
-        <div class="month-custom-1 d-flex-center">귀 {{ processKey.imputedYear }}-{{ formatMonth(month1) }}</div>
+        <div class="month-custom-1 d-flex-center">귀 {{ globalYear }}-{{ formatMonth(month1) }}</div>
         <div class="month-custom-2 d-flex-center">지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" /></div>
       </div>
     </a-form-item>
@@ -17,6 +17,7 @@
   </a-modal>
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer="" :width="600">
+    {{ dataApiCopy }}
     <div class="mt-30 d-flex-center">
       <span>과거내역</span>
       <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data" field-template="field-data" @value-changed="updateValue" :disabled="false">
@@ -45,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { companyId } from '@/helpers/commonFunction';
 import DxSelectBox from 'devextreme-vue/select-box';
@@ -54,6 +55,7 @@ import notification from '@/utils/notification';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -83,7 +85,8 @@ export default defineComponent({
       delete dataApiCopy.value.incomeCount;
       delete dataApiCopy.value.__typename;
     };
-    const month2 = ref<String>(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`);
+    const month2 = ref<String>(`${globalYear.value}${processKey.value.imputedMonth}`);
+
     const modalCopy = ref(false);
     const paymentDayCopy = ref();
     const findIncomeProcessExtraStatViewsParam = computed(() => ({
@@ -93,11 +96,7 @@ export default defineComponent({
     const findIncomeProcessExtraStatViewsTrigger = ref(true);
     const arrDataPoint = ref<[]>([]);
     const { mutate, onError, onDone } = useMutation(mutations.copyIncomeExtras);
-    const {
-      result: resultFindIncomeProcessExtraStatViews,
-      loading: loadingFindIncomeProcessExtraStatViews,
-      refetch: refetchFindIncomeProcessExtraStatViews,
-    } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+    const { result: resultFindIncomeProcessExtraStatViews } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
       enabled: findIncomeProcessExtraStatViewsTrigger.value,
       fetchPolicy: 'no-cache',
     }));
@@ -107,27 +106,31 @@ export default defineComponent({
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
     const month1 = ref(1);
+    const messageCopyDone = Message.getMessage('COMMON', '106').message;
     watch(
       () => props.month,
       (val) => {
         month1.value = val;
         let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
         if (props.dateType == 2 && props.month) {
-          yearMonth = `${processKey.value.paymentYear}${props.month + 1}`;
+          yearMonth = `${globalYear.value}${props.month + 1}`;
         }
         if (props.dateType == 1) {
-          yearMonth = `${processKey.value.paymentYear}${props.month}`;
+          yearMonth = `${globalYear.value}${props.month}`;
         }
         month2.value = yearMonth;
       }
     );
+    watchEffect(() => {
+      month2.value = `${globalYear.value}${processKey.value.imputedMonth}`;
+    });
     onError((res) => {
       notification('error', res.message);
     });
     onDone((res) => {
       setModalVisible();
       setModalVisibleCopy();
-      notification('success', ` 완료!`);
+      notification('success', messageCopyDone);
       emit('loadingTableInfo', true);
     });
 
@@ -139,18 +142,13 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
-      const dateCustom = {
-        imputedYear: globalYear.value,
-        imputedMonth: month2.value,
-        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
-      };
       emit('dataAddIncomeProcess', {
-        imputedYear: processKey.value.imputedYear,
+        imputedYear: globalYear.value,
         imputedMonth: props.month,
         paymentYear: parseInt(month2.value.toString().slice(0, 4)),
         paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
       });
+      processKey.value.imputedYear = globalYear.value;
       emit('closePopup', false);
       //   store.commit('common/processKeyPA620', dateCustom)
     };
@@ -164,11 +162,17 @@ export default defineComponent({
           companyId: companyId,
           source: dataApiCopy.value,
           target: {
-            imputedYear: processKey.value.imputedYear,
+            imputedYear: globalYear.value,
             imputedMonth: props.month,
             paymentYear: parseInt(month2.value.toString().slice(0, 4)),
             paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
           },
+        });
+        emit('dataAddIncomeProcess', {
+          imputedYear: globalYear.value,
+          imputedMonth: props.month,
+          paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+          paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
         });
       } else {
         notification('error', '날짜를 선택하세요.');
@@ -180,7 +184,6 @@ export default defineComponent({
       }
       return month;
     };
-
     return {
       processKey,
       modalCopy,
@@ -196,6 +199,7 @@ export default defineComponent({
       dataApiCopy,
       formatMonth,
       month1,
+      globalYear,
     };
   },
 });
@@ -266,8 +270,9 @@ export default defineComponent({
     color: white;
     padding: 0px;
     border: none;
-    height: 24px;
     background-color: black;
+    height: 30px;
+    font-size: 14px;
   }
 
   .dp__icon {
