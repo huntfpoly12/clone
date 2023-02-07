@@ -511,10 +511,7 @@ export default defineComponent({
   border: 1px solid #ddd
 }
 </style>
-=======
-</script> 
-=======
-</script>  
+  
 
 
 
@@ -529,12 +526,7 @@ export default defineComponent({
 
 
 
-
-
-
->>>>>>> develop
 
 
 
 <style lang="scss" scoped src="../style/styleEdit.scss"/>
->>>>>>> develop
