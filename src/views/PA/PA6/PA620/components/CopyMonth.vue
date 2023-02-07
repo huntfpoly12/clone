@@ -12,7 +12,7 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" />
+            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" />
         </a-form-item>
 
         <div class="text-align-center mt-30">
@@ -68,6 +68,7 @@ import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 import queries from "@/graphql/queries/PA/PA6/PA620/index"
 import { useStore } from 'vuex'
 import dayjs from "dayjs";
+import { Message } from '@/configs/enum';
 
 export default defineComponent({
     props: {
@@ -81,6 +82,10 @@ export default defineComponent({
             type: Number,
             default: 1,
         },
+        paymentDay: {
+            type: Number,
+            default: 1,
+        },
     },
     components: {
         DxSelectBox,
@@ -91,6 +96,8 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const month1: any = ref<number>()
         const processKey = computed(() => store.state.common.processKeyPA620)
+        const messageCopyDone= Message.getMessage('COMMON', '106').message;
+        const paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
         watch(() => props.data, (val) => {
             month1.value = val;
             let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth }`;
@@ -103,7 +110,6 @@ export default defineComponent({
             month2.value = yearMonth;
         });
         const modalCopy = ref(false)
-        const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
         //covert Date Month
@@ -128,7 +134,7 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', `완료!`)
+            notification('success', messageCopyDone)
         })
         const originData: any = ref({
             companyId: companyId,
@@ -178,16 +184,23 @@ export default defineComponent({
         };
         const actionCopy = () => {
             if (dataApiCopy.value.imputedYear) {
-                mutate({
-                    companyId: companyId,
-                    source: dataApiCopy.value,
-                    target: {
-                        imputedYear: globalYear.value,
-                        imputedMonth: month1.value,
-                        paymentYear: parseInt(month2.value.toString().slice(0,4)),
-                        paymentMonth: parseInt(month2.value.toString().slice(4,6)),
-                    },
-                })
+                // mutate({
+                //     companyId: companyId,
+                //     source: dataApiCopy.value,
+                //     target: {
+                //         imputedYear: globalYear.value,
+                //         imputedMonth: month1.value,
+                //         paymentYear: parseInt(month2.value.toString().slice(0,4)),
+                //         paymentMonth: parseInt(month2.value.toString().slice(4,6)),
+                //     },
+                // })
+                console.log(`output->`,
+                    dataApiCopy.value,
+                    globalYear.value,
+                    month1.value,
+                    parseInt(month2.value.toString().slice(0,4)),
+                    parseInt(month2.value.toString().slice(4,6)),
+                )
                 commitDate();
             } else {
                 notification('error', '날짜를 선택하세요.')
@@ -198,9 +211,13 @@ export default defineComponent({
         const openModalCopy = () => {
             modalCopy.value = true
         }
+        // watch(()=>props.paymentDay,(newVal)=> {
+        //     store.state.common.paymentDayPA620PA620.value = newVal;
+        // }, {deep: true}
+        // )
         return {
             modalCopy,
-            paymentDayCopy,
+            paymentDayPA620,
             month1, month2,
             openModalCopy,
             setModalVisible,
@@ -264,8 +281,9 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 24px;
         background-color: black;
+        height: 30px;
+        font-size: 14px;
     }
 
     .dp__icon {
