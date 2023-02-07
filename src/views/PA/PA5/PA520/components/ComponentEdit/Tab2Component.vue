@@ -1,6 +1,6 @@
 <template>
     <div id="tab2-pa520">
-        <div class="header-text-1">공제</div>
+        <div class="header-text-1">공제 {{ store.state.common.checkStatusChangeValuePA520 }}</div>
         <a-row :gutter="16">
             <a-col :span="24">
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -257,8 +257,6 @@ export default defineComponent({
             if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
                 store.state.common.checkStatusChangeValuePA520 = false
             } else {
-                console.log(JSON.stringify(newVal));
-                console.log(JSON.stringify(valueConvert));
                 store.state.common.checkStatusChangeValuePA520 = true
             }
         }, { deep: true })
@@ -280,9 +278,12 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch(() => store.state.common.idRowChangePa520, (res) => {
-            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
-            trigger.value = true
-            refectchDetail()
+          originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+           
+              trigger.value = true
+              refectchDetail()
+            
+
             store.state.common.checkStatusChangeValuePA520 = false
         }, { deep: true })
         watch(() => arrDeduction, (res) => {

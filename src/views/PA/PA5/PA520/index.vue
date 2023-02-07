@@ -1,6 +1,6 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
-    <div id="pa-520" class="page-content">
+    <div id="pa-520" class="page-content">{{ store.state.common.allowedChangedRowPA520 }}
         <a-row>
           <a-col :span="3" style="padding-right: 10px">
             <div class="total-user">
@@ -42,7 +42,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
-                        v-model:focused-row-key="focusedRowKey">
+                        v-model:focused-row-key="focusedRowKey"  @focused-row-changing="onFocusedRowChanging">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -122,9 +122,9 @@
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="변경 내용을 저장하시겠습니까?xx" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+        :content="Message.getCommonMessage('501').message" okText="네ㅌㅌ" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-        content="변경 내용을 저장하시겠습니까?" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed } from "vue"
@@ -261,7 +261,6 @@ export default defineComponent({
         }
         const modalChangeValueAdd = ref(false)
         const openEditModal = (val: any) => {
-            focusedRowKey.value = null
             store.state.common.idRowChangePa520 = val.data.employeeId
             if (store.state.common.checkChangeValueAddPA520 == true) {
                 modalChangeValueAdd.value = true
@@ -306,11 +305,14 @@ export default defineComponent({
             store.state.common.actionSavePA520++
         }
         // A function that is called when the user clicks on the save button.
-        const statusComfirmSave = (res: any) => {
-          if (res == true) {
-            actionSaveFunc()
-            store.state.common.idRowChangePa520 = dataChange.value
-            idRowEdit.value = dataChange.value
+      const statusComfirmSave = (res: any) => {
+         if (res == true) {
+              actionSaveFunc()
+              store.state.common.idRowChangePa520 = dataChange.value
+              store.state.common.allowedChangedRowPA520 = true
+              idRowEdit.value = dataChange.value
+          } else {
+              store.state.common.allowedChangedRowPA520 = false
           }
 
         }
@@ -318,7 +320,6 @@ export default defineComponent({
         const confirmSaveAdd = (res: any) => {
             if (res == true) {
                 store.state.common.actionSaveAddPA520++
-
             } else { //Not save
                 // Delete row add demo
                 store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -331,11 +332,18 @@ export default defineComponent({
                 let a = document.body.querySelectorAll('[aria-rowindex]');
                 (a[indexChange] as HTMLInputElement).click();
             }
-
         }
+
+      const onFocusedRowChanging = (e: any) => { 
+    //if (!store.state.common.allowedChangedRowPA520) {
+    console.log(e);
+    prevRowIndex
+      e.cancel =  true;
+       // }
+      }
         return {
             modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
-            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,
+            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,Message,onFocusedRowChanging
         }
     },
 })
