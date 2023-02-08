@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node --max-old-space-size=8192 node_modules/vite/dist/node/cli.js"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

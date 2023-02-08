@@ -7,19 +7,19 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
+                <a-form-item label="제작요청일(기간)" label-align="left">
                     <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
+                <a-form-item label="제작상태" label-align="left">
                     <div class="mt-7">
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
-                                <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                                <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px" />
-                                <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px" />
+                                <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                                <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                                <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>
@@ -37,7 +37,8 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
                 <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="string" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
+                        format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
@@ -61,7 +62,7 @@ import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
-import queries from "@/graphql/queries/BF/BF6/BF640/index";
+import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
@@ -86,7 +87,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
         let trigger = ref(true)
-        let dataModalDetail = ref()
+        let dataModalDetail:any = ref({})
         // ================== GRAPHQL=================
         //  QUERY : searchElectronicFilingFileProductions
         let {
@@ -94,12 +95,13 @@ export default defineComponent({
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.searchStep3, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchElectronicFilingFileProductions, { filter: dataSearch.value }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
             dataSource.value = val.data.searchElectronicFilingFileProductions
+            dataModalDetail.value.type = dataSearch.value.type
             trigger.value = false
         })
         errorTable((error: any) => {
@@ -110,7 +112,7 @@ export default defineComponent({
             if (typeStatus.value == 0)
                 dataSearch.value.productionStatuses = [2, -1]
             else
-                dataSearch.value.productionStatuses = [val]
+                dataSearch.value.productionStatuses = [typeStatus.value]
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
             dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {
@@ -120,8 +122,8 @@ export default defineComponent({
         }, { deep: true })
         // ============== FUNCTION =====================
         const openPopupDetail = (data: any) => {
+            dataModalDetail.value.electronicFilingId = data.electronicFilingId
             modalDetail.value = true
-            dataModalDetail.value = data
         }
         return {
             dataModalDetail, typeStatus,
