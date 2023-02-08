@@ -29,11 +29,13 @@
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
                     <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
-                <a-form-item label="상호" label-align="left" class="fix-width-label">
-                    <default-text-box v-model:valueInput="dataSearch.companyName" />
-                </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
                     <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                </a-form-item>
+            </a-col>
+            <a-col>
+                <a-form-item label="상호" label-align="left" class="fix-width-label">
+                    <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
                     <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
@@ -58,7 +60,10 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
+                        <div class="btn-modal-save" @click="openModalSave">
+                            <SaveOutlined class="fz-24 ml-5 action-save"/>
+                        <span style="margin-left: 5px;">파일제작요청</span>
+                        </div>
                     </a-tooltip>
                 </div>
             </a-form-item>
@@ -91,6 +96,10 @@
                     <template #productionStatus="{ data }">
                         <GetStatusTable :data="data.data" />
                     </template>
+                    <DxSummary>
+                            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                            <!-- <DxTotalItem column="제작현황" :customize-text="customizeTotalMonthly" value-format="#,###" /> -->
+                        </DxSummary>
                 </DxDataGrid>
             </a-spin>
         </div>
@@ -105,7 +114,7 @@ import {
     SaveOutlined
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
@@ -113,7 +122,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
         PopupConfirmSave, GetStatusTable
     },
     props: {
@@ -121,7 +130,6 @@ export default defineComponent({
     },
     setup(props) {
         let datePayment = ref(parseInt(dayjs().format('YYYYMM')))
-        // let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultSwitch = ref(false)
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchUtils })
@@ -159,7 +167,6 @@ export default defineComponent({
         })
         // =================== WATCH ====================
         watch(() => props.searchStep, () => {
-            // dataSearch.value.productionStatuses = []
             dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
             dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
             if (dataSearch.value) {

@@ -7,8 +7,8 @@
                 <mail-text-box :required="true" v-model:valueInput="email" width="250px" />
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
-            <a-row style="margin-top: 50px;">
-                <a-col :span="16" :offset="8">
+            <a-row style="margin-top: 30px;">
+                <a-col :span="24" class="text-center">
                     <button-basic text="아니요" type="default" mode="outlined" @onClick="setModalVisible()" :width="100"
                         style="margin-right: 10px;" />
                     <button-basic text="네. 발송합니다" :type="'default'" mode="'contained'" @onClick="sendEmail($event)"
@@ -19,8 +19,8 @@
     </a-modal>
     <a-modal v-else :visible="modalStatus" @cancel="setModalVisible" width="562px" footer="" :mask-closable="false">
         <standard-form>
-            <img src="@/assets/images/email.svg" alt="" style="width: 40px;">
             <div class="custom-modal-send-email">
+                <img src="@/assets/images/email.svg" alt="" style="width: 50px;">
                 <div>
                     <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
                     <div style="display: flex;align-items: center;">
@@ -29,8 +29,8 @@
                     </div>
                 </div>
             </div>
-            <a-row style="margin-top: 50px;">
-                <a-col :span="16" :offset="8">
+            <a-row style="margin-top: 30px;">
+                <a-col :span="24" class="text-center mt-10">
                     <button-basic text="아니요" type="default" mode="outlined" @onClick="setModalVisible()" :width="100"
                         style="margin-right: 10px;" />
                     <button-basic text="네. 발송합니다" :type="'default'" mode="'contained'" @onClick="sendEmail($event)"
