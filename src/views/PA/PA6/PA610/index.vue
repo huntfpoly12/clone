@@ -144,16 +144,22 @@
                             <type-code-select-box width="200px" v-model:valueInput="dataAction.incomeTypeCode"
                                 @textTypeCode="changeTextTypeCode" :disabled="disabledInput" />
                         </a-form-item>
-                        <a-form-item label="이메일" label-align="right" class="red">
+                        <a-form-item label="이메일" label-align="right">
                             <div class="custom-note">
                                 <mail-text-box width="300px" v-model:valueInput="dataAction.email"
-                                    placeholder="abc@example.com" :required="true" />
+                                    placeholder="abc@example.com"/>
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등
                                     주요 서류를 메일로 전달 가능합니다.
                                 </span>
                             </div>
                         </a-form-item>
+                        <a-row class="mt-25">
+                            <a-col :span="8" :offset="8" style="text-align: center;">
+                                <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
+                                @onClick="saving($event)" />
+                            </a-col>
+                        </a-row>
                     </a-spin>
                 </a-col>
             </a-row>
@@ -289,7 +295,8 @@ export default defineComponent({
         createdDone((res) => {
             store.state.common.activeAddRowPA610 = false
             refetchData()
-            focusedRowKey.value = res.data.createEmployeeBusiness.employeeId
+            focusedRowKey.value = res.data.createEmployeeBusiness.employeeId;
+            console.log(`output->res.data.createEmployeeBusiness.employeeId`,res.data.createEmployeeBusiness.employeeId)
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.value.incomeTypeCode

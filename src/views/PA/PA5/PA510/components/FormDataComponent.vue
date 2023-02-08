@@ -121,7 +121,7 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <span>
-                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal" id="button-action-dedution"
+                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal" id="button-action-dedution-pa510"
                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                 </span>
             </a-tooltip>
@@ -326,6 +326,9 @@ export default defineComponent({
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
+                setTimeout(() => {
+                    store.state.common.statusChangeFormPrice = false;
+                }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }

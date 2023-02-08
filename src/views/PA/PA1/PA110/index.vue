@@ -212,7 +212,8 @@
                         <DxButton
                             :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                             :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
-                        <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" :disabled="store.state.common.statusDisabledStatus"/>
+                        <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
+                            :disabled="store.state.common.statusDisabledStatus" />
                     </div>
                 </a-col>
                 <a-col :span="9">
@@ -292,11 +293,14 @@
                 <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
                     title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
                     @checkConfirm="statusComfirmChange" />
+                <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
+                    typeModal="confirm" :title="Message.getMessage('PA110', '001').message" content=""
+                    :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
+                    @checkConfirm="statusComfirmChangePrice" />
                 <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
                     @closePopup="modalCopy = false" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
         </div>
-
     </div>
 </template>
 <script lang="ts">
@@ -318,7 +322,7 @@ import CopyMonth from "./components/Popup/CopyMonth.vue";
 import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
 import { initDataCustomRes } from "./utils/index"
 import { userType } from "@/helpers/commonFunction";
-// import queriesHolding from "@/graphql/queries/CM/CM130/index";
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -360,28 +364,9 @@ export default defineComponent({
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
         let status = ref();
-        // const isDisabledForm = ref<boolean>(false);
+        const modalChangeRowPrice = ref(false)
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
-        // const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-        // const formatMonth = (month: any) => {
-        //     if (+month < 10) {
-        //         return '0' + month;
-        //     }
-        //     return month;
-        // };
-        // const inputDateTax = computed(() => {
-        //     if (!isDisabledForm.value) {
-        //         return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
-        //     }
-        //     return '';
-        // })
-        // const paymentDateTax = computed(() => {
-        //     if (!isDisabledForm.value) {
-        //         return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
-        //     }
-        //     return '';
-        // })
         // call api getIncomeProcessWages for first table 
         const {
             refetch: refetchDataProcessIncomeWages,
@@ -492,8 +477,7 @@ export default defineComponent({
 
                 });
             }
-        }
-        )
+        })
 
         // get getIncomeWages table
         const {
@@ -508,8 +492,6 @@ export default defineComponent({
         }))
         watch(resultTaxPayInfo, (value) => {
             store.state.common.dataTaxPayInfo = value.getIncomeWages;
-            console.log(value.getIncomeWages, !store.state.common.actionAddItem);
-            
             // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
             if (value.getIncomeWages[0]) { // if have data
                 if (store.state.common.employeeId && value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
@@ -546,9 +528,13 @@ export default defineComponent({
         let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
             rowEdit.value = data.data
-            if (rowEdit.value.employeeId) {
+            if (rowEdit.value.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
-                    modalChangeRow.value = true;
+                    if (store.state.common.statusChangeFormPrice) {
+                        modalChangeRowPrice.value = true;
+                    } else {
+                        modalChangeRow.value = true;
+                    }
                 } else {
                     if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
@@ -629,10 +615,6 @@ export default defineComponent({
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed;
         }
-
-        // const formateMoney = (options: any) => {
-        //   return filters.formatCurrency(options.value);
-        // };
         const statusComfirmChange = (res: any) => {
             if (res) {
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
@@ -644,6 +626,19 @@ export default defineComponent({
             }
             store.state.common.incomeId = rowEdit.value.incomeId
             store.state.common.employeeId = rowEdit.value.employeeId
+        }
+        const statusComfirmChangePrice = (res: any) => {
+            if (res) {
+                (document.getElementById("button-action-dedution-pa110") as HTMLInputElement).click();
+                store.state.common.focusedRowKey = store.state.common.employeeId
+            } else {
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
+                store.state.common.incomeId = rowEdit.value.incomeId
+                store.state.common.employeeId = rowEdit.value.employeeId
+            }
         }
         watch(globalYear, (newVal) => {
             // IncomeWageDailiesTrigger.value = true;
@@ -674,11 +669,9 @@ export default defineComponent({
             dataAddIncomeProcess,
             status,
             setUnderline,
-            // formateMoney,
-            // dateType,
-            // inputDateTax,
-            // paymentDateTax,
             modalChangeRow, statusComfirmChange,
+            modalChangeRowPrice, statusComfirmChangePrice,
+            Message,
             statusDisabledBlock,
         }
 

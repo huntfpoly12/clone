@@ -126,7 +126,7 @@
     </a-row>
     <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
-    <PopupMessage
+    <!-- <PopupMessage
       :modalStatus="resetStatus"
       @closePopup="resetStatus = false"
       :typeModal="'confirm'"
@@ -135,7 +135,7 @@
       :keyAccept="'1234'"
       :okText="'확인'"
       @checkConfirm="onResetComfirm"
-    />
+    /> -->
     <PopupMessage
       :modalStatus="rowChangeStatus"
       @closePopup="rowChangeStatus = false"
@@ -164,6 +164,7 @@ import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import ColumnGroup from 'ant-design-vue/lib/vc-table/sugar/ColumnGroup';
 
 export default defineComponent({
   components: {
@@ -215,7 +216,7 @@ export default defineComponent({
     const idRow = ref();
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
-
+    const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
     const {
       refetch: refetchData,
       result,
@@ -282,29 +283,21 @@ export default defineComponent({
     };
     //compare Data
     const compareType = ref(1); //0 is row change. 1 is add button;
+    // Comparing the values of two objects.
     const compareType1 = () => {
-    //   if (!isCompareEditPA120.value) {
-    //     return true;
-    //   }
-      console.log(JSON.stringify(initFormStateTab1));
-      console.log(JSON.stringify(initFormStateTabPA120.value));
       if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     };
     const compareType2 = () => {
-      if (!isCompareEditPA120.value) {
-        return true;
-      }
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value)) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     };
     //on add row
+    const isFirstWeb = ref(true);
     const openAddNewModal = async () => {
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
@@ -312,52 +305,85 @@ export default defineComponent({
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           addNewRow();
           compareType.value = 1;
-        //   console.log(`output->type =2`,)
+          // console.log(`output->type =2`);
           return;
         }
         if (!compareType1()) {
-          resetStatus.value = true;
+          // console.log(`output->type = 1 loi`);
+          rowChangeStatus.value = true;
+          isFirstWeb.value = false;
           return;
         }
-        // console.log(`output->type = 1 ko loi`,compareType1())
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
-        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+        // console.log(`output->type = 1 ko loi`, compareType1());
+        if (!isFirstWeb.value) {
+          dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+        }
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         addComponentKey.value++;
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+        isFirstWeb.value = false;
         return;
       }
+      isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       setTimeout(() => {
         addNewRow();
-      }, 100);
+      }, 50);
       return;
     };
 
     //row change confirm
-    const onRowChangeComfirm = (ok: boolean) => {
+    const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (compareType.value == 1) {
-          let ele = document.getElementById('btn-save') as HTMLInputElement;
-          ele.click();
+        let promise1 = new Promise<void>((resolve) => {
+          if (isNewRowPA120.value) {
+            let ele = document.getElementById('btn-save') as HTMLInputElement;
+            ele.click();
+            resolve();
+          }
+        });
+        let promise2 = new Promise<void>((resolve) => {
+          if (compareType.value == 2) {
+            let ele = document.getElementById('btn-save-edit');
+            ele?.click();
+            idRowEdit.value = idRow.value;
+            resolve();
+          }
+        });
+        Promise.all([promise1, promise2]);
+        if (isAddFormErrorPA120.value) {
+          focusedRowKey.value = initFormStateTabPA120.value.employeeId;
         } else {
-          let ele = document.getElementById('btn-save-edit');
-          ele?.click();
+          focusedRowKey.value = idRow.value;
         }
+        return;
       } else {
-        if (compareType.value == 1) {
-          // store.state.common.isRefreshDataEditPA120 = true;
-          actionChangeComponent.value = 2;
-          dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-          idRowEdit.value = idRow.value;
-          store.state.common.isNewRowPA120 = false;
-        } else {
+        if (isNewRowPA120.value) {
+          if (!isFirstWeb.value) {
+            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+          }
+          if (compareType.value == 1) {
+            // console.log(`output-> toi dang o so 1`);
+            setTimeout(() => {
+              addNewRow();
+            }, 100);
+            focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+          }
+        }
+        if (compareType.value == 2) {
+          // console.log(`output-> toi dang o so 2 `);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
         }
       }
-      compareType.value = 2;
+      if (!isNewRowPA120.value) {
+        compareType.value = 2;
+      } else {
+        compareType.value = 1;
+        focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      }
     };
     watch(result, (value) => {
       if (value) {
@@ -390,66 +416,35 @@ export default defineComponent({
     //edit row
 
     const actionEdit = (data: any) => {
+      compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          // console.log(`output->chuyen row bth`);
+          console.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
           actionChangeComponent.value = 2;
+          isFirstWeb.value = false;
           return;
         }
-        // console.log(`output->co new row, khac nhau`);
+        console.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
+        idRow.value = data.data.employeeId;
+        isFirstWeb.value = false;
         return;
       }
       actionChangeComponent.value = 2;
-      compareType.value = 2;
+      isFirstWeb.value = false;
       if (!compareType2()) {
-        // console.log(`output->row khac`);
+        console.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        // console.log(`output->chuyen row bth. ko co newrow`);
+        console.log(`output->chuyen row bth. ko co newrow`);
         store.state.common.isCompareEditPA120 = true;
         idRowEdit.value = data.data.employeeId;
-        
       }
-      // modalEditStatus.value = true;
-      // idRow.value = data.data.employeeId;
-      // if (isNewRowPA120.value) {
-      //   compareType.value = 2;
-      //   if (!compareType1()) {
-      //     rowChangeStatus.value = true;
-      //     store.state.common.isRefreshDataEditPA120 = false;
-      //     return;
-      //   } else {
-      //     delNewRow();
-      //     focusedRowKey.value = data.data.employeeId;
-      //     store.state.common.isRefreshDataEditPA120 = true;
-      //     actionChangeComponent.value = 2;
-      //     return;
-      //   }
-      // }
-      // // setTimeout(() =>{
-      // compareType.value = 2;
-      // // idRowEdit.value = data.data.employeeId;
-      // if (!compareType2()) {
-      //   rowChangeStatus.value = true;
-      //   return;
-      // } else {
-      //   store.state.common.isCompareEditPA120 = true;
-      //   idRowEdit.value = data.data.employeeId;
-      //   actionChangeComponent.value = 2;
-      // }
-      // resetActiveKey.value = '1';
-      // store.commit('common/resetTabPA120', '1');
-      // modalEditStatus.value = true;
-      // store.state.common.isNewRowPA120 = false;
-      // store.state.common.isRefreshDataEditPA120 = true;
-
-      // },100)
     };
     // when submit form done
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
@@ -471,20 +466,22 @@ export default defineComponent({
     });
     // del row when add row
     const delNewRow = () => {
-      dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+      if (!isFirstWeb.value) {
+        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+      }
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
       addComponentKey.value++;
-      focusedRowKey.value = null;
+      //   focusedRowKey.value = null;
       store.state.common.isNewRowPA120 = false;
       compareType.value = 2;
     };
     const addNewRow = () => {
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
       store.state.common.isNewRowPA120 = true;
       addComponentKey.value++;
       compareType.value = 1;
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
     };
     return {
       loading,

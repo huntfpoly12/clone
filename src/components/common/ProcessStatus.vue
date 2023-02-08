@@ -51,7 +51,9 @@ export default defineComponent({
         };
         
         const clickButton = () => {
-            showModal.value = true;
+            if(props.valueStatus || props.valueStatus <= 20) {
+                showModal.value = true;
+            }
         }
 
         const submit = () => {
