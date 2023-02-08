@@ -141,10 +141,10 @@ import {
     DxScrolling
 } from "devextreme-vue/data-grid";
 import {
-    SearchOutlined,
-    WarningOutlined,
-    MailOutlined,
-    MenuOutlined,
+  SearchOutlined,
+  WarningOutlined,
+  MailOutlined,
+  MenuOutlined,
 } from "@ant-design/icons-vue";
 export default defineComponent({
     props: ["modalStatus", "data", "msg", "title", 'typeHistory', 'idRowEdit'],
@@ -377,10 +377,141 @@ export default defineComponent({
         };
     },
 });
-</script>  
+</script>
+<style lang="scss" scoped>
+::v-deep .ant-form-item-control {
+  display: flex;
+  flex-direction: row;
+}
 
+::v-deep .red {
+  label {
+      color: red;
+  }
+}
 
+::v-deep .ant-form-item-explain-error {
+  width: 400px;
+  margin-left: 5px;
+  padding-top: 5px;
+}
 
+::v-deep .ant-form-item-label>label {
+  width: 110px;
+}
+
+.dflex {
+  display: flex;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.container_email .ant-modal-body {
+  padding: 0 24px;
+  padding-top: 16px;
+}
+
+.action-menu {
+  text-align: center;
+}
+
+.title_modal {
+  font-weight: 700;
+  color: gray;
+}
+
+.modal_email ::v-deep .anticon svg {
+  width: 50px;
+  height: 50px;
+}
+
+.select-search ::v-deep .ant-select-arrow .anticon>svg {
+  width: 16px;
+  height: 16px;
+}
+
+.modal {
+  width: 300px;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #fff;
+  font-size: 20px;
+  text-align: center;
+}
+
+.modal_email {
+  display: flex;
+  align-items: center;
+}
+
+.btn_sendemail {
+  margin-top: 10px;
+  padding: 7px;
+  color: red;
+  border: 1px solid red
+}
+
+.confirm-button {
+  margin-left: 100px;
+}
+
+.confirm-modal p {
+  white-space: normal;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.email-input .ant-form-item-label {
+  white-space: normal;
+  display: inline-block;
+  text-align: center;
+  line-height: 16px;
+}
+
+.detail-address {
+  margin-left: 7px;
+}
+
+.result-address {
+  margin-left: 110px;
+}
+
+.ant-form-item {
+  margin-bottom: 3px;
+}
+
+.warring-modal {
+  font-size: 13px;
+  line-height: 5px;
+}
+
+.ant-form-item-label {
+  text-align: left;
+}
+
+.ant-popover-arrow {
+  display: none;
+}
+
+.table-scroll {
+  height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+::v-deep .dx-datagrid.dx-gridbase-container {
+  border: 1px solid #ddd
+}
+</style>
+  
 
 
 

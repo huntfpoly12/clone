@@ -47,7 +47,7 @@
                 <a-form-item label="외국인 국적" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                     <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                        :hiddenOptionKR="dataEdited.foreigner" width="180px" />
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" />
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
@@ -106,7 +106,7 @@
         </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        content="처음부터 다시 변경 내용을 저장하시겠습니까? " okText="네" cancelText="아니오" @checkConfirm="statusComfirm" />
+        :content="Message.getCommonMessage('501').message" :okText="Message.getCommonMessage('501').yes" :cancelText="Message.getCommonMessage('501').no" @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -117,6 +117,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         idRowEdit: Number,
@@ -125,8 +126,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const modalStatusChange = ref(false)
-        const labelResident = ref('외국인번호 유효성')
-        const activeLabel = ref(true)
+        const labelResident = ref('주민등록번호')
+        const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
@@ -230,10 +231,12 @@ export default defineComponent({
         watch(() => dataEdited.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
-                labelResident.value = '주민등록번호'
-                activeLabel.value = true
-            } else {
                 labelResident.value = '외국인번호 유효성'
+                activeLabel.value = true
+                dataEdited.nationalityCode = 'KR'
+                dataEdited.stayQualification = null
+            } else {
+                labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
@@ -275,15 +278,17 @@ export default defineComponent({
             }
         }
         const statusComfirm = (res: any) => {
-            if (res == true)
-                document.getElementById('action-update')?.click()
+          if (res == true) {
+            document.getElementById('action-update')?.click()
             originDataDetail.value.employeeId = props.idRowEdit
             refetchValueDetail()
             indexChange.value = 1
+          }
+        
         }
         return {
             modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress, statusComfirm
+            actionUpdated, funcAddress, statusComfirm,Message
         };
     },
 });

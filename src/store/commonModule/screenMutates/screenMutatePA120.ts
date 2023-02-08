@@ -12,6 +12,7 @@ const screenMutatePA120 = {
         state.presidentPA120 = payload;
     },
     initFormStateTabPA120(state: any, payload: any){
+        console.log(`output->payload`,payload)
         state.initFormStateTabPA120 = {
             ...state.initFormStateTabPA120,
             ...payload
