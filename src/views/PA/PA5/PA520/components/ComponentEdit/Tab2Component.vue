@@ -1,6 +1,6 @@
 <template>
     <div id="tab2-pa520">
-        <div class="header-text-1">공제</div>
+        <div class="header-text-1">공제 {{ store.state.common.checkStatusChangeValuePA520 }} {{ idRowEdit }} {{ store.state.common.allowedChangedRowPA520 }}</div>
         <a-row :gutter="16">
             <a-col :span="24">
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -27,7 +27,6 @@
                         v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance" />
                 </a-form-item>
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
-                    {{ originDataUpdate.input.nationalPensionSupportPercent }} -------
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport" />
@@ -189,6 +188,7 @@ export default defineComponent({
                     
             })
         })
+
         const {
             refetch: refectchDetail,
             onResult: resApiGetEmployeeWageDaily,
@@ -196,6 +196,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
+
         resApiGetEmployeeWageDaily((e: any) => {
             trigger.value = false
             if (e.data) {
@@ -258,8 +259,6 @@ export default defineComponent({
             if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
                 store.state.common.checkStatusChangeValuePA520 = false
             } else {
-                console.log(JSON.stringify(newVal));
-                console.log(JSON.stringify(valueConvert));
                 store.state.common.checkStatusChangeValuePA520 = true
             }
         }, { deep: true })
@@ -281,10 +280,12 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch(() => store.state.common.idRowChangePa520, (res) => {
-            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
-            trigger.value = true
-            refectchDetail()
-            store.state.common.checkStatusChangeValuePA520 = false
+          if (!store.state.common.checkStatusChangeValuePA520) {
+              originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+              trigger.value = true
+              refectchDetail()
+          }
+          store.state.common.checkStatusChangeValuePA520 = false
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0

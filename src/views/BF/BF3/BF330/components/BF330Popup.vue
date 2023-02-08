@@ -118,7 +118,7 @@
                                                 </a-form-item>
                                             </div>
                                             <div class="custom-money">
-                                                <a-form-item label="서비스 시작년월" class="red">
+                                                <a-form-item label="서비스 시작년월xxxx" class="red">
                                                     <month-picker-box style="float:right" width="150px" :required="true"
                                                         v-model:valueDate="dataActiveRow.startYearMonth" />
                                                 </a-form-item>
