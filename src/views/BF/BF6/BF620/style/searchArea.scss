@@ -1,7 +1,7 @@
 .search-group {
-    background: #f1f3f4;
-    padding: 8px 5px;
-    margin-bottom: 10px;
+  background: #f1f3f4;
+  padding: 8px 5px;
+  margin-bottom: 10px;
   .search-date {
     display: flex;
     .search-text {
@@ -28,6 +28,9 @@
       .dp__icon {
         display: none;
       }
+      .dp__input {
+        font-size: 14px;
+      }
     }
     :deep .month-black {
       background-color: black;
@@ -42,12 +45,18 @@
       }
     }
     :deep .dx-checkbox-container {
-        margin-left: 10px;
+      margin-left: 10px;
     }
   }
   .search-production {
+    margin-left: 30px;
     :deep .ant-form-item-label > label {
-        height: 26px;
+      height: 26px;
+    }
+    .production-check {
+      display: grid;
+      grid-template-columns: 42% 29%;
+      margin-left: 97px;
     }
     :deep .check-box-group {
       .dx-checkbox-text {
@@ -70,11 +79,21 @@
         background-color: #c00000;
       }
     }
+    :deep .ant-form-item-control-input {
+      min-height: 26px;
+    }
   }
   .search-company {
+    margin-left: 30px;
+    display: grid;
+    grid-template-columns: 50% 50%;
     :deep .ant-form-item-label > label {
       width: 120px;
       padding-left: 10px;
     }
+  }
+  .search-4 {
+    align-self: center;
+    margin-left: 30px;
   }
 }
