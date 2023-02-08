@@ -1,8 +1,12 @@
 import getElectronicFilingsByIncomeWageDailyPaymentStatement from "./getElectronicFilingsByIncomeWageDailyPaymentStatement"
 import searchIncomeWageDailyPaymentStatementElectronicFilings from "./searchIncomeWageDailyPaymentStatementElectronicFilings"
+import getCompaniesInElectronicFilingFile from "./../BF630/getCompaniesInElectronicFilingFile"
+import searchElectronicFilingFileProductions from "./../BF630/searchElectronicFilingFileProductions"
 const queries = {
     getElectronicFilingsByIncomeWageDailyPaymentStatement: getElectronicFilingsByIncomeWageDailyPaymentStatement,
-    searchIncomeWageDailyPaymentStatementElectronicFilings: searchIncomeWageDailyPaymentStatementElectronicFilings
+    searchIncomeWageDailyPaymentStatementElectronicFilings: searchIncomeWageDailyPaymentStatementElectronicFilings,
+    searchElectronicFilingFileProductions: searchElectronicFilingFileProductions,
+    getCompaniesInElectronicFilingFile: getCompaniesInElectronicFilingFile
 };
 
 export default queries;

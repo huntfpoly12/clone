@@ -14,14 +14,14 @@
                             <!-- ================== Row 1 =========================== -->
                             <a-col :span="6">
                                 <div @click="checkAll">
-                                    <checkbox-basic  label="전체" v-model:valueCheckbox="checkAllValue" />
+                                    <checkbox-basic label="전체" v-model:valueCheckbox="checkAllValue" />
                                 </div>
                             </a-col>
                             <a-col :span="6">
-                                <checkbox-basic  v-model:valueCheckbox="year1.value" :label="year1.label" />
+                                <checkbox-basic v-model:valueCheckbox="year1.value" :label="year1.label" />
                             </a-col>
                             <a-col :span="4">
-                                <checkbox-basic  v-model:valueCheckbox="year2.value" :label="year2.label" />
+                                <checkbox-basic v-model:valueCheckbox="year2.value" :label="year2.label" />
                             </a-col>
                             <a-col :span="8" class="custom-info">
                                 <div>
@@ -33,69 +33,69 @@
                                 </span>
                             </a-col>
                             <!-- ================== Row 2 =========================== -->
-                            <a-col :span="6">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
+                            <a-col :span="6" @click="clickQuarter1">
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.quarter1.value"
                                     :label="arrCheckBoxSearch.quarter1.label" />
                             </a-col>
-                            <a-col :span="6">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter2.value"
+                            <a-col :span="6" @click="clickQuarter2">
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.quarter2.value"
                                     :label="arrCheckBoxSearch.quarter2.label" />
                             </a-col>
-                            <a-col :span="6">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter3.value"
+                            <a-col :span="6" @click="clickQuarter3">
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.quarter3.value"
                                     :label="arrCheckBoxSearch.quarter3.label" />
                             </a-col>
-                            <a-col :span="6">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
+                            <a-col :span="6" @click="clickQuarter4">
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.quarter4.value"
                                     :label="arrCheckBoxSearch.quarter4.label" />
                             </a-col>
                             <!-- ================== Row 3 =========================== -->
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month1.value"
                                     :label="arrCheckBoxSearch.month1.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month2.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month2.value"
                                     :label="arrCheckBoxSearch.month2.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month3.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month3.value"
                                     :label="arrCheckBoxSearch.month3.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month4.value"
                                     :label="arrCheckBoxSearch.month4.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month5.value"
                                     :label="arrCheckBoxSearch.month5.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month6.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month6.value"
                                     :label="arrCheckBoxSearch.month6.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month7.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month7.value"
                                     :label="arrCheckBoxSearch.month7.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month8.value"
                                     :label="arrCheckBoxSearch.month8.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month9.value"
                                     :label="arrCheckBoxSearch.month9.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month10.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month10.value"
                                     :label="arrCheckBoxSearch.month10.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month11.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month11.value"
                                     :label="arrCheckBoxSearch.month11.label" />
                             </a-col>
                             <a-col :span="2">
-                                <checkbox-basic  v-model:valueCheckbox="arrCheckBoxSearch.month12.value"
+                                <checkbox-basic v-model:valueCheckbox="arrCheckBoxSearch.month12.value"
                                     :label="arrCheckBoxSearch.month12.label" />
                             </a-col>
                         </a-row>
@@ -137,7 +137,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
                         <DxItem template="group-print" />
@@ -235,6 +235,7 @@ import { companyId, userId } from "@/../src/helpers/commonFunction";
 import PA530Popup from "./components/PA530Popup.vue";
 import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxSummary, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, PA530Popup
@@ -256,7 +257,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
-        const arrCheckBoxSearch = reactive({
+        const arrCheckBoxSearch: any = reactive({
             quarter1: {
                 label: "1/4분기",
                 value: true,
@@ -446,19 +447,26 @@ export default defineComponent({
             arrCheckBoxSearch.quarter3.value,
             arrCheckBoxSearch.quarter4.value,
         ], ([val1, val2, val3, val4]) => {
-            arrCheckBoxSearch.month1.value = val1
-            arrCheckBoxSearch.month2.value = val1
-            arrCheckBoxSearch.month3.value = val1
-            arrCheckBoxSearch.month4.value = val2
-            arrCheckBoxSearch.month5.value = val2
-            arrCheckBoxSearch.month6.value = val2
-            arrCheckBoxSearch.month7.value = val3
-            arrCheckBoxSearch.month8.value = val3
-            arrCheckBoxSearch.month9.value = val3
-            arrCheckBoxSearch.month10.value = val4
-            arrCheckBoxSearch.month11.value = val4
-            arrCheckBoxSearch.month12.value = val4
-
+            if (val1) {
+                arrCheckBoxSearch.month1.value = val1
+                arrCheckBoxSearch.month2.value = val1
+                arrCheckBoxSearch.month3.value = val1
+            }
+            if (val2) {
+                arrCheckBoxSearch.month4.value = val2
+                arrCheckBoxSearch.month5.value = val2
+                arrCheckBoxSearch.month6.value = val2
+            }
+            if (val3) {
+                arrCheckBoxSearch.month7.value = val3
+                arrCheckBoxSearch.month8.value = val3
+                arrCheckBoxSearch.month9.value = val3
+            }
+            if (val4) {
+                arrCheckBoxSearch.month10.value = val4
+                arrCheckBoxSearch.month11.value = val4
+                arrCheckBoxSearch.month12.value = val4
+            }
             switchSearchCheckbox.value = true
             if (val1 == true && val2 == true && val3 == true && val4 == true && year2.value == true && year1.value == true)
                 checkAllValue.value = true
@@ -466,6 +474,68 @@ export default defineComponent({
                 checkAllValue.value = false
 
         }, { deep: true });
+
+        watch(() => [
+            arrCheckBoxSearch.month1.value,
+            arrCheckBoxSearch.month2.value,
+            arrCheckBoxSearch.month3.value,
+        ], ([val1, val2, val3]) => {
+            if (!val1 || !val2 || !val3) {
+                arrCheckBoxSearch.quarter1.value = false
+            }
+            if (val1 && val2 && val3) {
+                arrCheckBoxSearch.quarter1.value = true
+            }
+        }, { deep: true });
+
+        watch(() => [
+            arrCheckBoxSearch.month4.value,
+            arrCheckBoxSearch.month5.value,
+            arrCheckBoxSearch.month6.value,
+        ], ([val4, val5, val6]) => {
+            if (!val4 || !val5 || !val6) {
+                arrCheckBoxSearch.quarter2.value = false
+            }
+            if (val4 && val5 && val6) {
+                arrCheckBoxSearch.quarter2.value = true
+            }
+        }, { deep: true });
+
+        watch(() => [
+            arrCheckBoxSearch.month7.value,
+            arrCheckBoxSearch.month8.value,
+            arrCheckBoxSearch.month9.value,
+        ], ([val1, val2, val3]) => {
+            if (!val1 || !val2 || !val3) {
+                arrCheckBoxSearch.quarter3.value = false
+            }
+            if (val1 && val2 && val3) {
+                arrCheckBoxSearch.quarter3.value = true
+            }
+        }, { deep: true });
+
+        watch(() => [
+            arrCheckBoxSearch.month10.value,
+            arrCheckBoxSearch.month11.value,
+            arrCheckBoxSearch.month12.value,
+        ], ([val1, val2, val3]) => {
+            if (!val1 || !val2 || !val3) {
+                arrCheckBoxSearch.quarter4.value = false
+            }
+            if (val1 && val2 && val3) {
+                arrCheckBoxSearch.quarter4.value = true
+            }
+        }, { deep: true });
+        watch(() => checkAllValue.value, (val) => {
+            if (val) {
+                arrCheckBoxSearch.quarter1.value = val
+                arrCheckBoxSearch.quarter2.value = val
+                arrCheckBoxSearch.quarter3.value = val
+                arrCheckBoxSearch.quarter4.value = val
+                year1.value = val
+                year2.value = val
+            }
+        })
 
         // ================FUNCTION============================================ 
         const searching = () => {
@@ -534,7 +604,7 @@ export default defineComponent({
                 refetchPrint()
         }
         const sendMailGroup = () => {
-            if (selectedItemKeys.value.length > 0) {
+            if (selectedItemKeys.value.length > 1) {
                 actionSendEmailGroup.value = true
                 let dataCall: any = []
                 // Gets the row of checked data 
@@ -552,23 +622,52 @@ export default defineComponent({
                 paymentYearMonthsModal.value = getArrPaymentYearMonth()
                 modalStatus.value = true
             } else
-                notification('error', "일용직근로자들을 선택하세요!")
+                notification('error', Message.getCommonMessage('601').message)
         }
         const selectionChanged = (data: any) => {
             selectedItemKeys.value = data.selectedRowKeys
         }
 
         const checkAll = () => {
-            arrCheckBoxSearch.quarter1.value = checkAllValue.value
-            arrCheckBoxSearch.quarter2.value = checkAllValue.value
-            arrCheckBoxSearch.quarter3.value = checkAllValue.value
-            arrCheckBoxSearch.quarter4.value = checkAllValue.value
-            year1.value = checkAllValue.value
-            year2.value = checkAllValue.value
+            if (!checkAllValue.value) {
+                Object.keys(arrCheckBoxSearch).forEach((val: string) => {
+                    arrCheckBoxSearch[val].value = false;
+                })
+                year1.value = false
+                year2.value = false
+            }
+        }
+        const clickQuarter1 = () => {
+            if (!arrCheckBoxSearch.quarter1.value) {
+                arrCheckBoxSearch.month1.value = false
+                arrCheckBoxSearch.month2.value = false
+                arrCheckBoxSearch.month3.value = false
+            }
+        }
+        const clickQuarter2 = () => {
+            if (!arrCheckBoxSearch.quarter2.value) {
+                arrCheckBoxSearch.month4.value = false
+                arrCheckBoxSearch.month5.value = false
+                arrCheckBoxSearch.month6.value = false
+            }
+        }
+        const clickQuarter3 = () => {
+            if (!arrCheckBoxSearch.quarter3.value) {
+                arrCheckBoxSearch.month7.value = false
+                arrCheckBoxSearch.month8.value = false
+                arrCheckBoxSearch.month9.value = false
+            }
+        }
+        const clickQuarter4 = () => {
+            if (!arrCheckBoxSearch.quarter4.value) {
+                arrCheckBoxSearch.month10.value = false
+                arrCheckBoxSearch.month11.value = false
+                arrCheckBoxSearch.month12.value = false
+            }
         }
 
         const printGroup = () => {
-            if (selectedItemKeys.value.length > 0) {
+            if (selectedItemKeys.value.length > 1) {
                 triggerPrint.value = true
                 dataCallApiPrint.value = {
                     companyId: companyId,
@@ -583,11 +682,12 @@ export default defineComponent({
 
                 refetchPrint()
             } else
-                notification('error', "일용직근로자들을 선택하세요!")
+                notification('error', Message.getCommonMessage('601').message)
         }
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
             printGroup, checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
+            clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4
         };
     },
 });
