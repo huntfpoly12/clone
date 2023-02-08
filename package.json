@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "serve": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "node --max-old-space-size=8000 && vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
