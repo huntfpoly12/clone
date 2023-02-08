@@ -75,7 +75,7 @@
   </div>
 </template>
   
-  <script lang="ts">
+<script lang="ts">
 import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
@@ -86,6 +86,7 @@ import { DxButton } from 'devextreme-vue/select-box';
 import  { DxDataGrid,DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
+
 export default defineComponent({
   components: {
     SearchArea,

@@ -29,7 +29,11 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         onResult((res: any) => {
-            arrStatus.value = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement
+            let data = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement;
+            arrStatus.value = data;
+            if(data) {
+                emit('productionStatusData',data[0])
+            }
         })
         const checkStatus = (status: any) => {
             if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0)
