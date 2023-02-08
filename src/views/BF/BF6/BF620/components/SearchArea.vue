@@ -1,7 +1,7 @@
 <template>
   <div class="search-group">
     <a-row>
-      <a-col span="8">
+      <a-col>
         <div class="search-date">
           <span class="search-text mt-5">귀속연월</span>
           <div class="search-date">
@@ -25,24 +25,25 @@
             </div>
           </div>
           <a-form-item label="내/외국인" label-align="right" class=" ml-10">
-            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType" layoutCustom="horizontal" class="mt-1"></radio-group>
+            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
+              layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
         </div>
       </a-col>
-      <a-col span="8">
+      <a-col>
         <div class="search-production">
           <a-form-item label="최종제작상태">
             <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작전'" :textUnCheck="'제작후'" />
-            <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
-            <div class="mt-5">
-              <div class="production-check">
-                <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox" v-model:valueCheckbox="filterBF620.productionStatuses" :size="18"> </CheckboxGroup>
-              </div>
-            </div>
+            <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
+                style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
+          <div class="mt-5 production-check">
+            <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
+              v-model:valueCheckbox="filterBF620.productionStatuses" :size="18"> </CheckboxGroup>
+          </div>
         </div>
       </a-col>
-      <a-col class="search-company" span="8">
+      <a-col class="search-company">
         <a-form-item label="사업자코드">
           <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" />
         </a-form-item>
@@ -50,18 +51,16 @@
           <default-text-box width="150px" v-model:valueInput="filterBF620.companyName"></default-text-box>
         </a-form-item>
         <a-row>
-          <a-col :span="13">
-            <a-form-item label="매니저리스트">
-              <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.excludeCancel" />
-          </a-col>
+          <a-form-item label="매니저리스트">
+            <list-manager-dropdown width="150px" v-model:valueInput="filterBF620.manageUserId" />
+          </a-form-item>
         </a-row>
         <a-form-item label="영업자리스트">
           <list-sales-dropdown width="150px" :required="true" v-model:valueInput="filterBF620.salesRepresentativeId" />
         </a-form-item>
+      </a-col>
+      <a-col class="search-4">
+        <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.excludeCancel" />
       </a-col>
     </a-row>
   </div>
@@ -142,13 +141,13 @@ export default defineComponent({
       }
     });
     // watch beforeProduction
-    watch(()=>filterBF620.value.beforeProduction, (newVal: any)=> {
-      if(newVal) {
+    watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
+      if (newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
         filterBF620.value.productionStatuses = [0];
       }
-    }, {deep: true})
+    }, { deep: true })
     return {
       radioCheckForeigner,
       foreigner,

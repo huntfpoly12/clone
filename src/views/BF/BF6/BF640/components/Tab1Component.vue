@@ -22,27 +22,31 @@
                     </div>
                 </a-form-item>
                 <div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1">
+                    <div class="d-flex-center custom-checkbox-search" :disabled="true"
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
+                            :disabled="dataSearch.beforeProduction">
                             <production-statuses :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2">
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
+                            :disabled="dataSearch.beforeProduction">
                             <production-statuses :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3">
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
+                            :disabled="dataSearch.beforeProduction">
                             <production-statuses :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4">
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
+                            :disabled="dataSearch.beforeProduction">
                             <production-statuses :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -86,12 +90,13 @@
                 </div>
             </a-form-item>
         </div>
+        {{ customTextSummary() }}
         <div class="form-table">
             <a-spin :spinning="loadingTable">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
+                    @selection-changed="selectionChanged" id="dataGrid1">
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="사업자코드" data-field="company.code" />
                     <DxColumn caption="상호 주소" cell-template="상호" />
@@ -112,13 +117,14 @@
                     </template>
                     <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
                         format="yyyy-MM-dd" />
-                    <DxColumn caption="제작현황" cell-template="제작현황" />
+                    <DxColumn caption="제작현황" cell-template="제작현황" width="200px" />
                     <template #제작현황="{ data }">
-                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
+                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data"
+                            @productionStatusData="productionStatusData" />
                     </template>
                     <DxSummary>
                         <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-                        <DxTotalItem class="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
+                        <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
                     </DxSummary>
                 </DxDataGrid>
             </a-spin>
@@ -128,8 +134,7 @@
     </div>
 </template>
 <script lang="ts">
-import dayjs from "dayjs";
-import { defineComponent, ref, computed, watch } from "vue";
+import { defineComponent, ref, computed, watch, reactive } from "vue";
 import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
@@ -139,6 +144,7 @@ import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
+import dayjs from 'dayjs';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
@@ -156,8 +162,8 @@ export default defineComponent({
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(false)
         let dataSearch: any = ref({ ...dataSearchUtils })
-        let typeCheckbox = ref({
-            checkbox1: true,
+        let typeCheckbox = ref<any>({
+            checkbox1: false,
             checkbox2: false,
             checkbox3: false,
             checkbox4: false,
@@ -167,7 +173,8 @@ export default defineComponent({
         let modalConfirmMail = ref(false)
         let dataCallApiGetElectronic = ref()
         let dataModalSave = ref()
-        let keySelect = ref([])
+        let keySelect = ref([]);
+        let productionStatusArr = ref<any>([]);
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -180,7 +187,16 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dataSource.value = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings
+            dayjs().isBefore(dayjs('2011-01-01'))
+            let data = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings;
+            let result = Object.values(data.reduce((acc: any, curr: any) => {
+                if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
+                    acc[curr.companyId] = curr;
+                }
+                return acc;
+            }, {}));
+            console.log(`output->result`, result)
+            dataSource.value = [...result];
             trigger.value = false
             // call api get productionStatus
             if (dataSource.value.length > 0) {
@@ -210,8 +226,22 @@ export default defineComponent({
                 companyIds: keySelect.value
             }
         }
+        const countStatus = (arr: any[], type: number) => {
+            console.log(`output->arr`, arr)
+            if (Object.keys(arr).length === 0 || arr.length === 0) {
+                return 0;
+            }
+            let count = arr.reduce((acc: any, crr: any) => {
+                acc[crr.productionStatus] = acc[crr.productionStatus] ? acc[crr.productionStatus] + 1 : 1;
+                return acc;
+            }, {});
+            if(count[type]){
+                return count[type];
+            }
+            return 0;
+        }
         const customTextSummary = () => {
-            return "제작전 ({sum})"
+            return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
         const selectionChanged = (res: any) => {
             keySelect.value = res.selectedRowKeys
@@ -237,12 +267,38 @@ export default defineComponent({
                 refetchTable()
             }
         }, { deep: true })
+        watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
+            for (const key in typeCheckbox.value) {
+                if (newVal) {
+                    typeCheckbox.value[key] = false;
+                } else {
+                    typeCheckbox.value[key] = false;
+                    typeCheckbox.value.checkbox1 = true;
+                }
+            }
+        }, { deep: true });
+        const productionStatusData = (emitVal: any) => {
+            productionStatusArr.value = [emitVal];
+            dataSource.value[0].productionStatuses = emitVal;
+            console.log(`output->productionStatusData`, emitVal)
+        }
+        watch(productionStatusArr, (newVal) => {
+            console.log(`output->newVal`, newVal)
+        })
         return {
             userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
-            actionSaveDone, selectionChanged, openModalSave, customTextSummary,
+            actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss">
+
+</style>
+<style scoped lang="scss">
+#dataGrid1 {
+    :deep .custom-sumary {
+        white-space: break-spaces;
+    }
+}
 </style>
