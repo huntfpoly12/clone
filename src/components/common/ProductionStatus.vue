@@ -12,9 +12,11 @@ import DxButton from 'devextreme-vue/button';
 export default defineComponent({
     props: {
         typeTag: { //number : 0,1,2,3,4,5 
-            type: Number
+          type: Number
         },
-        padding: String
+        padding: {
+          type: String
+        }
     },
     components: {
         DxButton
