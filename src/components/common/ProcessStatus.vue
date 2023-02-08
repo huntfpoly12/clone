@@ -30,6 +30,10 @@ export default defineComponent({
             type: Boolean,
             required: false
         },
+        dataRow: {
+            type: Array,
+            required: false
+        }
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);
@@ -57,9 +61,13 @@ export default defineComponent({
         }
 
         const submit = () => {
-          showModal.value = false;
-          currentBt.value = value.value
+            showModal.value = false;
+            currentBt.value = value.value
             emit("update:valueStatus", value.value);
+            emit("checkConfirmRowTable", {
+                ...props.dataRow,
+                'status': value.value
+            });
             emit("checkConfirm", true)
             
         }
@@ -118,7 +126,7 @@ export default defineComponent({
 }
 
 .mytooltip {
-    position: relative;
+    position: fixed;
     display: inline-block;
 }
 

@@ -17,8 +17,9 @@
             <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
             <template #status="{ data }">
-              <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
-                          :dataRow="data.data"/>
+              <process-status v-model:valueStatus="data.data.status" />
+              <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
+                          :dataRow="data.data"/> -->
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
@@ -450,6 +451,9 @@ export default defineComponent({
         margin: 5px 0px 3px 10px;
       }
     }
+  }
+  .mytooltip {
+    margin-left: -45px;
   }
 }
 
