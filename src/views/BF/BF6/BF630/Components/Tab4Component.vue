@@ -202,7 +202,7 @@ export default defineComponent({
     })
     watch(resIncomeExtraPayment, (value) => {
       if (value) {
-        dataSource.value = [value.searchIncomeExtraPaymentStatementElectronicFilings[0]]
+        dataSource.value = value.searchIncomeExtraPaymentStatementElectronicFilings
         // create list company ID for request file
         dataSource.value.map((item : any) => {
           companyIds.push(item.companyId)
