@@ -27,8 +27,9 @@
                 <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" />
                 <DxColumn caption="마감현황" cell-template="status" />
                 <template #status="{ data }">
-                    <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
-                        :dataRow="data.data" @dataRow="changeStatus" />
+                    <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
+                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
+                        :dataRow="data.data" @dataRow="changeStatus" /> -->
                 </template>
                 <DxColumn caption="마감일" cell-template="마감일"/>
                 <template #마감일="{ data }">
@@ -111,7 +112,7 @@ export default defineComponent({
         /*
          * ============== FUNCTION ============== 
          */
-        const changeStatus = (data: any) => {
+        const changeStatusRowTable = (data: any) => {
             let dataChangeStatus = {
                 "companyId": data.companyId,
                 "type": data.type,
@@ -132,7 +133,7 @@ export default defineComponent({
 
         return {
             dataSource, loadingTable, loadingChangeStatus, EmployeeType, dayjs,
-            setModalVisible, changeStatus
+            setModalVisible, changeStatusRowTable
         }
     }
 })
@@ -152,5 +153,9 @@ export default defineComponent({
     border-radius: 5px;
     color: white;
     cursor: pointer;
+}
+:deep .buttonModal {
+    margin-top: -5px;
+    height: 27px !important;
 }
 </style>

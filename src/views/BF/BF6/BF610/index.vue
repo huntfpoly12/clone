@@ -106,9 +106,10 @@
                     <DxColumn caption="마감 현황" cell-template="status" width="140" />
                     <template #status="{ data }">
                         <div class="d-flex-center">
-                            <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
-                                :dataRow="data.data" @dataRow="changeStatus" />
-                            <div class="pl-5 pr-5">
+                            <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
+                                :dataRow="data.data" @dataRow="changeStatus" /> -->
+                            <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
+                            <div class="pl-5 pr-5" style="margin-left: 100px;">
                                 <a-tooltip color="black" placement="topLeft">
                                     <template #title>소득별 마감현황</template>
                                     <plus-outlined @click="openModalStatus(data.data)" />
@@ -490,7 +491,7 @@ export default defineComponent({
             modalStatus.value = true
         }
 
-        const changeStatus = (data: any) => {
+        const changeStatusRowTable = (data: any) => {
             let dataChangeStatus = {
                 "companyId": data.companyId,
                 "imputedYear": data.imputedYear,
@@ -530,7 +531,7 @@ export default defineComponent({
             modalSendEmail, 
             // arraySelectBox, 
             dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
-            checkAll1, checkAll2, searching, closePopup, openModalStatus, changeStatus, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
+            checkAll1, checkAll2, searching, closePopup, openModalStatus, changeStatusRowTable, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
 })
