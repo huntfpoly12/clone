@@ -17,8 +17,9 @@
             <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
             <template #status="{ data }">
-              <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
-                          :dataRow="data.data"/>
+              <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
+              <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
+                          :dataRow="data.data"/> -->
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
             <template #imputedYear-imputedMonth="{ data }">
@@ -331,6 +332,25 @@ export default defineComponent({
     const actionCloseConfirm = (data: any) => {
       confirmStatus.value = false
     }
+    const {
+            mutate: actionChangeStatus,
+            onDone: doneChangeStatus,
+            onError: errChangeStatus
+        } = useMutation(mutations.changeTaxWithholdingStatusReportStatus);
+        doneChangeStatus(() => {
+            notification('success', `업부상태 변경되었습니다!`)
+        })
+        errChangeStatus((error) => {
+            notification('error', error.message)
+        })
+    const changeStatusRowTable = (data: any) => {
+      actionChangeStatus({
+          "companyId": companyId,
+          "imputedYear": data.imputedYear,
+          "reportId": data.reportId,
+          "status": data.status
+        })
+      }
     return {
       setModalVisible,
       hotSettings,
@@ -345,7 +365,8 @@ export default defineComponent({
       actionConfirmDelete,
       actionCloseConfirm,
       confirmStatus,
-      showTooltipYearMonth
+      showTooltipYearMonth,
+      changeStatusRowTable,
     }
   }
 });
@@ -421,6 +442,9 @@ export default defineComponent({
         margin: 5px 0px 3px 10px;
       }
     }
+  }
+  .mytooltip {
+    margin-left: -45px;
   }
 }
 
