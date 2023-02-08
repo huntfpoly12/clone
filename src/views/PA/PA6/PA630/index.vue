@@ -325,10 +325,7 @@ export default defineComponent({
         }
         const customTextSummaryWRST = () => {
             let sum = 0
-            console.log(dataSource.value);
-            
             dataSource.value?.map((value: any) => {
-                console.log(value);
                 sum+= value.withholdingLocalIncomeTax + value.withholdingIncomeTax
             })
             return "원천징수세액 계합계: " + filters.formatCurrency(sum)

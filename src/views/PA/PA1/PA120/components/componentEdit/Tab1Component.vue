@@ -1,6 +1,7 @@
 <template>
     <div id="tab1-pa120">
         <a-spin :spinning="loading" size="large">
+            {{ initFormStateTabPA120 }}
             <standard-form formName="tab1-pa120">
                 <a-form-item label="사번(코드)" label-align="right" class="red">
                     <text-number-box width="200px" :required="true" v-model:valueInput="employeeId"
@@ -287,50 +288,12 @@ export default defineComponent({
             }
         );
 
-        //Compare the data after editing, if there is a difference, add it to the array arrEdit
-        // watch(() => JSON.parse(JSON.stringify(formStateTab1)), (newValue) => {
-        //     console.log(`output->newValue`,newValue)
-        //   if (JSON.stringify(oldFormStateTab1) !== JSON.stringify(newValue)) {
-
-        //     arrDataEdit = arrDataEdit.filter(function(item) {
-        //       return item.employeeId !== newValue.employeeId;
-        //     });
-        //     console.log(`output->arrDataEdit`,arrDataEdit)
-        //     arrDataEdit.push(newValue)
-
-        //     //push the imployeeID into the arrayRoweditedPA120 array to identify the changed row
-        //     let arrEmployeeRowEdited = store.state.common.arrayRoweditedPA120.filter(function(item : any) {
-        //         return item !== newValue.employeeId;
-        //     })
-        //     arrEmployeeRowEdited.push(newValue.employeeId)
-        //     store.state.common.arrayRoweditedPA120 = arrEmployeeRowEdited;
-        //   }
-        // },{deep:true})
-
         const actionUpdated = (e: any) => {
-            // arrDataEdit.forEach(rowData => {
-            //   let newValDataEdit = {
-            //       ...rowData,
-            //       joinedAt: rowData.joinedAt,
-            //       leavedAt: rowData.leavedAt,
-            //       residentId: rowData.residentId.slice(0, 6) + '-' + rowData.residentId.slice(6, 14)
-            //     };
-            //     delete newValDataEdit.employeeId;
-            //     let dataCallCreat = {
-            //       companyId: companyId,
-            //       imputedYear: globalYear.value,
-            //       employeeId: rowData.employeeId,
-            //       input: newValDataEdit
-            //     };
-            //     console.log(`output->dataCallCreat`,dataCallCreat)
-            // })
-            // console.log(`output->arrDataEdit`,arrDataEdit)
-            //   delete formStateTab1.input.employeeId;
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let editData = initFormStateTabPA120.value;
+                let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
                 delete editData.employeeId
                 let dataCallCreat = {
                     ...originDataDetail.value,

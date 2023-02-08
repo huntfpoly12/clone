@@ -539,7 +539,7 @@ export default defineComponent({
         }
         const statusComfirmChangePrice = (res: any) => {
             if (res) {
-                (document.getElementById("button-action-dedution") as HTMLInputElement).click();
+                (document.getElementById("button-action-dedution-pa510") as HTMLInputElement).click();
                 store.state.common.focusedRowKey = store.state.common.employeeId
             } else {
                 if (!store.state.common.statusRowAdd) {
