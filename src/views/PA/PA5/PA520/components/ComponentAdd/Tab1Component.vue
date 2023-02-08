@@ -111,7 +111,7 @@ import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 export default defineComponent({
     setup(props, { emit }) {
-        const labelResident = ref('외국인번호 유효성')
+        const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref([])
@@ -175,15 +175,16 @@ export default defineComponent({
         watch(() => dataCreated.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
-                labelResident.value = '주민등록번호'
+                labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
+                dataCreated.stayQualification = 'C-4'
             } else {
                 activeLabel.value = false
-                labelResident.value = '외국인번호 유효성'
+                labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 dataCreated.nationality = '대한민국'
                 dataCreated.nationalityCode = 'KR'
-                dataCreated.stayQualification = 'C-4'
+                dataCreated.stayQualification = null
             }
         })
         watch(() => dataCreated, (value) => {
