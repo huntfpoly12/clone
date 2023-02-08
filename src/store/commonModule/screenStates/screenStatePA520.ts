@@ -9,6 +9,6 @@ const statesPA520 = {
   rowIdSaveDonePa520: 0,
   checkChangeValueAddPA520: false,
   actionSaveAddPA520: 0,
-  allowedChangedRowPA520: false
+  allowedChangedRowPA520: true
 };
 export default statesPA520;

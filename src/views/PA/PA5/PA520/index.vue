@@ -1,6 +1,6 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
-    <div id="pa-520" class="page-content">{{ store.state.common.allowedChangedRowPA520 }}
+    <div id="pa-520" class="page-content">{{ store.state.common.checkStatusChangeValuePA520 }}
         <a-row>
           <a-col :span="3" style="padding-right: 10px">
             <div class="total-user">
@@ -317,6 +317,9 @@ export default defineComponent({
 
         }
 
+      watch(() => store.state.common.allowedChangedRowPA520, () => {
+          
+        } )
         const confirmSaveAdd = (res: any) => {
             if (res == true) {
                 store.state.common.actionSaveAddPA520++
@@ -335,11 +338,11 @@ export default defineComponent({
         }
 
       const onFocusedRowChanging = (e: any) => { 
-    //if (!store.state.common.allowedChangedRowPA520) {
-    console.log(e);
-    prevRowIndex
-      e.cancel =  true;
-       // }
+    // //if (!store.state.common.allowedChangedRowPA520) {
+    // console.log(e);
+    // prevRowIndex
+    //   e.cancel =  true;
+    //    // }
       }
         return {
             modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
