@@ -37,7 +37,7 @@
         </div>
       </a-col>
     </a-row>
-    <a-row>
+    <a-row style="flex-flow: row nowrap;">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid
@@ -119,7 +119,7 @@
           </DxDataGrid>
         </a-spin>
       </a-col>
-      <a-col class="custom-layout" style="padding-right: 0px; display: block; flex: 1">
+      <a-col :span="13" class="custom-layout">
         <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus" v-if="actionChangeComponent == 1" :key="addComponentKey" />
         <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
       </a-col>
