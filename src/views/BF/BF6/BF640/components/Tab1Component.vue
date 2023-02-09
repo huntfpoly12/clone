@@ -26,28 +26,28 @@
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="2" />
+                            <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="3" />
+                            <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="4" />
+                            <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="5" />
+                            <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
                 </div>
@@ -85,12 +85,14 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
+                        <div class="btn-modal-save" @click="openModalSave">
+                            <SaveOutlined class="fz-20 ml-5 action-save"/>
+                        <span style="margin-left: 5px;">파일제작요청</span>
+                        </div>
                     </a-tooltip>
                 </div>
             </a-form-item>
         </div>
-        {{ customTextSummary() }}
         <div class="form-table">
             <a-spin :spinning="loadingTable">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -145,6 +147,7 @@ import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import dayjs from 'dayjs';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
@@ -174,7 +177,7 @@ export default defineComponent({
         let dataCallApiGetElectronic = ref()
         let dataModalSave = ref()
         let keySelect = ref([]);
-        let productionStatusArr = ref<any>([]);
+        const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -195,7 +198,7 @@ export default defineComponent({
                 }
                 return acc;
             }, {}));
-            console.log(`output->result`, result)
+            // console.log(`output->result`, result)
             dataSource.value = [...result];
             trigger.value = false
             // call api get productionStatus
@@ -215,8 +218,10 @@ export default defineComponent({
             notification('error', error.message)
         })
         // ================== FUNCTION ================== 
+        const selectionChanged = (event: any) => {
+            keySelect.value = event.selectedRowKeys
+        }
         const openModalSave = () => {
-            modalConfirmMail.value = true
             dataModalSave.value = {
                 filter: dataSearch.value,
                 emailInput: {
@@ -225,9 +230,20 @@ export default defineComponent({
                 },
                 companyIds: keySelect.value
             }
+            if (keySelect.value.length > 0) {
+                modalConfirmMail.value = true;
+            }else {
+                notification('warning',messageDelNoItem)
+            }
         }
+
+        //SUM
+        // count the number of status
+        
+        let productionStatusArr = ref<any>([]);
+        const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
-            console.log(`output->arr`, arr)
+            // console.log(`output->arr`, arr)
             if (Object.keys(arr).length === 0 || arr.length === 0) {
                 return 0;
             }
@@ -240,16 +256,24 @@ export default defineComponent({
             }
             return 0;
         }
+        // custom summary
         const customTextSummary = () => {
             return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
-        const selectionChanged = (res: any) => {
-            keySelect.value = res.selectedRowKeys
+        // caculator sum
+        const reFreshDataGrid = () => {
+            if(watchFirstRun.value) {
+                dataSource.value = dataSource.value.concat([]);
+                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                watchFirstRun.value = false;
+            }
         }
+
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
             refetchTable()
+            watchFirstRun.value = true;
         }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
@@ -263,10 +287,13 @@ export default defineComponent({
             if (typeCheckbox.value.checkbox4 == true)
                 dataSearch.value.productionStatuses.push(-1)
             if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
+                trigger.value = true;
+                refetchTable();
+                watchFirstRun.value = true;
             }
         }, { deep: true })
+        
+        // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
             for (const key in typeCheckbox.value) {
                 if (newVal) {
@@ -277,14 +304,11 @@ export default defineComponent({
                 }
             }
         }, { deep: true });
+        
         const productionStatusData = (emitVal: any) => {
             productionStatusArr.value = [emitVal];
-            dataSource.value[0].productionStatuses = emitVal;
-            console.log(`output->productionStatusData`, emitVal)
+            reFreshDataGrid();
         }
-        watch(productionStatusArr, (newVal) => {
-            console.log(`output->newVal`, newVal)
-        })
         return {
             userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
             actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData

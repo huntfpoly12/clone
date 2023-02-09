@@ -278,4 +278,7 @@ export default defineComponent({
     left: 10px;
     transform: translate(0, -50%);
 }
+.warring-modal span{
+    font-size: 12px;
+}
 </style>

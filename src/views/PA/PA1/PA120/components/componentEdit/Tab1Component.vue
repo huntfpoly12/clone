@@ -1,7 +1,6 @@
 <template>
     <div id="tab1-pa120">
         <a-spin :spinning="loading" size="large">
-            {{ initFormStateTabPA120 }}
             <standard-form formName="tab1-pa120">
                 <a-form-item label="사번(코드)" label-align="right" class="red">
                     <text-number-box width="200px" :required="true" v-model:valueInput="employeeId"
@@ -292,6 +291,7 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.state.common.isAddFormErrorPA120 = true;
             } else {
                 let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
                 delete editData.employeeId

@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex-center mt-10 title-action">
-        <div class="d-flex">
+        <div>
             <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'gray' }" height="33px" />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
