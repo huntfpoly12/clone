@@ -1,10 +1,14 @@
 <template>
   <div class="tab-group">
+    <SearchArea />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
         <switch-basic :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'" />
-        <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
+        <span style="font-size: 11px; color: #888888" class="ml-5">
+          <img src="@/assets/images/iconInfo.png" style="width: 14px" />
+          제작전은 제작요청되지 않은 상태입니다.
+        </span>
       </a-col>
       <a-col>
         <a-tooltip placement="topLeft" color="black">
@@ -25,6 +29,7 @@
           :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize"
           :column-auto-width="true"
+          @selection-changed="selectionChanged"
         >
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
@@ -36,14 +41,29 @@
           </template>
           <DxColumn caption="귀속연월" cell-template="inputYearMonth" />
           <template #inputYearMonth="{ data }">
+            <!-- {{ data.data.imputedYear }} -->
             <a-tooltip color="black">
               <template #title>삭제</template>
-              <DxButton :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+            <DxButton
+              :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
+              :style="{
+                color: 'white',
+                backgroundColor: 'gray',
+              }"
+              class="btn-date"
+            />
             </a-tooltip>
           </template>
           <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
           <template #paymentYearMonth="{ data }">
-            <DxButton :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+            <DxButton
+              :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth"
+              :style="{
+                color: 'white',
+                backgroundColor: 'black',
+              }"
+              class="btn-date"
+            />
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
           <template #reportType="{ data }">
@@ -51,27 +71,25 @@
             <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
             <div v-else></div>
           </template>
-          <DxColumn caption="신고 주기" cell-template="afterDeadline" />
+          <DxColumn caption="신고 종류" cell-template="afterDeadline" />
           <template #afterDeadline="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
+            <div v-if="data.data.afterDeadline" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
             <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
             <div v-else></div>
           </template>
           <DxColumn caption="납부세액(A99)" data-field="yearEndTaxAdjustment" />
-          <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" />
-          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" />
+          <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" />
+          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
           <template #productionStatus="{ data }">
-            {{ productionStatus }}
-            <!-- <ProductionStatuses></ProductionStatuses> -->
+            <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" @productionStatusData="productionStatusData" />
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem class="custom-sumary" column="신고 주기" summary-type="count" display-format="지급액합계: {0}" value-format="#,###" />
-            <DxTotalItem class="custom-sumary" column="필요경비" summary-type="sum" value-format="#,###" display-format="필요경비합계: {0}" />
-            <DxTotalItem class="custom-sumary" column="소득금액" summary-type="sum" value-format="#,###" display-format="소득금액합계: {0}" />
-            <!-- <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" /> -->
-            <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" value-format="#,###" />
+            <DxTotalItem cssclass="custom-sumary" column="필요경비" :customize-text="customTextSummary" />
+            <DxTotalItem cssclass="custom-sumary" column="소득금액" :customize-text="customTextSummary" />
+            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
           </DxSummary>
         </DxDataGrid>
       </a-spin>
@@ -87,10 +105,13 @@ import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxButton } from 'devextreme-vue/select-box';
-import  { DxDataGrid,DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
+import DxButton from "devextreme-vue/button";
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
+import GetStatusTable from './GetStatusTable.vue';
+import notification from '@/utils/notification';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
     SearchArea,
@@ -102,8 +123,9 @@ export default defineComponent({
     DxColumn,
     SaveOutlined,
     DxSummary,
-    DxTotalItem
-},
+    DxTotalItem,
+    GetStatusTable,
+  },
   props: {
     search: {
       type: Number,
@@ -117,88 +139,118 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
 
-    //produtionStatus
-
-    const eletroFillingParam = reactive({
-      input: {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        reportId: 2,
-      },
-    });
-    const eletroFillingTrigger = ref(false);
-    const productionStatus = ref();
-    const {
-      result: eletroFillingResult,
-      refetch: eletroFillingRefetch,
-      loading: eletroFillingLoading,
-    } = useQuery(queries.getElectronicFilingsByWithholdingTax, eletroFillingParam, () => ({
-      enabled: eletroFillingTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
-    watch(eletroFillingResult, (newVal) => {
-    //   console.log(`output->newVal`, newVal);
-      let data = newVal.getElectronicFilingsByWithholdingTax;
-      productionStatus.value = data;
-    });
-
-    //Search with holding and data source
+    //--------Search with holding and data source------
 
     const dataSource = ref([]);
-    const searchWithholdingTrigger = ref(false);
+    const searchWithholdingTrigger = ref(true);
     const {
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
       refetch: searchWithholdingRefetch,
       onError: searchWithholdingError,
       variables,
-    } = useQuery(queries.searchWithholdingTaxElectronicFilings, { filter: filterBF620.value }, () => ({
-      enabled: searchWithholdingTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
+    } = useQuery(
+      queries.searchWithholdingTaxElectronicFilings,
+      {
+        filter: filterBF620.value,
+      },
+      () => ({
+        enabled: searchWithholdingTrigger.value,
+        fetchPolicy: 'no-cache',
+      })
+    );
     watch(searchWithholdingResult, (newVal) => {
-    //   console.log(`output->newVal`, newVal);
       let data = newVal.searchWithholdingTaxElectronicFilings;
       searchWithholdingTrigger.value = false;
       dataSource.value = data;
-      if (data.lastProductionRequestedAt) {
-        eletroFillingParam.input.reportId = data.reportId;
-        eletroFillingTrigger.value = true;
-        eletroFillingRefetch();
-      }
     });
 
-    //on Search
+    //------------SUM AREA---------
+    // count the number of status
+
+    let productionStatusArr = ref<any>([]);
+    const watchFirstRun = ref(true);
+    const countStatus = (arr: any[], type: number) => {
+      // console.log(`output->arr`, arr)
+      if (Object.keys(arr).length === 0 || arr.length === 0) {
+        return 0;
+      }
+      let count = arr.reduce((acc: any, crr: any) => {
+        acc[crr.productionStatus] = acc[crr.productionStatus] ? acc[crr.productionStatus] + 1 : 1;
+        return acc;
+      }, {});
+      if (count[type]) {
+        return count[type];
+      }
+      return 0;
+    };
+    // custom summary
+    const customTextSummary = () => {
+      return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(
+        productionStatusArr.value,
+        1
+      )} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`;
+    };
+    // caculator sum
+    const reFreshDataGrid = () => {
+      if (watchFirstRun.value) {
+        dataSource.value = dataSource.value.concat([]);
+        dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+        watchFirstRun.value = false;
+      }
+    };
+    const productionStatusData = (emitVal: any) => {
+      productionStatusArr.value = [emitVal];
+      reFreshDataGrid();
+    };
+
+    //------on Search------
 
     watch(
       () => props.search,
       () => {
         // console.log(`output->props.search`, props.search);
-        variables.value = { filter: filterBF620.value };
+        variables.value = {
+          filter: filterBF620.value,
+        };
         searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();
       },
       { deep: true }
     );
 
-    // watchEffect(()=>{
+    // -------request file withholding---------
 
-    // })
-
-    // request file withholding
-
-    const requestFileData = ref();
+    const requestFileData = ref<any>({
+      reportKeyInputs: [],
+      filter: filterBF620.value,
+      emailInput: {},
+    });
+    const selectionChanged = (event: any) => {
+      if (event.selectedRowKeys) requestFileData.value.reportKeyInputs = event.selectedRowKeys;
+    };
     const modalStatus = ref<boolean>(false);
+    const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
       requestFileData.value = {
-        reportKeyInputs: eletroFillingParam.input,
+        reportKeyInputs: [
+          {
+            companyId: companyId,
+            imputedYear: globalYear.value,
+            reportId: 2,
+          },
+        ],
         filter: filterBF620.value,
         emailInput: {
           receiverName: userInfor.value.name,
           receiverAddress: userInfor.value.email,
         },
       };
-      modalStatus.value = true;
+      if (requestFileData.value.reportKeyInputs.length > 0) {
+        modalStatus.value = true;
+      } else {
+        notification('warning', messageDelNoItem);
+      }
     };
     return {
       filterBF620,
@@ -207,15 +259,17 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      productionStatus,
       onRequestFile,
       modalStatus,
       requestFileData,
       userInfor,
+      productionStatusData,
+      customTextSummary,
+      selectionChanged,
     };
   },
 });
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 @import '../style/style.scss';
 </style>

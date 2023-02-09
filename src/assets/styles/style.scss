@@ -1,5 +1,4 @@
-// grid scss
-$fontSize : 14;
+$fontSize : 13;
 
 .dx-datagrid-headers .dx-header-row {
   background-color: #F2F5F7;
@@ -187,4 +186,12 @@ input,
 label,
 table {
   font-size: $fontSize+px;
+}
+
+.btn-date {
+  height: 25px;
+
+  .dx-button-content {
+    padding: 0 10px;
+  }
 }

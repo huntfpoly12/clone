@@ -4,7 +4,12 @@
       <div>
         <div class="eamil-input">
           <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
-          <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
+          <mail-text-box
+            width="250px"
+            :required="true"
+            v-model:valueInput="dataRequestFile.emailInput.receiverAddress"
+            placeholder="abc@example.com"
+          ></mail-text-box>
         </div>
         <div>
           <span>로 메일을 발송하시겠습니까?</span>
@@ -41,7 +46,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const dataRequestFile = ref(props.data);
     // query send request file tab 1
-    const { mutate: creationWithholdingTaxTab1, onDone: onDoneTab1, onError: onErrorTab1 } = useMutation(mutations.requestCreationWithholdingTaxElectronicFilingFile);
+    const {
+      mutate: creationWithholdingTaxTab1,
+      onDone: onDoneTab1,
+      onError: onErrorTab1,
+    } = useMutation(mutations.requestCreationWithholdingTaxElectronicFilingFile);
     // query send request file tab 2
     const { mutate: creationLocalTab2, onDone: onDoneTab2, onError: onErrorTab2 } = useMutation(mutations.requestCreationLocalIncomeTaxElectronicFilingFile);
     const onSubmit = (e: any) => {

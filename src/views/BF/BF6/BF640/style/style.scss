@@ -1,112 +1,131 @@
 #bf-640 {
-    .custom-note {
-        span {
-            font-size: 11px;
-            color: #666666;
-            padding-left: 5px;
-        }
+  .custom-note {
+    span {
+      font-size: 11px;
+      color: #666666;
+      padding-left: 5px;
+    }
+  }
+
+  #step1 {
+    .search-form-step-1 {
+      background-color: #f1f3f4;
+      padding-top: 10px;
+      padding-left: 10px;
+      padding-bottom: 5px;
     }
 
-    #step1 {
-        .search-form-step-1 {
-            background-color: #f1f3f4;
-            padding-top: 10px;
-            padding-left: 10px;
-            padding-bottom: 5px;
-        }
+    ::v-deep .custom-checkbox-search {
+      margin-bottom: 4px;
+      cursor: pointer;
 
-        ::v-deep .custom-checkbox-search {
-            margin-bottom: 4px;
-            cursor: pointer;
-
-            >div {
-                margin-right: 5px;
-            }
-        }
-
-        ::v-deep .fix-width-label {
-            label {
-                width: 110px;
-            }
-        }
-
-        .title-table {
-            justify-content: space-between;
-            margin-top: 10px;
-
-            .action-save {
-                cursor: pointer;
-            }
-        }
+      > div {
+        margin-right: 5px;
+      }
     }
 
-    #step2 {
-        .search-form-step-1 {
-            background-color: #f1f3f4;
-            padding-top: 10px;
-            padding-left: 10px;
-            padding-bottom: 5px;
-        }
-
-        ::v-deep .custom-checkbox-search {
-            margin-bottom: 4px;
-            cursor: pointer;
-
-            >div {
-                margin-right: 5px;
-            }
-        }
-
-        ::v-deep .fix-width-label {
-            label {
-                width: 110px;
-            }
-        }
-
-        .title-table {
-            justify-content: space-between;
-            margin-top: 10px;
-
-            .action-save {
-                cursor: pointer;
-            }
-        }
-
-        .month-custom-1 {
-            padding-left: 10px;
-            border-radius: 5px;
-            margin-right: 10px;
-            color: white;
-            background-color: black;
-            width: 90px;
-            font-size: 12px;
-
-            ::v-deep .dp__main {
-                height: 25px!important;
-            }
-
-            ::v-deep .dp__input {
-                color: white;
-                padding: 0px;
-                border: none;
-                height: 24px;
-                background-color: black;
-                font-size: 14px;
-            }
-
-            ::v-deep .dp__icon {
-                display: none;
-            }
-        }
+    ::v-deep .fix-width-label {
+      label {
+        width: 110px;
+      }
     }
 
-    #step3 {}
-    .btn-modal-save {
-        background-color: black;
-        color: white;
-        padding: 2px 5px;
-        border-radius: 5px;
-        margin-left: 10px;
+    .title-table {
+      justify-content: space-between;
+      margin-top: 10px;
+
+      .action-save {
         cursor: pointer;
+      }
     }
+  }
+
+  #step2 {
+    .search-form-step-1 {
+      background-color: #f1f3f4;
+      padding-top: 10px;
+      padding-left: 10px;
+      padding-bottom: 5px;
+    }
+
+    ::v-deep .custom-checkbox-search {
+      margin-bottom: 4px;
+      cursor: pointer;
+
+      > div {
+        margin-right: 5px;
+      }
+    }
+
+    ::v-deep .fix-width-label {
+      label {
+        width: 110px;
+      }
+    }
+
+    .title-table {
+      justify-content: space-between;
+      margin-top: 10px;
+
+      .action-save {
+        cursor: pointer;
+      }
+    }
+
+    .month-custom-1 {
+      padding-left: 10px;
+      border-radius: 5px;
+      margin-right: 10px;
+      color: white;
+      background-color: black;
+      width: 90px;
+      font-size: 12px;
+
+      ::v-deep .dp__main {
+        height: 25px !important;
+      }
+
+      ::v-deep .dp__input {
+        color: white;
+        padding: 0px;
+        border: none;
+        height: 24px;
+        background-color: black;
+        font-size: 14px;
+      }
+
+      ::v-deep .dp__icon {
+        display: none;
+      }
+    }
+  }
+
+  #step3 {
+  }
+  .btn-modal-save {
+    background-color: black;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  .production-check {
+    display: grid;
+    grid-template-columns: 42% 42%;
+    margin-left: 97px;
+  }
+  .search-company {
+    margin-left: 30px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    :deep .ant-form-item-label > label {
+      width: 120px;
+      padding-left: 10px;
+    }
+  }
+  .search-4 {
+    align-self: center;
+    margin-left: 30px;
+  }
 }
