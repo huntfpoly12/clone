@@ -21,28 +21,32 @@
                     </div>
                 </a-form-item>
                 <div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox1 = !typeCheckbox.checkbox1">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1">
-                            <production-statuses :typeTag="2" />
+                    <div class="d-flex-center custom-checkbox-search" :disabled="true"
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
+                            :disabled="dataSearch.beforeProduction">
+                            <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox2 = !typeCheckbox.checkbox2">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2">
-                            <production-statuses :typeTag="3" />
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
+                            :disabled="dataSearch.beforeProduction">
+                            <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox3 = !typeCheckbox.checkbox3">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3">
-                            <production-statuses :typeTag="4" />
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
+                            :disabled="dataSearch.beforeProduction">
+                            <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
-                        @click="typeCheckbox.checkbox4 = !typeCheckbox.checkbox4">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4">
-                            <production-statuses :typeTag="5" />
+                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
+                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
+                            :disabled="dataSearch.beforeProduction">
+                            <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
                 </div>
@@ -114,10 +118,10 @@
                     <template #제작현황="{ data }">
                         <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
                     </template>
-                    <!-- <DxSummary>
-                    <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-                    <DxTotalItem class="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
-                </DxSummary> -->
+                    <DxSummary>
+                        <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
+                    </DxSummary>
                 </DxDataGrid>
             </a-spin>
         </div>
@@ -133,7 +137,7 @@ import {
     SaveOutlined
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
 import GetStatusTable from "./GetStatusTableStep2.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
@@ -141,9 +145,18 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
-        PopupConfirmSave,GetStatusTable
-    },
+    SaveOutlined,
+    DxDataGrid,
+    DxToolbar,
+    DxSelection,
+    DxColumn,
+    DxItem,
+    DxScrolling,
+    PopupConfirmSave,
+    GetStatusTable,
+    DxSummary,
+    DxTotalItem
+},
     props: {
         searchStep: Number,
     },
@@ -154,8 +167,8 @@ export default defineComponent({
         let valueDefaultSwitch = ref(false)
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchStep2Utils })
-        let typeCheckbox = ref({
-            checkbox1: true,
+        let typeCheckbox = ref<any>({
+            checkbox1: false,
             checkbox2: false,
             checkbox3: false,
             checkbox4: false,
@@ -219,8 +232,52 @@ export default defineComponent({
         const selectionChanged = (res: any) => {
             keySelect.value = res.selectedRowKeys
         }
+
+        //SUM
+        // count the number of status
+        let productionStatusArr = ref<any>([]);
+        const  watchFirstRun = ref(true)
+        const countStatus = (arr: any[], type: number) => {
+            // console.log(`output->arr`, arr)
+            if (Object.keys(arr).length === 0 || arr.length === 0) {
+                return 0;
+            }
+            let count = arr.reduce((acc: any, crr: any) => {
+                acc[crr.productionStatus] = acc[crr.productionStatus] ? acc[crr.productionStatus] + 1 : 1;
+                return acc;
+            }, {});
+            if(count[type]){
+                return count[type];
+            }
+            return 0;
+        }
+        // custom summary
+        const customTextSummary = () => {
+            return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
+        }
+        // caculator sum
+        const reFreshDataGrid = () => {
+            if(watchFirstRun.value) {
+                dataSource.value = dataSource.value.concat([]);
+                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                watchFirstRun.value = false;
+            }
+        }
+
+         // watch beforeProduction
+         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
+            for (const key in typeCheckbox.value) {
+                if (newVal) {
+                    typeCheckbox.value[key] = false;
+                } else {
+                    typeCheckbox.value[key] = false;
+                    typeCheckbox.value.checkbox1 = true;
+                }
+            }
+        }, { deep: true });
+        
         return {
-            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
+            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
             selectionChanged, openModalSave
         }
     }

@@ -1,4 +1,4 @@
-import getCompaniesInElectronicFilingFile from "./getCompaniesInElectronicFilingFile";
+import getCompaniesInElectronicFilingFile from  "@/graphql/queries/common/getCompaniesInElectronicFilingFile";
 import getElectronicFilingsByLocalIncomeTax from "./getElectronicFilingsByLocalIncomeTax";
 import getElectronicFilingsByWithholdingTax from "./getElectronicFilingsByWithholdingTax";
 import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
