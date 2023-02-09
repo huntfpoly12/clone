@@ -26,28 +26,28 @@
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="2" />
+                            <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="3" />
+                            <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="4" />
+                            <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
-                            <production-statuses :typeTag="5" />
+                            <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
                 </div>
@@ -90,7 +90,6 @@
                 </div>
             </a-form-item>
         </div>
-        {{ customTextSummary() }}
         <div class="form-table">
             <a-spin :spinning="loadingTable">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -175,6 +174,7 @@ export default defineComponent({
         let dataModalSave = ref()
         let keySelect = ref([]);
         let productionStatusArr = ref<any>([]);
+        const  watchFirstRun = ref(true)
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -195,7 +195,7 @@ export default defineComponent({
                 }
                 return acc;
             }, {}));
-            console.log(`output->result`, result)
+            // console.log(`output->result`, result)
             dataSource.value = [...result];
             trigger.value = false
             // call api get productionStatus
@@ -227,7 +227,7 @@ export default defineComponent({
             }
         }
         const countStatus = (arr: any[], type: number) => {
-            console.log(`output->arr`, arr)
+            // console.log(`output->arr`, arr)
             if (Object.keys(arr).length === 0 || arr.length === 0) {
                 return 0;
             }
@@ -250,6 +250,7 @@ export default defineComponent({
             modalConfirmMail.value = false
             trigger.value = true
             refetchTable()
+            watchFirstRun.value = true;
         }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
@@ -263,8 +264,9 @@ export default defineComponent({
             if (typeCheckbox.value.checkbox4 == true)
                 dataSearch.value.productionStatuses.push(-1)
             if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
+                trigger.value = true;
+                refetchTable();
+                watchFirstRun.value = true;
             }
         }, { deep: true })
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
@@ -277,14 +279,23 @@ export default defineComponent({
                 }
             }
         }, { deep: true });
+        const reFreshDataGrid = () => {
+            if(watchFirstRun.value) {
+                dataSource.value = dataSource.value.concat([]);
+                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                watchFirstRun.value = false;
+            }
+        }
         const productionStatusData = (emitVal: any) => {
             productionStatusArr.value = [emitVal];
-            dataSource.value[0].productionStatuses = emitVal;
-            console.log(`output->productionStatusData`, emitVal)
+            reFreshDataGrid();
+            // dataSource.value.concat([]);
+            // dataSource.value = dataSource.value.concat([]);
+            // dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+            // dataSource.value = dataSource.value.concat([]);
+            // dataSource.value.splice(1,1);
+            
         }
-        watch(productionStatusArr, (newVal) => {
-            console.log(`output->newVal`, newVal)
-        })
         return {
             userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
             actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData
