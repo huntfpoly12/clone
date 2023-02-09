@@ -1,6 +1,6 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
-    <div id="pa-520" class="page-content">{{ store.state.common.checkStatusChangeValuePA520 }}
+    <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="3" style="padding-right: 10px">
             <div class="total-user">
