@@ -17,9 +17,9 @@
             <a-form-item label="제작상태">
               <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses" layout="horizontal" :icon-size="12">
                 <template #radio="{ data }">
-                  <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                  <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px" />
-                  <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px" />
+                  <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                  <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                  <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
                 </template>
               </DxRadioGroup>
             </a-form-item>
