@@ -70,7 +70,7 @@
                                 :show-borders="true" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize" :column-auto-width="true" class="table-scroll"
                                 @selection-changed="onSelectionChanged">
-                                <DxScrolling mode="standard" show-scrollbar="always"/>
+                                <DxScrolling mode="standard" show-scrollbar="always" />
                                 <DxPaging :page-size="0" />
                                 <DxSelection data-field="active" mode="multiple" />
                                 <DxColumn data-field="id" caption="코드" :width="200" :fixed="true" />
@@ -124,7 +124,9 @@ import Field from './Field.vue';
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
-    props: ["modalStatus", "data"],
+    props: {
+        modalStatus: Boolean,
+    },
     components: {
         MenuOutlined,
         SearchOutlined,
@@ -183,8 +185,6 @@ export default defineComponent({
                 border: "1px solid goldenrod",
             }
         ])
-        const isShow = ref<boolean>(false);
-        const visible = ref<boolean>(false);
         let disabledBtn = ref(true);
 
         // config grid
@@ -229,11 +229,11 @@ export default defineComponent({
             rows: per_page,
             types: ["r"],
         });
-        let trigger = ref<boolean>(true);
+        let trigger = ref<boolean>(false);
         let triggerDuplication = ref<boolean>(false);
-        let triggerGroup = ref<boolean>(true);
-       
-              
+        let triggerGroup = ref<boolean>(false);
+
+
         const { result: resRoleGroup, refetch: reqRoleGroup } = useQuery(
             queries.searchScreenRoleGroups, originData,
             () => ({
@@ -243,7 +243,8 @@ export default defineComponent({
         );
         const arrData = ref()
         watch(resRoleGroup, (value: any) => {
-            if (value && value.searchScreenRoleGroups) 
+            trigger.value = false;
+            if (value && value.searchScreenRoleGroups)
                 arrData.value = value.searchScreenRoleGroups.datas
         });
         let dataCallGroup = ref({
@@ -274,6 +275,7 @@ export default defineComponent({
         //     selectSearch.value = option
         // })
         watch(resGroup, (value: any) => {
+            triggerGroup.value = false;
             let option: any = []
             value.findGroups.map((val: any) => {
                 option.push({
@@ -289,10 +291,6 @@ export default defineComponent({
                 }
             }
             selectSearch.value = option
-
-            if (value && value.findGroups) {
-                arrData.value = value.findGroups.datas
-            }
         });
         let dataCallCheck = ref({})
         const { refetch: refetchUserName, onResult: onResultUsername } =
@@ -326,6 +324,12 @@ export default defineComponent({
                 disabledBtn.value = true;
             }
         });
+        watch(() => props.modalStatus, (newVal) => {
+            if (newVal) {
+                trigger.value = true;
+                triggerGroup.value = true;
+            }
+        })
         const {
             mutate: creactUser,
             onDone: creactDone,
@@ -389,7 +393,6 @@ export default defineComponent({
             setModalVisible,
             arrData,
             formState,
-            isShow,
             selectSearch,
             createUser,
             changeValueType,
@@ -402,6 +405,8 @@ export default defineComponent({
     },
 });
 </script>  
+
+
 
 
 

@@ -110,14 +110,12 @@
                         </DxDataGrid>
                     </div>
                 </div>
-                <a-row>
-                    <a-col :offset="8" style="text-align: center; margin-top: 20px;">
-                        <button-basic text="취소" type="default" mode="outlined" @onClick="setModalVisible"
-                            class="mr-10" />
-                        <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="confirmUpdate($event)"
-                            :disabled="formState.type == 'c' ? true : false" />
-                    </a-col>
-                </a-row>
+                <a-col style="text-align: center; margin-top: 20px;">
+                    <button-basic text="취소" type="default" mode="outlined" @onClick="setModalVisible"
+                        class="mr-10" :width="120"/>
+                    <button-basic text="저장하고 나가기" type="default" mode="contained" @onClick="confirmUpdate($event)"
+                        :disabled="formState.type == 'c' ? true : false" :width="150"/>
+                </a-col>
             </standard-form>
         </a-modal>
     </div>
@@ -299,7 +297,6 @@ export default defineComponent({
             (newValue, old) => {
                 if (newValue) {
                     trigger.value = true;
-                    triggerSearchRoleGroup.value = true;
                     if (dataQuery) {
                         dataQuery.value = { id: props.idRowEdit };
                         refetch();
@@ -348,8 +345,11 @@ export default defineComponent({
                 }
                 checkedNames.value = arrSelect
             }
+            trigger.value = false;
+            triggerSearchRoleGroup.value = true;
         });
         watch(resRoleGroup, (value: any) => {
+            triggerSearchRoleGroup.value = false;
             if (value && value.searchScreenRoleGroups) {
                 arrData.value = value.searchScreenRoleGroups.datas
             }
