@@ -1,6 +1,6 @@
 <template>
     <div id="tab2-pa520">
-        <div class="header-text-1">공제 {{ store.state.common.checkStatusChangeValuePA520 }} {{ idRowEdit }} {{ store.state.common.allowedChangedRowPA520 }}</div>
+        <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24">
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">

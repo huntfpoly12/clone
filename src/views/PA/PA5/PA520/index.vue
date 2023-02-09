@@ -1,6 +1,6 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
-    <div id="pa-520" class="page-content">{{ store.state.common.checkStatusChangeValuePA520 }}
+    <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="3" style="padding-right: 10px">
             <div class="total-user">
@@ -332,8 +332,10 @@ export default defineComponent({
                 // Get index row change 
                 let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
                 // active row change
-                let a = document.body.querySelectorAll('[aria-rowindex]');
-                (a[indexChange] as HTMLInputElement).click();
+                setTimeout(() => {
+                  let a = document.body.querySelectorAll('[aria-rowindex]');
+                  (a[indexChange] as HTMLInputElement).click();
+                }, 100);
             }
         }
 
