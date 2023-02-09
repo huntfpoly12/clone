@@ -11,7 +11,7 @@ export const dataSearchUtils = {
     "paymentYear": parseInt(dayjs().format('YYYY')),
     "paymentMonth": parseInt(dayjs().format('MM')),
 }
-export const dataSearchStep3Utils = {
+export const dataSearchStep2Utils = {
     "type": 1,
     "requesteStartDate": parseInt(dayjs().format('YYYYMMDD')) - 10000,
     "requesteFinishDate": parseInt(dayjs().format('YYYYMMDD')),
