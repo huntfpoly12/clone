@@ -6,7 +6,7 @@
                 <a-row justify="start" :gutter="[16, 8]">
                     <a-col class="custom-flex">
                         <label class="lable-item">회원종류 :</label>
-                        <DxSelectBox id="custom-templates" :data-source="products" display-expr="name" value-expr="id"
+                        <DxSelectBox id="custom-templates" :data-source="productsValue" display-expr="name" value-expr="id"
                             item-template="item" :height="$config_styles.HeightInput" style="width:140px"
                             field-template="field" @value-changed="changeValueType">
                             <template #field="{ data }">
@@ -122,7 +122,7 @@
             </a-spin>
         </div>
     </div>
-    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="count"
+    <AddNew210Poup :modalStatus="modalAddNewStatus" @closePopup="closePopupAdd" :key="count"
         @createDone="createSuccess" />
     <EditBF210Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
         :idRowEdit="idRowEdit" typeHistory="bf-210-pop" title="회원관리" @updateDone="createSuccess" />
@@ -140,7 +140,7 @@ import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
 import DxButton from "devextreme-vue/button";
-import { EditOutlined, HistoryOutlined, SearchOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined, LoginOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
 import DxSelectBox from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF2/BF210/index";
@@ -164,12 +164,7 @@ export default defineComponent({
         EditBF210Popup,
         HistoryPopup,
         PopLogin,
-        SearchOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
         DxSelectBox,
-        LoginOutlined,
         Field,
     },
     setup() {
@@ -179,7 +174,7 @@ export default defineComponent({
         const modalHistoryStatus = ref(false)
         const modalLoginStatus = ref(false)
         const modalEditStatus = ref<boolean>(false);
-        let triggerSearching = ref<boolean>(false);
+        let triggerSearching = ref<boolean>(true);
         const checkStatus = ref({
             checkBox1: true,
             checkBox2: false
@@ -189,80 +184,84 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const dataSearch = ref({
+        const dataSearch:any = ref({
             ...dataSearchIndex,
             rows: per_page.value
         })
         const rowTable = ref()
         var idRowEdit = ref<number>(0)
-        const originData = ref()
-        let products = ref([...productsValue])
+        // const originData = ref()
+        // let products = ref([...productsValue])
         const dataSource = ref([])
-        const { refetch: refetchData, onResult, loading: loading } = useQuery(queries.searchUsers, originData, () => ({
+        const { refetch: refetchData, onResult, loading: loading } = useQuery(queries.searchUsers, { filter: dataSearch.value }, () => ({
             enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
         onResult((res) => {
+            triggerSearching.value = false;
             rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
         })
         const changePage = () => {
-            let dataNew = ref({
-                page: dataSearch.value.page,
-                rows: per_page,
-                type: dataSearch.value.type,
-                groupCode: dataSearch.value.groupCode,
-                groupName: dataSearch.value.groupName,
-                username: dataSearch.value.username,
-                name: dataSearch.value.name,
-                active: true,
-            })
+            // let dataNew = ref({
+            //     page: dataSearch.value.page,
+            //     rows: per_page,
+            //     type: dataSearch.value.type,
+            //     groupCode: dataSearch.value.groupCode,
+            //     groupName: dataSearch.value.groupName,
+            //     username: dataSearch.value.username,
+            //     name: dataSearch.value.name,
+            //     active: true,
+            // })
             triggerSearching.value = true
-            if (originData) {
-                originData.value = { filter: dataNew.value }
-                refetchData()
-            }
+            // if (originData) {
+            //     originData.value = { filter: dataNew.value }
+            //     refetchData()
+            // }
         }
         const searching = () => {
-            let dataNew = ref()
+            // let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
-                dataNew.value = {
-                    page: 1,
-                    rows: per_page,
-                    type: dataSearch.value.type,
-                    groupCode: dataSearch.value.groupCode,
-                    groupName: dataSearch.value.groupName,
-                    username: dataSearch.value.username,
-                    name: dataSearch.value.name,
-                    active: true,
-                }
+                // dataNew.value = {
+                //     page: 1,
+                //     rows: per_page,
+                //     type: dataSearch.value.type,
+                //     groupCode: dataSearch.value.groupCode,
+                //     groupName: dataSearch.value.groupName,
+                //     username: dataSearch.value.username,
+                //     name: dataSearch.value.name,
+                //     active: true,
+                // }
+                dataSearch.value.active = true
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
-                dataNew.value = {
-                    page: 1,
-                    rows: per_page,
-                    type: dataSearch.value.type,
-                    groupCode: dataSearch.value.groupCode,
-                    groupName: dataSearch.value.groupName,
-                    username: dataSearch.value.username,
-                    name: dataSearch.value.name,
-                    active: false,
-                }
+                // dataNew.value = {
+                //     page: 1,
+                //     rows: per_page,
+                //     type: dataSearch.value.type,
+                //     groupCode: dataSearch.value.groupCode,
+                //     groupName: dataSearch.value.groupName,
+                //     username: dataSearch.value.username,
+                //     name: dataSearch.value.name,
+                //     active: false,
+                // }
+                dataSearch.value.active = false
             } else {
-                dataNew.value = {
-                    page: 1,
-                    rows: per_page,
-                    type: dataSearch.value.type,
-                    groupCode: dataSearch.value.groupCode,
-                    groupName: dataSearch.value.groupName,
-                    username: dataSearch.value.username,
-                    name: dataSearch.value.name,
-                }
+                // dataNew.value = {
+                //     page: 1,
+                //     rows: per_page,
+                //     type: dataSearch.value.type,
+                //     groupCode: dataSearch.value.groupCode,
+                //     groupName: dataSearch.value.groupName,
+                //     username: dataSearch.value.username,
+                //     name: dataSearch.value.name,
+                // }
+                delete dataSearch.value.active
             }
             triggerSearching.value = true
-            if (originData) {
-                originData.value = { filter: dataNew.value }
-                refetchData()
-            }
+            // if (originData) {
+            //     originData.value = { filter: dataNew.value }
+            //     refetchData()
+            // }
         }
         const changeValueCheckBox = (checkbox: any) => {
             if (checkbox == 'checkBox1')
@@ -274,7 +273,6 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '회원관리')
         }
         const openAddNewModal = () => {
-            count.value++
             modalAddNewStatus.value = true;
         }
         const setModalEditVisible = (data: any) => {
@@ -324,6 +322,10 @@ export default defineComponent({
                 refetchData()
             }
         );
+        const closePopupAdd = () => {
+            modalAddNewStatus.value = false; 
+            count.value++
+        }
         return {
             createSuccess,
             changePage,
@@ -346,15 +348,15 @@ export default defineComponent({
             modalEditStatus,
             dataSource,
             idRowEdit,
-            refetchData,
-            originData,
+            // refetchData,
+            // originData,
             searching,
             dataSearch,
             rowChoose,
             checkStatus,
-            products,
+            productsValue,
             count,
-            loading
+            loading, closePopupAdd
         }
     },
 });

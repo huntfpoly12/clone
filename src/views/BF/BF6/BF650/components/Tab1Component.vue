@@ -91,7 +91,7 @@
                         </span>
                     </template>
                     <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-                        format="yyyy-MM-dd" />
+                        format="yyyy-MM-dd hh:mm" />
                     <DxColumn caption="제작현황" cell-template="productionStatus" />
                     <template #productionStatus="{ data }">
                         <GetStatusTable :data="data.data" />
