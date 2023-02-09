@@ -40,10 +40,6 @@
     padding: 0px;
 }
 
-.ant-form-item {
-    margin-bottom: 4px;
-}
-
 .title-number-modal {
     margin-top: 7px;
 }
@@ -191,11 +187,6 @@
             color: black;
         }
     }
-
-    .dp__input_icon_pad {
-        padding: 3px 0px 5px 36px;
-        border-radius: 3px;
-    }
 }
 
 :deep .ant-form-item-control-input-content{
@@ -212,9 +203,7 @@
 #bf-320-popup-datagrid{
     max-height: 141px;
 }
-:deep input.dp__input.dp__input_icon_pad {
-    height: 34px;
-}
+
 :deep .ant-form-item-control {
     display: table;
 }

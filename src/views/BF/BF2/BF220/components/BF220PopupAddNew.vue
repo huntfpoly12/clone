@@ -15,7 +15,7 @@
                                         placeholder="영문,숫자 5~10자 (중복불가)" :max-character="10" :min-character="5"
                                         :required="true" width="250"></default-text-box>
                                     <button-basic type="default" text="중복체크" @onClick="checkId" mode="contained"
-                                        :disabled="isDisable" :height="33"></button-basic>
+                                        :disabled="isDisable" :height="$config_styles.HeightInput"></button-basic>
                                 </div>
                             </a-form-item>
                         </a-col>

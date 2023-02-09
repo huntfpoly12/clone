@@ -484,10 +484,6 @@ export default defineComponent({
   margin-left: 110px;
 }
 
-.ant-form-item {
-  margin-bottom: 3px;
-}
-
 .warring-modal {
   font-size: 13px;
   line-height: 5px;

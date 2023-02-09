@@ -1,6 +1,6 @@
 <template>
     <div :class="fieldData?.id != 'c' ? 'custom-item-input-bf-210' : 'custom1-item-input-bf-210'"
-        :style="{ width: '100px', background: stydefault.background, padding: '0px 0 0 12px', borderRadius: '5px', border: stydefault.border, height: '25px', margin: '4px 0px 0 4px' }">
+        :style="{ width: '100px', background: stydefault.background, padding: '0px 0 0 12px', borderRadius: '5px', border: stydefault.border, height: '25px', margin: '1px 0px 0 1px' }">
         <DxTextBox :value="stydefault && stydefault.name" :read-only="true" class="product-name" />
     </div>
 </template>

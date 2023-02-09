@@ -296,8 +296,7 @@
                                             :label-col="labelCol">
                                             <div style="width: 200px">
                                                 <month-picker-box :required="true"
-                                                    v-model:valueDate="formState.content.withholding.startYearMonth"
-                                                    className="0" />
+                                                    v-model:valueDate="formState.content.withholding.startYearMonth"/>
                                             </div>
                                         </a-form-item>
                                         <a-form-item label="직 원 수" class="clr" label-align="left" :label-col="labelCol">

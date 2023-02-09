@@ -54,7 +54,6 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 24px;
         font-size: 14px;
     }
 
