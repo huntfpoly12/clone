@@ -24,16 +24,16 @@
             <span>연간(1.1~12.31)지급분</span> 
               <div class="group-checkbox">
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="2" padding="0px 5px" />
+                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="2" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="3" padding="0px 5px" />
+                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="3" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="4" padding="0px 5px" />
+                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="4" padding="0px 5px" />
                 </div>
                 <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-statuses :typeTag="5" padding="0px 5px" />
+                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="5" padding="0px 5px" />
                 </div>
               </div>
           </div>
@@ -78,7 +78,10 @@
                 <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                 <a-tooltip placement="topLeft" color="black">
                     <template #title>전자신고파일 제작 요청</template>
-                    <SaveOutlined class="fz-24 ml-5 action-save" @click="requestIncomeFile" />
+                    <div class="btn-modal-save" @click="requestIncomeFile">
+                        <SaveOutlined class="fz-24 ml-5 action-save"/>
+                    <span style="margin-left: 5px;">파일제작요청</span>
+                    </div>
                 </a-tooltip>
             </div>
         </a-form-item>
