@@ -5,16 +5,23 @@
       padding: 8px 5px;
       margin-bottom: 16px;
     }
+
     .top-table {
       justify-content: space-between;
     }
   }
+
   .tab-3 {
     display: flex;
     width: 100%;
     align-items: center;
+
     :deep .ant-form-item {
-        margin-bottom: 0;
-      }
+      margin-bottom: 0;
+    }
+  }
+
+  :deep .custom-sumary {
+    white-space: break-spaces;
   }
 }
