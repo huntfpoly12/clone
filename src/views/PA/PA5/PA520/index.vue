@@ -332,8 +332,10 @@ export default defineComponent({
                 // Get index row change 
                 let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
                 // active row change
-                let a = document.body.querySelectorAll('[aria-rowindex]');
-                (a[indexChange] as HTMLInputElement).click();
+                setTimeout(() => {
+                  let a = document.body.querySelectorAll('[aria-rowindex]');
+                  (a[indexChange] as HTMLInputElement).click();
+                }, 100);
             }
         }
 
