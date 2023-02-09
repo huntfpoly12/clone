@@ -189,6 +189,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const wrapper =  ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false)
+
+    // The above code is setting up the hot table.
     const hotSettings =  {
           comments: true,
           fillHandle: true,
@@ -221,24 +223,44 @@ export default defineComponent({
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
+
     const store = useStore();
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
     const trigger = ref<boolean>(false)
     const dataSource = ref<any>(props.dataReport);
     const originData = ref()
+
     const setModalVisible = () => {
       emit('closePopup', false)
     }
+
     onMounted(() => {
       clearAllCellValue(wrapper)
+      originData.value = {
+          companyId: companyId,
+          input:{
+            imputedYear: dataSource.value[0].imputedYear,
+            imputedMonth: dataSource.value[0].imputedMonth,
+            paymentYear: dataSource.value[0].paymentYear,
+            paymentMonth: dataSource.value[0].paymentMonth,
+            reportType: dataSource.value[0].reportType,
+            index: dataSource.value[0].index,
+            paymentType: 1,
+            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          },
+        }
+      trigger.value = true;
+      refetchData()
     })
 
     watch(() => props.dataReport,(newValue) => {
       dataSource.value = newValue
     })
     
+    // A hook that is used to fetch data from the server.
     const {
             refetch: refetchData,
             result,
@@ -266,6 +288,11 @@ export default defineComponent({
       confirmLoadNewStatus.value = true
     }
     
+    // A function that is called when the user clicks on the "Load New" button. It is setting the value of
+    // the originData variable to a new object. The new object has a companyId property that is set to the
+    // value of the companyId variable. It also has an input property that is set to an object. The input
+    // object has properties that are set to the values of the properties of the first object in the
+    // dataSource.value array.
     const loadNew = () => {
         originData.value = {
           companyId: companyId,
@@ -298,6 +325,7 @@ export default defineComponent({
         notification('error', error.message)
     })
 
+    // The above code is creating a tax withholding report.
     const createTaxWithholding = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
