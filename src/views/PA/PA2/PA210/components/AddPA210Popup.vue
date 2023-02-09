@@ -70,7 +70,7 @@
                 </div>
             </standard-form>
         </a-modal>
-        <report-grid :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
             :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>

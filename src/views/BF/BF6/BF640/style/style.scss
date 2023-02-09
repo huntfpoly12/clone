@@ -101,8 +101,12 @@
     }
 
     #step3 {}
-    .custom-sumary {
-        white-space: break-spaces;
-        color: red;
+    .btn-modal-save {
+        background-color: black;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 5px;
+        margin-left: 10px;
+        cursor: pointer;
     }
 }

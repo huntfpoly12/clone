@@ -85,7 +85,10 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
+                        <div class="btn-modal-save" @click="openModalSave">
+                            <SaveOutlined class="fz-20 ml-5 action-save"/>
+                        <span style="margin-left: 5px;">파일제작요청</span>
+                        </div>
                     </a-tooltip>
                 </div>
             </a-form-item>
@@ -144,6 +147,7 @@ import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import dayjs from 'dayjs';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
@@ -173,8 +177,7 @@ export default defineComponent({
         let dataCallApiGetElectronic = ref()
         let dataModalSave = ref()
         let keySelect = ref([]);
-        let productionStatusArr = ref<any>([]);
-        const  watchFirstRun = ref(true)
+        const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
         let {
@@ -215,8 +218,10 @@ export default defineComponent({
             notification('error', error.message)
         })
         // ================== FUNCTION ================== 
+        const selectionChanged = (event: any) => {
+            keySelect.value = event.selectedRowKeys
+        }
         const openModalSave = () => {
-            modalConfirmMail.value = true
             dataModalSave.value = {
                 filter: dataSearch.value,
                 emailInput: {
@@ -225,7 +230,18 @@ export default defineComponent({
                 },
                 companyIds: keySelect.value
             }
+            if (keySelect.value.length > 0) {
+                modalConfirmMail.value = true;
+            }else {
+                notification('warning',messageDelNoItem)
+            }
         }
+
+        //SUM
+        // count the number of status
+        
+        let productionStatusArr = ref<any>([]);
+        const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
             // console.log(`output->arr`, arr)
             if (Object.keys(arr).length === 0 || arr.length === 0) {
@@ -240,12 +256,19 @@ export default defineComponent({
             }
             return 0;
         }
+        // custom summary
         const customTextSummary = () => {
             return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
-        const selectionChanged = (res: any) => {
-            keySelect.value = res.selectedRowKeys
+        // caculator sum
+        const reFreshDataGrid = () => {
+            if(watchFirstRun.value) {
+                dataSource.value = dataSource.value.concat([]);
+                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                watchFirstRun.value = false;
+            }
         }
+
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
@@ -269,6 +292,8 @@ export default defineComponent({
                 watchFirstRun.value = true;
             }
         }, { deep: true })
+        
+        // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
             for (const key in typeCheckbox.value) {
                 if (newVal) {
@@ -279,22 +304,10 @@ export default defineComponent({
                 }
             }
         }, { deep: true });
-        const reFreshDataGrid = () => {
-            if(watchFirstRun.value) {
-                dataSource.value = dataSource.value.concat([]);
-                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
-                watchFirstRun.value = false;
-            }
-        }
+        
         const productionStatusData = (emitVal: any) => {
             productionStatusArr.value = [emitVal];
             reFreshDataGrid();
-            // dataSource.value.concat([]);
-            // dataSource.value = dataSource.value.concat([]);
-            // dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-            // dataSource.value = dataSource.value.concat([]);
-            // dataSource.value.splice(1,1);
-            
         }
         return {
             userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,

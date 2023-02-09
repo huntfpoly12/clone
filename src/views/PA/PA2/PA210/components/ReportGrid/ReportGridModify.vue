@@ -167,6 +167,7 @@ export default defineComponent({
       confirmLoadNewStatus.value = true
     }
     
+    // The above code is used to load the data from the database to the table.
     const loadNew = () => {
       clearAllCellValue(wrapper)
       let hot  = wrapper.value?.hotInstance; 
@@ -262,7 +263,8 @@ export default defineComponent({
             mutate: actionUpdateTaxWithholding,
             onDone: doneUpdate,
             onError: errUpdate
-        } = useMutation(mutations.updateTaxWithholdingStatusReport);
+    } = useMutation(mutations.updateTaxWithholdingStatusReport);
+        
     doneUpdate(() => {
         notification('success', `업부상태 변경되었습니다!`)
     })
@@ -270,6 +272,7 @@ export default defineComponent({
         notification('error', error.message)
     })
 
+    // The above code is a function that is called when the user clicks the "수정" button.
     const updateTaxWithholdingModifiy = () => {
       let hot = wrapper.value.hotInstance;
       const arrData = hot.getData()
@@ -374,10 +377,13 @@ export default defineComponent({
       actionUpdateTaxWithholding(variables)
     }
 
+    // The above code is creating a function called actionConfirmDelete. This function is setting the value
+    // of confirmStatus to true.
     const actionConfirmDelete = ()=>{
       confirmStatus.value = true
     }
 
+    // Creating a function that will close the confirm box.
     const actionCloseConfirm = () => {
       confirmStatus.value = false
     }
