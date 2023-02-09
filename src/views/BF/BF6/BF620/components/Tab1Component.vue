@@ -44,14 +44,14 @@
             <!-- {{ data.data.imputedYear }} -->
             <a-tooltip color="black">
               <template #title>삭제</template>
-              <DxButton
-                :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
-                :style="{
-                  color: 'white',
-                  backgroundColor: 'gray',
-                }"
-                :height="'33px'"
-              />
+            <DxButton
+              :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
+              :style="{
+                color: 'white',
+                backgroundColor: 'gray',
+              }"
+              class="btn-date"
+            />
             </a-tooltip>
           </template>
           <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
@@ -62,7 +62,7 @@
                 color: 'white',
                 backgroundColor: 'black',
               }"
-              :height="'33px'"
+              class="btn-date"
             />
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
@@ -73,7 +73,7 @@
           </template>
           <DxColumn caption="신고 종류" cell-template="afterDeadline" />
           <template #afterDeadline="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
+            <div v-if="data.data.afterDeadline" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
             <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
             <div v-else></div>
           </template>
@@ -105,7 +105,7 @@ import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxButton } from 'devextreme-vue/select-box';
+import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
@@ -142,7 +142,7 @@ export default defineComponent({
     //--------Search with holding and data source------
 
     const dataSource = ref([]);
-    const searchWithholdingTrigger = ref(false);
+    const searchWithholdingTrigger = ref(true);
     const {
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
@@ -216,9 +216,7 @@ export default defineComponent({
         searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();
       },
-      {
-        deep: true,
-      }
+      { deep: true }
     );
 
     // -------request file withholding---------
@@ -272,6 +270,6 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 @import '../style/style.scss';
 </style>

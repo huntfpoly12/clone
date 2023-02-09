@@ -2,7 +2,6 @@
   <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false"
     :buttonSave="false" />
   <div id="pa-720" class="page-content">
-    {{ incomeExtrasParams.processKey }}
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
@@ -98,7 +97,7 @@
             <div v-else @click="onAddMonth(12)">[+]</div>
           </template>
           <DxMasterDetail :enabled="true" template="row-detail" />
-          <template #row-detail="{ data }">
+          <template #row-detail>
             <div class="table-detail">
               <DxDataGrid key-expr="id" :data-source="IncomeProcessExtrasCustom" :show-borders="false"
                 :column-auto-width="true" :allow-column-reordering="move_column" :show-column-headers="false"
@@ -186,11 +185,11 @@
       </a-spin>
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
-      <a-col style="display: flex">
+      <a-col>
         <DxButton :text="'귀' + inputDateTax" :disabled="!isColumnData"
-          :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+          :style="{ color: 'white', backgroundColor: 'gray' }" class="btn-date" />
         <DxButton :text="'지' + paymentDateTax" :disabled="!isColumnData"
-          :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+          :style="{ color: 'white', backgroundColor: 'black' }" class="btn-date" />
         <ProcessStatus v-model:valueStatus="statusParam.status"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>

@@ -9,10 +9,7 @@
       <div>
         <label for="username" required>ID</label>
         <input
-          :class="[
-            errors && errors.search('username') !== -1 ? 'error' : '',
-            'form-control',
-          ]"
+          :class="[errors && errors.search('username') !== -1 ? 'error' : '', 'form-control']"
           type="text"
           name="username"
           autofocus
@@ -23,10 +20,7 @@
       <div>
         <label for="password" required>비밀번호</label>
         <input
-          :class="[
-            errors && errors.search('password') !== -1 ? 'error' : '',
-            'form-control',
-          ]"
+          :class="[errors && errors.search('password') !== -1 ? 'error' : '', 'form-control']"
           type="password"
           name="password"
           id="password"
@@ -34,48 +28,41 @@
         />
       </div>
       <p v-if="errors && errors.error" class="invalid">
-        {{ isSignup ? errors.error : "Invalid credentials" }}
+        {{ isSignup ? errors.error : 'Invalid credentials' }}
       </p>
       <button class="primary" type="submit">
-        {{
-           signinLoading
-            ? "로그인중입니다.."
-            : "로그인"
-        }}
+        {{ signinLoading ? '로그인중입니다..' : '로그인' }}
       </button>
     </form>
     <div class="request-contract">
-      <router-link to="/request-contract">
-        신규고객 서비스가입신청!!!
-      </router-link>
-      
+      <router-link to="/request-contract"> 신규고객 서비스가입신청!!! </router-link>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive, ref } from "vue";
-import { useMutation } from "@vue/apollo-composable";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import mutations from "../graphql/mutations/index";
-import { getJwtObject } from "@bankda/jangbuda-common";
+import { reactive, ref } from 'vue';
+import { useMutation } from '@vue/apollo-composable';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import mutations from '../graphql/mutations/index';
+import { getJwtObject } from '@bankda/jangbuda-common';
+import { setToken } from '@/helpers/commonFunction';
 export default {
   setup() {
     const store = useStore();
     const router = useRouter();
     const form = reactive({
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     });
     const errors = ref(null);
 
     const submitForm = (e) => {
       e.preventDefault();
       signinData();
-      sessionStorage.setItem('username', form.username)
+      sessionStorage.setItem('username', form.username);
     };
-
 
     // signin mutation
     const {
@@ -91,12 +78,15 @@ export default {
     }));
     signinDone((res) => {
       const jwtObject = getJwtObject(res.data.login.accessToken);
-      if(!jwtObject.isExpired()) {
-        store.commit("auth/setAuthData", res.data.login.accessToken);
+      if (!jwtObject.isExpired()) {
+        store.commit('auth/setAuthData', res.data.login.accessToken);
       } else {
-        store.commit("auth/setAuthData", res.data.login.refreshToken);
+        store.commit('auth/setAuthData', res.data.login.refreshToken);
       }
-      router.push("/dashboard");
+      router.push('/dashboard');
+      // location.reload();
+      store.commit('auth/setToken');
+      setToken();
     });
     onError((error) => {
       errors.value = error.message;
@@ -114,20 +104,20 @@ export default {
 
 <style scoped>
 .auth-form {
-    padding-top: 150px;
-    max-width: 400px;
-    margin: 0 auto;
+  padding-top: 150px;
+  max-width: 400px;
+  margin: 0 auto;
 }
 .flex {
-    display: flex;
-    align-items: center;
-    margin-left: -50px;
+  display: flex;
+  align-items: center;
+  margin-left: -50px;
 }
 .flex label {
-    width: 100px;
+  width: 100px;
 }
 [required]::after {
-  content: "*";
+  content: '*';
   color: red;
 }
 .request-contract {
@@ -135,7 +125,6 @@ export default {
 }
 .form-control {
   margin: 8px 0;
- 
 }
 
 .invalid:focus {
