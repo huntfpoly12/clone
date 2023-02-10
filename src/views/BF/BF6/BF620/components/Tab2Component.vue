@@ -5,14 +5,21 @@
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
         <switch-basic :textCheck="'세무대리인신고'" :textUnCheck="'납세자자진신고'" />
-        <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
-        <label class="lable-item ml-15">제출연월일:</label>
-        <date-time-box width="150px" default="2022-12-12" dateFormat="YYYY-MM-DD" />
+        <span style="font-size: 11px; color: #888888" class="ml-5">
+          <img src="@/assets/images/iconInfo.png" style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다.
+        </span>
       </a-col>
-      <a-col>
+      <a-col style="display: flex">
+        <div>
+          <label class="lable-item ml-15">제출연월일:</label>
+          <date-time-box width="150px" default="2022-12-12" dateFormat="YYYY-MM-DD" />
+        </div>
         <a-tooltip placement="topLeft" color="black">
           <template #title>전자신고파일 제작 요청</template>
-          <SaveOutlined class="fz-24 ml-5 action-save" @click="onRequestFile" />
+          <div class="btn-modal-save" @click="onRequestFile">
+            <SaveOutlined class="fz-20 ml-5 action-save" />
+            <span style="margin-left: 5px">파일제작요청</span>
+          </div>
         </a-tooltip>
       </a-col>
     </a-row>
@@ -41,12 +48,20 @@
           <template #inputYearMonth="{ data }">
             <a-tooltip color="black">
               <template #title>삭제</template>
-              <DxButton :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+              <DxButton
+                :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
+                :style="{ color: 'white', backgroundColor: 'gray' }"
+                :height="'33px'"
+              />
             </a-tooltip>
           </template>
           <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
           <template #paymentYearMonth="{ data }">
-            <DxButton :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+            <DxButton
+              :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth"
+              :style="{ color: 'white', backgroundColor: 'black' }"
+              :height="'33px'"
+            />
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
           <template #reportType="{ data }">
@@ -65,8 +80,7 @@
           <DxColumn caption="최종제작요청일시" data-field="wageIncomeSimplified" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
           <template #productionStatus="{ data }">
-            {{ productionStatus }}
-            <ProductionStatuses></ProductionStatuses>
+            {{ data.data.wageIncomeSimplified }}
           </template>
         </DxDataGrid>
       </a-spin>
@@ -83,7 +97,7 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import { DxButton } from 'devextreme-vue/select-box';
-import  { DxDataGrid,DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
 
@@ -131,7 +145,7 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(eletroFillingResult, (newVal) => {
-    //   console.log(`output->newVal`, newVal);
+      //   console.log(`output->newVal`, newVal);
       let data = newVal.getElectronicFilingsByLocalIncomeTax;
       productionStatus.value = data;
     });

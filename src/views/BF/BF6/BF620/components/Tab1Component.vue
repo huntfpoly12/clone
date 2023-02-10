@@ -13,7 +13,10 @@
       <a-col>
         <a-tooltip placement="topLeft" color="black">
           <template #title>전자신고파일 제작 요청</template>
-          <SaveOutlined class="fz-24 ml-5 action-save" @click="onRequestFile" />
+          <div class="btn-modal-save" @click="onRequestFile">
+            <SaveOutlined class="fz-20 ml-5 action-save" />
+            <span style="margin-left: 5px">파일제작요청</span>
+          </div>
         </a-tooltip>
       </a-col>
     </a-row>
@@ -44,14 +47,14 @@
             <!-- {{ data.data.imputedYear }} -->
             <a-tooltip color="black">
               <template #title>삭제</template>
-            <DxButton
-              :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
-              :style="{
-                color: 'white',
-                backgroundColor: 'gray',
-              }"
-              class="btn-date"
-            />
+              <DxButton
+                :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
+                :style="{
+                  color: 'white',
+                  backgroundColor: 'gray',
+                }"
+                class="btn-date"
+              />
             </a-tooltip>
           </template>
           <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
@@ -65,10 +68,10 @@
               class="btn-date"
             />
           </template>
-          <DxColumn caption="신고 주기" cell-template="reportType" />
+          <DxColumn caption="신고 주기" cell-template="reportType"/>
           <template #reportType="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
+            <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
+            <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
             <div v-else></div>
           </template>
           <DxColumn caption="신고 종류" cell-template="afterDeadline" />
@@ -105,7 +108,7 @@ import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import DxButton from "devextreme-vue/button";
+import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
@@ -224,28 +227,26 @@ export default defineComponent({
     const requestFileData = ref<any>({
       reportKeyInputs: [],
       filter: filterBF620.value,
-      emailInput: {},
+      emailInput: {
+        receiverName: userInfor.value.name,
+        receiverAddress: userInfor.value.email,
+      },
     });
     const selectionChanged = (event: any) => {
-      if (event.selectedRowKeys) requestFileData.value.reportKeyInputs = event.selectedRowKeys;
+      console.log(`output->event`, event);
+      if (event.selectedRowsData)
+        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
+          return { companyId: item.company.id, name: item.company.name, reportId: item.reportId };
+        });
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
-      requestFileData.value = {
-        reportKeyInputs: [
-          {
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            reportId: 2,
-          },
-        ],
-        filter: filterBF620.value,
-        emailInput: {
-          receiverName: userInfor.value.name,
-          receiverAddress: userInfor.value.email,
-        },
+      requestFileData.value.emailInput = {
+        receiverName: userInfor.value.name,
+        receiverAddress: userInfor.value.email,
       };
+      console.log(`output->requestFileData.value`, requestFileData.value);
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
       } else {
