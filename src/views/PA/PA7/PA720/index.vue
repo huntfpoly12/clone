@@ -371,7 +371,7 @@ export default defineComponent({
     const addNewRow = () => {
       let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
       store.commit('common/formPA720', dataActionUtils.input);
-      console.log(`output->dataActionUtils.input`, formPA720.value.input.employeeId);
+      // console.log(`output->dataActionUtils.input`, formPA720.value.input.employeeId);
       taxPayRef.value.focusedRowKey = formPA720.value.input.employeeId;
       // focusedRowKey.value = formPA720.value.employeeId;
       taxPayRef.value.dataSourceDetail = dataSourceDetail.value.concat([formPA720.value.input]);
@@ -544,14 +544,12 @@ export default defineComponent({
     const onPopupComfirm = (e: any) => {
       if (e) {
         if (!isLoadNewForm.value) {
-          console.log(`output->submit form`);
           onSubmit();
           store.commit('common/actionSaveTypePA720', 0);
         } else {
           resetForm();
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
           addNewRow();
-          console.log(`output->reset form`);
         }
       } else {
         isLoadNewForm.value = true;

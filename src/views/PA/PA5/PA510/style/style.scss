@@ -1,3 +1,4 @@
+@import "../../../../../assets/styles/settingStyle.scss";
 #pa-510 {
     margin-top: 10px;
 
@@ -110,9 +111,8 @@
     >div {
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
-        // width: 50%;
     }
+    margin-bottom: $margin-bottom+px;;
 }
 
 ::v-deep .dx-master-detail-cell {

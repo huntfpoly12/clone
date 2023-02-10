@@ -356,7 +356,6 @@ export default defineComponent({
     };
     // GET INCOMETYPECODE
     const changeIncomeTypeCode = (res: string) => {
-        console.log(`output->res`,res)
       formPA720.value.input.incomeTypeCode = res;
     };
 

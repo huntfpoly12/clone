@@ -52,6 +52,7 @@
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
                         <DxItem name="exportButton" />
+                        <DxItem template="pagination-table"/>
                         <DxItem name="searchPanel" />
                         <!-- <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
@@ -248,39 +249,6 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped>
-#data-grid-demo {
-    min-height: 700px;
-}
-.components-grid-demo-flex .ant-col {
-    display: flex;
-    align-items: center;
-}
-::v-deep .dx-toolbar-after {
-    display: flex;
-    .dx-toolbar-item {
-        &:first-child {
-            order: 2;
-            margin-left: 5px;
-        }
-    }
-}
-.modal-note {
-    max-height: 500px;
-    overflow-y: auto;
-    .title-note {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    th {
-        display: none;
-    }
-}
-.anticon {
-    cursor: pointer;
-}
-.custom-action {
-    text-align: center;
-}
+<style lang="scss" scoped src="./style/style.scss">
+
 </style>

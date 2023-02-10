@@ -42,10 +42,6 @@
   padding: 2px 0px 1px 36px;
   border-radius: 3px;
 }
-.btn-date {
-  height: $min-height+px;
-
-  .dx-button-content {
-    padding: 0 10px;
-  }
+.dx-datagrid .dx-row > td{
+  padding: 4px 7px;
 }

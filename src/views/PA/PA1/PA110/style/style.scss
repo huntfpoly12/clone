@@ -89,18 +89,18 @@
     padding-top: 5px;
 }
 ::v-deep .custom-deduction {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
 
-    >span {
-        margin-right: 10px; 
-    }
+    // >span {
+    //     margin-right: 10px; 
+    // }
 
     >div {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
+        // display: flex;
+        // align-items: center;
+        // margin-bottom: 5px;
         width: 50%;
     }
 }

@@ -46,4 +46,11 @@
   :deep .dp__theme_light {
     display: inline-block;
   }
+  :deep .custom-sumary {
+    white-space: break-spaces;
+  }
+  :deep .dx-button-content {
+    padding: 0 10px;
+  }
+
 }
