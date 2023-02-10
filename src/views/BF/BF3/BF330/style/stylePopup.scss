@@ -30,14 +30,6 @@
     padding-left: 50px;
 }
 
-::v-deep .text-area-box-custom .dx-texteditor-input {
-    text-align: left !important;
-}
-
-.ant-form-item {
-    margin-bottom: 3px;
-}
-
 .ant-table-tbody>tr>td {
     padding: 2px 8px;
 }
@@ -148,12 +140,6 @@
     margin-top: -35px;
 }
 
-::v-deep .input-float-right .dx-texteditor-input {
-    margin-right: 10px;
-    text-align: right;
-}
-
-
 ::v-deep .dx-checkbox-checked .dx-checkbox-icon::before {
     font-size: 13px;
     top: 8px;
@@ -217,6 +203,4 @@
 ::v-deep .delete_group span:first-child {
     width: 200px;
 }
-::v-deep input.dp__input.dp__input_icon_pad {
-    height: 34px;
-}
+

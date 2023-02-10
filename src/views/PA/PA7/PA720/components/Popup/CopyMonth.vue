@@ -245,15 +245,12 @@ export default defineComponent({
   border-radius: 5px;
   margin-right: 10px;
   color: white;
-
   .dp__input {
     color: white;
     padding: 0px;
     border: none;
-    height: 24px;
     background-color: #a6a6a6;
   }
-
   .dp__icon {
     display: none;
   }
@@ -271,7 +268,6 @@ export default defineComponent({
     padding: 0px;
     border: none;
     background-color: black;
-    height: 30px;
     font-size: 14px;
   }
 
