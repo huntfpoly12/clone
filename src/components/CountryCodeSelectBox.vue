@@ -1,16 +1,16 @@
 <template>
 	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueCountry"
-		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
+		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width , height: $config_styles.HeightInput}"
 		:disabled="disabled" :required="required">
 		<template #field="{ data }">
-			<div v-if="data" class="select-content" style="padding: 3px 0px;">
+			<div v-if="data" class="select-content" style="padding: 1px 0px;">
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
 					{{ data.value }}
 				</div>
 			</div>
-			<div v-else class="select-content" style="padding: 3px 0px; height: 30px;">
+			<div v-else class="select-content" style="padding: 1px 0px; height: 30px;">
 				<div>
 					<span>선택</span>
 					<DxTextBox style="display: none;" />
