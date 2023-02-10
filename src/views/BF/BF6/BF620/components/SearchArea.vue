@@ -5,10 +5,7 @@
         <div class="search-date">
           <span class="search-text mt-5">귀속연월</span>
           <div class="search-date">
-            <div class="month-custom d-flex-center">
-              귀
-              <month-picker-box v-model:valueDate="month1" style="width:60px" class="mr-5 ml-5" />
-            </div>
+            <month-picker-box-custom v-model:valueDate="month1" bgColor="gray"></month-picker-box-custom>
           </div>
           <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
@@ -17,12 +14,9 @@
           </a-form-item>
         </div>
         <div class="search-date ">
-          <span class="search-text mt-5">귀속연월</span>
+          <span class="search-text mt-5">지급연월</span>
           <div class="search-date">
-            <div class="month-custom month-black d-flex-center">
-              지
-              <month-picker-box v-model:valueDate="month2" style="width:60px" class="mr-5 ml-5" />
-            </div>
+            <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
           <a-form-item label="내/외국인" label-align="right" class=" ml-10">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
