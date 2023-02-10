@@ -44,7 +44,7 @@ export const styles: Styles = {
     LightGrey: "#5B6A81", //( Light Grey )
 
     // height input
-    HeightInput: "33px",
+    HeightInput: "28px",
 
     ColorCheckBox: "#337ab7",
 

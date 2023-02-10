@@ -66,7 +66,6 @@
         .title-table {
             justify-content: space-between;
             margin-top: 10px;
-
             .action-save {
                 cursor: pointer;
             }
@@ -79,7 +78,6 @@
             color: white;
             background-color: black;
             width: 90px;
-            font-size: 12px;
 
             ::v-deep .dp__main {
                 height: 25px!important;
@@ -89,9 +87,7 @@
                 color: white;
                 padding: 0px;
                 border: none;
-                height: 24px;
                 background-color: black;
-                font-size: 14px;
             }
 
             ::v-deep .dp__icon {

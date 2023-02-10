@@ -269,7 +269,6 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 24px;
         background-color: black;
         padding-top: 1px;
         font-size: 12px;

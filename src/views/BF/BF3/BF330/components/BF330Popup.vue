@@ -10,7 +10,7 @@
                                 <a-row>
                                     <a-col :span="6">
                                         <a-form-item label="총이용료" style="font-weight: bold">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{height: $config_styles.HeightInput}">
                                                 {{
                                                     $filters.formatCurrency(formState.info.totalPrice =
                                                         formState.info.accountingPrice + formState.info.withholdingPrice)
@@ -21,7 +21,7 @@
                                     <a-col :span="18"></a-col>
                                     <a-col :span="6">
                                         <a-form-item label="회계서비스 이용료" class="cusstom-label-padding">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{height: $config_styles.HeightInput}">
                                                 {{ $filters.formatCurrency(formState.info.accountingPrice) }}
                                             </p>
                                         </a-form-item>
@@ -29,7 +29,7 @@
                                     <a-col :span="18"></a-col>
                                     <a-col :span="6">
                                         <a-form-item label="원천서비스 이용료" class="cusstom-label-padding">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{height: $config_styles.HeightInput}">
                                                 {{ $filters.formatCurrency(formState.info.withholdingPrice) }}
                                             </p>
                                         </a-form-item>
@@ -138,7 +138,7 @@
                                         </a-col>
                                         <a-col :span="7">
                                             <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
-                                                <p class="input-disble" :id="'price-' + dataActiveRow.name">
+                                                <p class="input-disble" :id="'price-' + dataActiveRow.name" :style="{height: $config_styles.HeightInput}">
                                                     {{
                                                         $filters.formatCurrency(getTotalAmount(dataActiveRow))
                                                     }}
@@ -218,7 +218,7 @@
                                     <a-col :span="14">
                                         <a-form-item label="원천서비스 이용료:" style="font-weight: bold;"
                                             class="custom-label-select">
-                                            <p class="input-disble" style="width: 328px;">
+                                            <p class="input-disble" style="width: 328px;" :style="{height: $config_styles.HeightInput}">
                                                 {{ $filters.formatCurrency(totalWithholdingService) }}
                                             </p>
                                         </a-form-item>

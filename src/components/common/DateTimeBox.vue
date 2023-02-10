@@ -13,7 +13,6 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { ko } from "date-fns/locale";
 import filters from "@/helpers/filters";
 import dayjs from 'dayjs';
-import { range } from "lodash";
 export default defineComponent({
     props: {
         width: {
@@ -103,10 +102,6 @@ export default defineComponent({
 
 
 <style lang="scss" >
-input.dp__input.dp__input_icon_pad {
-    height: 34px;
-}
-
 .dp__disabled {
     background: #fff;
     border: 1px solid #ddd;

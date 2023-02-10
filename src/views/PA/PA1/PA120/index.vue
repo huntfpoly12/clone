@@ -37,6 +37,7 @@
         </div>
       </a-col>
     </a-row>
+    {{ token }}asd
     <a-row style="flex-flow: row nowrap;">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
@@ -217,6 +218,7 @@ export default defineComponent({
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
+    const token = computed(() => store.state.auth.token);
     const {
       refetch: refetchData,
       result,
@@ -526,6 +528,7 @@ export default defineComponent({
       compareType,
       messageSave,
       messageDel,
+      token,
     };
   },
 });

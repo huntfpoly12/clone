@@ -61,10 +61,6 @@ export default defineComponent({
 
 
 <style lang="scss" >
-input.dp__input.dp__input_icon_pad {
-    height: 34px;
-}
-
 .dp__disabled {
     background: #fff;
     border: 1px solid #ddd;

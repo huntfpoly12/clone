@@ -76,7 +76,5 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-::v-deep .dx-tag-content {
-    padding: 1px 25px 4px 6px;
-}
+
 </style>
