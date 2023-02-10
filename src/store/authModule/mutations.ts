@@ -11,9 +11,6 @@ const mutations = {
   },
   loadUserInfor(state: any, dataInfor: any) {
     state.userInfor = dataInfor
-  },
-  setToken: (state: any, token: string) => {
-    state.token = sessionStorage.getItem("token");
   }
 };
 

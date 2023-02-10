@@ -10,19 +10,16 @@ import Router from '../router';
 let companyId: any = null
 let userType: any = null
 let userId: any = null
-let screenRoleInfo: any = null;
-// store.dispatch('auth/setToke');
-// const token = store.state.auth.token;
-// const store = store;
+let screenRoleInfo: any = null;  
 let token = sessionStorage.getItem("token");
 if (token) {
     const jwtObject = getJwtObject(token);
     userType = jwtObject.userType
     userId = jwtObject.userId
     screenRoleInfo = jwtObject.screenRoleInfo
-    if (userType === 'c') {
-        companyId = jwtObject.companyId
-    }
+  if (userType === 'c') {
+      companyId = jwtObject.companyId
+  }
 }
 
 const openTab = (objTab :  any) => {
