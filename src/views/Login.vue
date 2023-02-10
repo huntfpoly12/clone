@@ -47,7 +47,6 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import mutations from '../graphql/mutations/index';
 import { getJwtObject } from '@bankda/jangbuda-common';
-import { setToken } from '@/helpers/commonFunction';
 export default {
   setup() {
     const store = useStore();
@@ -83,10 +82,9 @@ export default {
       } else {
         store.commit('auth/setAuthData', res.data.login.refreshToken);
       }
-      router.push('/dashboard');
-      // location.reload();
-      store.commit('auth/setToken');
-      setToken();
+      const url = new URL('/dashboard', window.location.origin)
+      window.location.href = url.toString()
+      //router.push({ path: '/dashboard' });
     });
     onError((error) => {
       errors.value = error.message;
