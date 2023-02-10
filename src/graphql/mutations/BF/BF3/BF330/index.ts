@@ -8,7 +8,8 @@ const mutations = {
   createServiceContractManageMemo: createServiceContractManageMemo,
   deleteServiceContractManageMemo: deleteServiceContractManageMemo,
   updateServiceContractManageMemo: updateServiceContractManageMemo,
-  updateServiceContract: updateServiceContract
+  updateServiceContractInfo: updateServiceContract,
+  updateServiceContractExtra: updateServiceContract
 };
 
 export default mutations;
