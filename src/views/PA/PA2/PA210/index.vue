@@ -16,7 +16,7 @@
                     </DxButton>
                 </template>
                 <template #button-template>
-                    <a-tooltip>
+                    <a-tooltip placement="topLeft">
                         <template #title>정기(기한후)신고서 새로 작성</template>
                         <div class="custom-grade-cell">
                             <DxButton icon="plus" @click="openAddNewModal" />
@@ -38,7 +38,7 @@
                         <div class="custom-grade-cell">
                             <DxButton
                                 :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
-                                :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                                :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                         </div>
                     </a-tooltip>
                 </template>
@@ -51,19 +51,19 @@
                         <div class="custom-grade-cell">
                             <DxButton
                                 :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                                :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                                :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                         </div>
                     </a-tooltip>
                 </template>
                 <DxColumn caption="신고 주기" cell-template="reportType" />
                 <template #reportType="{ data }">
                     <DxButton :text="getReportType(data.data.reportType)?.text"
-                        :style="getReportType(data.data.reportType)?.style" :height="'33px'" />
+                        :style="getReportType(data.data.reportType)?.style" :height="$config_styles.HeightInput" />
                 </template>
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
                     <DxButton :text="getAfterDeadline(data.data.index, data.data.afterDeadline)?.tag_name"
-                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style" :height="'33px'" />
+                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
                 </template>
 
                 <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"

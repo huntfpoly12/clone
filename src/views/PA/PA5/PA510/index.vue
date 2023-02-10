@@ -189,10 +189,10 @@
             <a-col>
                 <DxButton
                     :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
-                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 <DxButton
                     :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
-                    :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                    :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm" :disabled="store.state.common.statusDisabledStatus"/>
             </a-col>
             <a-col class="">

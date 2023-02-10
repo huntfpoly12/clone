@@ -88,14 +88,14 @@
                                     <a-col :span="9">
                                         <a-form-item label="상 호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
-                                            <default-text-box v-model:valueInput="formState.companyName" width="150px"
+                                            <default-text-box v-model:valueInput="formState.companyName" width="220"
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyName" />
                                         </a-form-item>
                                         <a-form-item label="사업자등록번호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
                                             <biz-number-text-box :disabled="!canChangeableBizNumber"
-                                                v-model:valueInput="formState.companyBizNumber" width="120"
+                                                v-model:valueInput="formState.companyBizNumber" width="220"
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyBizNumber" />
                                         </a-form-item>
@@ -108,34 +108,26 @@
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
                                             <id-number-text-box :required="true"
-                                                v-model:valueInput="formState.content.company.residentId" width="150px"
+                                                v-model:valueInput="formState.content.company.residentId" width="220"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="residentId" />
                                         </a-form-item>
                                         <a-form-item label="주소" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <a-row :gutter="[0, 4]">
-                                                <a-col :span="24">
-                                                    <a-row>
-                                                        <a-col :span="8">
-                                                            <default-text-box
-                                                                v-model:valueInput="formState.content.company.zipcode"
-                                                                width="100%" :disabled="true" />
-                                                        </a-col>
-                                                        <a-col :span="16">
-                                                            <div style="margin-left: 5px">
-                                                                <post-code-button @dataAddress="funcAddress" />
-                                                            </div>
-                                                        </a-col>
-                                                    </a-row>
-                                                </a-col>
-                                                <a-col :span="24">
+                                                <a-col :span="24" style="display: flex">
                                                     <default-text-box
-                                                        v-model:valueInput="formState.content.company.addressExtend"
-                                                        width="100%" placeholder="상세 주소 입력" />
+                                                        v-model:valueInput="formState.content.company.zipcode"
+                                                        width="70px" :disabled="true" />
+                                                    <post-code-button @dataAddress="funcAddress" />
                                                 </a-col>
                                                 <a-col :span="24">
                                                     <default-text-box
                                                         v-model:valueInput="formState.content.company.roadAddress"
-                                                        width="100%" :disabled="true" />
+                                                        width="220" :disabled="true" />
+                                                </a-col>
+                                                <a-col :span="24">
+                                                    <default-text-box
+                                                        v-model:valueInput="formState.content.company.addressExtend"
+                                                        width="220" placeholder="상세 주소 입력" />
                                                 </a-col>
                                             </a-row>
                                         </a-form-item>
@@ -143,10 +135,10 @@
                                             :label-col="{ span: 9 }">
                                             <tel-text-box v-model:valueInput="formState.content.company.phone"
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
-                                                nameInput="company-phone" />
+                                                nameInput="company-phone" width="220"/>
                                         </a-form-item>
                                         <a-form-item label="팩 스" label-align="left" :label-col="{ span: 9 }">
-                                            <text-number-box v-model:valueInput="formState.content.company.fax" />
+                                            <text-number-box v-model:valueInput="formState.content.company.fax" width="220"/>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6">
@@ -190,8 +182,6 @@
                                         <a-card title="⁙ 운영사업" :bordered="false" style="width: 100%"
                                             :headStyle="{ padding: '5px', color: 'red' }" bodyStyle="padding: 0px 0px">
                                         </a-card>
-                                        <div class="option">
-                                        </div>
                                         <div id="data-grid-demo">
                                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                                                 :data-source="dataSource" :show-borders="true"
@@ -210,7 +200,9 @@
                                                     <div>{{ data.rowIndex + 1 }}</div>
                                                 </template>
                                                 <DxColumn data-field="name" caption="사업명 (중복불가)" />
-                                                <DxColumn data-field="facilityBizType" caption="사업분류" />
+                                                <DxColumn data-field="facilityBizType" caption="사업분류" >
+                                                    <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+                                                </DxColumn>
                                                 <DxColumn cell-template="startYearMonth" caption="서비스시작년월"
                                                     data-type="date" />
                                                 <template #startYearMonth="{ data }">
@@ -230,7 +222,7 @@
                                                         css-class="cell-button-add" />
                                                 </DxToolbar>
                                                 <template #button-template>
-                                                    <DxButton icon="plus" @click="addRow" text="추가" />
+                                                    <button-basic style="padding: 4px 0;" icon="plus" @onClick="addRow" text="추가" />
                                                 </template>
                                             </DxDataGrid>
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
@@ -242,7 +234,7 @@
                                                             v-model:valueInput="dataActiveRow.facilityBizType"
                                                             displayeExpr="n" valueExpr="v" width="160px" />
                                                     </a-form-item>
-                                                    <a-form-item label="사업분류" :label-col="labelCol">
+                                                    <a-form-item label="사업명 (중복불가)" :label-col="labelCol">
                                                         <default-text-box v-model:valueInput="dataActiveRow.name"
                                                             :required="true" width="160px" />
                                                     </a-form-item>
@@ -374,11 +366,9 @@
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxMasterDetail, DxScrolling } from "devextreme-vue/data-grid";
-import { UploadOutlined, MinusCircleOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxLookup, DxToolbar, DxItem, DxTexts, DxScrolling } from "devextreme-vue/data-grid";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { FacilityBizType } from "@bankda/jangbuda-common";
-import DxDropDownBox from "devextreme-vue/drop-down-box";
 import { bizTypeItems, inputInCollapse } from "../utils";
 import { initialFormState, initialDataStatus, initialArrayRadioWithdrawDay } from "../utils/index"
 import queries from "@/graphql/queries/BF/BF3/BF310/index";
@@ -400,22 +390,15 @@ export default defineComponent({
         },
     },
     components: {
-        DxDropDownBox,
         DxDataGrid,
         DxColumn,
         DxPaging,
-        DxSelection,
-        UploadOutlined,
-        MinusCircleOutlined,
-        DeleteOutlined,
-        PlusOutlined,
         imgUpload,
         DxEditing,
         DxLookup,
         DxToolbar,
         DxItem,
         DxTexts,
-        DxMasterDetail,
         DxButton,
         DxScrolling
     },

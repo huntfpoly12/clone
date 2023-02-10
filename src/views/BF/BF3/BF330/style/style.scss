@@ -24,3 +24,42 @@
 .custom-action {
     text-align: center;
 }
+
+:deep .dx-button-content {
+    height: 28px;
+    padding: 6px;
+}
+#data-grid-demo {
+    min-height: 700px;
+}
+.components-grid-demo-flex .ant-col {
+    display: flex;
+    align-items: center;
+}
+::v-deep .dx-toolbar-after {
+    display: flex;
+    .dx-toolbar-item {
+        &:first-child {
+            order: 2;
+            margin-left: 5px;
+        }
+    }
+}
+.modal-note {
+    max-height: 500px;
+    overflow-y: auto;
+    .title-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    th {
+        display: none;
+    }
+}
+.anticon {
+    cursor: pointer;
+}
+.custom-action {
+    text-align: center;
+}

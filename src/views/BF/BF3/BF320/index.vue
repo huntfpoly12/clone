@@ -1,76 +1,76 @@
 <template>
-    
-        <action-header title="사업자관리" @actionSearch="searching" />
-        <div id="bf-320">
-            <div class="search-form">
-                <div id="components-grid-demo-flex">
-                    <a-row justify="start" :gutter="[16, 8]">
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">
-                                    사업자코드 :
-                                </label>
-                                <default-text-box v-model:valueInput="originData.code" width="130px" />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">상호:</label>
-                                <default-text-box v-model:valueInput="originData.name" width="130px" />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">대표자:</label>
-                                <default-text-box v-model:valueInput="originData.presidentName" width="130px" />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <label class="lable-item">해지:</label>
-                            <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'포함'"
-                                :textUnCheck="'제외'" />
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label class="lable-item">주소 :</label>
-                                <default-text-box v-model:valueInput="originData.address" width="130px" />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label>메니저명 :</label>
-                                <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
-                            </div>
-                        </a-col>
-                        <a-col>
-                            <div class="dflex custom-flex">
-                                <label>영업자명 :</label>
-                                <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
-                            </div>
-                        </a-col>
-                    </a-row>
-                </div>
+
+    <action-header title="사업자관리" @actionSearch="searching" />
+    <div id="bf-320">
+        <div class="search-form">
+            <div id="components-grid-demo-flex">
+                <a-row justify="start" :gutter="[16, 8]">
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">
+                                사업자코드 :
+                            </label>
+                            <default-text-box v-model:valueInput="originData.code" width="130px" />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">상호:</label>
+                            <default-text-box v-model:valueInput="originData.name" width="130px" />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">대표자:</label>
+                            <default-text-box v-model:valueInput="originData.presidentName" width="130px" />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <label class="lable-item">해지:</label>
+                        <switch-basic v-model:valueSwitch="originData.excludeCancel" :textCheck="'포함'"
+                            :textUnCheck="'제외'" />
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">주소 :</label>
+                            <default-text-box v-model:valueInput="originData.address" width="130px" />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label>메니저명 :</label>
+                            <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
+                        </div>
+                    </a-col>
+                    <a-col>
+                        <div class="dflex custom-flex">
+                            <label>영업자명 :</label>
+                            <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
+                        </div>
+                    </a-col>
+                </a-row>
             </div>
-            <div class="page-content"> 
-                <a-spin :spinning="loading" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
-                    @exporting="onExporting" :allow-column-reordering="move_column"
+        </div>
+        <div class="page-content">
+            <a-spin :spinning="loading" size="large">
+                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies"
+                    :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
                         <DxItem name="exportButton" />
+                        <DxItem template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <DxItem  template="pagination-table"/>
                         <!-- <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
                         <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
-                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" style="margin-top: 2px;"
-                                :total="rowTable" show-less-items @change="searching" />
+                            <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
+                                style="margin-top: 2px;" :total="rowTable" show-less-items @change="searching" />
                         </div>
                     </template>
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
@@ -87,11 +87,11 @@
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
                             <a-space :size="10">
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>편집</template>
                                     <EditOutlined @click="setModalVisible(data)" />
                                 </a-tooltip>
-                                <a-tooltip  color="black" placement="top">
+                                <a-tooltip color="black" placement="top">
                                     <template #title>변경이력</template>
                                     <HistoryOutlined @click="modalHistory(data)" />
                                 </a-tooltip>
@@ -99,36 +99,35 @@
                         </div>
                     </template>
                 </DxDataGrid>
-                </a-spin>
-                <div class="pagination-table" v-if="rowTable > originData.rows">
-                    <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
-                        :total="rowTable" show-less-items @change="searching" />
-                </div>
-                <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
-                    :data="popupData" />
-                <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-                    :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
+            </a-spin>
+            <div class="pagination-table" v-if="rowTable > originData.rows">
+                <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows" :total="rowTable"
+                    show-less-items @change="searching" />
             </div>
+            <BF320Popup :modalStatus="modalStatus" @closePopup="handleClosePopup" :idRowEdit="idRowEdit"
+                :data="popupData" />
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
+                title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
         </div>
+    </div>
 </template> 
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel,DxToolbar,DxScrolling,DxItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxExport, DxSearchPanel, DxToolbar, DxScrolling, DxItem } from 'devextreme-vue/data-grid';
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import BF320Popup from "./components/BF320Popup.vue";
 import DxButton from "devextreme-vue/button";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
-import { DxSelectBox } from 'devextreme-vue/select-box';
+import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxButton, DxPaging, DxSelection, DxExport, DxSearchPanel, DxSelectBox,DxToolbar,DxItem,DxScrolling,
+        DxDataGrid, DxColumn, DxButton, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling,
         BF320Popup, HistoryPopup,
-        EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined
+        EditOutlined, HistoryOutlined
     },
     setup() {
         // config grid
@@ -155,7 +154,7 @@ export default defineComponent({
         const searching = () => {
             trigger.value = true;
         }
-        const handleClosePopup = () => { 
+        const handleClosePopup = () => {
             modalStatus.value = false
             trigger.value = true;
         }

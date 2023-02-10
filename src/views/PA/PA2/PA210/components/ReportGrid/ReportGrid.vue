@@ -30,7 +30,7 @@
                 <div class="custom-grade-cell">
                     <DxButton
                         :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
-                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
             </template>
@@ -43,13 +43,13 @@
                 <div class="custom-grade-cell">
                     <DxButton
                         :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" />
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
             </template>
             <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
             <template #afterDeadline-index="{ data }">
-               <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="'33px'" />
+               <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
             </template>
             <DxColumn caption="연말"  cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
             <template #yearEndTaxAdjustment="{ data }">

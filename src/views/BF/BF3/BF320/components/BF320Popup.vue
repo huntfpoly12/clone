@@ -10,11 +10,11 @@
                                 <a-col span="9">
                                     <a-form-item label="상 호" class="clr">
                                         <default-text-box v-model:valueInput="formState.name" :required="true"
-                                            nameInput="formState-name" width="200px" />
+                                            nameInput="formState-name" width="220px" />
                                     </a-form-item>
                                     <a-form-item label="사업자등록번호" class="clr">
                                         <biz-number-text-box v-model:valueInput="formState.bizNumber" :required="true"
-                                            nameInput="formState-bizNumber" width="200px" />
+                                            nameInput="formState-bizNumber" width="220px" />
                                     </a-form-item>
                                     <a-form-item label="사업자유형" class="clr">
                                         <radio-group :arrayValue="arrRadioType" :disabled="true"
@@ -22,7 +22,7 @@
                                     </a-form-item>
                                     <a-form-item :label="changeTypeCompany(formState.bizType)" class="clr">
                                         <id-number-text-box v-model:valueInput="formState.residentId" :disabled="true"
-                                            width="145px" />
+                                            width="220" />
                                     </a-form-item>
                                     <a-form-item label="주소" class="custom-flex clr">
                                         <div style="display: flex; margin-bottom: 5px;">
@@ -31,27 +31,27 @@
                                                 autocomplete="off" :required="true" :disabled="true"
                                                 nameInput="formState-extendInfoDetailZipcode">
                                             </default-text-box>
-                                            <post-code-button @dataAddress="funcAddress" />
+                                            <post-code-button @dataAddress="funcAddress"/>
                                         </div>
                                         <div style="margin-bottom: 5px;">
                                             <default-text-box v-model:valueInput="formState.extendInfoDetailRoadAddress"
                                                 autocomplete="off" :required="true"
-                                                nameInput="formState-extendInfoDetailRoadAddress" :disabled="true">
+                                                nameInput="formState-extendInfoDetailRoadAddress" :disabled="true" width="220">
                                             </default-text-box>
                                         </div>
                                         <default-text-box v-model:valueInput="formState.extendInfoDetailAddressExtend"
-                                            autocomplete="off">
+                                            autocomplete="off" width="220">
                                         </default-text-box>
                                     </a-form-item>
                                     <a-form-item label="연락처" class="clr">
                                         <default-text-box v-model:valueInput="formState.extendInfoDetailPhone"
                                             nameInput="formState-extendInfoDetailPhone" :required="true"
-                                            placeholder="‘-’없이 숫자만 입력" width="150">
+                                            placeholder="‘-’없이 숫자만 입력" width="220">
                                         </default-text-box>
                                     </a-form-item>
                                     <a-form-item label="팩 스" class="clr">
                                         <default-text-box v-model:valueInput="formState.extendInfoDetailFax"
-                                            autocomplete="off" width="150" placeholder="‘-’없이 숫자만 입력" />
+                                            autocomplete="off" width="220" placeholder="‘-’없이 숫자만 입력" />
                                     </a-form-item>
                                 </a-col>
                                 <a-col :span="6">
@@ -139,7 +139,7 @@
                                             </text-area-box>
                                         </div>
                                         <a-space :size="8" style="margin-top: 7px">
-                                            <save-outlined :style="{ fontSize: '20px' }"
+                                            <SaveOutlined :style="{ fontSize: '20px' }"
                                                 @click="handleAddMemo(text.memo, text.memoId)" />
                                             <DeleteOutlined :style="{ fontSize: '20px' }"
                                                 @click="handleDeleteMemo(text.memoId)" />
@@ -168,13 +168,9 @@ import mutations from "@/graphql/mutations/BF/BF3/BF320/index";
 import notification from '@/utils/notification';
 import dayjs from 'dayjs';
 import {
-    UploadOutlined,
-    MinusCircleOutlined,
-    ZoomInOutlined,
     SaveOutlined,
     DeleteOutlined,
-    PlusSquareOutlined,
-    WarningFilled,
+    PlusSquareOutlined
 } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -191,13 +187,9 @@ export default defineComponent({
     },
     components: {
         DxDropDownBox,
-        UploadOutlined,
-        MinusCircleOutlined,
-        ZoomInOutlined,
         SaveOutlined,
         DeleteOutlined,
         PlusSquareOutlined,
-        WarningFilled,
         imgUpload,
     },
     setup(props, { emit }) {
