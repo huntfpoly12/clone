@@ -1,5 +1,5 @@
 <template>
-    <div class="month-custom-1" :style="{height: $config_styles.HeightInput }">
+    <div class="year-custom-1" :style="{height: $config_styles.HeightInput }">
       <Datepicker
         autoApply
         yearPicker 
@@ -44,7 +44,7 @@ export default defineComponent({
 </script> 
 
 <style lang="scss" scoped>
-.month-custom-1 {
+.year-custom-1 {
     border-radius: 5px;
     color: white;
     background-color: black;
