@@ -2,11 +2,8 @@
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="귀속연도" label-align="left">
-                    <div class="month-custom-1 d-flex-center">
-                        귀
-                        <month-picker-box v-model:valueDate="datePayment" class="mr-5 ml-5" width="80px" />
-                    </div>
+                <a-form-item label="귀속연도">
+                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black"/>
                 </a-form-item>
             </a-col>
             <a-col>

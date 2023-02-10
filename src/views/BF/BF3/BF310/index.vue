@@ -49,7 +49,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
@@ -84,15 +84,10 @@
                         <span v-if="data.data.simpleAccountingInfos">회계
                             <a-popover>
                                 <template #content>
-                                    <a-table :columns="[{
-                                        title: 'Name',
-                                        dataIndex: 'name',
-                                    },
-                                    {
-                                        title: 'Year Month',
-                                        dataIndex: 'startYearMonth',
-                                    }]" :data-source="data.data.simpleAccountingInfos" bordered :pagination="false">
-                                    </a-table>
+                                    <div v-for="item in data.data.simpleAccountingInfos" :key="item">
+                                        <div>{{ item.name }}: {{ (item.startYearMonth).toString().slice(0, 4) + '-' +
+                                        (item.startYearMonth).toString().slice(4, 6) }}</div>
+                                    </div>
                                 </template>
                                 <a-tag v-if="data.data.simpleAccountingInfos">{{
                                     data.data.simpleAccountingInfos.length
@@ -103,15 +98,9 @@
                         <span v-if="data.data.simpleWithholdingInfo">원천
                             <a-popover>
                                 <template #content>
-                                    <a-table :columns="[{
-                                        title: 'Name',
-                                        dataIndex: 'name',
-                                    },
-                                    {
-                                        title: 'Year Month',
-                                        dataIndex: 'startYearMonth',
-                                    }]" :data-source="[data.data.simpleWithholdingInfo]" bordered :pagination="false">
-                                    </a-table>
+                                    <div>{{ data.data.simpleWithholdingInfo.name ? data.data.simpleWithholdingInfo.name + ':' : ''}} {{
+                                                                        (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(0, 4) + '-' +
+                                    (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(4, 6) }}</div>
                                 </template>
                                 <a-tag>1</a-tag>
                             </a-popover>
@@ -149,33 +138,23 @@ import { ref, defineComponent, reactive, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
-import { SearchOutlined, EditOutlined, HistoryOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons-vue';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxPager, DxToolbar, DxItem,DxScrolling } from "devextreme-vue/data-grid";
+import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
 import filters from "@/helpers/filters";
-
 export default defineComponent({
     components: {
         DxDataGrid,
         DxColumn,
         DxPaging,
-        DxSelection,
-      DxExport,
-      DxScrolling,
+        DxExport,
+        DxScrolling,
         DxSearchPanel,
         BF310Popup,
-        SearchOutlined,
         EditOutlined,
-        DxPager,
-        MenuFoldOutlined,
-        MenuUnfoldOutlined,
-        MailOutlined,
-        PrinterOutlined,
-        DeleteOutlined,
-        SaveOutlined,
         DxToolbar,
         DxItem, HistoryOutlined
     },
@@ -283,29 +262,5 @@ export default defineComponent({
 
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style lang="scss" scoped  src="./style/style.scss" />
