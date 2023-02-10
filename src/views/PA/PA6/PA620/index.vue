@@ -300,7 +300,6 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        console.log(`output chay vao man hinh chinh`,)
         resIncomeProcessBusinesses(res => {
             if (res.data?.getIncomeProcessBusinesses) {
                 let respon = res.data.getIncomeProcessBusinesses

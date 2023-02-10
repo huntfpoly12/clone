@@ -177,7 +177,6 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, '권한그룹관리')
         }
         const modalHistory = (data: any) => {
-            console.log(`output->data.data.id`,data.data)
             IDRow.value = data.data.id
             modalHistoryStatus.value = true;
             popupData.value = data;

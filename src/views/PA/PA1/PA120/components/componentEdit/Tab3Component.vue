@@ -65,6 +65,7 @@
                             <div v-if="cellData.value == 0">
                                 <button class="btn-red">해당없음</button>
                             </div>
+                            <div></div>
                         </template>
                         <template #singleParentChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />

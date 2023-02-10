@@ -429,7 +429,6 @@ export default defineComponent({
             statusButton.value = newValue
         })
         watch(() => store.state.common.actionAddRow.dataSource, (newValue) => {
-            // console.log(`output->newValue`,newValue)
             dataSourceDetail.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
@@ -556,13 +555,11 @@ export default defineComponent({
             }
         }
         const changeIncomeTypeCode = (res: string) => {
-            console.log(`output->`,res)
             dataAction.input.incomeTypeCode = res
         }
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys;
             editParam.value = event.selectedRowsData.map((item: any)=> item.incomeId)
-            console.log(`output->`,event)
         }
         const deleteItem = () => {
             arrCallApiDelete.value = []

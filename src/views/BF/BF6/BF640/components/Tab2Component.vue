@@ -238,7 +238,6 @@ export default defineComponent({
         let productionStatusArr = ref<any>([]);
         const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
-            // console.log(`output->arr`, arr)
             if (Object.keys(arr).length === 0 || arr.length === 0) {
                 return 0;
             }
