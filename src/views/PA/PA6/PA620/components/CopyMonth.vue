@@ -184,23 +184,6 @@ export default defineComponent({
         };
         const actionCopy = () => {
             if (dataApiCopy.value.imputedYear) {
-                // mutate({
-                //     companyId: companyId,
-                //     source: dataApiCopy.value,
-                //     target: {
-                //         imputedYear: globalYear.value,
-                //         imputedMonth: month1.value,
-                //         paymentYear: parseInt(month2.value.toString().slice(0,4)),
-                //         paymentMonth: parseInt(month2.value.toString().slice(4,6)),
-                //     },
-                // })
-                console.log(`output->`,
-                    dataApiCopy.value,
-                    globalYear.value,
-                    month1.value,
-                    parseInt(month2.value.toString().slice(0,4)),
-                    parseInt(month2.value.toString().slice(4,6)),
-                )
                 commitDate();
             } else {
                 notification('error', '날짜를 선택하세요.')

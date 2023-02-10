@@ -80,7 +80,6 @@ export default defineComponent({
                         return +dayjs(item).format('YYYYMMDD')
                     });
                     emit("update:valueDate", newDate);
-                    console.log(`output->newDate`,newDate, date.value)
                     return;
                 }
                 let newDate = typeof date.value == 'object' ? +dayjs(date.value).format('YYYYMMDD') : filters.formatDateToInterger(date.value);

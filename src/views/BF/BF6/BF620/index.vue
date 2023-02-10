@@ -1,17 +1,7 @@
 <template>
-  <action-header title="계약정보관리&심사" />
+  <action-header title="계약정보관리&심사" @actionSearch="onSearch()" :buttonDelete="false" :buttonPrint="false" :buttonSave="activeKey == '5'" />
   <div id="bf-620" class="px-10">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
-      <template #rightExtra>
-        <div class="btn-action">
-          <a-tooltip color="black">
-            <template #title>삭제</template>
-            <a-button class="ml-4" @click="onSearch()">
-              <SearchOutlined />
-            </a-button>
-          </a-tooltip>
-        </div>
-      </template>
       <a-tab-pane key="1" tab="원천세">
         <tab-1-component :search="search1"></tab-1-component>
       </a-tab-pane>

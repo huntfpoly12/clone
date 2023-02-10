@@ -114,7 +114,6 @@ export default defineComponent({
             return check;
         }
         const onInput = (e: any) => {
-            // console.log(`output->e`,e)
         }
         const updateValue = async(e: any, val: any) => {
             if (val === '') {
@@ -157,7 +156,6 @@ export default defineComponent({
             selectBoxData.reload();
             newSelect.value.push(newItem)
             arrSelectSource.value.push(newItem)
-            // console.log(`output->e`,e.text.trim())
             // const productIds = arrSelectSource.value?.map((item: any) => item.id);
             // const incrementedId = productIds? Math.max.apply(null, productIds) + 1:  Math.floor(Math.random());
             // const newItem = {
@@ -177,7 +175,6 @@ export default defineComponent({
             //     .catch((error) => {
             //     throw error;
             // });
-            // console.log(`output->selectBoxData`,selectBoxData)
             customValue.value = false;
         }
         watch(

@@ -29,7 +29,7 @@
                             </a-form-item>
                             <a-form-item label="기본공제" label-align="right" class="red">
                                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
-                                    :required="true" :readOnly="true" :disabled="disabledButton"/>
+                                    :required="true" :readOnly="disabledButton" :disabled="disabledButton"/>
                             </a-form-item>
                             <a-form-item label="부녀자" label-align="right">
                                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
@@ -279,7 +279,7 @@ export default defineComponent({
                 disabledButton.value = true;
 
             } else disabledButton.value = false
-        })
+        },{deep: true})
         watch(() => props.idRowIndex, (value) => {
             trigger.value = true
             refetchValueDetail()

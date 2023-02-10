@@ -200,7 +200,6 @@ export default defineComponent({
     // watch productionStatuses
 
     watch(productionStatuses, (newVal) => {
-      console.log(`output->newVal[0]`, newVal);
       if (newVal == 0) {
         ElecFilingFileFilter.productionStatuses = [2, -1];
       } else {

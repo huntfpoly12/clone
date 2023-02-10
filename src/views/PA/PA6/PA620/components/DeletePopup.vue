@@ -55,7 +55,6 @@ export default defineComponent({
             notification('success', ` 완료!`)
         })
         const onSubmit = (e: any) => {
-            console.log(props.data);
             actionDelete({
                 companyId: companyId,
                 processKey: props.processKey,

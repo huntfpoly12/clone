@@ -437,6 +437,7 @@ export default defineComponent({
       return 0;
     };
     const updateData = () => {
+      trigger.value = true;
       refetch();
     };
     return {
