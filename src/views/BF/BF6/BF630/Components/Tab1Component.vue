@@ -79,7 +79,7 @@
                 <a-tooltip placement="topLeft" color="black">
                     <template #title>전자신고파일 제작 요청</template>
                     <div class="btn-modal-save" @click="requestIncomeFile">
-                        <SaveOutlined class="fz-24 ml-5 action-save"/>
+                        <SaveOutlined class="fz-20 ml-5 action-save"/>
                     <span style="margin-left: 5px;">파일제작요청</span>
                     </div>
                 </a-tooltip>
