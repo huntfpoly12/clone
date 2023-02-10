@@ -250,8 +250,6 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-    font-size: 16px;
-
     .dp__input {
         color: white;
         padding: 0px;

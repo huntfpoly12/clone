@@ -1,7 +1,5 @@
 // grid scss
-// common variable css
-$fontSize : 13;
-
+@import "./settingStyle.scss";
 @import "./customStyle.scss";
 
 .page-content {

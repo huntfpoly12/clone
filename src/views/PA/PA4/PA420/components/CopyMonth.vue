@@ -128,14 +128,12 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-
     .dp__input {
         color: white;
         padding: 0px;
         border: none;
         background-color: #A6A6A6;
     }
-
     .dp__icon {
         display: none;
     }
