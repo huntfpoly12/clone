@@ -82,7 +82,9 @@ export default {
       } else {
         store.commit('auth/setAuthData', res.data.login.refreshToken);
       }
-      router.push('/dashboard');
+      const url = new URL('/dashboard', window.location.origin)
+      window.location.href = url.toString()
+      //router.push({ path: '/dashboard' });
     });
     onError((error) => {
       errors.value = error.message;
