@@ -491,7 +491,7 @@ export default defineComponent({
 
         // ============= FUNCTION ==============================
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+            if (JSON.stringify(objDataDefault) != JSON.stringify(formState))
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)
@@ -532,7 +532,7 @@ export default defineComponent({
                 if (!variables.info.usedWithholding) {
                     delete variables.info.withholding
                 }
-                if (JSON.stringify(formState.extra) === JSON.stringify(formStateExtraOld.value) == false) {
+                if (JSON.stringify(formState.extra) != JSON.stringify(formStateExtraOld.value)) {
                     var variablesNotInfo = {
                         id: formState.id,
                         extra: JSON.parse(JSON.stringify({ ...formState.extra }))
@@ -541,7 +541,7 @@ export default defineComponent({
                     actionUpdate(variablesNotInfo);
                 }
                 delete variables.extra
-                actionUpdate(variables);
+                // actionUpdate(variables);
             }
         };
 

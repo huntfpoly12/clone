@@ -51,12 +51,11 @@
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
-                        <DxItem name="searchPanel" />
-                        <DxItem location="after" template="pagination-table"/>
                         <DxItem name="exportButton" />
-                        <DxItem name="groupPanel" />
+                        <DxItem name="searchPanel" />
+                        <!-- <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
+                        <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div  v-if="rowTable > originData.filter.rows">
@@ -262,7 +261,7 @@ export default defineComponent({
     .dx-toolbar-item {
         &:first-child {
             order: 2;
-            margin-left: 15px;
+            margin-left: 5px;
         }
     }
 }
