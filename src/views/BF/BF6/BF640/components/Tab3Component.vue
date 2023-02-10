@@ -17,9 +17,9 @@
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
                             <template #radio="{ data }">
-                                <production-statuses :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                                <production-statuses :typeTag="4" v-if="data == 2" padding="1px 10px" />
-                                <production-statuses :typeTag="5" v-if="data == -1" padding="1px 10px" />
+                                <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                                <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                                <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
                             </template>
                         </DxRadioGroup>
                     </div>
@@ -50,7 +50,7 @@
             </DxDataGrid>
         </div>
     </div>
-    <ElectronicFilingFileProductions :modalStatus="modalDetail" @closePopup="modalDetail = false"
+    <ElectronicFilingFileProductions v-if="modalDetail" :modalStatus="modalDetail" @closePopup="modalDetail = false"
         :data="dataModalDetail" />
 </template>
 <script lang="ts">
@@ -86,7 +86,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
         let trigger = ref(true)
-        let dataModalDetail = ref()
+        let dataModalDetail = ref();
         // ================== GRAPHQL=================
         //  QUERY : searchElectronicFilingFileProductions
         let {
@@ -98,6 +98,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
+
         resTable((val: any) => {
             dataSource.value = val.data.searchElectronicFilingFileProductions
             trigger.value = false
@@ -121,7 +122,10 @@ export default defineComponent({
         // ============== FUNCTION =====================
         const openPopupDetail = (data: any) => {
             modalDetail.value = true
-            dataModalDetail.value = data
+            dataModalDetail.value = {
+                electronicFilingId: data.electronicFilingId,
+                type: dataSearch.value.type
+            }
         }
         return {
             dataModalDetail, typeStatus, activeKey: ref("1"), rangeDate, styleCheckBox,

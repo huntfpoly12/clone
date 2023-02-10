@@ -7,7 +7,13 @@
         }
     }
     
-    #step2 {
+    #step1 {
+        #checkBoxSearchBF650 {
+            display: flex;
+            width: 260px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
         .search-form-step-1 {
             background-color: #f1f3f4;
             padding-top: 10px;
@@ -15,7 +21,7 @@
             padding-bottom: 5px;
         }
 
-        ::v-deep .custom-checkbox-search {
+        :deep .custom-checkbox-search {
             margin-bottom: 4px;
             cursor: pointer;
 
@@ -24,7 +30,7 @@
             }
         }
 
-        ::v-deep .fix-width-label {
+        :deep .fix-width-label {
             label {
                 width: 110px;
             }
@@ -48,20 +54,19 @@
             width: 90px;
             font-size: 12px;
 
-            ::v-deep .dp__main {
+            :deep .dp__main {
                 height: 25px !important;
             }
 
-            ::v-deep .dp__input {
+            :deep .dp__input {
                 color: white;
                 padding: 0px;
                 border: none;
-                height: 24px;
                 background-color: black;
                 font-size: 14px;
             }
 
-            ::v-deep .dp__icon {
+            :deep .dp__icon {
                 display: none;
             }
         }

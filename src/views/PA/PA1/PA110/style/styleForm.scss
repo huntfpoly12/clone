@@ -1,3 +1,4 @@
+@import "../../../../../assets/styles/settingStyle.scss";
 #pa-110 {
     ::v-deep .ant-form-item-label>label {
         width: 130px;
@@ -136,7 +137,7 @@
         >div {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: $margin-bottom+px;
         }
     }
 
@@ -163,7 +164,7 @@
             font-weight: bold;
         }
         >div {
-            margin-bottom: 10px;
+            margin-bottom: $margin-bottom+px;
         }
 
         .text5 {

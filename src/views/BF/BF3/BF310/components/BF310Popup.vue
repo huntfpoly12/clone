@@ -1,7 +1,7 @@
 <template>
     <div id="modal-detail-bf-310">
         <a-modal :mask-closable="false" :visible="modalStatus" title="계약정보관리&심사 " centered @cancel="setModalVisible()"
-            width="1000px" :bodyStyle="{ height: '800px' }" footer="">
+            width="1200px" :bodyStyle="{ height: '800px' }" footer="">
             <a-spin tip="Loading..." :spinning="loading || loadingUpdate">
                 <standard-form class="ant-form ant-form-horizontal" name="edit-page-310">
                     <div class="collapse-content">
@@ -83,10 +83,9 @@
                                     </a-col>
                                 </a-row>
                             </a-collapse-panel>
-                            <a-collapse-panel key="2" header="사업자정보">
+                            <a-collapse-panel key="2" header="사업자정보" class="key-2">
                                 <a-row :gutter="24" style="height: 350px; overflow-y: scroll">
                                     <a-col :span="9">
-                                        <!-- <div style="height: 350px; overflow-y: scroll"> -->
                                         <a-form-item label="상 호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
                                             <default-text-box v-model:valueInput="formState.companyName" width="150px"
@@ -100,25 +99,18 @@
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyBizNumber" />
                                         </a-form-item>
-                                        <!-- <a-row>
-                                        <a-col :span="12"> -->
                                         <a-form-item label="사업자유형" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
                                             <radio-group :arrayValue="bizTypeItems"
                                                 v-model:valueRadioCheck="formState.content.company.bizType"
                                                 layoutCustom="horizontal" />
                                         </a-form-item>
-                                        <!-- </a-col>
-                                        <a-col :span="12"> -->
-                                        <!-- {{  formState.content.company.residentId  }} -->
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
                                             <id-number-text-box :required="true"
                                                 v-model:valueInput="formState.content.company.residentId" width="150px"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="residentId" />
                                         </a-form-item>
-                                        <!-- </a-col>
-                                    </a-row> -->
                                         <a-form-item label="주소" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <a-row :gutter="[0, 4]">
                                                 <a-col :span="24">
@@ -190,7 +182,7 @@
                                         :required="true" messRequired="이항목은 필수 입력사항입니다!" nameInput="president-email" />
                                 </a-form-item>
                             </a-collapse-panel>
-                            <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll">
+                            <a-collapse-panel key="4" header="회계서비스신청" class="popup-scroll key-4">
                                 <div style="height: 350px; overflow-y: scroll">
                                     <checkbox-basic v-model:valueCheckbox="checkedService" :disabled="false" size="15"
                                         label="회계서비스 신청합니다." />
@@ -240,7 +232,6 @@
                                                 <template #button-template>
                                                     <DxButton icon="plus" @click="addRow" text="추가" />
                                                 </template>
-
                                             </DxDataGrid>
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
                                                 :key="dataActiveRow.rowIndex ?? 99">
@@ -305,8 +296,7 @@
                                             :label-col="labelCol">
                                             <div style="width: 200px">
                                                 <month-picker-box :required="true"
-                                                    v-model:valueDate="formState.content.withholding.startYearMonth"
-                                                    className="0" />
+                                                    v-model:valueDate="formState.content.withholding.startYearMonth"/>
                                             </div>
                                         </a-form-item>
                                         <a-form-item label="직 원 수" class="clr" label-align="left" :label-col="labelCol">
@@ -356,7 +346,6 @@
                                 </a-form-item>
                             </a-collapse-panel>
                             <a-collapse-panel key="7" header="기타">
-                                {{ formState.content.extra.salesRepresentativeId }}
                                 <a-form-item label="영업관리담당" label-align="left" :label-col="labelCol">
                                     <list-sales-dropdown
                                         v-model:valueInput="formState.content.extra.salesRepresentativeId"
@@ -620,7 +609,6 @@ export default defineComponent({
                 const cleanData = JSON.parse(
                     JSON.stringify(contentData, (name, val) => {
                         if (val == null) {
-                            //message.error(`${name} is null`, 4);
                             return;
                         }
                         if (

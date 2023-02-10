@@ -128,15 +128,12 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-
     .dp__input {
         color: white;
         padding: 0px;
         border: none;
-        height: 24px;
         background-color: #A6A6A6;
     }
-
     .dp__icon {
         display: none;
     }
@@ -153,7 +150,6 @@ export default defineComponent({
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
         background-color: black;
         font-size: 14px;
     }

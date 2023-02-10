@@ -1,0 +1,51 @@
+.dx-button-has-text .dx-button-content {
+  padding: 0px 15px;
+}
+
+.ant-form-item {
+  margin-bottom: $margin-bottom+px;
+}
+
+.ant-form-item-control-input {
+  min-height: $min-height+px;
+}
+.ant-tooltip-inner {
+  color: white !important;
+}
+
+.ant-form-item-label > label{
+  height: $common-height+px;
+}
+
+.dx-scrollable-scrollbars-alwaysvisible.dx-scrollable-both>.dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
+  padding-bottom: 0px !important;
+}
+
+.dx-texteditor-input {
+  margin: 0;
+  padding: 5px;
+  min-height: $min-height+px;
+}
+
+.dx-datagrid-header-panel .dx-toolbar {
+  margin-bottom: 2px;
+}
+
+.dx-tag-content{
+  padding: 1px 25px 0px 6px;
+}
+
+.dp__input{
+  padding: 2px 0px 1px 36px !important;
+}
+.dp__input_icon_pad{
+  padding: 2px 0px 1px 36px;
+  border-radius: 3px;
+}
+.btn-date {
+  height: $min-height+px;
+
+  .dx-button-content {
+    padding: 0 10px;
+  }
+}

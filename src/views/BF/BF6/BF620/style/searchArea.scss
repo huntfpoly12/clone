@@ -21,7 +21,6 @@
         color: white;
         padding: 0px;
         border: none;
-        height: 30px;
         background-color: #a6a6a6;
       }
 
@@ -55,7 +54,7 @@
     }
     .production-check {
       display: grid;
-      grid-template-columns: 42% 29%;
+      grid-template-columns: 45% 42%;
       margin-left: 97px;
     }
     :deep .check-box-group {

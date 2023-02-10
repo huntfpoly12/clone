@@ -1,14 +1,17 @@
+import getCompaniesInElectronicFilingFile from  "@/graphql/queries/common/getCompaniesInElectronicFilingFile";
 import searchIncomeWageSimplifiedPaymentStatementElectronicFilings from "./searchIncomeWageSimplifiedPaymentStatementElectronicFilings";
 import searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings from "./searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings";
 import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
 import getElectronicFilingsByIncomeWageSimplifiedPaymentStatement from "./getElectronicFilingsByIncomeWageSimplifiedPaymentStatement";
 import getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement from "./getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement";
+
 const queries = {
     search: searchIncomeWageSimplifiedPaymentStatementElectronicFilings,
     searchStep2: searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings,
     searchStep3: searchElectronicFilingFileProductions,
     getElectronicFilingsByIncomeWageSimplifiedPaymentStatement: getElectronicFilingsByIncomeWageSimplifiedPaymentStatement,
     getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement: getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement,
+    getCompaniesInElectronicFilingFile: getCompaniesInElectronicFilingFile,
 };
 
 export default queries;

@@ -10,7 +10,7 @@
                                 <a-row>
                                     <a-col :span="6">
                                         <a-form-item label="총이용료" style="font-weight: bold">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{ height: $config_styles.HeightInput }">
                                                 {{
                                                     $filters.formatCurrency(formState.info.totalPrice =
                                                         formState.info.accountingPrice + formState.info.withholdingPrice)
@@ -21,7 +21,7 @@
                                     <a-col :span="18"></a-col>
                                     <a-col :span="6">
                                         <a-form-item label="회계서비스 이용료" class="cusstom-label-padding">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{ height: $config_styles.HeightInput }">
                                                 {{ $filters.formatCurrency(formState.info.accountingPrice) }}
                                             </p>
                                         </a-form-item>
@@ -29,7 +29,7 @@
                                     <a-col :span="18"></a-col>
                                     <a-col :span="6">
                                         <a-form-item label="원천서비스 이용료" class="cusstom-label-padding">
-                                            <p class="input-disble">
+                                            <p class="input-disble" :style="{ height: $config_styles.HeightInput }">
                                                 {{ $filters.formatCurrency(formState.info.withholdingPrice) }}
                                             </p>
                                         </a-form-item>
@@ -57,7 +57,7 @@
                                         :show-row-lines="true" :focused-row-enabled="true" @row-removing="removingRow"
                                         @focused-row-changed="onFocusedRowChanged" :focused-row-key="focusedRowKey"
                                         @init-new-row="onInitRow">
-                                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                                        <DxScrolling mode="standard" show-scrollbar="always" />
                                         <DxEditing :use-icons="true" :allow-adding="true" template="button-template"
                                             new-row-position="pageBottom" :allow-deleting="true" mode="cell">
                                             <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
@@ -80,7 +80,10 @@
                                         </DxColumn>
                                         <DxColumn cell-template="startYearMonth" caption="서비스시작년월" data-type="date" />
                                         <template #startYearMonth="{ data }">
-                                            {{ data.data.startYearMonth ? dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : '' }}
+                                            {{
+                                                data.data.startYearMonth ?
+                                                    dayjs(data.data.startYearMonth.toString()).format('YYYY-MM') : ''
+                                            }}
                                         </template>
                                         <DxColumn data-field="capacity" caption="정원수 (명)" />
                                         <DxColumn caption="회계서비스이용료" cell-template="totalPrice" data-type="number" />
@@ -90,7 +93,7 @@
                                     </DxDataGrid>
                                     <DxDataGrid v-else id="gridContainer" :show-borders="true" ref="gridRefName"
                                         disabled="true">
-                                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                                        <DxScrolling mode="standard" show-scrollbar="always" />
                                         <DxEditing :use-icons="true" :allow-adding="true">
                                         </DxEditing>
                                         <DxColumn :allow-editing="false" :width="50" caption="#" />
@@ -138,7 +141,8 @@
                                         </a-col>
                                         <a-col :span="7">
                                             <a-form-item label="회계서비스 이용료:" style=" font-weight: bold">
-                                                <p class="input-disble" :id="'price-' + dataActiveRow.name">
+                                                <p class="input-disble" :id="'price-' + dataActiveRow.name"
+                                                    :style="{ height: $config_styles.HeightInput }">
                                                     {{
                                                         $filters.formatCurrency(getTotalAmount(dataActiveRow))
                                                     }}
@@ -146,7 +150,8 @@
                                             </a-form-item>
                                             <div class="custom-money">
                                                 <a-form-item label="기본이용료">
-                                                    <number-box-money style="float:right" :width="197" class="input-float-right "
+                                                    <number-box-money style="float:right" :width="197"
+                                                        class="input-float-right "
                                                         v-model:valueInput="dataActiveRow.price" :spinButtons="false" />
                                                 </a-form-item>
                                             </div>
@@ -218,7 +223,8 @@
                                     <a-col :span="14">
                                         <a-form-item label="원천서비스 이용료:" style="font-weight: bold;"
                                             class="custom-label-select">
-                                            <p class="input-disble" style="width: 328px;">
+                                            <p class="input-disble" style="width: 328px;"
+                                                :style="{ height: $config_styles.HeightInput }">
                                                 {{ $filters.formatCurrency(totalWithholdingService) }}
                                             </p>
                                         </a-form-item>
@@ -306,7 +312,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import DxNumberBox from "devextreme-vue/number-box";
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
-import { DxDataGrid, DxColumn, DxEditing, DxLookup, DxToolbar, DxItem, DxScrolling,DxTexts } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxEditing, DxLookup, DxToolbar, DxItem, DxScrolling, DxTexts } from "devextreme-vue/data-grid";
 import { DxButton } from "devextreme-vue/button";
 import { DeleteOutlined, PlusSquareOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import queries from "@/graphql/queries/BF/BF3/BF330/index";
@@ -317,7 +323,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from '@/utils/notification';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar,DxScrolling, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
+        DxDataGrid, DxColumn, DxEditing, DxLookup, DxButton, DxToolbar, DxScrolling, DxItem, DxNumberBox, DxTexts, DxCheckBox, DeleteOutlined, PlusSquareOutlined, imgUpload, SaveOutlined
     },
     props: {
         modalStatus: Boolean,
@@ -402,17 +408,38 @@ export default defineComponent({
         onDeleteMemo(() => {
             refetchMemo();
         });
-        // Update Service Contract
+        // Update Service Contract for info
         const {
             mutate: actionUpdate,
             loading: loadingUpdate,
             onDone: updateDone,
             onError: errUpdateContract
-        } = useMutation(mutations.updateServiceContract);
+        } = useMutation(mutations.updateServiceContractInfo);
         errUpdateContract((res) => {
             notification('error', res.message)
         })
-        updateDone((res) => {
+        updateDone((res) => { // After update the data info, then update the data extra
+            if (JSON.stringify(formState.extra) != JSON.stringify(formStateExtraOld.value)) {
+                var variablesNotInfo = {
+                    id: formState.id,
+                    extra: JSON.parse(JSON.stringify({ ...formState.extra }))
+                }
+                actionUpdateExtra(variablesNotInfo);
+            } else {
+                notification('success', "업데이트 완료!")
+                emit("closePopup", false)
+            }
+        });
+        // Update Service Contract for extra
+        const {
+            mutate: actionUpdateExtra,
+            onDone: updateDoneExtra,
+            onError: errUpdateContractExtra
+        } = useMutation(mutations.updateServiceContractExtra);
+        errUpdateContractExtra((res) => {
+            notification('error', res.message)
+        })
+        updateDoneExtra((res) => {
             notification('success', "업데이트 완료!")
             emit("closePopup", false)
         });
@@ -491,7 +518,7 @@ export default defineComponent({
 
         // ============= FUNCTION ==============================
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) === JSON.stringify(formState) == false)
+            if (JSON.stringify(objDataDefault) != JSON.stringify(formState))
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)
@@ -531,14 +558,6 @@ export default defineComponent({
                 }
                 if (!variables.info.usedWithholding) {
                     delete variables.info.withholding
-                }
-                if (JSON.stringify(formState.extra) === JSON.stringify(formStateExtraOld.value) == false) {
-                    var variablesNotInfo = {
-                        id: formState.id,
-                        extra: JSON.parse(JSON.stringify({ ...formState.extra }))
-
-                    }
-                    actionUpdate(variablesNotInfo);
                 }
                 delete variables.extra
                 actionUpdate(variables);
@@ -698,5 +717,7 @@ export default defineComponent({
     },
 });
 </script>   
+
+
 
 <style src="../style/stylePopup.scss" scoped />

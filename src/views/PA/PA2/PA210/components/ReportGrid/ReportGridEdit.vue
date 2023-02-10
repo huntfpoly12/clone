@@ -120,6 +120,7 @@ export default defineComponent({
     const wrapper = ref<any>(null);
     const confirmStatus = ref<boolean>(false)
     const confirmLoadNewStatus = ref<boolean>(false)
+    // The above code is setting up the hot table.
     const hotSettings = {
           comments: true,
           fillHandle: true,
@@ -174,28 +175,8 @@ export default defineComponent({
       confirmLoadNewStatus.value = true
     }
 
-    // const {
-    //         refetch: refetchData,
-    //         result,
-    //         loading,
-    //     } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
-    //         enabled: trigger.value,
-    //         fetchPolicy: "no-cache",
-    // }));
 
-    // watch(result, (data) => {
-    //   if (data) {
-    //     const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
-    //       return {
-    //         code: item.code,
-    //         numberOfPeople: item.numberOfPeople,
-    //         totalPayment: item.totalPayment,
-    //         collectedIncomeTax: item.collectedIncomeTax,
-    //       }
-    //     });
-    //     calculateWithholdingStatusReport(wrapper,newData)
-    //   }
-    // })
+  // The above code is used to fill the data into the table.
     const loadNew = () => {
       clearAllCellValue(wrapper)
       let hot = wrapper.value?.hotInstance; 
@@ -322,9 +303,12 @@ export default defineComponent({
           }
         }
       }
+      // Calling the actionUpdateTaxWithholding function with the variables object as a parameter.
       actionUpdateTaxWithholding(variables)
     }
 
+  // The above code is creating a function called actionConfirmDelete. This function is setting the value
+  // of confirmStatus.value to true.
     const actionConfirmDelete = ()=>{
       confirmStatus.value = true
     }
@@ -343,6 +327,7 @@ export default defineComponent({
         errChangeStatus((error) => {
             notification('error', error.message)
         })
+    // A function that is called when the user clicks on the button to change the status of the report.
     const changeStatusRowTable = (data: any) => {
       actionChangeStatus({
           "companyId": companyId,
