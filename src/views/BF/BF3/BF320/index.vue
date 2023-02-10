@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning || loading" size="large">
+    
         <action-header title="사업자관리" @actionSearch="searching" />
         <div id="bf-320">
             <div class="search-form">
@@ -39,19 +39,20 @@
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label>메니저명 :</label>
-                                <list-manager-dropdown width="150px" />
+                                <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
                             </div>
                         </a-col>
                         <a-col>
                             <div class="dflex custom-flex">
                                 <label>영업자명 :</label>
-                                <list-sales-dropdown width="150px" />
+                                <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
                             </div>
                         </a-col>
                     </a-row>
                 </div>
             </div>
             <div class="page-content"> 
+                <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="responApiSearchCompanies" :show-borders="true" key-expr="id"
                     @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -59,12 +60,12 @@
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxExport :enabled="true" :allow-export-selected-data="true" />
                     <DxToolbar>
+                        <DxItem name="exportButton" />
                         <DxItem name="searchPanel" />
                         <DxItem  template="pagination-table"/>
-                        <DxItem name="exportButton" />
-                        <DxItem name="groupPanel" />
+                        <!-- <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" />
+                        <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
@@ -81,7 +82,7 @@
                     <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
-                    <DxColumn data-field="unpaidMonths" caption="이용료" :format="amountFormat" data-type="number" />
+                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }" class="custom-action">
                         <div class="custom-action">
@@ -98,6 +99,7 @@
                         </div>
                     </template>
                 </DxDataGrid>
+                </a-spin>
                 <div class="pagination-table" v-if="rowTable > originData.rows">
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items @change="searching" />
@@ -108,7 +110,6 @@
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
             </div>
         </div>
-    </a-spin>
 </template> 
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
@@ -139,7 +140,6 @@ export default defineComponent({
         const rowTable = ref()
         let popupData = ref([])
         let modalHistoryStatus = ref<boolean>(false)
-        const spinning = ref<boolean>(true);
         var idRowEdit = ref<number>(0)
         let modalStatus = ref<boolean>(false)
         const trigger = ref<boolean>(true)
@@ -154,12 +154,10 @@ export default defineComponent({
         }))
         const searching = () => {
             trigger.value = true;
-            spinning.value = true;
-            refetchData()
         }
         const handleClosePopup = () => { 
             modalStatus.value = false
-            refetchData()
+            trigger.value = true;
         }
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '사업자관리')
@@ -175,11 +173,10 @@ export default defineComponent({
             popupData.value = data;
         }
         watch(result, (value) => {
+            trigger.value = false
             if (value) {
                 rowTable.value = value.searchCompanies.totalCount
                 responApiSearchCompanies.value = value.searchCompanies.datas
-                trigger.value = false
-                spinning.value = false;
             }
         });
         return {
@@ -188,7 +185,6 @@ export default defineComponent({
             move_column,
             colomn_resize,
             idRowEdit,
-            spinning,
             loading,
             modalHistoryStatus,
             responApiSearchCompanies,

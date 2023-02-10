@@ -6,19 +6,23 @@
   min-height: 700px;
 }
 
-::v-deep .dx-toolbar-after {
+:deep .dx-toolbar-after {
   display: flex;
 
   .dx-toolbar-item {
     &:first-child {
       order: 2;
-      margin-left: 15px;
+      margin-left: 5px;
     }
   }
 }
 
-::v-deep .dx-select-checkbox {
+:deep .dx-select-checkbox {
   display: inline-block !important;
+}
+
+:deep .dx-texteditor-input {
+  min-height: 30px !important;
 }
 
 .modal-note {
@@ -85,8 +89,8 @@
 }
 
 
-::v-deep.components-modal-demo-position {
-  ::v-deep.test-local {
+:deep.components-modal-demo-position {
+  :deep.test-local {
     background-color: pink !important;
     width: 1000px !important;
     height: 200px !important;
