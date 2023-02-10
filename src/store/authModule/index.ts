@@ -5,7 +5,8 @@ import actions from "./actions";
 const authModule = {
   state: () => ({
     userInfor: [],
-    authData: ''
+    authData: '',
+    token: 'hi',
   }),
   getters,
   mutations,

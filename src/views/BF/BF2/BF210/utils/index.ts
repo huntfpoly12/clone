@@ -45,6 +45,7 @@ export const dataSearchIndex = {
     groupName: "",
     username: "",
     name: "",
+    active: true,
 }
 
 export const productsValue = [

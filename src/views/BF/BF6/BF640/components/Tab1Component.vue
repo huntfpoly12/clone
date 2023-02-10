@@ -10,7 +10,7 @@
                         v-model:valueRadioCheck="dataSearch.paymentHalfYear" />
                 </a-form-item>
             </a-col>
-            <a-col>
+            <a-col class="ml-30">
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
                         <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
@@ -21,7 +21,7 @@
                         </div>
                     </div>
                 </a-form-item>
-                <div>
+                <div class="production-check">
                     <div class="d-flex-center custom-checkbox-search" :disabled="true"
                         @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             </a-col>
-            <a-col>
+            <a-col class="search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
                     <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
@@ -66,7 +66,7 @@
                     <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
-            <a-col>
+            <a-col class="search-4">
                 <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
             </a-col>
         </a-row>
@@ -269,6 +269,8 @@ export default defineComponent({
             }
         }
 
+        //
+        
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
@@ -292,7 +294,7 @@ export default defineComponent({
                 watchFirstRun.value = true;
             }
         }, { deep: true })
-        
+
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
             for (const key in typeCheckbox.value) {
