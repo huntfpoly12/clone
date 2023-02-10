@@ -48,10 +48,11 @@
             <a-tooltip color="black">
               <template #title>삭제</template>
               <DxButton
-                :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
+                :text="'귀 ' + data.data.imputedYear + '-' + data.data.imputedMonth"
                 :style="{
                   color: 'white',
                   backgroundColor: 'gray',
+                  height: $config_styles.HeightInput
                 }"
                 class="btn-date"
               />
@@ -60,21 +61,22 @@
           <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
           <template #paymentYearMonth="{ data }">
             <DxButton
-              :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth"
+              :text="'귀 ' + data.data.paymentYear + '-' + data.data.paymentMonth"
               :style="{
                 color: 'white',
                 backgroundColor: 'black',
+                height: $config_styles.HeightInput
               }"
               class="btn-date"
             />
           </template>
-          <DxColumn caption="신고 주기" cell-template="reportType"/>
+          <DxColumn caption="신고 주기" cell-template="reportType" width="95px"/>
           <template #reportType="{ data }">
             <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
             <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
             <div v-else></div>
           </template>
-          <DxColumn caption="신고 종류" cell-template="afterDeadline" />
+          <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
           <template #afterDeadline="{ data }">
             <div v-if="data.data.afterDeadline" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
             <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
@@ -89,10 +91,9 @@
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem class="custom-sumary" column="신고 주기" summary-type="count" display-format="지급액합계: {0}" value-format="#,###" />
-            <DxTotalItem cssclass="custom-sumary" column="필요경비" :customize-text="customTextSummary" />
-            <DxTotalItem cssclass="custom-sumary" column="소득금액" :customize-text="customTextSummary" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
+            <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text="reportTypeSummary" />
+            <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text="afterDeadlineSummary" />
+            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
           </DxSummary>
         </DxDataGrid>
       </a-spin>
@@ -173,13 +174,12 @@ export default defineComponent({
 
     let productionStatusArr = ref<any>([]);
     const watchFirstRun = ref(true);
-    const countStatus = (arr: any[], type: number) => {
-      // console.log(`output->arr`, arr)
+    const countStatus = (arr: any[], type: number, propertyCompare: string) => {
       if (Object.keys(arr).length === 0 || arr.length === 0) {
         return 0;
       }
       let count = arr.reduce((acc: any, crr: any) => {
-        acc[crr.productionStatus] = acc[crr.productionStatus] ? acc[crr.productionStatus] + 1 : 1;
+        acc[crr[propertyCompare]] = acc[crr[propertyCompare]] ? acc[crr[propertyCompare]] + 1 : 1;
         return acc;
       }, {});
       if (count[type]) {
@@ -188,11 +188,18 @@ export default defineComponent({
       return 0;
     };
     // custom summary
-    const customTextSummary = () => {
-      return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(
+    const reportTypeSummary = () => {
+      return `매월 ${countStatus(dataSource.value, 1,'reportType')} 반기 ${countStatus(dataSource.value, 6,'reportType')}`
+    };
+    const afterDeadlineSummary = () => {
+      return `정기 ${countStatus(dataSource.value, 0,'afterDeadline')} 기한후 ${countStatus(dataSource.value, 0,'afterDeadline')} 수정 ${countStatus(
+        dataSource.value,1,'afterDeadline')}`;
+    };
+    const productStatusSummary = () => {
+      return `제작전 ${countStatus(productionStatusArr.value, 0,'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0,'productionStatus')} 제작중 ${countStatus(
         productionStatusArr.value,
-        1
-      )} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`;
+        1,'productionStatus'
+      )} 제작실패 ${countStatus(productionStatusArr.value, -1,'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2,'productionStatus')}`;
     };
     // caculator sum
     const reFreshDataGrid = () => {
@@ -212,7 +219,6 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        // console.log(`output->props.search`, props.search);
         variables.value = {
           filter: filterBF620.value,
         };
@@ -233,7 +239,6 @@ export default defineComponent({
       },
     });
     const selectionChanged = (event: any) => {
-      console.log(`output->event`, event);
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
           return { companyId: item.company.id, name: item.company.name, reportId: item.reportId };
@@ -246,7 +251,6 @@ export default defineComponent({
         receiverName: userInfor.value.name,
         receiverAddress: userInfor.value.email,
       };
-      console.log(`output->requestFileData.value`, requestFileData.value);
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
       } else {
@@ -265,7 +269,9 @@ export default defineComponent({
       requestFileData,
       userInfor,
       productionStatusData,
-      customTextSummary,
+      reportTypeSummary,
+      afterDeadlineSummary,
+      productStatusSummary,
       selectionChanged,
     };
   },

@@ -3,99 +3,122 @@
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loading" size="large">
       <a-row :gutter="16" class="mb-7">
-        <a-col span="24" style="display: flex; flex-wrap: wrap;">
+        <a-col span="24" style="display: flex; flex-wrap: wrap">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
             <span class="check-box-tab1">
-                <checkbox-basic  label="국민연금"
-                v-model:valueCheckbox="formStateTab2.nationalPensionDeduction"></checkbox-basic>
+              <checkbox-basic label="국민연금" v-model:valueCheckbox="initFormTab2PA120.nationalPensionDeduction"></checkbox-basic>
             </span>
             <span class="check-box-tab1">
-                <checkbox-basic  label="건강보험" class="check-box-tab1"
-                v-model:valueCheckbox="formStateTab2.healthInsuranceDeduction"></checkbox-basic>
+              <checkbox-basic label="건강보험" class="check-box-tab1" v-model:valueCheckbox="initFormTab2PA120.healthInsuranceDeduction"></checkbox-basic>
             </span>
             <span class="check-box-tab1 mb-4 ml-15">
-                <checkbox-basic class="" size="18px" label="고용보험"
-                v-model:valueCheckbox="formStateTab2.employeementInsuranceDeduction" :disabled="presidentPA120"></checkbox-basic>
+              <checkbox-basic
+                class=""
+                size="18px"
+                label="고용보험"
+                v-model:valueCheckbox="initFormTab2PA120.employeementInsuranceDeduction"
+                :disabled="presidentPA120"
+              ></checkbox-basic>
             </span>
-            
+
             <p class="text-note mt-7 ml-7">
-                <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
-                본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
+              <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
+              본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
             </p>
           </a-form-item>
         </a-col>
         <a-col :span="11">
-          <div class="header-text-4 d-flex" style="justify-content: space-around;">
-            <a-col :span="12">
-              두루누리사회보험 공제
-            </a-col>
+          <div class="header-text-4 d-flex" style="justify-content: space-around">
+            <a-col :span="12"> 두루누리사회보험 공제 </a-col>
             <a-col :span="12" class="switch-bg">
               공제 여부:
-              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
-                v-model:valueSwitch="formStateTab2.insuranceSupport" @onChange="onChangeSwitch1"></switch-basic>
-
+              <switch-basic
+                switch-basic
+                textCheck="Y"
+                textUnCheck="N"
+                class="switch-insurance"
+                v-model:valueSwitch="initFormTab2PA120.insuranceSupport"
+                @onChange="onChangeSwitch1"
+              ></switch-basic>
             </a-col>
           </div>
-          <a-row :gutter="[0, 10]" >
-
+          <a-row :gutter="[0, 10]">
             <a-col span="7"> 국민연금 적용율: </a-col>
             <a-col span="12">
-              <radio-group :arrayValue="radioCheckPersenPension"
-                v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal"
-                :disabled="!formStateTab2.insuranceSupport"></radio-group>
+              <radio-group
+                :arrayValue="radioCheckPersenPension"
+                v-model:valueRadioCheck="initFormTab2PA120.nationalPensionSupportPercent"
+                layoutCustom="horizontal"
+                :disabled="!initFormTab2PA120.insuranceSupport"
+              ></radio-group>
             </a-col>
             <a-col span="7"> 고용보험 적용율: </a-col>
             <a-col span="12">
-              <radio-group :arrayValue="radioCheckPersenPension"
-                v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-                :disabled="!formStateTab2.insuranceSupport"></radio-group>
+              <radio-group
+                :arrayValue="radioCheckPersenPension"
+                v-model:valueRadioCheck="initFormTab2PA120.employeementInsuranceSupportPercent"
+                layoutCustom="horizontal"
+                :disabled="!initFormTab2PA120.insuranceSupport"
+              ></radio-group>
             </a-col>
             <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
             <a-col span="17" class="income-tax-app-rate">
-              <radio-group :arrayValue="IncomeTaxAppRate" v-model:valueRadioCheck="formStateTab2.incomeTaxMagnification"
-                layoutCustom="horizontal"></radio-group>
+              <radio-group
+                :arrayValue="IncomeTaxAppRate"
+                v-model:valueRadioCheck="initFormTab2PA120.incomeTaxMagnification"
+                layoutCustom="horizontal"
+              ></radio-group>
             </a-col>
           </a-row>
         </a-col>
         <a-col :span="13">
-          <div class="header-text-4 d-flex"  style="justify-content: space-around;">
-            <a-col :span="13">
-              중소기업취업 감면
-            </a-col>
+          <div class="header-text-4 d-flex" style="justify-content: space-around">
+            <a-col :span="13"> 중소기업취업 감면 </a-col>
             <a-col :span="10" class="switch-bg">
               감면 여부:
-              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
-                v-model:valueSwitch="formStateTab2.employeementReduction" @onChange="onChangeSwitch2"></switch-basic>
-
+              <switch-basic
+                switch-basic
+                textCheck="Y"
+                textUnCheck="N"
+                class="switch-insurance"
+                v-model:valueSwitch="initFormTab2PA120.employeementReduction"
+                @onChange="onChangeSwitch2"
+              ></switch-basic>
             </a-col>
           </div>
           <a-row :gutter="[5, 10]">
             <a-col :span="24">
               <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5" />
-              <span class="text-note">15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년
-                5년간) 근로소득세 70%(청년 90%, 150만원 한도) 감면</span>
+              <span class="text-note"
+                >15세~34세 이하 청년, 60세 이상인 사람, 장애인, 경력단절여성이 중소기업에 취업하는 경우 취업일로 부터 3년간(청년 5년간) 근로소득세 70%(청년 90%,
+                150만원 한도) 감면</span
+              >
             </a-col>
             <a-col span="7"> 감면기간: </a-col>
             <a-col span="15">
-              <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate"
-                :disabled="!formStateTab2.employeementReduction">
+              <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate" :disabled="!initFormTab2PA120.employeementReduction">
               </date-time-box>
             </a-col>
             <a-col span="7"> 감면율: </a-col>
             <a-col span="15">
-              <radio-group :arrayValue="radioCheckReductioRate"
-                v-model:valueRadioCheck="formStateTab2.employeementReductionRatePercent" layoutCustom="horizontal"
-                :disabled="!formStateTab2.employeementReduction"></radio-group>
+              <radio-group
+                :arrayValue="radioCheckReductioRate"
+                v-model:valueRadioCheck="initFormTab2PA120.employeementReductionRatePercent"
+                layoutCustom="horizontal"
+                :disabled="!initFormTab2PA120.employeementReduction"
+              ></radio-group>
             </a-col>
             <a-col span="7"> 감면입력: </a-col>
             <a-col span="15">
-              <radio-group :arrayValue="radioCheckReductionInput"
-                v-model:valueRadioCheck="formStateTab2.employeementReductionInput" layoutCustom="horizontal"
-                :disabled="!formStateTab2.employeementReduction"></radio-group>
+              <radio-group
+                :arrayValue="radioCheckReductionInput"
+                v-model:valueRadioCheck="initFormTab2PA120.employeementReductionInput"
+                layoutCustom="horizontal"
+                :disabled="!initFormTab2PA120.employeementReduction"
+              ></radio-group>
             </a-col>
           </a-row>
         </a-col>
-
       </a-row>
       <div class="header-text-3">
         급여 (기본값)
@@ -105,29 +128,29 @@
         </span>
       </div>
       <a-row :gutter="16">
-        <a-col style="flex: 0 0 28%;">
+        <a-col style="flex: 0 0 28%">
           <div class="header-text-2">요약</div>
           <div class="summary">
             <a-col :span="13">소득수당 합계:</a-col>
-            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
-              $filters.formatCurrency(totalPayItem)
-            }}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end"
+              ><span>{{ $filters.formatCurrency(totalPayItem) }}</span> 원</a-col
+            >
             <a-col :span="13">수당 과세 합계:</a-col>
-            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
-              $filters.formatCurrency(totalPayItemTax)
-            }}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end"
+              ><span>{{ $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col
+            >
             <a-col :span="13">수당 비과세 합계:</a-col>
-            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
-              $filters.formatCurrency(totalPayItemTaxFree)
-            }}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end"
+              ><span>{{ $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col
+            >
             <a-col :span="13">공제 합계:</a-col>
-            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
-              $filters.formatCurrency(totalDeduction)
-            }}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end"
+              ><span>{{ $filters.formatCurrency(totalDeduction) }}</span> 원</a-col
+            >
             <a-col :span="13">차인지급액:</a-col>
-            <a-col  style="display: inline-flex; justify-content: flex-end;"><span>{{
-              $filters.formatCurrency(subPayment)
-            }}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end"
+              ><span>{{ $filters.formatCurrency(subPayment) }}</span> 원</a-col
+            >
             <div class="text5">
               <span>
                 <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
@@ -136,24 +159,24 @@
             </div>
           </div>
         </a-col>
-        <a-col class="col-2" style="display: flex;flex-direction: column;">
+        <a-col class="col-2" style="display: flex; flex-direction: column">
           <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세</div>
-          <a-spin :spinning="loading1" size="large" style="height: 100%;">
+          <a-spin :spinning="loading1" size="large" style="height: 100%">
             <div class="deduction-main">
               <div v-for="item in datagConfigPayItems" :key="item.name" class="custom-deduction">
                 <span>
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                    subName="과세" />
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
-                    subName="상여(과세)" />
-                  <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')" />
-                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                    :name="item.name" :type="4" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2" subName="상여(과세)" />
+                  <deduction-items
+                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                    :name="item.name"
+                    :type="3"
+                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')"
+                  />
+                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
-                    v-model:valueInput="item.value" :min="0"> </number-box-money>
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :min="0"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -161,23 +184,26 @@
           </a-spin>
         </a-col>
         <a-col class="col-3">
-          <div class="header-text-2">공제 항목 <span style="float: right;">{{ $filters.formatCurrency(totalDeduction) }} 원</span></div>
+          <div class="header-text-2">
+            공제 항목 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span>
+          </div>
           <a-spin :spinning="loading1 || loading3" size="large">
             <div class="deduction-main">
               <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
                 <span>
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                    subName="과세" />
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
-                    subName="상여(과세)" />
-                  <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
-                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
-                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                    :name="item.name" :type="4" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2" subName="상여(과세)" />
+                  <deduction-items
+                    v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                    :name="item.name"
+                    :type="3"
+                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
+                  />
+                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
-                    v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :readOnly="true" :min="0">
+                  </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -187,9 +213,8 @@
       </a-row>
       <a-row style="margin-top: 20px">
         <a-col :span="8" :offset="8" style="text-align: center">
-          <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120"
-            @onClick="calculateTax" />
-          <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="updateDeduction" />
+          <button-basic style="margin-right: 20px" text="공제계산" type="default" mode="contained" :width="120" @onClick="calculateTax" />
+          <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2" @onClick="updateDeduction" />
         </a-col>
       </a-row>
     </a-spin>
@@ -200,13 +225,19 @@ import { defineComponent, reactive, ref, watch, computed } from 'vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate, initFormStateTab2 } from '../../utils/index';
 import { useStore } from 'vuex';
-import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from '@/helpers/commonFunction';
+import {
+  companyId,
+  calculateNationalPensionEmployee,
+  calculateHealthInsuranceEmployee,
+  calculateLongTermCareInsurance,
+  calculateEmployeementInsuranceEmployee,
+} from '@/helpers/commonFunction';
 import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
-import Datepicker from "@vuepic/vue-datepicker";
-import filters from "@/helpers/filters";
+import Datepicker from '@vuepic/vue-datepicker';
+import filters from '@/helpers/filters';
 
 type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
@@ -242,11 +273,11 @@ export default defineComponent({
     const triggerDetail = ref<boolean>(false);
 
     const globalYear = computed(() => store.state.settings.globalYear);
-    const formStateTab2 = reactive<any>({
-      ...initFormStateTab2,
-    });
+    // const initFormTab2PA120 = reactive<any>({
+    //   ...initFormStateTab2,
+    // });
     const triggerCalcIncome = ref<boolean>(false);
-    const presidentPA120 = computed(()=>store.state.common.presidentPA120);
+    const presidentPA120 = computed(() => store.state.common.presidentPA120);
     const calculateVariables = {
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -259,6 +290,8 @@ export default defineComponent({
       imputedYear: globalYear.value,
       useOnly: true,
     });
+    const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120)
+    const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
     watch(
       () => props.idRowEdit,
       () => {
@@ -266,17 +299,17 @@ export default defineComponent({
         refetchConfigDeduction();
       }
     );
-    
+
     /**
      * Calculate Income Wage Tax API
      */
-     const {
+    const {
       result: resCalcIncomeWageTax,
       loading: loading3,
       refetch: refetchCalcIncomeWageTax,
       onError: onIncomeWageTaxError,
     } = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
-    //   enabled: false,
+      //   enabled: false,
       fetchPolicy: 'no-cache',
     }));
     onIncomeWageTaxError((e) => {
@@ -285,19 +318,19 @@ export default defineComponent({
 
     watch(resCalcIncomeWageTax, (value) => {
       if (value) {
-        let itemValue11: Number ;
+        let itemValue11: Number;
         dataConfigDeduction.value?.forEach((item: any) => {
           if (item.itemCode == 1011) {
             item.value = value.calculateIncomeWageTax;
-            itemValue11 = value.calculateIncomeWageTax
-            formStateTab2.deductionItems[4] = {
+            itemValue11 = value.calculateIncomeWageTax;
+            initFormTab2PA120.value.deductionItems[4] = {
               itemCode: 1011,
               amount: value.calculateIncomeWageTax,
             };
           }
           if (item.itemCode == 1012) {
-            item.value = itemValue11? Math.floor(+itemValue11 / 10) * 10 : 0;
-            formStateTab2.deductionItems[4] = {
+            item.value = itemValue11 ? Math.floor(+itemValue11 / 10) * 10 : 0;
+            initFormTab2PA120.value.deductionItems[4] = {
               itemCode: 1012,
               amount: value.calculateIncomeWageTax,
             };
@@ -336,34 +369,37 @@ export default defineComponent({
     };
     watch(resultGetEmployeeWage, (value) => {
       if (value) {
-        formStateTab2.nationalPensionDeduction = value.getEmployeeWage.nationalPensionDeduction;
-        formStateTab2.healthInsuranceDeduction = value.getEmployeeWage.healthInsuranceDeduction;
-        formStateTab2.longTermCareInsuranceDeduction = value.getEmployeeWage.longTermCareInsuranceDeduction;
-        formStateTab2.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
-        formStateTab2.insuranceSupport = value.getEmployeeWage.insuranceSupport;
-        if (value.getEmployeeWage?.nationalPensionSupportPercent >= 0 && formStateTab2.insuranceSupport) {
-          formStateTab2.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent ?? 0;
+        let editRowData: any = {};
+        editRowData.nationalPensionDeduction = value.getEmployeeWage.nationalPensionDeduction;
+        editRowData.healthInsuranceDeduction = value.getEmployeeWage.healthInsuranceDeduction;
+        editRowData.longTermCareInsuranceDeduction = value.getEmployeeWage.longTermCareInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
+        editRowData.insuranceSupport = value.getEmployeeWage.insuranceSupport;
+        if (value.getEmployeeWage?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent ?? 0;
         }
-        if (value.getEmployeeWage?.employeementInsuranceSupportPercent >= 0 && formStateTab2.insuranceSupport) {
-          formStateTab2.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent ?? 0;
+        if (value.getEmployeeWage?.employeementInsuranceSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent ?? 0;
         }
         if (value.getEmployeeWage?.employeementReductionStartDate) {
-          formStateTab2.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate;
+          editRowData.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate;
         }
         if (value.getEmployeeWage?.employeementReductionFinishDate) {
-          formStateTab2.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate;
+          editRowData.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate;
           let ReductionStartDate = convertToDate(value.getEmployeeWage.employeementReductionStartDate);
           let ReductionFinishDate = convertToDate(value.getEmployeeWage.employeementReductionFinishDate);
           rangeDate.value = [ReductionStartDate, ReductionFinishDate];
         }
         if (value.getEmployeeWage?.employeementReductionRatePercent) {
-          formStateTab2.employeementReductionRatePercent = value.getEmployeeWage.employeementReductionRatePercent;
+          editRowData.employeementReductionRatePercent = value.getEmployeeWage.employeementReductionRatePercent;
         }
         if (value.getEmployeeWage?.employeementReductionInput) {
-          formStateTab2.employeementReductionInput = value.getEmployeeWage.employeementReductionInput;
+          editRowData.employeementReductionInput = value.getEmployeeWage.employeementReductionInput;
         }
-        formStateTab2.employeementReduction = value.getEmployeeWage.employeementReduction;
-        formStateTab2.incomeTaxMagnification = value.getEmployeeWage.incomeTaxMagnification;
+        editRowData.employeementReduction = value.getEmployeeWage.employeementReduction;
+        editRowData.incomeTaxMagnification = value.getEmployeeWage.incomeTaxMagnification;
+        store.commit('common/editRowTab2PA120', editRowData);
+        store.commit('common/initFormTab2PA120', editRowData);
         if (value.getEmployeeWage.payItems) {
           value.getEmployeeWage.payItems.map((item: any) => {
             datagConfigPayItems.value.find((Obj: any) => {
@@ -384,8 +420,8 @@ export default defineComponent({
         }
         dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 1;
         // setTimeOut(()=> calculateTax(), 100);
-        setTimeout(()=> calculateTax(),200)
-        setTimeout(()=> calculateTax(),500)
+        setTimeout(() => calculateTax(), 200);
+        setTimeout(() => calculateTax(), 500);
       }
     });
 
@@ -456,7 +492,6 @@ export default defineComponent({
       }
     });
 
-
     /**
      * Calculate Income Wage Tax if totalPayItem != 0
      */
@@ -490,15 +525,15 @@ export default defineComponent({
 
     const updateDeduction = () => {
       if (rangeDate.value) {
-        formStateTab2.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
-        formStateTab2.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
+        initFormTab2PA120.value.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
+        initFormTab2PA120.value.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
       }
       const variables = {
         companyId: companyId,
         imputedYear: globalYear.value,
         employeeId: employeeId.value,
         input: {
-          ...formStateTab2,
+          ...initFormTab2PA120.value,
         },
       };
       mutate(variables);
@@ -506,36 +541,38 @@ export default defineComponent({
 
     const onChangeSwitch1 = (e: any) => {
       if (e) {
-        formStateTab2.nationalPensionSupportPercent = 0;
-        formStateTab2.employeementInsuranceSupportPercent = 0;
+        initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+        initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
       } else {
-        delete formStateTab2.nationalPensionSupportPercent;
-        delete formStateTab2.employeementInsuranceSupportPercent;
+        delete initFormTab2PA120.value.nationalPensionSupportPercent;
+        delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
       }
     };
     const onChangeSwitch2 = (e: any) => {
       if (e) {
-        formStateTab2.employeementReductionRatePercent = 50;
-        formStateTab2.employeementReductionInput = 1;
+        initFormTab2PA120.value.employeementReductionRatePercent = 50;
+        initFormTab2PA120.value.employeementReductionInput = 1;
         rangeDate.value = [dayjs(), dayjs()];
       } else {
-        delete formStateTab2.employeementReductionRatePercent;
-        delete formStateTab2.employeementReductionInput;
-        delete formStateTab2.employeementReductionStartDate;
-        delete formStateTab2.employeementReductionFinishDate;
+        delete initFormTab2PA120.value.employeementReductionRatePercent;
+        delete initFormTab2PA120.value.employeementReductionInput;
+        delete initFormTab2PA120.value.employeementReductionStartDate;
+        delete initFormTab2PA120.value.employeementReductionFinishDate;
         rangeDate.value = undefined;
       }
     };
-    
+
     /**
      * Calculate Pension Employee
      * */
-     const calculateTax = () => {
+    const calculateTax = () => {
       dataConfigDeduction.value?.map((item: any) => {
         if (item.itemCode == 1001) {
-          let total1 = formStateTab2.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, formStateTab2.nationalPensionSupportPercent) : 0;
+          let total1 = initFormTab2PA120.value.nationalPensionDeduction
+            ? calculateNationalPensionEmployee(totalPayItem.value, initFormTab2PA120.value.nationalPensionSupportPercent)
+            : 0;
           item.value = total1;
-          formStateTab2.deductionItems[0] = {
+          initFormTab2PA120.value.deductionItems[0] = {
             itemCode: 1001,
             amount: total1,
           };
@@ -543,7 +580,7 @@ export default defineComponent({
         if (item.itemCode == 1002) {
           let total2 = calculateHealthInsuranceEmployee(totalPayItem.value);
           item.value = total2;
-          formStateTab2.deductionItems[1] = {
+          initFormTab2PA120.value.deductionItems[1] = {
             itemCode: 1002,
             amount: total2,
           };
@@ -551,21 +588,24 @@ export default defineComponent({
         if (item.itemCode == 1003) {
           let total3 = calculateLongTermCareInsurance(totalPayItem.value);
           item.value = total3;
-          formStateTab2.deductionItems[2] = {
+          initFormTab2PA120.value.deductionItems[2] = {
             itemCode: 1003,
             amount: total3,
           };
         }
         if (item.itemCode == 1004) {
-          let total4 = formStateTab2.insuranceSupport == true ? calculateEmployeementInsuranceEmployee(totalPayItem.value, formStateTab2.employeementInsuranceSupportPercent) : 0;
+          let total4 =
+            initFormTab2PA120.value.insuranceSupport == true
+              ? calculateEmployeementInsuranceEmployee(totalPayItem.value, initFormTab2PA120.value.employeementInsuranceSupportPercent)
+              : 0;
           item.value = total4;
-          formStateTab2.deductionItems[3] = {
+          initFormTab2PA120.value.deductionItems[3] = {
             itemCode: 1004,
             amount: total4,
           };
         }
       });
-      formStateTab2.payItems = datagConfigPayItems.value?.map((item: any) => {
+      initFormTab2PA120.value.payItems = datagConfigPayItems.value?.map((item: any) => {
         return {
           itemCode: item.itemCode,
           amount: item.value,
@@ -588,17 +628,24 @@ export default defineComponent({
       }, 0);
       totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
         if (!accumulator) {
-          accumulator = 0
+          accumulator = 0;
         }
         if (!object.value) {
-          object.value = 0
+          object.value = 0;
         }
         return accumulator + object.value;
       }, 0);
       refetchCalcIncomeWageTax();
+      store.state.common.isChangeConfigPayItemsPA120 = false;
     };
+
+    // watch datagConfigPayItems to check change row
+     watch(datagConfigPayItems, (newVal)=> {
+      if(newVal) {
+        store.state.common.isChangeConfigPayItemsPA120 = true;
+      }
+     })
     return {
-      formStateTab2,
       loading1,
       loading2,
       loading,
@@ -621,14 +668,16 @@ export default defineComponent({
       onChangeSwitch1,
       onChangeSwitch2,
       presidentPA120,
-      dependentCount
+      dependentCount,
+      editRowTab2PA120,
+      initFormTab2PA120,
     };
   },
 });
 </script>
 <style lang="scss" scoped >
 #tab2-pa120 {
-  ::v-deep .ant-form-item-label>label {
+  ::v-deep .ant-form-item-label > label {
     width: 130px;
     padding-left: 10px;
   }
@@ -700,7 +749,7 @@ export default defineComponent({
   }
 
   .durunuri-insurance {
-    ::v-deep .ant-form-item-label>label {
+    ::v-deep .ant-form-item-label > label {
       width: 200px;
       padding-left: 10px;
     }
@@ -732,7 +781,7 @@ export default defineComponent({
 
   .income-tax-app-rate {
     ::v-deep .dx-radiobutton {
-        margin-right: 12%;
+      margin-right: 12%;
     }
   }
 
@@ -759,12 +808,12 @@ export default defineComponent({
     justify-content: space-between;
     max-width: 97%;
 
-    >span {
+    > span {
       margin-right: 10px;
       min-width: 100px;
     }
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
       margin-bottom: 5px;
@@ -781,7 +830,7 @@ export default defineComponent({
       }
     }
 
-    ::v-deep .ant-form-item-label>label {
+    ::v-deep .ant-form-item-label > label {
       width: 100px;
       padding-left: 10px;
     }
@@ -792,8 +841,8 @@ export default defineComponent({
     flex-wrap: wrap;
     row-gap: 4px;
     justify-content: space-between;
-    :deep .ant-col{
-        padding: 0 !important;
+    :deep .ant-col {
+      padding: 0 !important;
     }
 
     div {
@@ -830,13 +879,13 @@ export default defineComponent({
   :deep .col-2 {
     flex: 1 1 30%;
     .dx-numberbox {
-        width: 111px !important;
+      width: 111px !important;
     }
     .deducation-name {
-        width: 50px !important;
+      width: 50px !important;
     }
   }
-  :deep .col-3{
+  :deep .col-3 {
     flex: 1 1 35%;
   }
 }

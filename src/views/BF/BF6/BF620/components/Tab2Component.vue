@@ -145,7 +145,6 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(eletroFillingResult, (newVal) => {
-      //   console.log(`output->newVal`, newVal);
       let data = newVal.getElectronicFilingsByLocalIncomeTax;
       productionStatus.value = data;
     });
@@ -165,7 +164,6 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(searchLocalIncomeResult, (newVal) => {
-      console.log(`output->newVal`, newVal);
       let data = newVal.searchLocalIncomeTaxElectronicFilings;
       searchLocalIncomeTrigger.value = false;
       dataSource.value = data;
@@ -181,7 +179,6 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        console.log(`output->props.search`, props.search);
         variables.value = { filter: filterBF620.value };
         searchLocalIncomeTrigger.value = true;
         searchLocalIncomeRefetch();
