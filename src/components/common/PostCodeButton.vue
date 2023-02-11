@@ -1,6 +1,6 @@
 <template>
   <div style="margin-left: 5px">
-    <DxButton icon="search" :width="155" :text="text" type="default" styling-mode="outlined" @click="isOpen = true"
+    <DxButton icon="search" :width="width" :text="text" type="default" styling-mode="outlined" @click="isOpen = true"
       :height="$config_styles.HeightInput" />
 
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
@@ -27,6 +27,10 @@ export default defineComponent({
     text: {
         type: String,
         default: "우편번호 검색",
+    },
+    width: {
+        type: String,
+        default: "145",
     }
   },
   data() {

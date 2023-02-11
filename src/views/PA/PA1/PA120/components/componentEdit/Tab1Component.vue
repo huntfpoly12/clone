@@ -237,7 +237,6 @@ export default defineComponent({
             fetchPolicy: 'no-cache',
         }));
         watch(getValueDefault, (value: any) => {
-            console.log(`output-`)
                 let data = value.getEmployeeWage;
                 let editRowData: any = {};
                 editRowData.name = data.name;
@@ -259,7 +258,6 @@ export default defineComponent({
                 editRowData.department = data.department;
                 editRowData.responsibility = data.responsibility;
                 store.commit('common/editRowPA120',editRowData);
-                console.log(`output->editRowData`,editRowData)
                 store.commit('common/initFormStateTabPA120',editRowData);
                 employeeId.value = data.employeeId;
         // }

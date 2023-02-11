@@ -196,13 +196,14 @@ export default defineComponent({
 
     onDoneAdd((res) => {
       notification('success', messageSave);
+      emit('upDateData');
     });
 
     onError((error) => {
       notification('error', error.message);
     });
 
-    const createNewEmployeeWageDependent = async (e: any) => {
+    const createNewEmployeeWageDependent = (e: any) => {
       var res = e.validationGroup.validate();
       if (props.employeeId) {
         if (!res.isValid) {
@@ -217,29 +218,10 @@ export default defineComponent({
               index: ref(props.dataSourceLen).value + 1,
             },
           };
-          await createEmployeeWageDependent(dataNew);
+          createEmployeeWageDependent(dataNew);
           setModalVisible();
-          emit('upDateData');
-        }
-      } else {
-        if (!res.isValid) {
-          res.brokenRules[0].validator.focus();
-        } else {
-          let dataNew = {
-            companyId: companyId,
-            employeeId: ref(props.employeeId).value,
-            imputedYear: globalYear.value,
-            input: {
-              ...formState,
-              index: ref(props.dataSourceLen).value + 1,
-            },
-          };
-          await createEmployeeWageDependent(dataNew);
-          setModalVisible();
-          emit('upDateData');
         }
       }
-
     };
     watch(()=>formState.residentId,(newVal)=> {
             let count;

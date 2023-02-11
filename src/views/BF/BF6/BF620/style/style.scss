@@ -5,13 +5,52 @@
       padding: 8px 5px;
       margin-bottom: 16px;
     }
+
     .top-table {
       justify-content: space-between;
     }
   }
+
   .tab-3 {
     display: flex;
     width: 100%;
     align-items: center;
   }
+
+  :deep table tr td {
+    vertical-align: middle;
+  }
+
+  .btn-modal-save {
+    background-color: black;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  .report-tag-black {
+    color: #ffffff;
+    background-color: black;
+    text-align: center;
+    width: 75px;
+  }
+
+  .report-tag-gray {
+    color: #555555;
+    background-color: #000000;
+    text-align: center;
+    width: 75px;
+  }
+  :deep .dp__theme_light {
+    display: inline-block;
+  }
+  :deep .custom-sumary {
+    white-space: break-spaces;
+  }
+  :deep .dx-button-content {
+    padding: 0 10px;
+  }
+
 }

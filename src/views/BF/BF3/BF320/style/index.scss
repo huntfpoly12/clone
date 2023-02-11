@@ -17,12 +17,13 @@
   }
 }
 
-:deep .dx-select-checkbox {
-  display: inline-block !important;
+:deep .dx-button-content {
+  height: 28px;
+  padding: 6px;
 }
 
-:deep .dx-texteditor-input {
-  min-height: 30px !important;
+:deep .dx-select-checkbox {
+  display: inline-block !important;
 }
 
 .modal-note {

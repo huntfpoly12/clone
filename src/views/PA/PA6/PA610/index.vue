@@ -296,7 +296,6 @@ export default defineComponent({
             store.state.common.activeAddRowPA610 = false
             refetchData()
             focusedRowKey.value = res.data.createEmployeeBusiness.employeeId;
-            console.log(`output->res.data.createEmployeeBusiness.employeeId`,res.data.createEmployeeBusiness.employeeId)
             disabledInput.value = true
             triggerDetail.value = true
             valueCallApiGetEmployeeBusiness.incomeTypeCode = dataAction.value.incomeTypeCode

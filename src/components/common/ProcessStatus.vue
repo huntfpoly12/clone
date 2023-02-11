@@ -1,18 +1,20 @@
 <template>
-    <div class="mytooltip">
-        <div class="mytext" :class="showModal ? 'show' : ''">
-            <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="value"
-                :layoutCustom="'horizontal'" />
-            <span>으로 변경하시겠습니까?</span>
-            <div class="mt-20">
-                <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'"
-                    @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
-                    :mode="'contained'" @onClick="submit" />
+    <div style="display: inline-block;">
+        <div class="mytooltip">
+            <div class="mytext" :class="showModal ? 'show' : ''">
+                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="value"
+                    :layoutCustom="'horizontal'" />
+                <span>으로 변경하시겠습니까?</span>
+                <div class="mt-20">
+                    <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'"
+                        @onClick="setModalVisible" />
+                    <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
+                        :mode="'contained'" @onClick="submit" />
+                </div>
             </div>
         </div>
         <div v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic :disabled="disabled" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"   @onClick="clickButton"></button-basic>
+                <button-basic :disabled="disabled" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"   @onClick="clickButton"></button-basic>
         </div>
     </div>
 </template>
@@ -127,7 +129,7 @@ export default defineComponent({
 
 .mytooltip {
     position: fixed;
-    display: inline-block;
+    // display: inline-block;
 }
 
 .show {

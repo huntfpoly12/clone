@@ -64,11 +64,8 @@ export default defineComponent({
 
         const updateValue = (value: any) => {
             emit("update:valueEmploy", value.value);  
-            // console.log(value.value);
-            // console.log(`output->`,arrayValueRes.value)
             props.arrayValue.forEach((val:any)=>{
                 if(val.employeeId == value.value){
-                    // console.log(val.incomeTypeCode);
                     emit("incomeTypeCode", val.incomeTypeCode);
                 }
             })
