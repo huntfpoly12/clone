@@ -68,7 +68,7 @@
                 <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
               </DxButton>
             </template>
-            <DxColumn caption="성명" width="140" cell-template="company-name" />
+            <DxColumn caption="성명" width="180" cell-template="company-name" />
             <template #company-name="{ data }">
               <employee-info
                 :idEmployee="data.data.employeeId"
@@ -322,7 +322,7 @@ export default defineComponent({
       let initFormTab2 = {...initFormTab2PA120.value};
       delete initFormTab2.deductionItems;
       delete initFormTab2.payItems;
-      if(isChangeConfigPayItemsPA120) {
+      if(isChangeConfigPayItemsPA120.value) {
         return false;
       }
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)) {
@@ -414,6 +414,7 @@ export default defineComponent({
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
         }
+        compareType.value = 2;
       }
 
       if (!isNewRowPA120.value) {
