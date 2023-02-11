@@ -66,8 +66,8 @@
                                 :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false"
                                 v-else />
                         </template>
-                        <DxColumn caption="주민등록번호" cell-template="residentId" width="150" />
-                        <template #residentId="{ data }" class="custom-action">
+                        <DxColumn caption="주민등록번호" cell-template="residentId" width="150"  css-class="cell-center" />
+                        <template #residentId="{ data }" >
                             <div v-if="data.data.residentId?.length == 14">
                                 <a-tooltip placement="top"
                                     v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
