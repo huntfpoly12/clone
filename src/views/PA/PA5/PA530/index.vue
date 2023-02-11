@@ -172,8 +172,8 @@
                     </template>
                     <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150px" />
                     <DxColumn caption="비고" cell-template="four-major" width="300px" />
-                    <template #four-major="{ data }" class="custom-action">
-                        <div>
+                    <template #four-major="{ data }">
+                        <div  class="custom-grade-cell">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                 :typeValue="1" />
                             <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"

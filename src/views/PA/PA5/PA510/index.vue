@@ -234,7 +234,7 @@
                         <DxColumn width="85" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
                         <DxColumn caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
-                            <div class="custom-action">
+                            <div class="custom-action custom-grade-cell">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
