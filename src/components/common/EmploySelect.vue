@@ -131,14 +131,6 @@ export default defineComponent({
     align-items: flex-end;
 }
 
-.style-Id {
-    margin-right: 5px;
-    text-align: center;
-    border: 1px solid rgb(164, 164, 164);
-    border-radius: 5px;
-    line-height: 23px;
-    padding: 0 7px;
-}
 
 .tag-status {
     background-color: red;
@@ -147,7 +139,6 @@ export default defineComponent({
     border-radius: 5px;
     margin: 0 5px;
 }
-
 .tag-type-20 {
     background-color: rgb(255, 255, 255);
     color: black;
