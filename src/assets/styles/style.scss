@@ -1,7 +1,13 @@
 // grid scss
 @import "./settingStyle.scss";
 @import "./customStyle.scss";
-
+div,
+span,
+input,
+label,
+table {
+  font-size: $fontSize+px;
+}
 .page-content {
   padding: 2px 10px 10px;
 }
@@ -147,10 +153,11 @@ $lenght: 50;
   margin-top: -1px;
 }
 
-div,
-span,
-input,
-label,
-table {
-  font-size: $fontSize+px;
+.style-Id {
+  margin-right: 5px;
+  text-align: center;
+  border: 1px solid rgb(164, 164, 164);
+  border-radius: 5px;
+  padding: 3px 4px;
+  height: 25px;
 }
