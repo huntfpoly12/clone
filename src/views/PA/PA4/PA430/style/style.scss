@@ -105,4 +105,11 @@
     ::v-deep .cell-center {
         text-align: center !important
     }
+
+    .bt-email-group :deep(.dx-button-content){
+      padding: 1px;
+    }
+    .bt-print-group :deep(.dx-button-content){
+      padding: 1px;
+    }
 }
