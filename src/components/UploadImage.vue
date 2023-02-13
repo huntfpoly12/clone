@@ -141,6 +141,7 @@ export default defineComponent({
                 messageUpload = "File must smaller than 5MB!"; 
                 return;
             }
+            console.log(file,'fileName');
             const formData = new FormData();
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
