@@ -1,0 +1,43 @@
+#pa-810 {}
+
+.form-modal {
+  .item-group {
+    margin-top: 10px;
+    border: 1px solid #a3a2a277;
+    padding: 6px 0 3px;
+
+    :deep .ant-form-item-label>label {
+      width: 130px;
+      padding-left: 10px;
+    }
+
+    .item-wrap {
+      position: relative;
+      border: 1px solid #cfcfcf77;
+      border-radius: 10px;
+      padding: 15px 0 10px;
+      margin: 8px 5px;
+
+      :deep .ant-form-item-label>label {
+        width: 122px;
+      }
+
+      &-title {
+        position: absolute;
+        top: -15px;
+        left: 23px;
+        background-color: #ffffff;
+        z-index: 100;
+        text-align: center;
+        padding: 6px 10px;
+      }
+    }
+
+    .check-box-tab1 {
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+  }
+}

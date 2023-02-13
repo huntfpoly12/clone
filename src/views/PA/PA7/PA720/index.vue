@@ -247,8 +247,6 @@
 
   <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="incomeExtrasParams.processKey"
     title="변경이력" typeHistory="pa-720" />
-  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-    :data="incomeExtrasParams.processKey" title="변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false" :dateType="dateType" :paymentDay="paymentDay"
     @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
