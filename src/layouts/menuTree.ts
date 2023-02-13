@@ -118,7 +118,7 @@ export default [
         title: "공통업무",
         id: "ac-600",
         subMenus: [
-          { title: "거래처등록", url: "#", id: "ac-610" },
+          { title: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
           { title: "후원자관리", url: "#", id: "ac-620" },
           { title: "기부금영수증", url: "#", id: "ac-630" },          
         ],
