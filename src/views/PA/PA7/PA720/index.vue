@@ -187,9 +187,9 @@
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
         <DxButton :text="'귀' + inputDateTax" :disabled="!isColumnData"
-          :style="{ color: 'white', backgroundColor: 'gray' }" class="btn-date" />
+          :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date" />
         <DxButton :text="'지' + paymentDateTax" :disabled="!isColumnData"
-          :style="{ color: 'white', backgroundColor: 'black' }" class="btn-date" />
+          :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date" />
         <ProcessStatus v-model:valueStatus="statusParam.status"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>

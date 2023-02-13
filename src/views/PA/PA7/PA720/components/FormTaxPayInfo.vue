@@ -21,16 +21,8 @@
       <a-col :span="12" style="padding-right: 5px">
         <a-form-item label="귀속/지급연월" style="display: flex">
           <div class="d-flex-center">
-            <div class="month-custom-1 d-flex-center" v-if="isColumnData">
-              귀
-              <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" :readonly="isEdit" />
-            </div>
-            <DxButton :text="'귀'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" :disabled="true" v-else />
-            <div class="month-custom-2 d-flex-center" v-if="isColumnData">
-              지
-              <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" :readonly="isEdit" />
-            </div>
-            <DxButton :text="'지'" :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" :disabled="true" v-else />
+            <month-picker-box-custom text="귀" bgColor="gray" v-model:valueDate="month1" :disabled="true"></month-picker-box-custom>
+            <month-picker-box-custom text="지" v-model:valueDate="month2" :disabled="true"></month-picker-box-custom>
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="red">

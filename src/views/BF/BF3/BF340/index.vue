@@ -43,7 +43,7 @@
                     <DxToolbar>
                         <DxItem location="after" template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />

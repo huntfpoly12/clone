@@ -1,6 +1,5 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }} 
     <DxDataGrid
       :show-row-lines="true"
       :hoverStateEnabled="true"
