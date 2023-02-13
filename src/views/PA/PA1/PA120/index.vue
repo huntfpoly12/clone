@@ -219,7 +219,6 @@ export default defineComponent({
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
-    const isCompareEditPA120 = computed(() => store.state.common.isCompareEditPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
     const trigger = ref<boolean>(true);
     const originData = ref({
@@ -304,7 +303,7 @@ export default defineComponent({
       }
     };
 
-    //------------compare Data-----------
+    //----------------compare Data----------------
 
     const compareType = ref(1); //0 is row change. 1 is add button;
     const isChangeConfigPayItemsPA120 = computed(()=> store.state.common.isChangeConfigPayItemsPA120);
@@ -381,7 +380,6 @@ export default defineComponent({
           if (compareType.value == 2) {
             let ele = document.getElementById('btn-save-edit');
             ele?.click();
-            idRowEdit.value = idRow.value;
             let ele2 = document.getElementById('btn-save-edit-tab2');
             ele2?.click();
             idRowEdit.value = idRow.value;
@@ -393,6 +391,7 @@ export default defineComponent({
           focusedRowKey.value = initFormStateTabPA120.value.employeeId;
         } else {
           focusedRowKey.value = idRow.value;
+          actionChangeComponent.value = 2;
         }
         return;
       } else {
@@ -415,6 +414,7 @@ export default defineComponent({
           actionChangeComponent.value = 2;
         }
         compareType.value = 2;
+        actionChangeComponent.value = 2;
       }
 
       if (!isNewRowPA120.value) {
@@ -424,9 +424,7 @@ export default defineComponent({
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       }
     };
-
     //edit row
-
     const actionEdit = (data: any) => {
       compareType.value = 2;
       if (isNewRowPA120.value) {
@@ -445,7 +443,6 @@ export default defineComponent({
         isFirstWeb.value = false;
         return;
       }
-      actionChangeComponent.value = 2;
       isFirstWeb.value = false;
       if (!compareType2()) {
         // console.log(`output->row khac`);
@@ -454,8 +451,8 @@ export default defineComponent({
         return;
       } else {
         // console.log(`output->chuyen row bth. ko co newrow`);
-        store.state.common.isCompareEditPA120 = true;
         idRowEdit.value = data.data.employeeId;
+        actionChangeComponent.value = 2;
       }
     };
 
