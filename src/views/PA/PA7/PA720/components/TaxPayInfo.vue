@@ -13,7 +13,7 @@
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
-      :onRowClick="onRowClick"
+      @row-click="onRowClick"
     >
       <DxScrolling mode="standard" show-scrollbar="always"/>
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
@@ -145,7 +145,7 @@ export default defineComponent({
       dataSourceDetail.value = res.data.getIncomeExtras;
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.employeeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
-        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
+        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.employeeId } });
         store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
@@ -219,6 +219,7 @@ export default defineComponent({
         focusedRowKey.value = null;
     },{deep: true})
     const onRowClick = (e: any) => {
+      console.log(`output->data`,e)
       const data = e.data && e.data;
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
@@ -231,7 +232,7 @@ export default defineComponent({
           },
           incomeId: data.incomeId,
         };
-        emit('editTax', data, firsTimeRow.value);
+        emit('editTax', updateParam, firsTimeRow.value);
         setTimeout(() => {
           firsTimeRow.value = false;
         }, 100);

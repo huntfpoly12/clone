@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="newDateLoading" size="large">
-    {{ formPA720 }}
+    {{ formPA720 }}{{ isEdit }}
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
@@ -169,7 +169,7 @@ export default defineComponent({
     const formPA720 = computed(() => store.getters['common/formPA720'])
     const formEditPA720 = computed(() => store.getters['common/formEditPA720'])
     const isEdit = ref(false);
-    const getEmployeeExtrasTrigger = ref<boolean>(true);
+    const getEmployeeExtrasTrigger = ref<boolean>(false);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: parseInt(dayjs().format('YYYY')),
@@ -202,13 +202,14 @@ export default defineComponent({
     //watch for changes
     watch(
       () => props.editTax,
-      (newValue) => {
+      async (newValue) => {
         if (newValue.incomeId) {
           incomeExtraParam.value = newValue;
           // formPA720.companyId = newValue.companyId;
-          triggerIncomeExtra.value = true;
           isEdit.value = true;
-          refetchIncomeExtra();
+          await refetchIncomeExtra();
+          triggerIncomeExtra.value = true;
+          getEmployeeExtrasTrigger.value = true;
         }
       },
       { deep: true }
@@ -226,14 +227,13 @@ export default defineComponent({
     const {
       refetch: refetchIncomeExtra,
       loading: loadingIncomeExtra,
-      onResult: onResultIncomeExtra,
       onError: onErrorIncomeExtra,
       result: resultIncomeExtra,
     } = useQuery(queries.getIncomeExtra, incomeExtraParam, () => ({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const { result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
       enabled: getEmployeeExtrasTrigger.value,
     }));
@@ -243,8 +243,8 @@ export default defineComponent({
 
     // get data
 
-    onResultIncomeExtra((res) => {
-      let data = res.data.getIncomeExtra;
+    watch(resultIncomeExtra,(newVal: any) => {
+      let data = newVal.getIncomeExtra;
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
       let editRowData: any = {};
@@ -260,7 +260,6 @@ export default defineComponent({
       };
       formPA720.value.processKey = incomeExtraParam.value.processKey;
       formEditPA720.value.processKey = incomeExtraParam.value.processKey;
-      console.log(`output->editRowData`,editRowData)
       store.commit('common/formPA720',editRowData);
       store.commit('common/formEditPA720',editRowData);
       incomeArr.value.push({

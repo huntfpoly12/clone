@@ -226,8 +226,12 @@
   }
 
   :deep .content-btm {
-    .custom-grade-cell .custom-grade-cell-tag {
-      padding: 1px 10px;
+    .custom-grade-cell{
+      padding: 0;
+      margin: 0;
+      .custom-grade-cell-tag {
+        padding: 1px 10px;
+      }
     }
     .dx-button-content {
       padding: 0px 10px 2px;

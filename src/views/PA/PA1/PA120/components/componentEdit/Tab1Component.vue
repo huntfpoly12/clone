@@ -239,7 +239,7 @@ export default defineComponent({
         watch(getValueDefault, (value: any) => {
           let data = value.getEmployeeWage;
           let editRowData: any = {};
-          editRowData.name = data.name;
+          editRowData.name = data.name.toUpperCase();
           editRowData.foreigner = data.foreigner;
           editRowData.president = data.president;
           editRowData.nationality = data.nationality;
@@ -306,7 +306,6 @@ export default defineComponent({
         // convert initFormStateTabPA120.value.name to uppercase
         watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
             initFormStateTabPA120.value.name = newVal.toUpperCase();
-            editRowPA120.value.name = newVal.toUpperCase();
         }, { deep: true })
         const changeTextCountry = (text: any) => {
             initFormStateTabPA120.value.nationality = text
