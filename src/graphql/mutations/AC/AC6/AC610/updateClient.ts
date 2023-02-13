@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-    query updateClient($companyId: Int!, $clientId: Int! $input: ClientInput!) {
+    mutation updateClient($companyId: Int!, $clientId: Int!, $input: ClientInput!) {
         updateClient(companyId: $companyId, clientId: $clientId, input: $input) {
             clientId
             name

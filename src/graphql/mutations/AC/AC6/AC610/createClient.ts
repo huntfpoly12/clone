@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-    query createClient($companyId: Int!, $input: : ClientInput!) {
+    mutation createClient($companyId: Int!, $input: ClientInput!) {
         createClient(companyId: $companyId, input: $input) {
             clientId
             name
