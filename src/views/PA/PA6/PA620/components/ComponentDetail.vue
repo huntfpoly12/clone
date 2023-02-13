@@ -2,9 +2,9 @@
     <div class="d-flex-center mt-10 title-action">
         <div>
             <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
-                :style="{ color: 'white', backgroundColor: 'gray' }" height="33px" />
+                :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}"  />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
-                :style="{ color: 'white', backgroundColor: 'black' }" height="33px" />
+                :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}"/>
             <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
         </div>
         <div class="d-flex">
@@ -94,17 +94,8 @@
                         <a-col :span="13">
                             <a-form-item label="귀속/지급연월" label-align="right">
                                 <div class="d-flex-center">
-                                    <div class="month-custom-1 d-flex-center" v-if="!isDisabledForm">
-                                        귀 <month-picker-box v-model:valueDate="month1" class="mr-5 ml-5" width="65px" 
-                                            :readonly="true" />
-                                    </div>
-                                    <DxButton :text="'귀'" :disabled="isDisabledForm"
-                                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" v-else />
-                                    <div class="month-custom-2 d-flex-center" v-if="!isDisabledForm">
-                                        지 <month-picker-box v-model:valueDate="month2" class="ml-5" :readonly="true" width="65px" />
-                                    </div>
-                                    <DxButton :text="'지'" :disabled="isDisabledForm"
-                                        :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" v-else />
+                                  <month-picker-box-custom text="귀" bgColor="gray" v-model:valueDate="month1" :disabled="true"></month-picker-box-custom>
+                                  <month-picker-box-custom text="지" v-model:valueDate="month2" :disabled="true"></month-picker-box-custom>
                                 </div>
                             </a-form-item>
                             <a-form-item label="지급일" label-align="right">
