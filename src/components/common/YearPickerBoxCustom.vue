@@ -5,6 +5,7 @@
         yearPicker 
         v-model="newDate"
         @update:modelValue="handleDate"
+        :disabled="disabled"
       >
           <template #trigger>
               <div class="text-box-1">{{ text }} {{newDate}}</div>
@@ -26,6 +27,10 @@ export default defineComponent({
             type: String,
             default: "귀",
         },
+        disabled: {
+          type: Boolean,
+          default: false,
+        }
     },
     components: {
         Datepicker,

@@ -158,7 +158,7 @@
 
 ::v-deep .custom-button-checkbox {
     border: 1px solid blue;
-    height: 91.5%;
+   
 
     .dx-button-content {
         padding: 5px 5px;
@@ -191,10 +191,6 @@
     cursor: pointer;
     height: 100%;
     width: 100px;
-}
-
-::v-deep .dx-button-mode-contained {
-    height: 34px;
 }
 
 .custom-button-delete {
