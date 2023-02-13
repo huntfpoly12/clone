@@ -144,12 +144,13 @@ export default defineComponent({
             const formData = new FormData();
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
-            fileName.value = file.name; 
+          fileName.value = file.name; 
+          console.log(formData);
+                
             try { 
                 loading.value = true;
               const data = await uploadRepository.public(formData); 
-                console.log(formData);
-                
+
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
