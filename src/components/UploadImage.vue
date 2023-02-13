@@ -151,7 +151,7 @@ export default defineComponent({
    console.log(formData.getAll('file')); 
 
                 
-            try { 
+           
                 loading.value = true;
               const data = await uploadRepository.public(formData); 
 
@@ -173,9 +173,7 @@ export default defineComponent({
 
                     });
                 });
-            } catch (error) { 
-                notification('error', '이미지를 업로드하는 동안 오류가 발생했습니다!')
-            }
+         
         };
 
         const handleCancel = () => {
