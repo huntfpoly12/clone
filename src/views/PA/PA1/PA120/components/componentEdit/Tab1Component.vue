@@ -55,7 +55,7 @@
                     </id-number-text-box>
                 </a-form-item>
 
-                <a-form-item label="주소정근무시간" label-align="right">
+                <a-form-item label="주소정근무시간" label-align="right" class="red">
                     <div class="input-text">
                         <number-box :required="true" :spinButtons="true"
                             v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours" width="150px" :min="1"
@@ -237,29 +237,29 @@ export default defineComponent({
             fetchPolicy: 'no-cache',
         }));
         watch(getValueDefault, (value: any) => {
-                let data = value.getEmployeeWage;
-                let editRowData: any = {};
-                editRowData.name = data.name;
-                editRowData.foreigner = data.foreigner;
-                editRowData.president = data.president;
-                editRowData.nationality = data.nationality;
-                editRowData.nationalityCode = data.nationalityCode;
-                editRowData.stayQualification = data.stayQualification;
-                editRowData.residentId = data.residentId.replace('-', '');
-                editRowData.roadAddress = data.roadAddress;
-                editRowData.addressExtend = data.addressExtend;
-                editRowData.email = data.email;
-                editRowData.employeeId = data.employeeId;
-                editRowData.joinedAt = data.joinedAt ?? NaN;
-                editRowData.leavedAt = data.leavedAt ?? NaN;
-                editRowData.retirementIncome = data.retirementIncome;
-                editRowData.weeklyWorkingHours = data.weeklyWorkingHours;
-                editRowData.householder = data.householder;
-                editRowData.department = data.department;
-                editRowData.responsibility = data.responsibility;
-                store.commit('common/editRowPA120',editRowData);
-                store.commit('common/initFormStateTabPA120',editRowData);
-                employeeId.value = data.employeeId;
+          let data = value.getEmployeeWage;
+          let editRowData: any = {};
+          editRowData.name = data.name;
+          editRowData.foreigner = data.foreigner;
+          editRowData.president = data.president;
+          editRowData.nationality = data.nationality;
+          editRowData.nationalityCode = data.nationalityCode;
+          editRowData.stayQualification = data.stayQualification;
+          editRowData.residentId = data.residentId.replace('-', '');
+          editRowData.roadAddress = data.roadAddress;
+          editRowData.addressExtend = data.addressExtend;
+          editRowData.email = data.email;
+          editRowData.employeeId = data.employeeId;
+          editRowData.joinedAt = data.joinedAt ?? NaN;
+          editRowData.leavedAt = data.leavedAt ?? NaN;
+          editRowData.retirementIncome = data.retirementIncome;
+          editRowData.weeklyWorkingHours = data.weeklyWorkingHours;
+          editRowData.householder = data.householder;
+          editRowData.department = data.department;
+          editRowData.responsibility = data.responsibility;
+          store.commit('common/editRowPA120',editRowData);
+          store.commit('common/initFormStateTabPA120',editRowData);
+          employeeId.value = data.employeeId;
         // }
         });
         const { mutate, onError, onDone } = useMutation(mutations.updateEmployeeWage);

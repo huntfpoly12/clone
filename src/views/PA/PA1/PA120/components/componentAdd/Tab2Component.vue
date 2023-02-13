@@ -387,6 +387,7 @@ export default defineComponent({
       }, 0);
     //   refetchCalcIncomeWageTax();
         triggerCalcIncome.value = true;
+        store.state.common.isChangeConfigPayItemsPA120 = false;
     };
     /**
      * Calculate Income Wage Tax if totalPayItem != 0
@@ -458,6 +459,13 @@ export default defineComponent({
             rangeDate.value = undefined;
         }
     },{deep:true})
+
+    // watch dataConfigPayItems to check change row
+    watch(()=>dataConfigPayItems, (newVal)=> {
+      if(newVal) {
+        store.state.common.isChangeConfigPayItemsPA120 = true;
+      }
+    },{deep: true})
     return {
       formStateTab2,
       loading1,
