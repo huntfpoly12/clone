@@ -449,6 +449,7 @@ export default defineComponent({
             // optionsRadio, 
             statusFormUpdate, 
             // popupData,
+            originDataDetail,
              listClient, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             statusRemoveRow, dataSearch, searching, changePage, actionSearch
