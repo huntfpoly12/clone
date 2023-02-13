@@ -146,7 +146,10 @@ export default defineComponent({
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
           fileName.value = file.name; 
-          console.log(formData);
+         // Display the key/value pairs
+
+   console.log(formData.getAll('file')); 
+
                 
             try { 
                 loading.value = true;
