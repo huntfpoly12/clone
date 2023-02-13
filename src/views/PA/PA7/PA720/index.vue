@@ -547,22 +547,12 @@ export default defineComponent({
       if (ok) {
         let promise1 = new Promise<void>((resolve) => {
           if (isNewRowPA720.value) {
-            let ele = document.getElementById('btn-save') as HTMLInputElement;
+            let ele = document.getElementById('save-js') as HTMLInputElement;
             ele.click();
             resolve();
           }
         });
-        let promise2 = new Promise<void>((resolve) => {
-          if (compareType.value == 2) {
-            let ele = document.getElementById('btn-save-edit');
-            ele?.click();
-            let ele2 = document.getElementById('btn-save-edit-tab2');
-            ele2?.click();
-            editTaxParam.value = editTaxParamFake.value;
-            resolve();
-          }
-        });
-        Promise.all([promise1, promise2]);
+        Promise.all([promise1]);
         if (isErrorFormPA720.value) {
           taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
         } else {
@@ -603,6 +593,7 @@ export default defineComponent({
     const editTax = (emit: any, firsTimeRow: boolean) => {
       console.log(`output->emit`,emit)
       compareType.value = 2;
+      formTaxRef.value.isEdit = false;
       if (isNewRowPA720.value) {
         if (compareType1()) {
           console.log(`output->chuyen row bth`,isNewRowPA720.value);
@@ -670,13 +661,6 @@ export default defineComponent({
         formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
       }, 200);
     };
-    
-    const compareAdd = computed(() => {
-      if (JSON.stringify(formPA720.value.input) != JSON.stringify(dataActionUtils.input)) {
-        return true;
-      }
-      return false;
-    });
     const addItemClick = ref(true);
     const addItem = () => {
       //   addNewRow();
@@ -769,20 +753,12 @@ export default defineComponent({
       store.commit('common/actionSavePA720');
       let ele: any = document.getElementById('save-js');
       ele?.click();
-      setTimeout(() => {
-        if (!isErrorFormPA720.value) {
-          isLoadNewForm.value = true;
-          taxPayRef.value.firsTimeRow = true;
-        } else {
-          taxPayRef.value.focusedRowKey = keyActivePA720.value;
-        }
-      }, 100);
     };
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        // taxPayRef.value.focusedRowKey = formState.employeeId
+        store.state.common.isErrorFormPA720 = true;
       } else {
         store.commit('common/actionSaveTypePA720', 1);
         onSubmit();
