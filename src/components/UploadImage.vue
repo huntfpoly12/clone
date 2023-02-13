@@ -147,7 +147,9 @@ export default defineComponent({
             fileName.value = file.name; 
             try { 
                 loading.value = true;
-                const data = await uploadRepository.public(formData); 
+              const data = await uploadRepository.public(formData); 
+                console.log(formData);
+                
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
