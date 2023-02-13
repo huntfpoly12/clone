@@ -141,13 +141,20 @@ export default defineComponent({
                 messageUpload = "File must smaller than 5MB!"; 
                 return;
             }
+            console.log(file,'fileName');
             const formData = new FormData();
             formData.append("category", "SubscriptionRequestCompanyLicense");
             formData.append("file", file);
-            fileName.value = file.name; 
-            try { 
+          fileName.value = file.name; 
+         // Display the key/value pairs
+
+   console.log(formData.getAll('file')); 
+
+                
+           
                 loading.value = true;
-                const data = await uploadRepository.public(formData); 
+              const data = await uploadRepository.public(formData); 
+
                 getBase64(file, (base64Url: string) => {
                     imageUrl.value = base64Url;
                     loading.value = false;
@@ -166,9 +173,7 @@ export default defineComponent({
 
                     });
                 });
-            } catch (error) { 
-                notification('error', '이미지를 업로드하는 동안 오류가 발생했습니다!')
-            }
+         
         };
 
         const handleCancel = () => {

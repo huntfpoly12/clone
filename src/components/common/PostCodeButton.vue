@@ -1,7 +1,7 @@
 <template>
   <div style="margin-left: 5px">
     <DxButton icon="search" :width="width" :text="text" type="default" styling-mode="outlined" @click="isOpen = true"
-      :height="$config_styles.HeightInput" />
+      :height="$config_styles.HeightInput" class="post-code"/>
 
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
       <div>
@@ -47,3 +47,8 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.post-code :deep(.dx-button-content) {
+    padding: 0px;
+}
+</style>

@@ -27,7 +27,7 @@
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
                             <DxToolbar>
                                 <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
+                                <DxItem name="exportButton" css-class="cell-button-export"/>
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
