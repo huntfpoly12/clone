@@ -6,7 +6,7 @@
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
           <!-- <img style="width: 30px;cursor: pointer;height: 36px;" src="@/assets/images/icon_delete.png" alt="" class="ml-3"> -->
-          <img style="width: 35px;cursor: pointer;height: 38px;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="createTaxWithholding">
+          <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="createTaxWithholding">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
         </div>
         <div class="table-detail">
