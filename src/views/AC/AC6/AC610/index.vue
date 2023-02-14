@@ -1,31 +1,30 @@
 <template>
-    <action-header title="거래처 관리" @actionSave="actionSave($event)" @actionSearch="actionSearch ? searching($event) : changePage($event)" :buttonDelete="false" />
+    <action-header title="거래처 관리" @actionSave="actionSave($event)"
+        @actionSearch="actionSearch ? searching($event) : changePage($event)" :buttonDelete="false" />
     <div id="ac-610">
         <div class="search-form dflex">
-            <!-- <a-row :gutter="[24, 8]"> -->
-                <div class="dflex">
-                    <label class="lable-item">거래처명 :</label>
-                    <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
-                </div>
-                <div class="dflex">
-                    <label class="lable-item">대표자명 :</label>
-                    <default-text-box v-model:valueInput="dataSearch.presidentName" />
-                </div>
-                <div class="dflex">
-                    <label class="lable-item">연락처 :</label>
-                    <tel-text-box v-model:valueInput="dataSearch.phone" />
-                </div>
-                <div class="dflex">
-                    <checkbox-basic v-model:valueCheckbox="dataSearch.includeNonUse" :size="'20'" label="이용중지 포함" />
-                </div>
-            <!-- </a-row> -->
+            <div class="dflex">
+                <label class="lable-item">거래처명 :</label>
+                <default-text-box width="150px" v-model:valueInput="dataSearch.name" />
+            </div>
+            <div class="dflex">
+                <label class="lable-item">대표자명 :</label>
+                <default-text-box v-model:valueInput="dataSearch.presidentName" />
+            </div>
+            <div class="dflex">
+                <label class="lable-item">연락처 :</label>
+                <tel-text-box v-model:valueInput="dataSearch.phone" />
+            </div>
+            <div class="dflex">
+                <checkbox-basic v-model:valueCheckbox="dataSearch.includeNonUse" :size="'20'" label="이용중지 포함" />
+            </div>
         </div>
         <div class="page-content">
             <a-row gutter="24">
                 <a-col span="16" class="custom-layout">
-                    <a-spin :spinning="loading || loadingCreated" size="large">
+                    <a-spin :spinning="loading" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
-                            :data-source="listClient.datas" :show-borders="true" key-expr="residentId"
+                            :data-source="listClient.datas" :show-borders="true" key-expr="clientId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
@@ -35,34 +34,33 @@
                             <DxToolbar>
                                 <DxItem location="after" template="pagination-table" />
                                 <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
-                                <DxItem location="after" template="button-history" css-class="cell-button-add" />
+                                <DxItem name="exportButton" css-class="cell-button-export" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
                             <template #pagination-table>
                                 <div v-if="listClient.totalCount > listClient.rows">
                                     <a-pagination v-model:current="listClient.page" v-model:page-size="listClient.rows"
-                                        :total="listClient.totalCount" show-less-items />
+                                        :total="listClient.totalCount" show-less-items @change="changePage"/>
                                 </div>
                             </template>
-                            <template #button-history style="border-color: #ddd;">
-                                <DxButton icon="plus">
-                                    <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
-                                </DxButton>
-                            </template>
                             <template #button-template>
-                                <DxButton icon="plus" @click="formCreate" />
+                                <a-tooltip placement="top">
+                                    <template #title>거래처 등록</template>
+                                    <div>
+                                        <DxButton icon="plus" @click="formCreate" />
+                                    </div>
+                                </a-tooltip>
                             </template>
                             <DxColumn caption="거래처명" data-field="name" />
                             <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
                             <template #bizNumber="{ data }">
                                 <span>
                                     {{
-                                        data.data.bizNumber.toString().slice(0, 3)
+                                        data.data.bizNumber?.toString().slice(0, 3)
                                     }}-{{
-    data.data.bizNumber.toString().slice(3, 5)
+    data.data.bizNumber?.toString().slice(3, 5)
 }}-{{
-    data.data.bizNumber.toString().slice(5, 10)
+    data.data.bizNumber?.toString().slice(5, 10)
 }}
                                 </span>
                             </template>
@@ -87,11 +85,23 @@
 
                             <DxColumn caption="대표자명" data-field="presidentName" />
                             <DxColumn caption="연락처" data-field="phone" />
-                            <DxColumn caption="이용여부" data-field="use" />
+                            <DxColumn caption="이용여부" cell-template="use" />
+                            <template #use="{ data }" class="custom-action">
+                                <div class="custom-action" style="text-align: center">
+                                    <button-basic :text="'이용중지'" :type="data.data.use ? 'success' : 'danger'"
+                                        :mode="'contained'" />
+                                </div>
+                            </template>
+                            <DxColumn cell-template="historyClient" />
+                            <template #historyClient="{ data }" class="custom-action">
+                                <div class="custom-action" style="text-align: center">
+                                    <HistoryOutlined v-if="data.data.clientId" style="font-size: 18px;" @click="modalHistory(data.data)" />
+                                </div>
+                            </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="listClient.totalCount > listClient.rows">
                             <a-pagination v-model:current="listClient.page" v-model:page-size="listClient.rows"
-                                :total="listClient.totalCount" show-less-items />
+                                :total="listClient.totalCount" show-less-items @change="changePage"/>
                         </div>
                     </a-spin>
                 </a-col>
@@ -138,8 +148,8 @@
                 </a-col>
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail"
-            title="변경이력" :idRowEdit="idRowEdit" typeHistory="ac-610" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
+            :data="originDataDetail" title="변경이력" typeHistory="ac-610" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
@@ -154,7 +164,7 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState } from "./utils/index"
 import mutations from "@/graphql/mutations/AC/AC6/AC610/index";
@@ -163,7 +173,7 @@ import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DxButton, HistoryPopup, SaveOutlined, DxScrolling,
     },
     setup() {
         // config grid
@@ -174,11 +184,6 @@ export default defineComponent({
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        var idRowEdit = ref<number>(0);
-        // let popupData = ref({
-        //     companyId: companyId,
-        //     clientId: null,
-        // });
         const focusedRowKey = ref()
         const modalStatus = ref(false)
         const modalStatusAdd = ref(false);
@@ -195,9 +200,9 @@ export default defineComponent({
         const dataSearch = ref({
             page: 1,
             rows: per_page,
-            name: "",
-            presidentName: "",
-            phone: "",
+            name: null,
+            presidentName: null,
+            phone: null,
             includeNonUse: false,
         });
         const originDataDetail: any = ref({
@@ -207,13 +212,14 @@ export default defineComponent({
         let confirmSave = ref(false)
 
         // ================GRAPQL==============================================
-        const { mutate: createClient, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
+        const { mutate: createClient, onDone: onDoneAdd, onError: onErrorAdd } = useMutation(
             mutations.createClient
         );
         const { mutate: updateClient, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
             mutations.updateClient
         );
-        const { refetch: refetchData, loading, result } = useQuery(queries.searchClients, { companyId: companyId,
+        const { refetch: refetchData, loading, result } = useQuery(queries.searchClients, {
+            companyId: companyId,
             filter: dataSearch.value
         }, () => ({
             fetchPolicy: "no-cache",
@@ -232,15 +238,16 @@ export default defineComponent({
                 formState.value.presidentName = data.presidentName
                 formState.value.phone = data.phone
                 formState.value.use = data.use
+                formState.value.clientId = data.clientId
                 dataRowOld = { ...formState.value }
             }
             triggerDetail.value = false;
         })
         onDoneAdd(() => {
             trigger.value = true;
-            focusedRowKey.value = parseInt(formState.value.residentId)
             dataRowOld = { ...formState.value }
             statusFormUpdate.value = true;
+            statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
@@ -248,13 +255,11 @@ export default defineComponent({
         });
         onDoneUpdate(() => {
             trigger.value = true;
-            if (formState.value.residentId == focusedRowKey.value) {
-                originDataDetail.value.residentId = formState.value.residentId
-                originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode
+            if (formState.value.clientId == focusedRowKey.value) {
+                originDataDetail.value.clientId = formState.value.clientId
                 dataRowOld = { ...formState.value }
             } else {
-                // originDataDetail.value.residentId = dataRow.residentId
-                // originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+                originDataDetail.value.clientId = dataRow.clientId
             }
             triggerDetail.value = true;
             notification('success', `업데이트 완료되었습니다!`)
@@ -269,15 +274,11 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                focusedRowKey.value = parseInt(formState.value.residentId)
-                // dataRow.residentId = formState.value.residentId
-                // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
-                // let residentId = formState.value.residentId.replace('-', '')
                 let input = {
                     name: formState.value.name,
                     bizNumber: formState.value.bizNumber,
-                    residentId: formState.value.residentId.replace('-', ''),
+                    residentId: formState.value.residentId?.replace('-', ''),
                     presidentName: formState.value.presidentName,
                     phone: formState.value.phone,
                     use: formState.value.use,
@@ -285,7 +286,7 @@ export default defineComponent({
                 if (statusFormUpdate.value) {
                     let dataUpdate = {
                         companyId: companyId,
-
+                        clientId: formState.value.clientId,
                         input: { ...input }
                     };
                     updateClient(dataUpdate);
@@ -294,21 +295,14 @@ export default defineComponent({
                         companyId: companyId,
                         input: { ...input }
                     };
-                    console.log(dataCreate);
-
                     createClient(dataCreate);
                 }
             }
         };
 
         const modalHistory = (data: any) => {
+            originDataDetail.value.clientId = data.clientId
             modalHistoryStatus.value = true
-        }
-        const textCountry = (val: any) => {
-            formState.value.nationality = val ? val : null;
-        }
-        const textTypeCode = (e: any) => {
-            formState.value.incomeTypeName = e
         }
 
 
@@ -319,7 +313,6 @@ export default defineComponent({
             const element = document.querySelector('.dx-row-focused');
             if (element)
                 (element as HTMLInputElement).classList.remove("dx-row-focused");
-
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else
@@ -327,17 +320,16 @@ export default defineComponent({
         }
         const onSelectionClick = (data: any) => {
             dataRow = data.data
-            if (dataRow.residentId) {
-                originDataDetail.value.residentId = data.data.residentId
-                originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
-                if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
+            if (dataRow.clientId) { // if click row already in database
+                originDataDetail.value.clientId = data.data.clientId
+                if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) { // if data has been changed and form add
                     modalStatus.value = true;
                 } else {
-                    if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
+                    if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) { // if data has been changed and form update
                         modalStatus.value = true;
                     } else {
-                        if (!statusRemoveRow.value && listClient.value.datas[listClient.value.datas.length - 1]?.residentId == null) {
-                            listClient.value.datas = listClient.value.splice(0, listClient.value.datas.length - 1)
+                        if (!statusRemoveRow.value && listClient.value.datas[listClient.value.datas.length - 1]?.clientId == null) { // if creating
+                            listClient.value.datas = listClient.value.datas.splice(0, listClient.value.datas.length - 1)
                             statusRemoveRow.value = true
                         }
                         triggerDetail.value = true;
@@ -372,7 +364,7 @@ export default defineComponent({
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
                 if (!statusRemoveRow.value) {
-                    listClient.value.datas = listClient.value.datas.splice(0, listClient.value.length - 1)
+                    listClient.value.datas = listClient.value.datas.splice(0, listClient.value.datas.length - 1)
                     statusRemoveRow.value = true
                 }
                 statusFormUpdate.value = true
@@ -388,21 +380,15 @@ export default defineComponent({
 
         const confimSaveWhenChangeRow = (status: any) => {
             if (status == true) {
-                let residentId = formState.value.residentId.replace('-', '')
                 let dataCreate = {
                     companyId: companyId,
-                    // imputedYear: globalYear.value,
                     input: {
-                        // residentId: parseInt(formState.value.residentId),
-                        // incomeTypeCode: formState.value.incomeTypeCode,
-                        // name: formState.value.name,
-                        // foreigner: formState.value.foreigner,
-                        // nationality: formState.value.nationality,
-                        // nationalityCode: formState.value.nationalityCode,
-                        // stayQualification: formState.value.stayQualification,
-                        // residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                        // email: formState.value.email,
-                        // incomeTypeName: formState.value.incomeTypeName,
+                        name: formState.value.name,
+                        bizNumber: formState.value.bizNumber,
+                        residentId: formState.value.residentId?.replace('-', ''),
+                        presidentName: formState.value.presidentName,
+                        phone: formState.value.phone,
+                        use: formState.value.use,
                     },
                 };
                 createClient(dataCreate);
@@ -410,49 +396,33 @@ export default defineComponent({
             triggerDetail.value = true;
         }
         const searching = (e: any) => {
-            // originData.page = 1
-            // originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            // originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
-            // originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
-            // refetchData()
+            dataSearch.value.page = listClient.value.page
             actionSearch.value = false
         }
         const changePage = (e: any) => {
+            dataSearch.value.page = listClient.value.page
             actionSearch.value = true
-            // originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            // originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
-            // originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
-            // refetchData()
         }
 
         // ================WATCHING============================================
         watch(result, (value) => {
-            if (value) {
+            trigger.value = false;
+            if (value.searchClients) {
                 listClient.value = value.searchClients
-                trigger.value = false;
-            }
-        });
-        watch(() => formState.value.foreigner, (newValue) => {
-            if (!newValue) {
-                formState.value.nationalityCode = 'KR'
-                formState.value.stayQualification = null
-            } else {
-                resetFormNum.value++;
-                formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
+                focusedRowKey.value = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+                formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
             }
         });
 
         return {
-            confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState,
-            // optionsRadio, 
-            statusFormUpdate, 
-            // popupData,
+            confirmSave, move_column, colomn_resize, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState,
+            statusFormUpdate,
             originDataDetail,
-             listClient, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
-            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            statusRemoveRow, dataSearch, searching, changePage, actionSearch
+            listClient, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, 
+            confimSaveWhenChangeRow, actionToAddFromEdit, formCreate, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            dataSearch, searching, changePage, actionSearch
         };
     },
 });
