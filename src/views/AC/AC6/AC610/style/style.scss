@@ -4,7 +4,6 @@
     }
 
     margin-top: 10px;
-    // padding: 10px 10px 10px 0;
 
     .total-user {
         background-color: #17375E;
@@ -100,4 +99,13 @@
 }
 .search-form > div {
     width: auto; 
+}
+td {
+    text-align: center;
+}
+.ant-switch {
+    background-color: #d9534f;
+}
+.ant-switch-checked {
+    background-color: #5cb85c;
 }

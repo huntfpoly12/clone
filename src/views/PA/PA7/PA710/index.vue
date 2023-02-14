@@ -281,6 +281,7 @@ export default defineComponent({
             focusedRowKey.value = parseInt(formState.value.employeeId)
             dataRowOld = { ...formState.value }
             statusFormUpdate.value = true;
+            statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {

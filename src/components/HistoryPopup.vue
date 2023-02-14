@@ -369,7 +369,6 @@ export default defineComponent({
                         case 'ac-610':
                             dataQuery.value = props.data;
                             triggerAC610.value = true;
-                            refetchAC610();
                             break;
                         default:
                             break;
@@ -791,6 +790,7 @@ export default defineComponent({
             if (value) {
                 dataTableShow.value = value.getClientLogs;
             }
+            triggerAC610.value = false;
         });
 
         const formarDate = (date: any) => {
