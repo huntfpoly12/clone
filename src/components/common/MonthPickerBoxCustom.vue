@@ -6,7 +6,7 @@
       @update:modelValue="handleDate" :disabled="disabled"
       >
           <template #trigger>
-              <div class="text-box-1">{{ text }} {{date.year}}-{{  date.month > 9 ? date.month : "0" + date.month.toString() }}</div>
+              <div class="text-box-1">{{ text }} {{date.year}}-{{  (date.month+1) > 9 ? (date.month+1) : "0" + (date.month+1).toString() }}</div>
           </template>
       </Datepicker>
     </div>
