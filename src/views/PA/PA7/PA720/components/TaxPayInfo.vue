@@ -13,12 +13,12 @@
       :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey"
       @selection-changed="selectionChanged"
-      :onRowClick="onRowClick"
+      @row-click="onRowClick"
     >
       <DxScrolling mode="standard" show-scrollbar="always"/>
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="170" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }" class="custom-action">
         <div>
           <button style="margin-right: 5px">
@@ -35,9 +35,9 @@
         </div>
       </template>
       <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="110" alignment="left" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="110" alignment="left" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="110" alignment="left" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="left" />
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100" alignment="left" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="left" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="left" />
       <template #incomLocalTax="{ data }">
@@ -145,7 +145,7 @@ export default defineComponent({
       dataSourceDetail.value = res.data.getIncomeExtras;
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.employeeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
-        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
+        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.employeeId } });
         store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
       }
       triggerDetail.value = false;
@@ -219,6 +219,7 @@ export default defineComponent({
         focusedRowKey.value = null;
     },{deep: true})
     const onRowClick = (e: any) => {
+      console.log(`output->data`,e)
       const data = e.data && e.data;
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {

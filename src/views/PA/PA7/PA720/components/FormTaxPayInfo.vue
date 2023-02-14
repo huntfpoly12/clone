@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="newDateLoading" size="large">
-    <!-- {{ formPA720 }} -->
+    {{ formPA720 }}{{ isEdit }}
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
@@ -21,8 +21,8 @@
       <a-col :span="12" style="padding-right: 5px">
         <a-form-item label="귀속/지급연월" style="display: flex">
           <div class="d-flex-center">
-            <month-picker-box-custom text="귀" bgColor="gray" v-model:valueDate="month1" :disabled="true"></month-picker-box-custom>
-            <month-picker-box-custom text="지" v-model:valueDate="month2" :disabled="true"></month-picker-box-custom>
+            <DxButton :text="'귀' + inputDateTax" :style="{ color: 'white', backgroundColor: 'gray',height: $config_styles.HeightInput }"  />
+            <DxButton :text="'지' + paymentDateTax" :style="{ color: 'white', backgroundColor: 'black',height: $config_styles.HeightInput }" />
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="red">
@@ -167,8 +167,9 @@ export default defineComponent({
     let disabledInput = ref(false);
     // let formPA720: any = computed(() => store.state.common.formPA720);
     const formPA720 = computed(() => store.getters['common/formPA720'])
+    const formEditPA720 = computed(() => store.getters['common/formEditPA720'])
     const isEdit = ref(false);
-    const getEmployeeExtrasTrigger = ref<boolean>(true);
+    const getEmployeeExtrasTrigger = ref<boolean>(false);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: parseInt(dayjs().format('YYYY')),
@@ -176,6 +177,18 @@ export default defineComponent({
     const arrayEmploySelect = ref<any>([]);
     const newDateLoading = ref<boolean>(false);
     const isResetComponent = ref<boolean>(true);
+      const inputDateTax = computed(() => {
+      if (props.isColumnData) {
+        return month1.value;
+      }
+      return '';
+    });
+    const paymentDateTax = computed(() => {
+      if (props.isColumnData) {
+        return month2.value;
+      }
+      return '';
+    });
     // common
     let incomeAmount = ref(0);
     let incomeTax = ref(0);
@@ -188,20 +201,15 @@ export default defineComponent({
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
     //watch for changes
     watch(
-      [() => props.editTax, () => props.isLoadNewForm],
-      ([newValue, newValue2]: [any, boolean]) => {
-        if (newValue2) {
-          newDateLoading.value = true;
-          if (newValue.incomeId) {
-            incomeExtraParam.value = newValue;
-            // formPA720.companyId = newValue.companyId;
-            triggerIncomeExtra.value = true;
-            incomeArr.value = [];
-            isEdit.value = true;
-            refetchIncomeExtra();
-          } else {
-            newDateLoading.value = false;
-          }
+      () => props.editTax,
+      async (newValue) => {
+        if (newValue.incomeId) {
+          incomeExtraParam.value = newValue;
+          // formPA720.companyId = newValue.companyId;
+          isEdit.value = true;
+          await refetchIncomeExtra();
+          triggerIncomeExtra.value = true;
+          getEmployeeExtrasTrigger.value = true;
         }
       },
       { deep: true }
@@ -219,14 +227,13 @@ export default defineComponent({
     const {
       refetch: refetchIncomeExtra,
       loading: loadingIncomeExtra,
-      onResult: onResultIncomeExtra,
       onError: onErrorIncomeExtra,
       result: resultIncomeExtra,
     } = useQuery(queries.getIncomeExtra, incomeExtraParam, () => ({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const { result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
       enabled: getEmployeeExtrasTrigger.value,
     }));
@@ -236,11 +243,12 @@ export default defineComponent({
 
     // get data
 
-    onResultIncomeExtra((res) => {
-        let data = res.data.getIncomeExtra;
+    watch(resultIncomeExtra,(newVal: any) => {
+      let data = newVal.getIncomeExtra;
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
-      formPA720.value.input = {
+      let editRowData: any = {};
+      editRowData.input = {
         paymentDay: data.paymentDay,
         employeeId: data.employeeId,
         incomeTypeCode: data.incomeTypeCode,
@@ -251,6 +259,9 @@ export default defineComponent({
         withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
       };
       formPA720.value.processKey = incomeExtraParam.value.processKey;
+      formEditPA720.value.processKey = incomeExtraParam.value.processKey;
+      store.commit('common/formPA720',editRowData);
+      store.commit('common/formEditPA720',editRowData);
       incomeArr.value.push({
         employeeId: data.employee.employeeId,
         incomeTypeCode: data.incomeTypeCode,
@@ -420,6 +431,8 @@ export default defineComponent({
       onChangeInput,
       actionSavePA720,
       messageRequired,
+      inputDateTax,
+      paymentDateTax
     };
   },
 });

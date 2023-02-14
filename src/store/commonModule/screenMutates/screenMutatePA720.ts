@@ -14,9 +14,15 @@ const screenMutatePA720 = {
     formPA720(state: any, payload: any){
         state.formPA720.input = {
             ...state.formPA720.input,
-            ...payload
+            ...payload.input
         }
     },
+    formEditPA720(state: any, payload: any){
+      state.formEditPA720.input = {
+          ...state.formEditPA720.input,
+          ...payload.input
+      }
+  },
 };
   
 export default screenMutatePA720;

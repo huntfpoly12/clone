@@ -219,7 +219,6 @@ export default defineComponent({
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
-    const isCompareEditPA120 = computed(() => store.state.common.isCompareEditPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
     const trigger = ref<boolean>(true);
     const originData = ref({
@@ -304,7 +303,7 @@ export default defineComponent({
       }
     };
 
-    //------------compare Data-----------
+    //----------------compare Data----------------
 
     const compareType = ref(1); //0 is row change. 1 is add button;
     const isChangeConfigPayItemsPA120 = computed(()=> store.state.common.isChangeConfigPayItemsPA120);
@@ -325,6 +324,8 @@ export default defineComponent({
       if(isChangeConfigPayItemsPA120.value) {
         return false;
       }
+      // console.log(`output->`,editRowPA120.value)
+      // console.log(`output->`,initFormStateTabPA120.value)
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)) {
         return true;
       }
@@ -381,7 +382,6 @@ export default defineComponent({
           if (compareType.value == 2) {
             let ele = document.getElementById('btn-save-edit');
             ele?.click();
-            idRowEdit.value = idRow.value;
             let ele2 = document.getElementById('btn-save-edit-tab2');
             ele2?.click();
             idRowEdit.value = idRow.value;
@@ -391,21 +391,25 @@ export default defineComponent({
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
           focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+          store.state.common.isNewRowPA120=true;
         } else {
+          store.state.common.isNewRowPA120=false;
           focusedRowKey.value = idRow.value;
+          actionChangeComponent.value = 2;
         }
-        return;
       } else {
         if (isNewRowPA120.value) {
           if (!isFirstWeb.value) {
+            focusedRowKey.value = null;
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
             // console.log(`output-> toi dang o so 1`);
             setTimeout(() => {
               addNewRow();
-            }, 100);
+            }, 50);
             focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+            return;
           }
         }
         if (compareType.value == 2) {
@@ -416,17 +420,17 @@ export default defineComponent({
         }
         compareType.value = 2;
       }
+      isFirstWeb.value = false;
 
       if (!isNewRowPA120.value) {
         compareType.value = 2;
+        focusedRowKey.value = idRowEdit.value;
       } else {
         compareType.value = 1;
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       }
     };
-
     //edit row
-
     const actionEdit = (data: any) => {
       compareType.value = 2;
       if (isNewRowPA120.value) {
@@ -442,10 +446,8 @@ export default defineComponent({
         // console.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
-        isFirstWeb.value = false;
         return;
       }
-      actionChangeComponent.value = 2;
       isFirstWeb.value = false;
       if (!compareType2()) {
         // console.log(`output->row khac`);
@@ -454,8 +456,8 @@ export default defineComponent({
         return;
       } else {
         // console.log(`output->chuyen row bth. ko co newrow`);
-        store.state.common.isCompareEditPA120 = true;
         idRowEdit.value = data.data.employeeId;
+        actionChangeComponent.value = 2;
       }
     };
 
@@ -567,7 +569,7 @@ export default defineComponent({
       compareType,
       messageSave,
       messageDel,
-      token,
+      isFirstWeb
     };
   },
 });
