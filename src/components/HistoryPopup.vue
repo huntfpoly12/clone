@@ -78,7 +78,7 @@ export default defineComponent({
         let triggerPA110 = ref<boolean>(false);
         let trigger220 = ref<boolean>(false);
         let trigger610 = ref<boolean>(false);
-        let trigger710 = ref<boolean>(false);
+        let triggerPA710 = ref<boolean>(false);
         let trigger520 = ref<boolean>(false);
         let trigger510 = ref<boolean>(false);
         let triggerStatus510 = ref<boolean>(false);
@@ -199,8 +199,8 @@ export default defineComponent({
                                 imputedYear: globalYear,
                                 companyId: companyId
                             };
-                            trigger710.value = true;
-                            refetchPA710();
+                            triggerPA710.value = true;
+                            // refetchPA710();
                             break;
                         case 'pa-120':
                             dataQuery.value = {
@@ -387,7 +387,7 @@ export default defineComponent({
                     trigger220.value = false;
                     trigger610.value = false;
                     trigger620.value = false;
-                    trigger710.value = false;
+                    triggerPA710.value = false;
                     trigger520.value = false;
                     trigger120.value = false;
                     trigger510.value = false;
@@ -398,8 +398,8 @@ export default defineComponent({
                     triggerStatus620.value = false;
                     triggerStatus720.value = false;
                     triggerPA210.value = false;
-                    triggerPA810.value = true;
-                    triggerAC610.value = true;
+                    triggerPA810.value = false;
+                    triggerAC610.value = false;
                 }
             }
         );
@@ -561,11 +561,12 @@ export default defineComponent({
             queries.getEmployeeExtrasLogs,
             dataQuery,
             () => ({
-                enabled: trigger710.value,
+                enabled: triggerPA710.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultPA710, (value) => {
+            triggerPA710.value = false;
             if (value && value.getEmployeeExtrasLogs) {
                 dataTableShow.value = value.getEmployeeExtrasLogs;
             }

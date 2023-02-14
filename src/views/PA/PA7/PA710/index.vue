@@ -365,7 +365,7 @@ export default defineComponent({
         };
 
         const modalHistory = (data: any) => {
-            modalHistoryStatus.value = companyId
+            modalHistoryStatus.value = true
         }
         const textCountry = (val: any) => {
             formState.value.nationality = val ? val : null;
