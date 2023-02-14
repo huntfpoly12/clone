@@ -19,13 +19,14 @@ export const dataActionUtils = {
     },
     input: {
         paymentDay: null,
-        employeeId: 0,
+        employeeId: '',
         incomeTypeCode: "",
         paymentAmount: null,
         requiredExpenses: null,
         taxRate: null,
         withholdingIncomeTax: null,
         withholdingLocalIncomeTax: null,
+        incomeId: "99axbzkk",
     }
 }
 export const dataGetDetailEdit = {

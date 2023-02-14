@@ -85,15 +85,21 @@
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
             <template #residentId="{ data }">
-              <div :id="`residentId${data.data.residentId}`">{{ data.data.residentId }}</div>
-              <DxTooltip
-                v-if="isResidentIdError[`${data.data.employeeId}`]"
-                position="top"
-                v-model:visible="defaultVisible"
-                :hide-on-outside-click="false"
-                :target="`#residentId${data.data.residentId}`"
-                >Error
-              </DxTooltip>
+              <div v-if="data.data.residentId?.length == 14">
+                  <a-tooltip placement="top"
+                      v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                      key="black">
+                      {{ data.data.residentId }}
+                  </a-tooltip>
+                  <a-tooltip placement="top" v-else title="ERROR" color="red">
+                      {{ data.data.residentId }}
+                  </a-tooltip>
+              </div>
+              <div v-else>
+                  <a-tooltip placement="top" key="black">
+                      {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
+                  </a-tooltip>
+              </div>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" />
             <template #grade-cell="{ data }">
@@ -232,12 +238,10 @@ export default defineComponent({
     const defaultVisible = ref<boolean>(false);
     const idRowEdit = ref();
     const rowChangeStatus = ref<Boolean>(false);
-    const isRefreshDataEditPA120 = computed(() => store.state.common.isRefreshDataEditPA120);
     const idRow = ref();
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
-    const token = computed(() => store.state.auth.token);
     const {
       refetch: refetchData,
       result,
@@ -384,15 +388,19 @@ export default defineComponent({
             ele?.click();
             let ele2 = document.getElementById('btn-save-edit-tab2');
             ele2?.click();
-            idRowEdit.value = idRow.value;
             resolve();
           }
         });
         Promise.all([promise1, promise2]);
-        if (isAddFormErrorPA120.value) {
-          focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-          store.state.common.isNewRowPA120=true;
+          if (isAddFormErrorPA120.value) {
+            // console.log(`output =? luu loi`,)
+            focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+          if(compareType.value == 1){
+            store.state.common.isNewRowPA120=true;
+          }
         } else {
+          // console.log(`output =? luu ko loi`,)
+          idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120=false;
           focusedRowKey.value = idRow.value;
           actionChangeComponent.value = 2;
@@ -564,12 +572,10 @@ export default defineComponent({
       initFormStateTab1,
       rowChangeStatus,
       onRowChangeComfirm,
-      editRowPA120,
-      isRefreshDataEditPA120,
       compareType,
       messageSave,
       messageDel,
-      isFirstWeb
+      isFirstWeb,
     };
   },
 });

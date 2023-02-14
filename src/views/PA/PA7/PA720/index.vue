@@ -450,7 +450,9 @@ export default defineComponent({
       refetchIncomeProcessExtras();
     });
     // -----------------change income process extra status------------------------
-    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(mutations.changeIncomeProcessExtraStatus);
+    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(
+      mutations.changeIncomeProcessExtraStatus
+    );
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       refetchIncomeProcessExtras();
@@ -464,7 +466,6 @@ export default defineComponent({
       refetchIncomeProcessExtras();
     });
     // ======================= track change of form ================================
-    const isNewRow = ref(false);
     const formPA720 = computed(() => store.getters['common/formPA720']);
     const formEditPA720 = computed(() => store.getters['common/formEditPA720']);
     const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
@@ -476,34 +477,34 @@ export default defineComponent({
       if (JSON.stringify(dataActionUtils.input) == JSON.stringify(formPA720.value.input)) {
         return true;
       }
-        return false;
+      return false;
     };
     const compareType2 = () => {
-        if (JSON.stringify(formEditPA720.value.input) == JSON.stringify(formPA720.value.input)) {
-          return true;
-        } else {
-          return false;
-        }
+      // console.log(JSON.stringify(formEditPA720.value.input));
+      // console.log(JSON.stringify(formPA720.value.input));
+      if (JSON.stringify(formEditPA720.value.input) == JSON.stringify(formPA720.value.input)) {
+        return true;
+      } else {
+        return false;
+      }
     };
     //function common
     const addNewRow = () => {
-      // resetForm()
-      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
+      resetForm();
       store.commit('common/formPA720', dataActionUtils);
       // console.log(`output->dataActionUtils.input`, formPA720.value.input.employeeId);
-      taxPayRef.value.focusedRowKey = formPA720.value.input.employeeId;
-      // taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
-      taxPayRef.value.dataSourceDetail = dataSourceDetail.value.concat([dataActionUtils.input]);
+      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+      taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
     };
-    const delNewRow = () => {
-      // resetForm()
-      taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
-      store.commit('common/formPA720', dataActionUtils.input);
-      //   addComponentKey.value++;
-      //   taxPayRef.value.focusedRowKey = null;
-      store.state.common.isNewRowPA720 = true;
+    const delNewRow = async () => {
+      await resetForm();
+      let newArr = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
+      // console.log(`output->taxPayRef`,taxPayRef.value.dataSourceDetail.length,taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1))
+      taxPayRef.value.dataSourceDetail = newArr;
+      store.commit('common/formPA720', dataActionUtils);
+      store.state.common.isNewRowPA720 = false;
       compareType.value = 2;
     };
     //on add row
@@ -514,66 +515,69 @@ export default defineComponent({
       if (isNewRowPA720.value) {
         if (compareType.value == 2) {
           dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
-          // addNewRow();
+          addNewRow();
           compareType.value = 1;
-          console.log(`output->type =2`);
+          // console.log(`output->type =2`);
           return;
         }
         if (!compareType1()) {
-          console.log(`output->type = 1 loi`);
+          // console.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           isFirstWeb.value = false;
           return;
         }
         store.commit('common/formPA720', dataActionUtils.input);
-        console.log(`output->type = 1 ko loi`, compareType1());
         dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
         dataSourceDetail.value = dataSourceDetail.value.concat([formPA720.value]);
-        taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
-        console.log(`output->type = 1 ko loi`, compareType1());
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
         isFirstWeb.value = false;
         return;
       }
       isFirstWeb.value = false;
       setTimeout(() => {
-        console.log(`output->type ko co newrow`, compareType1());
+        // console.log(`output->type ko co newrow`, compareType1());
         addNewRow();
       }, 50);
       return;
     };
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
-      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
       if (ok) {
         let promise1 = new Promise<void>((resolve) => {
-          if (isNewRowPA720.value) {
-            let ele = document.getElementById('save-js') as HTMLInputElement;
-            ele.click();
-            resolve();
+          let ele = document.getElementById('save-js') as HTMLInputElement;
+          ele.click();
+          if (compareType.value == 2) {
           }
+          resolve();
         });
         Promise.all([promise1]);
-        if (isErrorFormPA720.value) {
-          taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
-        } else {
-          taxPayRef.value.focusedRowKey = editTaxParamFake.value;
-        }
-        return;
+        setTimeout(() => {
+          if (isErrorFormPA720.value) {
+            taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+            if (compareType.value == 1) {
+              store.state.common.isNewRowPA720 = true;
+            }
+            // console.log(`1output-back ve back ve form`, formPA720);
+          } else {
+            // console.log(`1output-back ve fake`, editTaxParamFake.value.incomeId);
+            editTaxParam.value = editTaxParamFake.value;
+            taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
+            store.state.common.isNewRowPA720 = false;
+          }
+        }, 1500)
       } else {
         if (isNewRowPA720.value) {
-          // if (!isFirstWeb.value) {
-            dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
-          // }
+          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
-            console.log(`output-> toi dang o so 1`);
+            // console.log(`output-> toi dang o so 1`);
             setTimeout(() => {
               addNewRow();
-            }, 100);
-            taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
+            }, 50);
+            taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
           }
         }
         if (compareType.value == 2) {
-          console.log(`output-> toi dang o so 2 `);
+          // console.log(`output-> toi dang o so 2 `);
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
         }
@@ -582,146 +586,62 @@ export default defineComponent({
 
       if (!isNewRowPA720.value) {
         compareType.value = 2;
+        // console.log(`output-back ve fake`, editTaxParamFake.value.incomeId);
+        taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
       } else {
         compareType.value = 1;
-        taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+        // console.log(`output-back ve back ve form`);
       }
     };
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
-    const editTax = (emit: any, firsTimeRow: boolean) => {
-      console.log(`output->emit`,emit)
+    const editTax = async (emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
-      formTaxRef.value.isEdit = false;
       if (isNewRowPA720.value) {
         if (compareType1()) {
-          console.log(`output->chuyen row bth`,isNewRowPA720.value);
-          delNewRow();
+          await delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
           editTaxParam.value = emit;
-          isFirstWeb.value = false;
+          // console.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
+          formTaxRef.value.isEdit = true;
+          // isFirstWeb.value = false;
           return;
         }
-        console.log(`output->co new row, khac nhau`);
-        rowChangeStatus.value = true;
+        // console.log(`output->co new row, khac nhau`);
         editTaxParamFake.value = emit;
+        rowChangeStatus.value = true;
         isFirstWeb.value = false;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        console.log(`output->row khac`);
+        // console.log(`output->row khac`);
         rowChangeStatus.value = true;
         editTaxParamFake.value = emit;
         return;
       } else {
-        console.log(`output->chuyen row bth. ko co newrow`);
+        // console.log(`output->chuyen row bth. ko co newrow`);
+        formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
       }
-      // if (firsTimeRow) {
-      //   isLoadNewForm.value = true;
-      //   return;
-      // }
-      // let formInputInit: any;
-      // if (formTaxRef.value?.resultIncomeExtra?.getIncomeExtra != undefined) {
-      //   let { employeeId, incomeTypeCode, paymentAmount, paymentDay, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax } = formTaxRef.value?.resultIncomeExtra.getIncomeExtra;
-      //   formInputInit = { paymentDay, employeeId, incomeTypeCode, paymentAmount, requiredExpenses, taxRate, withholdingIncomeTax, withholdingLocalIncomeTax };
-      // } else {
-      //   formInputInit = store.state.common.formInputInit;
-      // }
-      // let formInputData = formTaxRef.value.dataAction.input;
-      // if (actionSaveTypePA720.value == 1) {
-      //   store.commit('common/actionSaveTypePA720', 0);
-      //   if (!compareAdd.value) {
-      //     return;
-      //   }
-      //   isLoadNewForm.value = false;
-      //   titleModalConfirm.value = messageSave;
-      //   popupAddStatus.value = true;
-      //   return;
-      // }
-      // store.commit('common/actionSaveTypePA720', 0);
-      // if (actionSaveTypePA720.value == 0) {
-      //   if (JSON.stringify(formInputData) != JSON.stringify(formInputInit)) {
-      //     isLoadNewForm.value = false;
-      //     titleModalConfirm.value = messageSave;
-      //     popupAddStatus.value = true;
-      //   }
-      // }
     };
     //Reset form tax
-    const resetForm = () => {
+    const resetForm = async () => {
       store.commit('common/formPA720', dataActionUtils.input);
       resetFormNum.value++;
-      formTaxRef.value.triggerIncomeExtra = false;
+      // formTaxRef.value.getEmployeeExtrasTrigger = true;
       formTaxRef.value.newDateLoading = false;
+      formTaxRef.value.isEdit = true;
 
       setTimeout(() => {
         formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
       }, 200);
     };
     const addItemClick = ref(true);
-    const addItem = () => {
-      //   addNewRow();
-      //   addItemClick.value = !addItemClick.value;
-      //   store.commit('common/actionSaveTypePA720', 1);
-      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
-      if (isNewRow.value) {
-        if (compareType.value == 2) {
-          // console.log(`output compare type 2`);
-          dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
-          addNewRow();
-          compareType.value = 1;
-          return;
-        }
-        if (!compareType1()) {
-          // console.log(`output compare type 1  looi`);
-          popupAddStatus.value = true;
-          titleModalConfirm.value = messageDel;
-          isLoadNewForm.value = true;
-          //   resetStatus.value = true;
-          return;
-        }
-        // console.log(`output compare type 1  ok`, formPA720.value.input.employeeId);
-        store.commit('common/formPA720', dataActionUtils.input);
-        dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
-        dataSourceDetail.value = dataSourceDetail.value.concat([formPA720.value.input]);
-        taxPayRef.value.focusedRowKey = formPA720.value.input.employeeId;
-        // taxPayRef.value.focusedRowKey = formPA720.value.employeeId;
-        return;
-      }
-      //   formPA720.value.stayQualification = formPA720.stayQualification;
-      // console.log(`output compare type chua add row`);
-      resetForm();
-      addNewRow();
-      return;
-      //   if (!formTaxRef.value.isEdit) {
-      //     if (compareAdd.value) {
-      //       popupAddStatus.value = true;
-      //       titleModalConfirm.value = 'Do you want to reset your form?';
-      //       isLoadNewForm.value = true;
-      //     }
-      //   } else {
-      //     resetForm();
-      //   }
-    };
     //does save when data and row change ?
     const titleModalConfirm = ref(messageDel);
-    const onPopupComfirm = (e: any) => {
-      if (e) {
-        if (!isLoadNewForm.value) {
-          onSubmit();
-          store.commit('common/actionSaveTypePA720', 0);
-        } else {
-          resetForm();
-          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
-          addNewRow();
-        }
-      } else {
-        isLoadNewForm.value = true;
-      }
-    };
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
       deleteIncomeExtrasParam.value.incomeIds = taxPayRef.value.incomeIdDels;
@@ -748,7 +668,7 @@ export default defineComponent({
     //---------------submit-------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
-    const actionSaveTypePA720 = computed(() => store.state.common.actionSaveTypePA720);
+    // const actionSaveTypePA720 = computed(() => store.state.common.actionSaveTypePA720);
     const onSubmit = () => {
       store.commit('common/actionSavePA720');
       let ele: any = document.getElementById('save-js');
@@ -807,7 +727,7 @@ export default defineComponent({
       return month;
     };
     // -------------------------click month in table top--------------
-    const month = ref<number>(0);       //active tab
+    const month = ref<number>(0); //active tab
     // fnc click month
     const showDetailSelected = (obj: any) => {
       taxPayRef.value.firsTimeRow = true;
@@ -816,7 +736,7 @@ export default defineComponent({
       incomeExtrasParams.processKey.paymentYear = obj.paymentYear;
       incomeExtrasParams.processKey.paymentMonth = obj.paymentMonth;
       statusParam.value = { ...incomeExtrasParams, status: obj.status };
-      resetForm();
+      // resetForm();
       month.value = obj.imputedMonth;
     };
     return {
@@ -871,10 +791,12 @@ export default defineComponent({
       formatMonth,
       resetForm,
       openTab,
-      onPopupComfirm,
+      // onPopupComfirm,
       openAddNewModal,
       onSave,
       onRowChangeComfirm,
+      editTaxParamFake,
+      isErrorFormPA720
     };
   },
 });
