@@ -8,4 +8,10 @@ export const productionStatusesCheckbox = [
     { id: 1, text: "제작중",  },
     { id: 2, text: "제작성공",  },
     { id: -1, text: "제작실패",  },
-  ]
+]
+export const formatMonth = (month: number) => {
+  if (month < 10) {
+    return '0' + month;
+  }
+  return month;
+};

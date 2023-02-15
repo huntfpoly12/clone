@@ -6,9 +6,7 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month }}
                 </div>
-                <div class="month-custom-2 d-flex-center">
-                    <span>지</span> <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
-                </div>
+                <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
@@ -31,8 +29,11 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지 {{ data.paymentYear }}-{{
-                            data.paymentMonth
+                        귀 {{ data.imputedYear }}-{{
+                            data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth
+                        }}
+                        지 {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
                         }}
                         <DxTextBox style="display: none;" />
                     </span>
@@ -42,8 +43,13 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth }} 지
-                        {{ data.paymentYear }}-{{ data.paymentMonth }}</span>
+                    <span>귀 {{ data.imputedYear }}-{{
+                        data.imputedMonth > 9 ? data.imputedMonth :
+                            '0' + data.imputedMonth
+                    }} 지
+                        {{ data.paymentYear }}-{{
+                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
+                        }}</span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -68,6 +74,7 @@ import notification from "@/utils/notification";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
+import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -95,7 +102,7 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA110)
         const globalYear = computed(() => store.state.settings.globalYear)
         const month: any = ref<number>()
-        const month2: any = ref<number>()
+        const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
@@ -121,7 +128,7 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ? paymentMonth : '0' + paymentMonth)}`)
             trigger.value = false;
         });
         const updateValue = (value: any) => {
@@ -211,27 +218,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.custom-modal-delete {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: center;
-    margin-top: 20px;
-
-    img {
-        width: 40px;
-        margin-right: 5px;
-    }
-
-    span {
-        padding: 0px 5px;
-    }
-}
-
-.mt-30 {
-    margin-top: 30px;
-}
-
 .text-align-center {
     text-align: center;
 }
@@ -240,44 +226,15 @@ export default defineComponent({
     margin: 0px 5px;
 }
 
-::v-deep label {
+:deep label {
     width: 100px;
 }
 
-::v-deep .month-custom-1 {
+:deep .month-custom-1 {
     background-color: #A6A6A6;
-    padding: 4px 10px;
+    padding: 3px 16px;
     border-radius: 5px;
-    margin-right: 10px;
     color: white;
-    .dp__input {
-        color: white;
-        padding: 0px;
-        border: none;
-        background-color: #A6A6A6;
-    }
-
-    .dp__icon {
-        display: none;
-    }
-}
-
-::v-deep .month-custom-2 {
-    background-color: black;
-    padding-left: 10px;
-    border-radius: 5px;
-    margin-right: 10px;
-    color: white;
-
-    .dp__input {
-        color: white;
-        padding: 0px;
-        border: none;
-        background-color: black;
-    }
-
-    .dp__icon {
-        display: none;
-    }
+    height: 28px;
 }
 </style>

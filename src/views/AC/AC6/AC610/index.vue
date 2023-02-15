@@ -30,7 +30,7 @@
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
+                            <DxExport :enabled="true" />
                             <DxToolbar>
                                 <DxItem location="after" template="pagination-table" />
                                 <DxItem name="searchPanel" />
@@ -52,7 +52,7 @@
                                 </a-tooltip>
                             </template>
                             <DxColumn caption="거래처명" data-field="name" />
-                            <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+                            <DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="bizNumber"/>
                             <template #bizNumber="{ data }">
                                 <span>
                                     {{
@@ -64,7 +64,7 @@
 }}
                                 </span>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="residentId" />
+                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
                             <template #residentId="{ data }">
                                 <div v-if="data.data.residentId?.length == 14">
                                     <a-tooltip placement="top"
@@ -85,7 +85,7 @@
 
                             <DxColumn caption="대표자명" data-field="presidentName" />
                             <DxColumn caption="연락처" data-field="phone" />
-                            <DxColumn caption="이용여부" cell-template="use" />
+                            <DxColumn caption="이용여부" cell-template="use" data-field="use"/>
                             <template #use="{ data }" class="custom-action">
                                 <div class="custom-action" style="text-align: center">
                                     <button-basic :text="'이용중지'" :type="data.data.use ? 'success' : 'danger'"

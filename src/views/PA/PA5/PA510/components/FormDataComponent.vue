@@ -426,7 +426,7 @@ export default defineComponent({
         watch(() => store.state.common.statusRowAdd, (newVal) => {
             if (!newVal) {
                 store.state.common.dataTaxPayInfo = JSON.parse(JSON.stringify(store.state.common.dataTaxPayInfo)).concat({ ...sampleDataIncomeWageDaily })
-                dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
+                dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
@@ -506,8 +506,8 @@ export default defineComponent({
         }
         const onChange = () => {
             if (employeeWageDailyParam.value.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
-                employeeWageDailyTrigger.value = true;
                 employeeWageDailyParam.value.employeeId = dataIncomeWageDaily.value.employee.employeeId;
+                employeeWageDailyTrigger.value = true;
             }
         }
         return {
