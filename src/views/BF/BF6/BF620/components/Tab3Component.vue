@@ -56,10 +56,9 @@
             <div @click="onShow">Kính lúp</div>
           </template>
         </DxDataGrid>
-        <div @click="onShow">Kính lúp</div>
+        <!-- <div @click="onShow">Kính lúp</div> -->
       </a-spin>
     </div>
-    {{ modalStatus }}z
     <a-modal :visible="modalStatus" @cancel="modalStatus = false" :mask-closable="false" class="confirm-md" footer="" :width="700">
       <a-spin :spinning="companiesInElectronicLoading">
         <br />

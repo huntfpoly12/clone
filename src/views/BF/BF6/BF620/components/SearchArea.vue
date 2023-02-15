@@ -1,5 +1,6 @@
 <template>
   <div class="search-group">
+    {{ filterBF620 }}<br/> {{  reportType}}
     <a-row>
       <a-col>
         <div class="search-date">
@@ -13,12 +14,12 @@
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
         </div>
-        <div class="search-date ">
+        <div class="search-date">
           <span class="search-text mt-5">지급연월</span>
           <div class="search-date">
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
-          <a-form-item label="내/외국인" label-align="right" class=" ml-10">
+          <a-form-item label="신고구분" label-align="right" class=" ml-10">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
@@ -84,11 +85,13 @@ export default defineComponent({
     const searchWithholdingTrigger = ref(true);
     // watch filterBF620.reportType to change value
     watch(
-      () => reportType.checkbox1,
-      (newVal: any) => {
+      () => reportType.checkbox1,(newVal: any) => {
+        if(!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
+          return;
+        }
         reportType.checkbox2 = newVal;
         reportType.checkbox3 = newVal;
-        filterBF620.value.reportType = null;
+        delete filterBF620.value.reportType;
 
       },
       { deep: true }
@@ -98,7 +101,7 @@ export default defineComponent({
       (newVal: any) => {
         if (newVal.checkbox2 == true && newVal.checkbox3 == true) {
           newVal.checkbox1 = true;
-          filterBF620.value.reportType = null;
+          delete filterBF620.value.reportType;
           return;
         }
         newVal.checkbox1 = false;
