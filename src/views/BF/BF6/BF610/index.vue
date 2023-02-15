@@ -25,8 +25,8 @@
                             <div>
                                 <checkbox-basic label="정기" v-model:valueCheckbox="reportType.checkbox2" />
                                 <checkbox-basic label="반기" v-model:valueCheckbox="reportType.checkbox3" />
+                            </div>
                         </div>
-                    </div>
                     </a-form-item>
                     <a-form-item label="신고구분" label-align="left" class="mb-0">
                         <div class=" d-flex-center">
@@ -41,8 +41,19 @@
                         </div>
                     </a-form-item>
                 </a-col>
-                <a-col>
-                    <a-form-item label="마감상태" label-align="left" class="mb-0">
+                <a-col style="display: flex;">
+                    <div style="margin-right: 10px;">
+                        <a-tooltip placement="top" color="black">
+                            <template #title>원천징수이행상황신고서 2</template>
+                            <div>마감상태 :</div>
+                        </a-tooltip>
+                        <div style="margin-top: 10px;" @click="checkAll3">
+                            <checkbox-basic label="입력중" class="custom-checkbox1"
+                                v-model:valueCheckbox="statuses.all" />
+                        </div>
+                        
+                    </div>
+                    <div>
                         <div class="mb-10">
                             <checkbox-basic label="입력중" class="mr-10 custom-checkbox1"
                                 v-model:valueCheckbox="statuses.checkbox1" />
@@ -55,7 +66,7 @@
                             <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4"
                                 v-model:valueCheckbox="statuses.checkbox4" />
                         </div>
-                    </a-form-item>
+                    </div>
                 </a-col>
                 <a-col>
                     <a-form-item label="사업자코드" label-align="left" class="mb-0 label-select">
@@ -67,12 +78,11 @@
                 </a-col>
                 <a-col>
                     <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
-                        <list-manager-dropdown
-                            v-model:valueInput="dataSearch.filter.manageUserId" width="150px" />
+                        <list-manager-dropdown v-model:valueInput="dataSearch.filter.manageUserId" width="150px" />
                     </a-form-item>
                     <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
-                        <list-sales-dropdown
-                            v-model:valueInput="dataSearch.filter.salesRepresentativeId" width="150px" />
+                        <list-sales-dropdown v-model:valueInput="dataSearch.filter.salesRepresentativeId"
+                            width="150px" />
                     </a-form-item>
                 </a-col>
                 <a-col>
@@ -108,8 +118,9 @@
                         <div class="d-flex-center">
                             <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                                 :dataRow="data.data" @dataRow="changeStatus" /> -->
-                            <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
-                            <div class="pl-5 pr-5" style="margin-left: 100px;">
+                            <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
+                                @checkConfirmRowTable="changeStatusRowTable" />
+                            <div class="pl-5 pr-5">
                                 <a-tooltip color="black" placement="topLeft">
                                     <template #title>소득별 마감현황</template>
                                     <plus-outlined @click="openModalStatus(data.data)" />
@@ -151,39 +162,39 @@
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
                     <template #yearEndTaxAdjustment="{ data }">
-                        {{ data.data.yearEndTaxAdjustment == false ? '' : '어' }}
+                        {{ data.data.yearEndTaxAdjustment == false ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="환급" cell-template="refund" />
                     <template #refund="{ data }">
-                        {{ data.data.refund == false ? '' : '어' }}
+                        {{ data.data.refund == false ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" />
                     <template #wageIncomeSimplified="{ data }">
-                        {{ data.data.wageIncomeSimplified == 0 ? '' : '어' }}
+                        {{ data.data.wageIncomeSimplified == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" />
                     <template #yearEndAdjustmentRetirement="{ data }">
-                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : '어' }}
+                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="근로 일용" cell-template="dailyWageIncome" />
                     <template #dailyWageIncome="{ data }">
-                        {{ data.data.dailyWageIncome == 0 ? '' : '어' }}
+                        {{ data.data.dailyWageIncome == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" />
                     <template #yearEndAdjustment="{ data }">
-                        {{ data.data.yearEndAdjustment == 0 ? '' : '어' }}
+                        {{ data.data.yearEndAdjustment == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="퇴직 소득" cell-template="retirementIncome" />
                     <template #retirementIncome="{ data }">
-                        {{ data.data.retirementIncome == 0 ? '' : '어' }}
+                        {{ data.data.retirementIncome == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="사업 소득" cell-template="businessIncome" />
                     <template #businessIncome="{ data }">
-                        {{ data.data.businessIncome == 0 ? '' : '어' }}
+                        {{ data.data.businessIncome == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="기타 소득" cell-template="extraIncome" />
                     <template #extraIncome="{ data }">
-                        {{ data.data.extraIncome == 0 ? '' : '어' }}
+                        {{ data.data.extraIncome == 0 ? '' : 'ㅇ' }}
                     </template>
                     <DxColumn caption="총지급액 (A99)" data-field="totalPayment" format="#,###" />
                     <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
@@ -227,9 +238,9 @@ export default defineComponent({
                 "rows": 10,
                 "paymentYearMonth": parseInt(globalYear.value + "01"),
                 "reportType": null, //1 or 6
-                "regular": false,
-                "revised": false,
-                "afterDeadline": false,
+                "regular": true,
+                "revised": true,
+                "afterDeadline": true,
                 "statuses": [10, 20, 30, 40],
                 "companyCode": null,
                 "companyName": null,
@@ -347,13 +358,14 @@ export default defineComponent({
             },
         ])
         let statuses = reactive({
+            all: true,
             checkbox1: true,
             checkbox2: true,
             checkbox3: true,
             checkbox4: true,
         })
         let reportType = ref({
-            checkAllTypeFication: false,
+            checkAllTypeFication: true,
             checkbox1: true,
             checkbox2: true,
             checkbox3: true,
@@ -411,37 +423,69 @@ export default defineComponent({
             refetchTable()
 
         }, { deep: true })
-        watch(() => dataSearch.filter.regular, (val: any) => {
-            if (val == true && dataSearch.filter.revised == true && dataSearch.filter.afterDeadline == true)
-                reportType.value.checkAllTypeFication = true
-            else
+        // watch(() => dataSearch.filter.regular, (val: any) => {
+        //     if (val == true && dataSearch.filter.revised == true && dataSearch.filter.afterDeadline == true)
+        //         reportType.value.checkAllTypeFication = true
+        //     else
+        //         reportType.value.checkAllTypeFication = false
+        // }, { deep: true })
+        // watch(() => dataSearch.filter.revised, (val: any) => {
+        //     if (val == true && dataSearch.filter.regular == true && dataSearch.filter.afterDeadline == true)
+        //         reportType.value.checkAllTypeFication = true
+        //     else
+        //         reportType.value.checkAllTypeFication = false
+        // }, { deep: true })
+        // watch(() => dataSearch.filter.afterDeadline, (val: any) => {
+        //     if (val == true && dataSearch.filter.revised == true && dataSearch.filter.regular == true)
+        //         reportType.value.checkAllTypeFication = true
+        //     else
+        //         reportType.value.checkAllTypeFication = false
+        // }, { deep: true })
+        watch(() => [
+            dataSearch.filter.regular,
+            dataSearch.filter.revised,
+            dataSearch.filter.afterDeadline
+        ], ([newA, newB, newC]) => {
+            if (!newA || !newB || !newC) { // if 1 cell is false
                 reportType.value.checkAllTypeFication = false
-        }, { deep: true })
-        watch(() => dataSearch.filter.revised, (val: any) => {
-            if (val == true && dataSearch.filter.regular == true && dataSearch.filter.afterDeadline == true)
+            }
+            if (newA && newB && newC) { // if all is true
                 reportType.value.checkAllTypeFication = true
-            else
-                reportType.value.checkAllTypeFication = false
-        }, { deep: true })
-        watch(() => dataSearch.filter.afterDeadline, (val: any) => {
-            if (val == true && dataSearch.filter.revised == true && dataSearch.filter.regular == true)
-                reportType.value.checkAllTypeFication = true
-            else
-                reportType.value.checkAllTypeFication = false
-        }, { deep: true })
+            }
+        });
 
-        watch(() => reportType.value.checkbox2, (val: any) => {
-            if (val == true && reportType.value.checkbox3 == true)
-                reportType.value.checkbox1 = true
-            else
+        // watch(() => reportType.value.checkbox2, (val: any) => {
+        //     if (val == true && reportType.value.checkbox3 == true)
+        //         reportType.value.checkbox1 = true
+        //     else
+        //         reportType.value.checkbox1 = false
+        // }, { deep: true })
+        // watch(() => reportType.value.checkbox3, (val: any) => {
+        //     if (val == true && reportType.value.checkbox2 == true)
+        //         reportType.value.checkbox1 = true
+        //     else
+        //         reportType.value.checkbox1 = false
+        // }, { deep: true })
+
+        watch(() => [ reportType.value.checkbox2, reportType.value.checkbox3 ], ([newA, newB]) => {
+            if (!newA || !newB) { // if 1 cell is false
                 reportType.value.checkbox1 = false
-        }, { deep: true })
-        watch(() => reportType.value.checkbox3, (val: any) => {
-            if (val == true && reportType.value.checkbox2 == true)
+            }
+            if (newA && newB) { // if all is true
                 reportType.value.checkbox1 = true
-            else
-                reportType.value.checkbox1 = false
-        }, { deep: true })
+            }
+        });
+
+        watch(() => [ statuses.checkbox1, statuses.checkbox2, statuses.checkbox3, statuses.checkbox4, ], ([newA, newB, newC, newD]) => {
+            if (!newA || !newB || !newC || !newD) { // if 1 cell is false
+                statuses.all = false
+            }
+            if (newA && newB && newC && newD) { // if all is true
+                statuses.all = true
+            }
+        });
+
+
 
         /*
          * ============== FUNCTION ============== 
@@ -527,11 +571,17 @@ export default defineComponent({
             dataSearch.filter.revised = reportType.value.checkAllTypeFication
             dataSearch.filter.afterDeadline = reportType.value.checkAllTypeFication
         }
+        const checkAll3 = () => {
+            statuses.checkbox1 = statuses.all
+            statuses.checkbox2 = statuses.all
+            statuses.checkbox3 = statuses.all
+            statuses.checkbox4 = statuses.all
+        }
         return {
-            modalSendEmail, 
+            modalSendEmail,
             // arraySelectBox, 
             dataSource, loadingTable, dataSearch, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
-            checkAll1, checkAll2, searching, closePopup, openModalStatus, changeStatusRowTable, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
+            checkAll1, checkAll2, checkAll3, searching, closePopup, openModalStatus, changeStatusRowTable, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail
         }
     }
 })

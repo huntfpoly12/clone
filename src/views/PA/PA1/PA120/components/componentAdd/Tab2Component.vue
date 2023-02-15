@@ -161,7 +161,7 @@
                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -387,6 +387,7 @@ export default defineComponent({
       }, 0);
     //   refetchCalcIncomeWageTax();
         triggerCalcIncome.value = true;
+        store.state.common.isChangeConfigPayItemsPA120 = false;
     };
     /**
      * Calculate Income Wage Tax if totalPayItem != 0
@@ -458,6 +459,13 @@ export default defineComponent({
             rangeDate.value = undefined;
         }
     },{deep:true})
+
+    // watch dataConfigPayItems to check change row
+    watch(()=>dataConfigPayItems, (newVal)=> {
+      if(newVal) {
+        store.state.common.isChangeConfigPayItemsPA120 = true;
+      }
+    },{deep: true})
     return {
       formStateTab2,
       loading1,

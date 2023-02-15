@@ -6,6 +6,7 @@ const getters = {
     actionSavePA720: (state: any) => state.actionSavePA720,
     keyActivePA720: (state: any) => state.keyActivePA720,
     formPA720: (state: any) => ({...state.formPA720, companyId: companyId,}),
+    formEditPA720: (state: any) => ({...state.formEditPA720, companyId: companyId,}),
     ...screenGetterPA120,
     ...screenGetterPA620,
 };

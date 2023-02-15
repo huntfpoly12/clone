@@ -59,7 +59,7 @@
           </a-form-item>
 
 
-        <a-form-item label="주소정근무시간" label-align="right">
+        <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
               <number-box :required="true" :spinButtons="true" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
               <span style="color: #888888; font-size:12px">
