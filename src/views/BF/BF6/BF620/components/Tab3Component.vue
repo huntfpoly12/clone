@@ -52,7 +52,7 @@
           <DxColumn caption="아이디" cell-template="productionRequestUserId" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
           <DxColumn caption="상세보기" cell-template="afterDeadline" />
-          <template #afterDeadline="{ data }">
+          <template #afterDeadline>
             <div @click="onShow">Kính lúp</div>
           </template>
         </DxDataGrid>
@@ -138,7 +138,7 @@ export default defineComponent({
     //Search with holding and data source
 
     const dataSource = ref([]);
-    const searchElectronicFilingTrigger = ref(false);
+    const searchElectronicFilingTrigger = ref(true);
     const {
       result: searchElectronicFilingResult,
       loading: searchElectronicFilingLoading,
