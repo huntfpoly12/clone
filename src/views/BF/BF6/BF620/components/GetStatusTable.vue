@@ -15,7 +15,7 @@ export default defineComponent({
   props: {
     dataProcduct: {
       type: Object,
-      required: true,
+      // required: true,
     },
   },
   setup(props, { emit }) {
@@ -27,7 +27,7 @@ export default defineComponent({
       if(newVal){
         filingsBywithholdingTrigger.value = true;
       }
-    }, {deep: true})
+    },{ immediate: true })
     const dataSearch = reactive({
       input: {
         companyId: props.dataProcduct?.companyId,
