@@ -23,42 +23,52 @@
           <div class="checkbox-tab-1">
             <span>연간(1.1~12.31)지급분</span> 
             <div class="group-checkbox">
-                <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="2" padding="0px 5px" />
-                </div>
-                <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="3" padding="0px 5px" />
-                </div>
-                <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="4" padding="0px 5px" />
-                </div>
-                <div class="checkbox-item">
-                  <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="5" padding="0px 5px" />
-                </div>
+                <a-row>
+                  <a-col :span="12">
+                    <div class="checkbox-item">
+                      <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="2" padding="0px 5px" />
+                    </div>
+                    <div class="checkbox-item">
+                      <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="4" padding="0px 5px" />
+                    </div>
+                  </a-col>
+                  <a-col :span="12">
+                    <div class="checkbox-item">
+                      <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="3" padding="0px 5px" />
+                    </div>
+                    <div class="checkbox-item">
+                      <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="5" padding="0px 5px" />
+                    </div>
+                  </a-col>
+                </a-row>
               </div>
           </div>
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <a-form-item  label="사업자코드">
-            <biz-number-text-box width="150px" v-model:valueInput="originData.companyCode"/>
-        </a-form-item>
-        <a-form-item  label="상호">
-          <default-text-box width="150px" v-model:valueInput="originData.companyName"></default-text-box >
-        </a-form-item>
         <a-row>
-            <a-col :span="12">
-              <a-form-item  label="매니저리스트">
+          <a-col :span="8">
+            <a-form-item  label="사업자코드">
+            <biz-number-text-box width="150px" v-model:valueInput="originData.companyCode"/>
+            </a-form-item>
+            <a-form-item  label="상호">
+              <default-text-box width="150px" v-model:valueInput="originData.companyName"></default-text-box >
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item  label="매니저리스트">
                 <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId"/>
-              </a-form-item>
-            </a-col>
-            <a-col :span="12">
+            </a-form-item>
+            <a-form-item  label="영업자리스트">
+              <list-sales-dropdown width="150px" :required="true" v-model:valueInput="originData.salesRepresentativeId"/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <div style="padding-left: 50px;">
               <switch-basic  :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="originData.excludeCancel"/>
-            </a-col>
+            </div>
+          </a-col>
         </a-row>
-        <a-form-item  label="영업자리스트">
-          <list-sales-dropdown width="150px" :required="true" v-model:valueInput="originData.salesRepresentativeId"/>
-        </a-form-item>
       </a-col>
     </a-row>
   </div>
