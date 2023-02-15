@@ -403,6 +403,9 @@ export default defineComponent({
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
                     }
+                    if (JSON.stringify(dataAdd) == JSON.stringify(processKey.value)) {
+                        status.value = data.status
+                    }
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
@@ -458,9 +461,9 @@ export default defineComponent({
                         value: filters.formatCurrency(data.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    if (data.imputedMonth == (dayjs().month() + 1)) {
-                        status.value = data.status
-                    }
+                    // if (data.imputedMonth == (dayjs().month() + 1) && status.value) {
+                    //     status.value = data.status
+                    // }
                     const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
                     if (obj) {
                         statusDisabledBlock.value = false;

@@ -6,10 +6,7 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
                 </div>
-                <div class="month-custom-2 d-flex-center">
-                    <span>지</span>
-                    <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
-                </div>
+                    <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
@@ -77,6 +74,7 @@ import notification from "@/utils/notification";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
+import dayjs from "dayjs";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -116,8 +114,7 @@ export default defineComponent({
             dataApiCopy.value.imputedYear = value.value.imputedYear
         };
 
-        // const month2 = ref(`${processKey.value.imputedYear}-${processKey.value.imputedMonth}`)
-        const month2: any = ref<number>()
+        const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
@@ -137,7 +134,7 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? 1 : paymentMonth}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ?  paymentMonth : '0'+paymentMonth)}`)
             trigger.value = false;
         });
         const originData: any = ref({
@@ -244,38 +241,15 @@ export default defineComponent({
     margin: 0px 5px;
 }
 
-::v-deep label {
+:deep label {
     width: 100px;
 }
 
-::v-deep .month-custom-1 {
-    font-size: 13px;
+:deep .month-custom-1 {
     background-color: #A6A6A6;
-    padding: 6px 20px 6px 10px;
+    padding: 3px 16px;
     border-radius: 5px;
-    margin-right: 10px;
     color: white;
-}
-
-::v-deep .month-custom-2 {
-    font-size: 13px;
-    background-color: black;
-    padding: 2px 0px 0px 10px;
-    border-radius: 5px;
-    margin-right: 10px;
-    color: white;
-
-    .dp__input {
-        color: white;
-        padding: 0px;
-        border: none;
-        background-color: black;
-        padding-top: 1px;
-        font-size: 12px;
-    }
-
-    .dp__icon {
-        display: none;
-    }
+    height: 28px;
 }
 </style>
