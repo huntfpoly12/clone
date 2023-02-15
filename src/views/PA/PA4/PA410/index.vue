@@ -4,7 +4,6 @@
 <script lang="ts">
 import { defineComponent, computed, defineAsyncComponent, onActivated } from "vue";
 import { useStore } from 'vuex';
-import { companyId } from "@/helpers/commonFunction";
 const PA410Page1 = defineAsyncComponent(() =>
   import("./components/PA410Page1.vue")
 );
