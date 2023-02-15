@@ -117,8 +117,7 @@
 }}
                         </span>
                     </template>
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-                        format="yyyy-MM-dd" />
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
                     <DxColumn caption="제작현황" cell-template="제작현황" width="200px" />
                     <template #제작현황="{ data }">
                         <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data"

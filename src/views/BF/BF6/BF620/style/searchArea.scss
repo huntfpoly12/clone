@@ -3,6 +3,7 @@
   padding: 8px 5px;
   margin-bottom: 10px;
   .search-date {
+    margin-right: 30px;
     display: flex;
     .search-text {
       margin-right: 20px;
@@ -48,13 +49,13 @@
     }
   }
   .search-production {
-    margin-left: 30px;
+    margin-right: 30px;
     :deep .ant-form-item-label > label {
       height: 26px;
     }
     .production-check {
       display: grid;
-      grid-template-columns: 45% 42%;
+      grid-template-columns: 45% 45%;
       margin-left: 97px;
     }
     :deep .check-box-group {
@@ -83,7 +84,7 @@
     }
   }
   .search-company {
-    margin-left: 30px;
+    margin-right: 30px;
     display: grid;
     grid-template-columns: 50% 50%;
     :deep .ant-form-item-label > label {
@@ -93,6 +94,5 @@
   }
   .search-4 {
     align-self: center;
-    margin-left: 30px;
   }
 }

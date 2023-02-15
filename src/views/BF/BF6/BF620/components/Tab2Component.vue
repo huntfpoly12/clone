@@ -90,7 +90,7 @@
 </template>
   
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
@@ -134,7 +134,7 @@ export default defineComponent({
         reportId: 2,
       },
     });
-    const eletroFillingTrigger = ref(false);
+    const eletroFillingTrigger = ref(true);
     const productionStatus = ref();
     const {
       result: eletroFillingResult,
