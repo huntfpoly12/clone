@@ -53,7 +53,7 @@
                                 class="table-sevice" :allow-column-reordering="move_column"
                                 :allow-column-resizing="colomn_resize">
                                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                                <DxColumn data-field="enumKey" caption="메뉴" :fixed="true" />
+                                <DxColumn data-field="enumKey" caption="메뉴" />
                                 <DxColumn caption="읽기" cell-template="col1" :width="100" alignment="center" />
                                 <template #col1="{ data }" class="custom-action">
                                     <div class="custom-action" @click="changeValRoles(data.data.enumKey, 'read')">

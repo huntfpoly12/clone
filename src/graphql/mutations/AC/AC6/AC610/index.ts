@@ -1,8 +1,8 @@
 import createClient from './createClient';
-import searchClients from './updateClient';
+import updateClient from './updateClient';
 const mutations = {
     createClient: createClient,
-    searchClients: searchClients,
+    updateClient: updateClient,
 };
 
 export default mutations;

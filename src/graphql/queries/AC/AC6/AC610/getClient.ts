@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-    query getClient($companyId: Int!, $clientId: : Int!) {
+    query getClient($companyId: Int!, $clientId: Int!) {
         getClient(companyId: $companyId, clientId: $clientId) {
             clientId
             name

@@ -185,7 +185,7 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, DxEditing, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState, initialOptionsRadio } from "./utils/index"
@@ -193,12 +193,14 @@ import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import { DxTooltip } from 'devextreme-vue/tooltip';
+// import { DxTooltip } from 'devextreme-vue/tooltip';
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
-        DxTooltip, DxEditing,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, 
+        // DxSorting,
+        // DxTooltip, 
+        // DxEditing,
     },
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -279,6 +281,7 @@ export default defineComponent({
             focusedRowKey.value = parseInt(formState.value.employeeId)
             dataRowOld = { ...formState.value }
             statusFormUpdate.value = true;
+            statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
@@ -362,7 +365,7 @@ export default defineComponent({
         };
 
         const modalHistory = (data: any) => {
-            modalHistoryStatus.value = companyId
+            modalHistoryStatus.value = true
         }
         const textCountry = (val: any) => {
             formState.value.nationality = val ? val : null;

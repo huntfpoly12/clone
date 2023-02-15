@@ -119,6 +119,7 @@ import queries from "@/graphql/queries/PA/PA4/PA410/index";
 import { initFormState } from '../utils';
 import EmailSinglePopup from './EmailSinglePopup.vue';
 import dayjs from 'dayjs';
+import filters from '@/helpers/filters';
 export default defineComponent({
     components: {
         EmailSinglePopup
@@ -135,8 +136,8 @@ export default defineComponent({
         const valueSelected = ref(store.state.common.employeeIdPA410)
         const formState = reactive({
             ...initFormState,
-            settlementStartDate: dayjs().format("YYYY-MM-DD"),
-            settlementFinishDate: dayjs().format("YYYY-MM-DD")
+            settlementStartDate: filters.formatDateToInterger(dayjs().format("YYYY-MM-DD")),
+            settlementFinishDate: filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
         })
         let variables = {
                 companyId: companyId,
@@ -147,7 +148,7 @@ export default defineComponent({
             const finishDate = dayjs(newFinishDate)         
             workingDays.value = finishDate.diff(formState.settlementStartDate, 'day');
             if (workingDays.value < 0) {
-                formState.settlementFinishDate = dayjs().add(1, 'day').format("YYYY-MM-DD");
+                formState.settlementFinishDate = filters.formatDateToInterger(dayjs().add(1, 'day').format("YYYY-MM-DD"));
             } else {
                 monthsService.value = finishDate.diff(formState.settlementStartDate, 'month');
                 yearsService.value = finishDate.diff(formState.settlementStartDate, 'year');
