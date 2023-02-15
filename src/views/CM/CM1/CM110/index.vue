@@ -124,7 +124,7 @@
                                 </a-form-item>
                             </div>
                             <div class="dflex">
-                                <a-form-item label="이메일" class="red" :label-col="labelCol">
+                                <a-form-item  label="이메일" class="red" :label-col="labelCol">
                                     <mail-text-box v-model:valueInput="formState.extendInfo.president.email"
                                         style="width: 300px" :required="true">
                                     </mail-text-box>
@@ -142,15 +142,15 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="resultDataUsers.getMyCompanyUsers.datas" :show-borders="true" key-expr="id"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                        :column-auto-width="true" style="width: 100%;">
-                        <DxScrolling mode="standard" show-scrollbar="always"/>
+                        :column-auto-width="true" @exporting="onExporting">
+                        <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxPager :visible="false" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem location="after" template="pagination-table" />
                             <DxItem name="searchPanel" />
-                            <DxItem name="exportButton" />
+                            <DxItem name="exportButton" css-class="cell-button-export" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             <DxItem name="groupPanel" />
                             <DxItem name="addRowButton" show-text="always" />
@@ -194,15 +194,15 @@
                         <template #pupop="{ data }" class="custom-action">
                             <div class="custom-action">
                                 <a-space :size="10">
-                                    <a-tooltip  color="black" placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>편집</template>
                                         <EditOutlined @click="openEditModal(data)" />
                                     </a-tooltip>
-                                    <a-tooltip  color="black" placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>변경이력</template>
                                         <HistoryOutlined @click="modalHistory(data)" />
                                     </a-tooltip>
-                                    <a-tooltip  color="black" placement="top">
+                                    <a-tooltip color="black" placement="top">
                                         <template #title>로그인이력</template>
                                         <login-outlined @click="modalLogin(data)" />
                                     </a-tooltip>
@@ -227,6 +227,7 @@
     </a-spin>
 </template>
 <script lang="ts">
+
 import {
     DxDataGrid,
     DxColumn,
@@ -242,6 +243,9 @@ import {
     DxItem
 } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
+import { Workbook } from 'exceljs';
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { saveAs } from "file-saver-es";
 import AddNewCM110Poup from "./components/AddNewCM110Poup.vue";
 import EditCM110Popup from "./components/EditCM110Popup.vue"
 import HistoryPopup from "@/components/HistoryPopup.vue";
@@ -293,12 +297,11 @@ export default defineComponent({
         ListLoginPopup,
         inputFormat,
         getJwtObject,
-        companyId
     },
+    
     setup() {
         // config grid
         const store = useStore();
-
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -479,6 +482,30 @@ export default defineComponent({
             })
             return stringConvert
         }
+        const onExporting = (e: any) => {
+            const workbook = new Workbook();
+            const worksheet = workbook.addWorksheet("MyCompanyUsers");
+            exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+                customizeCell: ({ gridCell, excelCell }) => {
+                    if (gridCell?.rowType === 'data') {
+                        if (gridCell.column?.dataField === 'facilityBusinesses') {
+                            excelCell.value = changeValueRow(gridCell.value)
+                        }
+                    }
+                },
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(
+                        new Blob([buffer], { type: "application/octet-stream" }),
+                        "DataGrid.xlsx"
+                    );
+                });
+            });
+            e.cancel = true;
+        };
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -525,10 +552,10 @@ export default defineComponent({
             closePopupAdd,
             changeValueRow,
             resetFormNum,
+            onExporting,
         };
     },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss">
-
 </style>
