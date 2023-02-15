@@ -270,9 +270,7 @@ export default defineComponent({
             store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
             notification('success', '업데이트 완료!');
             store.commit('common/actionFormDonePA120');
-            store.state.common.isCompareEditPA120 = false;
             store.state.common.isNewRowPA120 = false;
-            store.state.common.isAddFormErrorPA120 = false;
         });
 
         watch(() => props.idRowEdit, (value: any) => {
@@ -291,16 +289,17 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
                 store.state.common.isAddFormErrorPA120 = true;
             } else {
-                let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
-                delete editData.employeeId
-                let dataCallCreat = {
-                    ...originDataDetail.value,
-                    input: {
-                        ...editData,
-                        residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
-                    },
-                };
-                mutate(dataCallCreat);
+              let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
+              delete editData.employeeId
+              let dataCallCreat = {
+                ...originDataDetail.value,
+                input: {
+                  ...editData,
+                  residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
+                },
+              };
+              mutate(dataCallCreat);
+              store.state.common.isAddFormErrorPA120 = false;
             }
         };
         // convert initFormStateTabPA120.value.name to uppercase
