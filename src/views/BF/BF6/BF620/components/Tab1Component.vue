@@ -20,7 +20,6 @@
         </a-tooltip>
       </a-col>
     </a-row>
-    {{ dataSource }}
     <div class="content-grid">
       <a-spin :spinning="searchWithholdingLoading" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
@@ -133,7 +132,7 @@ export default defineComponent({
 
     //-----------------------Search with holding and data source----------------
 
-    const dataSource = ref(<any[]>[]);
+    const dataSource = ref(<any>[]);
     const searchWithholdingTrigger = ref(true);
     const {
       result: searchWithholdingResult,
@@ -274,7 +273,7 @@ export default defineComponent({
       formatMonth
     };
   },
-});
+})
 </script>
 <style lang="scss">
 @import '../style/style.scss';
