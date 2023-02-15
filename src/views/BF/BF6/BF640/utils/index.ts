@@ -29,6 +29,6 @@ export const dataSearchStep3Utils = {
     "type": 1,
     "requesteStartDate": parseInt(dayjs().format('YYYYMMDD')) - 10000,
     "requesteFinishDate": parseInt(dayjs().format('YYYYMMDD')),
-    "productionStatuses": [2, -1, 1, 0],
+    "productionStatuses": [2, -1,],
     "manageUserId": null
-} 
+}

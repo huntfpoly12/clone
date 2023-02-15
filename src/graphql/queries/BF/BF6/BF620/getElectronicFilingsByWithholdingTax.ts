@@ -3,7 +3,7 @@ export default gql`
   query getElectronicFilingsByWithholdingTax(
     $input: ElectronicFilingReportKeyInput!
   ) {
-    getElectronicFilingsByWithholdingTax(filter: $filter) {
+    getElectronicFilingsByWithholdingTax(input: $input) {
       electronicFilingId
       imputedYear
       imputedMonth

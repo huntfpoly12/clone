@@ -53,7 +53,7 @@ export default defineComponent({
     border-radius: 5px;
     color: white;
     background-color: black;
-    width: 80px;
+    width: fit-content;
     padding: 3px 16px;
 }
 </style>
