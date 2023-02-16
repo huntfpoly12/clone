@@ -2,7 +2,7 @@
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
     <div id="pa-520" class="page-content">
         <a-row>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="total-user">
               <div>
                 <span>{{ dataSource.length }}</span>
@@ -13,7 +13,7 @@
               </div>
             </div>
           </a-col>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="current-user">
               <div>
                 <span>{{ totalUserOnl }}</span>
@@ -24,7 +24,7 @@
               </div>
             </div>
           </a-col>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="leave-user">
               <div>
                 <span>{{ totalUserOff }}</span>
