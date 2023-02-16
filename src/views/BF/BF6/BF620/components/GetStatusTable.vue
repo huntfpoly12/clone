@@ -10,37 +10,50 @@
 import { defineComponent, ref, computed, watch, reactive } from "vue";
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
-import { useStore } from "vuex";
+import notification from "@/utils/notification";
 export default defineComponent({
   props: {
-    data: Object,
+    dataProcduct: {
+      type: Object,
+      // required: true,
+    },
   },
   setup(props, { emit }) {
     ///
-    const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
-    let arrStatus = ref([]);
+    let arrStatus = ref<any[]>([]);
+    const filingsBywithholdingTrigger = ref(false);
+    watch(()=> props.dataProcduct, (newVal)=> {
+      console.log(`output-1`,)
+      if(newVal){
+        filingsBywithholdingTrigger.value = true;
+      }
+    },{ immediate: true })
     const dataSearch = reactive({
       input: {
-        companyId: props.data?.companyId,
-        imputedYear: globalYear.value,
-        reportId: props.data?.reportId,
+        companyId: props.dataProcduct?.companyId,
+        imputedYear: props.dataProcduct?.imputedYear,
+        reportId: props.dataProcduct?.reportId,
       },
     });
     let {
       result: filingsByWithholdingResult,
       loading: filingsByWithholdingLoading,
       refetch: filingsByWithholdingRefetch,
+      onError: filingsByWithholdingError,
     } = useQuery(queries.getElectronicFilingsByWithholdingTax, dataSearch, () => ({
+      enabled: filingsBywithholdingTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(filingsByWithholdingResult, (newVal) => {
-      let data = newVal.getfilingsByWithholding;
+      let data = newVal.getElectronicFilingsByWithholdingTax;
       arrStatus.value = data;
+      filingsBywithholdingTrigger.value = false;
+      console.log(`output->`,data,filingsBywithholdingTrigger.value)
       if (data) {
         emit('productionStatusData', data[0]);
       }
     });
+    filingsByWithholdingError((res: any)=> {notification('error', res.message)})
     const checkStatus = (status: any) => {
       if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0) return true;
       else return false;

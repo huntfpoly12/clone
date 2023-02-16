@@ -39,7 +39,7 @@
                             <template #button-template>
                                 <DxButton icon="plus" @click="formCreate" />
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="company-name" />
+                            <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name"/>
                             <template #company-name="{ data }">
                                 <div class="custom-action" v-if="data.data.__typename">
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -53,7 +53,7 @@
                                         :checkStatus="false" />
                                 </div>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="residentId" />
+                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
                             <template #residentId="{ data }">
                                 <div v-if="data.data.residentId?.length == 14">
                                     <a-tooltip placement="top"
@@ -71,7 +71,7 @@
                                     </a-tooltip>
                                 </div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" />
+                            <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeCode"/>
                             <template #grade-cell="{ data }" class="custom-action">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>

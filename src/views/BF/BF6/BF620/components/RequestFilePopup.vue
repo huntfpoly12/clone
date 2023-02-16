@@ -1,5 +1,5 @@
 <template>
-  <a-modal :visible="modalStatus" @cancel="$emit('cancel')" :mask-closable="false" class="confirm-md" footer="" :width="644">
+  <a-modal :visible="true" @cancel="$emit('cancel')" :mask-closable="false" class="confirm-md" footer="" :width="644">
     <standard-form action="" name="request-file-620">
       <div>
         <div class="eamil-input">
@@ -30,10 +30,6 @@ import notification from '@/utils/notification';
 
 export default defineComponent({
   props: {
-    modalStatus: {
-      type: Boolean,
-      default: false,
-    },
     data: {
       type: Object,
       default: {},
@@ -45,14 +41,21 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const dataRequestFile = ref(props.data);
-    // query send request file tab 1
+
+    //----------------- query send request file tab 1--------------------------------
+
     const {
       mutate: creationWithholdingTaxTab1,
       onDone: onDoneTab1,
       onError: onErrorTab1,
     } = useMutation(mutations.requestCreationWithholdingTaxElectronicFilingFile);
-    // query send request file tab 2
+
+    // --------------query send request file tab 2--------------------------------
+
     const { mutate: creationLocalTab2, onDone: onDoneTab2, onError: onErrorTab2 } = useMutation(mutations.requestCreationLocalIncomeTaxElectronicFilingFile);
+
+    //-------------------on Submit request --------------------------------
+
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
@@ -74,7 +77,7 @@ export default defineComponent({
     // onDone tab 1
     onDoneTab1(() => {
       notification('success', `업데이트 완료!`);
-      emit('closePopup', false);
+      emit('cancel', false);
     });
     onErrorTab1((e: any) => {
       notification('error', e.message);

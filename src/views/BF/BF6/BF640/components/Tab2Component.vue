@@ -3,10 +3,7 @@
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
                 <a-form-item label="귀속연도" label-align="left">
-                    <div class="month-custom-1 d-flex-center">
-                        귀
-                        <month-picker-box v-model:valueDate="datePayment" class="mr-5 ml-5" width="80px" />
-                    </div>
+                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black"/>
                 </a-form-item>
             </a-col>
             <a-col class="ml-30">
@@ -51,7 +48,7 @@
                     </div>
                 </div>
             </a-col>
-            <a-col class="ml-30">
+            <a-col class="ml-30 search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
                     <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
@@ -65,7 +62,7 @@
                     <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
-            <a-col>
+            <a-col class="search-4">
                 <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
             </a-col>
         </a-row>

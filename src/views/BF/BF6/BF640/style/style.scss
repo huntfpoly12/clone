@@ -105,4 +105,37 @@
         margin-left: 10px;
         cursor: pointer;
     }
+    .report-tag-black {
+      color: #ffffff;
+      background-color: black;
+      text-align: center;
+      width: 75px;
+    }
+  
+    .report-tag-gray {
+      color: #555555;
+      background-color: #000000;
+      text-align: center;
+      width: 75px;
+      border-radius: 5px;
+  }
+    .production-check {
+      display: grid;
+      grid-template-columns: 45% 45%;
+      margin-left: 97px;
+      border-radius: 5px;
+  }
+    .search-company {
+      margin-right: 20px;
+      display: grid;
+      grid-template-columns: 50% 50%;
+      :deep .ant-form-item-label > label {
+        width: 120px;
+        padding-left: 10px;
+      }
+    }
+    .search-4 {
+      align-self: center;
+      
+    }
 }
