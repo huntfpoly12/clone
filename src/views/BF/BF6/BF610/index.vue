@@ -48,10 +48,9 @@
                             <div>마감상태 :</div>
                         </a-tooltip>
                         <div style="margin-top: 10px;" @click="checkAll3">
-                            <checkbox-basic label="입력중" class="custom-checkbox1"
+                            <checkbox-basic label="전체" class="custom-checkbox1"
                                 v-model:valueCheckbox="statuses.all" />
                         </div>
-                        
                     </div>
                     <div>
                         <div class="mb-10">
@@ -162,39 +161,39 @@
                     </template>
                     <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
                     <template #yearEndTaxAdjustment="{ data }">
-                        {{ data.data.yearEndTaxAdjustment == false ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.yearEndTaxAdjustment == false ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="환급" cell-template="refund" />
                     <template #refund="{ data }">
-                        {{ data.data.refund == false ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.refund == false ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" />
                     <template #wageIncomeSimplified="{ data }">
-                        {{ data.data.wageIncomeSimplified == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.wageIncomeSimplified == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" />
                     <template #yearEndAdjustmentRetirement="{ data }">
-                        {{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="근로 일용" cell-template="dailyWageIncome" />
                     <template #dailyWageIncome="{ data }">
-                        {{ data.data.dailyWageIncome == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.dailyWageIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" />
                     <template #yearEndAdjustment="{ data }">
-                        {{ data.data.yearEndAdjustment == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.yearEndAdjustment == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="퇴직 소득" cell-template="retirementIncome" />
                     <template #retirementIncome="{ data }">
-                        {{ data.data.retirementIncome == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.retirementIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="사업 소득" cell-template="businessIncome" />
                     <template #businessIncome="{ data }">
-                        {{ data.data.businessIncome == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.businessIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="기타 소득" cell-template="extraIncome" />
                     <template #extraIncome="{ data }">
-                        {{ data.data.extraIncome == 0 ? '' : 'ㅇ' }}
+                        <div class="showO">{{ data.data.extraIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
                     <DxColumn caption="총지급액 (A99)" data-field="totalPayment" format="#,###" />
                     <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
