@@ -4,14 +4,13 @@
     <div id="pa-620">
         <div class="page-content">
             <a-row>
-                <a-col :span="3" class="total-user">
+                <a-col :span="2" class="total-user">
                     <div>
                         <span>{{ dataSource.length }}</span>
-                        <br>
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="@/assets/images/user.svg" style="width: 70px" />
+                        <img src="@/assets/images/user.svg" style="width: 39px" />
                     </div>
                 </a-col>
                 <a-col :span="24" class="mt-10">
@@ -241,7 +240,7 @@
                 </a-col>
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
                     @createdDone="createdDone" />
-                <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false" :data="dataModalCopy"
+                <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
         </div>
@@ -256,7 +255,6 @@ import queries from "@/graphql/queries/PA/PA6/PA620/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { origindata } from "./utils";
-import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import dayjs from 'dayjs';
@@ -266,10 +264,10 @@ import CopyMonth from "./components/CopyMonth.vue";
 import queriesHolding from "@/graphql/queries/CM/CM130/index";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxMasterDetail,
+        DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxMasterDetail,
         EditOutlined, HistoryOutlined, SearchOutlined, DeleteOutlined, SaveOutlined,
         MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined,
-        HistoryPopup, ComponentDetail, CopyMonth
+        HistoryPopup, ComponentDetail, CopyMonth,
     },
     setup() {
         let statusButton = ref()
@@ -373,15 +371,15 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    if (val.imputedMonth == (dayjs().month() + 1)) {
-                        statusButton.value = val.status
-                        // if(actionSave.value == 0){
-                        //     store.state.common.processKeyPA620.imputedYear = val.imputedYear
-                        //     store.state.common.processKeyPA620.imputedMonth = val.imputedMonth
-                        //     store.state.common.processKeyPA620.paymentYear = val.paymentYear
-                        //     store.state.common.processKeyPA620.paymentMonth = val.paymentMonth
-                        // }          
-                    }
+                    // if (val.imputedMonth == (dayjs().month() + 1)) {
+                    //     statusButton.value = val.status
+                    //     // if(actionSave.value == 0){
+                    //     //     store.state.common.processKeyPA620.imputedYear = val.imputedYear
+                    //     //     store.state.common.processKeyPA620.imputedMonth = val.imputedMonth
+                    //     //     store.state.common.processKeyPA620.paymentYear = val.paymentYear
+                    //     //     store.state.common.processKeyPA620.paymentMonth = val.paymentMonth
+                    //     // }          
+                    // }
                 })
                 if (isRunOnce.value) {
                     isRunOnce.value = false;
@@ -423,20 +421,20 @@ export default defineComponent({
             actionSave.value++;
         }
         const createdDone = () => {
-            trigger.value = true;
-            // refetchData()
+            refetchData()
         }
         const addMonth = (month: number) => {
-            dataModalCopy.value = month
-            modalCopy.value = true
+            dataModalCopy.value = month;
+            modalCopy.value = true;
         }
         const loadingTable = () => {
-            // refetchData()
+            isRunOnce.value = true;
+            refetchData();
         }
         const dataAddIncomeProcess = (data: any) => {
-            // dataSource.value[0]['month' + data.imputedMonth] = data
-            // dataSource.value[0]['month' + data.imputedMonth].status = 10
-            // isDisabledForm.value = false;
+            dataSource.value[0]['month' + data.imputedMonth] = data
+            dataSource.value[0]['month' + data.imputedMonth].status = 10
+            isDisabledForm.value = false;
         }
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
@@ -447,7 +445,6 @@ export default defineComponent({
             isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
             store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value })
-            refetchData()
         })
 
         return {

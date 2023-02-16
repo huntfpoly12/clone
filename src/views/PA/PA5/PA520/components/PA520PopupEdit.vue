@@ -35,12 +35,6 @@ export default defineComponent({
             emit('closePopup', false)
         }
         const activeKey = ref('1')
-        watch(() => props.idRowEdit, (value) => {
-            if (value) {
-                activeKey.value = '1'
-            }
-        })
-
         return {
             setModalVisible,
             store, activeKey
