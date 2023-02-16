@@ -366,7 +366,8 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(resultIncomeProcessExtras, (newVal: any) => {
-      let responeData = newVal.getIncomeProcessExtras ?? [];
+      console.log(`output->getIncomeProcessExtras`,newVal)
+      let responeData = newVal?.getIncomeProcessExtras ?? [];
       columnData.value = [
         {
           globalYear: globalYear.value,
@@ -445,9 +446,7 @@ export default defineComponent({
     watch(globalYear, (newVal) => {
       incomeProcessExtrasParam.imputedYear = newVal;
       isRunOnce.value = true;
-      incomeExtrasParams.processKey.imputedYear = globalYear.value;
-      incomeExtrasParams.processKey.paymentYear = globalYear.value;
-      refetchIncomeProcessExtras();
+      // refetchIncomeProcessExtras();
     });
     // -----------------change income process extra status------------------------
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(
@@ -455,7 +454,7 @@ export default defineComponent({
     );
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
-      refetchIncomeProcessExtras();
+      // refetchIncomeProcessExtras();
     });
     // ======================= after change data ==================================
     const onFormDone = () => {
@@ -463,7 +462,7 @@ export default defineComponent({
       formTaxRef.value.isEdit = true;
     };
     watch(changeFommDone, () => {
-      refetchIncomeProcessExtras();
+      // refetchIncomeProcessExtras();
     });
     // ======================= track change of form ================================
     const formPA720 = computed(() => store.getters['common/formPA720']);
@@ -691,7 +690,7 @@ export default defineComponent({
       month.value = val;
     };
     const onLoadingTable = () => {
-      refetchIncomeProcessExtras();
+      // refetchIncomeProcessExtras();
     };
     const onAddIncomeProcess = (emit: any) => {
       resetForm();
