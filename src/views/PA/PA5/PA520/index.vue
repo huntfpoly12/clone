@@ -38,12 +38,13 @@
         </a-row>
         <a-row>
             <a-col :span="13" class="custom-layout">
-                <a-spin :spinning="loading" size="large">
+                <a-spin :spinning="loading" size="large">{{ store.state.common.activeAddRowPA520  }} {{ store.state.common.checkChangeValueAddPA520 }}
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
-                        v-model:focused-row-key="focusedRowKey"  @focused-row-changing="onFocusedRowChanging">
+                        v-model:focused-row-key="focusedRowKey">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
+                        <DxPaging :enabled="false" />
                         <DxToolbar>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -159,10 +160,10 @@ export default defineComponent({
         const totalUserOnl = ref(0)
         const totalUserOff = ref(0)
         const globalYear = computed(() => store.state.settings.globalYear)
-        const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const trigger = ref<boolean>(true)
-        const colomn_resize = computed(() => store.state.settings.colomn_resize)
+      const colomn_resize = computed(() => store.state.settings.colomn_resize)
+      const Id_RowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520)
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -173,6 +174,7 @@ export default defineComponent({
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
         const resetAddComponent = ref<number>(1);
+        const addRowOnclick = ref<boolean>(false)
         let dataChange = ref(0)
         // ======================= GRAPQL ================================
         const {
@@ -205,15 +207,18 @@ export default defineComponent({
                 totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
                 totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
  
-                if (store.state.common.rowIdSaveDonePa520 != 0) {
-                    // Get index row change 
-                    let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
-                    // active row change
-                    let a = document.body.querySelectorAll('[aria-rowindex]');
-                    (a[indexChange] as HTMLInputElement).click();
-                }
-
-                trigger.value = false
+              if (store.state.common.rowIdSaveDonePa520 != 0) {
+    
+                // Get index row change 
+                let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == Id_RowSaveDone.value)
+  
+                // active row change
+                setTimeout(() => { 
+                  let a = document.body.querySelectorAll('.style-Id');
+                  (a[indexChange] as HTMLInputElement).click();
+                }, 100);
+              }
+              trigger.value = false
             }
         })
         watch(() => modalAddNewStatus.value, (value) => {
@@ -240,11 +245,13 @@ export default defineComponent({
         // ======================= FUNCTION ================================
 
         // Opening a modal window.
-        const openAddNewModal = () => {
+      const openAddNewModal = () => {
             // Adding a new row to the table.
-            if (store.state.common.activeAddRowPA520 == false) {
+          if (store.state.common.activeAddRowPA520 == false) {
+              // Adding a new row to the grid.
                 let valueAddDefault = { ...DataCreatedTable }
                 store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
+               // Setting the focusedRowKey to null.
                 focusedRowKey.value = null
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
@@ -255,11 +262,16 @@ export default defineComponent({
                 resetAddComponent.value++;
                 actionChangeComponent.value = 1
                 modalAddNewStatus.value = true
-            } else {
-                notification('error', "Hoàn thành thao tác nhập trước đó")
-            }
-        }
+          }
+
+          if (store.state.common.activeAddRowPA520 && store.state.common.checkChangeValueAddPA520) {
+            modalChangeValueAdd.value = true
+            addRowOnclick.value = true
+          }
+      }
+        
         const modalChangeValueAdd = ref(false)
+        // The above code is a function that is called when the user clicks on the edit button.
         const openEditModal = (val: any) => {
             store.state.common.idRowChangePa520 = val.data.employeeId
             if (store.state.common.checkChangeValueAddPA520 == true) {
@@ -316,39 +328,39 @@ export default defineComponent({
           }
 
         }
-
-      watch(() => store.state.common.allowedChangedRowPA520, () => {
-          
-        } )
         const confirmSaveAdd = (res: any) => {
-            if (res == true) {
-                store.state.common.actionSaveAddPA520++
-            } else { //Not save
-                // Delete row add demo
-                store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
-                // Change status switch in store
-                store.state.common.activeAddRowPA520 = false
-                store.state.common.checkChangeValueAddPA520 = false
-                // Get index row change 
-                let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
-                // active row change
-                setTimeout(() => {
-                  let a = document.body.querySelectorAll('[aria-rowindex]');
-                  (a[indexChange] as HTMLInputElement).click();
-                }, 100);
-            }
+          if (res == true) {
+            store.state.common.actionSaveAddPA520++
+            // get employeeId (row key) last row in dataSourcePA520
+            focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
+          } else if (!res && addRowOnclick.value) { 
+            // Delete row add demo
+            store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+            // Change status switch in store
+            store.state.common.activeAddRowPA520 = false
+            store.state.common.checkChangeValueAddPA520 = false
+            // Setting the value of the addRowOnclick variable to false.
+            addRowOnclick.value = false
+            openAddNewModal()
+          }else{//Not save
+            // Delete row add demo
+            store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+            // Change status switch in store
+            store.state.common.activeAddRowPA520 = false
+            store.state.common.checkChangeValueAddPA520 = false
+            // Get index row change 
+            let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == store.state.common.idRowChangePa520)
+            // active row change
+            setTimeout(() => {
+              let a = document.body.querySelectorAll('[aria-rowindex]');
+              (a[indexChange] as HTMLInputElement).click();
+            }, 100);
+          }
         }
 
-      const onFocusedRowChanging = (e: any) => { 
-    // //if (!store.state.common.allowedChangedRowPA520) {
-    // console.log(e);
-    // prevRowIndex
-    //   e.cancel =  true;
-    //    // }
-      }
         return {
-            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, per_page, move_column, colomn_resize, contentDelete,
-            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,Message,onFocusedRowChanging
+            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, move_column, colomn_resize, contentDelete,
+            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,Message
         }
     },
 })
