@@ -38,7 +38,7 @@
         </a-row>
         <a-row>
             <a-col :span="13" class="custom-layout">
-                <a-spin :spinning="loading" size="large">{{ store.state.common.activeAddRowPA520  }} {{ store.state.common.checkChangeValueAddPA520 }}
+                <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
