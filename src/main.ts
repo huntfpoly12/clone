@@ -13,7 +13,7 @@ import { styles } from "./configs/styles/index";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { client } from "./ApolloClient.d";
 import { Message } from "./configs/enum";
-import clickOutside from '@/directives/click-outside';
+import globalDirectives from './directives'
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -49,13 +49,12 @@ Object.entries(requireComponent).forEach((fileComponent) => {
   app.component(componentName,defineAsyncComponent(componentImport))
 })
 
-app.directive('click-outside', clickOutside);
 app.config.globalProperties.$messages = Message;
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$config_styles = styles;
 
 app.config.performance = true;
-
+app.use(globalDirectives)
 app.use(router);
 app.use(store);
 app.use(Antd).mount("#app"); 
