@@ -7,7 +7,7 @@
                     귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0' + month1 }}
                 </div>
                 <div class="month-custom-2 d-flex-center"> 
-                    지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
+                    <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
                 </div>
             </div>
         </a-form-item>
@@ -49,7 +49,7 @@ export default defineComponent({
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-        let month2: any = ref(dayjs().format("YYYY-MM"))
+        let month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const setModalVisible = () => {
@@ -66,12 +66,15 @@ export default defineComponent({
             })
         );
         watch(resultConfig, (value) => {
+            let paymentMonth = month1.value
             if (value) {
-                if (value.getWithholdingConfig.reportType == 1)
-                    month2.value = globalYear.value * 100 + parseInt(month1.value)
-                else
-                    month2.value = globalYear.value * 100 + (parseInt(month1.value) + 1)
+                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                if (value.getWithholdingConfig.paymentType == 2) {
+                    paymentMonth = month1.value + 1
+                }
             }
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ? paymentMonth : '0' + paymentMonth)}`)
+            trigger.value = false;
         });
 
 
@@ -89,8 +92,8 @@ export default defineComponent({
             emit("dataAddIncomeProcess", {
                 imputedYear: props.processKey.imputedYear,
                 imputedMonth: month1.value,
-                paymentYear: parseInt(month2.value.split('-')[0]),
-                paymentMonth: parseInt(month2.value.split('-')[1]),
+                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
             notification('success', `완료!`)

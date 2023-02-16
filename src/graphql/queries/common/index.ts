@@ -33,6 +33,8 @@ import getIncomeProcessExtraLogs from "./getIncomeProcessExtraLogs";
 import getSubscriptionRequestLogs from "./getSubscriptionRequestLogs";
 import getTaxWithholdingStatusReportsLogs from "./getTaxWithholdingStatusReportsLogs";
 import searchUsers from "./searchUsers";
+import getClientLogs from "./getClientLogs";
+import getMajorInsuranceCompanyEmployeeAcquisitionLogs from "./getMajorInsuranceCompanyEmployeeAcquisitionLogs";
 const queries = {
   getUser: getUser,
   getListSale: getListSale,
@@ -70,6 +72,8 @@ const queries = {
   getSubscriptionRequestLogs: getSubscriptionRequestLogs,
   searchUsers: searchUsers,
   getTaxWithholdingStatusReportsLogs: getTaxWithholdingStatusReportsLogs,
+  getMajorInsuranceCompanyEmployeeAcquisitionLogs: getMajorInsuranceCompanyEmployeeAcquisitionLogs,
+  getClientLogs: getClientLogs,
 };
 
 export default queries;

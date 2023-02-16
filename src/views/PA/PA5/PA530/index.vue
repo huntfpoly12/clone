@@ -145,7 +145,7 @@
                     <template #group-print>
                         <div class="custom-mail-group">
                             <DxButton>
-                                <img src="@/assets/images/printGroup.png" alt="" style="width: 33px;"
+                                <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
                                     @click="printGroup" />
                             </DxButton>
                         </div>
@@ -153,7 +153,7 @@
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton>
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
                                     @click="sendMailGroup" />
                             </DxButton>
                         </div>
@@ -172,8 +172,8 @@
                     </template>
                     <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150px" />
                     <DxColumn caption="비고" cell-template="four-major" width="300px" />
-                    <template #four-major="{ data }" class="custom-action">
-                        <div>
+                    <template #four-major="{ data }">
+                        <div  class="custom-grade-cell">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                 :typeValue="1" />
                             <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"

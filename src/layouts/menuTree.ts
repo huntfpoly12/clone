@@ -118,7 +118,7 @@ export default [
         title: "공통업무",
         id: "ac-600",
         subMenus: [
-          { title: "거래처등록", url: "#", id: "ac-610" },
+          { title: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
           { title: "후원자관리", url: "#", id: "ac-620" },
           { title: "기부금영수증", url: "#", id: "ac-630" },          
         ],
@@ -192,7 +192,7 @@ export default [
         title: "4대보험",
         id: "pa-800",
         subMenus: [
-          { title: "취득신고", url: "#", id: "pa-810" },
+          { title: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810" },
           { title: "상실신고", url: "#", id: "pa-820" },
           { title: "급여변경신고", url: "#", id: "pa-830" },
           { title: "휴직복직신고", url: "#", id: "pa-840" },

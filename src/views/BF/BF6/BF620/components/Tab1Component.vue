@@ -22,18 +22,9 @@
     </a-row>
     <div class="content-grid">
       <a-spin :spinning="searchWithholdingLoading" size="large">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="companyId"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-          @selection-changed="selectionChanged"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="company.code" />
@@ -42,35 +33,27 @@
             {{ data.data.company.name }}
             {{ data.data.company.address }}
           </template>
-          <DxColumn caption="귀속연월" cell-template="inputYearMonth" />
+          <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
           <template #inputYearMonth="{ data }">
             <!-- {{ data.data.imputedYear }} -->
             <a-tooltip color="black">
               <template #title>삭제</template>
-              <DxButton
-                :text="'귀 ' + data.data.imputedYear + '-' + data.data.imputedMonth"
-                :style="{
-                  color: 'white',
-                  backgroundColor: 'gray',
-                  height: $config_styles.HeightInput
-                }"
-                class="btn-date"
-              />
+              <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
+                color: 'white',
+                backgroundColor: 'gray',
+                height: $config_styles.HeightInput
+              }" class="btn-date" />
             </a-tooltip>
           </template>
-          <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
+          <DxColumn caption="귀속연월" cell-template="paymentYearMonth" width="102px" />
           <template #paymentYearMonth="{ data }">
-            <DxButton
-              :text="'귀 ' + data.data.paymentYear + '-' + data.data.paymentMonth"
-              :style="{
-                color: 'white',
-                backgroundColor: 'black',
-                height: $config_styles.HeightInput
-              }"
-              class="btn-date"
-            />
+            <DxButton :text="'귀 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
+              color: 'white',
+              backgroundColor: 'black',
+              height: $config_styles.HeightInput
+            }" class="btn-date" />
           </template>
-          <DxColumn caption="신고 주기" cell-template="reportType" width="95px"/>
+          <DxColumn caption="신고 주기" cell-template="reportType" width="95px" />
           <template #reportType="{ data }">
             <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
             <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
@@ -78,16 +61,18 @@
           </template>
           <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
           <template #afterDeadline="{ data }">
-            <div v-if="data.data.afterDeadline" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
-            <div v-else></div>
+            <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
+            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
+            <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
           </template>
-          <DxColumn caption="납부세액(A99)" data-field="yearEndTaxAdjustment" />
-          <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" />
-          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm:ss" />
+          <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###"/>
+          <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
+            format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
           <template #productionStatus="{ data }">
-            <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" @productionStatusData="productionStatusData" />
+            <GetStatusTable :dataProcduct="data.data"
+              @productionStatusData="productionStatusData" />
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -98,7 +83,7 @@
         </DxDataGrid>
       </a-spin>
     </div>
-    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :data="requestFileData" tab-name="tab1" @cancel="modalStatus = false" />
+    <RequestFilePopup v-if="modalStatus" :data="requestFileData" tab-name="tab1" @cancel="modalStatus = false" />
   </div>
 </template>
 
@@ -112,10 +97,12 @@ import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, } from '@/helpers/commonFunction';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
+import { formatMonth } from '../utils/index'
+import dayjs from 'dayjs';
 export default defineComponent({
   components: {
     SearchArea,
@@ -143,16 +130,15 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
 
-    //--------Search with holding and data source------
+    //-----------------------Search with holding and data source----------------
 
-    const dataSource = ref([]);
+    const dataSource = ref<any[]>([]);
     const searchWithholdingTrigger = ref(true);
     const {
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
       refetch: searchWithholdingRefetch,
       onError: searchWithholdingError,
-      variables,
     } = useQuery(
       queries.searchWithholdingTaxElectronicFilings,
       {
@@ -165,11 +151,19 @@ export default defineComponent({
     );
     watch(searchWithholdingResult, (newVal) => {
       let data = newVal.searchWithholdingTaxElectronicFilings;
+      let result = Object.values(data.reduce((acc: any, curr: any) => {
+        if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
+          acc[curr.companyId] = curr;
+        }
+        return acc;
+      }, {}));
+      dataSource.value = [...result];
       searchWithholdingTrigger.value = false;
-      dataSource.value = data;
     });
-
-    //------------SUM AREA---------
+    searchWithholdingError((res: any) => {
+      notification('error', res.message)
+    })
+    //------------------------SUM AREA----------------- 
     // count the number of status
 
     let productionStatusArr = ref<any>([]);
@@ -189,17 +183,17 @@ export default defineComponent({
     };
     // custom summary
     const reportTypeSummary = () => {
-      return `매월 ${countStatus(dataSource.value, 1,'reportType')} 반기 ${countStatus(dataSource.value, 6,'reportType')}`
+      return `매월 ${countStatus(dataSource.value, 1, 'reportType')} 반기 ${countStatus(dataSource.value, 6, 'reportType')}`
     };
     const afterDeadlineSummary = () => {
-      return `정기 ${countStatus(dataSource.value, 0,'afterDeadline')} 기한후 ${countStatus(dataSource.value, 0,'afterDeadline')} 수정 ${countStatus(
-        dataSource.value,1,'afterDeadline')}`;
+      return `정기 ${countStatus(dataSource.value, 0, 'afterDeadline')} 기한후 ${countStatus(dataSource.value, 0, 'afterDeadline')} 수정 ${countStatus(
+        dataSource.value, 1, 'afterDeadline')}`;
     };
     const productStatusSummary = () => {
-      return `제작전 ${countStatus(productionStatusArr.value, 0,'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0,'productionStatus')} 제작중 ${countStatus(
+      return `제작전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
         productionStatusArr.value,
-        1,'productionStatus'
-      )} 제작실패 ${countStatus(productionStatusArr.value, -1,'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2,'productionStatus')}`;
+        1, 'productionStatus'
+      )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
     };
     // caculator sum
     const reFreshDataGrid = () => {
@@ -209,26 +203,30 @@ export default defineComponent({
         watchFirstRun.value = false;
       }
     };
+    let arr = ref<any>([])
     const productionStatusData = (emitVal: any) => {
+      arr.value.push(emitVal);
+      console.log(`output->[...emitVal]`,[...[emitVal]])
+      console.log(`output->[...emitVal]`,arr)
       productionStatusArr.value = [emitVal];
       reFreshDataGrid();
     };
 
-    //------on Search------
+    //--------------------on Search----------------------
 
     watch(
       () => props.search,
       () => {
-        variables.value = {
-          filter: filterBF620.value,
-        };
+        // variables.value = {
+        //   filter: filterBF620.value,
+        // };
         searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();
       },
       { deep: true }
     );
 
-    // -------request file withholding---------
+    // ----------------request file withholding---------
 
     const requestFileData = ref<any>({
       reportKeyInputs: [],
@@ -241,7 +239,7 @@ export default defineComponent({
     const selectionChanged = (event: any) => {
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.company.id, name: item.company.name, reportId: item.reportId };
+          return { companyId: item.company.id, imputedYear: item.imputedYear, reportId: item.reportId };
         });
     };
     const modalStatus = ref<boolean>(false);
@@ -259,7 +257,6 @@ export default defineComponent({
     };
     return {
       filterBF620,
-      variables,
       searchWithholdingLoading,
       move_column,
       colomn_resize,
@@ -273,9 +270,10 @@ export default defineComponent({
       afterDeadlineSummary,
       productStatusSummary,
       selectionChanged,
+      formatMonth
     };
   },
-});
+})
 </script>
 <style lang="scss">
 @import '../style/style.scss';

@@ -3,16 +3,7 @@ let statesPA720 = {
   keyActivePA720: 1,
   actionSavePA720: 0,
   actionSaveTypePA720: 0,
-  formInputInit: {
-    paymentDay: '',
-    employeeId: '',
-    incomeTypeCode: '',
-    paymentAmount: '',
-    requiredExpenses: '',
-    taxRate: '',
-    withholdingIncomeTax: '',
-    withholdingLocalIncomeTax: '',
-  },
+  isNewRowPA720:false,
   formPA720: {
     companyId: '',
     processKey: {
@@ -30,6 +21,27 @@ let statesPA720 = {
       taxRate: '',
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
+      incomeId: "99axbzkk",
+    },
+  },
+  formEditPA720: {
+    companyId: '',
+    processKey: {
+      imputedYear: '',
+      imputedMonth: '',
+      paymentYear: '',
+      paymentMonth: '',
+    },
+    input: {
+      paymentDay: '',
+      employeeId: 0,
+      incomeTypeCode: "",
+      paymentAmount: '',
+      requiredExpenses: '',
+      taxRate: '',
+      withholdingIncomeTax: '',
+      withholdingLocalIncomeTax: '',
+      incomeId: "99axbzkk",
     },
   },
 };

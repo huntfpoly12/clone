@@ -27,7 +27,7 @@
                             <DxExport :enabled="true" :allow-export-selected-data="true" />
                             <DxToolbar>
                                 <DxItem name="searchPanel" />
-                                <DxItem name="exportButton" />
+                                <DxItem name="exportButton" css-class="cell-button-export"/>
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
@@ -39,7 +39,7 @@
                             <template #button-template>
                                 <DxButton icon="plus" @click="formCreate" />
                             </template>
-                            <DxColumn caption="성명 (상호)" cell-template="company-name" />
+                            <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name"/>
                             <template #company-name="{ data }">
                                 <div class="custom-action" v-if="data.data.__typename">
                                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
@@ -53,7 +53,7 @@
                                         :checkStatus="false" />
                                 </div>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="residentId" />
+                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
                             <template #residentId="{ data }">
                                 <div v-if="data.data.residentId?.length == 14">
                                     <a-tooltip placement="top"
@@ -71,7 +71,7 @@
                                     </a-tooltip>
                                 </div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" />
+                            <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeCode"/>
                             <template #grade-cell="{ data }" class="custom-action">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
@@ -185,7 +185,7 @@ import { defineComponent, ref, watch, reactive, computed } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxSorting, DxEditing, } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState, initialOptionsRadio } from "./utils/index"
@@ -193,12 +193,14 @@ import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-import { DxTooltip } from 'devextreme-vue/tooltip';
+// import { DxTooltip } from 'devextreme-vue/tooltip';
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxSorting,
-        DxTooltip, DxEditing,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, 
+        // DxSorting,
+        // DxTooltip, 
+        // DxEditing,
     },
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -279,6 +281,7 @@ export default defineComponent({
             focusedRowKey.value = parseInt(formState.value.employeeId)
             dataRowOld = { ...formState.value }
             statusFormUpdate.value = true;
+            statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
@@ -362,7 +365,7 @@ export default defineComponent({
         };
 
         const modalHistory = (data: any) => {
-            modalHistoryStatus.value = companyId
+            modalHistoryStatus.value = true
         }
         const textCountry = (val: any) => {
             formState.value.nationality = val ? val : null;

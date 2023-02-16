@@ -234,7 +234,7 @@
                         <DxColumn width="85" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
                         <DxColumn caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }" class="custom-action">
-                            <div class="custom-action">
+                            <div class="custom-action custom-grade-cell">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                     :typeValue="1" />
                                 <four-major-insurance v-if="data.data.employee.healthInsuranceDeduction" :typeTag="2"
@@ -313,7 +313,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         store.state.common.processKeyPA510 = {
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
             imputedMonth: dayjs().month() + 1,
             paymentYear: globalYear.value,
             paymentMonth: dayjs().month() + 1,

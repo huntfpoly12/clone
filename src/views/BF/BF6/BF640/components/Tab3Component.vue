@@ -32,14 +32,26 @@
             </a-col>
         </a-row>
         <div class="form-table">
+          <a-spin :spinning="loadingTable">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
-                <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="string" />
+                <DxColumn caption="신고구분"  cell-template="reportType"/>
+                <template #reportType="{ data }">
+                  <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
+                  <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
+                  <div v-else></div>
+                </template>
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
-                <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
+                <DxColumn caption="제작현황" cell-template="제작현황" />
+                <template #제작현황="{ data }">
+                  <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
+                  <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
+                  <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
+                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" />
+                </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
                     <div style="text-align: center">
@@ -48,6 +60,7 @@
                     </div>
                 </template>
             </DxDataGrid>
+          </a-spin>
         </div>
     </div>
     <ElectronicFilingFileProductions v-if="modalDetail" :modalStatus="modalDetail" @closePopup="modalDetail = false"
@@ -65,11 +78,20 @@ import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
+import GetStatusTable from "./GetStatusTable.vue";
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup,
-        ElectronicFilingFileProductions
-    },
+    SaveOutlined,
+    DxDataGrid,
+    DxToolbar,
+    DxSelection,
+    DxColumn,
+    DxItem,
+    DxScrolling,
+    DxRadioGroup,
+    ElectronicFilingFileProductions,
+    GetStatusTable
+},
     props: {
         searchStep: Number,
     },
@@ -107,6 +129,12 @@ export default defineComponent({
             notification('error', error.message)
         })
         // ================= WATHCH ===================
+        watch(typeStatus,(newVal)=> {
+          if (newVal == 0)
+                dataSearch.value.productionStatuses = [2, -1]
+            else
+                dataSearch.value.productionStatuses = [newVal]
+        })
         watch(() => props.searchStep, (val: any) => {
             if (typeStatus.value == 0)
                 dataSearch.value.productionStatuses = [2, -1]
@@ -130,7 +158,7 @@ export default defineComponent({
         return {
             dataModalDetail, typeStatus, activeKey: ref("1"), rangeDate, styleCheckBox,
             typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalDetail,
-            openPopupDetail,
+            openPopupDetail,loadingTable
         }
     }
 })

@@ -352,6 +352,14 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
+        store.state.common.processKeyPA110 = {
+            imputedYear: globalYear.value,
+            imputedMonth: dayjs().month() + 1,
+            paymentYear: globalYear.value,
+            paymentMonth: dayjs().month() + 1,
+        }
+        console.log(store.state.common.processKeyPA110);
+        
         const processKey = computed(() => store.state.common.processKeyPA110)
         const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
@@ -402,6 +410,9 @@ export default defineComponent({
                         imputedMonth: data.imputedMonth,
                         paymentYear: data.paymentYear,
                         paymentMonth: data.paymentMonth,
+                    }
+                    if (JSON.stringify(dataAdd) == JSON.stringify(processKey.value)) {
+                        status.value = data.status
                     }
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
@@ -458,9 +469,9 @@ export default defineComponent({
                         value: filters.formatCurrency(data.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    if (data.imputedMonth == (dayjs().month() + 1)) {
-                        status.value = data.status
-                    }
+                    // if (data.imputedMonth == (dayjs().month() + 1) && status.value) {
+                    //     status.value = data.status
+                    // }
                     const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
                     if (obj) {
                         statusDisabledBlock.value = false;

@@ -13,6 +13,7 @@ import { styles } from "./configs/styles/index";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { client } from "./ApolloClient.d";
 import { Message } from "./configs/enum";
+import globalDirectives from './directives'
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -53,7 +54,7 @@ app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$config_styles = styles;
 
 app.config.performance = true;
-
+app.use(globalDirectives)
 app.use(router);
 app.use(store);
 app.use(Antd).mount("#app"); 

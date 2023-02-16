@@ -61,7 +61,6 @@ import {
     PlusSquareOutlined,
     WarningFilled,
 } from "@ant-design/icons-vue";
-import notification from "@/utils/notification";
 
 function getBase64(img: Blob, callback: (base64Url: string) => void) {
     const reader = new FileReader();
@@ -135,65 +134,69 @@ export default defineComponent({
         };
         let preview = ref<any>("");
         const onFileChange = async (e: { [x: string]: any; target: { files: any[] } }) => { 
-            const file = e.target.files[0];
-            if (file.size > 1024 * 1024 * 5) {
-                e.preventDefault();
-                messageUpload = "File must smaller than 5MB!"; 
-                return;
-            }
-            const formData = new FormData();
-            formData.append("category", "SubscriptionRequestCompanyLicense");
-            formData.append("file", file);
-            fileName.value = file.name; 
-            try { 
-                loading.value = true;
-                const data = await uploadRepository.public(formData); 
-                getBase64(file, (base64Url: string) => {
-                    imageUrl.value = base64Url;
-                    loading.value = false;
-                    emit('update:imageId', data.data.id)
-                    emit('update:imageSource', imageUrl.value)
-                    emit("update-img", {
-                        url: imageUrl.value,
-                        id: data.data.id,
-                        fileName: fileName.value,
-                        name: fileName.value
-                    });
-                    emit("update-step", {
-                        url: imageUrl.value,
-                        id: data.data.id,
-                        fileNamestep: fileName.value,
+        const file = e.target.files[0];
+        if (file.size > 1024 * 1024 * 5) {
+            e.preventDefault();
+            messageUpload = "File must smaller than 5MB!"; 
+            return;
+        }
+        console.log(file,'fileName');
+        const formData = new FormData();
+        formData.append("category", "SubscriptionRequestCompanyLicense");
+        formData.append("file", file);
+        fileName.value = file.name; 
+        // Display the key/value pairs
+        console.log(formData.getAll('file')); 
 
-                    });
-                });
-            } catch (error) { 
-                notification('error', '이미지를 업로드하는 동안 오류가 발생했습니다!')
-            }
-        };
+              
+          
+        loading.value = true;
+        const data = await uploadRepository.public(formData); 
 
-        const handleCancel = () => {
-            previewVisible.value = false;
-        };
-        const handlePreview = () => {
-            previewVisible.value = true;
-        };
+        getBase64(file, (base64Url: string) => {
+            imageUrl.value = base64Url;
+            loading.value = false;
+            emit('update:imageId', data.data.id)
+            emit('update:imageSource', imageUrl.value)
+            emit("update-img", {
+                url: imageUrl.value,
+                id: data.data.id,
+                fileName: fileName.value,
+                name: fileName.value
+            });
+            emit("update-step", {
+                url: imageUrl.value,
+                id: data.data.id,
+                fileNamestep: fileName.value,
 
-        return {
-            previewVisible,
-            handleCancel,
-            handlePreview,
-            imageUrl,
-            loading,
-            messageUpload,
-            fileList,
-            onRemove,
-            Upload,
-            file,
-            fileName,
-            showImg,
-            onFileChange,
-            preview,
-        };
+            });
+        });
+        
+      };
+
+      const handleCancel = () => {
+          previewVisible.value = false;
+      };
+      const handlePreview = () => {
+          previewVisible.value = true;
+      };
+
+      return {
+          previewVisible,
+          handleCancel,
+          handlePreview,
+          imageUrl,
+          loading,
+          messageUpload,
+          fileList,
+          onRemove,
+          Upload,
+          file,
+          fileName,
+          showImg,
+          onFileChange,
+          preview,
+      };
     },
 });
 </script>

@@ -64,14 +64,14 @@
                     </DxToolbar>
                     <template #send-group-mail>
                         <div class="custom-mail-group">
-                            <DxButton @click="actionOpenPopupEmailMulti">
+                            <DxButton @click="actionOpenPopupEmailMulti" class="bt-email-group">
                                 <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
                             </DxButton>
                         </div>
                     </template>
                     <template #send-group-print>
                         <div class="custom-mail-group">
-                            <DxButton @click="onPrintGroup">
+                            <DxButton @click="onPrintGroup" class="bt-print-group">
                                 <img src="@/assets/images/printGroup.png" alt=""
                                     style="width: 35px; margin-right: 3px; cursor: pointer" />
                             </DxButton>

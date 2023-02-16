@@ -3,11 +3,10 @@
         :width="500">
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
-                <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0'+month1}}
-                </div>
-                <div class="month-custom-2 d-flex-center">
-                    지 <month-picker-box v-model:valueDate="month2" width="65px" class="ml-5" />
+                <DxButton :text="'귀' + processKeyPA620.imputedYear + ' ' + '-' + ( month1 > 9 ? month1 : ('0'+month1))"
+                :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
+                <div class="d-flex-center">
+                <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
                 </div>
             </div>
         </a-form-item>
@@ -69,73 +68,97 @@ import queries from "@/graphql/queries/PA/PA6/PA620/index"
 import { useStore } from 'vuex'
 import dayjs from "dayjs";
 import { Message } from '@/configs/enum';
+import DxButton from "devextreme-vue/button";
 
 export default defineComponent({
     props: {
         modalStatus: {
             type: Boolean,
         },
-        data: {
+        monthVal: {
             type: Number,
         },
         dateType: {
             type: Number,
             default: 1,
         },
-        paymentDay: {
-            type: Number,
-            default: 1,
-        },
     },
     components: {
         DxSelectBox,
-        DxTextBox
+        DxTextBox,
+        DxButton
     },
     setup(props, { emit }) {
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
         const month1: any = ref<number>()
-        const processKey = computed(() => store.state.common.processKeyPA620)
+        const processKeyPA620 = computed(() => store.state.common.processKeyPA620)
         const messageCopyDone= Message.getMessage('COMMON', '106').message;
-        const paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
-        watch(() => props.data, (val) => {
+        const paymentDayPA620 = computed({
+          get() {
+            return store.getters['common/paymentDayPA620'];
+          },
+          set(value) {
+            store.commit('common/paymentDayPA620', value);
+          },
+        });
+        // ----------set month copy because dependent on the set up before--------------
+        let month2: any = ref();
+        watch(() => props.monthVal, (val) => {
             month1.value = val;
-            let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth }`;
-            if(props.dateType == 2 && props.data) {
-                yearMonth = `${processKey.value.paymentYear}${props.data + 1}`;
+            let yearMonth = `${processKeyPA620.value.paymentYear}${processKeyPA620.value.imputedMonth }`;
+            if(props.dateType == 2 && props.monthVal) {
+                yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal + 1}`;
             }
             if(props.dateType == 1) {
-                yearMonth = `${processKey.value.paymentYear}${props.data}`;
+                yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal}`;
             }
             month2.value = yearMonth;
         });
         const modalCopy = ref(false)
-        const dataApiCopy: any = ref({})
-        const arrDataPoint: any = ref({})
-        //covert Date Month
-        const convertToDate = (date: number | null | string) => {
-            if (date === null) {
-                return dayjs();
-            }
-            let dateStr = date.toString();
-            let dateLen = dateStr.length;
-            let dateData = dateStr.slice(0, 4) + '/' + `${dateLen==5&&0}` + dateStr.slice(4, dateLen);
-            return dayjs(dateData, 'YYYY/MM');
-        };
-        let month2: any = ref(convertToDate(`${processKey.value.paymentYear}${processKey.value.imputMonth + 1}`))
+        const dataApiCopy: any = ref({}); // datasource to copy the data
+        const arrDataPoint: any = ref({}) // date of date source
+        //-------------------------action copy data--------------------------------
         const {
             mutate,
             onError,
             onDone,
-        } = useMutation(mutations.copyIncomeBusinesses)
+        } = useMutation(mutations.copyIncomeBusinesses);
+        const openModalCopy = () => {
+            modalCopy.value = true
+        }
+        // get date to copy
+        const updateValue = (value: any) => {
+            dataApiCopy.value = {
+                imputedYear: value.value.imputedYear,
+                imputedMonth: value.value.imputedMonth,
+                paymentYear: value.value.paymentYear,
+                paymentMonth: value.value.paymentMonth,
+            }
+        };
+        const actionCopy = async() => {
+            if (dataApiCopy.value.imputedYear) {
+                await commitDate();
+                let param = {
+                  companyId: companyId,
+                  source: dataApiCopy.value,
+                  target: processKeyPA620.value,
+                }
+                mutate(param)
+            } else {
+                notification('error', '날짜를 선택하세요.')
+            }
+        }
         onError(res => {
             notification('error', res.message)
         })
-        onDone(res => {
-            setModalVisible()
-            setModalVisibleCopy()
-            notification('success', messageCopyDone)
+        onDone(() => {
+            setModalVisible();
+            setModalVisibleCopy();
+            notification('success', messageCopyDone);
+            emit('loadingTable')
         })
+        //-------------------------get date source copy--------------------------------
         const originData: any = ref({
             companyId: companyId,
             filter: {
@@ -151,15 +174,15 @@ export default defineComponent({
         onResult((value: any) => {
             arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
         })
-
+        // ---------------------fn modal --------------------
         const setModalVisible = () => {
             emit("closePopup", false)
         };
         const setModalVisibleCopy = () => {
             modalCopy.value = false
         };
-
-        const commitDate = () => {
+        //----------------emit date and set to store------------------
+        const commitDate = async() => {
             const dateCustom = {
                 imputedYear: globalYear.value,
                 imputedMonth: month1.value,
@@ -169,31 +192,12 @@ export default defineComponent({
             store.commit('common/processKeyPA620', dateCustom);
             emit("dataAddIncomeProcess", dateCustom)
         }
-
+        //------------------fn submit add new------------------------
         const onSubmit = () => {
             commitDate();
             emit("closePopup", false);
         };
-        const updateValue = (value: any) => {
-            dataApiCopy.value = {
-                imputedYear: value.value.imputedYear,
-                imputedMonth: value.value.imputedMonth,
-                paymentYear: value.value.paymentYear,
-                paymentMonth: value.value.paymentMonth,
-            }
-        };
-        const actionCopy = () => {
-            if (dataApiCopy.value.imputedYear) {
-                commitDate();
-            } else {
-                notification('error', '날짜를 선택하세요.')
-            }
 
-        }
-
-        const openModalCopy = () => {
-            modalCopy.value = true
-        }
         // watch(()=>props.paymentDay,(newVal)=> {
         //     store.state.common.paymentDayPA620PA620.value = newVal;
         // }, {deep: true}
@@ -209,7 +213,7 @@ export default defineComponent({
             arrDataPoint,
             updateValue,
             actionCopy,
-            processKey
+            processKeyPA620,
         }
     },
 })
@@ -229,16 +233,17 @@ export default defineComponent({
     margin: 0px 5px;
 }
 
-::v-deep label {
+:deep label {
     width: 100px;
 }
 
-::v-deep .month-custom-1 {
+:deep div.month-custom-1 {
     background-color: #A6A6A6;
     padding: 5px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
+    width: fit-content;
     .dp__input {
         color: white;
         padding: 0px;
@@ -250,7 +255,7 @@ export default defineComponent({
     }
 }
 
-::v-deep .month-custom-2 {
+:deep .month-custom-2 {
     background-color: black;
     padding-left: 10px;
     border-radius: 5px;

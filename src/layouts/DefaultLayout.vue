@@ -209,6 +209,8 @@ import {
   PA710,
   PA730,
   PA720,
+  PA810,
+  AC610,
   Test,
   Example,
 } from "./screenComponents";
@@ -266,6 +268,8 @@ export default defineComponent({
     PA710,
     PA720,
     PA730,
+    PA810,
+    AC610,
     Test,
     Example,
     MenuFoldOutlined,
@@ -365,6 +369,9 @@ export default defineComponent({
           if (newValue.id.includes("pa-7")) {
             this.openKeys = ["pa-000", "pa-700"];
           }
+          if (newValue.id.includes("ac-6")) {
+            this.openKeys = ["ac-000", "ac-600"];
+          }
           if (newValue.id !== "#") {
             this.$router.push(`/dashboard/${newValue.id}`);
           }
@@ -414,6 +421,8 @@ export default defineComponent({
       if (this.activeTab.id === "pa-710") return 'PA710';
       if (this.activeTab.id === "pa-720") return 'PA720';
       if (this.activeTab.id === "pa-730") return 'PA730';
+      if (this.activeTab.id === "pa-810") return 'PA810';
+      if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },

@@ -62,7 +62,7 @@
                     <DxToolbar>
                         <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />
@@ -303,9 +303,9 @@ export default defineComponent({
         }
         const getAbleDisable = (data: any) => {
             if (data === true) {
-                return "blue";
+                return "rgb(16 142 236 / 62%)";
             } else if (data === false) {
-                return "#d5a7a7";
+                return "rgb(205 32 31 / 51%)";
             }
         }
         const changeValueType = (e: any) => {

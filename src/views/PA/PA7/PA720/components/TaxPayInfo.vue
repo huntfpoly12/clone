@@ -1,25 +1,14 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }} 
-    <DxDataGrid
-      :show-row-lines="true"
-      :hoverStateEnabled="true"
-      :data-source="dataSourceDetail"
-      :show-borders="true"
-      :allow-column-reordering="move_column"
-      :allow-column-resizing="colomn_resize"
-      :column-auto-width="true"
-      focused-row-enabled="true"
-      key-expr="employeeId"
-      :auto-navigate-to-focused-row="true"
-      v-model:focused-row-key="focusedRowKey"
-      @selection-changed="selectionChanged"
-      :onRowClick="onRowClick"
-    >
-      <DxScrolling mode="standard" show-scrollbar="always"/>
+    {{ focusedRowKey }}{{ firsTimeRow }}
+    <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
+      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+      focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
+      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick">
+      <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
-      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="170" />
+      <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }" class="custom-action">
         <div>
           <button style="margin-right: 5px">
@@ -30,28 +19,34 @@
             <template #title v-if="data.data?.employee?.incomeTypeName?.length > 10">
               <span>{{ data.data?.employee?.incomeTypeName }}</span>
             </template>
-            
+
             {{ checkLen(data.data?.employee?.incomeTypeName) }}
           </a-tooltip>
         </div>
       </template>
       <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="110" alignment="left" />
-      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="110" alignment="left" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="110" alignment="left" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="left" />
+      <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
+        alignment="left" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="left" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="left" />
       <template #incomLocalTax="{ data }">
         {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
       </template>
-      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px" alignment="left" />
+      <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
+        alignment="left" />
       <DxSummary v-if="dataSourceDetail.length > 0">
         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
-        <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}" value-format="#,###" />
-        <DxTotalItem class="custom-sumary" column="필요경비" summary-type="sum" value-format="#,###" display-format="필요경비합계: {0}" />
-        <DxTotalItem class="custom-sumary" column="소득금액" summary-type="sum" value-format="#,###" display-format="소득금액합계: {0}" />
+        <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
+          value-format="#,###" />
+        <DxTotalItem class="custom-sumary" column="필요경비" summary-type="sum" value-format="#,###"
+          display-format="필요경비합계: {0}" />
+        <DxTotalItem class="custom-sumary" column="소득금액" summary-type="sum" value-format="#,###"
+          display-format="소득금액합계: {0}" />
         <DxTotalItem class="custom-sumary" column="공제" :customize-text="customTextSummary" />
-        <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}" value-format="#,###" />
+        <DxTotalItem class="custom-sumary" column="actualPayment" summary-type="sum" display-format="차인지급액합계: {0}"
+          value-format="#,###" />
       </DxSummary>
     </DxDataGrid>
   </a-spin>
@@ -144,10 +139,11 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
-      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.employeeId) {
-        focusedRowKey.value = res.data.getIncomeExtras[0]?.employeeId ?? 1;
+      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
+        focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        // store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
+        firsTimeRow.value = false;
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -206,7 +202,7 @@ export default defineComponent({
     // set key again
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
-    const focusedRowKey = ref<Number|null>(1);
+    const focusedRowKey = ref<Number | null>(1);
     watch(actionSavePA720, () => {
       setTimeout(() => {
         if (isErrorFormPA720.value || store.state.common.actionSaveTypePA720 === 1) {
@@ -215,10 +211,10 @@ export default defineComponent({
       }, 100);
     });
     const loadIndexInit = ref<Number>(0); // check click same row?
-    watch(()=>props.addItemClick,()=>{
-        loadIndexInit.value = -1;
-        focusedRowKey.value = null;
-    },{deep: true})
+    watch(() => props.addItemClick, () => {
+      loadIndexInit.value = -1;
+      focusedRowKey.value = null;
+    }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
       if (e.loadIndex != loadIndexInit.value) {
@@ -269,4 +265,5 @@ export default defineComponent({
 </script>
 
 <style>
+
 </style>

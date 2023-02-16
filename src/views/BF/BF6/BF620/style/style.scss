@@ -35,22 +35,46 @@
     background-color: black;
     text-align: center;
     width: 75px;
+    border-radius: 5px;
   }
 
   .report-tag-gray {
     color: #555555;
     background-color: #000000;
     text-align: center;
-    width: 75px;
+    width: fit-content;
+    border-radius: 5px;
   }
+
+  .deadline-tag {
+    padding: 4px 10px;
+    text-align: center;
+    color: white;
+    width: 85px;
+    margin-left: 25px;
+    border-radius: 5px;
+  }
+  
+  .tag-white {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+  }
+
+  .tag-black {
+    background-color: black;
+  }
+
+  .tag-orange {
+    background-color: rgb(204, 82, 12);
+  }
+
   :deep .dp__theme_light {
     display: inline-block;
   }
+
   :deep .custom-sumary {
     white-space: break-spaces;
-  }
-  :deep .dx-button-content {
-    padding: 0 10px;
   }
 
 }

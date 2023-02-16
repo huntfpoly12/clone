@@ -163,7 +163,7 @@
           <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 + 비과세</div>
           <a-spin :spinning="loading1" size="large" style="height: 100%">
             <div class="deduction-main">
-              <div v-for="item in datagConfigPayItems" :key="item.name" class="custom-deduction">
+              <div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
                 <span>
                   <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="과세" />
                   <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2" subName="상여(과세)" />
@@ -176,7 +176,7 @@
                   <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :min="0"> </number-box-money>
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :min="0"> </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
               </div>
@@ -202,7 +202,7 @@
                   <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
                 </span>
                 <div>
-                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false" v-model:valueInput="item.value" :readOnly="true" :min="0">
+                  <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0">
                   </number-box-money>
                   <span class="pl-5">원</span>
                 </div>
@@ -268,7 +268,7 @@ export default defineComponent({
 
     const rangeDate = ref<RangeValue>();
     const store = useStore();
-    const datagConfigPayItems = ref();
+    const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const triggerDetail = ref<boolean>(false);
 
@@ -402,7 +402,7 @@ export default defineComponent({
         store.commit('common/initFormTab2PA120', editRowData);
         if (value.getEmployeeWage.payItems) {
           value.getEmployeeWage.payItems.map((item: any) => {
-            datagConfigPayItems.value.find((Obj: any) => {
+            dataConfigPayItems.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
                 Obj.value = item.amount;
               }
@@ -437,7 +437,7 @@ export default defineComponent({
     }));
     watch(resConfigPayItems, (value) => {
       if (value) {
-        datagConfigPayItems.value = value.getWithholdingConfigPayItems.map((item: any) => {
+        dataConfigPayItems.value = value.getWithholdingConfigPayItems.map((item: any) => {
           return {
             itemCode: item.itemCode,
             name: item.name,
@@ -605,22 +605,22 @@ export default defineComponent({
           };
         }
       });
-      initFormTab2PA120.value.payItems = datagConfigPayItems.value?.map((item: any) => {
+      initFormTab2PA120.value.payItems = dataConfigPayItems.value?.map((item: any) => {
         return {
           itemCode: item.itemCode,
           amount: item.value,
         };
       });
-      totalPayItem.value = datagConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItem.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
-      totalPayItemTax.value = datagConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (object.tax) {
           accumulator += object.value;
         }
         return accumulator;
       }, 0);
-      totalPayItemTaxFree.value = datagConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTaxFree.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (!object.tax) {
           accumulator += object.value;
         }
@@ -639,12 +639,12 @@ export default defineComponent({
       store.state.common.isChangeConfigPayItemsPA120 = false;
     };
 
-    // watch datagConfigPayItems to check change row
-     watch(datagConfigPayItems, (newVal)=> {
+    // watch dataConfigPayItems to check change row
+     watch(()=>dataConfigPayItems, (newVal)=> {
       if(newVal) {
         store.state.common.isChangeConfigPayItemsPA120 = true;
       }
-     })
+     },{deep: true})
     return {
       loading1,
       loading2,
@@ -663,7 +663,7 @@ export default defineComponent({
       radioCheckReductionInput,
       IncomeTaxAppRate,
       companyId,
-      datagConfigPayItems,
+      dataConfigPayItems,
       dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
@@ -671,6 +671,7 @@ export default defineComponent({
       dependentCount,
       editRowTab2PA120,
       initFormTab2PA120,
+      isChangeConfigPayItemsPA120: computed(()=>store.state.common.isChangeConfigPayItemsPA120),
     };
   },
 });

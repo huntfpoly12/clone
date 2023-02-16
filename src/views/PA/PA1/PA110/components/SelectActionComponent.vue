@@ -26,7 +26,7 @@
     </DxButton>
     <div class="custom-select-tab ml-4">
         <button class="button-open-tab"
-            @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">일용직사원등록</button>
+            @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
     </div>
     <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">

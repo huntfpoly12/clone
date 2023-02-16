@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchArea />
+    <SearchAreaTab2 />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -65,15 +65,15 @@
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
           <template #reportType="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
+            <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
+            <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
             <div v-else></div>
           </template>
           <DxColumn caption="신고 주기" cell-template="afterDeadline" />
           <template #afterDeadline="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
-            <div v-else></div>
+            <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
+            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
+            <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
           </template>
           <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" />
           <DxColumn caption="최종마감일시" data-field="refund" />
@@ -90,8 +90,8 @@
 </template>
   
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import SearchArea from './SearchArea.vue';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import SearchAreaTab2 from './SearchAreaTab2.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
@@ -100,10 +100,11 @@ import { DxButton } from 'devextreme-vue/select-box';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
+import notification from '@/utils/notification';
 
 export default defineComponent({
   components: {
-    SearchArea,
+    SearchAreaTab2,
     RequestFilePopup,
     DxButton,
     DxDataGrid,
@@ -134,25 +135,26 @@ export default defineComponent({
         reportId: 2,
       },
     });
-    const eletroFillingTrigger = ref(false);
+    const eletroFillingTrigger = ref(true);
     const productionStatus = ref();
-    const {
-      result: eletroFillingResult,
-      refetch: eletroFillingRefetch,
-      loading: eletroFillingLoading,
-    } = useQuery(queries.getElectronicFilingsByLocalIncomeTax, eletroFillingParam, () => ({
-      enabled: eletroFillingTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
-    watch(eletroFillingResult, (newVal) => {
-      let data = newVal.getElectronicFilingsByLocalIncomeTax;
-      productionStatus.value = data;
-    });
+    // const {
+    //   result: eletroFillingResult,
+    //   refetch: eletroFillingRefetch,
+    //   loading: eletroFillingLoading,
+    //   onError: searchWithholdingError,
+    // } = useQuery(queries.getElectronicFilingsByLocalIncomeTax, eletroFillingParam, () => ({
+    //   enabled: eletroFillingTrigger.value,
+    //   fetchPolicy: 'no-cache',
+    // }));
+    // watch(eletroFillingResult, (newVal) => {
+    //   let data = newVal.getElectronicFilingsByLocalIncomeTax;
+    //   productionStatus.value = data;
+    // });
 
     //Search with holding and data source
 
     const dataSource = ref([]);
-    const searchLocalIncomeTrigger = ref(false);
+    const searchLocalIncomeTrigger = ref(true);
     const {
       result: searchLocalIncomeResult,
       loading: searchLocalIncomeLoading,
@@ -167,12 +169,11 @@ export default defineComponent({
       let data = newVal.searchLocalIncomeTaxElectronicFilings;
       searchLocalIncomeTrigger.value = false;
       dataSource.value = data;
-      if (data.lastProductionRequestedAt) {
-        eletroFillingParam.input.reportId = data.reportId;
-        eletroFillingTrigger.value = true;
-        eletroFillingRefetch();
-      }
     });
+    searchLocalIncomeError((res: any) => {
+      notification('error', res.message)
+    })
+    
 
     //on Search
 

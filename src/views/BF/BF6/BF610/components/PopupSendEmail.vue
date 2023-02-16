@@ -27,12 +27,12 @@
                 <date-time-box v-model:valueDate="dataForm.row4.date" />
             </a-col>
             <a-col :span="24" class="text-center mt-10 d-flex-center">
-                <mail-text-box width="200" class="mr-5" v-model:valueInput="dataPrint.emailInput" />
+                <mail-text-box width="200" class="mr-5" :required="true" v-model:valueInput="dataPrint.emailInput" placeholder="abc@example.com" />
                 <span>로 메일을 발송하시겠습니까?</span>
             </a-col>
             <a-col :span="24" class="text-center mt-10">
                 <button-basic text="아니요" type="default" mode="outlined" width="100" @onClick="setModalVisible" />
-                <button-basic text="네" type="default" class="ml-5" width="100" @onClick="actionPrint" />
+                <button-basic text="네" type="default" class="ml-5" width="100" @onClick="actionPrint($event)" />
             </a-col>
         </a-row>
     </a-modal>
@@ -130,7 +130,11 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", true)
         }
-        const actionPrint = () => {
+        const actionPrint = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
             dataPrint.value.formInputs = []
             if (dataForm.row1.checkbox == true)
                 dataPrint.value.formInputs.push({
@@ -157,6 +161,7 @@ export default defineComponent({
                 refetchPrint()
             else
                 notification('error', "Vui lòng chọn !")
+            }
         }
         return {
             dataForm, dataPrint,
