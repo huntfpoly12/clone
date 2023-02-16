@@ -1,5 +1,4 @@
 <template>
-
     <action-header title="사업자관리" @actionSearch="searching" />
     <div id="bf-320">
         <div class="search-form">
@@ -58,14 +57,14 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export" />
                         <DxItem template="pagination-table" />
                         <DxItem name="searchPanel" />
                         <!-- <DxItem name="groupPanel" />
-                        <DxItem name="addRowButton" show-text="always" />
-                        <DxItem name="columnChooserButton" /> -->
+                                <DxItem name="addRowButton" show-text="always" />
+                                <DxItem name="columnChooserButton" /> -->
                     </DxToolbar>
                     <template #pagination-table>
                         <div v-if="rowTable > originData.rows">
@@ -76,10 +75,16 @@
                     <DxColumn data-field="code" caption="사업자코드" :fixed="true" />
                     <DxColumn data-field="name" caption="상호" />
                     <DxColumn data-field="presidentName" caption="대표자" />
-                    <DxColumn data-field="address" caption="주소" data-type="date" />
+                    <DxColumn data-field="address" caption="주소" />
                     <DxColumn data-field="phone" caption="연락처" :width="230" />
                     <DxColumn data-field="manageCompactUser.name" caption="매니저" />
-                    <DxColumn data-field="manageStartDate" caption="관리시작일" data-type="date" />
+                    <DxColumn data-field="manageStartDate" caption="관리시작일" cell-template="manageStartDate" />
+                    <template #manageStartDate="{ data }">
+                        {{
+                            data.data.manageStartDate ?
+                            dayjs(data.data.manageStartDate.toString()).format('YYYY-MM-DD') : ''
+                        }}
+                    </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
@@ -109,7 +114,7 @@
             <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
                 title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-320" />
         </div>
-    </div>
+</div>
 </template> 
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from 'vue';
@@ -123,6 +128,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
+import dayjs from "dayjs";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxButton, DxExport, DxSearchPanel, DxToolbar, DxItem, DxScrolling,
@@ -197,6 +203,7 @@ export default defineComponent({
             popupData,
             setModalVisible,
             modalHistory,
+            dayjs,
         }
     },
 });

@@ -159,39 +159,39 @@
                             }}
                         </div>
                     </template>
-                    <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" />
+                    <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
                     <template #yearEndTaxAdjustment="{ data }">
                         <div class="showO">{{ data.data.yearEndTaxAdjustment == false ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="환급" cell-template="refund" />
+                    <DxColumn caption="환급" cell-template="refund" css-class="cell-center"/>
                     <template #refund="{ data }">
                         <div class="showO">{{ data.data.refund == false ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" />
+                    <DxColumn caption="근로 간이" cell-template="wageIncomeSimplified" css-class="cell-center"/>
                     <template #wageIncomeSimplified="{ data }">
                         <div class="showO">{{ data.data.wageIncomeSimplified == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" />
+                    <DxColumn caption="근로 중도" cell-template="yearEndAdjustmentRetirement" css-class="cell-center"/>
                     <template #yearEndAdjustmentRetirement="{ data }">
                         <div class="showO">{{ data.data.yearEndAdjustmentRetirement == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="근로 일용" cell-template="dailyWageIncome" />
+                    <DxColumn caption="근로 일용" cell-template="dailyWageIncome" css-class="cell-center"/>
                     <template #dailyWageIncome="{ data }">
                         <div class="showO">{{ data.data.dailyWageIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" />
+                    <DxColumn caption="근로 연말" cell-template="yearEndAdjustment" css-class="cell-center"/>
                     <template #yearEndAdjustment="{ data }">
                         <div class="showO">{{ data.data.yearEndAdjustment == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="퇴직 소득" cell-template="retirementIncome" />
+                    <DxColumn caption="퇴직 소득" cell-template="retirementIncome" css-class="cell-center"/>
                     <template #retirementIncome="{ data }">
                         <div class="showO">{{ data.data.retirementIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="사업 소득" cell-template="businessIncome" />
+                    <DxColumn caption="사업 소득" cell-template="businessIncome" css-class="cell-center"/>
                     <template #businessIncome="{ data }">
                         <div class="showO">{{ data.data.businessIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>
-                    <DxColumn caption="기타 소득" cell-template="extraIncome" />
+                    <DxColumn caption="기타 소득" cell-template="extraIncome" css-class="cell-center"/>
                     <template #extraIncome="{ data }">
                         <div class="showO">{{ data.data.extraIncome == 0 ? '' : 'ㅇ' }}</div>
                     </template>

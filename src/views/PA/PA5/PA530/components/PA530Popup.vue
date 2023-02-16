@@ -4,7 +4,7 @@
         <standard-form>
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" style="width: 40px;">
-                <mail-text-box :required="true" v-model:valueInput="email" width="250px" />
+                <mail-text-box :required="true" v-model:valueInput="email" width="250px" placeholder="abc@example.com"/>
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
             <a-row style="margin-top: 30px;">

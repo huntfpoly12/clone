@@ -26,14 +26,16 @@
                 <DxColumn caption="마감 현황" cell-template="process-status" width="120" />
                 <template #process-status="{ data }">
                     <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
-                        @dataRow="changeStatus" /> -->
-                        <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
+                                @dataRow="changeStatus" /> -->
+                    <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
+                        @checkConfirmRowTable="changeStatusRowTable" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
                     <a-tooltip>
                         <template #title>
-                            귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
+                            귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth,
+                                data.data.imputedFinishYearMonth) }}
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
@@ -46,12 +48,14 @@
                 <template #payment="{ data }">
                     <a-tooltip>
                         <template #title>
-                            지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
+                            지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth,
+                                data.data.paymentFinishYearMonth) }}
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
                                 :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                                :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                                :style="{ color: 'white', backgroundColor: 'black' }"
+                                :height="$config_styles.HeightInput" />
                         </div>
                     </a-tooltip>
                 </template>
@@ -63,46 +67,62 @@
                 <DxColumn caption="신고 종류" cell-template="afterDeadline" />
                 <template #afterDeadline="{ data }">
                     <DxButton :text="getAfterDeadline(data.data.index, data.data.afterDeadline)?.tag_name"
-                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
+                        :style="getAfterDeadline(data.data.index, data.data.afterDeadline)?.style"
+                        :height="$config_styles.HeightInput" />
                 </template>
 
                 <DxColumn data-field="yearEndTaxAdjustment" caption="연말" css-class="cell-center"
                     cell-template="yearEndTaxAdjustment" />
-                <template #yearEndTaxAdjustment="{ data }">{{ data.data.yearEndTaxAdjustment ? 'O' : '' }}</template>
+                <template #yearEndTaxAdjustment="{ data }">
+                    <div class="showO">{{ data.data.yearEndTaxAdjustment ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="refund" caption="환급" css-class="cell-center" cell-template="refund" />
-                <template #refund="{ data }">{{ data.data.refund ? 'O' : '' }}</template>
+                <template #refund="{ data }">
+                    <div class="showO">{{ data.data.refund ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="wageIncomeSimplified" caption="근로 간이" css-class="cell-center"
                     cell-template="wageIncomeSimplified" />
-                <template #wageIncomeSimplified="{ data }">{{ data.data.wageIncomeSimplified ? 'O' : '' }}</template>
+                <template #wageIncomeSimplified="{ data }">
+                    <div class="showO">{{ data.data.wageIncomeSimplified ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="yearEndAdjustmentRetirement" caption="근로 중도" css-class="cell-center"
                     cell-template="yearEndAdjustmentRetirement" />
-                <template #yearEndAdjustmentRetirement="{ data }">{{
-                    data.data.yearEndAdjustmentRetirement ? 'O' : ''
-                }}</template>
+                <template #yearEndAdjustmentRetirement="{ data }">
+                    <div class="showO">{{ data.data.yearEndAdjustmentRetirement ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="dailyWageIncome" caption="근로 일용" css-class="cell-center"
                     cell-template="dailyWageIncome" />
 
-                <template #dailyWageIncome="{ data }">{{ data.data.dailyWageIncome ? 'O' : '' }}</template>
+                <template #dailyWageIncome="{ data }">
+                    <div class="showO">{{ data.data.dailyWageIncome ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="yearEndAdjustment" caption="근로 연말" css-class="cell-center"
                     cell-template="yearEndAdjustment" />
-                <template #yearEndAdjustment="{ data }">{{ data.data.yearEndAdjustment ? 'O' : '' }}</template>
+                <template #yearEndAdjustment="{ data }">
+                    <div class="showO">{{ data.data.yearEndAdjustment ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="retirementIncome" caption="퇴직 소득" css-class="cell-center"
                     cell-template="retirementIncome" />
-                <template #retirementIncome="{ data }">{{ data.data.retirementIncome ? 'O' : '' }}</template>
+                <template #retirementIncome="{ data }">
+                    <div class="showO">{{ data.data.retirementIncome ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="businessIncome" caption="사업 소득" css-class="cell-center"
                     cell-template="businessIncome" />
-                <template #businessIncome="{ data }">{{ data.data.businessIncome ? 'O' : '' }}</template>
+                <template #businessIncome="{ data }">
+                    <div class="showO">{{ data.data.businessIncome ? 'ㅇ' : '' }}</div>
+                </template>
 
-                <DxColumn data-field="extraIncome" caption="기타 소득" css-class="cell-center"
-                    cell-template="extraIncome" />
-                <template #extraIncome="{ data }">{{ data.data.extraIncome ? 'O' : '' }}</template>
+                <DxColumn data-field="extraIncome" caption="기타 소득" css-class="cell-center" cell-template="extraIncome" />
+                <template #extraIncome="{ data }">
+                    <div class="showO">{{ data.data.extraIncome ? 'ㅇ' : '' }}</div>
+                </template>
 
                 <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint" />
                 <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center"
@@ -117,8 +137,7 @@
                     <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')"
                         style="border: none; margin-top: -2px;" />
                 </template>
-                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true"
-                    fixedPosition="right" />
+                <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
                 <template #add="{ data }">
                     <a-tooltip v-if="checkModify(data.data)">
                         <template #title>본 신고서에 대한 수정신고서를 작성합니다.</template>
@@ -139,19 +158,19 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false"
-        :dataPopupAdd="dataPopupAdd" />
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :dataPopupAdd="dataPopupAdd" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
-    <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false"
-        :dataCall="dataPopup" />
-    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false"
-        :dataReport="dataReport" :key="resetComponentEdit" />
+    <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
+    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport"
+        :key="resetComponentEdit" />
     <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
-        :dataReport="dataReport" :key="resetComponentModify" />
+    :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
+
+
 import { defineComponent, ref, computed, watch } from "vue";
 import dayjs from 'dayjs';
 import { companyId } from "@/helpers/commonFunction";
@@ -173,7 +192,7 @@ import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/i
 
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxToolbar,DxScrolling, DxItem, DxButton, HistoryOutlined,
+        DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
         ReportGridModify
     },
@@ -360,6 +379,4 @@ export default defineComponent({
     },
 });
 </script>  
-<style scoped lang="scss" src="./style/style.scss">
-
-</style>
+<style scoped lang="scss" src="./style/style.scss"></style>
