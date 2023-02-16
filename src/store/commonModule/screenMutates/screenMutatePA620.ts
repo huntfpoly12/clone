@@ -4,6 +4,9 @@ const screenMutatePA620 = {
             ...state.processKeyPA620,
             ...payload
         }
+    },
+    paymentDayPA620(state: any, payload: any){
+        state.paymentDayPA620=payload
     }
 };
 export default screenMutatePA620;
