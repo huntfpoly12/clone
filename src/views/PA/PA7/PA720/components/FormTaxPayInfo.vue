@@ -1,13 +1,13 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    {{ formPA720 }}{{ isEdit }} is Edit {{ getEmployeeExtrasTrigger }}
+    {{ formPA720 }}{{ isEdit }} is Edit {{ getEmployeeExtrasTrigger }}<br />
+    {{ paymentDayPA720 }} paymentDayPA720<br />
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
           <employ-type-select :disabled="isEdit || !isColumnData" :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
             v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
             @incomeTypeCode="changeIncomeTypeCode" />
-          <!-- <div v-if="validations.employeeId" class="validate">this must be filled</div> -->
         </a-form-item>
       </a-col>
       <a-col span="24">
@@ -100,10 +100,11 @@
         </div>
       </a-col>
     </a-row>
-  </a-spin>
+</a-spin>
 </template>
 
 <script lang="ts">
+
 import { ref, defineComponent, watch, reactive, computed, getCurrentInstance } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
@@ -150,9 +151,11 @@ export default defineComponent({
     let month1: any = ref(dayjs().format('YYYY-MM'));
     let month2: any = ref(dayjs().format('YYYY-MM'));
     let disabledInput = ref(false);
-    // let formPA720: any = computed(() => store.state.common.formPA720);
-    const formPA720 = computed(() => store.getters['common/formPA720']);
-    const formEditPA720 = computed(() => store.getters['common/formEditPA720']);
+    let formPA720: any = computed(() => store.state.common.formPA720);
+    let formEditPA720: any = computed(() => store.state.common.formEditPA720);
+    let paymentDayPA720: any = computed(() => store.state.common.paymentDayPA720);
+    // const formPA720 = computed(() => store.getters['common/formPA720']);paymentDayPA720
+    // const formEditPA720 = computed(() => store.getters['common/formEditPA720']);
     const isEdit = ref(false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
     const getEmployeeExtrasParams = reactive({
@@ -247,7 +250,8 @@ export default defineComponent({
       };
       formPA720.value.processKey = incomeExtraParam.value.processKey;
       formEditPA720.value.processKey = incomeExtraParam.value.processKey;
-      store.commit('common/formPA720', editRowData);
+      store.dispatch('common/formPA720', editRowData)
+      // store.commit('common/formPA720', editRowData);
       store.commit('common/formEditPA720', editRowData);
       incomeArr.value.push({
         employeeId: data.employee.employeeId,
@@ -432,10 +436,10 @@ export default defineComponent({
       paymentDateTax,
       loadingIncomeExtra,
       getEmployeeExtrasTrigger,
+      paymentDayPA720
     };
   },
 });
 </script>
 
-<style lang="scss" scoped src="../style/style.scss" >
-</style>
+<style lang="scss" scoped src="../style/style.scss" ></style>>

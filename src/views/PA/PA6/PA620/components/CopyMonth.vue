@@ -197,11 +197,6 @@ export default defineComponent({
             commitDate();
             emit("closePopup", false);
         };
-
-        // watch(()=>props.paymentDay,(newVal)=> {
-        //     store.state.common.paymentDayPA620PA620.value = newVal;
-        // }, {deep: true}
-        // )
         return {
             modalCopy,
             paymentDayPA620,
@@ -239,7 +234,7 @@ export default defineComponent({
 
 :deep div.month-custom-1 {
     background-color: #A6A6A6;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;

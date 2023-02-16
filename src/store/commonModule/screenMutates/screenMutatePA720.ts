@@ -22,7 +22,11 @@ const screenMutatePA720 = {
           ...state.formEditPA720.input,
           ...payload.input
       }
-  },
+    },
+    paymentDayPA720(state: any, payload: any){
+      console.log(`output->payload`,payload)
+      state.paymentDayPA720 = payload;
+    }
 };
   
 export default screenMutatePA720;

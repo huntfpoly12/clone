@@ -230,6 +230,7 @@
         </div>
       </a-col>
     </a-row>
+    {{ dataActionUtils.input }} dataActionUtils <br/>
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="incomeExtrasParams" @editTax="editTax"
@@ -709,7 +710,7 @@ export default defineComponent({
     watch(resultConfig, (newVal) => {
       const data = newVal.getWithholdingConfig;
       dateType.value = data.paymentType;
-      paymentDay.value = data.paymentDay;
+      store.commit('common/paymentDayPA720', data.paymentDay);
     });
 
     //--------compute data function--------------
@@ -738,6 +739,7 @@ export default defineComponent({
       // resetForm();
       month.value = obj.imputedMonth;
     };
+
     return {
       statusParam,
       loadingIncomeProcessExtras,
@@ -795,7 +797,8 @@ export default defineComponent({
       onSave,
       onRowChangeComfirm,
       editTaxParamFake,
-      isErrorFormPA720
+      isErrorFormPA720,
+      dataActionUtils
     };
   },
 });

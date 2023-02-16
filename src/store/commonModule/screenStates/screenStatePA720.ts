@@ -44,6 +44,7 @@ let statesPA720 = {
       incomeId: "99axbzkk",
     },
   },
+  paymentDayPA720:4,
 };
 
 export default statesPA720;

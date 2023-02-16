@@ -7,10 +7,6 @@
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
             <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
         </div>
-        {{ statusButton==30||statusButton==40 }}<br/>
-        {{ companyId}} companyId<br/>
-        {{ paymentDayPA620}} paymentDayPA620<br/>
-        {{ statusButton }}statusButton
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="addRow" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
             <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
@@ -230,10 +226,6 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false)
         let arrayEmploySelect: any = ref([]);
         let paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
-        // watch(()=>paymentDayPA620, (newVal)=> {
-        //   dataActionUtils.input.paymentDay = paymentDayPA620.value;
-        // }, {deep: true})
-        // dataActionUtils.input.paymentDay = paymentDayPA620.value;
         let dataAction: any = reactive({
             ...dataActionUtils,
         })
