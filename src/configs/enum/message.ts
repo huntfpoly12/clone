@@ -34,6 +34,8 @@ export class Message extends BaseType {
         '501': { "message" : "변경 내용을 저장하시겠습니까?","yes": "네","no":"아니요"}, // Are you sure you want to save your changes?
       // Group 
         '601': { "message" : "항목을 2개 이상 선택해야합니다"}, // You must select 2 or more items
+      // Check ID Card 
+        '701': { "message" : "주민등록번호가 유효하지 않습니다"}, // Social security number is invalid
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 

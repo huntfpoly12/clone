@@ -3,7 +3,7 @@ export default gql`
   query searchLocalIncomeTaxElectronicFilings(
     $filter: ElectronicFilingLocalIncomeTaxSearchFilter!
   ) {
-    searchWithholdingTaxElectronicFilings(filter: $filter) {
+    searchLocalIncomeTaxElectronicFilings(filter: $filter) {
       companyId
       imputedYear
       reportId
