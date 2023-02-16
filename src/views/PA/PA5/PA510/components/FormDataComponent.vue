@@ -9,8 +9,8 @@
                             @onChange="onChange" :activeType20="false" />
                     </a-form-item>
                     <a-form-item label="지급일">
-                        <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay"
-                            :max="31" :spinButtons="true" :disabled="!store.state.common.actionAddItem" />
+                        <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
+                            :spinButtons="true" :disabled="!store.state.common.actionAddItem" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -48,18 +48,17 @@
                         <a-typography-title :level="5" style="margin-bottom: 0;">
                             월급여 {{
                                 dataIncomeWageDaily.employee.monthlyPaycheck ?
-                                    $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
-                                    $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
+                                $filters.formatCurrency(dataIncomeWageDaily.monthlyWage) :
+                                $filters.formatCurrency(dataIncomeWageDaily.dailyWage * dataIncomeWageDaily.workingDays)
                             }}
                             원</a-typography-title>
                     </div>
                     <div class="input-text">
                         <span>일급/월급:</span>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck"
-                            :textCheck="'월급'" :textUnCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px"
-                            :required="true" placeholder='월급여' :spinButtons="false"
-                            v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
+                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
+                            :textUnCheck="'일급'" />
+                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
+                            placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                         <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.dailyWage" />
                     </div>
@@ -102,8 +101,7 @@
                         <div class="deduction-main">
                             <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
                                 <span>
-                                    <deduction-items
-                                        v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
                                         :name="item.name" :type="4" :width="'150px'" subName="월급" />
                                 </span>
                                 <div>
@@ -121,8 +119,9 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <span>
-                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal" id="button-action-dedution-pa510"
-                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal"
+                        id="button-action-dedution-pa510" :style="{ color: 'white', backgroundColor: 'gray' }"
+                        :height="'33px'" />
                 </span>
             </a-tooltip>
             <a-tooltip placement="top">
@@ -137,9 +136,10 @@
 
     <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false" :data="arrDeduction"
         @updateDate="updateDataDeduction" />
-    <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
+<InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
 </template>
 <script lang="ts">
+
 import { defineComponent, ref, computed, watch } from "vue";
 import DxButton from "devextreme-vue/button"
 import notification from "@/utils/notification";
@@ -312,11 +312,13 @@ export default defineComponent({
 
 
         // ===================WATCH==================================
+        // Watching the value of the store.state.common.actionAddItem and if it is true, it will do
+        // some stuff.
         watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
                 countKey.value++;
                 employeeWageDailyParam.value.employeeId = null
-                dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
                 arrDeduction.value.map((data: any) => {
                     data.price = 0
                 })
@@ -348,22 +350,31 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
-                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIncomeWageDaily.value
-                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
-            }
+            // if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
+            //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIncomeWageDaily.value
+            store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
+            // }
         }, { deep: true })
-        watch(() => store.state.common.incomeId, (value) => {      
+
+        // Watching the value of incomeId in the store. If the value is not null, it will set the value
+        // of incomeId in originDataIncomeWageDaily.value.incomeId to the value of incomeId in the
+        // store. Then it will set triggerIncomeWageDaily.value to true.
+        watch(() => store.state.common.incomeId, (value) => {
             if (value) {
                 originDataIncomeWageDaily.value.incomeId = store.state.common.incomeId
                 triggerIncomeWageDaily.value = true;
             } else {
-                arrDeduction.value.map((data: any) => {
-                    data.price = 0
-                })
-                dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                if (!store.state.common.actionAddItem) {
+                    arrDeduction.value.map((data: any) => {
+                        data.price = 0
+                    })
+                    dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                }
             }
         })
+
+        // Watching the value of actionSubmit and if it is true, it will execute the code inside the if
+        // statement.
         watch(() => store.state.common.actionSubmit, (value) => {
             let arrDeductionItems: any = []
             arrDeduction.value.forEach((value: any) => {
@@ -397,6 +408,9 @@ export default defineComponent({
                 })
             }
         })
+
+        // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
+        // changed.
         watch(() => arrDeduction, (res) => {
             let total = 0
             res.value.map((val: any) => {
@@ -404,6 +418,9 @@ export default defineComponent({
             })
             totalDeduction.value = filters.formatCurrency(total)
         }, { deep: true })
+
+        // Watching the resultEmployeeWageDaily and when it changes, it will update the
+        // dataIncomeWageDaily.value.
         watch(resultEmployeeWageDaily, (res: any) => {
             employeeWageDailyTrigger.value = false;
             let data = res.getEmployeeWageDaily;
@@ -423,9 +440,12 @@ export default defineComponent({
                 })
             })
         }, { deep: true })
+
+        // Watching the statusRowAdd property of the store.state.common object. If the value of
+        // statusRowAdd is false, then it will add a new row to the table.
         watch(() => store.state.common.statusRowAdd, (newVal) => {
-            if (!newVal) {
-                store.state.common.dataTaxPayInfo = JSON.parse(JSON.stringify(store.state.common.dataTaxPayInfo)).concat({ ...sampleDataIncomeWageDaily })
+            if (!newVal) { // add row table
+                store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
                 dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
@@ -433,12 +453,15 @@ export default defineComponent({
                 }, 100);
             }
         })
-        
+
         watch(() => store.state.common.paymentDayCopy, (newVal) => {
-            setTimeout(() =>{
+            setTimeout(() => {
                 dataIncomeWageDaily.value.paymentDay = newVal
             }, 1000)
         })
+
+        // Watching the store.state.common.resetArrayEmploySelect and when it changes it will reset the
+        // arrayEmploySelect.value to [] and then it will do some other stuff.
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
             if (store.state.common.actionAddItem) {
@@ -451,8 +474,9 @@ export default defineComponent({
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
         })
-        
+
         // ===================FUNCTION==================================
+        // A function that is used in a Vue HTML template.
         const funcCheckPrice = (id: any) => {
             let price = 0
             dataIncomeWageDaily.value.deductionItems.map((e: any) => {
@@ -461,6 +485,7 @@ export default defineComponent({
             })
             return price
         }
+        // Calculating the deduction of the employee.
         const actionDedution = () => {
             let dataDefault = dataIncomeWageDaily.value.employee
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
@@ -504,6 +529,7 @@ export default defineComponent({
         const actionInsurance = () => {
             modalInsurance.value = true;
         }
+        // A function that is called when the employeeId is changed.
         const onChange = () => {
             if (employeeWageDailyParam.value.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
                 employeeWageDailyParam.value.employeeId = dataIncomeWageDaily.value.employee.employeeId;
@@ -530,6 +556,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped  src="../style/style.scss" >
-
-</style>
+<style lang="scss" scoped  src="../style/style.scss" ></style>
