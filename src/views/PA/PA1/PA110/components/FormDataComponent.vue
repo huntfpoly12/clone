@@ -27,8 +27,7 @@
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-100">수당 과세합계</span>
-                            <number-box-money :readOnly="true" width="100px"
-                                v-model:valueInput="dataIW.totalPayItemTax" />
+                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.totalPayItemTax" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text2 d-flex-center">
@@ -39,8 +38,7 @@
                         </div>
                         <div class="text d-flex-center">
                             <span class="w-100">공제 합계</span>
-                            <number-box-money :readOnly="true" width="100px"
-                                v-model:valueInput="dataIW.totalDeduction" />
+                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.totalDeduction" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="d-flex-center">
@@ -70,8 +68,7 @@
                     <a-form-item label="총근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.totalWorkingHours" /><span
-                                style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right">
@@ -84,8 +81,7 @@
                     <a-form-item label="야간근로시간" label-align="right">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.workingHoursAtNight" /><span
-                                style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.workingHoursAtNight" /><span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="휴일근로시간" label-align="right">
@@ -117,9 +113,9 @@
                                         :name="item.name" :type="2" subName="상여(과세)" :width="'130px'" />
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" :width="'130px'" />
-                                    <deduction-items
-                                        v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
+                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
+                                        :width="'130px'" />
+                                    <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
                                         :name="item.name" :type="4" subName="과세" :width="'130px'" />
                                 </span>
                                 <div>
@@ -139,12 +135,12 @@
                             <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
                                 <span>
                                     <!-- <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" subName="과세" />
-                                    <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" />
-                                    <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
+                                            :name="item.name" :type="1" subName="과세" />
+                                        <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
+                                            :name="item.name" :type="2" subName="상여(과세)" />
+                                        <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
+                                            :name="item.name" :type="3"
+                                            :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
                                     <deduction-items :name="item.name" :width="'130px'" :type="4" subName="과세" />
                                 </span>
                                 <div>
@@ -177,12 +173,12 @@
                 :data="dataConfigDeductions" @updateDate="updateDataDeduction" />
             <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
             <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
-            <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false"
-                :data="dataIW" />
+            <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" :data="dataIW" />
         </a-spin>
-    </div>
+</div>
 </template>
 <script lang="ts">
+
 import { defineComponent, reactive, ref, watch, computed } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
@@ -386,18 +382,21 @@ export default defineComponent({
                 incomeWageParams.incomeId = value
                 triggerDetail.value = true;
             } else {
-                dataConfigDeductions.value.map((data: any) => {
-                    data.amount = 0
-                })
-                dataConfigPayItems.value.map((data: any) => {
-                    data.amount = 0
-                })
-                dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                if (!store.state.common.actionAddItem) {
+                    dataConfigDeductions.value.map((data: any) => {
+                        data.amount = 0
+                    })
+                    dataConfigPayItems.value.map((data: any) => {
+                        data.amount = 0
+                    })
+                    dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                }
+
             }
         })
         watch(() => store.state.common.statusRowAdd, (newVal) => {
             if (!newVal) {
-                store.state.common.dataTaxPayInfo = JSON.parse(JSON.stringify(store.state.common.dataTaxPayInfo)).concat({ ...sampleDataIncomeWage })
+                store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
                 dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
@@ -411,7 +410,7 @@ export default defineComponent({
         watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
                 countKey.value++;
-                dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
                 dataConfigDeductions.value.map((data: any) => {
                     data.amount = 0
                 })
@@ -445,10 +444,10 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
-                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIW.value
-                store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
-            }
+            // if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
+            //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIW.value
+            store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
+            // }
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
@@ -462,7 +461,7 @@ export default defineComponent({
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
         })
-        
+
         watch(() => store.state.common.actionSubmit, () => {
             submitForm();
         })
@@ -474,7 +473,7 @@ export default defineComponent({
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = data.paymentDay
                 dataIW.value.workingDays = data.workingDays
-                
+
                 dataIW.value.totalWorkingHours = data.totalWorkingHours
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
@@ -483,7 +482,7 @@ export default defineComponent({
                     data.amount = 0
                 })
                 data.payItems?.map((item: any) => {
-                    dataIW.value.payItems.push({itemCode: item.itemCode, amount:item.amount})
+                    dataIW.value.payItems.push({ itemCode: item.itemCode, amount: item.amount })
                     dataConfigPayItems.value?.find((Obj: any) => {
                         if (item.itemCode == Obj.itemCode) {
                             Obj.amount = item.amount;
@@ -495,7 +494,7 @@ export default defineComponent({
                     data.amount = 0
                 })
                 data.deductionItems?.map((item: any) => {
-                    dataIW.value.deductionItems.push({itemCode: item.itemCode, amount:item.amount})
+                    dataIW.value.deductionItems.push({ itemCode: item.itemCode, amount: item.amount })
                     dataConfigDeductions.value.find((Obj: any) => {
                         if (item.itemCode == Obj.itemCode) {
                             Obj.amount = item.amount;
@@ -515,7 +514,7 @@ export default defineComponent({
             triggerCalcIncome.value = false
             if (value) {
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = value.calculateIncomeWageTax
-                dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax/10)*10
+                dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax / 10) * 10
             }
         })
 
@@ -547,10 +546,10 @@ export default defineComponent({
                 }
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
-            
+
         })
         watch(() => store.state.common.paymentDayCopy, (newVal) => {
-            setTimeout(() =>{
+            setTimeout(() => {
                 dataIW.value.paymentDay = newVal
             }, 1000)
         })
@@ -601,8 +600,8 @@ export default defineComponent({
             };
             if (store.state.common.actionAddItem) {
                 variables.input.employeeId = dataIW.value.employee.employeeId,
-                variables.input.paymentDay = dataIW.value.paymentDay,
-                actionCreated(variables)
+                    variables.input.paymentDay = dataIW.value.paymentDay,
+                    actionCreated(variables)
             } else {
                 actionUpdate(variables)
             }
@@ -635,7 +634,7 @@ export default defineComponent({
             dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew
-                    dataIW.value.deductionItems[index] = {amount: val.amountNew, itemCode: val.itemCode}
+                dataIW.value.deductionItems[index] = { amount: val.amountNew, itemCode: val.itemCode }
             })
             setTimeout(() => {
                 store.state.common.statusChangeFormPrice = false;
@@ -666,6 +665,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped src="../style/styleForm.scss">
-
-</style>
+<style lang="scss" scoped src="../style/styleForm.scss"></style>

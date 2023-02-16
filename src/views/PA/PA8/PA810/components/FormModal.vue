@@ -141,42 +141,10 @@
               </a-row>
             </div>
           </a-col>
-          <a-col span="24">
-            <div class="item-wrap">
-              <span class="item-wrap-title">국민연금</span>
-              <a-row gutter="7">
-                <a-col span="12">
-                  <a-form-item label="취득부호" label-align="right">
-                    <checkbox-basic label="산재보험" v-model:valueCheckbox="formData.employeementInsuranceReport"></checkbox-basic>
-                    <!-- <div class="zip-code">
-                      <default-text-box
-                        v-model:valueInput="formData.roadAddress"
-                        width="300px"
-                        :disabled="true"
-                        class="roadAddress"
-                        placeholder="도로명주소"
-                      />
-                      <div style="margin-left: 5px">
-                        <post-code-button @dataAddress="funcAddress" text="주소검색" />
-                      </div>
-                    </div>
 
-                    <default-text-box v-model:valueInput="formData.addressExtend" width="300px" placeholder="상세 주소 입력" /> -->
-                  </a-form-item>
-                </a-col>
-                <a-col span="12">
-                  <a-form-item label="" label-align="right">
-                    <span class="check-box-tab1 mb-4 ml-15">
-                      <checkbox-basic label="취득월 납부 희망여부" v-model:valueCheckbox="formData.employeementInsuranceReport"></checkbox-basic>
-                    </span>
-                  </a-form-item>
-                </a-col>
-              </a-row>
-            </div>
-          </a-col>
           <a-col span="24">
             <div class="item-wrap">
-              <span class="item-wrap-title">국민연금</span>
+              <span class="item-wrap-title">건강보험</span>
               <a-row gutter="7">
                 <a-col span="12">
                   <a-form-item label="취득부호" label-align="right">
@@ -208,6 +176,83 @@
                   <a-form-item label="" label-align="right">
                     <span class="check-box-tab1 mb-4 ml-15">
                       <checkbox-basic label="취득월 납부 희망여부" v-model:valueCheckbox="formData.includeDependents"></checkbox-basic>
+                    </span>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+          </a-col>
+
+          <a-col span="24">
+            <div class="item-wrap">
+              <span class="item-wrap-title">고용산재</span>
+              <a-row gutter="7">
+                <a-col span="12">
+                  <a-form-item label="직종부호" label-align="right">
+                    <checkbox-basic label="산재보험" v-model:valueCheckbox="formData.employeementInsuranceReport"></checkbox-basic>
+                    <!-- <div class="zip-code">
+                      <default-text-box
+                        v-model:valueInput="formData.roadAddress"
+                        width="300px"
+                        :disabled="true"
+                        class="roadAddress"
+                        placeholder="도로명주소"
+                      />
+                      <div style="margin-left: 5px">
+                        <post-code-button @dataAddress="funcAddress" text="주소검색" />
+                      </div>
+                    </div>
+
+                    <default-text-box v-model:valueInput="formData.addressExtend" width="300px" placeholder="상세 주소 입력" /> -->
+                  </a-form-item>
+                </a-col>
+                <a-col span="5">
+                  <a-form-item label="" label-align="right">
+                    <span class="check-box-tab1 mb-4 ml-15">
+                      <checkbox-basic label="계약직여부" v-model:valueCheckbox="formData.employeementInsuranceReport"></checkbox-basic>
+                    </span>
+                  </a-form-item>
+                </a-col>
+                <a-col span="7" >
+                  <a-form-item label="" label-align="right">
+                    <div class="d-flex">
+                      <label class="lable-item">계약종료일:</label>
+                      <date-time-box width="145px" default="2022-12-12" dateFormat="YYYY-MM-DD" />
+                    </div>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row gutter="7">
+                <a-col span="12">
+                  <a-form-item label="" label-align="right">
+                    <checkbox-basic label="일자리안정자금지원 신청" v-model:valueCheckbox="formData.employeementInsuranceReport"></checkbox-basic>
+                    <!-- <div class="zip-code">
+                      <default-text-box
+                        v-model:valueInput="formData.roadAddress"
+                        width="300px"
+                        :disabled="true"
+                        class="roadAddress"
+                        placeholder="도로명주소"
+                      />
+                      <div style="margin-left: 5px">
+                        <post-code-button @dataAddress="funcAddress" text="주소검색" />
+                      </div>
+                    </div>
+
+                    <default-text-box v-model:valueInput="formData.addressExtend" width="300px" placeholder="상세 주소 입력" /> -->
+                  </a-form-item>
+                </a-col>
+                <a-col span="5">
+                  <a-form-item label="주소정근로시간" label-align="right">
+                    <span class="check-box-tab1 mb-4">
+                    <number-box :required="true" :spinButtons="true" v-model:valueInput="formData.employeementInsuranceReport" width="150px" :min="1" :max="52"></number-box>
+                    </span>
+                  </a-form-item>
+                </a-col>
+                <a-col span="7" >
+                  <a-form-item label="주소정근로시간" label-align="right">
+                    <span class="check-box-tab1 mb-4">
+                    <number-box :required="true" :spinButtons="true" v-model:valueInput="formData.employeementInsuranceReport" width="150px" :min="1" :max="52"></number-box>
                     </span>
                   </a-form-item>
                 </a-col>

@@ -303,9 +303,9 @@ export default defineComponent({
         }
         const getAbleDisable = (data: any) => {
             if (data === true) {
-                return "blue";
+                return "rgb(16 142 236 / 62%)";
             } else if (data === false) {
-                return "#d5a7a7";
+                return "rgb(205 32 31 / 51%)";
             }
         }
         const changeValueType = (e: any) => {
