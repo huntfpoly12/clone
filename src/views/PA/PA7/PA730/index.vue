@@ -54,7 +54,7 @@
             <div class="custom-mail-group">
               <DxButton @click="actionOpenPopupEmailGroup">
                 <img src="@/assets/images/emailGroup.png" alt=""
-                  style="width: 35px; margin-right: 3px; cursor: pointer" />
+                  style="width: 28px; margin-right: 3px; cursor: pointer" />
               </DxButton>
             </div>
           </template>
@@ -62,7 +62,7 @@
             <div class="custom-mail-group">
               <DxButton @click="onPrintGroup">
                 <img src="@/assets/images/printGroup.png" alt=""
-                  style="width: 35px; margin-right: 3px; cursor: pointer" />
+                  style="width: 28px; margin-right: 3px; cursor: pointer" />
               </DxButton>
             </div>
           </template>

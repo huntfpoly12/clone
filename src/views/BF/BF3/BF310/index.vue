@@ -52,9 +52,9 @@
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="rowTable" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxExport :enabled="true"/>
                     <DxToolbar>
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem name="page" template="pagination-table" location="after" />
                         <DxItem name="searchPanel" />
                     </DxToolbar>
