@@ -24,7 +24,7 @@
                 <div>
                     <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
                     <div style="display: flex;align-items: center;">
-                        <mail-text-box :required="true" v-model:valueInput="email" width="250px" />
+                        <mail-text-box :required="true" v-model:valueInput="email" width="250px" placeholder="abc@example.com"/>
                         <span>로 메일을 발송하시겠습니까?</span>
                     </div>
                 </div>
