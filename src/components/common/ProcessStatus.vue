@@ -1,5 +1,5 @@
 <template>
-    <div style="display: inline-block;" v-click-outside="onClosePopup">
+    <div style="display: inline-block;" v-click-outside="setModalVisible">
         <div class="mytooltip">
             <div class="mytext" :class="showModal ? 'show' : ''">
                 <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="value"
@@ -80,9 +80,6 @@ export default defineComponent({
               currentBt.value = valueNew
             }
         );
-        const onClosePopup = () => {
-          showModal.value = false;
-        }
         return {
             value,
             currentBt,
@@ -93,7 +90,6 @@ export default defineComponent({
             showModal,
             submit,
             userType,
-            onClosePopup
         }
     },
 });

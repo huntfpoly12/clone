@@ -15,7 +15,7 @@
                         <div v-if="activeKey == '2'">
                             <div class="btn-action">
                                 <a-tooltip color="black">
-                                    <template #title>삭제</template>
+                                    <template #title>조회</template>
                                     <a-button>
                                         <SearchOutlined />
                                     </a-button>
@@ -226,10 +226,10 @@
                         :onRowPrepared="changeColorRow">
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
-                            <DxItem name="exportButton" />
+                            <DxItem name="exportButton" css-class="cell-button-export"/>
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             <DxItem name="groupPanel" />
                             <DxItem name="addRowButton" show-text="always" />

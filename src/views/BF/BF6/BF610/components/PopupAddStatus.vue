@@ -23,8 +23,8 @@
                 <template #type="{ data }">
                     {{ EmployeeType[data.data.type] }}
                 </template>
-                <DxColumn caption="총지급액" data-field="totalPayment" />
-                <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" />
+                <!-- <DxColumn caption="총지급액" data-field="totalPayment" />
+                <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" /> -->
                 <DxColumn caption="마감현황" cell-template="status" />
                 <template #status="{ data }">
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
