@@ -12,6 +12,9 @@ const statesPA620 = {
         incomeIdStore : 0
     },
     paymentDayPA620:1,
+    testDate:{
+      valTest: 1
+    },
 };
 
 export default statesPA620;

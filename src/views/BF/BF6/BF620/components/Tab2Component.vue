@@ -65,15 +65,15 @@
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
           <template #reportType="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
+            <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
+            <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
             <div v-else></div>
           </template>
           <DxColumn caption="신고 주기" cell-template="afterDeadline" />
           <template #afterDeadline="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-10 py-4" style="color: #000000; background-color: black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-10 py-4" style="color: #000000; background-color: #555555">반기</div>
-            <div v-else></div>
+            <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
+            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
+            <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
           </template>
           <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" />
           <DxColumn caption="최종마감일시" data-field="refund" />
