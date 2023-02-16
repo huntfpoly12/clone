@@ -352,6 +352,14 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
+        store.state.common.processKeyPA110 = {
+            imputedYear: globalYear.value,
+            imputedMonth: dayjs().month() + 1,
+            paymentYear: globalYear.value,
+            paymentMonth: dayjs().month() + 1,
+        }
+        console.log(store.state.common.processKeyPA110);
+        
         const processKey = computed(() => store.state.common.processKeyPA110)
         const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])

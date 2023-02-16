@@ -34,8 +34,7 @@
                             cell-template="DescendantChange" />
                         <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
                             cell-template="maternityAdoptionChange" />
-                        <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"
-                            cell-template="consignmentRelationshipChange" />
+                        <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship"/>
                         <DxColumn alignment="left" caption="세대주여부 " data-field="householder"
                         cell-template="householderChange" />
                         <DxColumnFixing :enabled="true"/>
@@ -52,8 +51,8 @@
                             </div>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
-                            <employee-info :foreigner="cellData.value">
-                            </employee-info>
+                            <div v-if="cellData.value">내</div>
+                            <div v-else>외</div>
                         </template>
                         <template #womenChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
@@ -65,7 +64,7 @@
                             <div v-if="cellData.value == 0">
                                 <button class="btn-red">해당없음</button>
                             </div>
-                            <div></div>
+                            <div v-else>{{basicDeduction(cellData.value)}}</div>
                         </template>
                         <template #singleParentChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
@@ -74,17 +73,17 @@
                             <BtnCheck :value="cellData.value" />
                         </template>
                         <template #disabledChange="{ data: cellData }">
-                            <div v-if="cellData.value">{{ cellData.value }}</div>
+                            <div v-if="cellData.value">{{ disabledType(cellData.value) }}</div>
                         </template>
                         <template #DescendantChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
                         </template>
                         <template #maternityAdoptionChange="{ data: cellData }">
-                            <div v-if="cellData.value">{{ cellData.value }}</div>
+                            <div v-if="cellData.value">{{ maternityAndAdoption(cellData.value) }}</div>
                         </template>
-                        <template #consignmentRelationshipChange="{ data: cellData }">
+                        <!-- <template #consignmentRelationshipChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
-                        </template>
+                        </template> -->
                         <template #householderChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
                         </template>
@@ -225,6 +224,9 @@ import { Message } from "@/configs/enum"
 import BtnCheck from '../btnCheck/BtnCheck.vue';
 import {
     initFormStateTab3,
+    basicDeduction,
+    maternityAndAdoption,
+    disabledType,
 } from "../../utils/index";
 export default defineComponent({
     components: {
@@ -395,7 +397,10 @@ export default defineComponent({
             singleParentSummary,
             maternityAdoptionSummary,
             convertAge,
-            newForm
+            newForm,
+            basicDeduction,
+            maternityAndAdoption,
+            disabledType,
         }
     },
 });

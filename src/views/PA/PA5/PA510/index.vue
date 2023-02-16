@@ -313,7 +313,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         store.state.common.processKeyPA510 = {
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
             imputedMonth: dayjs().month() + 1,
             paymentYear: globalYear.value,
             paymentMonth: dayjs().month() + 1,

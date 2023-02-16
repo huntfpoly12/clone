@@ -445,10 +445,10 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            // if (!store.state.common.statusRowAdd) {
-            //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1] = dataIW.value
-            //     store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
-            // }
+            if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
+                store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIW.value
+                store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
+            }
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []

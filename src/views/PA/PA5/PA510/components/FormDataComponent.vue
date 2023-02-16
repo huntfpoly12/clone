@@ -348,7 +348,7 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            if (!store.state.common.statusRowAdd) {
+            if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
                 store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIncomeWageDaily.value
                 store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
             }
