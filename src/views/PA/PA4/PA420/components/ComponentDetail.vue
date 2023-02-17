@@ -63,7 +63,7 @@
                     format="#,###" />
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
-                <DxColumn caption="" cell-template="action" width="50px" />
+                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
                 <template #joinedAt="{ data }">
                     <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
                 </template>
