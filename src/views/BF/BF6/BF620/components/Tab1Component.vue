@@ -206,8 +206,6 @@ export default defineComponent({
     let arr = ref<any>([])
     const productionStatusData = (emitVal: any) => {
       arr.value.push(emitVal);
-      console.log(`output->[...emitVal]`,[...[emitVal]])
-      console.log(`output->[...emitVal]`,arr)
       productionStatusArr.value = [emitVal];
       reFreshDataGrid();
     };

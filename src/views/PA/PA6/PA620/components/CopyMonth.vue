@@ -94,6 +94,7 @@ export default defineComponent({
         const month1: any = ref<number>()
         const processKeyPA620 = computed(() => store.state.common.processKeyPA620)
         const messageCopyDone= Message.getMessage('COMMON', '106').message;
+        const modalCopy = ref(false)
         const paymentDayPA620 = computed({
           get() {
             return store.getters['common/paymentDayPA620'];
@@ -102,7 +103,7 @@ export default defineComponent({
             store.commit('common/paymentDayPA620', value);
           },
         });
-        // ----------set month copy because dependent on the set up before--------------
+        // ----------set month source default because dependent on the set up before--------------
         let month2: any = ref();
         watch(() => props.monthVal, (val) => {
             month1.value = val;
@@ -115,27 +116,25 @@ export default defineComponent({
             }
             month2.value = yearMonth;
         });
-        const modalCopy = ref(false)
-        const dataApiCopy: any = ref({}); // datasource to copy the data
-        const arrDataPoint: any = ref({}) // date of date source
         //-------------------------action copy data--------------------------------
         const {
             mutate,
             onError,
             onDone,
-        } = useMutation(mutations.copyIncomeBusinesses);
+          } = useMutation(mutations.copyIncomeBusinesses);
         const openModalCopy = () => {
             modalCopy.value = true
-        }
-        // get date to copy
-        const updateValue = (value: any) => {
+          }
+          // get date to copy
+          const updateValue = (value: any) => {
             dataApiCopy.value = {
                 imputedYear: value.value.imputedYear,
                 imputedMonth: value.value.imputedMonth,
                 paymentYear: value.value.paymentYear,
                 paymentMonth: value.value.paymentMonth,
-            }
-        };
+              }
+            };
+        const dataApiCopy: any = ref({}); // datasource to copy the data
         const actionCopy = async() => {
             if (dataApiCopy.value.imputedYear) {
                 await commitDate();
@@ -145,22 +144,23 @@ export default defineComponent({
                   target: processKeyPA620.value,
                 }
                 mutate(param)
-            } else {
+              } else {
                 notification('error', '날짜를 선택하세요.')
+              }
             }
-        }
-        onError(res => {
+            onError(res => {
             notification('error', res.message)
         })
         onDone(() => {
-            setModalVisible();
-            setModalVisibleCopy();
-            notification('success', messageCopyDone);
-            emit('loadingTable')
+          setModalVisible();
+          setModalVisibleCopy();
+          notification('success', messageCopyDone);
+          emit('loadingTable')
         })
         //-------------------------get date source copy--------------------------------
+        const arrDataPoint: any = ref({}) // arr date of date source
         const originData: any = ref({
-            companyId: companyId,
+          companyId: companyId,
             filter: {
                 startImputedYearMonth: parseInt(`${globalYear.value}1`),
                 finishImputedYearMonth: parseInt(`${globalYear.value}12`),
@@ -172,7 +172,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         onResult((value: any) => {
-            arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
+          arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
         })
         // ---------------------fn modal --------------------
         const setModalVisible = () => {
@@ -197,11 +197,6 @@ export default defineComponent({
             commitDate();
             emit("closePopup", false);
         };
-
-        // watch(()=>props.paymentDay,(newVal)=> {
-        //     store.state.common.paymentDayPA620PA620.value = newVal;
-        // }, {deep: true}
-        // )
         return {
             modalCopy,
             paymentDayPA620,
@@ -239,7 +234,7 @@ export default defineComponent({
 
 :deep div.month-custom-1 {
     background-color: #A6A6A6;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 5px;
     margin-right: 10px;
     color: white;
