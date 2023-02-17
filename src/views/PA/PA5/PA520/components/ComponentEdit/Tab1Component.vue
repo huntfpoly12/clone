@@ -106,7 +106,10 @@
         </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" :okText="Message.getCommonMessage('501').yes" :cancelText="Message.getCommonMessage('501').no" @checkConfirm="statusComfirm" />
+        :content="Message.getCommonMessage('501').message" 
+        :okText="Message.getCommonMessage('501').yes" 
+        :cancelText="Message.getCommonMessage('501').no" 
+        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -215,8 +218,10 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
-            emit('closePopup', false)
-            notification('success', '업데이트 완료!')
+          store.state.common.checkChangeValueAddPA520 = false
+          dataDefault = JSON.stringify(dataEdited)
+          emit('closePopup', false)
+          notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================ 
         watch(() => props.idRowEdit, (newVal) => {
