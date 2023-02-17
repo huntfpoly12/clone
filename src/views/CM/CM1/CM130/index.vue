@@ -242,7 +242,7 @@
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
-                            <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
+                            <tag-color-use :valueUse="data.value"/>
                         </template>
                         <DxColumn data-field="printName" caption="과세구분" />
                         <DxColumn data-field="name" caption="항목명" />
@@ -290,7 +290,7 @@
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"
                             css-class="cell-center" />
                         <template #use="{ data }">
-                            <a-tag :color="getAbleDisable(data.value)">{{ data.value ? "이용중" : "이용중지" }}</a-tag>
+                            <tag-color-use :valueUse="data.value"/>
                         </template>
                         <DxColumn caption="구분" cell-template="deduction" />
                         <template #deduction>
@@ -675,13 +675,7 @@ export default defineComponent({
             modalHistoryStatusDeduction.value = true;
             popupData.value = data;
         }
-        const getAbleDisable = (data: any) => {
-            if (data) {
-                return "gray";
-            } else {
-                return "red";
-            }
-        }
+        
         const changeValueAddress = (data: any) => {
             formState.competentTaxOfficeCode = data.taxOfficeName
             formState.localIncomeTaxArea = data.localIncomeTaxArea
@@ -756,7 +750,6 @@ export default defineComponent({
             onCloseEditModal,
             modalHistory,
             modalHistoryDeduction,
-            getAbleDisable,
             onExporting,
             dataPublicInstitution,
             itemCodeMax,

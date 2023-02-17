@@ -40,12 +40,10 @@
                     </a-col>
                     <a-col class="custom-flex">
                         <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox1" :size="'14'" />
-                        <a-tag :color="getAbleDisable(true)" style="cursor: pointer; margin-left: 7px;"
-                            @click="changeValueCheckBox('checkBox1')">이용중</a-tag>
+                        <tag-color-use :valueUse="true" @click="changeValueCheckBox('checkBox1')"/>
+                        <div style="width: 10px;"></div>
                         <checkbox-basic v-model:valueCheckbox="checkStatus.checkBox2" :size="'14'" />
-                        <a-tag :color="getAbleDisable(false)" style="cursor: pointer; margin-left: 7px;"
-                            @click="changeValueCheckBox('checkBox2')">이용중지
-                        </a-tag>
+                        <tag-color-use :valueUse="false" @click="changeValueCheckBox('checkBox2')"/>
                     </a-col>
                 </a-row>
             </div>
@@ -77,9 +75,9 @@
                     <template #button-template>
                         <DxButton icon="plus" @click="openAddNewModal" />
                     </template>
-                    <DxColumn data-field="active" caption="상태" data-type="text" cell-template="check-box" />
+                    <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" />
                     <template #check-box="{ data }">
-                        <a-tag :color="getAbleDisable(data.value)">{{ data.value == true ? "이용중" : "이용중지" }}</a-tag>
+                        <tag-color-use :valueUse="data.value"/>
                     </template>
                     <DxColumn data-field="username" caption="회원ID" css-class="cell-center" />
                     <DxColumn data-field="name" caption="회원명" />
@@ -301,13 +299,6 @@ export default defineComponent({
                 return "goldenrod";
             }
         }
-        const getAbleDisable = (data: any) => {
-            if (data === true) {
-                return "rgb(16 142 236 / 62%)";
-            } else if (data === false) {
-                return "rgb(205 32 31 / 51%)";
-            }
-        }
         const changeValueType = (e: any) => {
             dataSearch.value.type = e.value
         }
@@ -336,7 +327,6 @@ export default defineComponent({
             colomn_resize,
             openAddNewModal,
             setModalEditVisible,
-            getAbleDisable,
             getColorTag,
             modalHistory,
             modalLogin,
