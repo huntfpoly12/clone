@@ -291,8 +291,8 @@ export default defineComponent({
       if (isChangeConfigPayItemsPA120.value) {
         return false;
       }
-      // console.log(`output->`,editRowPA120.value)
-      // console.log(`output->`,initFormStateTabPA120.value)
+      // c onsole.log(`output->`,editRowPA120.value)
+      // c onsole.log(`output->`,initFormStateTabPA120.value)
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)) {
         return true;
       }
@@ -307,16 +307,16 @@ export default defineComponent({
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           addNewRow();
           compareType.value = 1;
-          // console.log(`output->type =2`);
+          // c onsole.log(`output->type =2`);
           return;
         }
         if (!compareType1()) {
-          // console.log(`output->type = 1 loi`);
+          // c onsole.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           return;
         }
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
-        // console.log(`output->type = 1 ko loi`, compareType1());
+        // c onsole.log(`output->type = 1 ko loi`, compareType1());
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
@@ -355,7 +355,7 @@ export default defineComponent({
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          // console.log(`output =? luu loi`, isFirstWeb.value)
+          // c onsole.log(`output =? luu loi`, isFirstWeb.value)
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
@@ -365,7 +365,7 @@ export default defineComponent({
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          // console.log(`output =? luu ko loi`,)
+          // c onsole.log(`output =? luu ko loi`,)
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           focusedRowKey.value = idRow.value;
@@ -378,7 +378,7 @@ export default defineComponent({
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            // console.log(`output-> toi dang o so 1`);
+            // c onsole.log(`output-> toi dang o so 1`);
             setTimeout(() => {
               addNewRow();
             }, 50);
@@ -388,7 +388,7 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          // console.log(`output-> toi dang o so 2 `);
+          // c onsole.log(`output-> toi dang o so 2 `);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
@@ -413,7 +413,7 @@ export default defineComponent({
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          // console.log(`output->chuyen row bth`);
+          // c onsole.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -421,19 +421,19 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        // console.log(`output->co new row, khac nhau`);
+        // c onsole.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        // console.log(`output->row khac`);
+        // c onsole.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        // console.log(`output->chuyen row bth. ko co newrow`);
+        // c onsole.log(`output->chuyen row bth. ko co newrow`);
         idRowEdit.value = data.data.employeeId;
         actionChangeComponent.value = 2;
       }

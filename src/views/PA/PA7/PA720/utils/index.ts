@@ -9,6 +9,17 @@ interface Origindata {
     code: string,
 }
 export const monthNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+/**
+ * It runs a series of functions in sequence, waiting for each one to finish before starting the next
+ * one
+ */
+async function runFunctions() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // add more functions here as needed
+}
+
+// runFunctions();
 export const dataActionUtils = {
     companyId: companyId,
     processKey: {
@@ -18,7 +29,7 @@ export const dataActionUtils = {
         paymentMonth: null,
     },
     input: {
-        paymentDay: null,
+        paymentDay: 1,
         employeeId: '',
         incomeTypeCode: "",
         paymentAmount: null,
@@ -48,4 +59,9 @@ export const taxDateIndex = {
     },
 }
 
-
+export const formatMonth = (month: number) => {
+  if (month < 10) {
+    return '0' + month;
+  }
+  return month;
+};

@@ -72,5 +72,9 @@ input.dp__input {
 .dx-datagrid-content .dx-datagrid-table .dx-row > td{
   vertical-align: middle;
 }
+.ant-form-item-label:hover {
+  pointer-events: none;
+  cursor: default;
+}
 
 

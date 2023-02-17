@@ -161,7 +161,7 @@
                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :readOnly="true" :min="0"> </number-box-money>
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :disabled="true" :min="0"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>

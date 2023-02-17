@@ -23,7 +23,6 @@ export default defineComponent({
     let arrStatus = ref<any[]>([]);
     const filingsBywithholdingTrigger = ref(false);
     watch(()=> props.dataProcduct, (newVal)=> {
-      console.log(`output-1`,)
       if(newVal){
         filingsBywithholdingTrigger.value = true;
       }
@@ -48,7 +47,6 @@ export default defineComponent({
       let data = newVal.getElectronicFilingsByWithholdingTax;
       arrStatus.value = data;
       filingsBywithholdingTrigger.value = false;
-      console.log(`output->`,data,filingsBywithholdingTrigger.value)
       if (data) {
         emit('productionStatusData', data[0]);
       }
