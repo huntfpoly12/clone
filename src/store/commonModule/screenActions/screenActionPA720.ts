@@ -3,10 +3,9 @@ const screenActionPA720 = {
     context.commit('formPA720', {
       input: {
         ...payload.input,
-        paymentDay: payload.input.paymentDay || context.state.common.paymentDayPA720
+        paymentDay: payload.input.paymentDay || context.state.common.paymentDayPA720,
       }
     });
-    console.log(`output->payload`,payload)
   },
 }
 

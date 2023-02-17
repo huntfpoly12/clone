@@ -25,7 +25,6 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
     :width="600">
-    {{ dataApiCopy }}
     <div class="mt-30 d-flex-center">
       <span>과거내역</span>
       <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
@@ -55,7 +54,7 @@
       <button-basic class="button-form-modal" text="네" :width="140" type="default" mode="contained"
         @onClick="actionCopy" />
     </div>
-</a-modal>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -93,9 +92,10 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const processKey = computed(() => store.state.common.processKeyPA510);
+    const processKeyPA720 = computed(() => store.state.common.processKeyPA720);
     const globalYear = computed(() => store.state.settings.globalYear);
-    const dataApiCopy: any = ref({});
+    const month1 = ref(1);
+    const modalCopy = ref(false);
     const paymentDayPA720 = computed({
       get() {
         return store.getters['common/paymentDayPA720'];
@@ -104,39 +104,15 @@ export default defineComponent({
         store.commit('common/paymentDayPA720', value);
       },
     });
-    const updateValue = (value: any) => {
-      dataApiCopy.value = value.value;
-      delete dataApiCopy.value.imputedYearMonth;
-      delete dataApiCopy.value.incomeCount;
-      delete dataApiCopy.value.__typename;
-    };
-    const month2 = ref<String>(`${globalYear.value}${processKey.value.imputedMonth}`);
 
-    const modalCopy = ref(false);
-    const paymentDayCopy = ref();
-    const findIncomeProcessExtraStatViewsParam = computed(() => ({
-      companyId: companyId,
-      filter: { startImputedYearMonth: 202200, finishImputedYearMonth: +(month2.value.toString().substring(0, 4) + `12`) },
-    }));
-    const findIncomeProcessExtraStatViewsTrigger = ref(true);
-    const arrDataPoint = ref<[]>([]);
-    const { mutate, onError, onDone } = useMutation(mutations.copyIncomeExtras);
-    const { result: resultFindIncomeProcessExtraStatViews } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
-      enabled: findIncomeProcessExtraStatViewsTrigger.value,
-      fetchPolicy: 'no-cache',
-    }));
-    // watch
-    watch(resultFindIncomeProcessExtraStatViews, (value) => {
-      findIncomeProcessExtraStatViewsTrigger.value = false;
-      arrDataPoint.value = value.findIncomeProcessExtraStatViews;
-    });
-    const month1 = ref(1);
-    const messageCopyDone = Message.getMessage('COMMON', '106').message;
+    // ----------set month source default because dependent on the set up before--------------
+
+    const month2 = ref<String>('');
     watch(
       () => props.month,
       (val) => {
         month1.value = val;
-        let yearMonth = `${processKey.value.paymentYear}${processKey.value.imputedMonth}`;
+        let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
         if (props.dateType == 2 && props.month) {
           yearMonth = `${globalYear.value}${props.month + 1}`;
         }
@@ -146,18 +122,73 @@ export default defineComponent({
         month2.value = yearMonth;
       }
     );
-    watchEffect(() => {
-      month2.value = `${globalYear.value}${processKey.value.imputedMonth}`;
-    });
-    onError((res) => {
-      notification('error', res.message);
-    });
-    onDone((res) => {
+
+    //-------------------------action copy data--------------------------------
+
+    const {
+      mutate,
+      onError,
+      onDone,
+    } = useMutation(mutations.copyIncomeExtras);
+    const openModalCopy = () => {
+      modalCopy.value = true
+    }
+    // get date to copy
+    const updateValue = (value: any) => {
+      dataApiCopy.value = {
+        imputedYear: value.value.imputedYear,
+        imputedMonth: value.value.imputedMonth,
+        paymentYear: value.value.paymentYear,
+        paymentMonth: value.value.paymentMonth,
+      }
+    };
+    const dataApiCopy: any = ref({}); // datasource to copy the data
+    const actionCopy = async () => {
+      if (dataApiCopy.value.imputedYear) {
+        await commitDate();
+        let param = {
+          companyId: companyId,
+          source: dataApiCopy.value,
+          target: processKeyPA720.value.processKey,
+        }
+        mutate(param);
+      } else {
+        notification('error', '날짜를 선택하세요.')
+      }
+    }
+    onError(res => {
+      notification('error', res.message)
+    })
+    onDone(() => {
       setModalVisible();
       setModalVisibleCopy();
       notification('success', messageCopyDone);
-      emit('loadingTableInfo', true);
+      emit('loadingTable')
+    })
+
+    //-------------------------get date source copy--------------------------------
+
+    const arrDataPoint: any = ref({}) // arr date of date source
+    const findIncomeProcessExtraStatViewsParam: any = ref({
+      companyId: companyId,
+      filter: {
+        startImputedYearMonth: parseInt(`${globalYear.value}1`),
+        finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+      }
+    })
+    const { result: resultFindIncomeProcessExtraStatViews } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+      fetchPolicy: 'no-cache',
+    }));
+    watch(resultFindIncomeProcessExtraStatViews, (value) => {
+      arrDataPoint.value = value.findIncomeProcessExtraStatViews;
     });
+    const messageCopyDone = Message.getMessage('COMMON', '106').message;
+
+    watchEffect(() => {
+      month2.value = `${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`;
+    });
+
+    // ---------------------fn modal --------------------
 
     const setModalVisible = () => {
       emit('closePopup', false);
@@ -165,54 +196,31 @@ export default defineComponent({
     const setModalVisibleCopy = () => {
       modalCopy.value = false;
     };
-
-    const onSubmit = () => {
-      emit('dataAddIncomeProcess', {
-        imputedYear: globalYear.value,
-        imputedMonth: props.month,
-        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
-      });
-      processKey.value.imputedYear = globalYear.value;
-      emit('closePopup', false);
-      //   store.commit('common/processKeyPA620', dateCustom)
-    };
-
-    const openModalCopy = () => {
-      modalCopy.value = true;
-    };
-    const actionCopy = () => {
-      if (dataApiCopy.value.imputedYear) {
-        mutate({
-          companyId: companyId,
-          source: dataApiCopy.value,
-          target: {
-            imputedYear: globalYear.value,
-            imputedMonth: props.month,
-            paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-            paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
-          },
-        });
-        emit('dataAddIncomeProcess', {
-          imputedYear: globalYear.value,
-          imputedMonth: props.month,
-          paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-          paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
-        });
-      } else {
-        notification('error', '날짜를 선택하세요.');
-      }
-    };
     const formatMonth = (month: number) => {
       if (month < 10) {
         return '0' + month;
       }
       return month;
     };
+    //----------------emit date and set to store------------------
+    const commitDate = async () => {
+      let dateTarget = {
+        imputedYear: globalYear.value,
+        imputedMonth: props.month,
+        paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+        paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+      };
+      emit('dataAddIncomeProcess', dateTarget);
+      processKeyPA720.value.processKey = dateTarget;
+    }
+    //------------------fn submit add new------------------------
+    const onSubmit = () => {
+      commitDate();
+      emit("closePopup", false);
+    };
     return {
-      processKey,
+      processKeyPA720,
       modalCopy,
-      paymentDayCopy,
       actionCopy,
       month2,
       openModalCopy,

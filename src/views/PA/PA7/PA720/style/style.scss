@@ -49,10 +49,6 @@
     margin-bottom: 10px;
   }
 
-  .ml-3 {
-    margin-left: 3px;
-  }
-
   .custom-note {
     >span {
       font-size: 11px;
@@ -187,6 +183,11 @@
     span {
       color: blue;
     }
+  }
+  :deep .dx-button-content {
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .button-open-tab {

@@ -1,5 +1,4 @@
 import { companyId } from "@/helpers/commonFunction";
-import store from "@/store/index";
 import dayjs from 'dayjs';
 interface Origindata {
     page: number,
@@ -10,23 +9,17 @@ interface Origindata {
     code: string,
 }
 export const monthNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-const paymentDay = async() => {
-  let data ;
-  await new Promise(resolve => setTimeout(resolve,1000));
-  data = store.getters['common/paymentDayPA720'];
-  console.log(`output-2`,)
-  return data;
-}
-console.log(`output->paymentDay`,paymentDay())
+/**
+ * It runs a series of functions in sequence, waiting for each one to finish before starting the next
+ * one
+ */
 async function runFunctions() {
   await new Promise(resolve => setTimeout(resolve, 1000));
-  console.log('Function 1 has completed');
   await new Promise(resolve => setTimeout(resolve, 1000));
-  console.log('Function 2 has completed');
   // add more functions here as needed
 }
 
-runFunctions();
+// runFunctions();
 export const dataActionUtils = {
     companyId: companyId,
     processKey: {
@@ -36,7 +29,7 @@ export const dataActionUtils = {
         paymentMonth: null,
     },
     input: {
-        paymentDay: async()=>await paymentDay(),
+        paymentDay: 1,
         employeeId: '',
         incomeTypeCode: "",
         paymentAmount: null,
@@ -66,4 +59,9 @@ export const taxDateIndex = {
     },
 }
 
-
+export const formatMonth = (month: number) => {
+  if (month < 10) {
+    return '0' + month;
+  }
+  return month;
+};
