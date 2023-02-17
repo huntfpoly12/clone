@@ -24,7 +24,7 @@
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                            <DxExport :enabled="true" :allow-export-selected-data="true" />
+                            <DxExport :enabled="true"/>
                             <DxToolbar>
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" css-class="cell-button-export"/>
