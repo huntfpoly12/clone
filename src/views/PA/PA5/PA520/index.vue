@@ -2,7 +2,7 @@
     <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
     <div id="pa-520" class="page-content">
         <a-row>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="total-user">
               <div>
                 <span>{{ dataSource.length }}</span>
@@ -13,7 +13,7 @@
               </div>
             </div>
           </a-col>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="current-user">
               <div>
                 <span>{{ totalUserOnl }}</span>
@@ -24,7 +24,7 @@
               </div>
             </div>
           </a-col>
-          <a-col :span="3" style="padding-right: 10px">
+          <a-col :span="2" style="padding-right: 10px">
             <div class="leave-user">
               <div>
                 <span>{{ totalUserOff }}</span>
@@ -38,7 +38,7 @@
         </a-row>
         <a-row>
             <a-col :span="13" class="custom-layout">
-                <a-spin :spinning="loading" size="large">{{ store.state.common.activeAddRowPA520  }} {{ store.state.common.checkChangeValueAddPA520 }}
+                <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
@@ -123,7 +123,7 @@
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네ㅌㅌ" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
@@ -174,6 +174,7 @@ export default defineComponent({
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
         const resetAddComponent = ref<number>(1);
+        // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
         let dataChange = ref(0)
         // ======================= GRAPQL ================================

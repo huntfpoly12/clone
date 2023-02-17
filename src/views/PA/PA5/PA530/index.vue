@@ -145,7 +145,7 @@
                     <template #group-print>
                         <div class="custom-mail-group">
                             <DxButton>
-                                <img src="@/assets/images/printGroup.png" alt="" style="width: 33px;"
+                                <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
                                     @click="printGroup" />
                             </DxButton>
                         </div>
@@ -153,7 +153,7 @@
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton>
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
                                     @click="sendMailGroup" />
                             </DxButton>
                         </div>

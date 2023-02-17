@@ -62,7 +62,7 @@ export default defineComponent({
         border: 1px solid #304967;
         margin-right: 10px;
         border-radius: 5px;
-        min-width: 50px;
+        // min-width: 50px;
         text-align: center;
     }
 }
