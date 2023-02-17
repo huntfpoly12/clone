@@ -1,6 +1,5 @@
 <template>
-  <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false"
-    :buttonSave="false" />
+  <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
@@ -230,8 +229,11 @@
         </div>
       </a-col>
     </a-row>
-    {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br/>
-    {{ processKeyPA720 }} processKeyPA720 <br/>
+    <!-- {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
+    {{ processKeyPA720 }} processKeyPA720 <br />
+    {{ compareType2() }} compareType2() <br />
+    {{ compareType1() }} compareType1() <br />
+    {{ compareType }} compareType <br /> -->
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax"
@@ -252,11 +254,12 @@
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
     :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
-  <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status=10" :dateType="dateType"
-    :paymentDay="paymentDay" @loadingTableInfo="onLoadingTable" @dataAddIncomeProcess="onAddIncomeProcess" />
-  <!-- <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
+  <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status = 10"
+    :dateType="dateType" :paymentDay="paymentDay" @loadingTableInfo="onLoadingTable"
+    @dataAddIncomeProcess="onAddIncomeProcess" />
+  <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
     :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onRowChangeComfirm"
-    :isConfirmIcon="false" /> -->
+    :isConfirmIcon="false" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
@@ -280,7 +283,7 @@ import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
 import queriesHolding from '@/graphql/queries/CM/CM130/index';
 import { Message } from '@/configs/enum';
-import {formatMonth} from './utils/index';
+import { formatMonth } from './utils/index';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -316,11 +319,11 @@ export default defineComponent({
     const deleteIncomeExtrasParam = ref<any>({});
     const changeIncomeExtraPaymentDayParam = ref<any>({ day: null });
     store.commit('common/processKeyPA720', globalYear.value);
-    const processKeyPA720 = computed(()=> store.getters['common/processKeyPA720']);
+    const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
     const popupAddStatus = ref<boolean>(false);
-    const dataActionUtilsPA720 = computed(()=> store.getters['common/dataActionUtilsPA720']);
+    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
     // ------------mes popup--------------------
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
@@ -362,7 +365,7 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(resultIncomeProcessExtras, (newVal: any) => {
-      // c onsole.log(`output->getIncomeProcessExtras`,newVal)
+      // c onsole.log(`output->getIncomeProcessExtras`, newVal)
       let responeData = newVal?.getIncomeProcessExtras ?? [];
       columnData.value = [
         {
@@ -467,16 +470,12 @@ export default defineComponent({
     //compare Data
     const compareType = ref(1); //0 is row change. 1 is add button;
     const compareType1 = () => {
-      //   c onsole.log(JSON.stringify(initFormStateTab1));
-      //   c onsole.log(JSON.stringify(formPA720.value));
       if (JSON.stringify(dataActionUtilsPA720.value.input) == JSON.stringify(formPA720.value.input)) {
         return true;
       }
       return false;
     };
     const compareType2 = () => {
-      // c onsole.log(JSON.stringify(formEditPA720.value.input));
-      // c onsole.log(JSON.stringify(formPA720.value.input));
       if (JSON.stringify(formEditPA720.value.input) == JSON.stringify(formPA720.value.input)) {
         return true;
       } else {
@@ -484,10 +483,15 @@ export default defineComponent({
       }
     };
     //function common
+    const resetForm = async () => {        //Reset form tax
+      store.commit('common/formPA720', dataActionUtilsPA720.value);
+      resetFormNum.value++;
+      // formTaxRef.value.getEmployeeExtrasTrigger = true;
+      formTaxRef.value.newDateLoading = false;
+      // formTaxRef.value.isEdit = true;
+    };
     const addNewRow = () => {
       resetForm();
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
-      // c onsole.log(`output->dataActionUtilsPA720.value.input`, formPA720.value.input.employeeId);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       store.state.common.isNewRowPA720 = true;
@@ -495,8 +499,7 @@ export default defineComponent({
     };
     const delNewRow = async () => {
       await resetForm();
-      let newArr = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
-      // c onsole.log(`output->taxPayRef`,taxPayRef.value.dataSourceDetail.length,taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1))
+      let newArr = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
       taxPayRef.value.dataSourceDetail = newArr;
       store.commit('common/formPA720', dataActionUtilsPA720.value);
       store.state.common.isNewRowPA720 = false;
@@ -506,6 +509,7 @@ export default defineComponent({
     const isFirstWeb = ref(true);
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
+      addItemClick.value = !addItemClick.value;
       let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
       if (isNewRowPA720.value) {
         if (compareType.value == 2) {
@@ -521,7 +525,8 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        store.commit('common/formPA720', dataActionUtilsPA720.value.input);
+        // c onsole.log(`output- dang co new row compare ko loi`,)
+        store.commit('common/formPA720', dataActionUtilsPA720.value);
         dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
         dataSourceDetail.value = dataSourceDetail.value.concat([formPA720.value]);
         taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
@@ -556,10 +561,10 @@ export default defineComponent({
           } else {
             // c onsole.log(`1output-back ve fake`, editTaxParamFake.value.incomeId);
             editTaxParam.value = editTaxParamFake.value;
-            taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
+            taxPayRef.value.focusedRowKey = compareType.value ==1 ? formPA720.value.input.incomeId: editTaxParamFake.value.incomeId;
             store.state.common.isNewRowPA720 = false;
           }
-        }, 1500)
+        }, 1000)
       } else {
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
@@ -584,9 +589,7 @@ export default defineComponent({
         // c onsole.log(`output-back ve fake`, editTaxParamFake.value.incomeId);
         taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
       } else {
-        compareType.value = 1;
-        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        // c onsole.log(`output-back ve back ve form`);
+        // compareType.value = 1;
       }
     };
     // enable load form when row change
@@ -622,24 +625,12 @@ export default defineComponent({
         editTaxParam.value = emit;
       }
     };
-    //Reset form tax
-    const resetForm = async () => {
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
-      resetFormNum.value++;
-      // formTaxRef.value.getEmployeeExtrasTrigger = true;
-      formTaxRef.value.newDateLoading = false;
-      // formTaxRef.value.isEdit = true;
-
-      setTimeout(() => {
-        formTaxRef.value.isResetComponent = !formTaxRef.value.isResetComponent;
-      }, 200);
-    };
     const addItemClick = ref(true);
     //does save when data and row change ?
     const titleModalConfirm = ref(messageDel);
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
-      deleteIncomeExtrasParam.value={
+      deleteIncomeExtrasParam.value = {
         ...processKeyPA720.value,
         incomeIds: taxPayRef.value.incomeIdDels
       }
@@ -721,10 +712,10 @@ export default defineComponent({
     const showDetailSelected = (obj: any) => {
       taxPayRef.value.firsTimeRow = true;
       let datObj = {
-        imputedYear:obj?.imputedYear,
-        imputedMonth:obj?.imputedMonth,
-        paymentYear:obj?.paymentYear,
-        paymentMonth:obj?.paymentMonth,
+        imputedYear: obj?.imputedYear,
+        imputedMonth: obj?.imputedMonth,
+        paymentYear: obj?.paymentYear,
+        paymentMonth: obj?.paymentMonth,
       }
       store.state.common.processKeyPA720.processKey = datObj;
       statusParam.value = { ...processKeyPA720.value, status: obj.status };
@@ -783,17 +774,18 @@ export default defineComponent({
       onAddIncomeProcess,
       resetForm,
       openTab,
-      // onPopupComfirm,
       openAddNewModal,
       onSave,
       onRowChangeComfirm,
       editTaxParamFake,
       isErrorFormPA720,
-      dataActionUtilsPA720
+      dataActionUtilsPA720,
+      compareType1,
+      compareType2,
+      compareType,
+      isNewRowPA720,
     };
   },
 });
 </script> 
-<style lang="scss" scoped src="./style/style.scss" >
-
-</style>
+<style lang="scss" scoped src="./style/style.scss" ></style>
