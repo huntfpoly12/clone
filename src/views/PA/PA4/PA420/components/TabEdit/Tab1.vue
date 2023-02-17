@@ -7,12 +7,8 @@
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
                     <div class="d-flex-center">
-                        <div class="month-custom-1 d-flex-center">
-                            귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
-                        </div>
-                        <div class="month-custom-2 d-flex-center">
-                            지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
-                        </div>
+                        <month-picker-box-custom v-model:valueDate="month1" text="귀" bgColor="gray"></month-picker-box-custom>
+                        <month-picker-box-custom v-model:valueDate="month1" text="지" ></month-picker-box-custom>
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
@@ -38,7 +34,7 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="임원여부">
-                    <switch-basic textCheck="X" textUnCheck="O" width="60px"
+                    <switch-basic textCheck="O" textUnCheck="X" width="60px"
                         v-model:valueSwitch="dataGet.specification.executive" />
                 </a-form-item>
                 <a-form-item label="퇴직사유" class="label-required">

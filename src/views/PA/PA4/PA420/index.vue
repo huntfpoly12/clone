@@ -3,14 +3,14 @@
     <div id="pa-420">
         <div class="page-content">
             <a-row>
-                <a-col :span="3" class="total-user">
+                <a-col :span="2" class="total-user">
                     <div>
                         <span>{{ dataSource.length }}</span>
                         <br>
                         <span>전체</span>
                     </div>
                     <div>
-                        <img src="@/assets/images/user.svg" style="width: 70px" />
+                        <img src="@/assets/images/user.svg" style="width: 39px;" />
                     </div>
                 </a-col>
                 <a-col :span="24" class="mt-10">
