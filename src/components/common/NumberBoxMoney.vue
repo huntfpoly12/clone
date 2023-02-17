@@ -87,3 +87,8 @@ export default defineComponent({
     },
 });
 </script>
+<style lang="scss" >
+.dx-texteditor-input {
+    text-align: right;;
+}
+</style>
