@@ -39,7 +39,7 @@ export default defineComponent({
         readOnly: Boolean,
         rtlEnabled: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         placeholder: String,
         mode: {
@@ -87,8 +87,8 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" >
-.dx-texteditor-input {
-    text-align: right;;
-}
+<style lang="scss" scoped>
+:deep.dx-numberbox .dx-texteditor-input{  
+  text-align: right;  
+}  
 </style>

@@ -21,7 +21,7 @@
                             :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
-                            <template #col-first="{ data }">
+                            <template #col-first="{}">
                                 <b>지급연월</b>
                             </template>
                             <DxColumn caption="1" width="100px" cell-template="month-1" />
@@ -29,7 +29,9 @@
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
                                     <colorful-badge :value="data.data.month1.status"
-                                        :year="data.data.month1.paymentYear" :month="data.data.month1.paymentMonth" />
+                                        :year="data.data.month1.paymentYear" :month="data.data.month1.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 1"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
                                 </div>
@@ -39,7 +41,9 @@
                                 <div class="hover-underlined" v-if="data.data.month2"
                                     @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)">
                                     <colorful-badge :value="data.data.month2.status"
-                                        :year="data.data.month2.paymentYear" :month="data.data.month2.paymentMonth" />
+                                        :year="data.data.month2.paymentYear" :month="data.data.month2.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 2"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
                                 </div>
@@ -49,7 +53,9 @@
                                 <div class="hover-underlined" v-if="data.data.month3"
                                     @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)">
                                     <colorful-badge :value="data.data.month3.status"
-                                        :year="data.data.month3.paymentYear" :month="data.data.month3.paymentMonth" />
+                                        :year="data.data.month3.paymentYear" :month="data.data.month3.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 3"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
                                 </div>
@@ -59,7 +65,9 @@
                                 <div class="hover-underlined" v-if="data.data.month4"
                                     @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)">
                                     <colorful-badge :value="data.data.month4.status"
-                                        :year="data.data.month4.paymentYear" :month="data.data.month4.paymentMonth" />
+                                        :year="data.data.month4.paymentYear" :month="data.data.month4.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 4"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
                                 </div>
@@ -69,7 +77,9 @@
                                 <div class="hover-underlined" v-if="data.data.month5"
                                     @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)">
                                     <colorful-badge :value="data.data.month5.status"
-                                        :year="data.data.month5.paymentYear" :month="data.data.month5.paymentMonth" />
+                                        :year="data.data.month5.paymentYear" :month="data.data.month5.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 5"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
                                 </div>
@@ -79,7 +89,9 @@
                                 <div class="hover-underlined" v-if="data.data.month6"
                                     @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
                                     <colorful-badge :value="data.data.month6.status"
-                                        :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth" />
+                                        :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 6"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
                                 </div>
@@ -89,7 +101,9 @@
                                 <div class="hover-underlined" v-if="data.data.month7"
                                     @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)">
                                     <colorful-badge :value="data.data.month7.status"
-                                        :year="data.data.month7.paymentYear" :month="data.data.month7.paymentMonth" />
+                                        :year="data.data.month7.paymentYear" :month="data.data.month7.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 7"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
                                 </div>
@@ -99,7 +113,9 @@
                                 <div class="hover-underlined" v-if="data.data.month8"
                                     @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)">
                                     <colorful-badge :value="data.data.month8.status"
-                                        :year="data.data.month8.paymentYear" :month="data.data.month8.paymentMonth" />
+                                        :year="data.data.month8.paymentYear" :month="data.data.month8.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 8"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
                                 </div>
@@ -109,7 +125,9 @@
                                 <div class="hover-underlined" v-if="data.data.month9"
                                     @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)">
                                     <colorful-badge :value="data.data.month9.status"
-                                        :year="data.data.month9.paymentYear" :month="data.data.month9.paymentMonth" />
+                                        :year="data.data.month9.paymentYear" :month="data.data.month9.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 9"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
                                 </div>
@@ -119,7 +137,9 @@
                                 <div class="hover-underlined" v-if="data.data.month10"
                                     @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
                                     <colorful-badge :value="data.data.month10.status"
-                                        :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth" />
+                                        :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 10"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
                                 </div>
@@ -129,7 +149,9 @@
                                 <div class="hover-underlined" v-if="data.data.month11"
                                     @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
                                     <colorful-badge :value="data.data.month11.status"
-                                        :year="data.data.month11.paymentYear" :month="data.data.month11.paymentMonth" />
+                                        :year="data.data.month11.paymentYear" :month="data.data.month11.paymentMonth" 
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 11"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
                                 </div>
@@ -139,13 +161,15 @@
                                 <div class="hover-underlined" v-if="data.data.month12"
                                     @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)">
                                     <colorful-badge :value="data.data.month12.status"
-                                        :year="data.data.month12.paymentYear" :month="data.data.month12.paymentMonth" />
+                                        :year="data.data.month12.paymentYear" :month="data.data.month12.paymentMonth"
+                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 12"
+                                        />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
                                 </div>
                             </template>
                             <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
-                            <template #detailRow="{ data }">
+                            <template #detailRow="{}">
                                 <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
                                     :column-auto-width="true" :allow-column-reordering="move_column"
                                     :show-column-headers="false" :allow-column-resizing="colomn_resize"
