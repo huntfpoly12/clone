@@ -87,10 +87,7 @@
                             <DxColumn caption="연락처" data-field="phone" />
                             <DxColumn caption="이용여부" cell-template="use" data-field="use"/>
                             <template #use="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center">
-                                    <button-basic :text="'이용중지'" :type="data.data.use ? 'success' : 'danger'"
-                                        :mode="'contained'" />
-                                </div>
+                                <tag-color-use :valueUse="data.value"/>
                             </template>
                             <DxColumn cell-template="historyClient" />
                             <template #historyClient="{ data }" class="custom-action">
@@ -184,7 +181,7 @@ export default defineComponent({
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        const focusedRowKey = ref()
+        const focusedRowKey = ref(null)
         const modalStatus = ref(false)
         const modalStatusAdd = ref(false);
         let dataRowOld = reactive({ ...initialState })
@@ -411,8 +408,8 @@ export default defineComponent({
             trigger.value = false;
             if (value.searchClients) {
                 listClient.value = value.searchClients
-                focusedRowKey.value = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
-                formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+                // focusedRowKey.value = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+                // formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
             }
         });
 
