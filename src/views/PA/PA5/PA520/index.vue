@@ -123,7 +123,7 @@
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네ㅌㅌ" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
@@ -174,6 +174,7 @@ export default defineComponent({
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
         const resetAddComponent = ref<number>(1);
+        // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
         let dataChange = ref(0)
         // ======================= GRAPQL ================================

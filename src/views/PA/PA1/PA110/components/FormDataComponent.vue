@@ -473,6 +473,7 @@ export default defineComponent({
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = data.paymentDay
                 dataIW.value.workingDays = data.workingDays
+
                 dataIW.value.totalWorkingHours = data.totalWorkingHours
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
@@ -554,33 +555,33 @@ export default defineComponent({
         })
         // ======================= FUNCTION ================================
         //  Calculate Pension Employee 
-        const calculateTax = async () => {
-            await (dataIW.value.payItems = dataConfigPayItems.value?.map((item: any) => {
+        const calculateTax = () => {
+            dataIW.value.payItems = dataConfigPayItems.value?.map((item: any) => {
                 return {
                     itemCode: item.itemCode,
                     amount: item.amount
                 }
-            }));
-            await (dataIW.value.totalPayItem = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            });
+            dataIW.value.totalPayItem = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
-            }, 0));
+            }, 0);
 
-            await (dataIW.value.totalPayItemTax = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            dataIW.value.totalPayItemTax = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 if (object.taxfreePayItemCode) {
                     accumulator += object.amount
                 }
                 return accumulator;
-            }, 0));
-            await (dataIW.value.totalPayItemTaxFree = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            }, 0);
+            dataIW.value.totalPayItemTaxFree = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 if (!object.taxfreePayItemCode) {
                     accumulator += object.amount
                 }
                 return accumulator;
-            }, 0));
-            await (dataIW.value.totalDeduction = dataConfigDeductions.value?.reduce((accumulator: any, object: any) => {
+            }, 0);
+            dataIW.value.totalDeduction = dataConfigDeductions.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
-            }, 0));
-            await (dataIW.value.subPayment = dataIW.value.totalPayItem - dataIW.value.totalDeduction)
+            }, 0);
+            dataIW.value.subPayment = dataIW.value.totalPayItem - dataIW.value.totalDeduction
         }
         const submitForm = () => {
             const variables: any = {
