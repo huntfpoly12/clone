@@ -45,7 +45,6 @@
           :column-auto-width="true" @selection-changed="onSelectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-          <DxExport :enabled="true" :allow-export-selected-data="true" />
           <DxToolbar>
             <DxItem template="send-group-mail" />
             <DxItem template="send-group-print" />
@@ -135,7 +134,7 @@ import notification from "@/utils/notification";
 import { useQuery } from '@vue/apollo-composable';
 import DxButton from 'devextreme-vue/button';
 import dayjs, { Dayjs } from 'dayjs';
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem } from 'devextreme-vue/data-grid';
 import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
 import queries from '../../../../graphql/queries/PA/PA7/PA730/index';
 import EmailSinglePopup from './components/PA730PopupSendSingleEmail.vue';
@@ -148,7 +147,6 @@ export default defineComponent({
     DxColumn,
     DxPaging,
     DxSelection,
-    DxExport,
     DxScrolling,
     DxSearchPanel,
     DxToolbar,

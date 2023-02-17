@@ -56,7 +56,7 @@
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxPaging :page-size="dataSearch.rows" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
