@@ -185,7 +185,7 @@ export default defineComponent({
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        const focusedRowKey = ref(null)
+        const focusedRowKey: any = ref(null)
         const modalStatus = ref(false)
         const modalStatusAdd = ref(false);
         let dataRowOld = reactive({ ...initialState })
@@ -351,8 +351,9 @@ export default defineComponent({
                         let a = document.body.querySelectorAll('[aria-rowindex]');
                         (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
                     }, 100);
+                    formState.value.clientId = 'RANDOM';
                     resetFormNum.value++;
-                    focusedRowKey.value = null;
+                    focusedRowKey.value = formState.value.clientId;
                     statusFormUpdate.value = false;
                 }
             } else {
