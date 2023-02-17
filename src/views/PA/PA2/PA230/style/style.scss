@@ -53,3 +53,9 @@
     padding: 3px 20px;
     border-radius: 5px;
 }
+
+:deep.custom-mail-group {
+  .dx-button-content {
+      padding: 3px;
+  }
+}
