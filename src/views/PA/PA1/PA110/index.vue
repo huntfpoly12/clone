@@ -358,8 +358,6 @@ export default defineComponent({
             paymentYear: globalYear.value,
             paymentMonth: dayjs().month() + 1,
         }
-        console.log(store.state.common.processKeyPA110);
-        
         const processKey = computed(() => store.state.common.processKeyPA110)
         const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
@@ -417,7 +415,7 @@ export default defineComponent({
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
-                        value: `${[data.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[data].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
+                        value: data.employeeStat ? `${filters.formatCurrency(data.employeeStat.employeeCount)}(${filters.formatCurrency(data.employeeStat.retireEmployeeCount)})` : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
@@ -469,24 +467,20 @@ export default defineComponent({
                         value: filters.formatCurrency(data.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    // if (data.imputedMonth == (dayjs().month() + 1) && status.value) {
-                    //     status.value = data.status
-                    // }
-                    const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
-                    if (obj) {
-                        statusDisabledBlock.value = false;
-                    } else {
-                        status.value = null
-                        statusDisabledBlock.value = true;
-                    }
-                    if (isRunOnce.value) {
-                        isRunOnce.value = false;
-                        if (obj) {
-                            showDetailSelected(obj)
-                        }
-                    }
-
                 });
+            }
+            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
+            if (obj) {
+                statusDisabledBlock.value = false;
+            } else {
+                status.value = null
+                statusDisabledBlock.value = true;
+            }
+            if (isRunOnce.value) {
+                isRunOnce.value = false;
+                if (obj) {
+                    showDetailSelected(obj)
+                }
             }
         })
 
