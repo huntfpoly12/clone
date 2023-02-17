@@ -350,10 +350,7 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            // if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
-            //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIncomeWageDaily.value
             store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
-            // }
         }, { deep: true })
 
         // Watching the value of incomeId in the store. If the value is not null, it will set the value
@@ -421,16 +418,16 @@ export default defineComponent({
 
         // Watching the resultEmployeeWageDaily and when it changes, it will update the
         // dataIncomeWageDaily.value.
-        watch(resultEmployeeWageDaily, (res: any) => {
+        watch(resultEmployeeWageDaily, async (res: any) => {
             employeeWageDailyTrigger.value = false;
             let data = res.getEmployeeWageDaily;
-            dataIncomeWageDaily.value.monthlyWage = data.monthlyWage;
-            dataIncomeWageDaily.value.dailyWage = data.dailyWage;
-            dataIncomeWageDaily.value.workingDays = data.workingDays;
-            dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
-            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
-            dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
-            dataIncomeWageDaily.value.employee.name = data.name;
+            await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
+            await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
+            await (dataIncomeWageDaily.value.workingDays = data.workingDays)
+            await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+            await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
+            await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
+            await (dataIncomeWageDaily.value.employee.name = data.name)
             arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
                 data.deductionItems?.forEach((val: any) => {
@@ -445,7 +442,7 @@ export default defineComponent({
         // statusRowAdd is false, then it will add a new row to the table.
         watch(() => store.state.common.statusRowAdd, (newVal) => {
             if (!newVal) { // add row table
-                store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
+                store.state.common.dataTaxPayInfo = JSON.parse(JSON.stringify(store.state.common.dataTaxPayInfo.concat({ ...sampleDataIncomeWageDaily })))
                 dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
