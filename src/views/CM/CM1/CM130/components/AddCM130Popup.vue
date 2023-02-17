@@ -97,10 +97,17 @@ export default defineComponent({
         });
 
         const onSubmit = (e: any) => {
+            
             var res = e.validationGroup.validate();
+            console.log(e.validationGroup.validatorsz);
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+            } else if (formState.taxPayCode) {
+                // res.brokenRules[1].validator.focus();
+                console.log(res);
+                res.getElementById("myText").required = true;
             } else {
+
                 let variables = {
                     companyId: companyId,
                     imputedYear: parseInt(dayjs().format("YYYY")),

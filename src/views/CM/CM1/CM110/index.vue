@@ -170,9 +170,7 @@
                         <DxColumn caption="상태" data-field="active" cell-template="tag-status" css-class="cell-center"
                             :width="150" />
                         <template #tag-status="{ data }">
-                            <a-tag :color="getColorTag(data.value)" style="width:65px">
-                                {{ data.value == true ? "이용중" : "이용중지" }}
-                            </a-tag>
+                            <tag-color-use :valueUse="data.value"/>
                         </template>
                         <DxColumn caption="성명" data-field="name" :width="200" />
                         <DxColumn caption="회계권한(담당사업)" data-field="facilityBusinesses"
@@ -408,13 +406,6 @@ export default defineComponent({
 
             }
         };
-        const getColorTag = (data: boolean) => {
-            if (data === true) {
-                return "rgb(16 142 236 / 62%)";
-            } else if (data === false) {
-                return "rgb(205 32 31 / 51%)";
-            }
-        }
 
         const originData = {
             companyId: companyId
@@ -536,7 +527,6 @@ export default defineComponent({
             modalHistory,
             modalLogin,
             popupData,
-            getColorTag,
             listDataMyCompanyUser,
             updateDataCompany,
             companyId,
