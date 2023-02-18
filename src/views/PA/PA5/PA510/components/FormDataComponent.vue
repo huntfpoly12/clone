@@ -421,16 +421,16 @@ export default defineComponent({
 
         // Watching the resultEmployeeWageDaily and when it changes, it will update the
         // dataIncomeWageDaily.value.
-        watch(resultEmployeeWageDaily, (res: any) => {
+        watch(resultEmployeeWageDaily, async (res: any) => {
             employeeWageDailyTrigger.value = false;
             let data = res.getEmployeeWageDaily;
-            dataIncomeWageDaily.value.monthlyWage = data.monthlyWage;
-            dataIncomeWageDaily.value.dailyWage = data.dailyWage;
-            dataIncomeWageDaily.value.workingDays = data.workingDays;
-            dataIncomeWageDaily.value.totalDeduction = data.totalDeduction;
-            dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck;
-            dataIncomeWageDaily.value.employee.employeeId = data.employeeId;
-            dataIncomeWageDaily.value.employee.name = data.name;
+            await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
+            await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
+            await (dataIncomeWageDaily.value.workingDays = data.workingDays)
+            await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+            await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
+            await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
+            await (dataIncomeWageDaily.value.employee.name = data.name)
             arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
                 data.deductionItems?.forEach((val: any) => {
