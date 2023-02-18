@@ -156,8 +156,12 @@
             </a-row>
             <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
-                    <div class="text-align-center ">
-                        <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
+                    <div class="text-align-center">
+                        <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" type="default" text="공제 재계산" />
+                        <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                        <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
+                        <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                        <!-- <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                         <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
                             :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px' }" :height="'33px'" />
@@ -165,7 +169,7 @@
                             :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px 0px 0px' }"
                             :height="'33px'" />
                         <DxButton @click="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''"
-                            :text="'중도정산 반영'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                            :text="'중도정산 반영'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" /> -->
                     </div>
                 </a-col>
             </a-row>

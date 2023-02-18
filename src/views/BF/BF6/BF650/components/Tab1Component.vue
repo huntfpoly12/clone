@@ -156,7 +156,19 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dataSource.value = val.data.searchIncomeWageDailyPaymentStatementElectronicFilings
+            // Filtering the dataSource.value to remove duplicate data.
+            let arrDataConvert: any = []
+            val.data.searchIncomeWageDailyPaymentStatementElectronicFilings.map((val: any) =>{
+                let row = arrDataConvert.find((data: any) => data.companyId == val.companyId)
+                if (row) {
+                    if (row.lastProductionRequestedAt < val.lastProductionRequestedAt) {
+                        arrDataConvert.push(val)
+                    }
+                } else {
+                    arrDataConvert.push(val)
+                }
+            })
+            dataSource.value = arrDataConvert
             trigger.value = false
         })
         errorTable((error: any) => {

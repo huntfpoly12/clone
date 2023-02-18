@@ -19,7 +19,7 @@
                     </div>
                     <a-form-item label="근무일수">
                         <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="200px"
-                            :required="true" />
+                            :required="true" min="1" max="31" />
                     </a-form-item>
                     <a-form-item label="월급여">
                         <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
@@ -70,7 +70,7 @@
                     </div>
                     <a-form-item label="근무일수">
                         <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            :spinButtons="true" />
+                            :spinButtons="true" min="1" max="31"/>
                     </a-form-item>
                     <div style="font-weight: bold;">
                         <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
@@ -119,16 +119,18 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <span>
-                    <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal"
+                    <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" type="default" text="공제 재계산" />
+                    <!-- <DxButton @click="actionDedution" text="공제 재계산" class="button-form-modal"
                         id="button-action-dedution-pa510" :style="{ color: 'white', backgroundColor: 'gray' }"
-                        :height="'33px'" />
+                        :height="'33px'" /> -->
                 </span>
             </a-tooltip>
             <a-tooltip placement="top">
                 <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
                 <span>
-                    <DxButton @click="actionInsurance" text="4대보험 EDI 조회/적용" class="button-form-modal"
-                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
+                    <button-basic style="margin: 0px 5px" @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                    <!-- <DxButton @click="actionInsurance" text="4대보험 EDI 조회/적용" class="button-form-modal"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" /> -->
                 </span>
             </a-tooltip>
         </div>
