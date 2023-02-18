@@ -1,6 +1,5 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }}{{ firsTimeRow }}
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
@@ -211,7 +210,6 @@ export default defineComponent({
     const loadIndexInit = ref<Number>(0); // check click same row?
     watch(() => props.addItemClick, () => {
       loadIndexInit.value = -1;
-      focusedRowKey.value = null;
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
