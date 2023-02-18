@@ -163,7 +163,6 @@ export default defineComponent({
         const arrDeduction: any = ref()
         
         const bgColorCaculateButton = ref()
-        const formIsChanged = ref(0)
         const caculateDone = ref(false)
         
         const originData = ref({
@@ -275,9 +274,12 @@ export default defineComponent({
                 valueConvert.input.employeementInsuranceSupportPercent = 0
             if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkStatusChangeValuePA520 = false
+
+              // set bg button caculate
               bgColorCaculateButton.value = '#337ab7'
             } else {   
               store.state.common.checkStatusChangeValuePA520 = true
+              // set bg button caculate
               bgColorCaculateButton.value = 'orange'
             }
         }, { deep: true })
@@ -317,7 +319,13 @@ export default defineComponent({
         watch(() => store.state.common.actionSavePA520, (res) => {
             updateDeduction()
         }, { deep: true })
-
+      watch([
+        () => originDataUpdate.value.input.nationalPensionDeduction,
+        () => originDataUpdate.value.input.healthInsuranceDeduction,
+        () => originDataUpdate.value.input.employeementInsuranceDeduction,], ([res1, res2, res3]) => {
+          callFuncCalculate()
+        })
+        
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
