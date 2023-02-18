@@ -1,6 +1,5 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }}{{ firsTimeRow }}
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
@@ -74,7 +73,6 @@ import {
 } from 'devextreme-vue/data-grid';
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import { dataActionUtils } from '../utils/index';
 import filters from '@/helpers/filters';
 
 export default defineComponent({
@@ -115,9 +113,6 @@ export default defineComponent({
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const rowTable = ref(0);
     let updateParam = reactive<any>({});
-    let dataAction: any = reactive({
-      ...dataActionUtils,
-    });
     let dataTableDetail: any = ref({
       ...props.dataCallTableDetail,
     });
@@ -142,8 +137,10 @@ export default defineComponent({
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        // store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
         firsTimeRow.value = false;
+      }else {
+        store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
+        emit('resetForm')
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -213,7 +210,6 @@ export default defineComponent({
     const loadIndexInit = ref<Number>(0); // check click same row?
     watch(() => props.addItemClick, () => {
       loadIndexInit.value = -1;
-      focusedRowKey.value = null;
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
@@ -240,7 +236,6 @@ export default defineComponent({
       }
     };
     return {
-      dataAction,
       rowTable,
       per_page,
       move_column,

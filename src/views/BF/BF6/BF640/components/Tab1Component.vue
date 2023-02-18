@@ -197,7 +197,6 @@ export default defineComponent({
                 }
                 return acc;
             }, {}));
-            // console.log(`output->result`, result)
             dataSource.value = [...result];
             trigger.value = false
             // call api get productionStatus

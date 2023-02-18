@@ -26,8 +26,8 @@
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listClient.datas" :show-borders="true" key-expr="clientId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="onSelectionClick"
-                            v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
+                            :column-auto-width="true" :onRowClick="onSelectionClick" v-model:focused-row-key="focusedRowKey"
+                            :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" />
@@ -40,7 +40,7 @@
                             <template #pagination-table>
                                 <div v-if="listClient.totalCount > listClient.rows">
                                     <a-pagination v-model:current="listClient.page" v-model:page-size="listClient.rows"
-                                        :total="listClient.totalCount" show-less-items @change="changePage"/>
+                                        :total="listClient.totalCount" show-less-items @change="changePage" />
                                 </div>
                             </template>
                             <template #button-template>
@@ -52,7 +52,7 @@
                                 </a-tooltip>
                             </template>
                             <DxColumn caption="거래처명" data-field="name" />
-                            <DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="bizNumber"/>
+                            <DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="bizNumber" />
                             <template #bizNumber="{ data }">
                                 <span>
                                     {{
@@ -64,7 +64,7 @@
 }}
                                 </span>
                             </template>
-                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
+                            <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId" />
                             <template #residentId="{ data }">
                                 <div v-if="data.data.residentId?.length == 14">
                                     <a-tooltip placement="top"
@@ -85,23 +85,21 @@
 
                             <DxColumn caption="대표자명" data-field="presidentName" />
                             <DxColumn caption="연락처" data-field="phone" />
-                            <DxColumn caption="이용여부" cell-template="use" data-field="use"/>
+                            <DxColumn caption="이용여부" cell-template="use" data-field="use" />
                             <template #use="{ data }" class="custom-action">
-                                <div class="custom-action" style="text-align: center">
-                                    <button-basic :text="'이용중지'" :type="data.data.use ? 'success' : 'danger'"
-                                        :mode="'contained'" />
-                                </div>
+                                <tag-color-use :valueUse="data.value" />
                             </template>
                             <DxColumn cell-template="historyClient" />
                             <template #historyClient="{ data }" class="custom-action">
                                 <div class="custom-action" style="text-align: center">
-                                    <HistoryOutlined v-if="data.data.clientId" style="font-size: 18px;" @click="modalHistory(data.data)" />
+                                    <HistoryOutlined v-if="data.data.clientId" style="font-size: 18px;"
+                                        @click="modalHistory(data.data)" />
                                 </div>
                             </template>
                         </DxDataGrid>
                         <div class="pagination-table" v-if="listClient.totalCount > listClient.rows">
                             <a-pagination v-model:current="listClient.page" v-model:page-size="listClient.rows"
-                                :total="listClient.totalCount" show-less-items @change="changePage"/>
+                                :total="listClient.totalCount" show-less-items @change="changePage" />
                         </div>
                     </a-spin>
                 </a-col>
@@ -112,11 +110,13 @@
                         </a-form-item>
 
                         <a-form-item label="사업자등록번호" :label-col="labelCol">
-                            <biz-number-text-box v-model:valueInput="formState.bizNumber" :width="200" />
+                            <biz-number-text-box v-model:valueInput="formState.bizNumber" :width="200"
+                                :disabled="disableInputBizNumber" />
                         </a-form-item>
 
                         <a-form-item label="주민등록번호" :label-col="labelCol">
-                            <id-number-text-box :width="200" v-model:valueInput="formState.residentId" />
+                            <id-number-text-box :width="200" v-model:valueInput="formState.residentId"
+                                :disabled="disableInputResidentId" />
                         </a-form-item>
 
                         <a-form-item label="대표자명" :label-col="labelCol">
@@ -130,17 +130,18 @@
                         <a-form-item label="이용/여부" :label-col="labelCol">
                             <switch-basic :width="50" v-model:valueSwitch="formState.use" :textCheck="'X'"
                                 :textUnCheck="'O'" />
+                            <div style="margin-left: 10px; display: inline-table;;">
+                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                                <span class="style-note">
+                                    이용하지 않는 경우 삭제되지
+                                    않으며,<br />
+                                    거래처 리스트에서 조회되지 않습니다
+                                </span>
+                            </div>
                         </a-form-item>
-                        <div class="custom-note">
-                            <span>
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 이용하지 않는 경우 삭제되지
-                                않으며,<br />
-                                거래처 리스트에서 조회되지 않습니다
-                            </span>
-                        </div>
+
                         <div class="text-align-center mt-20">
-                            <button-basic :text="'저장'" type="default" :mode="'contained'"
-                                @onClick="actionSave($event)" />
+                            <button-basic :text="'저장'" type="default" :mode="'contained'" @onClick="actionSave($event)" />
                         </div>
                         <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
                             id="active-save" />
@@ -148,15 +149,15 @@
                 </a-col>
             </a-row>
         </div>
-        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-            :data="originDataDetail" title="변경이력" typeHistory="ac-610" />
+        <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail"
+            title="변경이력" typeHistory="ac-610" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
         <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
             title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" />
-    </div>
+</div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, reactive } from "vue";
@@ -184,7 +185,7 @@ export default defineComponent({
 
         let statusFormUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false);
-        const focusedRowKey = ref()
+        const focusedRowKey: any = ref(null)
         const modalStatus = ref(false)
         const modalStatusAdd = ref(false);
         let dataRowOld = reactive({ ...initialState })
@@ -233,8 +234,8 @@ export default defineComponent({
             var data = res.data.getClient;
             if (data) {
                 formState.value.name = data.name
-                formState.value.bizNumber = data.bizNumber
-                formState.value.residentId = data.residentId
+                formState.value.bizNumber = data.bizNumber ? data.bizNumber : null
+                formState.value.residentId = data.residentId ? data.residentId : null
                 formState.value.presidentName = data.presidentName
                 formState.value.phone = data.phone
                 formState.value.use = data.use
@@ -350,8 +351,9 @@ export default defineComponent({
                         let a = document.body.querySelectorAll('[aria-rowindex]');
                         (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
                     }, 100);
+                    formState.value.clientId = 'RANDOM';
                     resetFormNum.value++;
-                    focusedRowKey.value = null;
+                    focusedRowKey.value = formState.value.clientId;
                     statusFormUpdate.value = false;
                 }
             } else {
@@ -411,8 +413,27 @@ export default defineComponent({
             trigger.value = false;
             if (value.searchClients) {
                 listClient.value = value.searchClients
-                focusedRowKey.value = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
-                formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+                // focusedRowKey.value = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+                // formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
+            }
+        });
+        const disableInputBizNumber = ref(false)
+        const disableInputResidentId = ref(false)
+        watch(() => [
+            formState.value.bizNumber,
+            formState.value.residentId
+        ], ([newA, newB]) => {
+            if (newA?.length) {
+                formState.value.residentId = null;
+                disableInputResidentId.value = true;
+            } else {
+                disableInputResidentId.value = false;;
+            }
+            if (newB?.length) {
+                formState.value.bizNumber = null;
+                disableInputBizNumber.value = true;
+            } else {
+                disableInputBizNumber.value = false;
             }
         });
 
@@ -420,13 +441,12 @@ export default defineComponent({
             confirmSave, move_column, colomn_resize, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState,
             statusFormUpdate,
             originDataDetail,
-            listClient, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, 
+            listClient, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
             confimSaveWhenChangeRow, actionToAddFromEdit, formCreate, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            dataSearch, searching, changePage, actionSearch
+            dataSearch, searching, changePage, actionSearch,
+            disableInputBizNumber, disableInputResidentId,
         };
     },
 });
 </script> 
-<style lang="scss" scoped src="./style/style.scss" >
-
-</style>
+<style lang="scss" scoped src="./style/style.scss" ></style>

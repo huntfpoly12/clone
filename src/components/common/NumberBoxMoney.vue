@@ -87,3 +87,8 @@ export default defineComponent({
     },
 });
 </script>
+<style lang="scss" scoped>
+:deep.dx-numberbox .dx-texteditor-input{  
+  text-align: right;  
+}  
+</style>

@@ -6,7 +6,7 @@ const token = sessionStorage.getItem("token");
 export default axios.create({
   baseURL,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     "Authorization": token ? `Bearer ${token}` : null
   }
 });

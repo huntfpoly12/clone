@@ -27,11 +27,11 @@
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                     <DxPaging :page-size="dataSearch.rows" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
                         <DxItem name="page" template="pagination-table" />
                         <DxItem name="searchPanel" />
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         <DxItem name="groupPanel" />
                         <DxItem name="addRowButton" show-text="always" />

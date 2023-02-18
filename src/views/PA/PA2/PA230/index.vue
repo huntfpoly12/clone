@@ -22,12 +22,6 @@
                             </a-col>
                         </a-row>
                     </a-col>
-                    <a-col :span="12" style="text-align: right;">
-                      <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
-                            @click="printFunc" />
-                      <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
-                            @click="sendMail" />
-                    </a-col>
                 </a-row>
             </div>
             <div class="page-content">
@@ -55,6 +49,25 @@
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
+                    <DxToolbar>
+                        <DxItem template="pagination-send-group-mail" />
+                        <DxItem template="send-group-print" />
+                    </DxToolbar>
+                    <template #pagination-send-group-mail>
+                    <div class="custom-mail-group">
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                @click="sendMail" />
+                        </DxButton>
+                    </div>
+                    </template>
+                    <template #send-group-print>
+                        <div class="custom-mail-group">
+                            <DxButton @click="printFunc">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                            </DxButton>
+                        </div>
+                    </template>
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="성명" cell-template="employee-info" width="300" />
@@ -86,7 +99,7 @@
                     </template>
                     <DxColumn caption="구분" cell-template="status" width="100"/>
                     <template #status="{ data }">
-                        <span class="status-red" v-if="data.data.status != 0">계속</span>
+                        <span class="status-red" v-if="data.data.employee.status != 0">계속</span>
                         <span class="status-blue" v-else>중도</span>
                     </template>
                     <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" width="160"/>
@@ -146,6 +159,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { companyId, userId } from "@/helpers/commonFunction";
+import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
@@ -155,7 +169,7 @@ import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem
+        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem,DxButton
     },
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
