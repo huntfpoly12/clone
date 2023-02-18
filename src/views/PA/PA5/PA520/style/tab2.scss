@@ -61,16 +61,16 @@
 			margin-left: 20px;
 		}
 	}
-
+  .switch-insurance {
+    width: 100px;
+    float: right;
+  }
 	.durunuri-insurance {
 		::v-deep .ant-form-item-label>label {
 			width: 200px;
 		}
 
-		.switch-insurance {
-			width: 50px;
-			float: right;
-		}
+
 	}
 
 	.empl-ins {
@@ -133,7 +133,7 @@
 	}
 
 	.deduction-main {
-		max-height: 200px;
+		max-height: 222px;
 		overflow: scroll;
 		border: 1px solid #ddd;
 		padding-left: 5px;
@@ -150,4 +150,7 @@
 	::v-deep .custom-switch.ant-switch {
 		background-color: #337ab7;
 	}
+  .switch-bg {
+    background-color: white;
+}
 }

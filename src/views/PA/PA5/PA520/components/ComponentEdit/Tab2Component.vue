@@ -20,12 +20,22 @@
                     </div>
                 </a-form-item>
             </a-col>
-            <a-col :span="12">
-                <div class="header-text-2">두루누리사회보험 공제</div>
-                <a-form-item label="두루누리사회보험 공제 여부" label-align="right" class="durunuri-insurance">
+        </a-row>
+        <a-row :gutter="16">
+            <a-col :span="24">
+              <div class="header-text-2">
+                <a-row>
+                  <a-col :span="14" >
+                    두루누리사회보험 공제
+                  </a-col>
+                  <a-col :span="10" class="switch-bg">
+                    <span>두루누리사회보험 공제 여부 :</span> 
                     <switch-basic textCheck="Y" textUnCheck="N"
                         v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance" />
-                </a-form-item>
+                  </a-col>
+                </a-row>
+              </div>
+
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
@@ -50,7 +60,9 @@
                     totalDeduction)
             }} </b> 원
             </a-col>
-            <a-col :span="12">
+        </a-row>
+        <a-row :gutter="16">
+            <a-col :span="10">
                 <div class="header-text-0">월급여
                     <span class="fz-14">
                         {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
@@ -61,11 +73,11 @@
                         <div class="d-flex-center">
                             <switch-basic textCheck="일급" textUnCheck="월급" class="mr-10 custom-switch"
                                 v-model:valueSwitch="originDataUpdate.input.monthlyPaycheck" />
-                            <number-box-money :min="0" width="200px" class="mr-5"
+                            <number-box-money :min="0" width="100px" class="mr-5"
                                 v-if="!originDataUpdate.input.monthlyPaycheck"
                                 v-model:valueInput="originDataUpdate.input.monthlyWage" placeholder="월급여"
                                 @changeInput="onChangeMonthlyWage" />
-                            <number-box-money :min="0" width="200px" class="mr-5" v-else
+                            <number-box-money :min="0" width="100px" class="mr-5" v-else
                                 v-model:valueInput="originDataUpdate.input.dailyWage" placeholder="일급여"
                                 @changeInput="onChangeDailyWage" />
                         </div>
@@ -78,7 +90,7 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
-                            <number-box-money width="200px" class="mr-5" :min="0"
+                            <number-box width="170px" class="mr-5" :min="0"
                                 v-model:valueInput="originDataUpdate.input.workingDays"
                                 @changeInput="onChangeWorkingDays" />
                             <span class="ml-10">일</span>
@@ -92,7 +104,7 @@
                     </div>
                 </div>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="14">
                 <div class="header-text-0">공제 항목 <span class="fz-14">{{ $filters.formatCurrency(totalDeduction) }}
                         원</span></div>
                 <a-spin :spinning="loading" size="large">
@@ -100,14 +112,14 @@
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
                             <span>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" subName="과세" />
+                                    :name="item.name" :type="1" subName="과세" width="100px" />
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" subName="상여(과세)" />
+                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" />
                                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                     :name="item.name" :type="3"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" />
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" subName="과세" />
+                                    :name="item.name" :type="4" subName="과세" width="100px" />
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
@@ -120,7 +132,7 @@
             </a-col>
         </a-row>
         <div class="button-action">
-            <button-basic text="공제계산" type="default" mode="contained" @onClick="callFuncCalculate" />
+            <button-basic text="공제계산"  @onClick="callFuncCalculate" :bgColor="bgColorCaculateButton"/>
             <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
                 id="action-update" />
         </div>
@@ -149,6 +161,11 @@ export default defineComponent({
         const globalYear: any = computed(() => store.state.settings.globalYear);
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
+        
+        const bgColorCaculateButton = ref()
+        const formIsChanged = ref(0)
+        const caculateDone = ref(false)
+        
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -257,11 +274,14 @@ export default defineComponent({
             if (valueConvert.input.employeementInsuranceSupportPercent == null)
                 valueConvert.input.employeementInsuranceSupportPercent = 0
             if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
-                store.state.common.checkStatusChangeValuePA520 = false
-            } else {
-                store.state.common.checkStatusChangeValuePA520 = true
+              store.state.common.checkStatusChangeValuePA520 = false
+              bgColorCaculateButton.value = '#337ab7'
+            } else {   
+              store.state.common.checkStatusChangeValuePA520 = true
+              bgColorCaculateButton.value = 'orange'
             }
         }, { deep: true })
+
         // Event change value default
         watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
             if (newVal == false) {
@@ -297,6 +317,7 @@ export default defineComponent({
         watch(() => store.state.common.actionSavePA520, (res) => {
             updateDeduction()
         }, { deep: true })
+
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
@@ -374,7 +395,7 @@ export default defineComponent({
         }
         return {
             store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
-            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,
+            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,bgColorCaculateButton
         };
     },
 });
