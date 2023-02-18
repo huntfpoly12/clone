@@ -86,7 +86,7 @@
                             </template>
                             <DxColumn caption="6" width="100px" cell-template="month-6" />
                             <template #month-6="{ data }">
-                                <div class="hover-underlined" v-if="data.data.month6"
+                                <div class="hover-underlined" :class="{}" v-if="data.data.month6"
                                     @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
                                     <colorful-badge :value="data.data.month6.status"
                                         :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth" 
@@ -425,12 +425,19 @@ export default defineComponent({
             dataModalCopy.value = month
             modalCopy.value = true
         }
-        const dataAddIncomeProcess = (data: any) => {
-            dataSource.value[0]['month' + data.imputedMonth] = data
-            dataSource.value[0]['month' + data.imputedMonth].status = 10
+      const dataAddIncomeProcess = (data: any) => {
+          dataCallTableSmall.processKey = {
+            imputedMonth : data.imputedMonth,
+            imputedYear : data.imputedYear,
+            paymentMonth : data.paymentMonth,
+            paymentYear : data.paymentYear,
+          }
+          dataSource.value[0]['month' + data.imputedMonth] = data
+          dataSource.value[0]['month' + data.imputedMonth].status = 2132
         }
         const actionCopySuccess = () => {
             modalCopy.value = false
+            
         }
         return {
             dataCallTableSmall, modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,

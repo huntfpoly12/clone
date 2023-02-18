@@ -6,9 +6,8 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0' + month1 }}
                 </div>
-                <div class="month-custom-2 d-flex-center"> 
-                    <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
-                </div>
+                <month-picker-box-custom v-model:valueDate="month2"/>
+           
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
