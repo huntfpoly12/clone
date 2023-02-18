@@ -3,7 +3,7 @@
         :style="{ color: color, backgroundColor: backGround, border: border }"  :height="$config_styles.HeightInput"/>
 </template>
 <script lang="ts">
-import { defineComponent, ref, getCurrentInstance } from "vue";
+import { defineComponent, ref, getCurrentInstance, computed, watch } from "vue";
 import DxButton from 'devextreme-vue/button';
 
 export default defineComponent({
@@ -24,7 +24,14 @@ export default defineComponent({
             type: String,
             required: true
         },
-
+        textColor: {
+            type: String,
+            default: 'white'
+        },
+        bgColor: {
+            type: String,
+            default: '#337ab7'
+        }
     },
     components: {
         DxButton
@@ -37,8 +44,8 @@ export default defineComponent({
             emit('onClick', e)
         }
 
-        const color = ref()
-        const backGround = ref()
+        const color = ref(props.textColor)
+        const backGround = ref(props.bgColor)
         const border = ref()
 
         if (props.type == 'success' && props.mode == 'contained') {
@@ -67,6 +74,12 @@ export default defineComponent({
             color.value = styleButton.BackgroundButtonDanger
         }
 
+        watch(() => props.textColor, () => {
+          color.value = props.textColor
+        })
+        watch(() => props.bgColor, () =>{
+          backGround.value = props.bgColor
+        })
         return {
             backGround,
             border,
