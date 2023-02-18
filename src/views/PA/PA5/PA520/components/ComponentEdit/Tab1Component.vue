@@ -74,10 +74,10 @@
                     </a-col>
                 </a-row>
                 <a-row class="d-flex-center pt-5">
-                    <default-text-box :disabled="true" placeholder="주소1" v-model:valueInput="dataEdited.roadAddress"
+                    <default-text-box :disabled="true" placeholder="도로명 주소" v-model:valueInput="dataEdited.roadAddress"
                         style="width: 50%;" />
                     <div style="width: 50%; padding-left: 10px;">
-                        <default-text-box placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                        <default-text-box placeholder="상세 주소 입력" v-model:valueInput="dataEdited.addressExtend" />
                     </div>
                 </a-row>
             </a-form-item>
