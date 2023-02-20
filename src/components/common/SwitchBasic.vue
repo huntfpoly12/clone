@@ -1,6 +1,6 @@
 <template>
     <a-switch v-model:checked="dataDef" :checked-children="textCheck" :un-checked-children="textUnCheck"
-        :style="{ width: width }" @change="onChange"/>
+        :style="{ width: width }" @change="onChange" :disabled="disabled"/>
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance, ref, watch } from "vue";
@@ -17,7 +17,11 @@ export default defineComponent({
         textUnCheck: {
             type: String
         },
-        width: String
+        width: String,
+        disabled: {
+          type: Boolean,
+          default: false
+        }
     },
 
     setup(props, { emit }) {
