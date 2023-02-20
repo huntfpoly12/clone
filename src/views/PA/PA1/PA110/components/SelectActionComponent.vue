@@ -43,8 +43,8 @@
         </template>
     </DxDropDownButton>
 
-    <!-- <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" /> -->
+    <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
 
     <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -153,16 +153,18 @@ export default defineComponent({
         const onActionAddItem = (value: any) => {
             // store.state.common.actionAddItem = true;
             if (store.state.common.statusRowAdd) {
-                if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                    modalStatusAdd.value = true
-                } else {
+                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+                //     modalStatusAdd.value = true
+                // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
                     store.state.common.incomeId = null;
                     store.state.common.focusedRowKey = null;
-                }
+                    store.state.common.actionResetForm++;
+                // }
             } else {
-                notification('error', "nhập vàooooo")
+                modalStatusAdd.value = true
+                // notification('error', "nhập vàooooo")
             }
         }
         const editItem = (value: any) => {
@@ -266,11 +268,13 @@ export default defineComponent({
         //     store.state.common.actionSubmit++
         //     // emit('actionUpdate',actionUpdateItem.value++)
         // }
-        // const statusComfirmAdd = (val: any) => {
-        //     if (val) {
-        //         store.state.common.actionAddItem = 1;
-        //     }
-        // }
+        const statusComfirmAdd = (val: any) => {
+            if (val) { // action save form
+                store.state.common.actionSubmit++
+            } else { // reset form
+                store.state.common.actionResetForm++;
+            }
+        }
         return {
             deleteItem,
             editItem,
@@ -300,7 +304,7 @@ export default defineComponent({
             // updateData,
             store,
             modalStatusAdd,
-            // statusComfirmAdd,
+            statusComfirmAdd,
         };
     },
 });

@@ -151,16 +151,18 @@ export default defineComponent({
         };
         const actionAddItem = () => {
             if (store.state.common.statusRowAdd) {
-                if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                    modalStatusAdd.value = true
-                } else {
+                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+                //     modalStatusAdd.value = true
+                // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
                     store.state.common.incomeId = null;
                     store.state.common.focusedRowKey = null;
-                }
+                    store.state.common.actionResetForm++;
+                // }
             } else {
-                notification('error', "nhập vàooooo")
+                modalStatusAdd.value = true
+                // notification('error', "nhập vàooooo")
             }
         }
         const editItem = (value: any) => {
@@ -249,8 +251,10 @@ export default defineComponent({
             }
         })
         const statusComfirmAdd = (val: any) => {
-            if (val) {
-                store.state.common.actionAddItem = 1;
+            if (val) { // action save form
+                store.state.common.actionSubmit++
+            } else { // reset form
+                store.state.common.actionResetForm++;
             }
         }
         const onSubmit = (e: any) => {

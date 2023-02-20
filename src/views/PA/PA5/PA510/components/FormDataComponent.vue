@@ -320,7 +320,6 @@ export default defineComponent({
             if (value) {
                 countKey.value++;
                 employeeWageDailyParam.value.employeeId = null
-                // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
                 arrDeduction.value.map((data: any) => {
                     data.price = 0
                 })
@@ -409,6 +408,12 @@ export default defineComponent({
                     input: input,
                 })
             }
+        })
+
+        // reset form data
+        watch(() => store.state.common.actionResetForm, (value) => {
+            countKey.value++;
+            dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
         })
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is

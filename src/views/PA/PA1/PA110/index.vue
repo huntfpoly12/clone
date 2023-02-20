@@ -513,7 +513,9 @@ export default defineComponent({
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
                 store.state.common.employeeId = null;
+                store.state.common.actionResetForm++;
             }
+            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             refetchDataProcessIncomeWages() //reset data table 1

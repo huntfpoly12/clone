@@ -6,7 +6,7 @@
                     :layoutCustom="'horizontal'" />
                 <span>으로 변경하시겠습니까?</span>
                 <div class="mt-20">
-                    <button-basic class="button-form-modal" :text="'아니오'" :type="'default'" :mode="'outlined'"
+                    <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
                         @onClick="setModalVisible" />
                     <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
                         :mode="'contained'" @onClick="submit" />
@@ -100,21 +100,21 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .entering {
-    background-color: #346CB0;
+    background-color: #346CB0 !important;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #4A7EBB;
 }
 .input {
-    background-color: #376092;
+    background-color: #376092 !important;
     border: 3px solid #558ED5 !important;
 }
 .adjusting {
-    background-color: #BB3835;
+    background-color: #BB3835 !important;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #BE4B48 !important;
 }
 .adjusted {
-    background-color: #C00000;
+    background-color: #C00000 !important;
     border: 3px solid #953735 !important;
 }
 .mytooltip .mytext {

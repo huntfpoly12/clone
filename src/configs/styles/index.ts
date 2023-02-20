@@ -15,6 +15,10 @@ interface Styles {
 
   ColorCheckBox: string;
 
+  ColorButtonNormal: string;
+  BackgroundButtonNormal: string;
+  BorderButtonNormal: string;
+
   ColorButtonSuccess: string;
   BackgroundButtonSuccess: string;
   BorderButtonSuccess: string;
@@ -50,6 +54,10 @@ export const styles: Styles = {
   HeightInput: "28px",
 
   ColorCheckBox: "#337ab7",
+
+  ColorButtonNormal: "#333",
+  BackgroundButtonNormal: "#fff",
+  BorderButtonNormal: "1px solid #ddd",
 
   ColorButtonSuccess: "white",
   BackgroundButtonSuccess: "#5cb85c",

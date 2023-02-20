@@ -22,28 +22,28 @@
                     <div class="summary">
                         <div class="text0 d-flex-center">
                             <span class="w-100">소득수당합계</span>
-                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.totalPayItem" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItem" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-100">수당 과세합계</span>
-                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.totalPayItemTax" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItemTax" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text2 d-flex-center">
                             <span class="w-100">수당 비과세 합계</span>
-                            <number-box-money :readOnly="true" width="100px"
+                            <number-box-money :disabled="true" width="100px"
                                 v-model:valueInput="dataIW.totalPayItemTaxFree" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text d-flex-center">
                             <span class="w-100">공제 합계</span>
-                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.totalDeduction" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalDeduction" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="d-flex-center">
                             <span class="w-100">차인지급액</span>
-                            <number-box-money :readOnly="true" width="100px" v-model:valueInput="dataIW.subPayment" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.subPayment" />
                             <span class="pl-5">원</span>
                             <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -97,7 +97,7 @@
             <div class="header-text-3">급여 / 공제
             </div>
             <a-row :gutter="16">
-                <a-col :span="12">
+                <a-col :span="13">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{
                         $filters.formatCurrency(dataIW.totalPayItemTax)
                     }} 과세 + {{
@@ -128,7 +128,7 @@
                         </div>
                     </a-spin>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="11">
                     <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(dataIW.totalDeduction) }} 원 </div>
                     <a-spin :spinning="loadingConfigDeductions" size="large">
                         <div class="deduction-main">
@@ -398,6 +398,12 @@ export default defineComponent({
 
             }
         })
+        // reset form data
+        watch(() => store.state.common.actionResetForm, (value) => {
+            countKey.value++;
+            dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+        })
+
         watch(() => store.state.common.statusRowAdd, (newVal) => {
             if (!newVal) {
                 store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
@@ -413,7 +419,7 @@ export default defineComponent({
 
         watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
-                countKey.value++;
+                // countKey.value++;
                 // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
                 dataConfigDeductions.value.map((data: any) => {
                     data.amount = 0
@@ -467,7 +473,27 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.actionSubmit, () => {
-            submitForm();
+            const variables: any = {
+                companyId: companyId,
+                processKey: { ...processKey.value },
+                incomeId: store.state.common.incomeId,
+                input: {
+                    workingDays: dataIW.value.workingDays,
+                    totalWorkingHours: dataIW.value.totalWorkingHours,
+                    overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
+                    workingHoursAtNight: dataIW.value.workingHoursAtNight,
+                    workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                    payItems: dataIW.value.payItems,
+                    deductionItems: dataIW.value.deductionItems,
+                }
+            };
+            if (store.state.common.actionAddItem) {
+                variables.input.employeeId = dataIW.value.employee.employeeId,
+                    variables.input.paymentDay = dataIW.value.paymentDay,
+                    actionCreated(variables)
+            } else {
+                actionUpdate(variables)
+            }
         })
 
         watch(result, (value) => {
@@ -586,29 +612,7 @@ export default defineComponent({
             }, 0));
             await (dataIW.value.subPayment = dataIW.value.totalPayItem - dataIW.value.totalDeduction)
         }
-        const submitForm = () => {
-            const variables: any = {
-                companyId: companyId,
-                processKey: { ...processKey.value },
-                incomeId: store.state.common.incomeId,
-                input: {
-                    workingDays: dataIW.value.workingDays,
-                    totalWorkingHours: dataIW.value.totalWorkingHours,
-                    overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                    workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                    workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                    payItems: dataIW.value.payItems,
-                    deductionItems: dataIW.value.deductionItems,
-                }
-            };
-            if (store.state.common.actionAddItem) {
-                variables.input.employeeId = dataIW.value.employee.employeeId,
-                    variables.input.paymentDay = dataIW.value.paymentDay,
-                    actionCreated(variables)
-            } else {
-                actionUpdate(variables)
-            }
-        }
+
         // open popup deduction
         const actionDedution = () => {
             dataConfigDeductions.value?.map((item: any) => {
