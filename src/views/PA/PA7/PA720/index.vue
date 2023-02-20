@@ -568,6 +568,14 @@ export default defineComponent({
     watch(changeFommDone, () => {
       refetchIncomeProcessExtras();
     });
+    const actionEditDaySuccess = (emit: String) => {
+      if (emit) {
+        changeFommDone.value++;
+        taxPayRef.value.focusedRowKey = null;
+        resetForm();
+      }
+      modalEdit.value = false;
+    };
 
     // ======================= track change of form ================================
 
@@ -703,13 +711,6 @@ export default defineComponent({
     const editItem = () => {
       modalEdit.value = true;
       changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
-    };
-    const actionEditDaySuccess = (emit: String) => {
-      if (emit == 'onDone') {
-        taxPayRef.value.triggerDetail = true;
-        taxPayRef.value.refetchIncomeExtras();
-      }
-      modalEdit.value = false;
     };
     //---------------submit-------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);

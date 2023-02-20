@@ -120,6 +120,8 @@
           </a-row>
         </a-col>
       </a-row>
+      <!-- {{ isCalculateEditPA120 }} isCalculateEditPA120 <br/>
+      {{ formState }} formState <br/> -->
       <div class="header-text-3">
         급여 (기본값)
         <span>
@@ -238,7 +240,6 @@ import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from '@vuepic/vue-datepicker';
 import filters from '@/helpers/filters';
-import { isCallExpression } from '@babel/types';
 
 type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
@@ -275,24 +276,20 @@ export default defineComponent({
     const presidentEditPA120 = computed(()=>store.state.common.presidentEditPA120);
 
     const globalYear = computed(() => store.state.settings.globalYear);
-    // const initFormTab2PA120 = reactive<any>({
-    //   ...initFormStateTab2,
-    // });
     const triggerCalcIncome = ref<boolean>(false);
-    const calculateVariables = {
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      totalTaxPay: totalPayItem.value,
-      dependentCount: dependentCount.value,
-    };
-    // get Withholding Config PayItems
-    const originDataDetail = ref({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-      useOnly: true,
-    });
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120)
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
+    
+    // fn common
+    const convertToDate = (date: number | null) => {
+      if (date === null) {
+        return dayjs();
+      }
+      let dateStr = date.toString();
+      let dateData = dateStr.slice(0, 4) + '/' + dateStr.slice(4, 6) + '/' + dateStr.slice(6, 8);
+      return dayjs(dateData, 'YYYY/MM/DD');
+    };
+    // change row data
     watch(
       () => props.idRowEdit,
       () => {
@@ -304,13 +301,20 @@ export default defineComponent({
     /**
      * Calculate Income Wage Tax API
      */
+    const calculateVariables = {
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      totalTaxPay: totalPayItem.value,
+      dependentCount: dependentCount.value,
+    };
+    const triggerCalcIncomeWageTax = ref(false);
     const {
       result: resCalcIncomeWageTax,
       loading: loading3,
       refetch: refetchCalcIncomeWageTax,
       onError: onIncomeWageTaxError,
     } = useQuery(queries.calculateIncomeWageTax, calculateVariables, () => ({
-      //   enabled: false,
+      // enabled: triggerCalcIncomeWageTax.value,
       fetchPolicy: 'no-cache',
     }));
     onIncomeWageTaxError((e) => {
@@ -331,13 +335,14 @@ export default defineComponent({
           }
           if (item.itemCode == 1012) {
             item.value = itemValue11 ? Math.floor(+itemValue11 / 10) * 10 : 0;
-            initFormTab2PA120.value.deductionItems[4] = {
+            initFormTab2PA120.value.deductionItems[5] = {
               itemCode: 1012,
               amount: value.calculateIncomeWageTax,
             };
           }
         });
       }
+      triggerCalcIncomeWageTax.value = false;
     });
 
     /**
@@ -360,15 +365,8 @@ export default defineComponent({
         enabled: triggerDetail.value,
       })
     );
-    const convertToDate = (date: number | null) => {
-      if (date === null) {
-        return dayjs();
-      }
-      let dateStr = date.toString();
-      let dateData = dateStr.slice(0, 4) + '/' + dateStr.slice(4, 6) + '/' + dateStr.slice(6, 8);
-      return dayjs(dateData, 'YYYY/MM/DD');
-    };
     watch(resultGetEmployeeWage, (value) => {
+      console.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
       if (value) {
         let data = value.getEmployeeWage;
         store.state.common.presidentEditPA120 = data.president;
@@ -403,7 +401,7 @@ export default defineComponent({
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         store.commit('common/editRowTab2PA120', editRowData);
         store.commit('common/initFormTab2PA120', editRowData);
-        if (data.payItems) {
+        if (data.payItems && dataConfigPayItems.value.length > 0) {
           data.payItems.map((item: any) => {
             dataConfigPayItems.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
@@ -416,6 +414,7 @@ export default defineComponent({
           data.deductionItems.map((item: any) => {
             dataConfigDeduction.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
+                console.log(`output->item.amount`,item.amount);
                 Obj.value = item.amount;
               }
             });
@@ -423,14 +422,19 @@ export default defineComponent({
         }
         dependentCount.value = data.dependents.length > 0 ? data.dependents.length : 1;
         // setTimeOut(()=> calculateTax(), 100);
-        setTimeout(() => calculateTax(), 200);
-        setTimeout(() => calculateTax(), 500);
+        // setTimeout(() => calculateTax(), 200);
+        // setTimeout(() => calculateTax(), 500);
       }
     });
 
     /**
      * get Withholding Config PayItems
      */
+    const originDataDetail = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      useOnly: true,
+    });
     const {
       refetch: refetchConfigPayItems,
       result: resConfigPayItems,
@@ -474,22 +478,22 @@ export default defineComponent({
       if (value) {
         dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.filter((item: any) => {
           if (item.itemCode == 1001) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
           if (item.itemCode == 1002) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
           if (item.itemCode == 1003) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
           if (item.itemCode == 1004) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
           if (item.itemCode == 1011) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
           if (item.itemCode == 1012) {
-            return { itemCode: item.itemCode, name: item.name, value: item.value };
+            return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
         });
       }
@@ -541,7 +545,7 @@ export default defineComponent({
       };
       mutate(variables);
     };
-
+    // custom data with logical
     const onChangeSwitch1 = (e: any) => {
       if (e) {
         initFormTab2PA120.value.nationalPensionSupportPercent = 0;
@@ -638,49 +642,57 @@ export default defineComponent({
         }
         return accumulator + object.value;
       }, 0);
-      refetchCalcIncomeWageTax();
+      triggerCalcIncomeWageTax.value = true;
+      // await refetchCalcIncomeWageTax();
       store.state.common.isChangeConfigPayItemsPA120 = false;
-      console.log(`output-`)
       store.state.common.isCalculateEditPA120 = true;
     };
-    
 
-    // watch dataConfigPayItems to check change row
-     watch(()=>dataConfigPayItems, (newVal)=> {
+    // watch president to disable employeementInsuranceDeduction
+
+    watch(()=> presidentEditPA120.value, (newValue) => {
+      if(newValue) {
+        initFormTab2PA120.value.employeementInsuranceDeduction = false;
+      }
+    },{deep:true});
+    watch(()=>dataConfigPayItems, (newVal)=> {
       if(newVal) {
+        // console.log(`output->dataConfigPayItems`,dataConfigPayItems)
         store.state.common.isChangeConfigPayItemsPA120 = true;
       }
-     },{deep: true})
-     // watch initFormTab2PA120 to check calculate button
-     const isCalculateEditPA120 = computed(()=> store.state.common.isCalculateEditPA120);
-     const formState = reactive({...initFormTab2PA120.value});
-     const objectB = ref(Object.assign({}, initFormTab2PA120.value));
+    },{deep: true})
+
+    // watch dataConfigPayItems to check change row
+    //  // watch initFormTab2PA120 to check calculate button
+    //  const isCalculateEditPA120 = computed(()=> store.state.common.isCalculateEditPA120);
     //  const formState = reactive({...initFormTab2PA120.value});
-    //  delete(formState.deductionItems)
-    //  watch(formState,(newVal: any)=> {
-    //   if(newVal) {
-    //     console.log(`output-`,newVal)
-    //     store.state.common.isCalculateEditPA120 = false;
-    //   }
-    //  },{deep: true})
-    // watch(formState, (newValue, oldValue) => {
-    //   console.log('object B thay đổi', newValue);
-    // });
-    watch(
-      () => initFormTab2PA120.value.payItems,
-      (newVal) => {
-        // Clone object A
-        console.log(`output->newVal pay items`,newVal)
-        // console.log(`output->objectB`,objectB)
-        // console.log('object B thay đổi', newVal);
-      },
-      { deep: true }
-    );
-    watch(objectB, (newVal, oldVal) => {
-      store.state.common.isCalculateEditPA120 = false;
-      console.log(`output->newVal`,JSON.stringify(newVal) == JSON.stringify(oldVal) )
-      console.log(`output->newVal`,JSON.stringify(newVal), JSON.stringify(oldVal))
-    })
+    //  const objectB = ref(Object.assign({}, initFormTab2PA120.value));
+    // //  const formState = reactive({...initFormTab2PA120.value});
+    // //  delete(formState.deductionItems)
+    // //  watch(formState,(newVal: any)=> {
+    // //   if(newVal) {
+    // //     console.log(`output-`,newVal)
+    // //     store.state.common.isCalculateEditPA120 = false;
+    // //   }
+    // //  },{deep: true})
+    // // watch(formState, (newValue, oldValue) => {
+    // //   console.log('object B thay đổi', newValue);
+    // // });
+    // watch(
+    //   () => initFormTab2PA120.value.payItems,
+    //   (newVal) => {
+    //     // Clone object A
+    //     console.log(`output->newVal pay items`,newVal)
+    //     // console.log(`output->objectB`,objectB)
+    //     // console.log('object B thay đổi', newVal);
+    //   },
+    //   { deep: true }
+    // );
+    // watch(objectB, (newVal, oldVal) => {
+    //   store.state.common.isCalculateEditPA120 = false;
+    //   console.log(`output->newVal`,JSON.stringify(newVal) == JSON.stringify(oldVal) )
+    //   console.log(`output->newVal`,JSON.stringify(newVal), JSON.stringify(oldVal))
+    // })
     return {
       loading1,
       loading2,
@@ -707,8 +719,8 @@ export default defineComponent({
       editRowTab2PA120,
       initFormTab2PA120,
       isChangeConfigPayItemsPA120: computed(()=>store.state.common.isChangeConfigPayItemsPA120),
-      isCalculateEditPA120,
-      formState,
+      // isCalculateEditPA120,
+      // formState,
       presidentEditPA120,
     };
   },
