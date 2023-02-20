@@ -209,7 +209,7 @@ export default defineComponent({
       }, 100);
     });
     const loadIndexInit = ref<Number>(0); // check click same row?
-    watch(() => props.addItemClick, () => {
+    watch(() => props.addItemClick, (newVal) => {
       loadIndexInit.value = -1;
     }, { deep: true })
     const onRowClick = (e: any) => {

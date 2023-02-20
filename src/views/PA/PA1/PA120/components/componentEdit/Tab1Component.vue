@@ -74,14 +74,14 @@
                 <a-form-item label="주소" class="clr" label-align="left">
                     <div class="zip-code">
                         <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true"
-                            class="roadAddress" placeholder="주소1" />
+                            class="roadAddress" placeholder="도로명주소" />
                         <div style="margin-left: 5px">
-                            <post-code-button @dataAddress="funcAddress" />
+                            <post-code-button @dataAddress="funcAddress" text="주소검색" />
                         </div>
                     </div>
 
                     <default-text-box v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
-                        placeholder="주소2" />
+                        placeholder="상세 주소 입력" />
                 </a-form-item>
                 <a-form-item label="이메일" label-align="right">
                     <div class="input-text">
@@ -233,7 +233,7 @@ export default defineComponent({
             refetch: refetchValueDetail,
             result: getValueDefault,
             loading,
-        } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
+        } = useQuery(queries.getEmployeeWage, originDataDetail.value, () => ({
             fetchPolicy: 'no-cache',
         }));
         watch(getValueDefault, (value: any) => {
@@ -271,6 +271,8 @@ export default defineComponent({
             notification('success', '업데이트 완료!');
             store.commit('common/actionFormDonePA120');
             store.state.common.isNewRowPA120 = false;
+            // store.commit('common/initFormStateTabPA120', initFormStateTab1);
+            store.commit('common/editRowPA120', initFormStateTabPA120.value);
         });
 
         watch(() => props.idRowEdit, (value: any) => {
@@ -322,10 +324,9 @@ export default defineComponent({
             }
             store.state.common.isForeignerPA120 = initFormStateTabPA120.value.foreigner;
         },{deep:true});
-        store.commit('common/presidentPA120', initFormStateTabPA120.value.president);
         watch(()=> initFormStateTabPA120.value.president, (newValue) => {
-            store.commit('common/presidentPA120', newValue);
-        },{deep: true})
+            store.state.common.presidentEditPA120 = newValue;
+        },{deep:true});
         return {
             loading,
             formStateTab1,
@@ -341,7 +342,7 @@ export default defineComponent({
             arrResponsibility,
             actionUpdated,
             changeTextCountry,
-            initFormStateTabPA120
+            initFormStateTabPA120,
         };
     },
 });
@@ -372,10 +373,6 @@ export default defineComponent({
     .zip-code {
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
-    }
-
-    .roadAddress {
         margin-bottom: 5px;
     }
 }
