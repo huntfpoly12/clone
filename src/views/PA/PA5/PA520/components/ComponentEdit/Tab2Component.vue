@@ -359,7 +359,7 @@ export default defineComponent({
           delete defValue.dailyWage
           delete defValue.deductionItems
           
-          let originValue = originDataUpdate.value.input;
+          let originValue = JSON.parse(JSON.stringify(originDataUpdate.value.input));
           delete originValue.longTermCareInsuranceDeduction
           delete originValue.insuranceSupport
           delete originValue.nationalPensionSupportPercent
