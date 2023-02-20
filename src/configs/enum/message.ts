@@ -77,7 +77,7 @@ export class Message extends BaseType {
   
   //근로소득-일용직소득  계산   
   public static PA110 = new Message({
-        '001': { "message" : "변경 항목에 대해 공제 제계산하시겠습니까?","yes": "네. 공제 재계산하겠습니다","no":"그냥 나가기"}, // Do you want to deduct the change?
+        '001': { "message" : "저장하기전에 공제계산해야합니다"}, // Do you want to deduct the change?
       
     });
    
