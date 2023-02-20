@@ -206,7 +206,7 @@
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>
-                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'outlined'"
+                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'"
                                                         @onClick="modalSetting" />
                                                 </a-form-item>
                                             </a-row>

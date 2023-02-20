@@ -3,9 +3,18 @@
   <div id="pa-720" class="page-content">
     <a-row>
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
-          :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true">
+        <DxDataGrid
+          :show-row-lines="true"
+          :hoverStateEnabled="true"
+          :data-source="columnData"
+          :show-borders="true"
+          :allow-column-reordering="move_column"
+          key-expr="globalYear"
+          :key="globalYear"
+          :allow-column-resizing="colomn_resize"
+          :column-auto-width="true"
+          :focused-row-enabled="true"
+        >
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
@@ -13,97 +22,165 @@
           </template>
           <DxColumn caption="01" width="100px" cell-template="imputed-month1" />
           <template #imputed-month1="{ data }">
-            <colorful-badge v-if="data.data.month_1" :value="data.data.month_1?.status"
-              :year="data.data.month_1?.paymentYear" :month="data.data.month_1?.paymentMonth" :isUnder="month == 1"
-              @click="showDetailSelected(data.data.month_1)" />
+            <colorful-badge
+              v-if="data.data.month_1"
+              :value="data.data.month_1?.status"
+              :year="data.data.month_1?.paymentYear"
+              :month="data.data.month_1?.paymentMonth"
+              :isUnder="month == 1"
+              @click="showDetailSelected(data.data.month_1)"
+            />
             <div v-else @click="onAddMonth(1)">[+]</div>
           </template>
           <DxColumn caption="02" width="100px" cell-template="imputed-month2" />
           <template #imputed-month2="{ data }">
-            <colorful-badge v-if="data.data.month_2" :value="data.data.month_2?.status"
-              :year="data.data.month_2?.paymentYear" :month="data.data.month_2?.paymentMonth"
-              @click="showDetailSelected(data.data.month_2)" :isUnder="month == 2" />
+            <colorful-badge
+              v-if="data.data.month_2"
+              :value="data.data.month_2?.status"
+              :year="data.data.month_2?.paymentYear"
+              :month="data.data.month_2?.paymentMonth"
+              @click="showDetailSelected(data.data.month_2)"
+              :isUnder="month == 2"
+            />
             <div v-else @click="onAddMonth(2)">[+]</div>
           </template>
           <DxColumn caption="03" width="100px" cell-template="imputed-month3" />
           <template #imputed-month3="{ data }">
-            <colorful-badge v-if="data.data.month_3" :value="data.data.month_3?.status"
-              :year="data.data.month_3?.paymentYear" :month="data.data.month_3?.paymentMonth"
-              @click="showDetailSelected(data.data.month_3)" :isUnder="month == 3" />
+            <colorful-badge
+              v-if="data.data.month_3"
+              :value="data.data.month_3?.status"
+              :year="data.data.month_3?.paymentYear"
+              :month="data.data.month_3?.paymentMonth"
+              @click="showDetailSelected(data.data.month_3)"
+              :isUnder="month == 3"
+            />
             <div v-else @click="onAddMonth(3)">[+]</div>
           </template>
           <DxColumn caption="04" width="100px" cell-template="imputed-month4" />
           <template #imputed-month4="{ data }">
-            <colorful-badge v-if="data.data.month_4" :value="data.data.month_4?.status"
-              :year="data.data.month_4?.paymentYear" :month="data.data.month_4?.paymentMonth"
-              @click="showDetailSelected(data.data.month_4)" :isUnder="month == 4" />
+            <colorful-badge
+              v-if="data.data.month_4"
+              :value="data.data.month_4?.status"
+              :year="data.data.month_4?.paymentYear"
+              :month="data.data.month_4?.paymentMonth"
+              @click="showDetailSelected(data.data.month_4)"
+              :isUnder="month == 4"
+            />
             <div v-else @click="onAddMonth(4)">[+]</div>
           </template>
           <DxColumn caption="05" width="100px" cell-template="imputed-month5" />
           <template #imputed-month5="{ data }">
-            <colorful-badge v-if="data.data.month_5" :value="data.data.month_5?.status"
-              :year="data.data.month_5?.paymentYear" :month="data.data.month_5?.paymentMonth"
-              @click="showDetailSelected(data.data.month_5)" :isUnder="month == 5" />
+            <colorful-badge
+              v-if="data.data.month_5"
+              :value="data.data.month_5?.status"
+              :year="data.data.month_5?.paymentYear"
+              :month="data.data.month_5?.paymentMonth"
+              @click="showDetailSelected(data.data.month_5)"
+              :isUnder="month == 5"
+            />
             <div v-else @click="onAddMonth(5)">[+]</div>
           </template>
           <DxColumn caption="06" width="100px" cell-template="imputed-month6" />
           <template #imputed-month6="{ data }">
-            <colorful-badge v-if="data.data.month_6" :value="data.data.month_6?.status"
-              :year="data.data.month_6?.paymentYear" :month="data.data.month_6?.paymentMonth"
-              @click="showDetailSelected(data.data.month_6)" :isUnder="month == 6" />
+            <colorful-badge
+              v-if="data.data.month_6"
+              :value="data.data.month_6?.status"
+              :year="data.data.month_6?.paymentYear"
+              :month="data.data.month_6?.paymentMonth"
+              @click="showDetailSelected(data.data.month_6)"
+              :isUnder="month == 6"
+            />
             <div v-else @click="onAddMonth(6)">[+]</div>
           </template>
           <DxColumn caption="07" width="100px" cell-template="imputed-month7" />
           <template #imputed-month7="{ data }">
-            <colorful-badge v-if="data.data.month_7" :value="data.data.month_7?.status"
-              :year="data.data.month_7?.paymentYear" :month="data.data.month_7?.paymentMonth"
-              @click="showDetailSelected(data.data.month_7)" :isUnder="month == 7" />
+            <colorful-badge
+              v-if="data.data.month_7"
+              :value="data.data.month_7?.status"
+              :year="data.data.month_7?.paymentYear"
+              :month="data.data.month_7?.paymentMonth"
+              @click="showDetailSelected(data.data.month_7)"
+              :isUnder="month == 7"
+            />
             <div v-else @click="onAddMonth(7)">[+]</div>
           </template>
           <DxColumn caption="08" width="100px" cell-template="imputed-month8" />
           <template #imputed-month8="{ data }">
-            <colorful-badge v-if="data.data.month_8" :value="data.data.month_8?.status"
-              :year="data.data.month_8?.paymentYear" :month="data.data.month_8?.paymentMonth"
-              @click="showDetailSelected(data.data.month_8)" :isUnder="month == 8" />
+            <colorful-badge
+              v-if="data.data.month_8"
+              :value="data.data.month_8?.status"
+              :year="data.data.month_8?.paymentYear"
+              :month="data.data.month_8?.paymentMonth"
+              @click="showDetailSelected(data.data.month_8)"
+              :isUnder="month == 8"
+            />
             <div v-else @click="onAddMonth(8)">[+]</div>
           </template>
           <DxColumn caption="09" width="100px" cell-template="imputed-month9" />
           <template #imputed-month9="{ data }">
-            <colorful-badge v-if="data.data.month_9" :value="data.data.month_9?.status"
-              :year="data.data.month_9?.paymentYear" :month="data.data.month_9?.paymentMonth"
-              @click="showDetailSelected(data.data.month_9)" :isUnder="month == 9" />
+            <colorful-badge
+              v-if="data.data.month_9"
+              :value="data.data.month_9?.status"
+              :year="data.data.month_9?.paymentYear"
+              :month="data.data.month_9?.paymentMonth"
+              @click="showDetailSelected(data.data.month_9)"
+              :isUnder="month == 9"
+            />
             <div v-else @click="onAddMonth(9)">[+]</div>
           </template>
           <DxColumn caption="10" width="100px" cell-template="imputed-month10" />
           <template #imputed-month10="{ data }">
-            <colorful-badge v-if="data.data.month_10" :value="data.data.month_10?.status"
-              :year="data.data.month_10?.paymentYear" :month="data.data.month_10?.paymentMonth"
-              @click="showDetailSelected(data.data.month_10)" :isUnder="month == 10" />
+            <colorful-badge
+              v-if="data.data.month_10"
+              :value="data.data.month_10?.status"
+              :year="data.data.month_10?.paymentYear"
+              :month="data.data.month_10?.paymentMonth"
+              @click="showDetailSelected(data.data.month_10)"
+              :isUnder="month == 10"
+            />
             <div v-else @click="onAddMonth(10)">[+]</div>
           </template>
           <DxColumn caption="11" width="100px" cell-template="imputed-month11" />
           <template #imputed-month11="{ data }">
-            <colorful-badge v-if="data.data.month_11" :value="data.data.month_11?.status"
-              :year="data.data.month_11?.paymentYear" :month="data.data.month_11?.paymentMonth"
-              @click="showDetailSelected(data.data.month_11)" :isUnder="month == 11" />
+            <colorful-badge
+              v-if="data.data.month_11"
+              :value="data.data.month_11?.status"
+              :year="data.data.month_11?.paymentYear"
+              :month="data.data.month_11?.paymentMonth"
+              @click="showDetailSelected(data.data.month_11)"
+              :isUnder="month == 11"
+            />
             <div v-else @click="onAddMonth(11)">[+]</div>
           </template>
           <DxColumn caption="12" width="100px" cell-template="imputed-month12" />
           <template #imputed-month12="{ data }">
-            <colorful-badge v-if="data.data.month_12" :value="data.data.month_12?.status"
-              :year="data.data.month_12?.paymentYear" :month="data.data.month_12?.paymentMonth"
-              @click="showDetailSelected(data.data.month_12)" :isUnder="month == 12" />
+            <colorful-badge
+              v-if="data.data.month_12"
+              :value="data.data.month_12?.status"
+              :year="data.data.month_12?.paymentYear"
+              :month="data.data.month_12?.paymentMonth"
+              @click="showDetailSelected(data.data.month_12)"
+              :isUnder="month == 12"
+            />
             <div v-else @click="onAddMonth(12)">[+]</div>
           </template>
           <DxMasterDetail :enabled="true" template="row-detail" />
           <template #row-detail>
             <div class="table-detail">
-              <DxDataGrid key-expr="id" :data-source="IncomeProcessExtrasCustom" :show-borders="false"
-                :column-auto-width="true" :allow-column-reordering="move_column" :show-column-headers="false"
-                :allow-column-resizing="colomn_resize" :focused-row-enabled="true">
+              <DxDataGrid
+                key-expr="id"
+                :data-source="IncomeProcessExtrasCustom"
+                :show-borders="false"
+                :column-auto-width="true"
+                :allow-column-reordering="move_column"
+                :show-column-headers="false"
+                :allow-column-resizing="colomn_resize"
+                :focused-row-enabled="true"
+              >
                 <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                 <template #col-first="{ data }">
-                  <b>{{ data.data.name }}</b><br />
+                  <b>{{ data.data.name }}</b
+                  ><br />
                 </template>
                 <DxColumn caption="1" width="100px" cell-template="month-1" />
                 <template #month-1="{ data }">
@@ -185,12 +262,9 @@
     </a-row>
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
-        <DxButton :text="'귀' + inputDateTax"
-          :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
-        <DxButton :text="'지' + paymentDateTax"
-          :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status"
-          @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
+        <DxButton :text="'귀' + inputDateTax" :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
+        <DxButton :text="'지' + paymentDateTax" :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
+        <ProcessStatus v-model:value-status="statusParam.status" @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
         <DxButton class="ml-4" icon="plus" @click="openAddNewModal" :disabled="!isColumnData" />
@@ -224,8 +298,7 @@
           </div>
         </DxButton>
         <div class="custom-select-tab ml-4">
-          <button class="button-open-tab"
-            @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">기타소득자등록</button>
+          <button class="button-open-tab" @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">기타소득자등록</button>
         </div>
       </a-col>
     </a-row>
@@ -233,33 +306,54 @@
     {{ processKeyPA720 }} processKeyPA720 <br />
     {{ compareType2() }} compareType2() <br />
     {{ compareType1() }} compareType1() <br />
-    {{ compareType }} compareType <br /> -->
+    {{ compareType }} compareType <br />
+    {{ isNewRowPA720 }} isNewRowPA720 <br />
+    {{ resetFormNum }} resetFormNum <br /> -->
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
-        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax"
-          :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" :addItemClick="addItemClick" @resetForm="resetForm()" />
+        <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" :addItemClick="addItemClick" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-        <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
-          :isColumnData="isColumnData" @changeFommDone="onFormDone" :key="resetFormNum"
-          :addNewIncomeExtra="processKeyPA720.processKey" />
+        <FormTaxPayInfo
+          ref="formTaxRef"
+          :editTax="editTaxParam"
+          :isLoadNewForm="isLoadNewForm"
+          :isColumnData="isColumnData"
+          @changeFommDone="onFormDone"
+          :key="resetFormNum"
+          :addNewIncomeExtra="processKeyPA720.processKey"
+        />
       </a-col>
     </a-row>
   </div>
-  <DeletePopup @delDone="changeFommDone++" :modalStatus="modalDelete" @closePopup="modalDelete = false"
-    :data="deleteIncomeExtrasParam" />
+  <DeletePopup @delDone="onDelDone" :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="deleteIncomeExtrasParam" />
 
-  <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="processKeyPA720.processKey"
-    title="변경이력" typeHistory="pa-720" />
-  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-    :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
+  <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="processKeyPA720.processKey" title="변경이력" typeHistory="pa-720" />
+  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
-  <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status = 10"
-    :dateType="dateType" :paymentDay="paymentDay" @loadingTableInfo="onLoadingTable"
-    @dataAddIncomeProcess="onAddIncomeProcess" />
-  <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
-    :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onRowChangeComfirm"
-    :isConfirmIcon="false" />
+  <CopyMonth
+    :modalStatus="modalCopy"
+    :month="dataModalCopy"
+    @closePopup="
+      modalCopy = false;
+      statusParam.status = 10;
+    "
+    :dateType="dateType"
+    :paymentDay="paymentDay"
+    @loadingTableInfo="onLoadingTable"
+    @dataAddIncomeProcess="onAddIncomeProcess"
+  />
+  <PopupMessage
+    :modalStatus="rowChangeStatus"
+    @closePopup="rowChangeStatus = false"
+    :typeModal="'confirm'"
+    :title="titleModalConfirm"
+    :content="''"
+    :cancelText="'아니요 '"
+    :okText="'네 '"
+    @checkConfirm="onRowChangeComfirm"
+    :isConfirmIcon="false"
+  />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
@@ -328,6 +422,7 @@ export default defineComponent({
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+    const titleModalConfirm = ref(messageDel);
 
     const inputDateTax = computed(() => {
       if (isColumnData.value) {
@@ -365,7 +460,6 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(resultIncomeProcessExtras, (newVal: any) => {
-      // c onsole.log(`output->getIncomeProcessExtras`, newVal)
       let responeData = newVal?.getIncomeProcessExtras ?? [];
       columnData.value = [
         {
@@ -448,17 +542,23 @@ export default defineComponent({
       store.commit('common/processKeyPA720', newVal);
     });
     // -----------------change income process extra status------------------------
-    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(
-      mutations.changeIncomeProcessExtraStatus
-    );
+    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       refetchIncomeProcessExtras();
     });
     // ======================= after change data ==================================
     const onFormDone = () => {
+      actionDone.value = true;
       changeFommDone.value++;
       formTaxRef.value.isEdit = true;
+      // c onsole.log(`output->`, formPA720.value.input.incomeId);
+      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+    };
+    const onDelDone = () => {
+      changeFommDone.value++;
+      taxPayRef.value.focusedRowKey = null;
+      resetForm();
     };
     watch(changeFommDone, () => {
       refetchIncomeProcessExtras();
@@ -483,37 +583,34 @@ export default defineComponent({
       }
     };
     //function common
-    const resetForm = async () => {        //Reset form tax
+    const resetForm = async () => {
+      //Reset form tax
       store.commit('common/formPA720', dataActionUtilsPA720.value);
+      store.commit('common/formEditPA720', formPA720.value);
       resetFormNum.value++;
-      // formTaxRef.value.getEmployeeExtrasTrigger = true;
       formTaxRef.value.newDateLoading = false;
-      // formTaxRef.value.isEdit = true;
     };
     const addNewRow = () => {
       resetForm();
-      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
+      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
     };
     const delNewRow = async () => {
       await resetForm();
-      let newArr = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
-      taxPayRef.value.dataSourceDetail = newArr;
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
+      taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
+      // taxPayRef.value.dataSourceDetail = newArr;
       store.state.common.isNewRowPA720 = false;
       compareType.value = 2;
     };
     //on add row
-    const isFirstWeb = ref(true);
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
       addItemClick.value = !addItemClick.value;
-      let dataSourceDetail = ref(taxPayRef.value.dataSourceDetail);
       if (isNewRowPA720.value) {
         if (compareType.value == 2) {
-          dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
+          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
           addNewRow();
           compareType.value = 1;
           // c onsole.log(`output->type =2`);
@@ -522,18 +619,15 @@ export default defineComponent({
         if (!compareType1()) {
           // c onsole.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
-          isFirstWeb.value = false;
           return;
         }
-        // c onsole.log(`output- dang co new row compare ko loi`,)
+        // c onsole.log(`output- dang co new row compare ko loi`);
         store.commit('common/formPA720', dataActionUtilsPA720.value);
-        dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
-        dataSourceDetail.value = dataSourceDetail.value.concat([formPA720.value]);
+        taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
+        taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat([formPA720.value]);
         taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        isFirstWeb.value = false;
         return;
       }
-      isFirstWeb.value = false;
       setTimeout(() => {
         // c onsole.log(`output->type ko co newrow`, compareType1());
         addNewRow();
@@ -543,37 +637,20 @@ export default defineComponent({
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        let promise1 = new Promise<void>((resolve) => {
-          let ele = document.getElementById('save-js') as HTMLInputElement;
-          ele.click();
-          if (compareType.value == 2) {
-          }
-          resolve();
-        });
-        Promise.all([promise1]);
-        setTimeout(() => {
-          if (isErrorFormPA720.value) {
-            taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-            if (compareType.value == 1) {
-              store.state.common.isNewRowPA720 = true;
-            }
-            // c onsole.log(`1output-back ve back ve form`, formPA720);
-          } else {
-            // c onsole.log(`1output-back ve fake`, editTaxParamFake.value.incomeId);
-            editTaxParam.value = editTaxParamFake.value;
-            taxPayRef.value.focusedRowKey = compareType.value ==1 ? formPA720.value.input.incomeId: editTaxParamFake.value.incomeId;
-            store.state.common.isNewRowPA720 = false;
-          }
-        }, 1000)
+        let ele = document.getElementById('save-js') as HTMLInputElement;
+        ele.click();
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+        onSubmit();
       } else {
         if (isNewRowPA720.value) {
-          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
+          taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0,taxPayRef.value.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
             // c onsole.log(`output-> toi dang o so 1`);
+            addNewRow();
             setTimeout(() => {
-              addNewRow();
+              taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
             }, 50);
-            taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+            return;
           }
         }
         if (compareType.value == 2) {
@@ -583,18 +660,11 @@ export default defineComponent({
         }
         compareType.value = 2;
       }
-
-      if (!isNewRowPA720.value) {
-        compareType.value = 2;
-        // c onsole.log(`output-back ve fake`, editTaxParamFake.value.incomeId);
-        taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
-      } else {
-        // compareType.value = 1;
-      }
     };
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
+    const actionDone = ref(false); //action with form when create, edit, delete is done
     const editTax = async (emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
       if (isNewRowPA720.value) {
@@ -604,16 +674,13 @@ export default defineComponent({
           editTaxParam.value = emit;
           // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
           formTaxRef.value.isEdit = true;
-          // isFirstWeb.value = false;
           return;
         }
         // c onsole.log(`output->co new row, khac nhau`);
         editTaxParamFake.value = emit;
         rowChangeStatus.value = true;
-        isFirstWeb.value = false;
         return;
       }
-      isFirstWeb.value = false;
       if (!compareType2()) {
         // c onsole.log(`output->row khac`);
         rowChangeStatus.value = true;
@@ -626,14 +693,12 @@ export default defineComponent({
       }
     };
     const addItemClick = ref(true);
-    //does save when data and row change ?
-    const titleModalConfirm = ref(messageDel);
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
       deleteIncomeExtrasParam.value = {
         ...processKeyPA720.value,
-        incomeIds: taxPayRef.value.incomeIdDels
-      }
+        incomeIds: taxPayRef.value.incomeIdDels,
+      };
       if (deleteIncomeExtrasParam.value.incomeIds.length > 0) {
         modalDelete.value = true;
       } else {
@@ -655,19 +720,33 @@ export default defineComponent({
     //---------------submit-------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
-    const onSubmit = () => {
-      store.commit('common/actionSavePA720');
-      let ele: any = document.getElementById('save-js');
-      ele?.click();
+    const onSubmit = async () => {
+      // c onsole.log(`output- on submit is called`,)
+      setTimeout(() => {
+        if (isErrorFormPA720.value) {
+          taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+          // c onsole.log(`1output-back ve back ve form`, formPA720);
+        } else {
+          // c onsole.log(`1output-back ve fake`, editTaxParamFake.value);
+          editTaxParam.value = compareType.value == 2 ?? editTaxParamFake.value;
+          taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
+          store.state.common.isNewRowPA720 = false;
+        }
+      }, 1000);
     };
-    const onSave = (e: any) => {
+    const onSave = async (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
       } else {
-        store.commit('common/actionSaveTypePA720', 1);
-        onSubmit();
+        // store.commit('common/actionSaveTypePA720', 1);
+        store.commit('common/actionSavePA720');
+        await onSubmit();
+        if (!isErrorFormPA720.value) {
+          editTaxParam.value = formPA720.value;
+          // c onsole.log(`output->back ve fake 2`);
+        }
       }
     };
     // -------------------Add data in month---------------------
@@ -716,7 +795,7 @@ export default defineComponent({
         imputedMonth: obj?.imputedMonth,
         paymentYear: obj?.paymentYear,
         paymentMonth: obj?.paymentMonth,
-      }
+      };
       store.state.common.processKeyPA720.processKey = datObj;
       statusParam.value = { ...processKeyPA720.value, status: obj.status };
       // resetForm();
@@ -760,7 +839,6 @@ export default defineComponent({
       formPA720,
       paymentDay,
       rowChangeStatus,
-      onSubmit,
       onDeleteItem,
       editItem,
       checkLen,
@@ -784,6 +862,7 @@ export default defineComponent({
       compareType2,
       compareType,
       isNewRowPA720,
+      onDelDone,
     };
   },
 });

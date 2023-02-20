@@ -379,10 +379,10 @@ export default defineComponent({
           }
           if (compareType.value == 1) {
             // c onsole.log(`output-> toi dang o so 1`);
+            addNewRow();
             setTimeout(() => {
-              addNewRow();
+              focusedRowKey.value = initFormStateTabPA120.value.employeeId;
             }, 50);
-            focusedRowKey.value = initFormStateTabPA120.value.employeeId;
             isFirstWeb.value = false;
             return;
           }
@@ -396,17 +396,6 @@ export default defineComponent({
         }
         compareType.value = 2;
       }
-      // isFirstWeb.value = false;
-
-      // if (!isNewRowPA120.value) {
-      //   compareType.value = 2;
-      //   if(!isFirstWeb.value){
-      //     focusedRowKey.value = idRowEdit.value;
-      //   }
-      // } else {
-      //   compareType.value = 1;
-      //   focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-      // }
     };
     //edit row
     const actionEdit = (data: any) => {

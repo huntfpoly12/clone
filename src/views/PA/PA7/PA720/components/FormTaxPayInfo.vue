@@ -1,5 +1,7 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
+    <!-- {{ formPA720 }} formPA720 <br/>
+    {{ formEditPA720 }} formEditPA720 <br/> -->
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
@@ -181,12 +183,13 @@ export default defineComponent({
     //watch for changes
     watch(
       () => props.editTax,
-      async (newValue) => {
-        if (newValue.incomeId) {
+       (newValue) => {
+        if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
-          triggerIncomeExtra.value = true;
-          await refetchIncomeExtra();
+          setTimeout(()=>{
+            triggerIncomeExtra.value = true;
+          },10)
         }
       },
       { deep: true }
@@ -246,7 +249,8 @@ export default defineComponent({
       }
       let createData = JSON.parse(JSON.stringify(formPA720.value));
       delete createData.input.incomeId;
-      let updateData = {...processKeyPA720.value,input:{...createData.input}}
+      let updateData = {...processKeyPA720.value,input:{...createData.input}};
+      store.commit('common/formEditPA720', formPA720.value);
       createIncomeExtra(updateData);
     });
     // GET ARRAY FORM
@@ -271,6 +275,8 @@ export default defineComponent({
       notification('success', `업데이트 완료!`);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
+      formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
+      formEditPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
     });
     updateIncomeExtraDone((res) => {
       emit('changeFommDone');

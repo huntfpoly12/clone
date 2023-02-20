@@ -44,8 +44,8 @@ export default defineComponent({
             emit('onClick', e)
         }
 
-        const color = ref(props.textColor)
-        const backGround = ref(props.bgColor)
+        const color = ref()
+        const backGround = ref()
         const border = ref()
 
         if (props.type == 'success' && props.mode == 'contained') {
@@ -74,12 +74,6 @@ export default defineComponent({
             color.value = styleButton.BackgroundButtonDanger
         }
 
-        watch(() => props.textColor, () => {
-          color.value = props.textColor
-        })
-        watch(() => props.bgColor, () =>{
-          backGround.value = props.bgColor
-        })
         return {
             backGround,
             border,
