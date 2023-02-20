@@ -333,7 +333,7 @@ export default defineComponent({
           if (res == true) {
             store.state.common.actionSaveAddPA520++
             // get employeeId (row key) last row in dataSourcePA520
-            focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
+            //focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
           } else if (!res && addRowOnclick.value) { 
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -343,7 +343,7 @@ export default defineComponent({
             // Setting the value of the addRowOnclick variable to false.
             addRowOnclick.value = false
             openAddNewModal()
-          }else{//Not save
+          } else {//Not save
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store
