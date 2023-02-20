@@ -1,5 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
+    <!-- {{ dataSourceDetail.length }} -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
@@ -138,9 +139,9 @@ export default defineComponent({
         focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
         firsTimeRow.value = false;
-      }else {
-        store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
-        emit('resetForm')
+      // }else {
+      //   store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
+      //   emit('resetForm')
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -155,7 +156,7 @@ export default defineComponent({
       (newValue) => {
         dataTableDetail.value = newValue;
         triggerDetail.value = true;
-        refetchIncomeExtras();
+        // refetchIncomeExtras();
       },
       { deep: true }
     );
