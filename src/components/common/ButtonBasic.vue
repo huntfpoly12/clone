@@ -1,6 +1,6 @@
 <template>
     <DxButton :disabled="disabled" :text="text" :type="type" @click="onClick($event)" :styling-mode="mode"
-        :style="{ color: color, backgroundColor: backGround, border: border }"  :height="$config_styles.HeightInput"/>
+        :style="{ color: color, backgroundColor: backGround, border: border }" :height="$config_styles.HeightInput" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, getCurrentInstance, computed, watch } from "vue";
@@ -48,39 +48,49 @@ export default defineComponent({
         const backGround = ref()
         const border = ref()
 
-        if (props.type == 'success' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonSuccess
-            backGround.value = styleButton.BackgroundButtonSuccess
-        } else if (props.type == 'success' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonSuccess
-            border.value = styleButton.BorderButtonSuccess
-        } else if (props.type == 'success' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonSuccess
-        } else if (props.type == 'default' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonDefault
-            backGround.value = styleButton.BackgroundButtonDefault
-        } else if (props.type == 'default' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonDefault
-            border.value = styleButton.BorderButtonDefault
-        } else if (props.type == 'default' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonDefault
-        } else if (props.type == 'danger' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonDanger
-            backGround.value = styleButton.BackgroundButtonDanger
-        } else if (props.type == 'danger' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonDanger
-            border.value = styleButton.BorderButtonDanger
-        } else if (props.type == 'danger' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonDanger
-        } else if (props.type == 'normal' && props.mode == 'contained') {
-            color.value = styleButton.ColorButtonNormal
-            backGround.value = styleButton.BackgroundButtonNormal
-        } else if (props.type == 'normal' && props.mode == 'outlined') {
-            color.value = styleButton.BackgroundButtonNormal
-            border.value = styleButton.BorderButtonNormal
-        } else if (props.type == 'normal' && props.mode == 'text') {
-            color.value = styleButton.BackgroundButtonNormal
-        }
+        watch(() => props.type, (newValue) => {
+            if (props.type == 'success' && props.mode == 'contained') {
+                color.value = styleButton.ColorButtonSuccess
+                backGround.value = styleButton.BackgroundButtonSuccess
+            } else if (props.type == 'success' && props.mode == 'outlined') {
+                color.value = styleButton.BackgroundButtonSuccess
+                border.value = styleButton.BorderButtonSuccess
+            } else if (props.type == 'success' && props.mode == 'text') {
+                color.value = styleButton.BackgroundButtonSuccess
+            } else if (props.type == 'default' && props.mode == 'contained') {
+                color.value = styleButton.ColorButtonDefault
+                backGround.value = styleButton.BackgroundButtonDefault
+            } else if (props.type == 'default' && props.mode == 'outlined') {
+                color.value = styleButton.BackgroundButtonDefault
+                border.value = styleButton.BorderButtonDefault
+            } else if (props.type == 'default' && props.mode == 'text') {
+                color.value = styleButton.BackgroundButtonDefault
+            } else if (props.type == 'danger' && props.mode == 'contained') {
+                color.value = styleButton.ColorButtonDanger
+                backGround.value = styleButton.BackgroundButtonDanger
+            } else if (props.type == 'danger' && props.mode == 'outlined') {
+                color.value = styleButton.BackgroundButtonDanger
+                border.value = styleButton.BorderButtonDanger
+            } else if (props.type == 'danger' && props.mode == 'text') {
+                color.value = styleButton.BackgroundButtonDanger
+            } else if (props.type == 'normal' && props.mode == 'contained') {
+                color.value = styleButton.ColorButtonNormal
+                backGround.value = styleButton.BackgroundButtonNormal
+            } else if (props.type == 'normal' && props.mode == 'outlined') {
+                color.value = styleButton.BackgroundButtonNormal
+                border.value = styleButton.BorderButtonNormal
+            } else if (props.type == 'normal' && props.mode == 'text') {
+                color.value = styleButton.BackgroundButtonNormal
+            } else if (props.type == 'calculate' && props.mode == 'contained') {
+                color.value = styleButton.ColorButtonCalculate
+                backGround.value = styleButton.BackgroundButtonCalculate
+            } else if (props.type == 'calculate' && props.mode == 'outlined') {
+                color.value = styleButton.BackgroundButtonCalculate
+                border.value = styleButton.BorderButtonCalculate
+            } else if (props.type == 'calculate' && props.mode == 'text') {
+                color.value = styleButton.BackgroundButtonCalculate
+            }
+        });
 
         return {
             backGround,
