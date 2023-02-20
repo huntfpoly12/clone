@@ -457,6 +457,7 @@ export default defineComponent({
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
                 store.state.common.employeeId = null;
+                store.state.common.actionResetForm++;
             }
             store.state.common.resetArrayEmploySelect++
         })
@@ -511,7 +512,7 @@ export default defineComponent({
         }
 
         const selectionChanged = (data: any) => {
-            store.state.common.actionAddItem = true
+            // store.state.common.actionAddItem = true
             store.state.common.incomeId = null
             store.state.common.focusedRowKey = null
             dataRows.value = data.selectedRowsData

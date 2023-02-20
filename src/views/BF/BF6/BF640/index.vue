@@ -38,7 +38,6 @@ export default defineComponent({
         let searchStep2 = ref(0)
         let searchStep3 = ref(0)
         const searching = () => {
-            // console.log('1');
             if (activeKey.value == '1')
                 searchStep1.value++
             else if (activeKey.value == '2')

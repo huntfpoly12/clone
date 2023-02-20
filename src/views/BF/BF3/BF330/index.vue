@@ -49,9 +49,9 @@
                     :show-row-lines="true"  :hoverStateEnabled="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                    <DxExport :enabled="true" :allow-export-selected-data="true" />
+                    <DxExport :enabled="true" />
                     <DxToolbar>
-                        <DxItem name="exportButton" />
+                        <DxItem name="exportButton" css-class="cell-button-export"/>
                         <DxItem template="pagination-table"/>
                         <DxItem name="searchPanel" />
                         <!-- <DxItem name="groupPanel" />

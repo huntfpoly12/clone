@@ -206,7 +206,7 @@
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>
-                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'outlined'"
+                                                    <button-basic :text="'수동선택'" :type="'default'" :mode="'contained'"
                                                         @onClick="modalSetting" />
                                                 </a-form-item>
                                             </a-row>
@@ -281,10 +281,10 @@
                         :onRowClick="editData">
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-                        <DxExport :enabled="true" :allow-export-selected-data="true" />
+                        <DxExport :enabled="true" />
                         <DxToolbar>
                             <DxItem name="searchPanel" />
-                            <DxItem name="exportButton" />
+                            <DxItem name="exportButton" css-class="cell-button-export" />
                         </DxToolbar>
                         <DxColumn data-field="itemCode" :width="80" css-class="cell-center" caption="코드" />
                         <DxColumn data-field="use" caption="이용여부" :width="100" cell-template="use"

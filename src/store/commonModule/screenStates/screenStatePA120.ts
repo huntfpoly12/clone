@@ -6,6 +6,7 @@ const statesPA120 = {
   resetTabPA120: '1',
   isForeignerPA120: false,
   presidentPA120: false,
+  presidentEditPA120: false,
   initFormStateTabPA120: {
     name: "",
     foreigner: false,
@@ -71,6 +72,7 @@ const statesPA120 = {
   isNewRowPA120: true,
   isAddFormErrorPA120: false,
   isChangeConfigPayItemsPA120: false,
+  isCalculateEditPA120: true,
 };
 
 export default statesPA120;

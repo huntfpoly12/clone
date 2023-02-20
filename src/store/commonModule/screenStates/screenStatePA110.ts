@@ -19,6 +19,7 @@ const statesPA110 = {
   statusDisabledStatus: true,
   resetArrayEmploySelect: 1,
   statusChangeFormPrice: false,
+  actionResetForm: 0,
 };
 
 export default statesPA110;
