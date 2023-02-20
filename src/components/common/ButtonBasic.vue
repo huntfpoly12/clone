@@ -72,6 +72,14 @@ export default defineComponent({
             border.value = styleButton.BorderButtonDanger
         } else if (props.type == 'danger' && props.mode == 'text') {
             color.value = styleButton.BackgroundButtonDanger
+        } else if (props.type == 'normal' && props.mode == 'contained') {
+            color.value = styleButton.ColorButtonNormal
+            backGround.value = styleButton.BackgroundButtonNormal
+        } else if (props.type == 'normal' && props.mode == 'outlined') {
+            color.value = styleButton.BackgroundButtonNormal
+            border.value = styleButton.BorderButtonNormal
+        } else if (props.type == 'normal' && props.mode == 'text') {
+            color.value = styleButton.BackgroundButtonNormal
         }
 
         watch(() => props.textColor, () => {
