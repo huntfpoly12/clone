@@ -100,4 +100,11 @@
   table tr td {
     vertical-align: middle;
   }
+  :deep .tag-foreigner {
+    background-color: orange;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 5px;
+    width: min-content;
+  }
 }

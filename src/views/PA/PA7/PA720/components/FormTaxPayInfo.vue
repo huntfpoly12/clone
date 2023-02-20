@@ -250,7 +250,6 @@ export default defineComponent({
       let createData = JSON.parse(JSON.stringify(formPA720.value));
       delete createData.input.incomeId;
       let updateData = {...processKeyPA720.value,input:{...createData.input}};
-      store.commit('common/formEditPA720', formPA720.value);
       createIncomeExtra(updateData);
     });
     // GET ARRAY FORM
@@ -276,13 +275,14 @@ export default defineComponent({
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
-      formEditPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
+      store.commit('common/formEditPA720', formPA720.value);
     });
     updateIncomeExtraDone((res) => {
       emit('changeFommDone');
       notification('success', `업데이트 완료!`);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
+      store.commit('common/formEditPA720', formPA720.value);
     });
     //error message
     onErrorIncomeExtra((res: any) => {
