@@ -1,7 +1,8 @@
 <template>
   <div id="tab2-pa120">
+    {{ presidentEditPA120 }} presidentEditPA120 <br/>
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
-    <a-spin :spinning="loading" size="large">
+    <a-spin :spinning="loadingEmployeeWage" size="large">
       <a-row :gutter="16" class="mb-7">
         <a-col span="24" style="display: flex; flex-wrap: wrap">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
@@ -17,12 +18,12 @@
                 size="18px"
                 label="고용보험"
                 v-model:valueCheckbox="initFormTab2PA120.employeementInsuranceDeduction"
-                :disabled="presidentPA120"
+                :disabled="presidentEditPA120"
               ></checkbox-basic>
             </span>
 
             <p class="text-note mt-7 ml-7">
-              <img class="mt-4 mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
+              <img class="mr-3" src="@/assets/images/iconInfo.png" style="width: 14px" />
               본 항목은 공제 계산을 위한 설정으로 실제 4대보험 신고 여부와는 무관합니다.
             </p>
           </a-form-item>
@@ -120,6 +121,8 @@
           </a-row>
         </a-col>
       </a-row>
+      {{ isCalculateEditPA120 }} isCalculateEditPA120 <br/>
+      {{ formState }} formState <br/>
       <div class="header-text-3">
         급여 (기본값)
         <span>
@@ -191,15 +194,15 @@
             <div class="deduction-main">
               <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
                 <span>
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="과세" />
-                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2" subName="상여(과세)" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1" subName="공제" />
+                  <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2" subName="공제" />
                   <deduction-items
                     v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                     :name="item.name"
                     :type="3"
                     :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
                   />
-                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
+                  <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="공제" />
                 </span>
                 <div>
                   <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :disabled="true" :min="0">
@@ -238,6 +241,7 @@ import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from '@vuepic/vue-datepicker';
 import filters from '@/helpers/filters';
+import { isCallExpression } from '@babel/types';
 
 type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
@@ -271,13 +275,13 @@ export default defineComponent({
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const triggerDetail = ref<boolean>(false);
+    const presidentEditPA120 = computed(()=>store.state.common.presidentEditPA120);
 
     const globalYear = computed(() => store.state.settings.globalYear);
     // const initFormTab2PA120 = reactive<any>({
     //   ...initFormStateTab2,
     // });
     const triggerCalcIncome = ref<boolean>(false);
-    const presidentPA120 = computed(() => store.state.common.presidentPA120);
     const calculateVariables = {
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -346,7 +350,7 @@ export default defineComponent({
     const {
       refetch: refetchValueDetail,
       result: resultGetEmployeeWage,
-      loading,
+      loading: loadingEmployeeWage,
     } = useQuery(
       queries.getEmployeeWage,
       {
@@ -369,39 +373,41 @@ export default defineComponent({
     };
     watch(resultGetEmployeeWage, (value) => {
       if (value) {
+        let data = value.getEmployeeWage;
+        store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
-        editRowData.nationalPensionDeduction = value.getEmployeeWage.nationalPensionDeduction;
-        editRowData.healthInsuranceDeduction = value.getEmployeeWage.healthInsuranceDeduction;
-        editRowData.longTermCareInsuranceDeduction = value.getEmployeeWage.longTermCareInsuranceDeduction;
-        editRowData.employeementInsuranceDeduction = value.getEmployeeWage.employeementInsuranceDeduction;
-        editRowData.insuranceSupport = value.getEmployeeWage.insuranceSupport;
-        if (value.getEmployeeWage?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
-          editRowData.nationalPensionSupportPercent = value.getEmployeeWage.nationalPensionSupportPercent ?? 0;
+        editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
+        editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
+        editRowData.longTermCareInsuranceDeduction = data.longTermCareInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction = presidentEditPA120.value?false:data.employeementInsuranceDeduction;
+        editRowData.insuranceSupport = data.insuranceSupport;
+        if (data?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent ?? 0;
         }
-        if (value.getEmployeeWage?.employeementInsuranceSupportPercent >= 0 && editRowData.insuranceSupport) {
-          editRowData.employeementInsuranceSupportPercent = value.getEmployeeWage.employeementInsuranceSupportPercent ?? 0;
+        if (data?.employeementInsuranceSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.employeementInsuranceSupportPercent = data.employeementInsuranceSupportPercent ?? 0;
         }
-        if (value.getEmployeeWage?.employeementReductionStartDate) {
-          editRowData.employeementReductionStartDate = value.getEmployeeWage.employeementReductionStartDate;
+        if (data?.employeementReductionStartDate) {
+          editRowData.employeementReductionStartDate = data.employeementReductionStartDate;
         }
-        if (value.getEmployeeWage?.employeementReductionFinishDate) {
-          editRowData.employeementReductionFinishDate = value.getEmployeeWage.employeementReductionFinishDate;
-          let ReductionStartDate = convertToDate(value.getEmployeeWage.employeementReductionStartDate);
-          let ReductionFinishDate = convertToDate(value.getEmployeeWage.employeementReductionFinishDate);
+        if (data?.employeementReductionFinishDate) {
+          editRowData.employeementReductionFinishDate = data.employeementReductionFinishDate;
+          let ReductionStartDate = convertToDate(data.employeementReductionStartDate);
+          let ReductionFinishDate = convertToDate(data.employeementReductionFinishDate);
           rangeDate.value = [ReductionStartDate, ReductionFinishDate];
         }
-        if (value.getEmployeeWage?.employeementReductionRatePercent) {
-          editRowData.employeementReductionRatePercent = value.getEmployeeWage.employeementReductionRatePercent;
+        if (data?.employeementReductionRatePercent) {
+          editRowData.employeementReductionRatePercent = data.employeementReductionRatePercent;
         }
-        if (value.getEmployeeWage?.employeementReductionInput) {
-          editRowData.employeementReductionInput = value.getEmployeeWage.employeementReductionInput;
+        if (data?.employeementReductionInput) {
+          editRowData.employeementReductionInput = data.employeementReductionInput;
         }
-        editRowData.employeementReduction = value.getEmployeeWage.employeementReduction;
-        editRowData.incomeTaxMagnification = value.getEmployeeWage.incomeTaxMagnification;
+        editRowData.employeementReduction = data.employeementReduction;
+        editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         store.commit('common/editRowTab2PA120', editRowData);
         store.commit('common/initFormTab2PA120', editRowData);
-        if (value.getEmployeeWage.payItems) {
-          value.getEmployeeWage.payItems.map((item: any) => {
+        if (data.payItems) {
+          data.payItems.map((item: any) => {
             dataConfigPayItems.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
                 Obj.value = item.amount;
@@ -409,8 +415,8 @@ export default defineComponent({
             });
           });
         }
-        if (value.getEmployeeWage.deductionItems) {
-          value.getEmployeeWage.deductionItems.map((item: any) => {
+        if (data.deductionItems) {
+          data.deductionItems.map((item: any) => {
             dataConfigDeduction.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
                 Obj.value = item.amount;
@@ -418,7 +424,7 @@ export default defineComponent({
             });
           });
         }
-        dependentCount.value = value.getEmployeeWage.dependents.length > 0 ? value.getEmployeeWage.dependents.length : 1;
+        dependentCount.value = data.dependents.length > 0 ? data.dependents.length : 1;
         // setTimeOut(()=> calculateTax(), 100);
         setTimeout(() => calculateTax(), 200);
         setTimeout(() => calculateTax(), 500);
@@ -637,7 +643,10 @@ export default defineComponent({
       }, 0);
       refetchCalcIncomeWageTax();
       store.state.common.isChangeConfigPayItemsPA120 = false;
+      console.log(`output-`)
+      store.state.common.isCalculateEditPA120 = true;
     };
+    
 
     // watch dataConfigPayItems to check change row
      watch(()=>dataConfigPayItems, (newVal)=> {
@@ -645,10 +654,40 @@ export default defineComponent({
         store.state.common.isChangeConfigPayItemsPA120 = true;
       }
      },{deep: true})
+     // watch initFormTab2PA120 to check calculate button
+     const isCalculateEditPA120 = computed(()=> store.state.common.isCalculateEditPA120);
+     const formState = reactive({...initFormTab2PA120.value});
+     const objectB = ref(Object.assign({}, initFormTab2PA120.value));
+    //  const formState = reactive({...initFormTab2PA120.value});
+    //  delete(formState.deductionItems)
+    //  watch(formState,(newVal: any)=> {
+    //   if(newVal) {
+    //     console.log(`output-`,newVal)
+    //     store.state.common.isCalculateEditPA120 = false;
+    //   }
+    //  },{deep: true})
+    // watch(formState, (newValue, oldValue) => {
+    //   console.log('object B thay đổi', newValue);
+    // });
+    watch(
+      () => initFormTab2PA120.value.payItems,
+      (newVal) => {
+        // Clone object A
+        console.log(`output->newVal pay items`,newVal)
+        // console.log(`output->objectB`,objectB)
+        // console.log('object B thay đổi', newVal);
+      },
+      { deep: true }
+    );
+    watch(objectB, (newVal, oldVal) => {
+      store.state.common.isCalculateEditPA120 = false;
+      console.log(`output->newVal`,JSON.stringify(newVal) == JSON.stringify(oldVal) )
+      console.log(`output->newVal`,JSON.stringify(newVal), JSON.stringify(oldVal))
+    })
     return {
       loading1,
       loading2,
-      loading,
+      loadingEmployeeWage,
       rangeDate,
       totalPayItem,
       totalPayItemTaxFree,
@@ -667,11 +706,13 @@ export default defineComponent({
       dataConfigDeduction,
       onChangeSwitch1,
       onChangeSwitch2,
-      presidentPA120,
       dependentCount,
       editRowTab2PA120,
       initFormTab2PA120,
       isChangeConfigPayItemsPA120: computed(()=>store.state.common.isChangeConfigPayItemsPA120),
+      isCalculateEditPA120,
+      formState,
+      presidentEditPA120,
     };
   },
 });
