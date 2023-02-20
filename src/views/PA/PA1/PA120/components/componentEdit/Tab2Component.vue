@@ -1,6 +1,5 @@
 <template>
   <div id="tab2-pa120">
-    {{ presidentEditPA120 }} presidentEditPA120 <br/>
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loadingEmployeeWage" size="large">
       <a-row :gutter="16" class="mb-7">
@@ -121,8 +120,6 @@
           </a-row>
         </a-col>
       </a-row>
-      {{ isCalculateEditPA120 }} isCalculateEditPA120 <br/>
-      {{ formState }} formState <br/>
       <div class="header-text-3">
         급여 (기본값)
         <span>

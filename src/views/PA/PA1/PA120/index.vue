@@ -37,12 +37,12 @@
         </div>
       </a-col>
     </a-row>
-    {{ initFormStateTabPA120 }} initFormStateTabPA120 <br/>
+    <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br/>
     {{ editRowPA120 }} editRowPA120 <br/>
     {{ compareType2() }} compareType2() <br />
     {{ compareType1() }} compareType1() <br />
     {{ compareType }} compareType <br />
-    {{ isNewRowPA120 }} isNewRowPA720 <br />
+    {{ isNewRowPA120 }} isNewRowPA720 <br /> -->
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
