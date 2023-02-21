@@ -73,6 +73,7 @@ const statesPA120 = {
   isAddFormErrorPA120: false,
   isChangeConfigPayItemsPA120: false,
   isCalculateEditPA120: true,
+  rowKeyTab2PA120: 1,
 };
 
 export default statesPA120;

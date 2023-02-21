@@ -245,6 +245,7 @@ export default defineComponent({
        store.state.common.isNewRowPA120 = false;
        store.state.common.isAddFormErrorPA120 = false;
        store.commit('common/editRowPA120', initFormStateTabPA120.value);
+       store.state.common.rowKeyTab2PA120 = initFormStateTabPA120.value.employeeId;
     //    store.state.common.isNewRowPA120
     });
 
