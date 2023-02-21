@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-120" class="page-content">
@@ -37,12 +36,6 @@
         </div>
       </a-col>
     </a-row>
-    <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br/>
-    {{ editRowPA120 }} editRowPA120 <br/>
-    {{ compareType2() }} compareType2() <br />
-    {{ compareType1() }} compareType1() <br />
-    {{ compareType }} compareType <br />
-    {{ isNewRowPA120 }} isNewRowPA720 <br /> -->
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
@@ -69,7 +62,7 @@
             <template #button-template>
               <DxButton icon="plus" @click="openAddNewModal" />
             </template>
-            <template #button-history="{}" style="border-color: #ddd">
+            <template #button-history="{}">
               <DxButton icon="plus">
                 <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
               </DxButton>
@@ -118,7 +111,7 @@
               </div>
             </template>
             <DxColumn cell-template="pupop" width="30" />
-            <template #pupop="{ data }" class="custom-action">
+            <template #pupop="{ data }">
               <div class="custom-action" style="text-align: center" v-if="data.data.deletable">
                 <a-space :size="10">
                   <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
@@ -173,9 +166,8 @@ import PA120PopupAddNewVue from './components/PA120PopupAddNew.vue';
 import PA120PopupEdit from './components/PA120PopupEdit.vue';
 import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
-import { initFormStateTab1 } from './utils/index';
+import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import ColumnGroup from 'ant-design-vue/lib/vc-table/sugar/ColumnGroup';
 
 export default defineComponent({
   components: {
@@ -284,14 +276,7 @@ export default defineComponent({
       } else {
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       }
-    };
-    // watch(
-    //   () => store.state.common.reloadEmployeeList,
-    //   () => {
-    //     trigger.value = true;
-    //     refetchData();
-    //   }
-    // );
+    }
     const modalHistory = () => {
       modalHistoryStatus.value = true;
     };
@@ -347,11 +332,11 @@ export default defineComponent({
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
         if (!compareType1()) {
-          console.log(`output->type = 1 loi`);
+          // c onsole.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           return;
         }
-        console.log(`output->type = 1 ko loi`, compareType1());
+        // c onsole.log(`output->type = 1 ko loi`, compareType1());
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
@@ -362,7 +347,7 @@ export default defineComponent({
         isFirstWeb.value = false;
         return;
       }
-      console.log(`output->an nut add lan dau tien`);
+      // c onsole.log(`output->an nut add lan dau tien`);
       isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       setTimeout(() => {
@@ -370,7 +355,13 @@ export default defineComponent({
       }, 50);
       return;
     };
-
+    const tabCurrent = computed(()=> {
+      if(!isCalculateEditPA120.value) {
+        return 2;
+      }
+      return 1;
+    })
+    const rowKeyTab2PA120 = computed(()=> store.state.common.rowKeyTab2PA120)
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
@@ -382,27 +373,31 @@ export default defineComponent({
           }
         });
         let promise2 = new Promise<void>((resolve) => {
-          if (compareType.value == 2) {
+          if (compareType.value == 2 && tabCurrent.value == 1) {
             let ele = document.getElementById('btn-save-edit');
             ele?.click();
-            let ele2 = document.getElementById('btn-save-edit-tab2');
-            ele2?.click();
-            resolve();
           }
+          if (compareType.value == 2 && tabCurrent.value  == 2) {
+            // let ele2 = document.getElementById('btn-save-edit-tab2');
+            // ele2?.click();
+            let ele3 = document.getElementById('btn-save-add-tab2');
+            ele3?.click();
+          }
+          resolve();
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          console.log(`output =? luu loi`, isFirstWeb.value);
+          // c onsole.log(`output =? luu loi`, isFirstWeb.value);
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
           }
-          focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+          focusedRowKey.value = tabCurrent.value == 2 ? rowKeyTab2PA120.value : initFormStateTabPA120.value.employeeId;
           if (compareType.value == 1) {
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          console.log(`output =? luu ko loi`);
+          // c onsole.log(`output =? luu ko loi`);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           // focusedRowKey.value = idRow.value;
@@ -415,7 +410,7 @@ export default defineComponent({
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            console.log(`output-> toi dang o so 1`);
+            // c onsole.log(`output-> toi dang o so 1`);
             addNewRow();
             setTimeout(() => {
               focusedRowKey.value = initFormStateTabPA120.value.employeeId;
@@ -425,7 +420,8 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          console.log(`output-> toi dang o so 2 `);
+          // c onsole.log(`output-> toi dang o so 2 `);
+          store.commit('common/initFormTab2PA120', initFormStateTab2);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
@@ -439,7 +435,7 @@ export default defineComponent({
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          console.log(`output->chuyen row bth`);
+          // c onsole.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -447,19 +443,19 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        console.log(`output->co new row, khac nhau`);
+        // c onsole.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        console.log(`output->row khac`);
+        // c onsole.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        console.log(`output->chuyen row bth. ko co newrow`);
+        // c onsole.log(`output->chuyen row bth. ko co newrow`);
         idRowEdit.value = data.data.employeeId;
         actionChangeComponent.value = 2;
       }
@@ -556,6 +552,8 @@ export default defineComponent({
       editRowPA120,
       compareType1,
       compareType2,
+      tabCurrent,
+      rowKeyTab2PA120,
     };
   },
 });
