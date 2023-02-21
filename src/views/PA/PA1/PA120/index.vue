@@ -46,10 +46,21 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
-            :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
+          <DxDataGrid
+            :show-row-lines="true"
+            :hoverStateEnabled="true"
+            :data-source="dataSource"
+            :show-borders="true"
+            key-expr="employeeId"
+            :allow-column-reordering="move_column"
+            :allow-column-resizing="colomn_resize"
+            :column-auto-width="true"
+            :onRowClick="actionEdit"
+            :focused-row-enabled="true"
+            id="pa-120-gridContainer"
+            :auto-navigate-to-focused-row="true"
+            v-model:focused-row-key="focusedRowKey"
+          >
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
               <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -65,17 +76,23 @@
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" />
             <template #company-name="{ data }">
-              <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
-                :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"
-                @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
+              <employee-info
+                :idEmployee="data.data.employeeId"
+                :name="data.data.name"
+                :idCardNumber="data.data.residentId"
+                :status="data.data.status"
+                :foreigner="data.data.foreigner"
+                :checkStatus="false"
+                @toolTopErorr="toolTopErorr"
+                :employeeId="data.data.employeeId"
+                @mouseenter="defaultVisible = true"
+                @mouseleave="defaultVisible = false"
+              />
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
             <template #residentId="{ data }">
               <div v-if="data.data.residentId?.length == 14">
-                <a-tooltip placement="top"
-                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                  key="black">
+                <a-tooltip placement="top" v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32" key="black">
                   {{ data.data.residentId }}
                 </a-tooltip>
                 <a-tooltip placement="top" v-else title="ERROR" color="red">
@@ -94,14 +111,10 @@
                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
                 <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="4" :typeValue="1" />
-                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
-                  :ratio="data.data.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
-                  :ratio="data.data.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8"
-                  :ratio="data.data.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
-                  :ratio="data.data.incomeTaxMagnification" />
+                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
+                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10" :ratio="data.data.incomeTaxMagnification" />
               </div>
             </template>
             <DxColumn cell-template="pupop" width="30" />
@@ -117,16 +130,12 @@
         </a-spin>
       </a-col>
       <a-col :span="13" class="custom-layout">
-        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-          v-if="actionChangeComponent == 1" :key="addComponentKey" />
-        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2"
-          :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
+        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus" v-if="actionChangeComponent == 1" :key="addComponentKey" />
+        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
       </a-col>
     </a-row>
-    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete"
-      okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-      :idRowEdit="idRowEdit" typeHistory="pa-120" />
+    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
     <!-- <PopupMessage
       :modalStatus="resetStatus"
       @closePopup="resetStatus = false"
@@ -137,9 +146,17 @@
       :okText="'확인'"
       @checkConfirm="onResetComfirm"
     /> -->
-    <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
-      :title="messageSave" :content="''" :keyAccept="'1234'" :okText="'네'" cancelText="아니요"
-      @checkConfirm="onRowChangeComfirm" />
+    <PopupMessage
+      :modalStatus="rowChangeStatus"
+      @closePopup="rowChangeStatus = false"
+      :typeModal="'confirm'"
+      :title="messageSave"
+      :content="''"
+      :keyAccept="'1234'"
+      :okText="'네'"
+      cancelText="아니요"
+      @checkConfirm="onRowChangeComfirm"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -280,6 +297,7 @@ export default defineComponent({
     };
 
     //----------------compare Data----------------
+    const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
     //function common
     const delNewRow = () => {
       if (!isFirstWeb.value) {
@@ -302,7 +320,7 @@ export default defineComponent({
     const isChangeConfigPayItemsPA120 = computed(() => store.state.common.isChangeConfigPayItemsPA120);
     // Comparing the values of two objects.
     const compareType1 = () => {
-      if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value)) {
+      if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
@@ -317,7 +335,8 @@ export default defineComponent({
       if (isChangeConfigPayItemsPA120.value) {
         return false;
       }
-      if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)) {
+      // JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)
+      if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
@@ -343,7 +362,7 @@ export default defineComponent({
         isFirstWeb.value = false;
         return;
       }
-      console.log(`output->an nut add lan dau tien`,)
+      console.log(`output->an nut add lan dau tien`);
       isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       setTimeout(() => {
@@ -373,7 +392,7 @@ export default defineComponent({
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          console.log(`output =? luu loi`, isFirstWeb.value)
+          console.log(`output =? luu loi`, isFirstWeb.value);
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
@@ -383,7 +402,7 @@ export default defineComponent({
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          console.log(`output =? luu ko loi`,)
+          console.log(`output =? luu ko loi`);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           // focusedRowKey.value = idRow.value;
@@ -536,11 +555,10 @@ export default defineComponent({
       isFirstWeb,
       editRowPA120,
       compareType1,
-      compareType2
+      compareType2,
     };
   },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss" >
-
 </style>
