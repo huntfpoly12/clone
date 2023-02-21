@@ -104,7 +104,7 @@
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false"
-                                        v-model:valueInput="item.price" :disabled="true" />
+                                        v-model:valueInput="item.price"/>
                                     <span class="pl-5">원</span>
                                 </div>
                             </div>
