@@ -9,7 +9,7 @@
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
-      <template #tag="{ data }" class="custom-action">
+      <template #tag="{ data }">
         <div>
           <button style="margin-right: 5px">
             {{ data.data.incomeTypeCode }}

@@ -107,4 +107,13 @@
     border-radius: 5px;
     width: min-content;
   }
+  :deep .bg_orange{
+    background-color: #da9c29 !important;
+  }
+  :deep .btn-default {
+    width: 90px !important;
+  }
+  :deep .ant-tabs {
+    overflow: initial;
+  }
 }

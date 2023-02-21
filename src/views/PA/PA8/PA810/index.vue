@@ -1,127 +1,137 @@
 <template>
-  <action-header title="취득신고등록" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
+  <action-header title="취득신고등록" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false"/>
   <div id="pa-810" class="px-10 py-10">
-    <div>
+    <a-spin :spinning="loading" size="large">
       <DxDataGrid
         :show-row-lines="true"
         :hoverStateEnabled="true"
         :data-source="dataSource"
         :show-borders="true"
         :allow-column-reordering="move_column"
-        key-expr="globalYear"
-        :key="globalYear"
+        key-expr="companyId"
         :allow-column-resizing="colomn_resize"
         :column-auto-width="true"
-        :focused-row-enabled="true"
       >
-        <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxScrolling mode="standard" show-scrollbar="always"/>
         <DxToolbar>
-          <DxItem location="after" template="button-template" css-class="cell-button-add" />
+          <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
-          <DxButton icon="plus" @click="openAddNewModal" />
+          <DxButton icon="plus" @click="openAddNewModal"/>
         </template>
-        <DxColumn caption="일련번호" data-field="workId" width="100" />
-        <DxColumn caption="성명" data-field="name" width="100" />
-        <DxColumn caption="생년월일" data-field="convertBirthday" width="100" />
-        <DxColumn caption="주민등록증" data-field="residentId" width="100" />
-        <DxColumn caption="상태" data-field="workingStatus" width="100" />
-        <DxColumn caption="등록일" data-field="registeredAt" width="100" />
-        <DxColumn caption="접수일" data-field="acceptedAt" width="100" />
-        <DxColumn caption="완료일" data-field="completedAt" width="100" />
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="100" />
-        <DxColumn caption="FAX상태" data-field="paymentYear" width="100" />
-        <DxColumn caption="메모" data-field="memo" width="100" />
-        <DxColumn caption="신고서다운로드" cell-template="report" />
+        <DxColumn caption="일련번호" data-field="workId" width="100"/>
+        <DxColumn caption="성명" data-field="name"/>
+        <!-- TODO api not field convertBirthday -->
+        <DxColumn caption="생년월일" data-field="convertBirthday" width="100"/>
+        <DxColumn caption="주민등록증" data-field="residentId" width="150"/>
+        <DxColumn caption="상태" data-field="workingStatus" width="100"/>
+        <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat"/>
+        <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat"/>
+        <DxColumn caption="접수일" data-field="completedAt" width="100" :format="dateFormat"/>
+        <DxColumn caption="접수번호" data-field="accedpedNumber"/>
+        <!-- TODO api not field paymentYear -->
+        <DxColumn caption="FAX상태" data-field="paymentYear"/>
+        <DxColumn caption="메모" data-field="memo"/>
+        <DxColumn caption="신고서다운로드" cell-template="report" width="100"/>
         <template #report="{ data }" class="custom-action">
-          <div class="custom-action" style="text-align: center">
-            <a-space :size="10">
-              <DeleteOutlined @click="onGetAcquistionRp(data.data.employeeId)" />
-            </a-space>
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.employeeId)">
+              <DownloadOutlined :size="12"/>
+            </DxButton>
           </div>
         </template>
-        <DxScrolling column-rendering-mode="virtual" />
-        <DxColumn caption="첨부파일다운로드" cell-template="pupop" />
-        <template #pupop="{ data }" class="custom-action">
-          <div class="custom-action" style="text-align: center">
-            <a-space :size="10">
-              <DeleteOutlined @click="onGetAcquistionRp(data.data.employeeId)" />
-            </a-space>
-          </div>
-        </template>
-        <DxScrolling column-rendering-mode="virtual" />
-        <DxColumn cell-template="action" width="100" />
+        <DxScrolling column-rendering-mode="virtual"/>
+        <DxColumn caption="첨부파일다운로드" data-field="dependentsEvidenceFileStorageId" width="40"/>
+        <DxScrolling column-rendering-mode="virtual"/>
+        <DxColumn cell-template="action" width="150"/>
         <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="text-align: center">
-            <a-space :size="10">
-              <DeleteOutlined @click="onGetAcquistionRp(data.data.workId)" />
-              <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
-                <a-tooltip placement="top">
-                  <template #title>근로소득자료 변경이력</template>
-                  <div class="text-center">
-                    <HistoryOutlined style="font-size: 16px" />
-                  </div>
-                </a-tooltip>
+            <a-space>
+              <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
+                <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
-              <DeleteOutlined @click="onCancelAcquistion(data.data.workId)" />
+              <DxButton type="ghost" style="cursor: pointer" @click="onOpenModalUpdate(data.data)">
+                <ZoomInOutlined />
+              </DxButton>
+              <DxButton type="ghost" style="cursor: pointer" @click="onCancelAcquistion(data.data.workId)">
+                <DeleteOutlined/>
+              </DxButton>
             </a-space>
           </div>
         </template>
-        <DxScrolling column-rendering-mode="virtual" />
+        <DxScrolling column-rendering-mode="virtual"/>
       </DxDataGrid>
-    </div>
-    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="취득신고등록" typeHistory="pa-810" />
-    <DeleteOutlined @click="onGetEmployeeAcquisition(1)" />
-    <FormModal v-if="isNewModal" @closeModal="isNewModal = false"></FormModal>
+    </a-spin>
+    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="취득신고등록"
+                  typeHistory="pa-810"/>
+    <CreatePA810Popup v-if="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    <ViewPA810Popup v-if="isEditModalStatus && dataRow" @closeModal="isEditModalStatus = false" :data="dataRow" />
   </div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive } from 'vue';
-import { useStore } from 'vuex';
+import {ref, defineComponent, watch, computed, reactive} from 'vue';
+import type { Ref } from 'vue'
+import {useStore} from 'vuex';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
-import { useMutation, useQuery } from '@vue/apollo-composable';
-import { companyId, openTab } from '@/helpers/commonFunction';
-import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons-vue';
-import { DxDataGrid, DxColumn, DxScrolling, DxMasterDetail, DxToolbar } from 'devextreme-vue/data-grid';
+import {useMutation, useQuery} from '@vue/apollo-composable';
+import {companyId, openTab} from '@/helpers/commonFunction';
+import { HistoryOutlined, DownloadOutlined, ZoomInOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import {DxDataGrid, DxColumn, DxScrolling, DxMasterDetail, DxToolbar} from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import notification from '@/utils/notification';
-import FormModal from './components/FormModal.vue';
-import { DxItem } from 'devextreme-vue/select-box';
+import CreatePA810Popup from './components/CreatePA810Popup.vue';
+import {DxItem} from 'devextreme-vue/select-box';
+import HistoryPopup from "@/components/HistoryPopup.vue";
+import dayjs from "dayjs";
+import ViewPA810Popup from "@/views/PA/PA8/PA810/components/ViewPA810Popup.vue";
+import { MajorInsuranceCompanyEmployeeAcquisition } from "@/types/types";
+import imgUpload from "@/components/UploadImage.vue";
 
 export default defineComponent({
   components: {
+    ViewPA810Popup,
+    HistoryPopup,
     DxDataGrid,
     DxColumn,
     DxButton,
     DxScrolling,
     HistoryOutlined,
     DeleteOutlined,
-    FormModal,
+    CreatePA810Popup,
     DxToolbar,
     DxItem,
+    DownloadOutlined,
+    ZoomInOutlined,
+    imgUpload
   },
   setup() {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
-    const { per_page, move_column, colomn_resize } = store.state.settings;
+    const {per_page, move_column, colomn_resize} = store.state.settings;
     const actionParam = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
       workId: null,
-    });
+    })
 
     // Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
-
     const dataSource = ref([]);
     const employeeAcquisitionsParam = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
     });
-    const {} = useQuery(queries.getMajorInsuranceCompanyEmployeeAcquisitions, employeeAcquisitionsParam, () => ({
+
+    const {
+      refetch, onResult, loading
+    } = useQuery(queries.getMajorInsuranceCompanyEmployeeAcquisitions, employeeAcquisitionsParam, () => ({
       fetchPolicy: 'no-cache',
     }));
+
+    onResult((res) => {
+      dataSource.value = res.data.getMajorInsuranceCompanyEmployeeAcquisitions
+    })
 
     // -------history------
 
@@ -134,7 +144,7 @@ export default defineComponent({
     //------get ReportViewUrl ----
 
     const fillRpTrigger = ref<boolean>(false);
-    const { refetch: fillRpRefetch, result: fillRpResult } = useQuery(
+    const {refetch: fillRpRefetch, result: fillRpResult} = useQuery(
       queries.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
       actionParam,
       () => ({
@@ -148,54 +158,50 @@ export default defineComponent({
         fillRpTrigger.value = false;
       }
     });
-    const onGetAcquistionRp = (e: any) => {
-      actionParam.workId = e;
+    const onGetAcquistionRp = (workId: any) => {
+      actionParam.workId = workId;
       fillRpTrigger.value = true;
       fillRpRefetch();
     };
 
-    //------get EmployeeAcquisition ----
+    //---------Modal create edit----------
+    const isOpenModalCreate = ref(false);
+    const openAddNewModal = () => {
+      isOpenModalCreate.value = true;
+    };
+    const handleCreate = () => {
+      refetch();
+      isOpenModalCreate.value = false;
+    };
 
-    const employeeAcquisitionTrigger = ref<boolean>(false);
-    const dataDetail = ref();
-    const { refetch: employeeAcquisitionRefetch, result: employeeAcquisitionResult } = useQuery(
-      queries.getMajorInsuranceCompanyEmployeeAcquisition,
-      actionParam,
-      () => ({
-        enabled: employeeAcquisitionTrigger.value,
-        fetchPolicy: 'no-cache',
-      })
-    );
-    watch(employeeAcquisitionResult, (newVal) => {
-      if (newVal) {
-        let data = newVal.getMajorInsuranceCompanyEmployeeAcquisition;
-        dataDetail.value = data;
-        employeeAcquisitionTrigger.value = false;
+    // ---------update log------------
+    const isEditModalStatus = ref(false);
+    const dataRow = ref<MajorInsuranceCompanyEmployeeAcquisition>();
+    const handleUpdate = (e: any) => {
+      refetch();
+      isEditModalStatus.value = false;
+    };
+    const onOpenModalUpdate = (data: MajorInsuranceCompanyEmployeeAcquisition) => {
+      if(data) {
+        isEditModalStatus.value = true;
+        dataRow.value = data;
       }
-    });
-    const onGetEmployeeAcquisition = (e: any) => {
-      actionParam.workId = e;
-      employeeAcquisitionTrigger.value = true;
-      employeeAcquisitionRefetch();
     };
 
     //------mutation cancel acquistion ----
-
-    const { mutate: mutateCancelAcquistion, onDone: onDoneCancelAcquistionDone } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
+    const {
+      mutate: mutateCancelAcquistion,
+      onDone: onDoneCancelAcquistionDone
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
     const onCancelAcquistion = (e: any) => {
       actionParam.workId = e;
       mutateCancelAcquistion(actionParam);
     };
     onDoneCancelAcquistionDone(() => {
-      notification('success', 'success');
+      notification('success', 'delete success');
+      refetch();
     });
 
-    //---------open Modal create edit----------
-
-    const isNewModal = ref(false);
-    const openAddNewModal = () => {
-      isNewModal.value = true;
-    };
     return {
       globalYear,
       per_page,
@@ -207,9 +213,22 @@ export default defineComponent({
       actionParam,
       onOpenLogs,
       onCancelAcquistion,
-      onGetEmployeeAcquisition,
+      // onGetEmployeeAcquisition,
       openAddNewModal,
-      isNewModal,
+      isOpenModalCreate,
+      refetch,
+      onResult,
+      loading,
+      dateFormat: function (value: any) {
+        if (value) {
+          return dayjs(value).format('YYYY-MM-DD');
+        }
+      },
+      onOpenModalUpdate,
+      isEditModalStatus,
+      handleUpdate,
+      dataRow,
+      handleCreate,
     };
   },
 });

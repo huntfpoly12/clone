@@ -3,7 +3,7 @@
     :width="500">
     <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
       <div class="d-flex-center">
-        <DxButton :text="'귀' + globalYear + ' ' + '-' + formatMonth(month1)"
+        <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
           :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
           class="btn-date mr-2" />
         <div class="d-flex-center">
@@ -184,9 +184,9 @@ export default defineComponent({
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
 
-    watchEffect(() => {
-      month2.value = `${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`;
-    });
+    // watchEffect(() => {
+    //   month2.value = `${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`;
+    // });
 
     // ---------------------fn modal --------------------
 
@@ -290,6 +290,12 @@ export default defineComponent({
 
   .dp__icon {
     display: none;
+  }
+}
+
+:deep .btn-date {
+  div.dx-button-content {
+    padding: 0px 10px 0px;
   }
 }
 </style>

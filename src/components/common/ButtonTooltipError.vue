@@ -4,8 +4,9 @@
             <span>{{  textError }}</span>
         </div>
     </div>
+    {{ statusChange }}
     <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
-        :type="statusChange ? 'calculate' : 'default'" text="공제 재계산" />
+        :type="statusChange ? 'calculate' : 'default'" :text="text" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -27,6 +28,10 @@ export default defineComponent({
         textError: {
             type: String,
             default: Message.getMessage('PA110', '001').message
+        },
+        text:{
+            type: String,
+            default: '공제 재계산'
         }
     },
     setup(props, { emit }) {
