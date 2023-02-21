@@ -74,8 +74,7 @@
                     </a-form-item>
                     <div style="font-weight: bold;">
                         <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
-                            $filters.formatCurrency(Math.round(dataIncomeWageDaily.monthlyWage /
-                                dataIncomeWageDaily.workingDays))
+                            showDailyWage()
                         }}원</span>
 
                         <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
@@ -86,8 +85,7 @@
                         }}원</span>
 
                         <span v-else>월급여 {{
-                            $filters.formatCurrency(dataIncomeWageDaily.dailyWage *
-                                dataIncomeWageDaily.workingDays)
+                           showMonthlyWage()
                         }}원</span>
                     </div>
 
@@ -526,6 +524,7 @@ export default defineComponent({
         
         const submitForm = () => {
             if (store.state.common.statusChangeFormPrice) {
+                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
                 showErrorButton.value = true;
             } else {
                 let arrDeductionItems: any = []
@@ -561,6 +560,17 @@ export default defineComponent({
                 }
             }
         }
+        const showDailyWage = () => {
+            let price = Math.round(dataIncomeWageDaily.value.monthlyWage /  dataIncomeWageDaily.value.workingDays)
+            dataIncomeWageDaily.value.dailyWage = price ? price : dataIncomeWageDaily.value.dailyWage
+            return filters.formatCurrency(dataIncomeWageDaily.value.dailyWage)
+            
+        }
+        const showMonthlyWage = () => {
+            let price = dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays
+            dataIncomeWageDaily.value.monthlyWage = price ? price : dataIncomeWageDaily.value.monthlyWage
+            return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
+        }
         return {
             dataIncomeWageDaily,
             arrDeduction,
@@ -579,6 +589,7 @@ export default defineComponent({
             countKey,
             submitForm,
             showErrorButton,
+            showDailyWage, showMonthlyWage
         };
     },
 });

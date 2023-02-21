@@ -141,11 +141,11 @@
                                         <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                             :name="item.name" :type="3"
                                             :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" /> -->
-                                    <deduction-items :name="item.name" :width="'130px'" :type="4" subName="과세" />
+                                    <deduction-items :name="item.name" :width="'130px'" :type="4" subName="공제" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
-                                        v-model:valueInput="item.amount" :readOnly="true" :min="0">
+                                        v-model:valueInput="item.amount" :disabled="true" :min="0">
                                     </number-box-money>
                                     <span class="pl-5">원</span>
                                 </div>
@@ -156,9 +156,21 @@
             </a-row>
             <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
-                    <div class="text-align-center">
-                        <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" type="default" text="공제 재계산" />
-                        <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                    <div class="text-align-center" style="display: flex; justify-content: center;">
+                        <a-tooltip placement="top">
+                            <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
+                            <div>
+                                <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
+                            </div>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
+                            <div>
+                                <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                            </div>
+                        </a-tooltip>
+                        <!-- <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" type="default" text="공제 재계산" />
+                        <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" /> -->
                         <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
                         <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
                         <!-- <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
@@ -179,7 +191,7 @@
             <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
             <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" :data="dataIW" />
         </a-spin>
-</div>
+    </div>
 </template>
 <script lang="ts">
 
@@ -223,6 +235,7 @@ export default defineComponent({
         const triggerDetail = ref<boolean>(false);
         const triggerCalcIncome = ref<boolean>(false);
         const employeeWageTrigger = ref<boolean>(false);
+        const showErrorButton = ref(false)
 
         const dataIW: any = ref(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
 
@@ -375,7 +388,7 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(() => dataConfigDeductions.value, (value) => {
             calculateTax();
-            store.state.common.statusChangeFormPrice = true;
+            // store.state.common.statusChangeFormPrice = true;
         }, { deep: true })
         watch(() => dataConfigPayItems.value, (value) => {
             calculateTax();
@@ -402,12 +415,17 @@ export default defineComponent({
         watch(() => store.state.common.actionResetForm, (value) => {
             countKey.value++;
             dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+            store.state.common.statusChangeFormPrice = false;
         })
 
         watch(() => store.state.common.statusRowAdd, (newVal) => {
             if (!newVal) {
                 store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
+                // store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1].payItems = []
                 dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
+                // dataIW.value.payItems = []
+                // dataIW.value.deductionItems = []
+                
                 setTimeout(() => {
                     let a = document.body.querySelectorAll('[aria-rowindex]');
                     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
@@ -419,7 +437,7 @@ export default defineComponent({
 
         watch(() => store.state.common.actionAddItem, (value) => {
             if (value) {
-                // countKey.value++;
+                countKey.value++;
                 // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
                 dataConfigDeductions.value.map((data: any) => {
                     data.amount = 0
@@ -473,26 +491,43 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.actionSubmit, () => {
-            const variables: any = {
-                companyId: companyId,
-                processKey: { ...processKey.value },
-                incomeId: store.state.common.incomeId,
-                input: {
-                    workingDays: dataIW.value.workingDays,
-                    totalWorkingHours: dataIW.value.totalWorkingHours,
-                    overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                    workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                    workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                    payItems: dataIW.value.payItems,
-                    deductionItems: dataIW.value.deductionItems,
-                }
-            };
-            if (store.state.common.actionAddItem) {
-                variables.input.employeeId = dataIW.value.employee.employeeId,
-                    variables.input.paymentDay = dataIW.value.paymentDay,
-                    actionCreated(variables)
+            if (store.state.common.statusChangeFormPrice) {
+                store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
+                showErrorButton.value = true;
             } else {
-                actionUpdate(variables)
+                let payItems = dataConfigPayItems.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount
+                    }
+                })
+                let deductionItems = dataConfigDeductions.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount
+                    }
+                })
+                const variables: any = {
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    incomeId: store.state.common.incomeId,
+                    input: {
+                        workingDays: dataIW.value.workingDays,
+                        totalWorkingHours: dataIW.value.totalWorkingHours,
+                        overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
+                        workingHoursAtNight: dataIW.value.workingHoursAtNight,
+                        workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                        payItems: payItems,
+                        deductionItems: deductionItems,
+                    }
+                };
+                if (store.state.common.actionAddItem) {
+                    variables.input.employeeId = dataIW.value.employee.employeeId,
+                        variables.input.paymentDay = dataIW.value.paymentDay,
+                        actionCreated(variables)
+                } else {
+                    actionUpdate(variables)
+                }
             }
         })
 
@@ -537,7 +572,8 @@ export default defineComponent({
                 store.state.common.dataRowOld = { ...dataIW.value }
                 setTimeout(() => {
                     store.state.common.statusChangeFormEdit = false;
-                }, 500);
+                    store.state.common.statusChangeFormPrice = false;
+                }, 200);
             }
         })
         watch(resCalcIncomeWageTax, (value) => {
@@ -551,6 +587,9 @@ export default defineComponent({
         watch(resultEmployeeWage, (newVal: any) => {
             employeeWageTrigger.value = false;
             if (store.state.common.actionAddItem) {
+                dataIW.value.employee.name = newVal.getEmployeeWage.name;
+                // dataIW.value.totalPay = newVal.getEmployeeWage.totalPay;
+                // dataIW.value.totalPay = newVal.getEmployeeWage.totalPay;
                 if (newVal.getEmployeeWage.payItems) {
                     dataConfigPayItems.value.map((data: any) => {
                         data.amount = 0
@@ -562,6 +601,8 @@ export default defineComponent({
                             }
                         });
                     })
+                }
+                if (newVal.getEmployeeWage.deductionItems) {
                     dataConfigDeductions.value.map((data: any) => {
                         data.amount = 0
                     })
@@ -572,8 +613,8 @@ export default defineComponent({
                             }
                         });
                     })
-                    calculateTax();
                 }
+                calculateTax();
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
 
@@ -583,15 +624,21 @@ export default defineComponent({
                 dataIW.value.paymentDay = newVal
             }, 1000)
         })
+
+        watch(() => store.state.common.statusChangeFormPrice, (value) => {
+            if (!value) {
+                showErrorButton.value = false
+            }
+        })
+        
+        watch(() => dataIW.value.totalPayItem, (value) => {
+            store.state.common.statusChangeFormPrice = true;
+        })
         // ======================= FUNCTION ================================
         //  Calculate Pension Employee 
         const calculateTax = async () => {
-            await (dataIW.value.payItems = dataConfigPayItems.value?.map((item: any) => {
-                return {
-                    itemCode: item.itemCode,
-                    amount: item.amount
-                }
-            }));
+            
+            // }));
             await (dataIW.value.totalPayItem = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
             }, 0));
@@ -645,6 +692,7 @@ export default defineComponent({
             })
             setTimeout(() => {
                 store.state.common.statusChangeFormPrice = false;
+                showErrorButton.value = false;
             }, 500);
         }
 
@@ -668,6 +716,7 @@ export default defineComponent({
             countKey,
             loadingGetEmployeeWage,
             updateDataDeduction,
+            showErrorButton,
         };
     },
 });
