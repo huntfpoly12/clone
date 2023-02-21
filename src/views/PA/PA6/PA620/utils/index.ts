@@ -50,6 +50,7 @@ export const dataActionUtils = {
     withholdingIncomeTax: 0,
     withholdingLocalIncomeTax: 0,
     paymentDay: 0,
+    incomeId: "99axbzkk",
   },
 };
 export const dataGetDetailEdit = {

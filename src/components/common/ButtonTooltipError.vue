@@ -4,7 +4,6 @@
             <span>{{  textError }}</span>
         </div>
     </div>
-    {{ statusChange }}
     <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
         :type="statusChange ? 'calculate' : 'default'" :text="text" />
 </template>
