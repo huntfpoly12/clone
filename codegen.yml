@@ -1,0 +1,5 @@
+schema: https://dev-jangbuda-api.bankda.com/graphql/\
+generates:
+  src/types/types.d.ts:
+    plugins:
+      - typescript

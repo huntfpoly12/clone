@@ -1,6 +1,6 @@
 <template>
     <!-- check a birthday not later than the current date (if any) -->
-    <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
+    <Datepicker v-model="date" :textInput="textInput" locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
         :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
         :multi-calendars="multiCalendars">
@@ -41,6 +41,10 @@ export default defineComponent({
         range: {
             type: Boolean,
             default: false
+        },
+        textInput: {
+            type: Boolean,
+            default: true
         },
         multiCalendars: {
             type: Boolean,
