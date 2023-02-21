@@ -54,13 +54,13 @@
                             <DxColumn caption="거래처명" data-field="name" />
                             <DxColumn caption="사업자등록번호" cell-template="bizNumber" data-field="bizNumber" />
                             <template #bizNumber="{ data }">
-                                <span>
+                                <span v-if="data.data.bizNumber">
                                     {{
-                                        data.data.bizNumber?.toString().slice(0, 3)
+                                        data.data.bizNumber.toString().slice(0, 3)
                                     }}-{{
-    data.data.bizNumber?.toString().slice(3, 5)
+    data.data.bizNumber.toString().slice(3, 5)
 }}-{{
-    data.data.bizNumber?.toString().slice(5, 10)
+    data.data.bizNumber.toString().slice(5, 10)
 }}
                                 </span>
                             </template>
