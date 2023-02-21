@@ -210,7 +210,7 @@
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                         <DxColumn caption="일용직사원" cell-template="tag" width="150" />
-                        <template #tag="{ data }" class="custom-action">
+                        <template #tag="{ data }">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId"
                                     :name="data.data.employee.name" :idCardNumber="data.data.employee.residentId"
@@ -233,7 +233,7 @@
                         </template>
                         <DxColumn width="85" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
                         <DxColumn caption="비고" cell-template="four-major-insurance" />
-                        <template #four-major-insurance="{ data }" class="custom-action">
+                        <template #four-major-insurance="{ data }">
                             <div class="custom-action custom-grade-cell">
                                 <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                                     :typeValue="1" />
@@ -269,8 +269,8 @@
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
             title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
-        <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
-            :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" />
+        <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
+            :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" /> -->
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
             @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
@@ -321,7 +321,7 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA510)
         const modalCopy = ref<boolean>(false);
         const modalChangeRow = ref(false)
-        const modalChangeRowPrice = ref(false)
+        // const modalChangeRowPrice = ref(false)
         let dataCustomRes: any = ref([])
         const dataRows: any = ref([])
         const dataSource: any = ref([])
@@ -364,7 +364,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
-            refetchData()
+            refetchData() //reset data table 1
         })
 
         // ======================= WATCH ==================================
@@ -463,8 +463,8 @@ export default defineComponent({
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             refetchData() //reset data table 1
-            IncomeWageDailiesTrigger.value = true;
-            refetchDataTaxPayInfo() //reset data table 2
+            IncomeWageDailiesTrigger.value = true; //reset data table 2
+            // refetchDataTaxPayInfo() //reset data table 2
         })
         watch(() => status.value, (newVal) => {
             if (userType != 'm' && (newVal == 30 || newVal == 40)) {
@@ -474,8 +474,10 @@ export default defineComponent({
             }
         })
         watch(globalYear, (newVal) => {
-            IncomeWageDailiesTrigger.value = true;
-            refetchDataTaxPayInfo() //reset data table 2
+            store.state.common.processKeyPA510.imputedYear = newVal
+            store.state.common.processKeyPA510.paymentYear = newVal
+            IncomeWageDailiesTrigger.value = true; //reset data table 2
+            // refetchDataTaxPayInfo() //reset data table 2
         })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
@@ -492,11 +494,11 @@ export default defineComponent({
             rowEdit.value = data.data
             if (rowEdit.value.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
-                    if (store.state.common.statusChangeFormPrice) {
-                        modalChangeRowPrice.value = true;
-                    } else {
+                    // if (store.state.common.statusChangeFormPrice) {
+                    //     modalChangeRowPrice.value = true;
+                    // } else {
                         modalChangeRow.value = true;
-                    }
+                    // }
                 } else {
                     if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
@@ -531,26 +533,31 @@ export default defineComponent({
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
                 if (!store.state.common.statusRowAdd) {
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
-                }
-            }
-            store.state.common.incomeId = rowEdit.value.incomeId
-            store.state.common.employeeId = rowEdit.value.employeeId
-        }
-        const statusComfirmChangePrice = (res: any) => {
-            if (res) {
-                (document.getElementById("button-action-dedution-pa510") as HTMLInputElement).click();
-                store.state.common.focusedRowKey = store.state.common.employeeId
-            } else {
-                if (!store.state.common.statusRowAdd) {
+                    store.state.common.actionAddItem = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = rowEdit.value.incomeId
                 store.state.common.employeeId = rowEdit.value.employeeId
             }
+            
         }
+        // const statusComfirmChangePrice = (res: any) => {
+        //     if (res) {
+        //         (document.getElementById("button-action-dedution-pa510") as HTMLInputElement).click();
+        //         store.state.common.focusedRowKey = store.state.common.employeeId
+        //     } else {
+        //         if (!store.state.common.statusRowAdd) { // if you are create
+        //             console.log(1);
+                    
+        //             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+        //             store.state.common.statusRowAdd = false
+        //         }
+        //         console.log(2);
+        //         store.state.common.incomeId = rowEdit.value.incomeId
+        //         store.state.common.employeeId = rowEdit.value.employeeId
+        //     }
+        // }
         const customizeTotalMonthly = (data: any) => {
             let total: any = 0
             store.state.common.dataTaxPayInfo.map((val: any) => {
@@ -567,8 +574,8 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             status.value = 10
-            refetchDataTaxPayInfo()
-            IncomeWageDailiesTrigger.value = true;
+            // refetchDataTaxPayInfo()
+            IncomeWageDailiesTrigger.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
         return {
@@ -577,7 +584,6 @@ export default defineComponent({
             status,
             dataSource,
             per_page, move_column, colomn_resize,
-            refetchData,
             selectionChanged,
             dataCustomRes,
             showDetailSelected,
@@ -592,7 +598,7 @@ export default defineComponent({
             statusComfirm,
             store,
             modalChangeRow, statusComfirmChange,
-            modalChangeRowPrice, statusComfirmChangePrice,
+            // modalChangeRowPrice, statusComfirmChangePrice,
             statusDisabledBlock,
             Message,
         }

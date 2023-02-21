@@ -251,7 +251,7 @@
                         <DxColumn data-field="printCode" caption="유형" />
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="100" />
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div class="custom-action">
                                 <a-space :size="10">
                                     <a-tooltip color="black" v-if="data.data.editable" placement="top">
@@ -299,7 +299,7 @@
                         <DxColumn data-field="name" caption="항목명" />
                         <DxColumn data-field="formula" caption="산출방법" />
                         <DxColumn cell-template="pupop" css-class="cell-center" :width="30" />
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div class="custom-action">
                                 <a-space>
                                     <a-tooltip color="black" placement="top">
