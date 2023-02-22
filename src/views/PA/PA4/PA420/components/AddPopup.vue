@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalOption" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
         style="top: 20px">
-        <div class="block-radio ">{{ dataForm.input.retirementType }}
+        <div class="block-radio ">
             <radio-group class="radio-group one" :arrayValue="option1" v-model:valueRadioCheck="retirementIncome1" layoutCustom="horizontal" />
             <radio-group class="radio-group two" :arrayValue="option2" v-model:valueRadioCheck="dataForm.input.retirementType"
                 layoutCustom="horizontal" />
