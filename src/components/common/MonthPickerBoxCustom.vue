@@ -3,6 +3,7 @@
       <Datepicker
       v-model="date" autoApply monthPicker locale="ko" :format-locale="ko"
       format="yyyy-MM" :uid="id"
+      :min-date="minDate"
       @update:modelValue="handleDate" :disabled="disabled"
       >
           <template #trigger>
@@ -38,7 +39,11 @@ export default defineComponent({
     disabled: {
       type: Boolean,
       default: false,
-    }
+    },
+    minDate: {
+        type: [Date,String],
+        default: null,
+    },
 
   },
   components: {

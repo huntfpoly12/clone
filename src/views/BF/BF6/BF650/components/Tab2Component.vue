@@ -8,7 +8,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="제작요청일(기간)" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :maxRange="365" :multi-calendars="true" />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -40,7 +40,11 @@
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
                         format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
-                <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
+                <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" data-type="string" />
+                <template #productionStatus="{ data }">
+                    <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
+                    <production-status :typeTag="5" v-if="data.value == -1" padding="1px 10px" />
+                </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
                     <div style="text-align: center">
@@ -85,7 +89,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate: any = ref([dayjs().subtract(7, 'day'), dayjs()]);
         let trigger = ref(true)
         let dataModalDetail:any = ref({})
         // ================== GRAPHQL=================
