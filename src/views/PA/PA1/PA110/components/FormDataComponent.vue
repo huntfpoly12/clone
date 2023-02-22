@@ -584,12 +584,23 @@ export default defineComponent({
             }
         })
 
-        watch(resultEmployeeWage, (newVal: any) => {
+        watch(resultEmployeeWage, async (newVal: any) => {
             employeeWageTrigger.value = false;
             if (store.state.common.actionAddItem) {
-                dataIW.value.employee.name = newVal.getEmployeeWage.name;
-                // dataIW.value.totalPay = newVal.getEmployeeWage.totalPay;
-                // dataIW.value.totalPay = newVal.getEmployeeWage.totalPay;
+                await (dataIW.value.employee.name = newVal.getEmployeeWage.name);
+                await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
+                await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
+
+                await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
+                
+                await (dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction);
+                await (dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction);
+                await (dataIW.value.employee.employeementInsuranceDeduction = newVal.getEmployeeWage.employeementInsuranceDeduction);
+                await (dataIW.value.employee.nationalPensionSupportPercent = newVal.getEmployeeWage.nationalPensionSupportPercent);
+                await (dataIW.value.employee.employeementInsuranceSupportPercent = newVal.getEmployeeWage.employeementInsuranceSupportPercent);
+                await (dataIW.value.employee.employeementReductionRatePercent = newVal.getEmployeeWage.employeementReductionRatePercent);
+                await (dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification);
+
                 if (newVal.getEmployeeWage.payItems) {
                     dataConfigPayItems.value.map((data: any) => {
                         data.amount = 0

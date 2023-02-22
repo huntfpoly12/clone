@@ -2,15 +2,15 @@
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="귀속연도">
-                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black"/>
+                <a-form-item label="지급연월">
+                    <month-picker-box-custom v-model:valueDate="datePayment" :minDate="new Date('2022-1-1')" bgColor="black"/>
                 </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
-                            textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
+                            textUnCheck="제작전" />
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -18,7 +18,7 @@
                     </div>
                 </a-form-item>
                 <div id="checkBoxSearchBF650">
-                    <CheckboxGroup :disabled="dataSearch.beforeProduction" :options="productionStatusesCheckbox"
+                    <CheckboxGroup :disabled="!dataSearch.beforeProduction" :options="productionStatusesCheckbox"
                         v-model:valueCheckbox="dataSearch.productionStatuses" :size="18"> </CheckboxGroup>
                 </div>
             </a-col>
@@ -45,7 +45,7 @@
         <div class="title-table d-flex">
             <a-form-item label="파일 제작 설정" label-align="left">
                 <div class="custom-note d-flex-center">
-                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                    <switch-basic :disabled="true" v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
                     <span class="d-flex-center">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                         <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
@@ -96,6 +96,7 @@
                     <DxSummary>
                             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
                             <!-- <DxTotalItem column="제작현황" :customize-text="customizeTotalMonthly" value-format="#,###" /> -->
+                            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
                         </DxSummary>
                 </DxDataGrid>
             </a-spin>
@@ -127,7 +128,7 @@ export default defineComponent({
     },
     setup(props) {
         let datePayment = ref(parseInt(dayjs().format('YYYYMM')))
-        let valueDefaultSwitch = ref(false)
+        let valueDefaultSwitch = ref(true)
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchUtils })
         const productionStatusesCheckbox = [
@@ -198,7 +199,12 @@ export default defineComponent({
         const selectionChanged = (res: any) => {
             keySelect.value = res.selectedRowKeys
         }
+        const customTextSummary = () => {
+            dataSource.value
+            return `제작전  제작대기  제작중  제작실패  제작성공 `
+        }
         return {
+            customTextSummary,
             loadingTable, 
             valueDefaultSwitch, 
             datePayment, 
