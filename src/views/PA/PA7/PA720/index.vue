@@ -462,7 +462,6 @@ export default defineComponent({
     // ======================= after change data ==================================
 
     const onFormDone = () => {
-      actionDone.value = true;
       changeFommDone.value++;
       formTaxRef.value.isEdit = true;
       // c onsole.log(`output->`, formPA720.value.input.incomeId);
@@ -584,7 +583,6 @@ export default defineComponent({
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
-    const actionDone = ref(false); //action with form when create, edit, delete is done
     const editTax = async (emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
       if (isNewRowPA720.value) {
@@ -612,7 +610,6 @@ export default defineComponent({
         editTaxParam.value = emit;
       }
     };
-    const addItemClick = ref(true);
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
       deleteIncomeExtrasParam.value = {
@@ -637,6 +634,7 @@ export default defineComponent({
     //---------------submit-------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
+    const addItemClick = ref(true);
     const onSubmit = async () => {
       // c onsole.log(`output- on submit is called`,)
       setTimeout(() => {
