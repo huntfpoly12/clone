@@ -16,10 +16,10 @@
       <a-col :span="12" style="padding-right: 5px">
         <a-form-item label="귀속/지급연월" style="display: flex">
           <div class="d-flex-center">
-            <DxButton :text="'귀' + inputDateTax"
-              :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" />
-            <DxButton :text="'지' + paymentDateTax"
-              :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" />
+            <DxButton :text="'귀 ' + inputDateTax"
+              :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date"/>
+            <DxButton :text="'지 ' + paymentDateTax"
+              :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="red">
@@ -68,14 +68,14 @@
           <a-form-item label="소득세(공제)">
             <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
               v-model:valueInput="formPA720.input.withholdingIncomeTax" />
-            <span>원</span>
+            <span class="ml-1">원</span>
           </a-form-item>
         </div>
         <div class="input-text">
           <a-form-item label="지방소득세(공제)">
             <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
               v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" />
-            <span>원</span>
+            <span class="ml-1">원</span>
           </a-form-item>
         </div>
         <div class="top-con">

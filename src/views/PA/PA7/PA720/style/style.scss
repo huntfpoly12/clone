@@ -118,7 +118,8 @@
     border-radius: 5px;
     margin-right: 10px;
     color: white;
-    width: fit-content;;
+    width: fit-content;
+    ;
 
     .dp__input {
       color: white;
@@ -184,6 +185,7 @@
       color: blue;
     }
   }
+
   :deep .dx-button-content {
     padding: 6px;
     display: inline-flex;
@@ -228,20 +230,33 @@
   }
 
   :deep .content-btm {
-    .custom-grade-cell{
+    .custom-grade-cell {
       padding: 0;
       margin: 0;
+
       .custom-grade-cell-tag {
         padding: 1px 10px;
       }
     }
+
     .dx-button-content {
       padding: 0px 10px 2px;
     }
-  }
-  .btn-date {
     div.dx-button-content {
-      padding: 0px 10px 2px;
+      padding: 0px 6px 1px;
+      .dx-dropdowneditor-icon {
+        width: 24px;
+      }
+  
+      .dx-dropdowneditor-icon::before {
+        margin-left: -6px;
+      }
+    }
+  }
+
+  :deep .btn-date {
+    div.dx-button-content {
+      padding: 0px 10px 0px;
     }
   }
 }

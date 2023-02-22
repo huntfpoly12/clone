@@ -21,8 +21,7 @@
       }
     }
   }
-  ::v-deep .custom-layout {
-    padding: 10px 10px 10px 0;
+  :deep .custom-layout {
 
     > div {
       border: 1px solid #d7d7d7;
@@ -87,7 +86,7 @@
       text-align: center;
     }
   }
-  ::v-deep .active-row-key {
+  :deep .active-row-key {
     background-color: #337ab7;
     color: white;
   }
@@ -106,5 +105,14 @@
     padding: 3px 10px;
     border-radius: 5px;
     width: min-content;
+  }
+  :deep .bg_orange{
+    background-color: #da9c29 !important;
+  }
+  :deep .btn-default {
+    width: 90px !important;
+  }
+  :deep .ant-tabs {
+    overflow: initial;
   }
 }
