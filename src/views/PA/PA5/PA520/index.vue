@@ -50,7 +50,14 @@
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
+                          <a-tooltip placement="top" class="custom-tooltip">
+                              <template #title>
+                                신규
+                              </template>
+                              <div style="text-align: center;" >
+                                <DxButton icon="plus" @click="openAddNewModal" />
+                              </div>
+                          </a-tooltip>
                         </template>
                         <template #button-history>
                             <DxButton>
@@ -87,7 +94,7 @@
                         </template>
 
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{ data }" class="custom-action">
+                        <template #grade-cell="{ data }">
                             <div class="custom-grade-cell">
                                 <four-major-insurance v-if="data.data.nationalPensionDeduction == true" :typeTag="1"
                                     :typeValue="1" />
@@ -102,7 +109,7 @@
                             </div>
                         </template>
                         <DxColumn cell-template="pupop" width="50" />
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div v-if="data.data.deletable" class="custom-action text-center">
                                 <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
@@ -119,7 +126,7 @@
         </a-row>
     </div>
     <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="statusComfirm" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"

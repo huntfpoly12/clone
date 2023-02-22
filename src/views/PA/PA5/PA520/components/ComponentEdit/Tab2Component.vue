@@ -6,9 +6,9 @@
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
                     <div class="d-flex-center">
                         <checkbox-basic size="14px" label="국민연금" class="check-box-tab1"
-                            v-model:valueCheckbox="originDataUpdate.input.nationalPensionDeduction" />
+                            v-model:valueCheckbox="originDataUpdate.input.nationalPensionDeduction" :disabled="true"/>
                         <checkbox-basic size="14px" label="건강보험" class="check-box-tab1"
-                            v-model:valueCheckbox="originDataUpdate.input.healthInsuranceDeduction" />
+                            v-model:valueCheckbox="originDataUpdate.input.healthInsuranceDeduction" :disabled="true"/>
                         <checkbox-basic size="14px" label="고용보험" class="check-box-tab1"
                             v-model:valueCheckbox="originDataUpdate.input.employeementInsuranceDeduction" />
                         <div class="pr-5 pl-10">
@@ -90,9 +90,9 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
-                            <number-box width="170px" class="mr-5" :min="0"
+                            <number-box width="170px" class="mr-5" 
                                 v-model:valueInput="originDataUpdate.input.workingDays"
-                                @changeInput="onChangeWorkingDays" />
+                                @changeInput="onChangeWorkingDays" :min="1" :max="31"/>
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>

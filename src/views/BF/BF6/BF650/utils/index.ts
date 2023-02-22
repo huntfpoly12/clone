@@ -7,7 +7,7 @@ export const dataSearchUtils = {
     "companyName": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
-    "excludeCancel": false,
+    "excludeCancel": true,
     "paymentYear": parseInt(dayjs().format('YYYY')),
     "paymentMonth": parseInt(dayjs().format('MM')),
 }
