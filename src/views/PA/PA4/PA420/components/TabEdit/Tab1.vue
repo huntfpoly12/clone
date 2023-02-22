@@ -1,6 +1,6 @@
 <template>
     <standard-form class="modal-add">
-        <a-row :gutter="16">
+        <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
                   <a-tag :color="dataGet.retirementType == 2 ? 'green' : 'red'">{{
