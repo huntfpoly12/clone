@@ -77,7 +77,7 @@
                     }} 원
                 </div>
                 <template
-                    v-for="(value, index) in dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements">
+                    v-for="(value, index) in dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements" :key="index">
                     <div class="d-flex mb-5">
                         <default-text-box width="18%" class="mr-5" placeholder="연금계좌취급자"
                             v-model:valueInput="value.pensionAccountHolder" />
@@ -189,7 +189,7 @@
                 </a-form-item>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">세액계산</div>
+                <div class="header-text-2 mb-10">이연퇴직소득세액계산</div>
                 <a-form-item label="신고대상세액">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
@@ -208,7 +208,7 @@
                     }}
                     원)</div>
                 <template
-                    v-for="(value, index) in dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements">
+                    v-for="(value, index) in dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements" :key="index">
                     <div class="d-flex mb-5">
                         <default-text-box width="19%" class="mr-5" placeholder="연금계좌취급자"
                             v-model:valueInput="value.pensionAccountHolder" disabled="true" />
@@ -230,7 +230,7 @@
                         <span class="pl-5 pr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>
-                                = [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]
+                              = [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]
                             </template>
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                         </a-tooltip>
@@ -238,7 +238,7 @@
                 </a-form-item>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">세액계산</div>
+                <div class="header-text-2 mb-10">납부명세(차감원천징수세액)</div>
                 <a-form-item label="소득세">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
