@@ -216,7 +216,7 @@ export default defineComponent({
               // filter 일용 employee
             arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10 && !props.listEmployeeexist.includes(element.employeeId))
           // if it is 일용직사원 
-          } else (!retirementIncome1.value) {
+          } else {
             arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20 && !props.listEmployeeexist.includes(element.employeeId))
                
           } 
