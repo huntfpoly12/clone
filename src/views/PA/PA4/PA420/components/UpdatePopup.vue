@@ -12,7 +12,7 @@
                 <keep-alive>
                     <template v-if="step === 0">
                         <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
-                            :actionNextStep="valueNextStep" @nextPage="step++" />
+                            :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
                     </template>
                 </keep-alive>
                 <keep-alive>
@@ -44,7 +44,7 @@ import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import dayjs from "dayjs";
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -65,7 +65,9 @@ export default defineComponent({
     components: {
         Tab1, Tab2, Tab3
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
         const step = ref(0)
         const valueNextStep = ref(0)
         const dayValue = ref(1)
@@ -83,6 +85,12 @@ export default defineComponent({
             processKey: props.processKey,
             incomeId: 0
         })
+
+        store.dispatch('common/getListEmployee', {
+            companyId: companyId,
+            imputedYear: globalYear,
+        })
+        const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
         // =========================  GRAPQL =================================================
         const {
             mutate,
@@ -222,6 +230,7 @@ export default defineComponent({
             statusModal,
             dataDetailValue,
             valueNextStep,
+            arrayEmploySelect
         }
     },
 })
