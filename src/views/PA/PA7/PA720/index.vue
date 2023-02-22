@@ -229,8 +229,8 @@
         </div>
       </a-col>
     </a-row>
+    <!-- {{ processKeyPA720 }} processKeyPA720 <br /> -->
     <!-- {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
-    {{ processKeyPA720 }} processKeyPA720 <br />
     {{ compareType2() }} compareType2() <br />
     {{ compareType1() }} compareType1() <br />
     {{ compareType }} compareType <br />
@@ -449,6 +449,7 @@ export default defineComponent({
       incomeProcessExtrasParam.imputedYear = newVal;
       isRunOnce.value = true;
       store.commit('common/processKeyPA720', newVal);
+      resetForm();
     });
 
     // -----------------change income process extra status------------------------
@@ -487,7 +488,7 @@ export default defineComponent({
       resetForm();
       columnData.value[0]['month_' + emit.imputedMonth] = emit;
       isColumnData.value = true;
-      columnData.value[0]['month_' + emit.imputedMonth].status = 10;
+      // columnData.value[0]['month_' + emit.imputedMonth].status = 10;
     };
     const onCopyDone = () => {
       setTimeout(() => refetchIncomeProcessExtras(), 100);
@@ -516,7 +517,6 @@ export default defineComponent({
     };
     //function common
     const resetForm = async () => {
-      //Reset form tax
       store.commit('common/formPA720', dataActionUtilsPA720.value);
       store.commit('common/formEditPA720', formPA720.value);
       resetFormNum.value++;
@@ -532,7 +532,6 @@ export default defineComponent({
     const delNewRow = async () => {
       await resetForm();
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
-      // taxPayRef.value.dataSourceDetail = newArr;
       store.state.common.isNewRowPA720 = false;
       compareType.value = 2;
     };
