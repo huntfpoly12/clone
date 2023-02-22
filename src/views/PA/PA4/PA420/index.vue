@@ -3,16 +3,6 @@
     <div id="pa-420">
         <div class="page-content">
             <a-row>
-                <a-col :span="2" class="total-user">
-                    <div>
-                        <span>{{ dataSource.length }}</span>
-                        <br>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" style="width: 39px;" />
-                    </div>
-                </a-col>
                 <a-col :span="24" class="mt-10">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -30,7 +20,7 @@
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth)">
                                     <colorful-badge :value="data.data.month1.status"
                                         :year="data.data.month1.paymentYear" :month="data.data.month1.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 1"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 1"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
@@ -42,7 +32,7 @@
                                     @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth)">
                                     <colorful-badge :value="data.data.month2.status"
                                         :year="data.data.month2.paymentYear" :month="data.data.month2.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 2"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 2"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
@@ -54,7 +44,7 @@
                                     @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth)">
                                     <colorful-badge :value="data.data.month3.status"
                                         :year="data.data.month3.paymentYear" :month="data.data.month3.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 3"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 3"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
@@ -66,7 +56,7 @@
                                     @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth)">
                                     <colorful-badge :value="data.data.month4.status"
                                         :year="data.data.month4.paymentYear" :month="data.data.month4.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 4"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 4"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
@@ -78,7 +68,7 @@
                                     @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth)">
                                     <colorful-badge :value="data.data.month5.status"
                                         :year="data.data.month5.paymentYear" :month="data.data.month5.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 5"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 5"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
@@ -90,7 +80,7 @@
                                     @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth)">
                                     <colorful-badge :value="data.data.month6.status"
                                         :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 6"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 6"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
@@ -102,7 +92,7 @@
                                     @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth)">
                                     <colorful-badge :value="data.data.month7.status"
                                         :year="data.data.month7.paymentYear" :month="data.data.month7.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 7"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 7"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
@@ -114,7 +104,7 @@
                                     @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth)">
                                     <colorful-badge :value="data.data.month8.status"
                                         :year="data.data.month8.paymentYear" :month="data.data.month8.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 8"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 8"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
@@ -126,7 +116,7 @@
                                     @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth)">
                                     <colorful-badge :value="data.data.month9.status"
                                         :year="data.data.month9.paymentYear" :month="data.data.month9.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 9"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 9"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
@@ -138,7 +128,7 @@
                                     @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth)">
                                     <colorful-badge :value="data.data.month10.status"
                                         :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 10"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 10"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
@@ -150,7 +140,7 @@
                                     @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth)">
                                     <colorful-badge :value="data.data.month11.status"
                                         :year="data.data.month11.paymentYear" :month="data.data.month11.paymentMonth" 
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 11"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 11"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
@@ -162,7 +152,7 @@
                                     @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth)">
                                     <colorful-badge :value="data.data.month12.status"
                                         :year="data.data.month12.paymentYear" :month="data.data.month12.paymentMonth"
-                                        :isUnder="dataCallTableSmall.processKey.imputedMonth == 12"
+                                        :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 12"
                                         />
                                 </div>
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
@@ -263,7 +253,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail :dataCallTableDetail="dataCallTableSmall" :statusButton="statusButton"
+                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
                     :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
@@ -309,34 +299,27 @@ export default defineComponent({
         const modalCopy = ref<boolean>(false);
         const dataModalCopy: any = ref()
         const globalYear = computed(() => store.state.settings.globalYear)
-        const dataGetValueTable = reactive({
-            companyId: companyId,
-            imputedYear: globalYear,
-            // imputedMonth: dayjs().month(),
-        })
-        const dataCallTableSmall = reactive({
+
+        let valueCallApiGetEmployeeBusiness = ref({
             companyId: companyId,
             processKey: {
-                imputedYear: null,
-                imputedMonth: null,
-                paymentYear: null,
-                paymentMonth: null,
-            }
-        })
-        let valueCallApiGetEmployeeBusiness = reactive({
-            companyId: companyId,
-            processKey: {
-                imputedYear: globalYear.value,
+                imputedYear: globalYear,
                 imputedMonth: dayjs().month() + 1,
-                paymentYear: globalYear.value,
+                paymentYear: globalYear,
                 paymentMonth: dayjs().month() + 1
             }
         })
+
+        console.log(valueCallApiGetEmployeeBusiness)
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================
         // API QUERY TABLE BIG
-        const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessRetirements, dataGetValueTable, () => ({
-            enabled: trigger.value,
+        const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessRetirements, {
+            companyId: companyId,
+            imputedYear: globalYear,
+            // imputedMonth: dayjs().month(),
+        }, () => ({
+            //enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         resIncomeProcessBusinesses(res => {
@@ -390,11 +373,12 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
+               
                     if (val.imputedMonth == (dayjs().month() + 1)) {
-                        dataCallTableSmall.processKey.imputedMonth = val.imputedMonth
-                        dataCallTableSmall.processKey.imputedYear = val.imputedYear
-                        dataCallTableSmall.processKey.paymentMonth = val.paymentMonth
-                        dataCallTableSmall.processKey.paymentYear = val.paymentYear
+                      valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = val.imputedMonth
+                      valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = val.imputedYear
+                      valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = val.paymentMonth
+                      valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = val.paymentYear
                         statusButton.value = val.status
                     }
                 })
@@ -404,15 +388,10 @@ export default defineComponent({
         })
         // ================FUNCTION============================================   
         const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any) => {
-            valueCallApiGetEmployeeBusiness.processKey.imputedMonth = imputedMonth
-            valueCallApiGetEmployeeBusiness.processKey.imputedYear = imputedYear
-            valueCallApiGetEmployeeBusiness.processKey.paymentYear = paymentYear
-            valueCallApiGetEmployeeBusiness.processKey.paymentMonth = paymentMonth
-
-            dataCallTableSmall.processKey.imputedMonth = imputedMonth
-            dataCallTableSmall.processKey.imputedYear = imputedYear
-            dataCallTableSmall.processKey.paymentYear = paymentYear
-            dataCallTableSmall.processKey.paymentMonth = paymentMonth
+            valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = imputedMonth
+            valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = imputedYear
+            valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = paymentYear
+            valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = paymentMonth
         }
         const saving = () => {
             actionSave.value++;
@@ -426,21 +405,21 @@ export default defineComponent({
             modalCopy.value = true
         }
       const dataAddIncomeProcess = (data: any) => {
-          dataCallTableSmall.processKey = {
+        valueCallApiGetEmployeeBusiness.value.processKey = {
             imputedMonth : data.imputedMonth,
             imputedYear : data.imputedYear,
             paymentMonth : data.paymentMonth,
             paymentYear : data.paymentYear,
           }
           dataSource.value[0]['month' + data.imputedMonth] = data
-          dataSource.value[0]['month' + data.imputedMonth].status = 2132
+          dataSource.value[0]['month' + data.imputedMonth].status = 10
         }
         const actionCopySuccess = () => {
             modalCopy.value = false
             
         }
         return {
-            dataCallTableSmall, modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,
+            modalCopy, actionSave, statusButton, valueCallApiGetEmployeeBusiness, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy,
             createdDone, addMonth, saving, showDetailSelected, actionCopySuccess, dataAddIncomeProcess
         };
     },

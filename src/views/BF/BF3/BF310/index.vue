@@ -126,7 +126,7 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items @change="changePage" />
                 </div>
-                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" @onUpdate="onUpdate" :data="idSubRequest" />
+                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" @onUpdate="trigger = true" :data="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
             </div>
@@ -239,11 +239,6 @@ export default defineComponent({
             trigger.value = true;
             // refetchData();
         }
-        const onUpdate = () => {
-            console.log(1);
-            
-            trigger.value = true;
-        }
         return {
             loading,
             move_column,
@@ -262,7 +257,7 @@ export default defineComponent({
             actionSearch,
             onChangePage,
             dayjs,
-            onUpdate,
+            trigger,
         }
     },
 
