@@ -211,17 +211,15 @@ export default defineComponent({
         }
 
       const openModalAdd = () => {
-          // if is 사원 and retirementType is 중도정산
-          if (retirementIncome1.value && dataForm.input.retirementType == 2) {
+          // if is 사원 
+          if (retirementIncome1.value) {
               // filter 일용 employee
             arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10 && !props.listEmployeeexist.includes(element.employeeId))
-          // if it is 일용직사원 and retirementType is 중도정산    
-          } else if(!retirementIncome1.value && dataForm.input.retirementType == 2) {
+          // if it is 일용직사원 
+          } else (!retirementIncome1.value) {
             arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20 && !props.listEmployeeexist.includes(element.employeeId))
-          // if it is 퇴직소득(퇴직자)       
-          } else {
-              
-          }
+               
+          } 
           modalStatusAccept.value = true
           modalOption.value = false
         }
