@@ -238,6 +238,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
+                <!-- {{ processKeyPA620 }} processKeyPA620 <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
                     @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
@@ -283,7 +284,8 @@ export default defineComponent({
         const originData = reactive({ ...origindata, rows: per_page });
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalYear = computed(() => store.state.settings.globalYear);
+        const processKeyPA620 = computed(() => store.state.common.processKeyPA620);
         const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -449,7 +451,7 @@ export default defineComponent({
 
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
-            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,
+            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620
         };
     },
 });
