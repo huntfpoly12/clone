@@ -88,7 +88,7 @@
                                     <a-col :span="9">
                                         <a-form-item label="상 호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
-                                            <default-text-box v-model:valueInput="formState.companyName" width="220"
+                                            <default-text-box v-model:valueInput="formState.content.company.name" width="220"
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyName" />
                                         </a-form-item>
@@ -436,8 +436,8 @@ export default defineComponent({
         };
         // watch event modal popup
         watch(() => props.modalStatus, (newValue, old) => {
-            trigger.value = true;
             if (newValue) {
+                trigger.value = true;
                 visible.value = newValue;
                 dataQuery.value = { id: props.data };
                 Object.assign(formState, initialFormState);
@@ -561,6 +561,7 @@ export default defineComponent({
             }
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            emit("onUpdate", true)
         });
         onError((error) => {
             notification('error', error.message)
@@ -582,6 +583,7 @@ export default defineComponent({
                 let newObj = JSON.parse(JSON.stringify(dataSource.value));
                 newObj.map((item: any) => {
                     delete item.rowIndex;
+
                     delete item.dataImg;
                     if (item?.registrationCardFileStorageId?.length < 1) {
                         delete item.registrationCardFileStorageId;
