@@ -2,23 +2,22 @@
     <action-header title="기타소득자등록" @actionSave="actionSave($event)" :buttonDelete="false" />
     <div id="pa-710">
         <div class="page-content">
-            <a-row gutter="12">
-                <a-col span="3" class="total-user">
+            <a-row>
+                <a-col span="2" class="total-user">
                     <div>
                         <span>{{ listEmployeeExtra.length }}</span>
                         <br>
                         <span>전체</span>
                     </div>
                     <div>
-                        <i class="dx-icon-user"></i>
+                        <img src="@/assets/images/user.svg" style="width: 39px;" />
                     </div>
                 </a-col>
-                <a-col span="21">
-                </a-col>
+                <a-col span="22"></a-col>
                 <a-col span="16" class="custom-layout">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
-                            :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeId"
+                            :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
@@ -31,7 +30,7 @@
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
-                            <template #button-history style="border-color: #ddd;">
+                            <template #button-history>
                                 <DxButton icon="plus">
                                     <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
                                 </DxButton>
@@ -72,12 +71,12 @@
                                 </div>
                             </template>
                             <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeCode"/>
-                            <template #grade-cell="{ data }" class="custom-action">
+                            <template #grade-cell="{ data }">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
                             </template>
                             <DxColumn :width="50" cell-template="pupop" />
-                            <template #pupop="{ data }" class="custom-action">
+                            <template #pupop="{ data }">
                                 <div class="custom-action">
                                     <a-space :size="10">
                                         <DeleteOutlined v-if="data.data.deletable"
@@ -266,6 +265,7 @@ export default defineComponent({
                 formState.value.residentId = data.residentId
                 formState.value.email = data.email
                 formState.value.employeeId = data.employeeId
+                formState.value.employeeIdHide = data.employeeId // forcus row key
                 formState.value.incomeTypeCode = data.incomeTypeCode
                 formState.value.incomeTypeName = data.incomeTypeName
                 formState.value.deletable = data.deletable
@@ -324,22 +324,23 @@ export default defineComponent({
                 // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
+                let input = {
+                    name: formState.value.name,
+                    foreigner: formState.value.foreigner,
+                    nationality: formState.value.nationality,
+                    nationalityCode: formState.value.nationalityCode,
+                    stayQualification: formState.value.stayQualification,
+                    residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                    email: formState.value.email,
+                    incomeTypeName: formState.value.incomeTypeName,
+                }
                 if (statusFormUpdate.value) {
                     let dataUpdate = {
                         companyId: companyId,
                         imputedYear: globalYear.value,
                         employeeId: parseInt(formState.value.employeeId),
                         incomeTypeCode: formState.value.incomeTypeCode,
-                        input: {
-                            name: formState.value.name,
-                            foreigner: formState.value.foreigner,
-                            nationality: formState.value.nationality,
-                            nationalityCode: formState.value.nationalityCode,
-                            stayQualification: formState.value.stayQualification,
-                            residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: formState.value.email,
-                            incomeTypeName: formState.value.incomeTypeName,
-                        }
+                        input: { ...input }
                     };
                     updateEmployeeExtra(dataUpdate);
                 } else {
@@ -349,14 +350,7 @@ export default defineComponent({
                         input: {
                             employeeId: parseInt(formState.value.employeeId),
                             incomeTypeCode: formState.value.incomeTypeCode,
-                            name: formState.value.name,
-                            foreigner: formState.value.foreigner,
-                            nationality: formState.value.nationality,
-                            nationalityCode: formState.value.nationalityCode,
-                            stayQualification: formState.value.stayQualification,
-                            residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                            email: formState.value.email,
-                            incomeTypeName: formState.value.incomeTypeName,
+                            ...input,
                         },
                     };
                     createEmployeeExtra(dataCreate);
@@ -417,16 +411,12 @@ export default defineComponent({
                     statusRemoveRow.value = false;
                     listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
                     formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    setTimeout(() => {
-                        let a = document.body.querySelectorAll('[aria-rowindex]');
-                        (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                    }, 100);
                     resetFormNum.value++;
-                    focusedRowKey.value = null;
+                    focusedRowKey.value = 'PA710';
                     statusFormUpdate.value = false;
                 }
             } else {
-                notification('error', "nhập vàooooo")
+                modalStatus.value = true;
             }
         }
 
@@ -484,9 +474,16 @@ export default defineComponent({
 
         // ================WATCHING============================================
         watch(result, (value) => {
+            trigger.value = false;
             if (value) {
-                listEmployeeExtra.value = value.getEmployeeExtras
-                trigger.value = false;
+                listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
+                    return {
+                        ...value,
+                        employeeIdHide: value.employeeId
+                    }
+                })
+                // listEmployeeExtra.value = value.getEmployeeExtras
+                
             }
         });
         watch(() => formState.value.foreigner, (newValue) => {

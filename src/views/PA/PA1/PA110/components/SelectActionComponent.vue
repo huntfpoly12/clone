@@ -160,7 +160,7 @@ export default defineComponent({
                     store.state.common.actionAddItem = true;
                     store.state.common.incomeId = null;
                     store.state.common.focusedRowKey = null;
-                    store.state.common.actionResetForm++;
+                    // store.state.common.actionResetForm++;
                 // }
             } else {
                 modalStatusAdd.value = true

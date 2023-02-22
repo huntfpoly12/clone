@@ -4,7 +4,7 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month }}
+                    귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
                 </div>
                 <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
             </div>

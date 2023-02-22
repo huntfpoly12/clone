@@ -107,7 +107,7 @@
                         </span>
                     </template>
                     <DxColumn :width="80" cell-template="pupop" type="buttons" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
                                 <a-tooltip placement="top" color="black">
@@ -126,7 +126,7 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items @change="changePage" />
                 </div>
-                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" :data="idSubRequest" />
+                <BF310Popup :modalStatus="modalStatus" @closePopup="modalStatus = false" @onUpdate="onUpdate" :data="idSubRequest" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idSubRequest" typeHistory="bf-310" />
             </div>
@@ -215,7 +215,7 @@ export default defineComponent({
             originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
-            refetchData()
+            // refetchData()
             actionSearch.value = false
         }
         const changePage = (e: any) => {
@@ -224,20 +224,25 @@ export default defineComponent({
             originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
-            refetchData()
+            // refetchData()
         }
         watch(result, (value) => {
+            trigger.value = false;
             if (value) {
                 rowTable.value = value.searchSubscriptionRequests.totalCount
                 dataSource.value = value.searchSubscriptionRequests.datas
-                trigger.value = false;
             }
         });
         // Get api when page is changed
         const onChangePage = (page: any, pageSize: any) => {
             originData.page = page;
             trigger.value = true;
-            refetchData();
+            // refetchData();
+        }
+        const onUpdate = () => {
+            console.log(1);
+            
+            trigger.value = true;
         }
         return {
             loading,
@@ -256,7 +261,8 @@ export default defineComponent({
             onExporting,
             actionSearch,
             onChangePage,
-            dayjs
+            dayjs,
+            onUpdate,
         }
     },
 

@@ -82,7 +82,7 @@
                 @mouseleave="defaultVisible = false"
               />
             </template>
-            <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
+            <DxColumn caption="주민등록번호" cell-template="residentId" width="110" />
             <template #residentId="{ data }">
               <div v-if="data.data.residentId?.length == 14">
                 <a-tooltip placement="top" v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32" key="black">
@@ -98,7 +98,7 @@
                 </a-tooltip>
               </div>
             </template>
-            <DxColumn caption="비고" cell-template="grade-cell" />
+            <DxColumn caption="비고" cell-template="grade-cell" width="410" />
             <template #grade-cell="{ data }">
               <div>
                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
@@ -332,11 +332,11 @@ export default defineComponent({
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
         if (!compareType1()) {
-          // c onsole.log(`output->type = 1 loi`);
+          console.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           return;
         }
-        // c onsole.log(`output->type = 1 ko loi`, compareType1());
+        console.log(`output->type = 1 ko loi`, compareType1());
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
@@ -347,7 +347,7 @@ export default defineComponent({
         isFirstWeb.value = false;
         return;
       }
-      // c onsole.log(`output->an nut add lan dau tien`);
+      console.log(`output->an nut add lan dau tien`);
       isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       setTimeout(() => {
@@ -387,17 +387,18 @@ export default defineComponent({
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          // c onsole.log(`output =? luu loi`, isFirstWeb.value);
+          console.log(`output =? luu loi`, isFirstWeb.value);
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
+            isFirstWeb.value = false;
           }
           focusedRowKey.value = tabCurrent.value == 2 ? rowKeyTab2PA120.value : initFormStateTabPA120.value.employeeId;
           if (compareType.value == 1) {
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          // c onsole.log(`output =? luu ko loi`);
+          console.log(`output =? luu ko loi`);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           // focusedRowKey.value = idRow.value;
@@ -410,7 +411,7 @@ export default defineComponent({
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            // c onsole.log(`output-> toi dang o so 1`);
+            console.log(`output-> toi dang o so 1`);
             addNewRow();
             setTimeout(() => {
               focusedRowKey.value = initFormStateTabPA120.value.employeeId;
@@ -420,7 +421,7 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          // c onsole.log(`output-> toi dang o so 2 `);
+          console.log(`output-> toi dang o so 2 `);
           store.commit('common/initFormTab2PA120', initFormStateTab2);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
@@ -435,7 +436,7 @@ export default defineComponent({
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          // c onsole.log(`output->chuyen row bth`);
+          console.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -443,19 +444,19 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        // c onsole.log(`output->co new row, khac nhau`);
+        console.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        // c onsole.log(`output->row khac`);
+        console.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        // c onsole.log(`output->chuyen row bth. ko co newrow`);
+        console.log(`output->chuyen row bth. ko co newrow`);
         idRowEdit.value = data.data.employeeId;
         actionChangeComponent.value = 2;
       }

@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    {{ formPA720 }} formPA720 <br/>
-    {{ formEditPA720 }} formEditPA720 <br/>
+    <!-- {{ formPA720 }} formPA720 <br/>
+    {{ formEditPA720 }} formEditPA720 <br/> -->
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
