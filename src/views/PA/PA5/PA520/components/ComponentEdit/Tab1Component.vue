@@ -59,8 +59,15 @@
                 <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
             <a-form-item label="주소정근무시간" class="label-red" label-align="right">
-                <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
-                    placeholder="숫자만 입력 가능" />
+              <div class="input-text">
+                <number-box :required="true" :spinButtons="true" v-model:valueInput="dataEdited.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                      급여명세서 및 4대보험 취득신고시 이용됩니다.
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
@@ -255,6 +262,11 @@ export default defineComponent({
         watch(dataEdited, () => {
             indexChange.value++
         }, { deep: true })
+
+        // convert dataCreated.name to uppercase
+        watch(()=> dataEdited.name,(newVal)=> {
+          dataEdited.name = newVal.toUpperCase();
+        },{deep: true})
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;

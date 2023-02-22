@@ -2,10 +2,19 @@
     <a-spin :spinning="loadingCreated">
         <standard-form action="" name="add-page-210">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
+              <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
                     placeholder="숫자만 입력 가능" />
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                        최초 저장된 이후 수정 불가
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
+              
                 <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                     placeholder="한글,영문(대문자) 입력 가능" />
             </a-form-item>
@@ -53,8 +62,15 @@
                 <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
             </a-form-item>
             <a-form-item label="주소정근무시간" label-align="right" class="label-red">
-                <text-number-box width="200px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
-                    placeholder="숫자만 입력 가능" />
+              <div class="input-text">
+                <number-box :required="true" :spinButtons="true" v-model:valueInput="dataCreated.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                      급여명세서 및 4대보험 취득신고시 이용됩니다.
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
@@ -208,6 +224,10 @@ export default defineComponent({
             document.getElementById('action-save')?.click()
         }, { deep: true });
 
+        // convert dataCreated.name to uppercase
+        watch(()=> dataCreated.name,(newVal)=> {
+          dataCreated.name = newVal.toUpperCase();
+        },{deep: true})
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
