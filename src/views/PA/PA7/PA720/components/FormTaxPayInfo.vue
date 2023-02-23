@@ -84,14 +84,13 @@
             <b>{{
               $filters.formatCurrency(
                 formPA720.input.paymentAmount -
-                formPA720.input.requiredExpenses -
                 formPA720.input.withholdingIncomeTax -
                 formPA720.input.withholdingLocalIncomeTax
               )
             }}</b>
             원
             <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-            <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 필요경비 - 공제합계</span>
+            <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 -  공제합계</span>
           </div>
         </div>
       </a-col>
@@ -323,8 +322,8 @@ export default defineComponent({
       incomeAmount.value = objIncomeAmount;
       formPA720.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
-      formPA720.value.input.actualPayment = objIncomeTax.localIncomeTax;
-      formPA720.value.input.incomePayment = objIncomeTax.localIncomeTax;
+      formPA720.value.input.incomePayment = formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses;
+      formPA720.value.input.actualPayment = formPA720.value.input.paymentAmount - formPA720.value.input.withholdingIncomeTax - formPA720.value.input.withholdingLocalIncomeTax;
     };
     const updateValue = (value: any) => {
       formPA720.value.input.taxRate = value.value;

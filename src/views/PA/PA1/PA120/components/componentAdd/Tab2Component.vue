@@ -189,6 +189,8 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from "@vuepic/vue-datepicker";
+import queryCM130 from "@/graphql/queries/CM/CM130/index";
+
 type RangeValue = [Dayjs, Dayjs];
 export default defineComponent({
   components: {Datepicker},
@@ -497,6 +499,23 @@ export default defineComponent({
     setTimeout(() => {
       store.state.common.isCalculateEditPA120 = true;
     }, 1000);
+    // get config
+    const withholdingTrigger = ref(true);
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    const { result: resultConfig} = useQuery(
+        queryCM130.getWithholdingConfig,
+        dataQuery,
+        () => ({
+          enabled: withholdingTrigger.value,
+          fetchPolicy: "no-cache",
+        })
+    );
+    watch(resultConfig,(newVal)=> {
+      if(newVal){
+        formStateTab2.insuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
+        withholdingTrigger.value=false;
+      }
+    })
     return {
       formStateTab2,
       loading1,
