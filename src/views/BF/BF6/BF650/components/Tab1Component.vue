@@ -91,7 +91,7 @@
                         format="yyyy-MM-dd hh:mm" />
                     <DxColumn caption="제작현황" cell-template="productionStatus" />
                     <template #productionStatus="{ data }">
-                        <GetStatusTable :data="data.data" @productionStatusData="productionStatusData" />
+                        <GetStatusTable :data="data.data" @productionStatusData="productionStatusData()" />
                     </template>
                     <DxSummary>
                         <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
