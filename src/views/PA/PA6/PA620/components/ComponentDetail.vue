@@ -5,7 +5,7 @@
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disable="statusButton==30||statusButton==40"/>
         </div>
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
@@ -790,14 +790,12 @@ export default defineComponent({
                   input: createData.input
                 })
             } else {
-                let editData = JSON.parse(JSON.stringify(dataAction.value));
-                delete params.input.incomeId;
                 delete params.input.paymentDay;
                 delete params.input.employeeId;
                 delete params.input.incomeTypeCode;
                 let inputEdit = {
                     ...dataCallApiDetailEdit,
-                    input: {...editData.input}
+                    input: {...params.input}
                 }
                 actionEdit(inputEdit)
             }

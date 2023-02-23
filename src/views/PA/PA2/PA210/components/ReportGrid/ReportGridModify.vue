@@ -6,7 +6,7 @@
         <div class="action-right">
           <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
           <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
+          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
         </div>
         <div class="table-detail">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -16,7 +16,7 @@
             <DxScrolling mode="standard" show-scrollbar="always"/>
             <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
             <template #status="{ data }">
-              <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
+              <process-status-tooltip :valueStatus="10" :height="32"
                           :dataRow="data.data" />
             </template>
             <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
@@ -80,9 +80,10 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useMutation} from "@vue/apollo-composable";
+import { useMutation, useQuery} from "@vue/apollo-composable";
 import { mergeCellsModified, cellsSettingModified, dataModified ,calculateWithholdingStatusReportModified,inputPositionModified,clearAllCellValue} from "./GridsettingModify"
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
+import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
@@ -152,6 +153,8 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(props.dataReport);
+    const trigger = ref<boolean>(false)
+    const originData = ref()
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -163,14 +166,55 @@ export default defineComponent({
       loadNew()
     })
 
+      // Get IncomesForTaxWithholdingStatusReport
+      const {
+          refetch: refetchData,
+          result,
+          loading,
+      } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
+          enabled: trigger.value,
+          fetchPolicy: "no-cache",
+    }));
     const actionConfirmLoadNew = ()=>{
       confirmLoadNewStatus.value = true
     }
-    
+
+    watch(result, (data) => {
+      if (data) {
+        // make new format for data
+        const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
+          return {
+            code: item.code,
+            numberOfPeople: item.numberOfPeople,
+            totalPayment: item.totalPayment,
+            collectedIncomeTax: item.collectedIncomeTax,
+          }
+        });
+        calculateWithholdingStatusReportModified(wrapper,newData)
+      }
+    })
     // The above code is used to load the data from the database to the table.
     const loadNew = () => {
       clearAllCellValue(wrapper)
-      let hot  = wrapper.value?.hotInstance; 
+      // call api to set modified value
+      originData.value = {
+          companyId: companyId,
+          input:{
+            imputedYear: dataSource.value[0].imputedYear,
+            imputedMonth: dataSource.value[0].imputedMonth,
+            paymentYear: dataSource.value[0].paymentYear,
+            paymentMonth: dataSource.value[0].paymentMonth,
+            reportType: dataSource.value[0].reportType,
+            index: dataSource.value[0].index,
+            paymentType: 1,
+            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
+          },
+      }
+      trigger.value = true;
+      refetchData()
+
+      let hot = wrapper.value?.hotInstance; 
+      //Put in a loop to set data into each cell
       dataSource.value[0]?.statementAndAmountOfTaxPaids.forEach((data: any) => {
           if (!data.code) {
             return; 
