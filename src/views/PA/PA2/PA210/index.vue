@@ -158,14 +158,14 @@
             </DxDataGrid>
         </a-spin>
     </div>
-    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :dataPopupAdd="dataPopupAdd" />
+    <AddPA210Popup :modalStatus="modalAddNewStatus" @closePopup="closePopupAddNew" :dataPopupAdd="dataPopupAdd" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
-    <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport"
+    <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="closeReportGridEdit" :dataReport="dataReport"
         :key="resetComponentEdit" />
-    <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
+    <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="closeReportGridModify"
     :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
@@ -289,8 +289,23 @@ export default defineComponent({
 
         // ===================FUNCTION===============================
         const openAddNewModal = () => {
-            modalAddNewStatus.value = true;
+          modalAddNewStatus.value = true;
         }
+        const closePopupAddNew = () => {
+          modalAddNewStatus.value = false;
+          refetchData()
+        }
+
+        const closeReportGridEdit = () => {
+          statusReportGridEdit.value = false;
+          refetchData()
+        }
+
+        const closeReportGridModify = () => {
+          statusReportGridModify.value = false;
+          refetchData()
+        }
+
         const openModalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
@@ -370,11 +385,13 @@ export default defineComponent({
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
+            closePopupAddNew,closeReportGridEdit,closeReportGridModify,
             editRow, statusReportGridEdit, dataReport, statusReportGridModify,
             dataPopup,
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
+            
         };
     },
 });

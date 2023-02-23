@@ -306,7 +306,7 @@ export default defineComponent({
         
     doneChangeStatus(() => {
         notification('success', `업부상태 변경되었습니다!`)
-        setModalVisible()
+        emit('isDoneReport', false)
     })
     errChangeStatus((error) => {
         notification('error', error.message)
