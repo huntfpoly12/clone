@@ -28,14 +28,14 @@
         <button class="button-open-tab"
             @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
     </div>
-    <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""

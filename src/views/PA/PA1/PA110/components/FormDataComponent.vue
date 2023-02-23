@@ -1,5 +1,5 @@
 <template>
-    <div id="pa-110">
+    <div id="pa-110" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
         <a-spin :spinning="loading || loadingGetEmployeeWage" size="large">
             <a-row class="row-1" :key="countKey">
                 <a-col :span="12">

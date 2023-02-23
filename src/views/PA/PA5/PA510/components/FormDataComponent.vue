@@ -1,6 +1,6 @@
 <template>
-    <standard-form action="" name="add-page-210" style="border: 1px solid #d7d7d7; padding: 10px;">
-        <a-spin :spinning="loading || loadingIncomeWageDaily">
+    <standard-form action="" name="add-page-210" class="formPA510" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
+        <a-spin :spinning="loading || loadingIncomeWageDaily" >
             <a-row :key="countKey">
                 <a-col :span="12" style="padding-right: 10px">
                     <a-form-item label="일용직사원">
@@ -415,14 +415,14 @@ export default defineComponent({
             await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
             await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
             await (dataIncomeWageDaily.value.employee.name = data.name)
-            arrDeduction.value.map((dataRow: any) => {
+            await (arrDeduction.value.map((dataRow: any) => {
                 dataRow.price = 0
                 data.deductionItems?.forEach((val: any) => {
                     if (val.itemCode == dataRow.itemCode) {
                         dataRow.price = val.amount
                     }
                 })
-            })
+            }))
         }, { deep: true })
 
         // Watching the statusRowAdd property of the store.state.common object. If the value of
