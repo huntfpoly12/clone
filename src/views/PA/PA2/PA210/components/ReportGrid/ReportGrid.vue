@@ -239,28 +239,14 @@ export default defineComponent({
 
     onMounted(() => {
       clearAllCellValue(wrapper)
-      originData.value = {
-          companyId: companyId,
-          input:{
-            imputedYear: dataSource.value[0].imputedYear,
-            imputedMonth: dataSource.value[0].imputedMonth,
-            paymentYear: dataSource.value[0].paymentYear,
-            paymentMonth: dataSource.value[0].paymentMonth,
-            reportType: dataSource.value[0].reportType,
-            index: dataSource.value[0].index,
-            paymentType: 1,
-            yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
-          },
-        }
-      trigger.value = true;
-      refetchData()
+      loadNew()
     })
 
     watch(() => props.dataReport,(newValue) => {
       dataSource.value = newValue
     })
     
-    // A hook that is used to fetch data from the server.
+    // Get IncomesForTaxWithholdingStatusReport
     const {
             refetch: refetchData,
             result,
@@ -272,6 +258,7 @@ export default defineComponent({
 
     watch(result, (data) => {
       if (data) {
+        // make new format for data
         const newData = data.getIncomesForTaxWithholdingStatusReport.map((item: any) => {
           return {
             code: item.code,

@@ -147,7 +147,7 @@
                     </a-tooltip>
                 </template>
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
-                <template #pupop="{ data }" class="custom-action">
+                <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center; ">
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
@@ -163,9 +163,9 @@
         typeHistory="pa-210" />
     <PopupPrint :modalStatus="modalPrintStatus" @closePopup="modalPrintStatus = false" :dataCall="dataPopup" />
     <PopupSendEmail :modalStatus="modalSendEmailStatus" @closePopup="modalSendEmailStatus = false" :dataCall="dataPopup" />
-    <ReportGridEdit :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport"
+    <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="statusReportGridEdit = false" :dataReport="dataReport"
         :key="resetComponentEdit" />
-    <ReportGridModify :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
+    <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="statusReportGridModify = false"
     :dataReport="dataReport" :key="resetComponentModify" />
 </template>
 <script lang="ts">
