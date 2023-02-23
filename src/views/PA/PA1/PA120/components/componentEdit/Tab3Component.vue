@@ -15,7 +15,7 @@
                             <DxButton icon="plus" @click="openAddDependent" />
                         </template>
                         <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relation"/>
-                        <template #relation="{ data }" class="custom-action">
+                        <template #relation="{ data }">
                             {{$filters.formatRelation(data.value)}}
                         </template>
                         <DxColumn alignment="left" caption="성명" data-field="name" />
@@ -39,7 +39,7 @@
                         cell-template="householderChange" />
                         <DxColumnFixing :enabled="true"/>
                         <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div class="custom-action">
                                 <a-space :size="10">
                                     <a-tooltip  color="black" placement="top">
@@ -100,7 +100,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="relationSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -109,7 +109,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="womenSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -118,7 +118,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="basicDeductionSummary == 0 ?'': basicDeductionSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -127,7 +127,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="basicDeductionSummary2 == 0 ?'': basicDeductionSummary2"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -137,7 +137,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="descendantSummary == 0 ?'': descendantSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -154,7 +154,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="seniorSummary == 0 ?'': seniorSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -163,7 +163,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="disabledSummary == 0 ?'': disabledSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -172,7 +172,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="womenSummary2 == 0 ?'': womenSummary2"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -181,7 +181,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="singleParentSummary == 0 ?'': singleParentSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>
@@ -190,7 +190,7 @@
                             <text-number-box
                                 width="200px"
                                 :value="maternityAdoptionSummary == 0 ?'': maternityAdoptionSummary"
-                                :readOnly="true"
+                                :disabled="true"
                             />
                             </div>
                         </a-form-item>

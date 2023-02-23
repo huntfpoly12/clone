@@ -13,7 +13,7 @@
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X" @onChange="onChangePresident"
               style="width: 80px"></switch-basic>
             <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
               대표자인 경우 고용보험 제외됩니다. </span>
@@ -110,8 +110,8 @@
         </a-row>
       </standard-form>
     </a-spin>
-    <PopupMessage :modalStatus="presidenStatus" @closePopup="presidenStatus = false" :typeModal="'confirm'"
-      :title="presidentWaring" :content="''" :okText="'확인'"
+    <PopupMessage :modalStatus="presidenStatus" @closePopup="presidenStatus = false" :typeModal="'info'"
+      :title="presidentWaring" :content="''" :okText="'확인'" :isConfirmIcon="false"
       @checkConfirm="presidenStatus = false" />
   </div>
 </template>
@@ -338,11 +338,11 @@ export default defineComponent({
 
     const presidentWaring = "대표자는 고용보험에서 제외됩니다. ( 기존에 선택되어있는 경우 강제로 해지됩니다";
     const presidenStatus = ref(false);
-    watch(() => initFormStateTabPA120.value.president, (newVal) => {
-      if (newVal) {
+    const onChangePresident = (emit: any)=> {
+      if (emit) {
         presidenStatus.value = true;
       }
-    }, { deep: true })
+    }
     return {
       loading,
       formStateTab1,
@@ -360,7 +360,8 @@ export default defineComponent({
       changeTextCountry,
       initFormStateTabPA120,
       presidenStatus,
-      presidentWaring
+      presidentWaring,
+      onChangePresident
     };
   },
 });

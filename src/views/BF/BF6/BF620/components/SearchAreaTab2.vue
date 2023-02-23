@@ -33,7 +33,7 @@
           </a-form-item>
           <div class="mt-5 production-check">
             <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
-              v-model:valueCheckbox="filterBF620.productionStatuses" :size="18"> </CheckboxGroup>
+              v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
       </a-col>
@@ -66,8 +66,9 @@ import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
 import { reportTypeCheckbox, productionStatusesCheckbox } from '../utils/index';
+import CheckboxGroup from './CheckboxGroup.vue';
 export default defineComponent({
-  components: { DxButton },
+  components: { DxButton, CheckboxGroup },
   setup() {
     const store = useStore();
     const filterBF620 = computed(() => store.state.common.filterBF620);
