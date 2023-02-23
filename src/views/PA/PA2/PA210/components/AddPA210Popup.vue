@@ -70,7 +70,7 @@
                 </div>
             </standard-form>
         </a-modal>
-        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false" @isDoneReport="closeAllPopupAdd"
             :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
@@ -288,6 +288,11 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+
+        const closeAllPopupAdd = () => {
+          reportGridStatus.value = false
+          setModalVisible()
+        }
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
         };
@@ -301,7 +306,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent, showTooltipYearMonth
+            focusedRowKey,resetComponent, showTooltipYearMonth,closeAllPopupAdd
         };
     },
 });

@@ -1254,12 +1254,13 @@ export const setValueDataTable = (wrapper: any,code: string, data: any) => {
 
 export const calculateWithholdingStatusReportModified = (wrapper: any,data: any = []) => {
   let cellData = Array()
+  // to distinguish the case of data transmission or no data transmission
   if (data.length > 0) {
     cellData = data
   } else {
     let hot = wrapper.value.hotInstance;
     const arrData = hot.getData()
-  
+    // format data to perform calculations
     for (let index = 0; index < arrData.length; index++) {
       if (index >= 4 && index <= 61 && !arrData[index][4]) {
         cellData.push({
@@ -1271,6 +1272,7 @@ export const calculateWithholdingStatusReportModified = (wrapper: any,data: any 
       }
     }
   }
+  // do the calculation
   const output = WithholdingStatusReport.getWithholdingStatusReport(cellData);
     if (output.incomeWages.length > 0) { // 근로소득 [간이세액(A01), 중도퇴사(A02), 일용근로(A03), 연말정산-합계(A04), 연말정산-분납신청(A05), 연말정산-납부금액(A06), 가감계(A10)]
       output.incomeWages.forEach((item) => {
