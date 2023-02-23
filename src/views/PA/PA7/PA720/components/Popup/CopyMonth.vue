@@ -107,7 +107,7 @@ export default defineComponent({
 
     // ----------set month source default because dependent on the set up before--------------
 
-    const month2 = ref<String>('');
+    const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
     watch(
       () => props.month,
       (val) => {
