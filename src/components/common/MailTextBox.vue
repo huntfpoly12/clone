@@ -34,7 +34,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    placeholder: String,
+    placeholder: {
+      type: String,
+      default: "abc@example.com",
+    },
     readOnly: Boolean,
     nameInput: {
       type: String,

@@ -13,9 +13,9 @@
                 </div>
             </div>
             <div class="text-align-center mt-50">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -26,11 +26,9 @@
 import { defineComponent, watch, ref, computed } from 'vue'
 import notification from "@/utils/notification";
 import { useStore } from 'vuex'
-import { userId } from "@/helpers/commonFunction";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -40,39 +38,35 @@ export default defineComponent({
         data: {
             type: Object,
             default: {}
-        }
+        },
+        emailAddress: String,
     },
     components: {
     },
     setup(props, { emit }) {
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
-        let emailAddress = ref('');
-
+        let emailAddress: any = ref('');
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser.email
-        })
+        watch(() => props.modalStatus, (val) => {
+            if (val) {
+                emailAddress.value = props.emailAddress
+            }
+        });
 
         const {
             mutate: sendEmail,
             onDone: onDoneAdd,
-            onError: errorSendEmail,
-            error,
+            onError: errorSendEmail
         } = useMutation(mutations.sendIncomeWageDailySalaryStatementReportEmail);
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                let variables:any = []
+                let variables: any = []
                 props.data.map((value: any) => {
                     variables.push({
                         senderName: sessionStorage.getItem("username"),
