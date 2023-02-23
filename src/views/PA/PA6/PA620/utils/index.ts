@@ -35,15 +35,8 @@ export const valueDefaultAction = {
 
 import { companyId } from "@/helpers/commonFunction";
 export const dataActionUtils = {
-  companyId: companyId,
-  processKey: {
-    imputedYear: 2022,
-    imputedMonth: 1,
-    paymentYear: 2022,
-    paymentMonth: 1,
-  },
   input: {
-    employeeId: 0,
+    employeeId: null,
     incomeTypeCode: "",
     paymentAmount: 0,
     taxRate: 3,

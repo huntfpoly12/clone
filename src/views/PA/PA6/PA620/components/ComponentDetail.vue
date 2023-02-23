@@ -5,7 +5,7 @@
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" />
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disable="statusButton==30||statusButton==40"/>
         </div>
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
@@ -53,8 +53,19 @@
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                     <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                     <template #tag="{ data }">
-                        <income-type :typeCode="data.data.incomeTypeCode" :typeName="(data.data.employee.name)"
-                            :incomeTypeName="data.data.employee.incomeTypeName" />
+                      <div>
+                        <button style="margin-right: 5px">
+                          {{ data.data.incomeTypeCode }}
+                        </button>
+                        {{ data.data?.employee?.name }}
+                        <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
+                          <template #title v-if="data.data?.employee?.incomeTypeName?.length > 10">
+                            <span>{{ data.data?.employee?.incomeTypeName }}</span>
+                          </template>
+
+                          {{ checkLen(data.data?.employee?.incomeTypeName) }}
+                        </a-tooltip>
+                      </div>
                     </template>
                     <DxColumn width="80px" caption="지급일" data-field="paymentDay" :format="amountFormat"
                         data-type="string" />
@@ -83,6 +94,11 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
             <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
+              <!-- {{ dataAction }} dataAction <br/>
+              {{ dataActionEdit }} dataActionEdit <br/>
+              {{ dataCallApiDetailEdit }} dataCallApiDetailEdit <br/>
+              {{ isNewRow }} isNewRow <br/>
+              {{ compareForm() }} compareForm <br/> -->
                 <a-form-item label="사업소득자" label-align="right">
                     <employ-type-select :arrayValue="arrayEmploySelect"
                         v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
@@ -106,7 +122,7 @@
                                     :disabled="disabledInput || isDisabledForm" />
                             </a-form-item>
                             <a-form-item label="지급액" label-align="right">
-                                <number-box-money :min="0" width="150px" class="mr-5" :disabled="isDisabledForm"
+                                <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || statusButton==30||statusButton==40"
                                     v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" />
                             </a-form-item>
                             <a-form-item label="세율" label-align="right">
@@ -138,10 +154,7 @@
                             </div>
                             <div class="header-text-2 mb-10">
                                 <div>
-                                    공제합계 <b class="ml-5"> {{ ($filters.formatCurrency(dataAction.input.paymentAmount -
-                                        dataAction.input.withholdingIncomeTax -
-                                        dataAction.input.withholdingLocalIncomeTax))
-                                    }}</b>원
+                                  차인지급액 <b class="ml-5"> {{ $filters.formatCurrency(dataAction.input.actualPayment)}}</b>원
                                     <span class="fz-11 ml-10" style="color: gray;">
                                         <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
                                             class="mr-5">
@@ -221,11 +234,11 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const rowTable = ref(0);
         const globalYear = computed(() => store.state.settings.globalYear)
-        const processKey = computed(() => store.getters['common/processKeyPA620']);
         const modalHistory = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         let arrayEmploySelect: any = ref([]);
         let paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
+        const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
         let dataAction: any = ref({...dataActionUtils})
         let dataAddDefaul: any = ref(
           JSON.parse(JSON.stringify(dataActionUtils))
@@ -236,15 +249,16 @@ export default defineComponent({
         })
         let dataTableDetail: any = reactive({
             companyId: companyId,
-            processKey: processKey.value
+            processKey: processKeyPA620.value
         })
         let dataCallApiDetailEdit = reactive({
-            ...dataGetDetailEdit
+            processKey: processKeyPA620.value,
+            companyId: companyId,
+            incomeId:0
         })
         const arrDropDown = [
             ...arrDropDownUtil
           ]
-        const processKeyPA620 = computed(() => store.getters['common/processKeyPA620']);
        
         const focusedRowKey = ref();
         const gridRefName: any = ref();
@@ -252,19 +266,18 @@ export default defineComponent({
         const messageSave = Message.getMessage('COMMON', '501').message;
         const titleModalConfirm = ref(messageSave);
         const popupAddType = ref(1);
-        const dataActionEditInit = ref({});
         const isCompare = ref(false);
         const copyFocusRowKey = ref();
         const oldIncomeId = ref(1);
         const inputDateTax = computed(() => {
             if (!props.isDisabledForm) {
-                return processKey.value.imputedYear + '-' + formatMonth(processKey.value.imputedMonth)
+                return processKeyPA620.value.imputedYear + '-' + formatMonth(processKeyPA620.value.imputedMonth)
             }
             return '';
         })
         const paymentDateTax = computed(() => {
             if (!props.isDisabledForm) {
-                return processKey.value.paymentYear + '-' + formatMonth(processKey.value.paymentMonth)
+                return processKeyPA620.value.paymentYear + '-' + formatMonth(processKeyPA620.value.paymentMonth)
             }
             return '';
         })
@@ -284,18 +297,25 @@ export default defineComponent({
             store.state.common.actionAddRow.dataSource = val;
             //If you change the current year and no data, return the values to empty
             if (isFirstChange.value) {
+                let rowData: any = {};
                 isCompare.value = false;
                 focusedRowKey.value = val[0]?.incomeId;
-                dataAction.value.input.paymentDay = val[0]?.paymentDay ?? '';
-                if(!props.isDisabledForm) {
-                  dataAction.value.input.paymentDay = val[0]?.paymentDay ?? paymentDayPA620.value;
-                }
-                dataAction.value.input.employeeId = val[0]?.employeeId ?? '';
-                dataAction.value.input.incomeTypeCode = val[0]?.incomeTypeCode;
-                dataAction.value.input.paymentAmount = val[0]?.paymentAmount;
-                dataAction.value.input.withholdingIncomeTax = val[0]?.withholdingIncomeTax;
-                dataAction.value.input.withholdingLocalIncomeTax = val[0]?.withholdingLocalIncomeTax;
+                // rowData.paymentDay = val[0]?.paymentDay ?? '';
+                // if(!props.isDisabledForm) {
+                //   rowData.paymentDay = val[0]?.paymentDay ?? paymentDayPA620.value;
+                // }
+                // rowData.employeeId = val[0]?.employeeId ?? '';
+                // rowData.incomeTypeCode = val[0]?.incomeTypeCode;
+                // rowData.paymentAmount = val[0]?.paymentAmount;
+                // rowData.taxRate = val[0]?.taxRate;
+                // rowData.withholdingIncomeTax = val[0]?.withholdingIncomeTax;
+                // rowData.withholdingLocalIncomeTax = val[0]?.withholdingLocalIncomeTax;
+                // console.log(`output->rowData`,rowData)
+                // dataActionEdit.value.input = {...JSON.parse(JSON.stringify(rowData))};
+                // dataAction.value.input = {...rowData};
                 isFirstChange.value = false;
+                disabledInput.value = true;
+                dataCallApiDetailEdit.incomeId = val[0]?.incomeId;
             }
             if (val.length == 0) {
                 disabledInput.value = false;
@@ -327,70 +347,28 @@ export default defineComponent({
             enabled: triggerDetailDetailEdit.value,
             fetchPolicy: "no-cache",
         }));
-        watch(() => resDetailEdit, (newValue, old) => {
-            if (newValue.value) {
-                let respon = newValue.value.getIncomeBusiness
-                dataAction.value.input.paymentDay = respon.paymentDay
-                dataAction.value.input.employeeId = respon.employeeId
-                dataAction.value.input.incomeTypeCode = respon.incomeTypeCode
-                dataAction.value.input.paymentAmount = respon.paymentAmount
-                dataAction.value.input.withholdingIncomeTax = respon.withholdingIncomeTax
-                dataAction.value.input.withholdingLocalIncomeTax = respon.withholdingLocalIncomeTax
+        watch(resDetailEdit, (newValue) => {
+            if (newValue) {
+                let data = newValue.getIncomeBusiness;
+                let rowData: any = {};
+                rowData.paymentDay = data.paymentDay
+                rowData.employeeId = data.employeeId
+                rowData.incomeTypeCode = data.incomeTypeCode
+                rowData.paymentAmount = data.paymentAmount
+                rowData.taxRate = data.taxRate
+                rowData.withholdingIncomeTax = data.withholdingIncomeTax
+                rowData.withholdingLocalIncomeTax = data.withholdingLocalIncomeTax;
+                rowData.actualPayment = data.actualPayment;
                 triggerDetailDetailEdit.value = false;
-                dataActionEditInit.value = JSON.parse(JSON.stringify(dataAction.value.input));
-                // isCompare.value=false;
+                dataAction.value.input = rowData;
+                dataActionEdit.value.input = {...JSON.parse(JSON.stringify(rowData))};
+                disabledInput.value = true;
             }
-        }, { deep: true })
+        })
         errorDetailEdit(res => {
             notification('error', res.message)
         })
-        // API CREATED 
-        const {
-            mutate: actionCreated,
-            onError: errorCreated,
-            loading: loadingCreated,
-            onDone: doneCreated,
-        } = useMutation(mutations.createIncomeBusiness);
-        doneCreated(res => {
-            focusedRowKey.value = res.data.createIncomeBusiness.incomeId
-            emit('createdDone', true)
-            notification('success', `업데이트 완료!`)
-            triggerDetail.value = true
-            refetchTableDetail()
-        })
-        errorCreated(res => {
-            notification('error', res.message)
-        })
-        // API EDIT 
-        const {
-            mutate: actionEdit,
-            onError: errorEdit,
-            loading: loadingEdit,
-            onDone: doneEdit,
-        } = useMutation(mutations.updateIncomeBusiness);
-        doneEdit(() => {
-            emit('createdDone', true)
-            notification('success', `업데이트 완료!`)
-            triggerDetail.value = true
-            refetchTableDetail()
-        })
-        errorEdit(res => {
-            notification('error', res.message)
-        })
-        // Action save value 
-        const {
-            mutate: actionChangeIncomeProcessBusinessStatus,
-            onError: errorChangeIncomeProcessBusinessStatus,
-            onDone: successChangeIncomeProcessBusinessStatus,
-        } = useMutation(mutations.changeIncomeProcessBusinessStatus)
-        errorChangeIncomeProcessBusinessStatus(e => {
-            notification('error', e.message)
-        })
-        successChangeIncomeProcessBusinessStatus(e => {
-            focusedRowKey.value = dataAction.value.input.incomeId;
-            notification('success', `업데이트 완료!`);
-            emit('createdDone', true)
-        })
+       
         // ===================================== WATCHING ============================================  
         // watch(() => dataAction, (newValue) => {
         //     if (store.state.common.actionAddRow.activeRowAdd == true) {
@@ -422,10 +400,12 @@ export default defineComponent({
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
             isCompare.value = false;
-            focusedRowKey.value = 0;
+            // focusedRowKey.value = 0;
             isFirstChange.value = true;
             dataTableDetail.processKey = processKeyPA620.value;
+            dataCallApiDetailEdit.processKey = newVal;
             delete dataTableDetail.processKey.status;
+            isNewRow.value = false;
             triggerDetail.value = true;
             refetchOption()
             let date1 = processKeyPA620.value.imputedYear + '-' + processKeyPA620.value.imputedMonth
@@ -438,6 +418,7 @@ export default defineComponent({
             let objIncomeTax: any = Formula.getIncomeTax(dataAction.value.input.paymentAmount, dataAction.value.input.taxRate);
             dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
             dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
+            dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax -dataAction.value.input.withholdingLocalIncomeTax;
         };
         // const resetForm = () => {
         //     disabledInput.value = false
@@ -504,22 +485,18 @@ export default defineComponent({
 
 
 
-        // ======================= track change of form ================================
+        // ======================= TRACK FORM CHANGE ================================
 
-        // const dataAction = computed(() => store.getters['common/dataAction']);
-        const dataActionEdit = ref();
-        const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
+        const dataActionEdit = ref({input:{}});
         const isNewRow = ref(false);
         //compare Data
         const compareType = ref(1); //0 is row change. 1 is add button;
-        const compareType1 = () => {
-          if (JSON.stringify(dataActionUtils.input) == JSON.stringify(dataAction.value.input)) {
-            return true;
-          }
-          return false;
-        };
-        const compareType2 = () => {
-          if (JSON.stringify(dataActionEdit.value.input) == JSON.stringify(dataAction.value.input)) {
+        const compareForm = () => {
+          let daActionCompare = JSON.parse(JSON.stringify(dataAction.value));
+          delete daActionCompare.input.employee;
+          let daActionEditCompare = JSON.parse(JSON.stringify(dataActionEdit.value));
+          delete daActionEditCompare.input.employee;
+          if (JSON.stringify(daActionCompare.input) == JSON.stringify(daActionEditCompare.input)) {
             return true;
           } else {
             return false;
@@ -528,10 +505,8 @@ export default defineComponent({
         //function common
         const resetForm = async () => {
           //Reset form tax
-          dataAction.value = dataActionUtils;
-          dataActionEdit.value = dataAction;
-          // resetFormNum.value++;
-          // formTaxRef.value.newDateLoading = false;
+          dataAction.value.input = {...dataActionUtils.input, paymentDay: paymentDayPA620.value};
+          dataActionEdit.value.input = {...dataActionUtils.input, paymentDay: paymentDayPA620.value};
         };
         const addNewRow = () => {
           resetForm();
@@ -544,22 +519,21 @@ export default defineComponent({
           await resetForm();
           dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
           // dataSourceDetail.value = newArr;
-          isNewRow.value = true;
+          isNewRow.value = false;
           compareType.value = 2;
         };
         //on add row
         const rowChangeStatus = ref<Boolean>(false);
         const openAddNewModal = async () => {
-          if (isNewRowPA720.value) {
-            if (!compareType1()) {
+          if (isNewRow.value) {
+            if (!compareForm()) {
               rowChangeStatus.value = true;
               return;
             }
-            // c onsole.log(`output- dang co new row compare ko loi`);
             return;
           }
           setTimeout(() => {
-            // c onsole.log(`output->type ko co newrow`, compareType1());
+            disabledInput.value = false;
             addNewRow();
           }, 50);
           return;
@@ -569,12 +543,10 @@ export default defineComponent({
           if (ok) {
             let ele = document.getElementById('save-js-620') as HTMLInputElement;
             ele.click();
-            focusedRowKey.value = dataAction.value.input.incomeId;
           } else {
-            if (isNewRowPA720.value) {
+            if (isNewRow.value) {
               dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
               if (compareType.value == 1) {
-                // c onsole.log(`output-> toi dang o so 1`);
                 addNewRow();
                 setTimeout(() => {
                   focusedRowKey.value = dataAction.value.input.incomeId;
@@ -583,8 +555,7 @@ export default defineComponent({
               }
             }
             if (compareType.value == 2) {
-              // c onsole.log(`output-> toi dang o so 2 `);
-              // editTaxParam.value = idRowFake.value;
+              dataCallApiDetailEdit.incomeId = idRowFake.value;
               isNewRow.value = false;
             }
             compareType.value = 2;
@@ -594,31 +565,32 @@ export default defineComponent({
         const idRowFake = ref();
         const onRowClick = async (item: any) => {
           compareType.value = 2;
-          if (isNewRowPA720.value) {
-            if (compareType1()) {
+          if (isNewRow.value) {
+            if (compareForm()) {
               await delNewRow();
-              focusedRowKey.value = item.incomeId;
-              // editTaxParam.value = item;
-              // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, item);
-              // formTaxRef.value.isEdit = true;
+              focusedRowKey.value = item.data.incomeId;
+              dataCallApiDetailEdit.incomeId = item.data.incomeId;
               return;
             }
-            // c onsole.log(`output->co new row, khac nhau`);
-            idRowFake.value = item;
+            idRowFake.value = item.data.incomeId;
             rowChangeStatus.value = true;
             return;
           }
-          if (!compareType2()) {
-            // c onsole.log(`output->row khac`);
+          if (!compareForm()) {
             rowChangeStatus.value = true;
-            idRowFake.value = item;
+            idRowFake.value = item.data.incomeId;
             return;
           } else {
-            // c onsole.log(`output->chuyen row bth. ko co newrow`);
-            // formTaxRef.value.isEdit = true;
-            // editTaxParam.value = emit;
+            dataCallApiDetailEdit.incomeId = item.data.incomeId;
           }
         };
+        //watch to refetch datadetail
+        watch(()=>dataCallApiDetailEdit.incomeId,async(newVal)=>{
+          if(newVal) {
+            triggerDetailDetailEdit.value = true;
+            // await refetchDetailEdit();
+          }
+        },{deep:true})
 
 
 
@@ -682,8 +654,9 @@ export default defineComponent({
         //     }
         // }
         const changeIncomeTypeCode = (res: string) => {
-            dataAction.value.input.incomeTypeCode = res
-        }
+            dataAction.value.input.incomeTypeCode = res;
+            dataAction.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.incomeTypeCode == res)[0];
+        } 
         const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys;
             editParam.value = event.selectedRowsData.map((item: any)=> item.incomeId)
@@ -700,8 +673,9 @@ export default defineComponent({
             modalEdit.value = false
             triggerDetail.value = true
             refetchTableDetail()
-            openAddNewModal()
-            emit('createdDone', true)
+            resetForm()
+            emit('createdDone', true);
+            isNewRow.value = false;
         }
         const onItemClick = (key: String) => {
             switch (key) {
@@ -722,7 +696,7 @@ export default defineComponent({
             if (popupDataDelete.value.length > 0) {
                 modalEdit.value = true
             } else {
-                notification('error', `항목을 하나 선택하세요!`)
+                notification('warning',messageDelNoItem)
             }
         }
         const customTextSummary = () => {
@@ -732,44 +706,134 @@ export default defineComponent({
             })
             return '공제합계: ' + filters.formatCurrency(total)
         }
+
+        
+        //---------------------- Action save status ----------------------
+        const {
+            mutate: actionChangeIncomeProcessBusinessStatus,
+            onError: errorChangeIncomeProcessBusinessStatus,
+            onDone: successChangeIncomeProcessBusinessStatus,
+        } = useMutation(mutations.changeIncomeProcessBusinessStatus)
+        errorChangeIncomeProcessBusinessStatus(e => {
+            notification('error', e.message)
+        })
+        successChangeIncomeProcessBusinessStatus(e => {
+            focusedRowKey.value = dataAction.value.input.incomeId;
+            notification('success', `업데이트 완료!`);
+            emit('createdDone', true)
+        })
         const statusComfirm = () => {
             actionChangeIncomeProcessBusinessStatus({
                 companyId: companyId,
-                processKey: { ...processKey.value },
+                processKey: { ...processKeyPA620.value },
                 status: statusButton.value
             })
         }
-        const onSave = () => {
-            dataAction.value.processKey.imputedMonth = parseInt(month1.value.split('-')[1])
-            dataAction.value.processKey.imputedYear = parseInt(month1.value.split('-')[0])
-            dataAction.value.processKey.paymentMonth = parseInt(month2.value.split('-')[1])
-            dataAction.value.processKey.paymentYear = parseInt(month2.value.split('-')[0])
-            if (switchAction.value == true) {
-                actionCreated(dataAction)
+
+        // -------------------------ACTION FORM--------------------------------
+
+        const {
+            mutate: actionCreated,
+            onError: errorCreated,
+            loading: loadingCreated,
+            onDone: doneCreated,
+        } = useMutation(mutations.createIncomeBusiness);
+        doneCreated(res => {
+            focusedRowKey.value = res.data.createIncomeBusiness.incomeId
+            emit('createdDone', true)
+            notification('success', `업데이트 완료!`)
+            triggerDetail.value = true
+            refetchTableDetail()
+            isErrorForm.value = false;
+            disabledInput.value = true;
+            dataActionEdit.value.input = dataAction.value.input;
+        })
+        errorCreated(res => {
+            notification('error', res.message)
+            isErrorForm.value = true;
+        })
+        // API EDIT 
+        const {
+            mutate: actionEdit,
+            onError: errorEdit,
+            loading: loadingEdit,
+            onDone: doneEdit,
+        } = useMutation(mutations.updateIncomeBusiness);
+        doneEdit(() => {
+            emit('createdDone', true)
+            notification('success', `업데이트 완료!`)
+            triggerDetail.value = true
+            refetchTableDetail();
+            isErrorForm.value = false;
+        })
+        errorEdit(res => {
+            notification('error', res.message);
+            isErrorForm.value = true;
+        })
+        const isErrorForm = ref(false);
+        const onSave = (e:any) => {
+          var res = e.validationGroup.validate();
+          if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+            isErrorForm.value = true;
+          } else {
+            isErrorForm.value = false;
+            let params = JSON.parse(JSON.stringify(dataAction.value));
+            delete params.input.incomeId;
+            delete params.input.employee;
+            delete params.input.actualPayment;
+            if (!disabledInput.value) {
+                let createData = params;
+                actionCreated({
+                  companyId: companyId,
+                  processKey: processKeyPA620.value,
+                  input: createData.input
+                })
             } else {
+                delete params.input.paymentDay;
+                delete params.input.employeeId;
+                delete params.input.incomeTypeCode;
                 let inputEdit = {
-                    ...dataAction,
-                    incomeId: dataCallApiDetailEdit.incomeId,
-                    input: {
-                        paymentAmount: dataAction.value.input.paymentAmount,
-                        taxRate: 3,
-                        withholdingIncomeTax: dataAction.value.input.withholdingIncomeTax,
-                        withholdingLocalIncomeTax: dataAction.value.input.withholdingLocalIncomeTax,
-                    }
+                    ...dataCallApiDetailEdit,
+                    input: {...params.input}
                 }
                 actionEdit(inputEdit)
             }
+            setTimeout(() => {
+              if (isErrorForm.value) {
+                focusedRowKey.value = dataAction.value.input.incomeId;
+              } else {
+                dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
+                focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+                isNewRow.value =false;
+              }
+            }, 1000);
+          }
         };
+        //---------------------------------------------fn common--------------------------------
         const formatMonth = (month: any) => {
             if (+month < 10) {
                 return '0' + month;
             }
             return month;
         };
+        const checkLen = (text: String) => {
+          if (text.length > 10) {
+            return text.substring(0, 10) + '...';
+          }
+          return text;
+        };
+        // --------- clear selection --------------------
+        // const gridRefName: any = ref("grid");
+        // const clearSelection = () => {
+        //   const dataGrid = this.$refs[this.dataGridRefName].instance;
+
+        //   dataGrid.clearSelection();
+        // };
         return {
-            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, processKey, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,companyId,
+            arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus
+            paymentDayPA620,rowChangeStatus,dataActionEdit,dataCallApiDetailEdit,isNewRow,checkLen,compareForm
         }
     }
 });

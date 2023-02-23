@@ -562,6 +562,7 @@ export default defineComponent({
 
     const updateDeduction = () => {
       if(!isCalculateEditPA120.value) {
+        console.log(`output->isCalculateEditPA120.value`,isCalculateEditPA120.value)
         store.state.common.isAddFormErrorPA120 = true;
         return;
       }

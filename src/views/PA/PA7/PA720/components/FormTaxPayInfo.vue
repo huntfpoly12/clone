@@ -5,7 +5,7 @@
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
-          <employ-type-select :disabled="isEdit || !isColumnData" :arrayValue="arrayEmploySelect"
+          <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus" :arrayValue="arrayEmploySelect"
             v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
             @incomeTypeCode="changeIncomeTypeCode" />
         </a-form-item>
@@ -23,23 +23,23 @@
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="red">
-          <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData" width="150px" class="mr-5"
+          <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus" width="150px" class="mr-5"
             v-model:valueInput="formPA720.input.paymentDay" :required="true" />
         </a-form-item>
         <a-form-item label="지급액" class="red">
           <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
             v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-            :disabled="!isColumnData"></number-box-money>
+            :disabled="!isColumnData || isExpiredStatus"></number-box-money>
         </a-form-item>
         <a-form-item label="필요경비" class="red">
           <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
-            v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData"
+            v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
             class="red"></number-box-money>
         </a-form-item>
         <a-form-item label="세율" class="red">
           <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" :value="formPA720.input.taxRate"
             placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-            @value-changed="updateValue" :required="true" :disabled="!isColumnData">
+            @value-changed="updateValue" :required="true" :disabled="!isColumnData || isExpiredStatus">
             <template #item="{ data }">
               <a-tooltip placement="top" zIndex="9999">
                 <template #title v-if="data?.tooltip">
@@ -136,6 +136,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isExpiredStatus: {
+      type: Boolean,
+      default: false,
+    }
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -236,20 +240,21 @@ export default defineComponent({
     // SUBMIT FORM
 
     watch(actionSavePA720, () => {
+      let params = JSON.parse(JSON.stringify(formPA720.value));
+      delete params.input.incomeId;
+      delete params.input.employee;
+      delete params.input.actualPayment;
+      delete params.input.incomePayment;
       if (isEdit.value === true) {
-        let incomeExtraUpdateData = JSON.parse(JSON.stringify(formPA720.value));
-        delete incomeExtraUpdateData.input.incomeId;
-        delete incomeExtraUpdateData.input.paymentDay;
-        delete incomeExtraUpdateData.input.employeeId;
-        delete incomeExtraUpdateData.input.incomeTypeCode;
-        incomeExtraUpdateData.incomeId = incomeExtraParam.value.incomeId;
-        let updateData = {...processKeyPA720.value,input:{...incomeExtraUpdateData.input},incomeId:props.editTax.incomeId}
+        delete params.input.paymentDay;
+        delete params.input.employeeId;
+        delete params.input.incomeTypeCode;
+        params.incomeId = incomeExtraParam.value.incomeId;
+        let updateData = {...processKeyPA720.value,input:{...params.input},incomeId:props.editTax.incomeId}
         updateIncomeExtra(updateData);
         return;
       }
-      let createData = JSON.parse(JSON.stringify(formPA720.value));
-      delete createData.input.incomeId;
-      let updateData = {...processKeyPA720.value,input:{...createData.input}};
+      let updateData = {...processKeyPA720.value,input:{...params.input}};
       createIncomeExtra(updateData);
     });
     // GET ARRAY FORM
@@ -266,6 +271,7 @@ export default defineComponent({
     // GET INCOMETYPECODE
     const changeIncomeTypeCode = (res: string) => {
       formPA720.value.input.incomeTypeCode = res;
+      formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.incomeTypeCode == res)[0];
     };
 
     // AFTER ACTION FORM
@@ -317,6 +323,8 @@ export default defineComponent({
       incomeAmount.value = objIncomeAmount;
       formPA720.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
+      formPA720.value.input.actualPayment = objIncomeTax.localIncomeTax;
+      formPA720.value.input.incomePayment = objIncomeTax.localIncomeTax;
     };
     const updateValue = (value: any) => {
       formPA720.value.input.taxRate = value.value;

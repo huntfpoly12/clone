@@ -25,17 +25,17 @@
         </div>
       </template>
       <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="left" />
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
-        alignment="left" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="left" />
+        alignment="right" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
-      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="left" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
       <template #incomLocalTax="{ data }">
         {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
       </template>
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
-        alignment="left" />
+        alignment="right" />
       <DxSummary v-if="dataSourceDetail.length > 0">
         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"

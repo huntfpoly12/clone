@@ -253,7 +253,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <ComponentDetail :dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
+                <ComponentDetail v-model:dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
                     :actionSave="actionSave" @createdDone="createdDone" />
                 <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
                     :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
@@ -263,7 +263,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed } from "vue";
+import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -300,16 +300,21 @@ export default defineComponent({
         const dataModalCopy: any = ref()
         const globalYear = computed(() => store.state.settings.globalYear)
 
-        let valueCallApiGetEmployeeBusiness = ref({
+        const valueCallApiGetEmployeeBusiness = ref({
             companyId: companyId,
             processKey: {
-                imputedYear: globalYear,
+                imputedYear: globalYear.value,
                 imputedMonth: dayjs().month() + 1,
-                paymentYear: globalYear,
+                paymentYear: globalYear.value,
                 paymentMonth: dayjs().month() + 1
             }
         })
-
+        
+        // Watching the globalYear variable and when it changes, it updates the value 
+        watch(globalYear,(newVal)=>{
+            valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = newVal
+            valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = newVal
+        })
         console.log(valueCallApiGetEmployeeBusiness)
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================

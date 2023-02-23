@@ -121,10 +121,10 @@ export default defineComponent({
       emit('closePopup', false);
     };
     const notifcationTax = () => {
-            notification('warning', taxWaring);
-            setTimeout(()=> {
-                formState.women = false;
-            }, 200)
+      notification('warning', taxWaring);
+      setTimeout(()=> {
+          formState.women = false;
+      }, 200)
     }
     watch(()=>formState.women, (newValue) => {
         if (newValue == true  && formState.singleParent == true) {
