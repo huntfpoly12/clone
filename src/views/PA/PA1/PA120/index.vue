@@ -378,8 +378,8 @@ export default defineComponent({
             ele?.click();
           }
           if (compareType.value == 2 && tabCurrent.value  == 2) {
-            // let ele2 = document.getElementById('btn-save-edit-tab2');
-            // ele2?.click();
+            let ele2 = document.getElementById('btn-save-edit-tab2');
+            ele2?.click();
             let ele3 = document.getElementById('btn-save-add-tab2');
             ele3?.click();
           }

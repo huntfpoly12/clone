@@ -90,9 +90,8 @@
           </a-row>
         </a-col>
       </a-row>
-      <!-- {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
-      {{ initFormTab2PA120 }} initFormTab2PA120 <br />
-      {{ calculateVariables }} calculateVariables <br /> -->
+      {{ dataConfigPayItems }} dataConfigPayItems <br />
+      {{ dataConfigDeduction }} dataConfigDeduction <br />
       <div class="header-text-3">
         급여 (기본값)
         <span>
@@ -178,9 +177,13 @@
           </a-spin>
         </a-col>
       </a-row>
+      {{  isAddFormErrorPA120 }} isAddFormErrorPA120<br/>
+      {{  isCalculateEditPA120 }} isCalculateEditPA120<br/>
+      {{  isBtnYellow }} isBtnYellow<br/>
+      {{  initFormTab2PA120 }} initFormTab2PA120<br/>
       <a-row style="margin-top: 20px">
         <a-col :span="8" :offset="8" style="text-align: center">
-          <button-tooltip-error :statusChange="!isCalculateEditPA120" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
+          <button-tooltip-error :statusChange="!isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
           <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2"
             @onClick="updateDeduction" />
         </a-col>
@@ -229,8 +232,8 @@ export default defineComponent({
 
     const rangeDate = ref<RangeValue>();
     const store = useStore();
-    const dataConfigPayItems = ref();
-    const dataConfigDeduction = ref();
+    const dataConfigPayItems = ref<any>([]);
+    const dataConfigDeduction = ref<any>([]);
     const triggerDetail = ref<boolean>(false);
     const presidentEditPA120 = computed(() => store.state.common.presidentEditPA120);
 
@@ -308,21 +311,35 @@ export default defineComponent({
         if (data?.employeementReductionInput) {
           editRowData.employeementReductionInput = data.employeementReductionInput;
         }
+        editRowData.payItems = data.payItems;
+        editRowData.deductionItems = data.deductionItems;
         editRowData.employeementReduction = data.employeementReduction;
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         store.state.common.rowKeyTab2PA120 = data.employeeId;
-        store.commit('common/editRowTab2PA120', editRowData);
-        store.commit('common/initFormTab2PA120', editRowData);
+        console.log(`output->editRowData`,editRowData)
+        store.state.common.editRowTab2PA120 = editRowData;
+        store.state.common.initFormTab2PA120 = editRowData;
+        // store.commit('common/editRowTab2PA120', editRowData);
+        // store.commit('common/initFormTab2PA120', editRowData);
+        console.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
         if (data.payItems && dataConfigPayItems.value.length > 0) {
-          data.payItems.map((item: any) => {
-            dataConfigPayItems.value.find((Obj: any) => {
-              if (item.itemCode == Obj.itemCode) {
-                Obj.value = item.amount;
-              }
-            });
-          });
+          // data.payItems.map((item: any) => {
+          //   dataConfigPayItems.value.find((Obj: any) => {
+          //     if (item.itemCode == Obj.itemCode) {
+          //       Obj.value = item.amount;
+          //     }
+          //   });
+          // });
+          dataConfigPayItems.value = data.payItems.map((item1: any) => {
+            const item2 = dataConfigPayItems.value.find((item2: any) => item2.itemCode === item1.itemCode);
+            console.log(`output->item2`,item2)
+            const value = item2 ? item2.value : 0
+            return { ...item2, ...item1, value }
+          })
+          // 
+          console.log(`output->dataConfigPayItems.value`)
         }
-        if (data.deductionItems) {
+        if (data.deductionItems && dataConfigDeduction.value.length > 0) {
           data.deductionItems.map((item: any) => {
             dataConfigDeduction.value.find((Obj: any) => {
               if (item.itemCode == Obj.itemCode) {
@@ -336,6 +353,7 @@ export default defineComponent({
           return accumulator + object.value;
         }, 0);
         store.state.common.isCalculateEditPA120 = true;
+        isBtnYellow.value = true;
       }
     });
 
@@ -459,7 +477,6 @@ export default defineComponent({
         });
       }
       triggerCalcIncomeWageTax.value = false;
-      store.state.common.isCalculateEditPA120 = true;
       calculateTax();
     });
 
@@ -473,6 +490,7 @@ export default defineComponent({
         triggerCalcIncomeWageTax.value = true;
       }
       store.state.common.isCalculateEditPA120 = true;
+      isBtnYellow.value = true;
     }, { deep: true });
 
     /**
@@ -539,52 +557,8 @@ export default defineComponent({
       }, 0);
       // triggerCalcIncomeWageTax.value = true;
       // await refetchCalcIncomeWageTax();
-      store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
-    };
-
-    /**
-     *  Save form
-     */
-    const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
-
-    onError((e) => {
-      notification('error', e.message);
-    });
-
-    onDone((res) => {
-      emit('closePopup', false);
-      notification('success', '업데이트 완료!');
-      store.commit('common/actionFormDonePA120');
-      store.commit('common/keyActivePA120', 3);
-      store.state.common.isCalculateEditPA120 = true;
-    });
-
-    const updateDeduction = () => {
-      if(!isCalculateEditPA120.value) {
-        console.log(`output->isCalculateEditPA120.value`,isCalculateEditPA120.value)
-        store.state.common.isAddFormErrorPA120 = true;
-        return;
-      }
-      initFormTab2PA120.value.payItems = dataConfigPayItems.value?.map((item: any) => {
-        return {
-          itemCode: item.itemCode,
-          amount: item.value,
-        };
-      });
-      if (rangeDate.value) {
-        initFormTab2PA120.value.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
-        initFormTab2PA120.value.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
-      }
-      const variables = {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        employeeId: employeeId.value,
-        input: {
-          ...initFormTab2PA120.value,
-        },
-      };
-      mutate(variables);
+      isBtnYellow.value = true;
     };
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
@@ -601,6 +575,8 @@ export default defineComponent({
         initFormTab2PA120.value.employeementReductionRatePercent = 50;
         initFormTab2PA120.value.employeementReductionInput = 1;
         rangeDate.value = [dayjs(), dayjs()];
+        initFormTab2PA120.value.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
+        initFormTab2PA120.value.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
       } else {
         delete initFormTab2PA120.value.employeementReductionRatePercent;
         delete initFormTab2PA120.value.employeementReductionInput;
@@ -628,17 +604,75 @@ export default defineComponent({
       (newVal) => {
         if (newVal) {
           store.state.common.isCalculateEditPA120 = false;
+          isBtnYellow.value = false;
         }
       },
       { deep: true }
     );
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
-    watchEffect(() => {
+    const isBtnYellow = ref(true);
+    let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
       if (rest) {
         store.state.common.isCalculateEditPA120 = false;
+        isBtnYellow.value = false;
       }
     });
+    
+
+    /**
+     *  Save form
+     */
+    const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
+    const updateDeduction = () => {
+      if(!isBtnYellow.value) {
+        console.log(`output->isCalculateEditPA120.value`,isCalculateEditPA120.value)
+        store.state.common.isAddFormErrorPA120 = true;
+        return;
+      }
+      stopTrack();
+      store.state.common.isCalculateEditPA120 = true;
+      initFormTab2PA120.value.payItems = dataConfigPayItems.value?.map((item: any) => {
+        return {
+          itemCode: item.itemCode,
+          amount: item.value,
+        };
+      });
+      // if (rangeDate.value) {
+      //   initFormTab2PA120.value.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
+      //   initFormTab2PA120.value.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
+      // }
+      const variables = {
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        employeeId: employeeId.value,
+        input: {
+          ...initFormTab2PA120.value,
+        },
+      };
+      console.log(`output->variables`,variables)
+      mutate(variables);
+    };
+    onError((e) => {
+      notification('error', e.message);
+      store.state.common.isCalculateEditPA120 = false;
+    });
+    onDone((res) => {
+      emit('closePopup', false);
+      notification('success', '업데이트 완료!');
+      store.commit('common/actionFormDonePA120');
+      store.commit('common/keyActivePA120', 3);
+      store.state.common.isCalculateEditPA120 = true;
+      store.state.common.isAddFormErrorPA120 = false;
+      stopTrack = watchEffect(() => {
+        const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
+        if (rest) {
+          store.state.common.isCalculateEditPA120 = false;
+          isBtnYellow.value = false;
+        }
+      });
+    });
+
     return {
       loading1,
       loading2,
@@ -666,7 +700,8 @@ export default defineComponent({
       isCalculateEditPA120,
       presidentEditPA120,
       calculateVariables,
-      isAddFormErrorPA120
+      isAddFormErrorPA120,
+      isBtnYellow,
     };
   },
 });
