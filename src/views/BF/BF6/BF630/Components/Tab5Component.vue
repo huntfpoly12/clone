@@ -9,7 +9,7 @@
               </a-col>
               <a-col>
                   <a-form-item  label="제작요청일(기간)"> 
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"></range-date-time-box>
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" maxRange="365"></range-date-time-box>
                   </a-form-item>
               </a-col>
               <a-autocomplete>
