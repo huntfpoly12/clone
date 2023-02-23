@@ -1,4 +1,4 @@
-<template>{{ tabName }} 
+<template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="644">
         <standard-form action="" name="request-file-630">
