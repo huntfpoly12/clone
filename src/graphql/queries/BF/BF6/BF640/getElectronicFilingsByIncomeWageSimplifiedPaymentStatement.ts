@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-query ExampleQuery($input: ElectronicFilingCompanyPaymentHalfYearKeyInput!) { 
+query getElectronicFilingsByIncomeWageSimplifiedPaymentStatement($input: ElectronicFilingCompanyPaymentHalfYearKeyInput!) { 
   getElectronicFilingsByIncomeWageSimplifiedPaymentStatement(input: $input) {
     productionStatus
   }
