@@ -4,7 +4,7 @@ export const sampleDataIncomeWageDaily = {
     dailyWage: 0,
     workingDays: 0,
     totalDeduction: 0,
-    incomeId: null,
+    incomeId: "PA510",
     employee: {
         employeeId: null,
         name: '',

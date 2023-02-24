@@ -249,10 +249,10 @@ export default defineComponent({
         }))
 
         // ===================DONE GRAPQL==================================
-        onDoneAdd(() => {
+        onDoneAdd((data: any) => {
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.employeeId = dataIncomeWageDaily.value.employee.employeeId
+            store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
             store.state.common.loadingTableInfo++
             notification('success', messageAddSuccess)
         })
@@ -355,7 +355,7 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
+            // store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
         }, { deep: true })
 
         watch(() => store.state.common.statusChangeFormPrice, (value) => {
@@ -368,8 +368,8 @@ export default defineComponent({
         // of incomeId in originDataIncomeWageDaily.value.incomeId to the value of incomeId in the
         // store. Then it will set triggerIncomeWageDaily.value to true.
         watch(() => store.state.common.incomeId, (value) => {
-            if (value) {
-                originDataIncomeWageDaily.value.incomeId = store.state.common.incomeId
+            if (value && value != 'PA510') {
+                originDataIncomeWageDaily.value.incomeId = value
                 triggerIncomeWageDaily.value = true;
             } else {
                 if (!store.state.common.actionAddItem) {
@@ -431,10 +431,11 @@ export default defineComponent({
             if (!newVal) { // add row table
                 store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
                 dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
-                setTimeout(() => {
-                    let a = document.body.querySelectorAll('[aria-rowindex]');
-                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                }, 100);
+                store.state.common.focusedRowKey = 'PA510'
+                // setTimeout(() => {
+                //     let a = document.body.querySelectorAll('[aria-rowindex]');
+                //     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                // }, 100);
             }
         })
 
@@ -524,7 +525,7 @@ export default defineComponent({
         
         const submitForm = () => {
             if (store.state.common.statusChangeFormPrice) {
-                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
+                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
                 showErrorButton.value = true;
             } else {
                 let arrDeductionItems: any = []
