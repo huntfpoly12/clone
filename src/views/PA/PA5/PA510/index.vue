@@ -444,8 +444,6 @@ export default defineComponent({
             store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
             // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
             if (value.getIncomeWageDailies[0]) { // if have data
-                console.log(store.state.common.incomeId);
-                
                 if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
                     store.state.common.focusedRowKey = store.state.common.incomeId
                     // store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
@@ -459,7 +457,7 @@ export default defineComponent({
                 store.state.common.actionAddItem = true
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
-                store.state.common.employeeId = null;
+                // store.state.common.employeeId = null;
                 store.state.common.actionResetForm++;
             }
             store.state.common.resetArrayEmploySelect++
