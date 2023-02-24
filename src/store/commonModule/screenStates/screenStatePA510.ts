@@ -8,7 +8,7 @@ const statesPA510 = {
     },
     dataRowOld: null,
     incomeId: null,
-    employeeId: null,
+    // employeeId: null,
     actionAddItem: false,
     statusChangeFormAdd: false,
     statusChangeFormEdit: false,
