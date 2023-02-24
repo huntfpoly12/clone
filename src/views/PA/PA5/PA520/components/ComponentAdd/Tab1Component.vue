@@ -101,7 +101,7 @@
                     </span>
                 </div>
             </a-form-item>
-            <a-form-item label="부서" label-align="right">{{ dataCreated.department }}
+            <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
                     width="200px" />
             </a-form-item>

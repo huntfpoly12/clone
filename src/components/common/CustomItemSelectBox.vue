@@ -1,4 +1,4 @@
-<template> 
+<template>
     <DxSelectBox 
       :height="$config_styles.HeightInput" 
       :name="nameInput" 
@@ -7,7 +7,7 @@
       :width="width" 
       :data-source="selectBoxData" 
       :show-clear-button="clearButton"
-      v-model:value="value" 
+      v-model:value="valueSelected" 
       :read-only="readOnly" 
       display-expr="value" 
       value-expr="value" 
@@ -15,7 +15,7 @@
       :accept-custom-value="customValue" 
       @custom-item-creating="customItemCreating" 
       @contentReady="onContentReady"
-      @value-changed="updateValue($event ,value)" 
+      @value-changed="updateValue($event ,valueSelected)" 
       >
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -77,9 +77,8 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
 
-        const value = ref(props.valueInput);
+        const valueSelected = ref(props.valueInput);
         const customValue = ref(false);
-        const newSelect = ref<any[]>([]);
     
         const updateValue = (e: any, val: any) => {
             if (val === '') {
@@ -94,33 +93,29 @@ export default defineComponent({
               emit("update:valueInput", val);
             }
         };
-        const arrSelectSource = ref<any[]>(props.arrSelect??[]);
         
         const customItemCreating = (e: any) => {
             let nextId;
-          selectBoxData.store().totalCount({}).then((count: any) => { nextId = count + 1 });
-            alert()
-            if(e.text.trim() == "" && e.text == "직접입력"){
+            selectBoxData.store().totalCount({}).then((count: any) => { nextId = count + 1 });
+
+            if(e.text.trim() == "" || e.text == "직접입력"){
+                e.customItem = '';
                 customValue.value = false;
+              
                 return;
+            }else{
+                e.customItem = { id: nextId, value: e.text };
+                // Adds the entry to the data source
+                selectBoxData.store().insert(e.customItem);
+                // Reloads the data source
+                selectBoxData.reload();
+                customValue.value = false;
             }
-            e.customItem = { id: nextId, value: e.text };
-            const newItem = {
-                id: nextId,
-                value: e.text,
-            };
-            // Adds the entry to the data source
-            selectBoxData.store().insert(e.customItem);
-            // Reloads the data source
-            selectBoxData.reload();
-            newSelect.value.push(newItem)
-            arrSelectSource.value.push(newItem)
-            customValue.value = false;
         }
         watch(
             () => props.valueInput,
             (newValue) => {
-                value.value = newValue;
+                valueSelected.value = newValue;
             }
         );
         watch(
@@ -129,9 +124,7 @@ export default defineComponent({
                 if (newValue)
                     newValue.map(v => {
                         selectBoxData.store().insert(v)
-                    });
-                    arrSelectSource.value = newValue ?? [];
-
+                });
             }
         );
         const isRunOnce = ref(true);
@@ -146,7 +139,7 @@ export default defineComponent({
         
         return {
             isValidValue,
-            value,
+            valueSelected,
             customValue,
             updateValue,
             messageRequired,
