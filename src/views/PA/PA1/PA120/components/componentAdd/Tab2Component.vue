@@ -74,7 +74,7 @@
             감면기간:
            </a-col> 
            <a-col span="15">
-             <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate" :disabled="!formStateTab2.employeementReduction"> </date-time-box>
+             <date-time-box width="250px" :range="true" :multi-calendars="true" :disabled="!formStateTab2.employeementReduction"> </date-time-box>
            </a-col>
            <a-col span="7">
             감면율:
@@ -169,9 +169,12 @@
         </a-spin>
       </a-col>
     </a-row>
+    {{ isBtnYellow }} isBtnYellow <br/>
+    {{ formStateTab2 }} formStateTab2 <br/>
+    {{ rangeDate }} rangeDate <br/>
     <a-row style="margin-top: 20px">
       <a-col :span="8" :offset="8" style="text-align: center">
-        <button-tooltip-error :statusChange="!isCalculateEditPA120" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
+        <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
         <button-basic id="btn-save-add-tab2" text="저장" type="default" mode="contained" :width="90" @onClick="createDeduction" />
       </a-col>
     </a-row>
@@ -191,7 +194,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from "@vuepic/vue-datepicker";
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
 
-type RangeValue = [Dayjs, Dayjs];
+type RangeValue = [Dayjs | null, Dayjs | null];
 export default defineComponent({
   components: {Datepicker},
   props: {
@@ -381,8 +384,11 @@ export default defineComponent({
       }, 0);
     //   refetchCalcIncomeWageTax();
       // triggerCalcIncome.value = true;
-      store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
+      isBtnYellow.value = false;
+      if(!formStateTab2.value?.employeementReductionStartDate){
+        rangeDate.value = [null, null];
+      }
     };
     /**
      * Calculate Income Wage Tax if totalPayItem != 0
@@ -398,50 +404,6 @@ export default defineComponent({
         });
       }
     });
-
-    /**
-     *  Save form
-     */
-    const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
-
-    onError((e) => {
-      notification('error', e.message);
-    });
-
-    onDone((res) => {
-      emit('closePopup', false);
-      notification('success', '업데이트 완료!');
-      store.commit('common/actionFormDonePA120');
-      store.commit('common/keyActivePA120', props.employeeId);
-      store.state.common.isCalculateEditPA120 = true;
-    });
-
-    const createDeduction = () => {
-      if(!isCalculateEditPA120.value) {
-        store.state.common.isAddFormErrorPA120 = true;
-        return;
-      }
-      if (rangeDate.value) {
-        formStateTab2.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
-        formStateTab2.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
-      }
-        
-      formStateTab2.payItems = dataConfigPayItems.value?.map((item: any) => {
-        return {
-          itemCode: item.itemCode,
-          amount: item.value,
-        };
-      });
-      const variables = {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        employeeId: props.employeeId,
-        input: {
-            ...formStateTab2,
-        }
-      };
-      mutate(variables);
-    };
     watch(()=>formStateTab2.insuranceSupport,(newVal)=> {
         if(newVal) {
             formStateTab2.nationalPensionSupportPercent = 0;
@@ -455,9 +417,9 @@ export default defineComponent({
         if(newVal) {
             formStateTab2.employeementReductionRatePercent = 50;
             formStateTab2.employeementReductionInput= 1;
-            formStateTab2.employeementReductionStartDate= +dayjs().format("YYYYMMDD");
-            formStateTab2.employeementReductionFinishDate= +dayjs().format("YYYYMMDD");
-            rangeDate.value = [dayjs(), dayjs()]
+            rangeDate.value = [dayjs(), dayjs()];
+            formStateTab2.employeementReductionStartDate= filters.formatDateToInterger(rangeDate.value[0]);
+            formStateTab2.employeementReductionFinishDate= filters.formatDateToInterger(rangeDate.value[1]);
         }else {
             delete formStateTab2.employeementReductionRatePercent;
             delete formStateTab2.employeementReductionInput;
@@ -485,20 +447,77 @@ export default defineComponent({
       (newVal) => {
         if (newVal) {
           store.state.common.isCalculateEditPA120 = false;
+          isBtnYellow.value = true;
         }
       },
       { deep: true }
     );
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
-    watchEffect(() => {
+    const isBtnYellow = ref(false);
+    let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = formStateTab2;
       if (rest) {
         store.state.common.isCalculateEditPA120 = false;
+        isBtnYellow.value = true;
       }
     });
     setTimeout(() => {
       store.state.common.isCalculateEditPA120 = true;
     }, 1000);
+    
+
+    /**
+     *  Save form
+     */
+    const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
+    const createDeduction = () => {
+      if(!isCalculateEditPA120.value) {
+        store.state.common.isAddFormErrorPA120 = true;
+        return;
+      }
+      // if (rangeDate.value) {
+      //   formStateTab2.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
+      //   formStateTab2.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
+      // }
+        
+      formStateTab2.payItems = dataConfigPayItems.value?.map((item: any) => {
+        return {
+          itemCode: item.itemCode,
+          amount: item.value,
+        };
+      });
+      const variables = {
+        companyId: companyId,
+        imputedYear: globalYear.value,
+        employeeId: props.employeeId,
+        input: {
+            ...formStateTab2,
+        }
+      };
+      mutate(variables);
+    };
+    onError((e) => {
+      notification('error', e.message);
+      store.state.common.isCalculateEditPA120 = false;
+    });
+
+    onDone((res) => {
+      stopTrack = watchEffect(() => {
+        const { deductionItems, payItems, ...rest } = formStateTab2;
+        if (rest) {
+          console.log(`output -track 2`)
+          store.state.common.isCalculateEditPA120 = false;
+          isBtnYellow.value = true;
+        }
+      });
+      emit('closePopup', false);
+      notification('success', '업데이트 완료!');
+      store.commit('common/actionFormDonePA120');
+      store.commit('common/keyActivePA120', props.employeeId);
+      store.state.common.isCalculateEditPA120 = true;
+      store.state.common.isAddFormErrorPA120 = false;
+    });
+
     // get config
     const withholdingTrigger = ref(true);
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
@@ -538,8 +557,8 @@ export default defineComponent({
       dataConfigDeduction,
       presidentPA120,
       isCalculateEditPA120,
-      calculateVariables,
-      isAddFormErrorPA120
+      isAddFormErrorPA120,
+      isBtnYellow
     };
   },
 });

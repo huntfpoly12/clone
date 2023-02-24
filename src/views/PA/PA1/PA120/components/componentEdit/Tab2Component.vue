@@ -90,8 +90,6 @@
           </a-row>
         </a-col>
       </a-row>
-      {{ dataConfigPayItems }} dataConfigPayItems <br />
-      {{ dataConfigDeduction }} dataConfigDeduction <br />
       <div class="header-text-3">
         급여 (기본값)
         <span>
@@ -177,13 +175,13 @@
           </a-spin>
         </a-col>
       </a-row>
-      {{  isAddFormErrorPA120 }} isAddFormErrorPA120<br/>
+      <!-- {{  isAddFormErrorPA120 }} isAddFormErrorPA120<br/>
       {{  isCalculateEditPA120 }} isCalculateEditPA120<br/>
       {{  isBtnYellow }} isBtnYellow<br/>
-      {{  initFormTab2PA120 }} initFormTab2PA120<br/>
+      {{  initFormTab2PA120 }} initFormTab2PA120<br/> -->
       <a-row style="margin-top: 20px">
         <a-col :span="8" :offset="8" style="text-align: center">
-          <button-tooltip-error :statusChange="!isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
+          <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
           <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2"
             @onClick="updateDeduction" />
         </a-col>
@@ -205,7 +203,7 @@ import Datepicker from '@vuepic/vue-datepicker';
 import filters from '@/helpers/filters';
 import DxButton from 'devextreme-vue/button';
 
-type RangeValue = [Dayjs, Dayjs];
+type RangeValue = [Dayjs | null, Dayjs | null];
 export default defineComponent({
   components: { Datepicker, DxButton },
   props: {
@@ -323,29 +321,23 @@ export default defineComponent({
         // store.commit('common/initFormTab2PA120', editRowData);
         console.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
         if (data.payItems && dataConfigPayItems.value.length > 0) {
-          // data.payItems.map((item: any) => {
-          //   dataConfigPayItems.value.find((Obj: any) => {
-          //     if (item.itemCode == Obj.itemCode) {
-          //       Obj.value = item.amount;
-          //     }
-          //   });
-          // });
-          dataConfigPayItems.value = data.payItems.map((item1: any) => {
-            const item2 = dataConfigPayItems.value.find((item2: any) => item2.itemCode === item1.itemCode);
-            console.log(`output->item2`,item2)
-            const value = item2 ? item2.value : 0
-            return { ...item2, ...item1, value }
+          dataConfigPayItems.value = dataConfigPayItems.value.map((item1: any) => {
+            delete item1.__typename;
+            const item2 = data.payItems.find((item2: any) => item2.itemCode === item1.itemCode);
+            delete item2?.__typename;
+            const value = item2 ? item2.amount : 0
+            return { ...item1, ...item2, value }
           })
-          // 
-          console.log(`output->dataConfigPayItems.value`)
         }
         if (data.deductionItems && dataConfigDeduction.value.length > 0) {
-          data.deductionItems.map((item: any) => {
-            dataConfigDeduction.value.find((Obj: any) => {
-              if (item.itemCode == Obj.itemCode) {
-                Obj.value = item.amount;
-              }
+          dataConfigDeduction.value=dataConfigDeduction.value.map((item1: any) => {
+            delete item1.__typename;
+            let item2 = data.deductionItems.find((item2: any) => {
+              item2.value = item1.amount;
             });
+            delete item2?.__typename;
+            let value = item1 ? item1.amount : 0;
+            return {...item1, ...item2,value}
           });
         }
         calculateVariables.dependentCount = data.dependents.length > 0 ? data.dependents.length : 1;
@@ -353,7 +345,7 @@ export default defineComponent({
           return accumulator + object.value;
         }, 0);
         store.state.common.isCalculateEditPA120 = true;
-        isBtnYellow.value = true;
+        isBtnYellow.value = false;
       }
     });
 
@@ -485,18 +477,19 @@ export default defineComponent({
      */
 
     watch(() => calculateVariables, async (newValue) => {
-      if (newValue.totalTaxPay > 0) {
+      if (newValue.totalTaxPay >= 0) {
         await refetchCalcIncomeWageTax();
         triggerCalcIncomeWageTax.value = true;
       }
       store.state.common.isCalculateEditPA120 = true;
-      isBtnYellow.value = true;
+      isBtnYellow.value = false;
     }, { deep: true });
 
     /**
      * Calculate Pension Employee
      * */
     const calculateTax = () => {
+      console.log(`output- chay vao calculateTax`,)
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -558,7 +551,10 @@ export default defineComponent({
       // triggerCalcIncomeWageTax.value = true;
       // await refetchCalcIncomeWageTax();
       store.state.common.isAddFormErrorPA120 = false;
-      isBtnYellow.value = true;
+      isBtnYellow.value = false;
+      if(!initFormTab2PA120.value?.employeementReductionStartDate){
+        rangeDate.value = [null, null];
+      }
     };
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
@@ -604,18 +600,18 @@ export default defineComponent({
       (newVal) => {
         if (newVal) {
           store.state.common.isCalculateEditPA120 = false;
-          isBtnYellow.value = false;
+          isBtnYellow.value = true;
         }
       },
       { deep: true }
     );
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
-    const isBtnYellow = ref(true);
+    const isBtnYellow = ref(false);
     let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
       if (rest) {
         store.state.common.isCalculateEditPA120 = false;
-        isBtnYellow.value = false;
+        isBtnYellow.value = true;
       }
     });
     
@@ -625,8 +621,7 @@ export default defineComponent({
      */
     const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
     const updateDeduction = () => {
-      if(!isBtnYellow.value) {
-        console.log(`output->isCalculateEditPA120.value`,isCalculateEditPA120.value)
+      if(isBtnYellow.value) {
         store.state.common.isAddFormErrorPA120 = true;
         return;
       }
@@ -638,10 +633,6 @@ export default defineComponent({
           amount: item.value,
         };
       });
-      // if (rangeDate.value) {
-      //   initFormTab2PA120.value.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
-      //   initFormTab2PA120.value.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
-      // }
       const variables = {
         companyId: companyId,
         imputedYear: globalYear.value,
@@ -650,7 +641,6 @@ export default defineComponent({
           ...initFormTab2PA120.value,
         },
       };
-      console.log(`output->variables`,variables)
       mutate(variables);
     };
     onError((e) => {
@@ -658,19 +648,19 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = false;
     });
     onDone((res) => {
-      emit('closePopup', false);
-      notification('success', '업데이트 완료!');
-      store.commit('common/actionFormDonePA120');
-      store.commit('common/keyActivePA120', 3);
-      store.state.common.isCalculateEditPA120 = true;
-      store.state.common.isAddFormErrorPA120 = false;
       stopTrack = watchEffect(() => {
         const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
         if (rest) {
+          console.log(`output -track 2`)
           store.state.common.isCalculateEditPA120 = false;
-          isBtnYellow.value = false;
+          isBtnYellow.value = true;
         }
       });
+      emit('closePopup', false);
+      notification('success', '업데이트 완료!');
+      store.commit('common/actionFormDonePA120');
+      store.state.common.isCalculateEditPA120 = true;
+      store.state.common.isAddFormErrorPA120 = false;
     });
 
     return {
