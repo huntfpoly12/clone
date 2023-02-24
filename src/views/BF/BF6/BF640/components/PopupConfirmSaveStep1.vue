@@ -35,6 +35,7 @@ export default defineComponent({
     setup(props, { emit }) {
         let mailAction = ref()
         let dataCallApi = ref()
+        
         // query send request file tab 1
         const {
             mutate: sendRequestFileTab1,
@@ -48,6 +49,7 @@ export default defineComponent({
         onErrorTab1(e => {
             notification('error', e.message)
         })
+        
         // query send request file tab 2
         const {
             mutate: sendRequestFileTab2,
@@ -55,19 +57,23 @@ export default defineComponent({
             onError: onErrorTab2,
         } = useMutation(mutations.requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile);
         onDoneTab2(() => {
-            notification('success', `업데이트 완료!`)
-            emit("sendActionSaveDone", false) 
+          notification('success', `업데이트 완료!`)
+          emit("closePopup", false)
+          emit("sendActionSaveDone", false) 
         })
         onErrorTab2(e => {
             notification('error', e.message)
         })
+
         watch(() => props.modalStatus, (newVal) => {
             if (newVal == true)
                 mailAction.value = props.data?.emailInput.receiverAddress
         })
+
         const setModalVisible = () => {
             emit("closePopup", true)
         }
+
         const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {

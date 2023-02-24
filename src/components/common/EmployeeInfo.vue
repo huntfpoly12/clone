@@ -7,7 +7,7 @@
             <a-tooltip placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
                 v-if="idCardNumber && name && convertBirthDay(idCardNumber)">
                 <template #title>
-                    <div v-if="convertBirthDay(idCardNumber)">{{ convertBirthDay(idCardNumber) }}</div>
+                    <div v-if="convertBirthDay(idCardNumber)" style="color: white;">{{ convertBirthDay(idCardNumber) }}</div>
                 </template>
                 <div class="text-center">
                     {{ name }}
@@ -92,15 +92,6 @@ export default defineComponent({
     display: flex;
     align-items: flex-end;
 }
-.tag-status {
-    background-color: #C00000;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
-}
-
-
 .tag-status {
     background-color: #C00000;
     color: white;

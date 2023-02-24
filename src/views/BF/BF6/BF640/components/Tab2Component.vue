@@ -18,29 +18,25 @@
                     </div>
                 </a-form-item>
                 <div class="production-check">
-                    <div class="d-flex-center custom-checkbox-search" :disabled="true"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
@@ -81,7 +77,10 @@
                     <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
-                        <SaveOutlined class="fz-24 ml-5 action-save" @click="openModalSave" />
+                        <div class="btn-modal-save" @click="openModalSave">
+                            <SaveOutlined class="fz-20 ml-5 action-save"/>
+                        <span style="margin-left: 5px;">파일제작요청</span>
+                        </div>
                     </a-tooltip>
                 </div>
             </a-form-item>
@@ -110,10 +109,10 @@
 }}
                         </span>
                     </template>
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd"/>
+                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                     <DxColumn caption="제작현황" cell-template="제작현황" />
                     <template #제작현황="{ data }">
-                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" />
+                        <GetStatusTable  :data="data.data" />
                     </template>
                     <DxSummary>
                         <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -123,7 +122,7 @@
             </a-spin>
         </div>
     </div>
-    <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" :data="dataModalSave"
+    <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail" :data="dataModalSave"
         :step="2" />
 </template>
 <script lang="ts">
@@ -140,6 +139,7 @@ import GetStatusTable from "./GetStatusTableStep2.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     components: {
     SaveOutlined,
@@ -178,6 +178,7 @@ export default defineComponent({
         let trigger = ref(true)
         let modalConfirmMail = ref(false)
         let dataModalSave = ref()
+        const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
         let {
@@ -216,7 +217,6 @@ export default defineComponent({
         }, { deep: true })
         // ================== FUNCTION ================== 
         const openModalSave = () => {
-            modalConfirmMail.value = true
             dataModalSave.value = {
                 filter: dataSearch.value,
                 emailInput: {
@@ -225,7 +225,21 @@ export default defineComponent({
                 },
                 companyIds: keySelect.value
             }
+            if (keySelect.value.length > 0) {
+                modalConfirmMail.value = true;
+            }else {
+                notification('warning',messageDelNoItem)
+            }
         }
+
+      // The above code is a function that is called when the user clicks the "Close" button on the
+      // modal.
+        const closeConfirmMail = () => {
+          modalConfirmMail.value = false;
+          trigger.value = true
+          refetchTable()
+        }
+
         const selectionChanged = (res: any) => {
             keySelect.value = res.selectedRowKeys
         }
@@ -274,7 +288,7 @@ export default defineComponent({
         
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave
+            selectionChanged, openModalSave,closeConfirmMail
         }
     }
 })

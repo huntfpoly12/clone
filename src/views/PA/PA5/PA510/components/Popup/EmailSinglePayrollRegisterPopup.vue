@@ -16,9 +16,9 @@
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-50">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -42,7 +42,8 @@ export default defineComponent({
         data: {
             type: Object,
             default: {}
-        }
+        },
+        emailAddress: String,
     },
     components: {
         DxSelectBox,
@@ -50,15 +51,17 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const processKey = computed(() => store.state.common.processKeyPA510)
-        let emailAddress = ref('');
+        let emailAddress: any = ref('');
         const dataSelect = ref([
             { name: '사번순', value: '사번' },
             { name: '부서순', value: '부서' },
             { name: '직위순', value: '직위' },
         ])
         const valueSelect = ref('사번')
-        watch(() => props.data, (val) => {
-            emailAddress.value = val?.employee.email
+        watch(() => props.modalStatus, (val) => {
+            if (val) {
+                emailAddress.value = props.emailAddress
+            }
         });
 
         const setModalVisible = () => {

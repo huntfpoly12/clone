@@ -22,29 +22,25 @@
                     </div>
                 </a-form-item>
                 <div class="production-check">
-                    <div class="d-flex-center custom-checkbox-search" :disabled="true"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox1 = !typeCheckbox.checkbox1) : ''">
+                    <div class="d-flex-center custom-checkbox-search" >
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox2 = !typeCheckbox.checkbox2) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox3 = !typeCheckbox.checkbox3) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search"
-                        @click="!dataSearch.beforeProduction ? (typeCheckbox.checkbox4 = !typeCheckbox.checkbox4) : ''">
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
@@ -120,7 +116,7 @@
                     <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
                     <DxColumn caption="제작현황" cell-template="제작현황" width="200px" />
                     <template #제작현황="{ data }">
-                        <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data"
+                        <GetStatusTable v-if="data.data.lastProductionRequestedAt"  :data="data.data"
                             @productionStatusData="productionStatusData" />
                     </template>
                     <DxSummary>
@@ -130,7 +126,7 @@
                 </DxDataGrid>
             </a-spin>
         </div>
-        <PopupConfirmSaveStep1 :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false"
+        <PopupConfirmSaveStep1  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
     </div>
 </template>
@@ -184,7 +180,7 @@ export default defineComponent({
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.search, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchIncomeWageSimplifiedPaymentStatementElectronicFilings, { filter: dataSearch.value }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
@@ -235,13 +231,17 @@ export default defineComponent({
             }
         }
 
+        const closeConfirmMail = () => {
+          modalConfirmMail.value = false;
+          trigger.value = true
+          refetchTable()
+        }
         //SUM
         // count the number of status
         
         let productionStatusArr = ref<any>([]);
         const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
-            // console.log(`output->arr`, arr)
             if (Object.keys(arr).length === 0 || arr.length === 0) {
                 return 0;
             }
@@ -267,8 +267,6 @@ export default defineComponent({
             }
         }
 
-        //
-        
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
@@ -310,8 +308,20 @@ export default defineComponent({
             reFreshDataGrid();
         }
         return {
-            userInfor, dataModalSave, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, loadingTable, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,
-            actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData
+          userInfor,
+          dataModalSave,
+          activeKey: ref("1"),
+          valueDefaultCheckbox,
+          valueDefaultSwitch,
+          loadingTable, dayjs,
+          checkBoxSearch,
+          typeCheckbox,
+          dataSearch,
+          dataSource,
+          colomn_resize,
+          move_column,
+          modalConfirmMail,
+          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail
         }
     }
 })

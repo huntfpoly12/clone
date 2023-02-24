@@ -220,10 +220,11 @@
                         </template>
                         <DxColumn width="75" caption="근무일수" data-field="workingDays" />
                         <DxColumn width="85" caption="일급여" data-field="dailyWage" format="fixedPoint" />
+                        <DxColumn width="85" caption="월급여" data-field="monthlyWage" format="fixedPoint" />
                         <DxColumn width="85" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
-                                <template #title>소득세 {{ $filters.formatCurrency(data.data.incomePayment) }} / 지방소득세
+                                <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
                                     {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
                                 </template>
                                 <span>
@@ -254,7 +255,7 @@
                         <DxColumn caption="지급일" data-field="paymentDay" width="60px" />
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
-                            <DxTotalItem column="일급여" :customize-text="customizeTotalMonthly" value-format="#,###" />
+                            <DxTotalItem column="월급여" summary-type="sum" display-format="월급여합계: {0}" value-format="#,###" />
                             <DxTotalItem column="공제" summary-type="sum" display-format="공제합계: {0}"
                                 value-format="#,###" />
                             <DxTotalItem column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
@@ -558,13 +559,13 @@ export default defineComponent({
         //         store.state.common.employeeId = rowEdit.value.employeeId
         //     }
         // }
-        const customizeTotalMonthly = (data: any) => {
-            let total: any = 0
-            store.state.common.dataTaxPayInfo.map((val: any) => {
-                total += val.workingDays * val.dailyWage
-            })
-            return `월급여합계: ${filters.formatCurrency(total)}`;
-        }
+        // const customizeTotalMonthly = (data: any) => {
+        //     let total: any = 0
+        //     store.state.common.dataTaxPayInfo.map((val: any) => {
+        //         total += val.workingDays * val.dailyWage
+        //     })
+        //     return `월급여합계: ${filters.formatCurrency(total)}`;
+        // }
 
         const copyMonth = (month: number) => {
             dataModalCopy.value = month
@@ -590,7 +591,7 @@ export default defineComponent({
             actionEditTaxPay,
             dataRows,
             loadingTaxPayInfo,
-            customizeTotalMonthly,
+            // customizeTotalMonthly,
             copyMonth,
             modalCopy,
             dataModalCopy,

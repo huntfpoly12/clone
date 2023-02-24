@@ -5,7 +5,7 @@
         <a-row>
           <a-col :span="8">
             <a-form-item  label="귀속연도">
-              <year-picker-box-custom v-model:valueDate="originData.imputedYear"></year-picker-box-custom>
+              <year-picker-box-custom v-model:valueDate="originData.imputedYear" :minYear="2022"></year-picker-box-custom>
             </a-form-item>
           </a-col>
           <a-col :span="16">
@@ -26,18 +26,18 @@
                 <a-row>
                   <a-col :span="12">
                     <div class="checkbox-item">
-                      <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="2" padding="0px 5px" />
+                      <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!originData.beforeProduction" :size="'20'"/> <production-status :typeTag="2" padding="0px 5px" />
                     </div>
                     <div class="checkbox-item">
-                      <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="4" padding="0px 5px" />
+                      <checkbox-basic v-model:valueCheckbox="checkbox3" :disabled="!originData.beforeProduction" :size="'20'"/> <production-status :typeTag="4" padding="0px 5px" />
                     </div>
                   </a-col>
                   <a-col :span="12">
                     <div class="checkbox-item">
-                      <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="3" padding="0px 5px" />
+                      <checkbox-basic v-model:valueCheckbox="checkbox2" :disabled="!originData.beforeProduction" :size="'20'"/> <production-status :typeTag="3" padding="0px 5px" />
                     </div>
                     <div class="checkbox-item">
-                      <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="originData.beforeProduction" :size="'20'"/> <production-status :typeTag="5" padding="0px 5px" />
+                      <checkbox-basic v-model:valueCheckbox="checkbox4" :disabled="!originData.beforeProduction" :size="'20'"/> <production-status :typeTag="5" padding="0px 5px" />
                     </div>
                   </a-col>
                 </a-row>
@@ -76,7 +76,7 @@
     <div class="title-table d-flex">
         <a-form-item label="파일 제작 설정" label-align="left">
             <div class="custom-note d-flex-center">
-                <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                <switch-basic textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true"/>
                 <span class="style-note">
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                     <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
@@ -85,7 +85,7 @@
         </a-form-item>
         <a-form-item label="제출연월일" label-align="left">
             <div class="d-flex-center">
-                <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                <date-time-box width="150px" v-model:valueDate="dateSubmission"/>
                 <a-tooltip placement="topLeft" color="black">
                     <template #title>전자신고파일 제작 요청</template>
                     <div class="btn-modal-save" @click="requestIncomeFile">
@@ -157,7 +157,8 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const trigger = ref<boolean>(true);
     const triggerElecFilings = ref<boolean>(false);
-    // for checkbox 
+    const dateSubmission  = ref((globalYear.value + 1) +'0310')
+    // for checkbox
     const checkbox1 = ref<boolean>(false);
     const checkbox2 = ref<boolean>(false);
     const checkbox3 = ref<boolean>(false);
@@ -166,7 +167,7 @@ export default defineComponent({
     let companyIds = Array();
     const dataRequestFile = ref()
     const originData = reactive({
-          beforeProduction:false,
+          beforeProduction:true,
           productionStatuses:Array(),
           companyCode:'',
           companyName:'',
@@ -307,7 +308,8 @@ export default defineComponent({
       trigger,
       requestIncomeFile,
       modalRequestFile,
-      dataRequestFile
+      dataRequestFile,
+      dateSubmission
     }
   }
 })

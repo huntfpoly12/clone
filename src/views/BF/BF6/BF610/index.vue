@@ -23,7 +23,7 @@
                                     @click="checkAll1" />
                             </div>
                             <div>
-                                <checkbox-basic label="정기" v-model:valueCheckbox="reportType.checkbox2" />
+                                <checkbox-basic label="매월" v-model:valueCheckbox="reportType.checkbox2" />
                                 <checkbox-basic label="반기" v-model:valueCheckbox="reportType.checkbox3" />
                             </div>
                         </div>
@@ -91,6 +91,8 @@
             </a-row>
         </div>
         <div class="page-content">
+            <process-status 
+                                @checkConfirmRowTable="changeStatusRowTable" />
             <a-spin :spinning="loadingTable" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource.datas"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
