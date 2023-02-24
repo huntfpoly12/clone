@@ -88,7 +88,7 @@
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
                         v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate"
-                        :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                        :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
                         v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />
@@ -105,7 +105,7 @@
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
                         v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate"
-                        :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                        :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
                         v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />

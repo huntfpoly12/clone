@@ -66,12 +66,18 @@
                     format="#,###" />
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
                     format="#,###" />
-                <DxColumn caption="공제" width="100px" data-field="totalDeduction" data-type="string" format="#,###" />
+                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" />
                 <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
                     format="#,###" />
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
                 <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
+                <template #total-deduction="{ data }">
+                  <a-tooltip placement="left">
+                      <template #title>소득세 {incomePayment} / 지방<br>소득세 {withholdingLocalIncomeTax}</template>     
+                      <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
+                  </a-tooltip>
+                </template>
                 <template #joinedAt="{ data }">
                     <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
                 </template>
@@ -86,7 +92,7 @@
                     <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                         :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                         :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                        :forDailyUse="data.data.employeeType == 10 ? true : false" />
+                        :forDailyUse="data.data.employeeType == 10 ? false : true" />
                 </template>
                 <template #note="{ data }">
                     <div>
@@ -134,7 +140,7 @@
         title="변경이력" typeHistory="pa-420" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
+    <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
@@ -280,6 +286,13 @@ export default defineComponent({
         const actionClosePopup = () => {
             modalUpdate.value = false
         }
+
+        const closeChangePaymentDay = () => {
+          modalEdit.value = false
+          triggerDetail.value = true
+          refetchTableDetail()
+        }
+        
         const onItemClick = (key: String) => {
             if (key == 'history') {
                 modalHistory.value = true
@@ -350,7 +363,8 @@ export default defineComponent({
             actionClosePopup,
             refetchTableDetail,
             resetFormNum,
-            listEmployeeId
+            listEmployeeId,
+            closeChangePaymentDay
         }
     }
 });
