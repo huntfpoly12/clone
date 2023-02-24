@@ -173,6 +173,7 @@ export default defineComponent({
             })
             emit("closePopup", false)
             store.state.common.paymentDayCopy = paymentDayCopy.value
+            store.state.common.actionCopy++
             store.state.common.resetArrayEmploySelect++
         };
 

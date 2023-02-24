@@ -271,7 +271,7 @@ export default defineComponent({
         resEmployeeWage(value => {
             dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
             if (store.state.common.actionAddItem) {
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
@@ -282,7 +282,7 @@ export default defineComponent({
         })
         resWithholdingConfigPayItems(res => {
             arrDeduction.value = []
-            res.data.getWithholdingConfigDeductionItems.map((val: any) => {
+            res.data.getWithholdingConfigDeductionItems?.map((val: any) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode)) {
                     let price = funcCheckPrice(val.itemCode)
                     arrDeduction.value.push({
@@ -296,9 +296,9 @@ export default defineComponent({
         resIncomeWageDaily((value: any) => {
             dataIncomeWageDaily.value = value.data.getIncomeWageDaily
             store.state.common.dataRowOld = { ...value.data.getIncomeWageDaily }
-            arrDeduction.value.map((data: any) => {
+            arrDeduction.value?.map((data: any) => {
                 data.price = 0
-                dataIncomeWageDaily.value.deductionItems.forEach((val: any) => {
+                dataIncomeWageDaily.value.deductionItems?.map((val: any) => {
                     if (val.itemCode == data.itemCode) {
                         data.price = val.amount
                     }
@@ -318,11 +318,11 @@ export default defineComponent({
             if (value) {
                 countKey.value++;
                 employeeWageDailyParam.value.employeeId = null
-                arrDeduction.value.map((data: any) => {
+                arrDeduction.value?.map((data: any) => {
                     data.price = 0
                 })
                 arrayEmploySelect.value = []
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
@@ -373,7 +373,7 @@ export default defineComponent({
                 triggerIncomeWageDaily.value = true;
             } else {
                 if (!store.state.common.actionAddItem) {
-                    arrDeduction.value.map((data: any) => {
+                    arrDeduction.value?.map((data: any) => {
                         data.price = 0
                     })
                     dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
@@ -397,7 +397,7 @@ export default defineComponent({
         // changed.
         watch(() => arrDeduction, (res) => {
             let total = 0
-            res.value.map((val: any) => {
+            res.value?.map((val: any) => {
                 total += val.price
             })
             totalDeduction.value = filters.formatCurrency(total)
@@ -415,9 +415,9 @@ export default defineComponent({
             await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
             await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
             await (dataIncomeWageDaily.value.employee.name = data.name)
-            await (arrDeduction.value.map((dataRow: any) => {
+            await (arrDeduction.value?.map((dataRow: any) => {
                 dataRow.price = 0
-                data.deductionItems?.forEach((val: any) => {
+                data.deductionItems?.map((val: any) => {
                     if (val.itemCode == dataRow.itemCode) {
                         dataRow.price = val.amount
                     }
@@ -439,9 +439,9 @@ export default defineComponent({
             }
         })
 
-        watch(() => store.state.common.paymentDayCopy, (newVal) => {
+        watch(() => store.state.common.actionCopy, (newVal) => {
             setTimeout(() => {
-                dataIncomeWageDaily.value.paymentDay = newVal
+                dataIncomeWageDaily.value.paymentDay = store.state.common.paymentDayCopy
             }, 1000)
         })
 
@@ -450,7 +450,7 @@ export default defineComponent({
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
             if (store.state.common.actionAddItem) {
-                dataEmployeeWageDailies.value.map((dataEmployee: any) => {
+                dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
@@ -464,7 +464,7 @@ export default defineComponent({
         // A function that is used in a Vue HTML template.
         const funcCheckPrice = (id: any) => {
             let price = 0
-            dataIncomeWageDaily.value.deductionItems.map((e: any) => {
+            dataIncomeWageDaily.value.deductionItems?.map((e: any) => {
                 if (e.itemCode == id)
                     price = e.amount
             })

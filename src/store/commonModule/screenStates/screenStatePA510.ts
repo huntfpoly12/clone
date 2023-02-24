@@ -22,6 +22,7 @@ const statesPA510 = {
     resetArrayEmploySelect: 1,
     statusChangeFormPrice: false,
     actionResetForm: 0,
+    actionCopy: 1,
 };
   
 export default statesPA510;

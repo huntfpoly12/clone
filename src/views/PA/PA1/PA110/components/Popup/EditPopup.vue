@@ -54,6 +54,7 @@ export default defineComponent({
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            store.state.common.loadingTableInfo++
         })
         onError((e: any) => {
             notification('error', e.message)
