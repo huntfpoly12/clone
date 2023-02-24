@@ -158,8 +158,8 @@ export default defineComponent({
                 // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = null;
-                    store.state.common.focusedRowKey = null;
+                    store.state.common.incomeId = 'PA510';
+                    store.state.common.focusedRowKey = 'PA510';
                     // store.state.common.actionResetForm++;
                 // }
             } else {

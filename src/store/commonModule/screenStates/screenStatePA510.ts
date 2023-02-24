@@ -8,7 +8,7 @@ const statesPA510 = {
     },
     dataRowOld: null,
     incomeId: null,
-    employeeId: null,
+    // employeeId: null,
     actionAddItem: false,
     statusChangeFormAdd: false,
     statusChangeFormEdit: false,
@@ -22,6 +22,7 @@ const statesPA510 = {
     resetArrayEmploySelect: 1,
     statusChangeFormPrice: false,
     actionResetForm: 0,
+    actionCopy: 1,
 };
   
 export default statesPA510;

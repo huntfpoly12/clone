@@ -229,13 +229,6 @@
         </div>
       </a-col>
     </a-row>
-    <!-- {{ processKeyPA720 }} processKeyPA720 <br /> -->
-    <!-- {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
-    {{ compareType2() }} compareType2() <br />
-    {{ compareType1() }} compareType1() <br />
-    {{ compareType }} compareType <br />
-    {{ isNewRowPA720 }} isNewRowPA720 <br />
-    {{ resetFormNum }} resetFormNum <br /> -->
     <a-row class="content-btm">
       <a-col :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax"
@@ -323,7 +316,6 @@ export default defineComponent({
     const processKeyPA720 = computed(() => store.getters['common/processKeyPA720']);
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
-    const popupAddStatus = ref<boolean>(false);
     const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
     // ------------mes popup--------------------
     const messageSave = Message.getMessage('COMMON', '501').message;
@@ -430,7 +422,7 @@ export default defineComponent({
       if (isRunOnce.value) {
         isRunOnce.value = false;
         if (columnData.value[0]['month_' + processKeyPA720.value.processKey.imputedMonth]) {
-          showDetailSelected(columnData.value[0]['month_' + `${dayjs().month() + 1}`]);
+          showDetailSelected(columnData.value[0]['month_' + `${processKeyPA720.value.processKey.imputedMonth}`]);
         }
       }
       if (!columnData.value[0].hasData) {
@@ -444,7 +436,7 @@ export default defineComponent({
       isColumnData.value = columnData.value[0].hasData ? true : false;
     });
     //change year
-    watch(globalYear, (newVal) => {
+    watch (globalYear, (newVal) => {
       incomeProcessExtrasParam.imputedYear = newVal;
       isRunOnce.value = true;
       store.commit('common/processKeyPA720', newVal);
@@ -453,11 +445,14 @@ export default defineComponent({
 
     // -----------------change income process extra status------------------------
 
-    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone } = useMutation(mutations.changeIncomeProcessExtraStatus);
+    const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone, onError: onErrorChangeStatus  } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', `업데이트 완료!`);
       refetchIncomeProcessExtras();
     });
+    onErrorChangeStatus((res: any) => {
+      notification('error', res.message);
+    })
 
     // ======================= after change data ==================================
 
@@ -487,10 +482,12 @@ export default defineComponent({
       resetForm();
       columnData.value[0]['month_' + emit.imputedMonth] = emit;
       isColumnData.value = true;
-      // columnData.value[0]['month_' + emit.imputedMonth].status = 10;
+      month.value = emit.imputedMonth;
+      statusParam.value = { ...processKeyPA720.value, status: 10 };
     };
     const onCopyDone = () => {
-      setTimeout(() => refetchIncomeProcessExtras(), 100);
+      refetchIncomeProcessExtras();
+      isRunOnce.value = true;
       taxPayRef.value.firsTimeRow = true;
     };
 
@@ -513,14 +510,14 @@ export default defineComponent({
     };
     const compareType2 = () => {
       let daActionCompare = JSON.parse(JSON.stringify(formPA720.value.input));
-      delete daActionCompare.employee;
-      delete daActionCompare.actualPayment;
-      delete daActionCompare.incomePayment;
+      delete daActionCompare?.employee;
+      delete daActionCompare?.actualPayment;
+      delete daActionCompare?.incomePayment;
       let daActionEditCompare = JSON.parse(JSON.stringify(formEditPA720.value.input));
       delete daActionEditCompare?.employee;
+      delete daActionEditCompare?.actualPayment;
       delete daActionEditCompare?.incomePayment;
-      delete daActionEditCompare?.incomePayment;
-      if (JSON.stringify(formEditPA720.value.input) == JSON.stringify(daActionCompare)) {
+      if (JSON.stringify(daActionEditCompare) == JSON.stringify(daActionCompare)) {
         return true;
       } else {
         return false;
@@ -594,10 +591,13 @@ export default defineComponent({
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
     const editTax = async (emit: any, firsTimeRow: boolean) => {
+      // c onsole.log(`output->firsTimeRow`,firsTimeRow)
       compareType.value = 2;
       if (isNewRowPA720.value) {
         if (compareType1()) {
-          await delNewRow();
+          if(!firsTimeRow){
+            await delNewRow();
+          }
           taxPayRef.value.focusedRowKey = emit.incomeId;
           editTaxParam.value = emit;
           // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
@@ -643,7 +643,6 @@ export default defineComponent({
     };
     //---------------submit-------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
-    const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
     const addItemClick = ref(true);
     const onSubmit = async () => {
       // c onsole.log(`output- on submit is called`,)
@@ -674,7 +673,7 @@ export default defineComponent({
     const onAddMonth = (val: number) => {
       dataModalCopy.value = val;
       modalCopy.value = true;
-      month.value = val;
+      // month.value = val;
     };
     //get config to check default date type
     const dateType = ref<number>(1);
@@ -688,14 +687,6 @@ export default defineComponent({
       dateType.value = data.paymentType;
       store.commit('common/paymentDayPA720', data.paymentDay);
     });
-
-    //--------compute data function--------------
-    const checkLen = (text: String) => {
-      if (text.length > 10) {
-        return text.substring(0, 10) + '...';
-      }
-      return text;
-    };
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
     // fnc click month
@@ -711,6 +702,7 @@ export default defineComponent({
       statusParam.value = { ...processKeyPA720.value, status: obj.status };
       // resetForm();
       month.value = obj.imputedMonth;
+      store.state.common.isNewRowPA720 = false;
     };
 
     //-----------------check tag > 30 40 -------------------------
@@ -743,7 +735,6 @@ export default defineComponent({
       modalHistoryStatus,
       modalCopy,
       dataModalCopy,
-      popupAddStatus,
       isRunOnce,
       month,
       isLoadNewForm,
@@ -753,13 +744,11 @@ export default defineComponent({
       inputDateTax,
       dateType,
       addItemClick,
-      keyActivePA720,
       formPA720,
       paymentDay,
       rowChangeStatus,
       onDeleteItem,
       editItem,
-      checkLen,
       showDetailSelected,
       editTax,
       onFormDone,
@@ -773,10 +762,9 @@ export default defineComponent({
       openAddNewModal,
       onSave,
       onRowChangeComfirm,
-      editTaxParamFake,
       isNewRowPA720,
       onDelDone,
-      isExpiredStatus
+      isExpiredStatus,
     };
   },
 });

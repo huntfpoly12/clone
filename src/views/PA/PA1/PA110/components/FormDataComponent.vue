@@ -375,7 +375,7 @@ export default defineComponent({
         doneCreated(res => {
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.employeeId = dataIW.value.employee.employeeId
+            store.state.common.incomeId = res.data.createIncomeWage.incomeId
             store.state.common.loadingTableInfo++
             notification('success', `업데이트 완료!`)
         })
@@ -395,7 +395,7 @@ export default defineComponent({
         }, { deep: true })
 
         watch(() => store.state.common.incomeId, (value) => {
-            if (value) {
+            if (value && value != 'PA110') {
                 incomeWageParams.incomeId = value
                 triggerDetail.value = true;
             } else {
@@ -423,13 +423,14 @@ export default defineComponent({
                 store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
                 // store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1].payItems = []
                 dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
+                store.state.common.focusedRowKey = 'PA110'
                 // dataIW.value.payItems = []
                 // dataIW.value.deductionItems = []
                 
-                setTimeout(() => {
-                    let a = document.body.querySelectorAll('[aria-rowindex]');
-                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                }, 100);
+                // setTimeout(() => {
+                //     let a = document.body.querySelectorAll('[aria-rowindex]');
+                //     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+                // }, 100);
             } else {
 
             }
@@ -474,7 +475,7 @@ export default defineComponent({
             }
             // if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
             //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIW.value
-            store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
+            // store.state.common.focusedRowKey = dataIW.value?.incomeId
             // }
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
@@ -492,7 +493,7 @@ export default defineComponent({
 
         watch(() => store.state.common.actionSubmit, () => {
             if (store.state.common.statusChangeFormPrice) {
-                store.state.common.focusedRowKey = dataIW.value?.employee.employeeId
+                store.state.common.focusedRowKey = dataIW.value?.incomeId
                 showErrorButton.value = true;
             } else {
                 let payItems = dataConfigPayItems.value?.map((item: any) => {
@@ -538,6 +539,7 @@ export default defineComponent({
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = data.paymentDay
                 dataIW.value.workingDays = data.workingDays
+                dataIW.value.incomeId = data.incomeId
 
                 dataIW.value.totalWorkingHours = data.totalWorkingHours
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
@@ -630,9 +632,9 @@ export default defineComponent({
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
 
         })
-        watch(() => store.state.common.paymentDayCopy, (newVal) => {
+        watch(() => store.state.common.actionCopy, (newVal) => {
             setTimeout(() => {
-                dataIW.value.paymentDay = newVal
+                    dataIW.value.paymentDay = store.state.common.paymentDayCopy
             }, 1000)
         })
 

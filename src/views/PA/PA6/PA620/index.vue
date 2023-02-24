@@ -4,15 +4,6 @@
     <div id="pa-620">
         <div class="page-content">
             <a-row>
-                <a-col :span="2" class="total-user">
-                    <div>
-                        <span>{{ dataSource.length }}</span>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" style="width: 39px" />
-                    </div>
-                </a-col>
                 <a-col :span="24" class="mt-10">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -240,7 +231,7 @@
                 </a-col>
                 <!-- {{ processKeyPA620 }} processKeyPA620 <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    @createdDone="createdDone" />
+                    @createdDone="createdDone" ref="formRef"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -294,6 +285,7 @@ export default defineComponent({
         let dataCustomRes: any = ref([])
         const isRunOnce = ref<boolean>(true);
         const isDisabledForm = ref<boolean>(false);
+        const formRef = ref();
         // ================GRAPQL==============================================
         // API QUERY TABLE BIG
         const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetIncomeProcessBusinesses, () => ({
@@ -437,21 +429,23 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             isDisabledForm.value = false;
+            setUnderline(data);
         }
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
         }
 
         // ======================================== WATCH =========================================
-        watch(globalYear, (newVal) => {
+        watch (globalYear, (newVal) => {
             isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
-            store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value })
+            store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value });
+            formRef.value.resetForm();
         })
 
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
-            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620
+            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef
         };
     },
 });
