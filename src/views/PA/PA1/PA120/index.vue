@@ -311,12 +311,6 @@ export default defineComponent({
       return false;
     };
     const compareType2 = () => {
-      let editRowTab2 = { ...editRowTab2PA120.value };
-      delete editRowTab2.deductionItems;
-      delete editRowTab2.payItems;
-      let initFormTab2 = { ...initFormTab2PA120.value };
-      delete initFormTab2.deductionItems;
-      delete initFormTab2.payItems;
       if (isChangeConfigPayItemsPA120.value) {
         return false;
       }
@@ -332,11 +326,9 @@ export default defineComponent({
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
         if (!compareType1()) {
-          console.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           return;
         }
-        console.log(`output->type = 1 ko loi`, compareType1());
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
@@ -347,7 +339,6 @@ export default defineComponent({
         isFirstWeb.value = false;
         return;
       }
-      console.log(`output->an nut add lan dau tien`);
       isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       setTimeout(() => {
@@ -378,8 +369,8 @@ export default defineComponent({
             ele?.click();
           }
           if (compareType.value == 2 && tabCurrent.value  == 2) {
-            // let ele2 = document.getElementById('btn-save-edit-tab2');
-            // ele2?.click();
+            let ele2 = document.getElementById('btn-save-edit-tab2');
+            ele2?.click();
             let ele3 = document.getElementById('btn-save-add-tab2');
             ele3?.click();
           }
@@ -387,7 +378,6 @@ export default defineComponent({
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          console.log(`output =? luu loi`, isFirstWeb.value);
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
@@ -398,10 +388,8 @@ export default defineComponent({
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          console.log(`output =? luu ko loi`);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
-          // focusedRowKey.value = idRow.value;
           actionChangeComponent.value = 2;
         }
       } else {
@@ -411,7 +399,6 @@ export default defineComponent({
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            console.log(`output-> toi dang o so 1`);
             addNewRow();
             setTimeout(() => {
               focusedRowKey.value = initFormStateTabPA120.value.employeeId;
@@ -421,7 +408,6 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          console.log(`output-> toi dang o so 2 `);
           store.commit('common/initFormTab2PA120', initFormStateTab2);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
@@ -436,7 +422,6 @@ export default defineComponent({
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          console.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -444,19 +429,16 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        console.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        console.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        console.log(`output->chuyen row bth. ko co newrow`);
         idRowEdit.value = data.data.employeeId;
         actionChangeComponent.value = 2;
       }
