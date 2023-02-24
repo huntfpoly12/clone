@@ -17,7 +17,7 @@
                 <a-col span="16" class="custom-layout">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
-                            :data-source="listEmployeeExtra" :show-borders="true" key-expr="employeeIdHide"
+                            :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
@@ -70,7 +70,7 @@
                                     </a-tooltip>
                                 </div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeCode"/>
+                            <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeName"/>
                             <template #grade-cell="{ data }">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
@@ -265,11 +265,12 @@ export default defineComponent({
                 formState.value.residentId = data.residentId
                 formState.value.email = data.email
                 formState.value.employeeId = data.employeeId
-                formState.value.employeeIdHide = data.employeeId // forcus row key
+                formState.value.residentIdHide = data.residentId // forcus row key
                 formState.value.incomeTypeCode = data.incomeTypeCode
                 formState.value.incomeTypeName = data.incomeTypeName
                 formState.value.deletable = data.deletable
                 dataRowOld = { ...formState.value }
+                focusedRowKey.value = data.residentId
             }
             triggerDetail.value = false;
         })
@@ -278,13 +279,20 @@ export default defineComponent({
         );
         onDoneAdd(() => {
             trigger.value = true;
-            focusedRowKey.value = parseInt(formState.value.employeeId)
-            dataRowOld = { ...formState.value }
+            if (focusedRowKey.value == dataRow.residentId) { // if click save modal
+                originDataDetail.value.employeeId = dataRow.employeeId
+                originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
+            } else { // if click submit
+                originDataDetail.value.employeeId = formState.value.employeeId
+                originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode  
+            }
+            triggerDetail.value = true;
             statusFormUpdate.value = true;
             statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)
         });
         onErrorAdd((e) => {
+            focusedRowKey.value = 'PA710'
             notification('error', e.message)
         });
         onDoneDelete(() => {
@@ -298,7 +306,7 @@ export default defineComponent({
         });
         onDoneUpdate(() => {
             trigger.value = true;
-            if (formState.value.employeeId == focusedRowKey.value) {
+            if (formState.value.residentId == focusedRowKey.value) {
                 originDataDetail.value.employeeId = formState.value.employeeId
                 originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode
                 dataRowOld = { ...formState.value }
@@ -319,7 +327,11 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                focusedRowKey.value = parseInt(formState.value.employeeId)
+                if (statusFormUpdate.value) {
+                    focusedRowKey.value = formState.value.residentId
+                } else {
+                    focusedRowKey.value = statusRemoveRow.value ? null : 'PA710'
+                }
                 // dataRow.employeeId = formState.value.employeeId
                 // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
@@ -416,7 +428,7 @@ export default defineComponent({
                     statusFormUpdate.value = false;
                 }
             } else {
-                modalStatus.value = true;
+                modalStatusAdd.value = true;
             }
         }
 
@@ -479,7 +491,7 @@ export default defineComponent({
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
-                        employeeIdHide: value.employeeId
+                        residentIdHide: value.residentId
                     }
                 })
                 // listEmployeeExtra.value = value.getEmployeeExtras
