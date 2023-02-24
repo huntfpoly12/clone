@@ -50,10 +50,11 @@ export default defineComponent({
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeWagePaymentDay);
+        } = useMutation(mutations.changeIncomeWageDailyPaymentDay);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            store.state.common.loadingTableInfo++
         })
         onError((e: any) => {
             notification('error', e.message)

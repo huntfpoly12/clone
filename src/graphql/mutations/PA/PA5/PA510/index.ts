@@ -5,7 +5,7 @@ import sendIncomeWageDailyPayrollRegisterReportEmail from "./sendIncomeWageDaily
 import sendIncomeWageDailySalaryStatementReportEmail from "./sendIncomeWageDailySalaryStatementReportEmail";
 import copyIncomeWageDailies from "./copyIncomeWageDailies";
 import changeIncomeProcessWageDailyStatus from "./changeIncomeProcessWageDailyStatus";
-import changeIncomeWagePaymentDay from "../../PA1/PA110/changeIncomeWagePaymentDay";
+import changeIncomeWageDailyPaymentDay from "./changeIncomeWageDailyPaymentDay";
 const mutations = {
     deleteIncomeWageDailies: deleteIncomeWageDailies,
     createIncomeWageDaily: createIncomeWageDaily,
@@ -14,7 +14,7 @@ const mutations = {
     sendIncomeWageDailySalaryStatementReportEmail: sendIncomeWageDailySalaryStatementReportEmail,
     copyIncomeWageDailies: copyIncomeWageDailies,
     changeIncomeProcessWageDailyStatus: changeIncomeProcessWageDailyStatus,
-    changeIncomeWagePaymentDay: changeIncomeWagePaymentDay,
+    changeIncomeWageDailyPaymentDay: changeIncomeWageDailyPaymentDay,
 };
 
 export default mutations;
