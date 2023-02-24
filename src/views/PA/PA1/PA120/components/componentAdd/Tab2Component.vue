@@ -169,9 +169,9 @@
         </a-spin>
       </a-col>
     </a-row>
-    {{ isBtnYellow }} isBtnYellow <br/>
+    <!-- {{ isBtnYellow }} isBtnYellow <br/>
     {{ formStateTab2 }} formStateTab2 <br/>
-    {{ rangeDate }} rangeDate <br/>
+    {{ rangeDate }} rangeDate <br/> -->
     <a-row style="margin-top: 20px">
       <a-col :span="8" :offset="8" style="text-align: center">
         <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
