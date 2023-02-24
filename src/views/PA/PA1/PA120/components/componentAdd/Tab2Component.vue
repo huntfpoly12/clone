@@ -505,7 +505,6 @@ export default defineComponent({
       stopTrack = watchEffect(() => {
         const { deductionItems, payItems, ...rest } = formStateTab2;
         if (rest) {
-          console.log(`output -track 2`)
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
         }

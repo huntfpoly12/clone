@@ -141,7 +141,7 @@ export default defineComponent({
         const customItemCreating = (e: any) => {
             let nextId;
             selectBoxData.store().totalCount({}).then((count: any) => { nextId = count + 1 });
-            if(e.text.trim() == "" && e.text == "직접입력"){
+            if(e.text == "" && e.text == "직접입력"){
                 customValue.value = false;
                 return;
             }
