@@ -516,8 +516,8 @@ export default defineComponent({
 
         const selectionChanged = (data: any) => {
             // store.state.common.actionAddItem = true
-            store.state.common.incomeId = null
-            store.state.common.focusedRowKey = null
+            // store.state.common.incomeId = null
+            store.state.common.focusedRowKey = store.state.common.employeeId
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
