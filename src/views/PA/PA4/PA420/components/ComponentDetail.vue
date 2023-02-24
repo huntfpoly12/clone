@@ -86,7 +86,7 @@
                     <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                         :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                         :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                        :forDailyUse="data.data.employeeType == 10 ? true : false" />
+                        :forDailyUse="data.data.employeeType == 10 ? false : true" />
                 </template>
                 <template #note="{ data }">
                     <div>
