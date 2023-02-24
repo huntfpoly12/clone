@@ -44,7 +44,7 @@
                                 <a-space :size="10">
                                     <a-tooltip  color="black" placement="top">
                                         <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data.data.index)" />
+                                        <EditOutlined @click="actionEdit(data.data)" />
                                     </a-tooltip>
 
                                 </a-space>
@@ -204,7 +204,7 @@
             :employeeId="idRowEdit" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
         </PopupAddNewDependent>
         <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :key="idRowIndex"
-            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length">
+            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" :dependentItem="dependentItem">
         </PopupUpdateDependent>
     </div>
 </template>
@@ -281,8 +281,10 @@ export default defineComponent({
             modalAddNewDependent.value = true;
             newForm.value++;
         };
+        const dependentItem = ref();
         const actionEdit = (val: any) => {
-            idRowIndex.value = val
+            idRowIndex.value = val.index;
+            dependentItem.value = val;
             modalEditStatus.value = true
             refetchData()
 
@@ -401,6 +403,7 @@ export default defineComponent({
             basicDeduction,
             maternityAndAdoption,
             disabledType,
+            dependentItem,
         }
     },
 });

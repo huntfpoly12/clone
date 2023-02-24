@@ -161,19 +161,25 @@ export default defineComponent({
         const arrDataPoint: any = ref({}) // arr date of date source
         const originData: any = ref({
           companyId: companyId,
-            filter: {
-                startImputedYearMonth: parseInt(`${globalYear.value}1`),
-                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
-            }
+          filter: {
+              startImputedYearMonth: parseInt(`${globalYear.value}1`),
+              finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+          }
         })
         const {
-            onResult: onResult
+            onResult: onResult,
+            refetch
         } = useQuery(queries.findIncomeProcessBusinessStatViews, originData, () => ({
             fetchPolicy: "no-cache",
         }));
         onResult((value: any) => {
           arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
         })
+        watch(globalYear, (newVal, oldVal) => {
+          originData.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
+          originData.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
+          refetch()
+        });
         // ---------------------fn modal --------------------
         const setModalVisible = () => {
             emit("closePopup", false)
