@@ -205,7 +205,7 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
                         :allow-column-reordering="move_column" :focused-row-enabled="true"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="employee.employeeId"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
@@ -444,20 +444,20 @@ export default defineComponent({
             store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
             // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
             if (value.getIncomeWageDailies[0]) { // if have data
-                if (store.state.common.employeeId && value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
-                    store.state.common.focusedRowKey = store.state.common.employeeId
-                    store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                    store.state.common.focusedRowKey = store.state.common.incomeId
+                    // store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                 } else {
-                    store.state.common.focusedRowKey = value.getIncomeWageDailies[0].employeeId
+                    store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
                     store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
-                    store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
+                    // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
                 }
                 store.state.common.actionAddItem = false
             } else {
                 store.state.common.actionAddItem = true
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
-                store.state.common.employeeId = null;
+                // store.state.common.employeeId = null;
                 store.state.common.actionResetForm++;
             }
             store.state.common.resetArrayEmploySelect++
@@ -506,7 +506,7 @@ export default defineComponent({
                         store.state.common.statusRowAdd = true
                     }
                     store.state.common.incomeId = data.data.incomeId
-                    store.state.common.employeeId = data.data.employeeId
+                    // store.state.common.employeeId = data.data.employeeId
                 }
                 if (store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
@@ -516,8 +516,8 @@ export default defineComponent({
 
         const selectionChanged = (data: any) => {
             // store.state.common.actionAddItem = true
-            store.state.common.incomeId = null
-            store.state.common.focusedRowKey = null
+            // store.state.common.incomeId = null
+            store.state.common.focusedRowKey = store.state.common.incomeId
             dataRows.value = data.selectedRowsData
         }
         const showDetailSelected = (data: any) => {
@@ -539,7 +539,7 @@ export default defineComponent({
                     store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = rowEdit.value.incomeId
-                store.state.common.employeeId = rowEdit.value.employeeId
+                // store.state.common.employeeId = rowEdit.value.employeeId
             }
             
         }

@@ -169,9 +169,9 @@
         </a-spin>
       </a-col>
     </a-row>
-    {{ isBtnYellow }} isBtnYellow <br/>
+    <!-- {{ isBtnYellow }} isBtnYellow <br/>
     {{ formStateTab2 }} formStateTab2 <br/>
-    {{ rangeDate }} rangeDate <br/>
+    {{ rangeDate }} rangeDate <br/> -->
     <a-row style="margin-top: 20px">
       <a-col :span="8" :offset="8" style="text-align: center">
         <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
@@ -505,7 +505,6 @@ export default defineComponent({
       stopTrack = watchEffect(() => {
         const { deductionItems, payItems, ...rest } = formStateTab2;
         if (rest) {
-          console.log(`output -track 2`)
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
         }

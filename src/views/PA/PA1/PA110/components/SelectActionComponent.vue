@@ -3,7 +3,7 @@
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
-    <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/>
+    <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/> -->
     <DxButton @click="onSubmit($event)" size="large"
         class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
@@ -23,6 +23,12 @@
                 <img src="@/assets/images/icon_status_history.png" alt="" class="icon_status_history" />
             </div>
         </a-tooltip>
+    </DxButton>
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
+        <div class="d-flex-center">
+            <checkbox-basic  :valueCheckbox="true" disabled="true" />
+            <span class="fz-12 pl-5">지급일변경</span>
+        </div>
     </DxButton>
     <div class="custom-select-tab ml-4">
         <button class="button-open-tab"
@@ -158,8 +164,8 @@ export default defineComponent({
                 // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = null;
-                    store.state.common.focusedRowKey = null;
+                    store.state.common.incomeId = 'PA110';
+                    store.state.common.focusedRowKey = 'PA110';
                     // store.state.common.actionResetForm++;
                 // }
             } else {

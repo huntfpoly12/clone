@@ -123,6 +123,41 @@ export default defineComponent({
       }
     );
 
+    //-------------------------get date source copy--------------------------------
+
+    const arrDataPoint: any = ref({}) // arr date of date source
+    const findIncomeProcessExtraStatViewsParam: any = ref({
+      companyId: companyId,
+      filter: {
+        startImputedYearMonth: parseInt(`${globalYear.value}1`),
+        finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+      }
+    })
+    const { result: resultFindIncomeProcessExtraStatViews, refetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+      fetchPolicy: 'no-cache',
+    }));
+    watch(resultFindIncomeProcessExtraStatViews, (value) => {
+      arrDataPoint.value = value.findIncomeProcessExtraStatViews;
+    });
+    const messageCopyDone = Message.getMessage('COMMON', '106').message;
+
+    watchEffect(() => {
+      if (props.dateType == 2 && props.month) {
+        month2.value = `${globalYear.value}${props.month + 1}`;
+      }
+      if (props.dateType == 1) {
+        month2.value = `${globalYear.value}${props.month}`;
+      }
+      // if(globalYear.value) {
+      //   refetch();
+      // }
+    });
+    watch(globalYear, (newVal, oldVal) => {
+      findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
+      findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
+      refetch()
+    });
+
     //-------------------------action copy data--------------------------------
 
     const {
@@ -152,6 +187,7 @@ export default defineComponent({
           target: processKeyPA720.value.processKey,
         }
         mutate(param);
+        // emit('loadingTable')
       } else {
         notification('error', '날짜를 선택하세요.')
       }
@@ -165,28 +201,6 @@ export default defineComponent({
       notification('success', messageCopyDone);
       emit('loadingTable')
     })
-
-    //-------------------------get date source copy--------------------------------
-
-    const arrDataPoint: any = ref({}) // arr date of date source
-    const findIncomeProcessExtraStatViewsParam: any = ref({
-      companyId: companyId,
-      filter: {
-        startImputedYearMonth: parseInt(`${globalYear.value}1`),
-        finishImputedYearMonth: parseInt(`${globalYear.value}12`),
-      }
-    })
-    const { result: resultFindIncomeProcessExtraStatViews } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    watch(resultFindIncomeProcessExtraStatViews, (value) => {
-      arrDataPoint.value = value.findIncomeProcessExtraStatViews;
-    });
-    const messageCopyDone = Message.getMessage('COMMON', '106').message;
-
-    // watchEffect(() => {
-    //   month2.value = `${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`;
-    // });
 
     // ---------------------fn modal --------------------
 

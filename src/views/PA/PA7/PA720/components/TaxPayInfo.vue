@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ dataSourceDetail.length }} -->
+    <!-- {{ dataSourceDetail[0]}} -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
@@ -12,14 +12,15 @@
       <template #tag="{ data }">
         <div>
           <button style="margin-right: 5px">
-            {{ data.data.incomeTypeCode }}
+            {{ data.data.employeeId }}
           </button>
           {{ data.data?.employee?.name }}
           <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
-            <template #title v-if="data.data?.employee?.incomeTypeName?.length > 10">
-              <span>{{ data.data?.employee?.incomeTypeName }}</span>
+            <template #title>
+              {{ data.data.incomeTypeCode }}
+              <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
+              }}</span>
             </template>
-
             {{ checkLen(data.data?.employee?.incomeTypeName) }}
           </a-tooltip>
         </div>
@@ -32,7 +33,14 @@
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
       <template #incomLocalTax="{ data }">
-        {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+        <a-tooltip placement="top">
+          <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
+            {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
+          </template>
+          <span>
+            {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+          </span>
+        </a-tooltip>
       </template>
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
         alignment="right" />
@@ -139,9 +147,9 @@ export default defineComponent({
         focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
         firsTimeRow.value = false;
-      // }else {
-      //   store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
-      //   emit('resetForm')
+        // }else {
+        //   store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
+        //   emit('resetForm')
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -175,7 +183,7 @@ export default defineComponent({
 
     const checkLen = (text: String) => {
       if (text.length > 10) {
-        return text.substring(0, 10) + '...';
+        return text.substring(0, 7) + '...';
       }
       return text;
     };
@@ -260,6 +268,4 @@ export default defineComponent({
 });
 </script>
 
-<style>
-
-</style>
+<style></style>

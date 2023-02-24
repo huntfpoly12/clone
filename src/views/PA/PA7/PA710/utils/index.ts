@@ -7,7 +7,7 @@ export const initialState = {
         residentId: "",
         email: "",
         employeeId: null,
-        employeeIdHide: 'PA710',
+        residentIdHide: 'PA710',
         incomeTypeCode: "940100",
         incomeTypeName: "저술가",
         deletable: false,
