@@ -22,7 +22,6 @@
                             <production-status :typeTag="5" v-if="data == -1" padding="1px 10px"/>
                         </template>
                     </DxRadioGroup>
-                    
                 </a-form-item>
               </a-autocomplete>
               <a-col>

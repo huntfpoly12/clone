@@ -99,6 +99,8 @@ export default defineComponent({
                             title: props.title,
                             content: props.content,
                             okText: props.okText,
+                            ...icon,
+                            class: props.isConfirmIcon ? '' : 'noIcon',
                             onOk() {
                                 emit("closePopup", false)
                             },
