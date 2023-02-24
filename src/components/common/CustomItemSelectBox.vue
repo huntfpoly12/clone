@@ -16,20 +16,11 @@
       @custom-item-creating="customItemCreating" 
       @contentReady="onContentReady"
       @value-changed="updateValue($event ,value)" 
-      @item-click="onItemClick"
-      @input = "onInput"
       >
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
     </DxSelectBox>
-    <!-- v-model:selectedItem="editBoxValue"
-              :value="product"
-              :accept-custom-value="true"
-              :data-source="productsDataSource"
-              display-expr="Name"
-              value-expr="ID"
-              @customItemCreating="customItemCreating($event)" -->
 </template>
 
 <script lang="ts">
@@ -78,44 +69,19 @@ export default defineComponent({
             ],
             key: "id"
         });
+        
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
         const messageRequired = ref(messages.getCommonMessage('102').message);
         if (props.messRequired != "") {
             messageRequired.value = props.messRequired;
         }
+
         const value = ref(props.valueInput);
-        const customValue = ref(true);
+        const customValue = ref(false);
         const newSelect = ref<any[]>([]);
-        const checkText = (text: any) => {
-            let check = true;
-            arrSelectSource.value?.forEach((item:any) => {
-                if(text == item.value){
-                    isValidValue.value = false;
-                    customValue.value = false;
-                    check = false;
-                }
-            })
-            if(!check) {
-                return check
-            }
-            newSelect.value.forEach((item:any) => {
-                if(text == item.value){
-                    isValidValue.value = false;
-                    customValue.value = false;
-                    check = false;
-                }
-            })
-            if(!check) {
-                return check
-            }
-            isValidValue.value = true;
-            customValue.value = true;
-            return check;
-        }
-        const onInput = (e: any) => {
-        }
-        const updateValue = async(e: any, val: any) => {
+    
+        const updateValue = (e: any, val: any) => {
             if (val === '') {
                 customValue.value = false;
             }
@@ -124,23 +90,16 @@ export default defineComponent({
                 let ele = e.element.children[0].children[1].children[0].children[0];
                 ele.focus();
                 ele.select();
-            };
-            // newSelect.value.forEach((item:any) => {
-            //     if(item.value == val) {
-            //         customValue.value = true;
-            //         let ele = e.element.children[0].children[1].children[0].children[0];
-            //         ele.focus();
-            //         ele.select();
-            //     }
-            // })
-            // checkText(val);
-            emit("update:valueInput", val);
+            } else {
+              emit("update:valueInput", val);
+            }
         };
         const arrSelectSource = ref<any[]>(props.arrSelect??[]);
         
         const customItemCreating = (e: any) => {
             let nextId;
-            selectBoxData.store().totalCount({}).then((count: any) => { nextId = count + 1 });
+          selectBoxData.store().totalCount({}).then((count: any) => { nextId = count + 1 });
+            alert()
             if(e.text.trim() == "" && e.text == "직접입력"){
                 customValue.value = false;
                 return;
@@ -156,25 +115,6 @@ export default defineComponent({
             selectBoxData.reload();
             newSelect.value.push(newItem)
             arrSelectSource.value.push(newItem)
-            // const productIds = arrSelectSource.value?.map((item: any) => item.id);
-            // const incrementedId = productIds? Math.max.apply(null, productIds) + 1:  Math.floor(Math.random());
-            // const newItem = {
-            //     id: incrementedId,
-            //     value: e.text,
-            // };
-
-            // e.customItem = selectBoxData
-            //     .store()
-            //     .insert(newItem)
-            //     .then(() => {
-            //         selectBoxData.load();
-            //         newSelect.value.push(newItem)
-            //         arrSelectSource.value.push(newItem)
-            //     })
-            //     .then(() => newItem)
-            //     .catch((error) => {
-            //     throw error;
-            // });
             customValue.value = false;
         }
         watch(
@@ -203,22 +143,7 @@ export default defineComponent({
                 ele.select();
             }
         };
-        const onItemClick = (e:any) => {
-          if(e.itemData.id==1){
-                let ele = e.element.children[0].children[1].children[0].children[0];
-                ele.focus();
-                ele.select();
-                customValue.value = true;
-            }
-            newSelect.value.forEach((item:any) => {
-                if(item.value == e.itemData.value) {
-                    customValue.value = true;
-                    let ele = e.element.children[0].children[1].children[0].children[0];
-                    ele.focus();
-                    ele.select();
-                }
-            })
-        }
+        
         return {
             isValidValue,
             value,
@@ -228,9 +153,9 @@ export default defineComponent({
             customItemCreating,
             selectBoxData,
             onContentReady,
-            onItemClick,
-            onInput
+        
         };
     },
 });
 </script>
+

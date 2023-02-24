@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">
+    <standard-form class="modal-add" name="tab-1-420">
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -165,8 +165,8 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="지급일">
-                    <date-time-box :required="false" width="150px"
+                <a-form-item label="지급일" class="label-required">
+                    <date-time-box :required="true" width="150px"
                         v-model:valueDate="dataForm.taxCalculationInput.lastRetiredYearsOfService.paymentDate" />
                 </a-form-item>
                 <a-form-item label="제외일수">
@@ -267,8 +267,6 @@
                 }}일</div>
             </a-col>
         </a-row>
-        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
-            style="display: none;" />
     </standard-form>
 </template>
 
