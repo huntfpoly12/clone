@@ -3,7 +3,7 @@ import deleteIncomeRetirements from "./deleteIncomeRetirements";
 import updateIncomeRetirement from "./updateIncomeRetirement";
 import createIncomeBusiness from "./createIncomeBusiness";
 import updateEmployeeBusiness from "./updateEmployeeBusiness";
-import changeIncomeBusinessPaymentDay from "./changeIncomeBusinessPaymentDay";
+import changeIncomeRetirementPaymentDay from "./changeIncomeRetirementPaymentDay";
 import copyIncomeBusinesses from "./copyIncomeBusinesses";
 import createIncomeRetirement from "./createIncomeRetirement";
 import changeIncomeProcessRetirementStatus from "./changeIncomeProcessRetirementStatus";
@@ -12,7 +12,7 @@ const mutations = {
     createIncomeBusiness: createIncomeBusiness,
     updateIncomeRetirement: updateIncomeRetirement,
     updateEmployeeBusiness: updateEmployeeBusiness,
-    changeIncomeBusinessPaymentDay: changeIncomeBusinessPaymentDay,
+    changeIncomeRetirementPaymentDay: changeIncomeRetirementPaymentDay,
     copyIncomeBusinesses: copyIncomeBusinesses,
     createIncomeRetirement: createIncomeRetirement,
     changeIncomeProcessRetirementStatus : changeIncomeProcessRetirementStatus

@@ -150,10 +150,13 @@ export default defineComponent({
             // selectBoxData.value = res.data.getDepartments 
             let valArr: any = []
             res.data.getDepartments.map((v: any) => {
+              // filter empty value
+              if (v.department != '') {
                 valArr.push({
                     id: v.department,
                     value: v.department
                 })
+              }
             })
             selectBoxData1.value = valArr
         })
@@ -164,11 +167,14 @@ export default defineComponent({
         }))
         resGetResponsibilities(res => {
             let valArr: any = []
-            res.data.getResponsibilities.map((v: any) => {
+          res.data.getResponsibilities.map((v: any) => {
+              // filter empty value
+              if (v.responsibility != '') {
                 valArr.push({
                     id: v.responsibility,
                     value: v.responsibility
                 })
+              }
             })
             selectBoxData2.value = valArr
         })

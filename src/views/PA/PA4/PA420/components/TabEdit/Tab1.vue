@@ -161,7 +161,7 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="지급일">
+                <a-form-item label="지급일" >
                     <date-time-box width="150px"
                         v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.paymentDate"
                         :required="true" />
