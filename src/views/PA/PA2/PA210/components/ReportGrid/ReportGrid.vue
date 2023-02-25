@@ -29,7 +29,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
@@ -42,7 +42,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
@@ -68,6 +68,7 @@
         <div class="table-grid">
           <hot-table ref="wrapper" :settings="hotSettings"></hot-table>
         </div> 
+        <!-- backend Chưa làm xong -->
         <!-- <div class="header-2">원천징수세액환급신청서 / 기납부세액명세서 검증 결과</div>
         <div class="verification-result">
           <div class="form-item">
@@ -275,11 +276,7 @@ export default defineComponent({
       confirmLoadNewStatus.value = true
     }
     
-    // A function that is called when the user clicks on the "Load New" button. It is setting the value of
-    // the originData variable to a new object. The new object has a companyId property that is set to the
-    // value of the companyId variable. It also has an input property that is set to an object. The input
-    // object has properties that are set to the values of the properties of the first object in the
-    // dataSource.value array.
+    // A function that is called when the user clicks on the "Load New" button. 
     const loadNew = () => {
         originData.value = {
           companyId: companyId,
