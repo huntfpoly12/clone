@@ -4,7 +4,7 @@
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
             <a-row>
-                <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
+                <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -230,10 +230,10 @@
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
-                            @selection-changed="selectionChanged"
+                            @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
-                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple"
+                            <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
                             <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
                             <template #tag="{ data }">
@@ -361,7 +361,7 @@ export default defineComponent({
         const processKey = computed(() => store.state.common.processKeyPA110)
         const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
-        const dataCustomRes = ref<any>([])
+        const dataCustomRes: any = ref<any>([])
         const arrDataPoint = ref<any>([])
         const dataModalCopy = ref()
         const modalCopy = ref<boolean>(false);
@@ -392,8 +392,7 @@ export default defineComponent({
                 dataSource.value = [{
                     companyId: companyId,
                 }]
-
-                dataCustomRes.value = [...initDataCustomRes]
+                dataCustomRes.value = JSON.parse(JSON.stringify(initDataCustomRes))
                 value.getIncomeProcessWages.forEach((data: any) => {
                     // create data to copy
                     arrDataPoint.value.push({
@@ -556,9 +555,13 @@ export default defineComponent({
             }
         }
         const selectionChanged = (data: any) => {
-            // store.state.common.actionAddItem = true
-            store.state.common.focusedRowKey = store.state.common.incomeId
-            dataRows.value = data.selectedRowsData
+            data.component.getSelectedRowsData().then((rowData: any) => {
+                dataRows.value = rowData
+                if ( rowData.length > 1 ) {
+                    // store.state.common.incomeId = rowData[0].
+                    store.state.common.focusedRowKey = store.state.common.incomeId
+                }
+            })
         }
         /**
          * show detail value of month

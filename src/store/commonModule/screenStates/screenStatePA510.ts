@@ -23,6 +23,8 @@ const statesPA510 = {
     statusChangeFormPrice: false,
     actionResetForm: 0,
     actionCopy: 1,
+    loadingFormData: 1,
+    selectionFilter: null,
 };
   
 export default statesPA510;

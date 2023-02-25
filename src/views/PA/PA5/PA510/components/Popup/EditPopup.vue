@@ -26,6 +26,8 @@ import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { useStore } from 'vuex'
+import { Message } from "@/configs/enum";
+
 export default defineComponent({
     props: {
         modalStatus: {
@@ -52,9 +54,10 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.changeIncomeWageDailyPaymentDay);
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '101').message)
             emit("closePopup", false)
             store.state.common.loadingTableInfo++
+            store.state.common.loadingFormData++
         })
         onError((e: any) => {
             notification('error', e.message)
