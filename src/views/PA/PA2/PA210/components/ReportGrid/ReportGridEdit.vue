@@ -29,7 +29,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
@@ -42,7 +42,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
