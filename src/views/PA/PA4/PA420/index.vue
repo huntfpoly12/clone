@@ -14,7 +14,7 @@
                             <template #col-first="{}">
                                 <b>지급연월</b>
                             </template>
-                            <DxColumn caption="1" width="100px" cell-template="month-1" />
+                            <DxColumn caption="01" width="100px" cell-template="month-1" />
                             <template #month-1="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth,data.data.month1.status)">
@@ -26,7 +26,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="2" width="100px" cell-template="month-2" />
+                            <DxColumn caption="02" width="100px" cell-template="month-2" />
                             <template #month-2="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month2"
                                     @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth,data.data.month2.status)">
@@ -38,7 +38,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="3" width="100px" cell-template="month-3" />
+                            <DxColumn caption="03" width="100px" cell-template="month-3" />
                             <template #month-3="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month3"
                                     @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth,data.data.month3.status)">
@@ -50,7 +50,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="4" width="100px" cell-template="month-4" />
+                            <DxColumn caption="04" width="100px" cell-template="month-4" />
                             <template #month-4="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month4"
                                     @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth,data.data.month4.status)">
@@ -62,7 +62,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="5" width="100px" cell-template="month-5" />
+                            <DxColumn caption="05" width="100px" cell-template="month-5" />
                             <template #month-5="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month5"
                                     @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth,data.data.month5.status)">
@@ -74,7 +74,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="6" width="100px" cell-template="month-6" />
+                            <DxColumn caption="06" width="100px" cell-template="month-6" />
                             <template #month-6="{ data }">
                                 <div class="hover-underlined" :class="{}" v-if="data.data.month6"
                                     @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth,data.data.month6.status)">
@@ -86,7 +86,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="7" width="100px" cell-template="month-7" />
+                            <DxColumn caption="07" width="100px" cell-template="month-7" />
                             <template #month-7="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month7"
                                     @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth,data.data.month7.status)">
@@ -98,7 +98,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="8" width="100px" cell-template="month-8" />
+                            <DxColumn caption="08" width="100px" cell-template="month-8" />
                             <template #month-8="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month8"
                                     @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth,data.data.month8.status)">
@@ -110,7 +110,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="9" width="100px" cell-template="month-9" />
+                            <DxColumn caption="09" width="100px" cell-template="month-9" />
                             <template #month-9="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month9"
                                     @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth,data.data.month9.status)">
