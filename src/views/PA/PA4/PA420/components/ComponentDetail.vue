@@ -49,6 +49,12 @@
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사원" cell-template="tag" width="300px" header-cell-template="title-header-사원"/>
+                <template #tag="{ data }">
+                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                        :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                        :forDailyUse="data.data.employeeType == 10 ? false : true" />
+                </template>
                 <template #title-header-사원="{}">
                   <a-tooltip placement="top" class="custom-tooltip">
                       <template #title>
@@ -58,8 +64,18 @@
                   </a-tooltip>
                 </template>
                 <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
+                <template #retirementType="{ data }">
+                    <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
+                    <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
+                </template>
                 <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" />
+                <template #joinedAt="{ data }">
+                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
+                </template>
                 <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" />
+                <template #leavedAt="{ data }">
+                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
+                </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
                     width="120px" />
                 <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
@@ -67,33 +83,15 @@
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
                     format="#,###" />
                 <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" />
-                <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
-                    format="#,###" />
-                <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
-                <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
-                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
                 <template #total-deduction="{ data }">
                   <a-tooltip placement="left">
                       <template #title>소득세 {incomePayment} / 지방<br>소득세 {withholdingLocalIncomeTax}</template>     
                       <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                   </a-tooltip>
                 </template>
-                <template #joinedAt="{ data }">
-                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
-                </template>
-                <template #leavedAt="{ data }">
-                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
-                </template>
-                <template #retirementType="{ data }">
-                    <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
-                    <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
-                </template>
-                <template #tag="{ data }">
-                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                        :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                        :forDailyUse="data.data.employeeType == 10 ? false : true" />
-                </template>
+                <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
+                    format="#,###" />
+                <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <template #note="{ data }">
                     <div>
                         <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -112,6 +110,11 @@
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </div>
                 </template>
+                <DxColumn caption="지급일" data-field="paymentDay" cell-template="payment-day" />
+                <template #payment-day="{ data }">
+                    {{ data.data.paymentDay < 10 ? "0"+ data.data.paymentDay :  data.data.paymentDay}}
+                </template>
+                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
                 <template #action="{ data }">
                     <div class="wf-100 text-center">
                         <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
