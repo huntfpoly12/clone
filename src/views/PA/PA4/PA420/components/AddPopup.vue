@@ -28,7 +28,7 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>  
         <div class="step-content pt-20">
-            <form action="your-action">
+      
                 <keep-alive>
                     <template v-if="step === 0">
                         <Tab1 :dataForm="dataForm" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect" :actionNextStep="valueNextStep" @nextPage="step++"/>
@@ -44,7 +44,7 @@
                         <Tab3 :dataForm="dataForm" />
                     </template>
                 </keep-alive>
-            </form>
+          
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -194,7 +194,8 @@ export default defineComponent({
             step.value--;
         }
 
-        const created = () => {
+      const created = (e: any) => {
+          console.log(e.validationGroup.validate())
             const variables: any = reactive({
                 companyId: companyId,
                 processKey: { ...dataForm.processKey },
@@ -217,9 +218,12 @@ export default defineComponent({
             arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10 && !props.listEmployeeexist.includes(element.employeeId))
           // if it is 일용직사원 
           } else {
-            arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20 && !props.listEmployeeexist.includes(element.employeeId))
-               
+            arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20 && !props.listEmployeeexist.includes(element.employeeId))   
           } 
+          //If you choose retired employees, you have to filter again
+          if (dataForm.input.retirementType == 1) {
+            arrayEmploySelect.value = arrayEmploySelect.value.filter((element: any) => element.status === 0)   
+          }
           modalStatusAccept.value = true
           modalOption.value = false
         }

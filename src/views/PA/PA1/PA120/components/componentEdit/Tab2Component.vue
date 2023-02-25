@@ -314,12 +314,12 @@ export default defineComponent({
         editRowData.employeementReduction = data.employeementReduction;
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         store.state.common.rowKeyTab2PA120 = data.employeeId;
-        console.log(`output->editRowData`,editRowData)
+        // c onsole.log(`output->editRowData`,editRowData)
         store.state.common.editRowTab2PA120 = editRowData;
         store.state.common.initFormTab2PA120 = editRowData;
         // store.commit('common/editRowTab2PA120', editRowData);
         // store.commit('common/initFormTab2PA120', editRowData);
-        console.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
+        // c onsole.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
         if (data.payItems && dataConfigPayItems.value.length > 0) {
           dataConfigPayItems.value = dataConfigPayItems.value.map((item1: any) => {
             delete item1.__typename;
@@ -489,7 +489,7 @@ export default defineComponent({
      * Calculate Pension Employee
      * */
     const calculateTax = () => {
-      console.log(`output- chay vao calculateTax`,)
+      // c onsole.log(`output- chay vao calculateTax`,)
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -651,7 +651,7 @@ export default defineComponent({
       stopTrack = watchEffect(() => {
         const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
         if (rest) {
-          console.log(`output -track 2`)
+          // c onsole.log(`output -track 2`)
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
         }

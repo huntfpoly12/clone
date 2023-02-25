@@ -17,6 +17,14 @@
             font-size: 12px;
         }
     }
+    .long-text {
+      align-items: start;
+      padding-top: 3px;
+    }
+    :deep .d-flex-nowrap {
+      display: flex;
+      flex-wrap: nowrap;
+    }
 
     ::v-deep .label-red {
         label {

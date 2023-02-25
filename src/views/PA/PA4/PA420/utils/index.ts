@@ -45,7 +45,7 @@ export const initialFormState = {
         paymentMonth: parseInt(dayjs().format("MM")),
     },
     input: {
-        paymentDay: 1,
+        paymentDay: null,
         employeeId: null,
         employeeType: null,
         retirementType: 1,
@@ -82,7 +82,7 @@ export const initialFormState = {
         lastRetiredYearsOfService: {
             settlementStartDate: null,
             settlementFinishDate: null,
-            paymentDate: 0,
+            paymentDate: null,
             exclusionDays: 0,
             additionalDays: 0,
         },
@@ -95,14 +95,14 @@ export const initialFormState = {
                     pensionAccountHolder: '',
                     bizNumber: '',
                     bankAccountNumber: '',
-                    depositDate: 0,
+                    depositDate: null,
                     accountDepositAmount: 0,
                 },
                 {
                     pensionAccountHolder: '',
                     bizNumber: '',
                     bankAccountNumber: '',
-                    depositDate: 0,
+                    depositDate: null,
                     accountDepositAmount: 0,
                 }
             ]
@@ -132,14 +132,14 @@ export const initialIncomeRetirementTax = {
                 pensionAccountHolder: '',
                 bizNumber: '',
                 bankAccountNumber:'',
-                depositDate: 0,
+                depositDate: null,
                 accountDepositAmount: 0,
             },
             {
                 pensionAccountHolder: '',
                 bizNumber: '',
                 bankAccountNumber: '',
-                depositDate: 0,
+                depositDate: null,
                 accountDepositAmount: 0,
             }
         ]

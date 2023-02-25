@@ -1,5 +1,5 @@
 #pa-120 {
-    ::v-deep .label-custom-width {
+    :deep .label-custom-width {
         label {
             width: auto!important;
         }
@@ -18,6 +18,14 @@
         >span {
             font-size: 12px;
         }
+    }
+    .long-text {
+      align-items: start;
+      padding-top: 3px;
+    }
+    :deep .ant-row.ant-form-item.d-flex-nowrap {
+      display: flex !important;
+      flex-wrap: nowrap;
     }
 
     ::v-deep .label-red {

@@ -24,7 +24,7 @@ import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
-import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import { EditOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
     props: {
@@ -52,7 +52,7 @@ export default defineComponent({
             mutate,
             onDone,
             onError,
-        } = useMutation(mutations.changeIncomeBusinessPaymentDay);
+        } = useMutation(mutations.changeIncomeRetirementPaymentDay);
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)

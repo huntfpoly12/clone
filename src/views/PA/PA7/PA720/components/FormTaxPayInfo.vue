@@ -1,7 +1,9 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
     <!-- {{ formPA720 }} formPA720 <br/>
-    {{ formEditPA720 }} formEditPA720 <br/> -->
+    {{ formEditPA720 }} formEditPA720 <br/>
+    {{ incomeExtraParam }} incomeExtraParam <br/> -->
+
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
@@ -113,6 +115,23 @@ import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import DxValidator, { DxRequiredRule } from 'devextreme-vue/validator';
 import {formatMonth} from '../utils/index';
+
+
+const taxRateOptions = [
+  {
+    label: '20% (일반적인 기타소득)',
+    value: 20,
+  },
+  {
+    label: '15% (연금외수령)',
+    tooltip: '세액공제를 받은 연금납입액, 연금계좌의 운용실적에 따라 증가된 금액',
+    value: 15,
+  },
+  {
+    label: '30% (복권 등 당첨금)',
+    value: 30,
+  },
+];
 export default defineComponent({
   components: {
     DxSelectBox,
@@ -157,9 +176,8 @@ export default defineComponent({
     const getEmployeeExtrasTrigger = ref<boolean>(true);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
-      imputedYear: parseInt(dayjs().format('YYYY')),
+      imputedYear: processKeyPA720.value.processKey.imputedYear,
     });
-    const arrayEmploySelect = ref<any>([]);
     const newDateLoading = ref<boolean>(false);
     const inputDateTax = computed(() => {
       if (props.isColumnData) {
@@ -183,23 +201,21 @@ export default defineComponent({
 
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
-    //watch for changes
+
+    //-------------------------get incom extra detail ------------------------
+
     watch(
       () => props.editTax,
        (newValue) => {
         if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
-          setTimeout(()=>{
-            triggerIncomeExtra.value = true;
-          },10)
+          triggerIncomeExtra.value = true;
         }
       },
       { deep: true }
     );
-    //query
     const {
-      refetch: refetchIncomeExtra,
       loading: loadingIncomeExtra,
       onError: onErrorIncomeExtra,
       result: resultIncomeExtra,
@@ -207,15 +223,6 @@ export default defineComponent({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const { result: resultEmployeeExtras} = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    // mutation
-    const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
-    const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
-
-    // get data
-
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
       incomeExtraData.value = data;
@@ -236,8 +243,30 @@ export default defineComponent({
       store.commit('common/formEditPA720', editRowData);
       newDateLoading.value = loadingIncomeExtra.value;
     });
-    // SUBMIT FORM
+    onErrorIncomeExtra((res: any) => {
+      newDateLoading.value = loadingIncomeExtra.value;
+    });
 
+    //----------------------------get employee extras --------------------------------
+    
+    const arrayEmploySelect = ref<any>([]);
+    const { result: resultEmployeeExtras} = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+      fetchPolicy: 'no-cache',
+    }));
+    watch(resultEmployeeExtras, (newValue: any) => {
+      arrayEmploySelect.value = newValue.getEmployeeExtras;
+    });
+    //change year
+    const globalYear = computed(() => store.state.settings.globalYear);
+    watch (globalYear, (newVal) => {
+      getEmployeeExtrasParams.imputedYear = newVal;
+    });
+
+    //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
+
+    const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
+    const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
+    //submit
     watch(actionSavePA720, () => {
       let params = JSON.parse(JSON.stringify(formPA720.value));
       delete params.input.incomeId;
@@ -256,23 +285,6 @@ export default defineComponent({
       let updateData = {...processKeyPA720.value,input:{...params.input}};
       createIncomeExtra(updateData);
     });
-    // GET ARRAY FORM
-    watch(resultEmployeeExtras, (newValue: any) => {
-      arrayEmploySelect.value = newValue.getEmployeeExtras;
-    });
-
-    const checkLen = (text: String) => {
-      if (text.length > 10) {
-        return text.substring(0, 10) + '...';
-      }
-      return text;
-    };
-    // GET INCOMETYPECODE
-    const changeIncomeTypeCode = (res: string) => {
-      formPA720.value.input.incomeTypeCode = res;
-      formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.incomeTypeCode == res)[0];
-    };
-
     // AFTER ACTION FORM
     createIncomeExtraDone((res) => {
       emit('changeFommDone');
@@ -289,10 +301,6 @@ export default defineComponent({
       store.state.common.isErrorFormPA720 = false;
       store.commit('common/formEditPA720', formPA720.value);
     });
-    //error message
-    onErrorIncomeExtra((res: any) => {
-      newDateLoading.value = loadingIncomeExtra.value;
-    });
     createIncomeExtraError((res: any) => {
       notification('error', res.message);
       store.state.common.isErrorFormPA720 = true;
@@ -301,21 +309,9 @@ export default defineComponent({
       notification('error', res.message);
       store.state.common.isErrorFormPA720 = true;
     })
-    const taxRateOptions = [
-      {
-        label: '20% (일반적인 기타소득)',
-        value: 20,
-      },
-      {
-        label: '15% (연금외수령)',
-        tooltip: '세액공제를 받은 연금납입액, 연금계좌의 운용실적에 따라 증가된 금액',
-        value: 15,
-      },
-      {
-        label: '30% (복권 등 당첨금)',
-        value: 30,
-      },
-    ];
+
+    // ------------------------------calculate form fn--------------------------
+
     const caclInput = () => {
       let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(formPA720.value.input.paymentAmount, formPA720.value.input.requiredExpenses);
       let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate);
@@ -331,6 +327,16 @@ export default defineComponent({
     };
     const onChangeInput = () => {
       caclInput();
+    };
+    const checkLen = (text: String) => {
+      if (text.length > 10) {
+        return text.substring(0, 10) + '...';
+      }
+      return text;
+    };
+    const changeIncomeTypeCode = (res: string, id: any) => {
+      formPA720.value.input.incomeTypeCode = res;
+      formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
     };
     return {
       checkLen,

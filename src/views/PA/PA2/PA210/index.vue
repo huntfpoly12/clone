@@ -359,6 +359,8 @@ export default defineComponent({
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
             } else {
+                // set day to current day if is modify action
+                dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
             }
