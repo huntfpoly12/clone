@@ -1,7 +1,7 @@
 <template>
   <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-    :show-spin-buttons="spinButtons" @input="updateValue(value)" :rtlEnabled="rtlEnabled" :max="max" :min="min"
+    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min"
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -64,7 +64,9 @@ export default defineComponent({
     const updateValue = (value: any) => {
       emit("update:valueInput", value);
     };
-
+    const onChange = (e: any) => {
+            emit("changeInput",e);
+    }
     watch(
       () => props.valueInput,
       (newValue) => {
@@ -73,7 +75,7 @@ export default defineComponent({
     );
 
     return {
-      updateValue,
+      updateValue,onChange,
       value,
       messageRequired
     };
