@@ -65,7 +65,7 @@
                             </DxButton>
                         </template>
                         <DxColumn caption="성명" cell-template="company-name" width="250" />
-                        <template #company-name="{ data }"> 
+                        <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false"
