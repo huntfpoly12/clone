@@ -485,15 +485,23 @@ export default defineComponent({
         }
 
         // ================WATCHING============================================
+        let runOne = ref(true);
         watch(result, (value) => {
             trigger.value = false;
-            if (value) {
+            if (value && value.getEmployeeExtras?.length) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
                         residentIdHide: value.residentId
                     }
                 })
+                if (runOne.value) {
+                    originDataDetail.value.employeeId = listEmployeeExtra.value[0].employeeId
+                    originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0].incomeTypeCode
+                    triggerDetail.value = true;
+                    statusFormUpdate.value = true;
+                    runOne.value = false;
+                }
                 // listEmployeeExtra.value = value.getEmployeeExtras
                 
             }
