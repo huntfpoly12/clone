@@ -70,7 +70,7 @@
                 </div>
             </standard-form>
         </a-modal>
-        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="reportGridStatus = false"
+        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="closeAllPopupAdd" @isDoneReport="closeAllPopupAdd"
             :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
@@ -204,7 +204,13 @@ export default defineComponent({
                 let year = globalYear.value
                 if (value.paymentType == 1) {
                     for (let i = 1; i <= 12; i++) {
-                        if (!value.reportClassCodes.find((item: any) => item == "매당" + i)) {
+                      if (!value.reportClassCodes.find((item: any) => item == "매당" + i)) {
+                            // string concatenation 10th next month of paymentday
+                            const subDate = parseInt(
+                                                  year.toString() + // year
+                                                  ((i + 1) < 10 ? '0' + (i + 1).toString() : (i + 1).toString()) + // month
+                                                  '10' // day
+                                                ) 
                             dataReports.value.push({
                                 reportId: i,
                                 imputedYear: year,
@@ -216,7 +222,7 @@ export default defineComponent({
                                 index: 0,
                                 status: 10,
                                 refund: i == 2 ? true : false,
-                                submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                                submissionDate: subDate,
                                 yearEndTaxAdjustment: i == 2 ? true : false,
                                 imputedFinishYearMonth: parseInt(year + `${i}`),
                                 imputedStartYearMonth: parseInt(year + `${i}`),
@@ -230,18 +236,24 @@ export default defineComponent({
                         if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {
                             let imputedMonth = i == 0 ? 2 : i
                             let paymentMonth = i == 0 ? 2 : i + 1
+                            paymentMonth = paymentMonth == 13 ? 2 : paymentMonth +1
+                            // string concatenation 10th next month of paymentday
+                            const yearSub = (paymentMonth == 13 ? year + 1 : year).toString();
+                            const monthSub = (paymentMonth < 10 ? '0' + (paymentMonth + 1).toString() : (paymentMonth + 1).toString()) 
+                            const subDate = parseInt(yearSub+monthSub +'10') 
+                          
                             dataReports.value.push({
                                 reportId: i,
                                 imputedYear: year,
                                 imputedMonth: imputedMonth,
                                 paymentYear: paymentMonth == 13 ? year + 1 : year,
-                                paymentMonth: paymentMonth == 13 ? 1 : paymentMonth,
+                                paymentMonth: paymentMonth,
                                 reportClassCode: "매익" + i,
                                 ...value,
                                 index: 0,
                                 status: 10,
                                 refund: i == 1 ? true : false,
-                                submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                                submissionDate: subDate, // 10th next month of paymentday
                                 yearEndTaxAdjustment: i == 0 ? true : false,
                                 imputedFinishYearMonth: i ? parseInt(year + `${i}`) : null,
                                 paymentFinishYearMonth: i ? parseInt((paymentMonth == 13 ? year + 1 : year) + `${paymentMonth == 13 ? 1 : paymentMonth}`) : null,
@@ -252,7 +264,13 @@ export default defineComponent({
             } else {
                 let array = value.paymentType == 1 ? arrayPaymentType1 : arrayPaymentType2
                 array.map((data: any, index) => {
-                    if (!value.reportClassCodes.find((item: any) => item == (value.paymentType == 1 ? "반당" : "반익") + index)) {
+                  if (!value.reportClassCodes.find((item: any) => item == (value.paymentType == 1 ? "반당" : "반익") + index)) {
+                        // string concatenation 10th next month of paymentday
+                        const subDate = parseInt(
+                                                  globalYear.value.toString() + // year
+                                                  (data.paymentMonth +1).toString() + // month
+                                                  '10' // day
+                                                ) 
                         dataReports.value.push({
                             reportId: index,
                             imputedYear: globalYear.value,
@@ -264,7 +282,7 @@ export default defineComponent({
                             index: 0,
                             status: 10,
                             refund: data.refund,
-                            submissionDate: parseInt(dayjs().format("YYYYMMDD")),
+                            submissionDate: subDate, // 10th next month of paymentday),
                             yearEndTaxAdjustment: data.yearEndTaxAdjustment,
                             imputedFinishYearMonth: data.imputedFinishYearMonth,
                             imputedStartYearMonth: data.imputedStartYearMonth,
@@ -288,6 +306,11 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+
+        const closeAllPopupAdd = () => {
+          reportGridStatus.value = false
+          setModalVisible()
+        }
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
         };
@@ -301,7 +324,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent, showTooltipYearMonth
+            focusedRowKey,resetComponent, showTooltipYearMonth,closeAllPopupAdd
         };
     },
 });

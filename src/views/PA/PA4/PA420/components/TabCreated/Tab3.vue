@@ -88,7 +88,7 @@
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
                         v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate"
-                        :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                        :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
                         v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />
@@ -105,7 +105,7 @@
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
                         v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate"
-                        :required="false" width="25%" class="mr-5" placeholder="입금일" />
+                        :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
                         v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />
@@ -204,15 +204,15 @@
                 </a-form-item>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">세액계산</div>
-                <a-form-item label="환산산출세액">
+                <div class="header-text-2 mb-10">이연퇴직소득세액계산</div>
+                <a-form-item label="신고대상세액">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.taxAmountCalculation.taxAmountSubjectToReporting" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <div>연금계좌입금명세 ({{
+                <div>연금계좌입금명세 (${{
                     dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount ?
                         $filters.formatCurrency(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount)
                         :
@@ -252,13 +252,13 @@
                         v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
                         disabled="true" :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
-                <a-form-item label="신고대상세액">
+                <a-form-item label="이연퇴직소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax" />
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top">
-                            <template #title>= [환산산출세액] - [세액공제] - [기납부(기과세이연)세액]</template>
+                            <template #title>= [신고대상세액] * [계좌입금금액합계] / [과세대상 퇴직급여(확정)]</template>
                             <div>
                                 <span><img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"></span>
                             </div>
@@ -267,15 +267,15 @@
                 </a-form-item>
             </a-col>
             <a-col :span="12">
-                <div class="header-text-2 mb-10">세액계산</div>
-                <a-form-item label="환산산출세액">
+                <div class="header-text-2 mb-10">납부명세(차감원천징수세액)</div>
+                <a-form-item label="소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.deductibleWithholdingTax.incomeTax" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <a-form-item label="환산산출세액">
+                <a-form-item label="지방소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.deductibleWithholdingTax.localIncomeTax" />
@@ -283,14 +283,14 @@
                     </div>
                 </a-form-item>
                 <div>신고대상세액</div>
-                <a-form-item class="label-children" label="환산산출세액">
+                <a-form-item class="label-children" label="소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.taxAmountToBeReported.incomeTax" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <a-form-item class="label-children" label="환산산출세액">
+                <a-form-item class="label-children" label="지방소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.taxAmountToBeReported.localIncomeTax" />
@@ -299,14 +299,14 @@
                 </a-form-item>
 
                 <div>이연퇴직소득세</div>
-                <a-form-item class="label-children" label="환산산출세액">
+                <a-form-item class="label-children" label="소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.retirementIncomeTax.incomeTax" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <a-form-item class="label-children" label="환산산출세액">
+                <a-form-item class="label-children" label="지방소득세">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px" disabled="true"
                             v-model:valueInput="dataIncomeRetirementTax.retirementIncomeTax.localIncomeTax" />

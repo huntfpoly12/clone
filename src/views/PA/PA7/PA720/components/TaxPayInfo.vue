@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    {{ focusedRowKey }}{{ firsTimeRow }}
+    <!-- {{ dataSourceDetail[0]}} -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
@@ -9,33 +9,44 @@
       <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
-      <template #tag="{ data }" class="custom-action">
+      <template #tag="{ data }">
         <div>
           <button style="margin-right: 5px">
-            {{ data.data.incomeTypeCode }}
+            {{ data.data.employeeId }}
           </button>
           {{ data.data?.employee?.name }}
           <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
-            <template #title v-if="data.data?.employee?.incomeTypeName?.length > 10">
-              <span>{{ data.data?.employee?.incomeTypeName }}</span>
+            <template #title>
+              {{ data.data.incomeTypeCode }}
+              <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
+              }}</span>
             </template>
-
             {{ checkLen(data.data?.employee?.incomeTypeName) }}
           </a-tooltip>
         </div>
       </template>
-      <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
-      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="left" />
+      <DxColumn caption="지급일" width="60" alignment="left" cell-template="paymentDay" />
+      <template #paymentDay="{data}">
+        {{ formatMonth(data.data.paymentDay) }}
+      </template>
+      <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
-        alignment="left" />
-      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="left" />
+        alignment="right" />
+      <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
-      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="left" />
+      <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
       <template #incomLocalTax="{ data }">
-        {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+        <a-tooltip placement="top">
+          <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
+            {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
+          </template>
+          <span>
+            {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
+          </span>
+        </a-tooltip>
       </template>
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
-        alignment="left" />
+        alignment="right" />
       <DxSummary v-if="dataSourceDetail.length > 0">
         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
@@ -74,8 +85,8 @@ import {
 } from 'devextreme-vue/data-grid';
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
-import { dataActionUtils } from '../utils/index';
 import filters from '@/helpers/filters';
+import { formatMonth } from '../utils/index';
 
 export default defineComponent({
   components: {
@@ -115,9 +126,6 @@ export default defineComponent({
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const rowTable = ref(0);
     let updateParam = reactive<any>({});
-    let dataAction: any = reactive({
-      ...dataActionUtils,
-    });
     let dataTableDetail: any = ref({
       ...props.dataCallTableDetail,
     });
@@ -142,8 +150,10 @@ export default defineComponent({
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        // store.commit('common/keyActivePA720', res.data.getIncomeExtras[0]?.employeeId ?? 1);
         firsTimeRow.value = false;
+        // }else {
+        //   store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
+        //   emit('resetForm')
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -158,7 +168,7 @@ export default defineComponent({
       (newValue) => {
         dataTableDetail.value = newValue;
         triggerDetail.value = true;
-        refetchIncomeExtras();
+        // refetchIncomeExtras();
       },
       { deep: true }
     );
@@ -177,7 +187,7 @@ export default defineComponent({
 
     const checkLen = (text: String) => {
       if (text.length > 10) {
-        return text.substring(0, 10) + '...';
+        return text.substring(0, 7) + '...';
       }
       return text;
     };
@@ -211,9 +221,8 @@ export default defineComponent({
       }, 100);
     });
     const loadIndexInit = ref<Number>(0); // check click same row?
-    watch(() => props.addItemClick, () => {
+    watch(() => props.addItemClick, (newVal) => {
       loadIndexInit.value = -1;
-      focusedRowKey.value = null;
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
@@ -240,7 +249,6 @@ export default defineComponent({
       }
     };
     return {
-      dataAction,
       rowTable,
       per_page,
       move_column,
@@ -259,11 +267,10 @@ export default defineComponent({
       focusedRowKey,
       onRowClick,
       firsTimeRow,
+      formatMonth
     };
   },
 });
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -5,8 +5,8 @@
       <div class="report-grid">
         <div class="header-1">원천세신고서</div>
         <div class="action-right">
-          <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
-          <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding">
+          <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status == 10">
+          <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding" v-if="dataSource[0].status == 10">
           <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
         </div>
         <div class="table-detail">
@@ -29,7 +29,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>
@@ -42,7 +42,7 @@
                 </template>
                 <div class="custom-grade-cell">
                     <DxButton
-                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
               </a-tooltip>

@@ -1,13 +1,15 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    {{ formPA720 }}{{ isEdit }} is Edit {{ getEmployeeExtrasTrigger }}
+    <!-- {{ formPA720 }} formPA720 <br/>
+    {{ formEditPA720 }} formEditPA720 <br/>
+    {{ incomeExtraParam }} incomeExtraParam <br/> -->
+
     <a-row>
       <a-col :span="24">
         <a-form-item label="사업소득자" label-align="right" class="red">
-          <employ-type-select :disabled="isEdit || !isColumnData" :arrayValue="isEdit ? incomeArr : arrayEmploySelect"
+          <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus" :arrayValue="arrayEmploySelect"
             v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
             @incomeTypeCode="changeIncomeTypeCode" />
-          <!-- <div v-if="validations.employeeId" class="validate">this must be filled</div> -->
         </a-form-item>
       </a-col>
       <a-col span="24">
@@ -16,33 +18,30 @@
       <a-col :span="12" style="padding-right: 5px">
         <a-form-item label="귀속/지급연월" style="display: flex">
           <div class="d-flex-center">
-            <DxButton :text="'귀' + inputDateTax"
-              :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" />
-            <DxButton :text="'지' + paymentDateTax"
-              :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" />
+            <DxButton :text="'귀 ' + inputDateTax"
+              :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date"/>
+            <DxButton :text="'지 ' + paymentDateTax"
+              :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
           </div>
         </a-form-item>
         <a-form-item label="지급일" class="red">
-          <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData" width="150px" class="mr-5"
+          <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus" width="150px" class="mr-5"
             v-model:valueInput="formPA720.input.paymentDay" :required="true" />
-          <!-- <div v-if="validations.paymentDay" class="validate">this must be filled</div> -->
         </a-form-item>
         <a-form-item label="지급액" class="red">
           <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
             v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-            :disabled="!isColumnData"></number-box-money>
-          <!-- <div v-if="validations.paymentAmount" class="validate">this must be filled</div> -->
+            :disabled="!isColumnData || isExpiredStatus"></number-box-money>
         </a-form-item>
         <a-form-item label="필요경비" class="red">
           <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
-            v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData"
+            v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
             class="red"></number-box-money>
-          <!-- <div v-if="validations.requiredExpenses" class="validate">this must be filled</div> -->
         </a-form-item>
         <a-form-item label="세율" class="red">
           <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" :value="formPA720.input.taxRate"
             placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-            @value-changed="updateValue" :required="true">
+            @value-changed="updateValue" :required="true" :disabled="!isColumnData || isExpiredStatus">
             <template #item="{ data }">
               <a-tooltip placement="top" zIndex="9999">
                 <template #title v-if="data?.tooltip">
@@ -55,7 +54,6 @@
               <DxRequiredRule :message="messageRequired" />
             </DxValidator>
           </DxSelectBox>
-          <!-- <div v-if="validations.taxRate" class="validate">this must be filled</div> -->
         </a-form-item>
       </a-col>
       <a-col class="input-group-4" :span="12" style="padding-left: 5px">
@@ -72,14 +70,14 @@
           <a-form-item label="소득세(공제)">
             <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
               v-model:valueInput="formPA720.input.withholdingIncomeTax" />
-            <span>원</span>
+            <span class="ml-1">원</span>
           </a-form-item>
         </div>
         <div class="input-text">
           <a-form-item label="지방소득세(공제)">
             <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
               v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" />
-            <span>원</span>
+            <span class="ml-1">원</span>
           </a-form-item>
         </div>
         <div class="top-con">
@@ -88,22 +86,22 @@
             <b>{{
               $filters.formatCurrency(
                 formPA720.input.paymentAmount -
-                formPA720.input.requiredExpenses -
                 formPA720.input.withholdingIncomeTax -
                 formPA720.input.withholdingLocalIncomeTax
               )
             }}</b>
             원
             <img src="@/assets/images/iconInfo.png" style="width: 16px" />
-            <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 - 필요경비 - 공제합계</span>
+            <span style="font-size: 10px; color: #7f7f7f; margin-left: 5px">지급액 -  공제합계</span>
           </div>
         </div>
       </a-col>
     </a-row>
-  </a-spin>
+</a-spin>
 </template>
 
 <script lang="ts">
+
 import { ref, defineComponent, watch, reactive, computed, getCurrentInstance } from 'vue';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
@@ -116,6 +114,24 @@ import { Formula } from '@bankda/jangbuda-common';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import DxValidator, { DxRequiredRule } from 'devextreme-vue/validator';
+import {formatMonth} from '../utils/index';
+
+
+const taxRateOptions = [
+  {
+    label: '20% (일반적인 기타소득)',
+    value: 20,
+  },
+  {
+    label: '15% (연금외수령)',
+    tooltip: '세액공제를 받은 연금납입액, 연금계좌의 운용실적에 따라 증가된 금액',
+    value: 15,
+  },
+  {
+    label: '30% (복권 등 당첨금)',
+    value: 30,
+  },
+];
 export default defineComponent({
   components: {
     DxSelectBox,
@@ -138,6 +154,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isExpiredStatus: {
+      type: Boolean,
+      default: false,
+    }
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -146,31 +166,28 @@ export default defineComponent({
     });
     const incomeExtraData = ref<any>([]);
     const triggerIncomeExtra = ref<boolean>(false);
-    const incomeArr = ref<any>([]);
     let month1: any = ref(dayjs().format('YYYY-MM'));
     let month2: any = ref(dayjs().format('YYYY-MM'));
     let disabledInput = ref(false);
-    // let formPA720: any = computed(() => store.state.common.formPA720);
-    const formPA720 = computed(() => store.getters['common/formPA720']);
-    const formEditPA720 = computed(() => store.getters['common/formEditPA720']);
+    let formPA720: any = computed(() => store.state.common.formPA720);
+    let formEditPA720: any = computed(() => store.state.common.formEditPA720);
+    let processKeyPA720: any = computed(() => store.getters['common/processKeyPA720']);
     const isEdit = ref(false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
-      imputedYear: parseInt(dayjs().format('YYYY')),
+      imputedYear: processKeyPA720.value.processKey.imputedYear,
     });
-    const arrayEmploySelect = ref<any>([]);
     const newDateLoading = ref<boolean>(false);
-    const isResetComponent = ref<boolean>(true);
     const inputDateTax = computed(() => {
       if (props.isColumnData) {
-        return month1.value;
+        return processKeyPA720.value.processKey.imputedYear+'-'+formatMonth(processKeyPA720.value.processKey.imputedMonth);
       }
       return '';
     });
     const paymentDateTax = computed(() => {
       if (props.isColumnData) {
-        return month2.value;
+        return processKeyPA720.value.processKey.paymentYear+'-'+formatMonth(processKeyPA720.value.processKey.paymentMonth);
       }
       return '';
     });
@@ -184,34 +201,21 @@ export default defineComponent({
 
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
-    //watch for changes
+
+    //-------------------------get incom extra detail ------------------------
+
     watch(
       () => props.editTax,
-      async (newValue) => {
-        if (newValue.incomeId) {
+       (newValue) => {
+        if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
-          // formPA720.companyId = newValue.companyId;
           isEdit.value = true;
-          await refetchIncomeExtra();
           triggerIncomeExtra.value = true;
-          await refetchEmployeeExtras();
-          getEmployeeExtrasTrigger.value = true;
         }
       },
       { deep: true }
     );
-    watch(
-      () => [props.addNewIncomeExtra, isResetComponent.value],
-      async ([newValue]: any) => {
-        let date1 = newValue.imputedYear + '-' + newValue.imputedMonth;
-        let date2 = newValue.paymentYear + '-' + newValue.paymentMonth;
-        month1.value = dayjs(date1).format('YYYY-MM');
-        month2.value = dayjs(date2).format('YYYY-MM');
-      }
-    );
-    //query
     const {
-      refetch: refetchIncomeExtra,
       loading: loadingIncomeExtra,
       onError: onErrorIncomeExtra,
       result: resultIncomeExtra,
@@ -219,16 +223,6 @@ export default defineComponent({
       enabled: triggerIncomeExtra.value,
       fetchPolicy: 'no-cache',
     }));
-    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
-      fetchPolicy: 'no-cache',
-      enabled: getEmployeeExtrasTrigger.value,
-    }));
-    // mutation
-    const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
-    const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
-
-    // get data
-
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
       incomeExtraData.value = data;
@@ -245,127 +239,67 @@ export default defineComponent({
         withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
         incomeId: data.incomeId,
       };
-      formPA720.value.processKey = incomeExtraParam.value.processKey;
-      formEditPA720.value.processKey = incomeExtraParam.value.processKey;
-      store.commit('common/formPA720', editRowData);
+      store.commit('common/formPA720', editRowData)
       store.commit('common/formEditPA720', editRowData);
-      incomeArr.value.push({
-        employeeId: data.employee.employeeId,
-        incomeTypeCode: data.incomeTypeCode,
-        name: data.employee.name,
-        incomeTypeName: data.employee.incomeTypeName,
-      });
       newDateLoading.value = loadingIncomeExtra.value;
-      validations.employeeId = false;
-      validations.taxRate = false;
-      validations.paymentDay = false;
-      validations.paymentAmount = false;
-      validations.requiredExpenses = false;
     });
-    // validate
-    const validations = reactive({
-      employeeId: false,
-      taxRate: false,
-      paymentDay: false,
-      paymentAmount: false,
-      requiredExpenses: false,
+    onErrorIncomeExtra((res: any) => {
+      newDateLoading.value = loadingIncomeExtra.value;
     });
-    watch(
-      () => formPA720.value.input,
-      (newVal) => {
-        if (newVal.employeeId) {
-          validations.employeeId = false;
-        }
-        if (newVal.paymentDay) {
-          validations.paymentDay = false;
-        }
-        if (newVal.paymentAmount) {
-          validations.paymentAmount = false;
-        }
-        if (newVal.requiredExpenses) {
-          validations.requiredExpenses = false;
-        }
-        if (newVal.taxRate) {
-          validations.taxRate = false;
-        }
-      },
-      { deep: true }
-    );
-    // SUBMIT FORM
 
-    watch(actionSavePA720, () => {
-      // store.commit('pending');
-      if (!formPA720.value.input.employeeId) {
-        validations.employeeId = true;
-      }
-      if (!formPA720.value.input.paymentDay) {
-        validations.paymentDay = true;
-      }
-      if (!formPA720.value.input.paymentAmount) {
-        validations.paymentAmount = true;
-      }
-      if (!formPA720.value.input.requiredExpenses) {
-        validations.requiredExpenses = true;
-      }
-      if (!formPA720.value.input.taxRate) {
-        validations.taxRate = true;
-      }
-      if (validations.employeeId || validations.paymentAmount || validations.paymentDay || validations.requiredExpenses || validations.taxRate) {
-        store.commit('common/isErrorFormPA720', true);
-        store.commit('common/keyActivePA720', formPA720.value.input.incomeId);
-        return;
-      }
-      store.commit('common/isErrorFormPA720', false);
-      formPA720.value.processKey.imputedMonth = parseInt(month1.value.split('-')[1]);
-      formPA720.value.processKey.imputedYear = parseInt(month1.value.split('-')[0]);
-      formPA720.value.processKey.paymentMonth = parseInt(month2.value.split('-')[1]);
-      formPA720.value.processKey.paymentYear = parseInt(month2.value.split('-')[0]);
-      if (isEdit.value === true) {
-        let incomeExtraUpdateData = JSON.parse(JSON.stringify(formPA720.value));
-        delete incomeExtraUpdateData.value.input.incomeId;
-        delete incomeExtraUpdateData.input.paymentDay;
-        delete incomeExtraUpdateData.input.employeeId;
-        delete incomeExtraUpdateData.input.incomeTypeCode;
-        incomeExtraUpdateData.incomeId = incomeExtraParam.value.incomeId;
-        updateIncomeExtra(incomeExtraUpdateData);
-        return;
-      }
-      let createData = JSON.parse(JSON.stringify(formPA720.value));
-      delete createData.input.incomeId;
-      createIncomeExtra(createData);
-    });
-    // GET FORM
+    //----------------------------get employee extras --------------------------------
+    
+    const arrayEmploySelect = ref<any>([]);
+    const { result: resultEmployeeExtras} = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+      fetchPolicy: 'no-cache',
+    }));
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
     });
+    //change year
+    const globalYear = computed(() => store.state.settings.globalYear);
+    watch (globalYear, (newVal) => {
+      getEmployeeExtrasParams.imputedYear = newVal;
+    });
 
-    const checkLen = (text: String) => {
-      if (text.length > 10) {
-        return text.substring(0, 10) + '...';
+    //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
+
+    const { mutate: createIncomeExtra, onDone: createIncomeExtraDone, onError: createIncomeExtraError } = useMutation(mutations.createIncomeExtra);
+    const { mutate: updateIncomeExtra, onDone: updateIncomeExtraDone, onError: updateIncomeExtraError } = useMutation(mutations.updateIncomeExtra);
+    //submit
+    watch(actionSavePA720, () => {
+      let params = JSON.parse(JSON.stringify(formPA720.value));
+      delete params.input.incomeId;
+      delete params.input.employee;
+      delete params.input.actualPayment;
+      delete params.input.incomePayment;
+      if (isEdit.value === true) {
+        delete params.input.paymentDay;
+        delete params.input.employeeId;
+        delete params.input.incomeTypeCode;
+        params.incomeId = incomeExtraParam.value.incomeId;
+        let updateData = {...processKeyPA720.value,input:{...params.input},incomeId:props.editTax.incomeId}
+        updateIncomeExtra(updateData);
+        return;
       }
-      return text;
-    };
-    // GET INCOMETYPECODE
-    const changeIncomeTypeCode = (res: string) => {
-      formPA720.value.input.incomeTypeCode = res;
-    };
-
+      let updateData = {...processKeyPA720.value,input:{...params.input}};
+      createIncomeExtra(updateData);
+    });
     // AFTER ACTION FORM
     createIncomeExtraDone((res) => {
       emit('changeFommDone');
       notification('success', `업데이트 완료!`);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
+      formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
+      store.commit('common/formEditPA720', formPA720.value);
     });
     updateIncomeExtraDone((res) => {
       emit('changeFommDone');
       notification('success', `업데이트 완료!`);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
-    });
-    //error message
-    onErrorIncomeExtra((res: any) => {
-      newDateLoading.value = loadingIncomeExtra.value;
+      store.commit('common/formEditPA720', formPA720.value);
     });
     createIncomeExtraError((res: any) => {
       notification('error', res.message);
@@ -375,27 +309,17 @@ export default defineComponent({
       notification('error', res.message);
       store.state.common.isErrorFormPA720 = true;
     })
-    const taxRateOptions = [
-      {
-        label: '20% (일반적인 기타소득)',
-        value: 20,
-      },
-      {
-        label: '15% (연금외수령)',
-        tooltip: '세액공제를 받은 연금납입액, 연금계좌의 운용실적에 따라 증가된 금액',
-        value: 15,
-      },
-      {
-        label: '30% (복권 등 당첨금)',
-        value: 30,
-      },
-    ];
+
+    // ------------------------------calculate form fn--------------------------
+
     const caclInput = () => {
       let objIncomeAmount: any = Formula.getExtraEmployeeIncomeAmount(formPA720.value.input.paymentAmount, formPA720.value.input.requiredExpenses);
       let objIncomeTax: any = Formula.getIncomeTax(objIncomeAmount, formPA720.value.input.taxRate);
       incomeAmount.value = objIncomeAmount;
       formPA720.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
       formPA720.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
+      formPA720.value.input.incomePayment = formPA720.value.input.paymentAmount - formPA720.value.input.requiredExpenses;
+      formPA720.value.input.actualPayment = formPA720.value.input.paymentAmount - formPA720.value.input.withholdingIncomeTax - formPA720.value.input.withholdingLocalIncomeTax;
     };
     const updateValue = (value: any) => {
       formPA720.value.input.taxRate = value.value;
@@ -404,13 +328,22 @@ export default defineComponent({
     const onChangeInput = () => {
       caclInput();
     };
+    const checkLen = (text: String) => {
+      if (text.length > 10) {
+        return text.substring(0, 10) + '...';
+      }
+      return text;
+    };
+    const changeIncomeTypeCode = (res: string, id: any) => {
+      formPA720.value.input.incomeTypeCode = res;
+      formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
+    };
     return {
       checkLen,
       month1,
       month2,
       incomeExtraData,
       incomeExtraParam,
-      incomeArr,
       disabledInput,
       formPA720,
       changeIncomeTypeCode,
@@ -422,8 +355,6 @@ export default defineComponent({
       incomeAmount,
       incomeTax,
       localIncomeTax,
-      isResetComponent,
-      validations,
       resultIncomeExtra,
       onChangeInput,
       actionSavePA720,
@@ -432,10 +363,10 @@ export default defineComponent({
       paymentDateTax,
       loadingIncomeExtra,
       getEmployeeExtrasTrigger,
+      formEditPA720
     };
   },
 });
 </script>
 
-<style lang="scss" scoped src="../style/style.scss" >
-</style>
+<style lang="scss" scoped src="../style/style.scss" ></style>>

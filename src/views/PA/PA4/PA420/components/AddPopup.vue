@@ -14,7 +14,7 @@
         <div class="footer mt-30">
             <button-basic class="button-form-modal mr-5" text="아니요" type="default" mode="outlined"
                 @onClick="setModalVisible" />
-            <button-basic class="button-form-modal" text="네. 변경합니다" :width="140" type="default" mode="contained"
+            <button-basic class="button-form-modal" text="네. 입력합니다" :width="140" type="default" mode="contained"
                 @onClick="openModalAdd" />
         </div>       
     </a-modal>
@@ -28,10 +28,10 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>  
         <div class="step-content pt-20">
-            <form action="your-action">
+      
                 <keep-alive>
                     <template v-if="step === 0">
-                        <Tab1 :dataForm="dataForm" :arrayEmploySelect="arrayEmploySelect" :actionNextStep="valueNextStep" @nextPage="step++"/>
+                        <Tab1 :dataForm="dataForm" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect" :actionNextStep="valueNextStep" @nextPage="step++"/>
                     </template>
                 </keep-alive>
                 <keep-alive>
@@ -44,7 +44,7 @@
                         <Tab3 :dataForm="dataForm" />
                     </template>
                 </keep-alive>
-            </form>
+          
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -84,6 +84,10 @@ export default defineComponent({
         key: {
             type: Number,
         },
+        listEmployeeexist: {
+            type: Array,
+            default: []
+        }
     },
     components: {
         Tab1, Tab2, Tab3
@@ -97,8 +101,14 @@ export default defineComponent({
         const modalStatusAccept = ref(false)
         const retirementIncome1 = ref(true)
         const modalOption = ref()
-        const trigger = ref(false)
-        const dataForm = reactive(JSON.parse(JSON.stringify({...initialFormState})));
+        const dataForm = reactive(JSON.parse(JSON.stringify({ ...initialFormState})));
+        watch(()=>props.processKey, (value: any) => {
+            dataForm.processKey.imputedYear = value.imputedYear
+            dataForm.processKey.imputedMonth = value.imputedMonth
+            dataForm.processKey.paymentYear = value.paymentYear
+            dataForm.processKey.paymentMonth = value.paymentMonth
+        });
+       
         const option1 = reactive([
             { id: true, text: '사원' },
             { id: false, text: '일용직사원' }
@@ -112,11 +122,6 @@ export default defineComponent({
             emit("closePopup", false)
         };
 
-        const requestCallDetail = reactive({
-            companyId: companyId,
-            processKey: props.processKey,
-            incomeId: props.key
-        })
         store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
@@ -138,11 +143,6 @@ export default defineComponent({
         onErrorCreateIncomeRetirement((e: any) => {
             notification('error', e.message)
         })
-
-        const { refetch: refetchGetDetail, onError: errorGetDetail, result: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }));
 
         // ================WATCHING============================================
         watch(() => props.modalStatus, (newValue) => {
@@ -194,7 +194,8 @@ export default defineComponent({
             step.value--;
         }
 
-        const created = () => {
+      const created = (e: any) => {
+          console.log(e.validationGroup.validate())
             const variables: any = reactive({
                 companyId: companyId,
                 processKey: { ...dataForm.processKey },
@@ -210,14 +211,21 @@ export default defineComponent({
             mutateCreateIncomeRetirement(variables)
         }
 
-        const openModalAdd = () => {
-            if (retirementIncome1.value) {
-                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10)
-            } else {
-                arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20)
-            }
-            modalStatusAccept.value = true
-            modalOption.value = false
+      const openModalAdd = () => {
+          // if is 사원 
+          if (retirementIncome1.value) {
+              // filter 일용 employee
+            arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 10 && !props.listEmployeeexist.includes(element.employeeId))
+          // if it is 일용직사원 
+          } else {
+            arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter((element: any) => element.type === 20 && !props.listEmployeeexist.includes(element.employeeId))   
+          } 
+          //If you choose retired employees, you have to filter again
+          if (dataForm.input.retirementType == 1) {
+            arrayEmploySelect.value = arrayEmploySelect.value.filter((element: any) => element.status === 0)   
+          }
+          modalStatusAccept.value = true
+          modalOption.value = false
         }
         return {
             setModalVisible,

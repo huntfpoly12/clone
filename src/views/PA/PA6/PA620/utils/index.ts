@@ -34,50 +34,16 @@ export const valueDefaultAction = {
 };
 
 import { companyId } from "@/helpers/commonFunction";
-// import { useStore } from "vuex";
-// import { computed } from "vue";
-// /* Using vuex to get the value of paymentDayPA620. */
-// export const  dataActionUtils = {
-//     setup() {
-//     const store = useStore();
-//     const paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
-//       return {
-//         companyId: companyId,
-//         processKey: {
-//         imputedYear: 2022,
-//         imputedMonth: 1,
-//         paymentYear: 2022,
-//         paymentMonth: 1,
-//         },
-//         input: {
-//         paymentDay: paymentDayPA620.value,
-//         employeeId: 0,
-//         incomeTypeCode: "",
-//         paymentAmount: 0,
-//         taxRate: 3,
-//         withholdingIncomeTax: 0,
-//         withholdingLocalIncomeTax: 0,
-//         }
-//       };
-//     }
-//   };
-// const paymentDayPA620 = computed(() => 1);
 export const dataActionUtils = {
-  companyId: companyId,
-  processKey: {
-    imputedYear: 2022,
-    imputedMonth: 1,
-    paymentYear: 2022,
-    paymentMonth: 1,
-  },
   input: {
-    employeeId: 0,
+    employeeId: null,
     incomeTypeCode: "",
     paymentAmount: 0,
     taxRate: 3,
     withholdingIncomeTax: 0,
     withholdingLocalIncomeTax: 0,
     paymentDay: 0,
+    incomeId: "99axbzkk",
   },
 };
 export const dataGetDetailEdit = {

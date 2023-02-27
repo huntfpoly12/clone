@@ -59,8 +59,15 @@
                 <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
             </a-form-item>
             <a-form-item label="주소정근무시간" class="label-red" label-align="right">
-                <text-number-box width="200px" v-model:valueInput="dataEdited.weeklyWorkingHours" :required="true"
-                    placeholder="숫자만 입력 가능" />
+              <div class="input-text">
+                <number-box :required="true" :spinButtons="true" v-model:valueInput="dataEdited.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                      급여명세서 및 4대보험 취득신고시 이용됩니다.
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
@@ -74,10 +81,10 @@
                     </a-col>
                 </a-row>
                 <a-row class="d-flex-center pt-5">
-                    <default-text-box :disabled="true" placeholder="주소1" v-model:valueInput="dataEdited.roadAddress"
+                    <default-text-box :disabled="true" placeholder="도로명 주소" v-model:valueInput="dataEdited.roadAddress"
                         style="width: 50%;" />
                     <div style="width: 50%; padding-left: 10px;">
-                        <default-text-box placeholder="주소2" v-model:valueInput="dataEdited.addressExtend" />
+                        <default-text-box placeholder="상세 주소 입력" v-model:valueInput="dataEdited.addressExtend" />
                     </div>
                 </a-row>
             </a-form-item>
@@ -106,7 +113,10 @@
         </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" :okText="Message.getCommonMessage('501').yes" :cancelText="Message.getCommonMessage('501').no" @checkConfirm="statusComfirm" />
+        :content="Message.getCommonMessage('501').message" 
+        :okText="Message.getCommonMessage('501').yes" 
+        :cancelText="Message.getCommonMessage('501').no" 
+        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -154,11 +164,14 @@ export default defineComponent({
         }))
         resGetDepartments(res => {
             let valArr: any = []
-            res.data.getDepartments.map((v: any) => {
+          res.data.getDepartments.map((v: any) => {
+            // filter empty value
+            if (v.department != '') {
                 valArr.push({
                     id: v.department,
                     value: v.department
                 })
+              }
             })
             selectBoxData1.value = valArr
         })
@@ -170,10 +183,13 @@ export default defineComponent({
         resGetResponsibilities(res => {
             let valArr: any = []
             res.data.getResponsibilities.map((v: any) => {
+            // filter empty value
+              if (v.responsibility != '') {
                 valArr.push({
-                    id: v.responsibility,
-                    value: v.responsibility
+                  id: v.responsibility,
+                  value: v.responsibility
                 })
+              }
             })
             selectBoxData2.value = valArr
         })
@@ -215,8 +231,10 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
-            emit('closePopup', false)
-            notification('success', '업데이트 완료!')
+          store.state.common.checkChangeValueAddPA520 = false
+          dataDefault = JSON.stringify(dataEdited)
+          emit('closePopup', false)
+          notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================ 
         watch(() => props.idRowEdit, (newVal) => {
@@ -250,6 +268,11 @@ export default defineComponent({
         watch(dataEdited, () => {
             indexChange.value++
         }, { deep: true })
+
+        // convert dataCreated.name to uppercase
+        watch(()=> dataEdited.name,(newVal)=> {
+          dataEdited.name = newVal.toUpperCase();
+        },{deep: true})
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataEdited.zipcode = data.zonecode;

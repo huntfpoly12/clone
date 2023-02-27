@@ -88,7 +88,7 @@
                                     <a-col :span="9">
                                         <a-form-item label="상 호" class="clr" label-align="left"
                                             :label-col="{ span: 9 }">
-                                            <default-text-box v-model:valueInput="formState.companyName" width="220"
+                                            <default-text-box v-model:valueInput="formState.content.company.name" width="220"
                                                 :required="true" messRequired="이항목은 필수 입력사항입니다!"
                                                 nameInput="companyName" />
                                         </a-form-item>
@@ -190,7 +190,7 @@
                                                 :repaint-changes-only="true" ref="gridRefName"
                                                 :onRowClick="onSelectionClick" :focused-row-enabled="true"
                                                 key-expr="rowIndex" @init-new-row="onInitRow"
-                                                :auto-navigate-to-focused-row="true" :focused-row-key="focusedRowKey"
+                                                :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey"
                                                 @focused-row-changed="onFocusedRowChanged" id="bf-320-popup-datagrid">
                                                 <DxScrolling mode="standard" show-scrollbar="always" />
                                                 <DxPaging :enabled="false" />
@@ -222,7 +222,7 @@
                                                         css-class="cell-button-add" />
                                                 </DxToolbar>
                                                 <template #button-template>
-                                                    <button-basic style="padding: 4px 0;" icon="plus" @onClick="addRow" text="추가" />
+                                                    <button-basic icon="plus" @onClick="addRow" text="추가" />
                                                 </template>
                                             </DxDataGrid>
                                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
@@ -285,9 +285,9 @@
                                         :disabled="false" :size="'16'" />
                                     <div style="margin-top: 20px">
                                         <a-form-item label="서비스 시작년월" class="clr" label-align="left"
-                                            :label-col="labelCol">
+                                            :label-col="labelCol" >
                                             <div style="width: 200px">
-                                                <month-picker-box :required="true"
+                                                <month-picker-box :required="true" width="120px"
                                                     v-model:valueDate="formState.content.withholding.startYearMonth"/>
                                             </div>
                                         </a-form-item>
@@ -433,23 +433,19 @@ export default defineComponent({
                 emit("closePopup", false)
             else
                 comfirmClosePopup(() => emit("closePopup", false))
-            triggerCheckPer.value = false;
-            trigger.value = false;
         };
         // watch event modal popup
         watch(() => props.modalStatus, (newValue, old) => {
-            trigger.value = true;
             if (newValue) {
+                trigger.value = true;
                 visible.value = newValue;
                 dataQuery.value = { id: props.data };
-                refetch();
                 Object.assign(formState, initialFormState);
             } else {
                 Object.assign(formState, initialFormState);
                 imageLicenseFile.value = "";
                 licenseFileName.value = "";
                 visible.value = newValue;
-                trigger.value = false;
                 activeKey.value = 1;
             }
         });
@@ -472,10 +468,12 @@ export default defineComponent({
         );
         // watch result resCheckPerEdit
         watch(resCheckPerEdit, (value) => {
+            triggerCheckPer.value = false;
             canChangeableBizNumber.value =
                 value.isSubscriptionRequestChangeableBizNumber;
         });
         watch(result, (value) => {
+            trigger.value = false;
             if (value && value.getSubscriptionRequest) {
                 // set value license 
                 if (value.getSubscriptionRequest.content.company.license) {
@@ -499,7 +497,6 @@ export default defineComponent({
                     ? value.getSubscriptionRequest.rejectedAt
                     : value.getSubscriptionRequest.createdAt;
                 // set status subcription 
-                triggerCheckPer.value = true;
                 dataQueryCheckPer.value = {
                     id: value.getSubscriptionRequest.id,
                     bizNumber: value.getSubscriptionRequest.companyBizNumber,
@@ -515,10 +512,15 @@ export default defineComponent({
                         ...item, rowIndex: key
                     }
                 })
-                // trigger query check if can be change business registration number
-                refetchCheckPer();
+                // Setting the first row of the dataSource as the active row.
+                if (dataSource.value.length) {
+                    dataActiveRow.value = dataSource.value[0]
+                    focusedRowKey.value = 0
+                }
+                triggerCheckPer.value = true;
             }
         });
+        // A function that returns a string based on the value of bizType.
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
                 return "주민등록번호";
@@ -526,6 +528,7 @@ export default defineComponent({
                 return "법인등록번호";
             }
         };
+        // A function that is being called by the Daum Postcode API.
         const funcAddress = (data: any) => {
             formState.value.content.company.zipcode = data.zonecode;
             formState.value.content.company.roadAddress = data.roadAddress;
@@ -558,10 +561,12 @@ export default defineComponent({
             }
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            emit("onUpdate", true)
         });
         onError((error) => {
             notification('error', error.message)
         });
+        // A function that is called when a button is clicked.
         const updateSubscriptionRequest = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -578,6 +583,7 @@ export default defineComponent({
                 let newObj = JSON.parse(JSON.stringify(dataSource.value));
                 newObj.map((item: any) => {
                     delete item.rowIndex;
+
                     delete item.dataImg;
                     if (item?.registrationCardFileStorageId?.length < 1) {
                         delete item.registrationCardFileStorageId;
@@ -619,39 +625,20 @@ export default defineComponent({
             formState.value.content.company.licenseFileStorageId = img.id;
             imageLicenseFile.value = img.url ? img.url : "";
             licenseFileName.value = img.fileName;
-            // dataActiveRow.value.registrationCardFileStorageId = img.id;
-            // dataActiveRow.value.registrationCard = img;
         };
         const removeLicenseFile = () => {
             dataActiveRow.value.dataImg = ""
             imageLicenseFile.value = "";
             licenseFileName.value = "";
-            // dataActiveRow.value.registrationCardFileStorageId = "";
-            // dataActiveRow.value.registrationCard = "";
         };
         // handle registration CardFile Storage upload
         const getregCardFile = (img: any) => {
             dataActiveRow.value.registrationCardFileStorageId = img.id;
             dataActiveRow.value.registrationCard = img;
-            // formState.value.content.accounting.facilityBusinesses.map((e: any) => {
-            //     if (e.name === img.name) {
-            //         e.registrationCardFileStorageId = img.id
-            //         e.registrationCard = {
-            //             name: img.fileName,
-            //             url: img.url,
-            //         }
-            //     }
-            // })
         };
         const removeRegCardFile = (name: any) => {
             dataActiveRow.value.registrationCardFileStorageId = "";
             dataActiveRow.value.registrationCard = "";
-            // formState.value.content.accounting.facilityBusinesses.map((e: any) => {
-            //     if (e.name === name) {
-            //         e.registrationCardFileStorageId = null
-            //         e.registrationCard = null
-            //     }
-            // })
         };
         const contentReady = (e: any) => {
             if (!e.component.getSelectedRowKeys().length) {
@@ -669,20 +656,14 @@ export default defineComponent({
         const gridRefName: any = ref("grid");
         const dataActiveRow = ref<any>(dataSource.value[0])
         const focusedRowKey = ref(0)
-        const initRow = {
-            // longTermCareInstitutionNumber: '',
-            // capacity: "",
-            // facilityBizType: null,
-            // name: null,
-            // startYearMonth: null,
-            // registrationCardFileStorageId: null,
-            rowIndex: null
-        }
+        const initRow = { rowIndex: null }
+        // A function that is called when a row is clicked.
         const onSelectionClick = (value: any) => {
             dataActiveRow.value = value.data;
             licenseFileName.value = value.data.registrationCard?.name ?? "";
             imageLicenseFile.value = value.data.registrationCard?.url ?? "";
         }
+        // Adding a new row to the grid.
         const addRow = async () => {
             await gridRefName.value.instance.addRow()
             gridRefName.value.instance.closeEditCell();

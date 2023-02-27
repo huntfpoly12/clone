@@ -32,7 +32,7 @@
     <button class="button-open-tab"
         @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
-    <DxDropDownButton class="ml-3 action-select-1" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3 action-select-1" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
@@ -42,7 +42,7 @@
         </template>
     </DxDropDownButton>
 
-    <DxDropDownButton class="ml-3  action-select-2" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3  action-select-2" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;">
@@ -60,8 +60,8 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
-    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
-    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
+    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" :emailAddress="emailAddress"/>
+    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister" :emailAddress="emailAddress"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
     <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
         :data="popupDataEmailSingle" />
@@ -87,6 +87,8 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
+import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
+import { userId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxButton,
@@ -151,16 +153,18 @@ export default defineComponent({
         };
         const actionAddItem = () => {
             if (store.state.common.statusRowAdd) {
-                if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                    modalStatusAdd.value = true
-                } else {
+                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+                //     modalStatusAdd.value = true
+                // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = null;
-                    store.state.common.focusedRowKey = null;
-                }
+                    store.state.common.incomeId = 'PA510';
+                    store.state.common.focusedRowKey = 'PA510';
+                    // store.state.common.actionResetForm++;
+                // }
             } else {
-                notification('error', "nhập vàooooo")
+                modalStatusAdd.value = true
+                // notification('error', "nhập vàooooo")
             }
         }
         const editItem = (value: any) => {
@@ -248,9 +252,23 @@ export default defineComponent({
                 window.open(value.getIncomeWageDailySalaryStatementViewUrl)
             }
         })
+
+        // Using the useQuery hook to fetch data from the server.
+        const {
+            onResult: onResultUserInf
+        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+            fetchPolicy: "no-cache",
+        }));
+        let emailAddress = ref('')
+        onResultUserInf(e => {
+            emailAddress.value = e.data.getUser?.email
+        })
+
         const statusComfirmAdd = (val: any) => {
-            if (val) {
-                store.state.common.actionAddItem = 1;
+            if (val) { // action save form
+                store.state.common.actionSubmit++
+            } else { // reset form
+                store.state.common.actionResetForm++;
             }
         }
         const onSubmit = (e: any) => {
@@ -284,6 +302,7 @@ export default defineComponent({
             openTab,
             onSubmit,
             store,
+            emailAddress,
         };
     },
 });

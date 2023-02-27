@@ -1,13 +1,17 @@
 import getEmployeeWage from "./getEmployeeWage";
-import getEmployeeWageDaily from "./getEmployeeWageDaily";
+import getEmployeeWages from "./getEmployeeWages";
+import getEmployeeWageDailies from "./getEmployeeWageDailies";
 import getMajorInsuranceCompanyEmployeeAcquisition from "./getMajorInsuranceCompanyEmployeeAcquisition";
 import getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl from "./getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl";
 import getMajorInsuranceCompanyEmployeeAcquisitions from "./getMajorInsuranceCompanyEmployeeAcquisitions";
+
 const queries = {
-    getEmployeeWage,
-    getEmployeeWageDaily,
-    getMajorInsuranceCompanyEmployeeAcquisition,
-    getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl:getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
-    getMajorInsuranceCompanyEmployeeAcquisitions,
+  getEmployeeWage,
+  getEmployeeWages,
+  getEmployeeWageDailies,
+  getMajorInsuranceCompanyEmployeeAcquisition,
+  getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl:
+    getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
+  getMajorInsuranceCompanyEmployeeAcquisitions,
 };
 export default queries;

@@ -10,12 +10,14 @@ import Router from '../router';
 let companyId: any = null
 let userType: any = null
 let userId: any = null
+let managerGrade: any = null
 let screenRoleInfo: any = null;  
 let token = sessionStorage.getItem("token");
 if (token) {
     const jwtObject = getJwtObject(token);
     userType = jwtObject.userType
     userId = jwtObject.userId
+    managerGrade = jwtObject.managerGrade
     screenRoleInfo = jwtObject.screenRoleInfo
   if (userType === 'c') {
       companyId = jwtObject.companyId
@@ -137,6 +139,7 @@ export {
     openTab,
     userType,
     userId,
+    managerGrade,
     screenRoleInfo,
     onExportingCommon,
     convertAge,

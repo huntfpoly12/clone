@@ -50,7 +50,14 @@
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
+                          <a-tooltip placement="top" class="custom-tooltip">
+                              <template #title>
+                                신규
+                              </template>
+                              <div style="text-align: center;" >
+                                <DxButton icon="plus" @click="openAddNewModal" />
+                              </div>
+                          </a-tooltip>
                         </template>
                         <template #button-history>
                             <DxButton>
@@ -58,7 +65,7 @@
                             </DxButton>
                         </template>
                         <DxColumn caption="성명" cell-template="company-name" width="250" />
-                        <template #company-name="{ data }"> 
+                        <template #company-name="{ data }">
                             <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                                 :idCardNumber="data.data.residentId" :status="data.data.status"
                                 :foreigner="data.data.foreigner" :checkStatus="false"
@@ -87,7 +94,7 @@
                         </template>
 
                         <DxColumn caption="비고" cell-template="grade-cell" />
-                        <template #grade-cell="{ data }" class="custom-action">
+                        <template #grade-cell="{ data }">
                             <div class="custom-grade-cell">
                                 <four-major-insurance v-if="data.data.nationalPensionDeduction == true" :typeTag="1"
                                     :typeValue="1" />
@@ -102,7 +109,7 @@
                             </div>
                         </template>
                         <DxColumn cell-template="pupop" width="50" />
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div v-if="data.data.deletable" class="custom-action text-center">
                                 <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
                             </div>
@@ -119,11 +126,11 @@
         </a-row>
     </div>
     <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-        :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="statusComfirm" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네ㅌㅌ" cancelText="아니오" @checkConfirm="statusComfirmSave" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
@@ -174,6 +181,7 @@ export default defineComponent({
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
         const resetAddComponent = ref<number>(1);
+        // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
         let dataChange = ref(0)
         // ======================= GRAPQL ================================
@@ -332,7 +340,7 @@ export default defineComponent({
           if (res == true) {
             store.state.common.actionSaveAddPA520++
             // get employeeId (row key) last row in dataSourcePA520
-            focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
+            //focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
           } else if (!res && addRowOnclick.value) { 
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -342,7 +350,7 @@ export default defineComponent({
             // Setting the value of the addRowOnclick variable to false.
             addRowOnclick.value = false
             openAddNewModal()
-          }else{//Not save
+          } else {//Not save
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store

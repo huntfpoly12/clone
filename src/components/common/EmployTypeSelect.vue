@@ -4,7 +4,7 @@
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding: 2px">
-                <income-type :typeCode="data?.incomeTypeCode" :typeName="(data?.name)"
+                <income-type :typeCode="data?.employeeId" :typeName="(data?.name)"
                     :incomeTypeName="data?.incomeTypeName" />
                 <DxTextBox style="display: none;" />
                 {{ data }}
@@ -16,10 +16,24 @@
 
         </template>
         <template #item-data="{ data }">
-            <div>
+          <!-- <div>
                 <income-type :typeCode="data?.incomeTypeCode" :typeName="data?.name"
                     :incomeTypeName="data?.incomeTypeName" />
-            </div>
+            </div> -->
+          <div class="employee-group">
+            <button style="margin-right: 5px">
+              {{ data.employeeId }}
+            </button>
+            {{ data?.name }}
+            <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
+              <template #title>
+                {{ data.incomeTypeCode }}
+                <span v-if="data?.incomeTypeName?.length > 10">{{ data?.incomeTypeName
+                }}</span>
+              </template>
+              {{ checkLen(data?.incomeTypeName) }}
+            </a-tooltip>
+          </div>
         </template>
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -66,7 +80,7 @@ export default defineComponent({
             emit("update:valueEmploy", value.value);  
             props.arrayValue.forEach((val:any)=>{
                 if(val.employeeId == value.value){
-                    emit("incomeTypeCode", val.incomeTypeCode);
+                    emit("incomeTypeCode", val.incomeTypeCode, val.employeeId);
                 }
             })
 
@@ -87,10 +101,17 @@ export default defineComponent({
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
         const messageRequired = ref(messages.getCommonMessage('102').message);
+        const checkLen = (text: String) => {
+          if (text.length > 10) {
+            return text.substring(0, 7) + '...';
+          }
+          return text;
+        };
         return {
             updateValue,
             valueEmployRes,
-            messageRequired
+            messageRequired,
+            checkLen,
             // arrayValueRes,
         };
     },
@@ -134,6 +155,9 @@ export default defineComponent({
 
 .jtf-center {
     justify-content: center;
+}
+.employee-group {
+  padding: 0 10px;
 }
 </style>
   

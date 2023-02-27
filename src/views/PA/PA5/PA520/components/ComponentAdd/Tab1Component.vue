@@ -2,10 +2,19 @@
     <a-spin :spinning="loadingCreated">
         <standard-form action="" name="add-page-210">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
+              <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
                     placeholder="숫자만 입력 가능" />
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                        최초 저장된 이후 수정 불가
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
+              
                 <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                     placeholder="한글,영문(대문자) 입력 가능" />
             </a-form-item>
@@ -53,8 +62,15 @@
                 <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
             </a-form-item>
             <a-form-item label="주소정근무시간" label-align="right" class="label-red">
-                <text-number-box width="200px" v-model:valueInput="dataCreated.weeklyWorkingHours" :required="true"
-                    placeholder="숫자만 입력 가능" />
+              <div class="input-text">
+                <number-box :required="true" :spinButtons="true" v-model:valueInput="dataCreated.weeklyWorkingHours" width="150px" :min="1" :max="52"></number-box>
+                <div class="pl-10">
+                    <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="style-note">
+                      급여명세서 및 4대보험 취득신고시 이용됩니다.
+                    </span>
+                </div>
+              </div>
             </a-form-item>
             <a-form-item label="주소" class="clr" label-align="left">
                 <a-row>
@@ -68,10 +84,10 @@
                     </a-col>
                 </a-row>
                 <a-row class="d-flex mt-5">
-                    <default-text-box width="50%" :disabled="true" placeholder="주소1"
+                    <default-text-box width="50%" :disabled="true" placeholder="도로명 주소"
                         v-model:valueInput="dataCreated.roadAddress" />
                     <div style="width: 50%;padding-left: 5px;">
-                        <default-text-box placeholder="주소2" v-model:valueInput="dataCreated.addressExtend" />
+                        <default-text-box placeholder="상세 주소 입력" v-model:valueInput="dataCreated.addressExtend" />
                     </div>
                 </a-row>
             </a-form-item>
@@ -85,9 +101,12 @@
                     </span>
                 </div>
             </a-form-item>
+            <a-form-item label="연락처" label-align="right">
+              <tel-text-box width="200px" v-model:valueInput="dataCreated.department" />
+            </a-form-item>
             <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
-                    width="200px" />
+                    width="200" />
             </a-form-item>
             <a-form-item label="직위" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
@@ -134,10 +153,13 @@ export default defineComponent({
             // selectBoxData.value = res.data.getDepartments 
             let valArr: any = []
             res.data.getDepartments.map((v: any) => {
+              // filter empty value
+              if (v.department != '') {
                 valArr.push({
                     id: v.department,
                     value: v.department
                 })
+              }
             })
             selectBoxData1.value = valArr
         })
@@ -148,11 +170,14 @@ export default defineComponent({
         }))
         resGetResponsibilities(res => {
             let valArr: any = []
-            res.data.getResponsibilities.map((v: any) => {
+          res.data.getResponsibilities.map((v: any) => {
+              // filter empty value
+              if (v.responsibility != '') {
                 valArr.push({
                     id: v.responsibility,
                     value: v.responsibility
                 })
+              }
             })
             selectBoxData2.value = valArr
         })
@@ -188,15 +213,6 @@ export default defineComponent({
             }
         })
         watch(() => dataCreated, (value) => {
-            if (store.state.common.activeAddRowPA520 == true) {
-                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
-                dataTable.employeeId = value.employeeId
-                dataTable.name = value.name
-                dataTable.foreigner = value.foreigner
-                dataTable.status = value.retirementIncome
-                dataTable.residentId = value.residentId
-            }
-
             if (JSON.stringify(DataCreated) !== JSON.stringify(value))
                 store.state.common.checkChangeValueAddPA520 = true
             else
@@ -208,6 +224,12 @@ export default defineComponent({
             document.getElementById('action-save')?.click()
         }, { deep: true });
 
+        // convert dataCreated.name to uppercase
+        watch(()=> dataCreated.name,(newVal)=> {
+          dataCreated.name = newVal.toUpperCase();
+        }, { deep: true })
+
+        
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;

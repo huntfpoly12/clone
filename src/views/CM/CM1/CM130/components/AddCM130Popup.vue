@@ -100,6 +100,8 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+            } else if (!formState.taxPayCode?.length) {
+                notification('error', `선택해 주세요 과세구분/유형!`)
             } else {
                 let variables = {
                     companyId: companyId,
@@ -138,7 +140,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="../style/style.scss">
-::v-deep ul.ant-cascader-menu {
+:deep ul.ant-cascader-menu {
     height: auto;
     max-height: 180px;
 }

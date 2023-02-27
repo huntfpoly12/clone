@@ -1,18 +1,16 @@
 <template>
     <standard-form class="modal-add">
-        <a-row :gutter="16">
+        <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
-                    <a-tag :color="dataGet.retirementType == 1 ? 'green' : 'red'">퇴직소득</a-tag>
+                  <a-tag :color="dataGet.retirementType == 2 ? 'green' : 'red'">{{
+                        dataGet.retirementType == 2 ? '중간정산' : '퇴직소득'
+                    }}</a-tag>
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
                     <div class="d-flex-center">
-                        <div class="month-custom-1 d-flex-center">
-                            귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
-                        </div>
-                        <div class="month-custom-2 d-flex-center">
-                            지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
-                        </div>
+                        <month-picker-box-custom v-model:valueDate="month1" text="귀" bgColor="gray"></month-picker-box-custom>
+                        <month-picker-box-custom v-model:valueDate="month2" text="지" ></month-picker-box-custom>
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
@@ -22,8 +20,16 @@
             </a-col>
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
-                    <employ-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="valueSelected" width="350px"
+                  <div class="d-flex-center">
+                    <employ-select :arrayValue="arrayEmploySelect" :valueEmploy="dataDetail?.employeeId" width="300px"
                         :required="true" disabled="true" />
+                    <div class="ml-5 d-flex-center" >
+                      <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                      <span class="custom-waring" style="width: 180px;">
+                        대상: 사원과 일용직사<br>원 중 퇴직금 대상자.
+                      </span>
+                    </div>
+                  </div>
                 </a-form-item>
                 <a-form-item label="입사일">
                     <div class="d-flex-center">
@@ -38,12 +44,12 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="임원여부">
-                    <switch-basic textCheck="X" textUnCheck="O" width="60px"
+                    <switch-basic textCheck="O" textUnCheck="X" width="60px"
                         v-model:valueSwitch="dataGet.specification.executive" />
                 </a-form-item>
                 <a-form-item label="퇴직사유" class="label-required">
                     <select-box-common :arrSelect="arrayReasonResignation" :required="true"
-                        v-model:valueInput="dataGet.specification.retirementReason" placeholder="영업자선택" width="300px" />
+                        v-model:valueInput="dataGet.specification.retirementReason" placeholder="선택" width="300px" />
                 </a-form-item>
             </a-col>
             <div class="header-text-1">근속연수</div>
@@ -155,7 +161,7 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="지급일">
+                <a-form-item label="지급일" >
                     <date-time-box width="150px"
                         v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.paymentDate"
                         :required="true" />
@@ -267,13 +273,23 @@ import { Formula } from "@bankda/jangbuda-common";
 
 export default defineComponent({
     props: {
-        dataDetail: Object,
-        actionNextStep: Number,
+      processKey: {
+          type: Object,
+          default: {}
+      },
+      dataDetail: Object,
+      actionNextStep: Number,
+      arrayEmploySelect: {
+          type: Array,
+          default: []
+      },
     },
     setup(props, { emit }) {
-        let valueSelected = ref(17)
-        let month1: any = ref(dayjs().format("YYYY-MM"))
-        let month2: any = ref(dayjs().format("YYYY-MM"))
+        // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
+        const monthInputed = props.processKey.imputedMonth < 9 ? props.processKey.imputedYear.toString() + '0' + props.processKey.imputedMonth.toString() : props.processKey.imputedYear.toString() + props.processKey.imputedMonth.toString()
+        const monthPayment =  props.processKey.paymentMonth < 9 ? props.processKey.paymentYear.toString()+'0'+props.processKey.paymentMonth.toString() : props.processKey.paymentYear.toString()+props.processKey.paymentMonth.toString()
+        let month1 = ref(monthInputed)
+        let month2 = ref(monthPayment)
 
         let yearsOfService1 = reactive({
             day: 0,
@@ -294,37 +310,12 @@ export default defineComponent({
         const dataGet: any = ref({
             ...dataDefaultDetailUtils
         })
-        const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        store.dispatch('common/getListEmployee', {
-            companyId: companyId,
-            imputedYear: globalYear,
-        })
+ 
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
-        const arrayEmploySelect = ref([])
-        const arrayEmploySelectCommon = reactive(store.state.common.arrayEmployeePA410)
-
-
         // =============== WATCH ==================================
         watch(() => props.dataDetail, (value: any) => {
             dataGet.value = value
-            month1.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYY-MM")
-            setTimeout(() => {
-                if (arrayEmploySelectCommon) {
-                    arrayEmploySelect.value = JSON.parse(
-                        JSON.stringify(arrayEmploySelectCommon, (name, val) => {
-                            if (
-                                // name !== "name" && name !== "updatedAt" && name != "status" && name != "stayQualification" && name != "type" && name != "employeeId"
-                                name === "__typename"
-                            ) {
-                                delete val[name];
-                            } else {
-                                return val;
-                            }
-                        })
-                    );
-                }
-            }, 100);
+            month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
@@ -411,14 +402,12 @@ export default defineComponent({
 
         return {
             yearsOfService1, yearsOfService2, yearsOfService3,
-            valueSelected,
-            arrayEmploySelect,
             month1, month2,
             arrayReasonResignation,
             dataGet,
             dayjs,
             openTabFuc,
-            submitForm,
+            submitForm,monthInputed
         }
     }
 })

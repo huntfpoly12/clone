@@ -3,7 +3,12 @@
     <a-spin :spinning="loading" size="large">
       <standard-form formName="tab1-pa120">
           <a-form-item label="사번(코드)" label-align="right" class="red">
-            <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
+            <div class="input-text">
+              <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
+              <span style="color: #888888; font-size:12px">
+                <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
+              </span>
+            </div>
           </a-form-item>
       
           <a-form-item label="대표자 여부 " label-align="right">
@@ -82,7 +87,6 @@
                     <post-code-button @dataAddress="funcAddress" text="주소검색"/>
                 </div>
             </div>
-
             <default-text-box v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px" placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
@@ -245,6 +249,8 @@ export default defineComponent({
        store.state.common.isCompareEditPA120 = false;
        store.state.common.isNewRowPA120 = false;
        store.state.common.isAddFormErrorPA120 = false;
+       store.commit('common/editRowPA120', initFormStateTabPA120.value);
+       store.state.common.rowKeyTab2PA120 = initFormStateTabPA120.value.employeeId;
     //    store.state.common.isNewRowPA120
     });
 
@@ -273,20 +279,20 @@ export default defineComponent({
       }
     };
 // compare data
-    const compareData = () => {
-      var formStateTab1Copy = reactive(initFormStateTabPA120);
-      initFormStateTab1.joinedAt = dayjs().format("YYYY-MM-DD");
-      if(JSON.stringify(formStateTab1Copy)!==JSON.stringify(initFormStateTab1)){
-          return false;
-        }
-      if(residentId.value !== ''){
-          return false;
-        }
-      if(employeeId.value == false){
-        return false;
-      }
-      return true;
-    }
+    // const compareData = () => {
+    //   var formStateTab1Copy = reactive(initFormStateTabPA120);
+    //   initFormStateTab1.joinedAt = dayjs().format("YYYY-MM-DD");
+    //   if(JSON.stringify(formStateTab1Copy)!==JSON.stringify(initFormStateTab1)){
+    //       return false;
+    //     }
+    //   if(residentId.value !== ''){
+    //       return false;
+    //     }
+    //   if(employeeId.value == false){
+    //     return false;
+    //   }
+    //   return true;
+    // }
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
 // convert initFormStateTabPA120.value.name to uppercase
     watch(()=> initFormStateTabPA120.value.name,(newVal)=> {
@@ -325,7 +331,6 @@ export default defineComponent({
       createNewEmployeeWage,
       arrDepartments,
       arrResponsibility,
-      compareData,
       actionFormDonePA120,
       changeTextCountry
     };
@@ -357,9 +362,6 @@ export default defineComponent({
   .zip-code{
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
-  }
-  .roadAddress{
     margin-bottom: 5px;
   }
 }

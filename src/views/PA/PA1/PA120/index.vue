@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-120" class="page-content">
@@ -40,10 +39,21 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
-            :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
+          <DxDataGrid
+            :show-row-lines="true"
+            :hoverStateEnabled="true"
+            :data-source="dataSource"
+            :show-borders="true"
+            key-expr="employeeId"
+            :allow-column-reordering="move_column"
+            :allow-column-resizing="colomn_resize"
+            :column-auto-width="true"
+            :onRowClick="actionEdit"
+            :focused-row-enabled="true"
+            id="pa-120-gridContainer"
+            :auto-navigate-to-focused-row="true"
+            v-model:focused-row-key="focusedRowKey"
+          >
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
               <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -52,24 +62,30 @@
             <template #button-template>
               <DxButton icon="plus" @click="openAddNewModal" />
             </template>
-            <template #button-history="{}" style="border-color: #ddd">
+            <template #button-history="{}">
               <DxButton icon="plus">
                 <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
               </DxButton>
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" />
             <template #company-name="{ data }">
-              <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
-                :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
-                :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"
-                @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
+              <employee-info
+                :idEmployee="data.data.employeeId"
+                :name="data.data.name"
+                :idCardNumber="data.data.residentId"
+                :status="data.data.status"
+                :foreigner="data.data.foreigner"
+                :checkStatus="false"
+                @toolTopErorr="toolTopErorr"
+                :employeeId="data.data.employeeId"
+                @mouseenter="defaultVisible = true"
+                @mouseleave="defaultVisible = false"
+              />
             </template>
-            <DxColumn caption="주민등록번호" cell-template="residentId" width="120" />
+            <DxColumn caption="주민등록번호" cell-template="residentId" width="110" />
             <template #residentId="{ data }">
               <div v-if="data.data.residentId?.length == 14">
-                <a-tooltip placement="top"
-                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                  key="black">
+                <a-tooltip placement="top" v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32" key="black">
                   {{ data.data.residentId }}
                 </a-tooltip>
                 <a-tooltip placement="top" v-else title="ERROR" color="red">
@@ -82,24 +98,20 @@
                 </a-tooltip>
               </div>
             </template>
-            <DxColumn caption="비고" cell-template="grade-cell" />
+            <DxColumn caption="비고" cell-template="grade-cell" width="410" />
             <template #grade-cell="{ data }">
               <div>
                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
                 <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="4" :typeValue="1" />
-                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
-                  :ratio="data.data.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
-                  :ratio="data.data.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8"
-                  :ratio="data.data.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
-                  :ratio="data.data.incomeTaxMagnification" />
+                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
+                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10" :ratio="data.data.incomeTaxMagnification" />
               </div>
             </template>
             <DxColumn cell-template="pupop" width="30" />
-            <template #pupop="{ data }" class="custom-action">
+            <template #pupop="{ data }">
               <div class="custom-action" style="text-align: center" v-if="data.data.deletable">
                 <a-space :size="10">
                   <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
@@ -111,16 +123,12 @@
         </a-spin>
       </a-col>
       <a-col :span="13" class="custom-layout">
-        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
-          v-if="actionChangeComponent == 1" :key="addComponentKey" />
-        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2"
-          :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
+        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus" v-if="actionChangeComponent == 1" :key="addComponentKey" />
+        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
       </a-col>
     </a-row>
-    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete"
-      okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
-      :idRowEdit="idRowEdit" typeHistory="pa-120" />
+    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
     <!-- <PopupMessage
       :modalStatus="resetStatus"
       @closePopup="resetStatus = false"
@@ -131,9 +139,17 @@
       :okText="'확인'"
       @checkConfirm="onResetComfirm"
     /> -->
-    <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
-      :title="messageSave" :content="''" :keyAccept="'1234'" :okText="'네'" cancelText="아니요"
-      @checkConfirm="onRowChangeComfirm" />
+    <PopupMessage
+      :modalStatus="rowChangeStatus"
+      @closePopup="rowChangeStatus = false"
+      :typeModal="'confirm'"
+      :title="messageSave"
+      :content="''"
+      :keyAccept="'1234'"
+      :okText="'네'"
+      cancelText="아니요"
+      @checkConfirm="onRowChangeComfirm"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -150,9 +166,8 @@ import PA120PopupAddNewVue from './components/PA120PopupAddNew.vue';
 import PA120PopupEdit from './components/PA120PopupEdit.vue';
 import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
-import { initFormStateTab1 } from './utils/index';
+import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import ColumnGroup from 'ant-design-vue/lib/vc-table/sugar/ColumnGroup';
 
 export default defineComponent({
   components: {
@@ -205,6 +220,36 @@ export default defineComponent({
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
+    //--------------------delete row data-------------------
+    const { mutate: actionDelete, onError: errorDelete, onDone: successDelete } = useMutation(mutations.deleteEmployeeWage);
+    const actionDeleteFuc = (data: any) => {
+      idAction.value = data;
+      delStatus.value = true;
+    };
+    const statusComfirm = (res: any) => {
+      if (res == true) {
+        actionDelete({
+          companyId: companyId,
+          imputedYear: globalYear.value,
+          employeeId: idAction.value,
+        });
+        actionChangeComponent.value = 1;
+      }
+    };
+    successDelete((e) => {
+      notification('success', `업데이트 완료!`);
+      trigger.value = true;
+      refetchData();
+      store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      store.commit('common/editRowPA120', initFormStateTab1);
+      isFirstWeb.value = true;
+      addComponentKey.value++;
+      focusedRowKey.value = null;
+    });
+    errorDelete((e) => {
+      notification('error', e.message);
+    });
+    //-----------------get employee wage and data source --------------------------------
     const {
       refetch: refetchData,
       result,
@@ -213,18 +258,6 @@ export default defineComponent({
       enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
-    const { mutate: actionDelete, onError: errorDelete, onDone: successDelete } = useMutation(mutations.deleteEmployeeWage);
-    errorDelete((e) => {
-      notification('error', e.message);
-    });
-    successDelete((e) => {
-      notification('success', `업데이트 완료!`);
-      trigger.value = true;
-      refetchData();
-      store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      addComponentKey.value++;
-      focusedRowKey.value = null;
-    });
     watch(result, (value) => {
       if (value) {
         dataSource.value = value.getEmployeeWages;
@@ -243,57 +276,46 @@ export default defineComponent({
       } else {
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       }
-    };
-    //delete row
-    watch(
-      () => store.state.common.reloadEmployeeList,
-      () => {
-        trigger.value = true;
-        refetchData();
-      }
-    );
+    }
     const modalHistory = () => {
       modalHistoryStatus.value = true;
     };
-    const actionDeleteFuc = (data: any) => {
-      idAction.value = data;
-      delStatus.value = true;
-    };
-    const statusComfirm = (res: any) => {
-      if (res == true) {
-        actionDelete({
-          companyId: companyId,
-          imputedYear: globalYear.value,
-          employeeId: idAction.value,
-        });
-        actionChangeComponent.value = 1;
-      }
-    };
 
     //----------------compare Data----------------
-
-    const compareType = ref(1); //0 is row change. 1 is add button;
+    const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
+    //function common
+    const delNewRow = () => {
+      if (!isFirstWeb.value) {
+        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+      }
+      store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      addComponentKey.value++;
+      store.state.common.isNewRowPA120 = false;
+      compareType.value = 2;
+    };
+    const addNewRow = () => {
+      store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      store.state.common.isNewRowPA120 = true;
+      addComponentKey.value++;
+      compareType.value = 1;
+    };
+    const compareType = ref(1); //0 is row click. 1 is add button click;
     const isChangeConfigPayItemsPA120 = computed(() => store.state.common.isChangeConfigPayItemsPA120);
     // Comparing the values of two objects.
     const compareType1 = () => {
-      if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value)) {
+      if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
     };
     const compareType2 = () => {
-      let editRowTab2 = { ...editRowTab2PA120.value };
-      delete editRowTab2.deductionItems;
-      delete editRowTab2.payItems;
-      let initFormTab2 = { ...initFormTab2PA120.value };
-      delete initFormTab2.deductionItems;
-      delete initFormTab2.payItems;
       if (isChangeConfigPayItemsPA120.value) {
         return false;
       }
-      // console.log(`output->`,editRowPA120.value)
-      // console.log(`output->`,initFormStateTabPA120.value)
-      if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)) {
+      // JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)
+      if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
@@ -303,20 +325,11 @@ export default defineComponent({
     const openAddNewModal = async () => {
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
-        if (compareType.value == 2) {
-          dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-          addNewRow();
-          compareType.value = 1;
-          // console.log(`output->type =2`);
-          return;
-        }
         if (!compareType1()) {
-          // console.log(`output->type = 1 loi`);
           rowChangeStatus.value = true;
           return;
         }
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
-        // console.log(`output->type = 1 ko loi`, compareType1());
         if (!isFirstWeb.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
@@ -333,7 +346,13 @@ export default defineComponent({
       }, 50);
       return;
     };
-
+    const tabCurrent = computed(()=> {
+      if(!isCalculateEditPA120.value) {
+        return 2;
+      }
+      return 1;
+    })
+    const rowKeyTab2PA120 = computed(()=> store.state.common.rowKeyTab2PA120)
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
@@ -345,30 +364,32 @@ export default defineComponent({
           }
         });
         let promise2 = new Promise<void>((resolve) => {
-          if (compareType.value == 2) {
+          if (compareType.value == 2 && tabCurrent.value == 1) {
             let ele = document.getElementById('btn-save-edit');
             ele?.click();
+          }
+          if (compareType.value == 2 && tabCurrent.value  == 2) {
             let ele2 = document.getElementById('btn-save-edit-tab2');
             ele2?.click();
-            resolve();
+            let ele3 = document.getElementById('btn-save-add-tab2');
+            ele3?.click();
           }
+          resolve();
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          // console.log(`output =? luu loi`, isFirstWeb.value)
           if (isFirstWeb.value) {
             dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
             store.state.common.isNewRowPA120 = true;
+            isFirstWeb.value = false;
           }
-          focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+          focusedRowKey.value = tabCurrent.value == 2 ? rowKeyTab2PA120.value : initFormStateTabPA120.value.employeeId;
           if (compareType.value == 1) {
             store.state.common.isNewRowPA120 = true;
           }
         } else {
-          // console.log(`output =? luu ko loi`,)
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
-          focusedRowKey.value = idRow.value;
           actionChangeComponent.value = 2;
         }
       } else {
@@ -378,17 +399,16 @@ export default defineComponent({
             dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
           }
           if (compareType.value == 1) {
-            // console.log(`output-> toi dang o so 1`);
+            addNewRow();
             setTimeout(() => {
-              addNewRow();
+              focusedRowKey.value = initFormStateTabPA120.value.employeeId;
             }, 50);
-            focusedRowKey.value = initFormStateTabPA120.value.employeeId;
             isFirstWeb.value = false;
             return;
           }
         }
         if (compareType.value == 2) {
-          // console.log(`output-> toi dang o so 2 `);
+          store.commit('common/initFormTab2PA120', initFormStateTab2);
           idRowEdit.value = idRow.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
@@ -396,24 +416,12 @@ export default defineComponent({
         }
         compareType.value = 2;
       }
-      // isFirstWeb.value = false;
-
-      // if (!isNewRowPA120.value) {
-      //   compareType.value = 2;
-      //   if(!isFirstWeb.value){
-      //     focusedRowKey.value = idRowEdit.value;
-      //   }
-      // } else {
-      //   compareType.value = 1;
-      //   focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-      // }
     };
     //edit row
     const actionEdit = (data: any) => {
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareType1()) {
-          // console.log(`output->chuyen row bth`);
           delNewRow();
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -421,19 +429,16 @@ export default defineComponent({
           isFirstWeb.value = false;
           return;
         }
-        // console.log(`output->co new row, khac nhau`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
       isFirstWeb.value = false;
       if (!compareType2()) {
-        // console.log(`output->row khac`);
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       } else {
-        // console.log(`output->chuyen row bth. ko co newrow`);
         idRowEdit.value = data.data.employeeId;
         actionChangeComponent.value = 2;
       }
@@ -485,25 +490,6 @@ export default defineComponent({
     watch(keyActivePA120, (newval: number) => {
       focusedRowKey.value = +newval;
     });
-    // del row when add row
-    const delNewRow = () => {
-      if (!isFirstWeb.value) {
-        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-      }
-      store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      addComponentKey.value++;
-      //   focusedRowKey.value = null;
-      store.state.common.isNewRowPA120 = false;
-      compareType.value = 2;
-    };
-    const addNewRow = () => {
-      store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
-      store.state.common.isNewRowPA120 = true;
-      addComponentKey.value++;
-      compareType.value = 1;
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-    };
     return {
       loading,
       idRowEdit,
@@ -546,10 +532,14 @@ export default defineComponent({
       messageSave,
       messageDel,
       isFirstWeb,
+      editRowPA120,
+      compareType1,
+      compareType2,
+      tabCurrent,
+      rowKeyTab2PA120,
     };
   },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss" >
-
 </style>

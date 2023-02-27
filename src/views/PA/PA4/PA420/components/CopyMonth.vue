@@ -6,13 +6,12 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0' + month1 }}
                 </div>
-                <div class="month-custom-2 d-flex-center"> 
-                    <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
-                </div>
+                <month-picker-box-custom v-model:valueDate="month2"/>
+           
             </div>
         </a-form-item>
-        <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" />
+        <a-form-item label="지급일" label-align="right" class="label-required">
+            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" :required="true"/>
         </a-form-item>
         <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
@@ -88,15 +87,20 @@ export default defineComponent({
             }
         });
 
-        const onSubmit = () => {
+        const onSubmit = (e : any) => {
+          var res = e.validationGroup.validate();
+          if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+          } else {
             emit("dataAddIncomeProcess", {
-                imputedYear: props.processKey.imputedYear,
-                imputedMonth: month1.value,
-                paymentYear: parseInt(month2.value.toString().slice(0, 4)),
-                paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
+              imputedYear: props.processKey.imputedYear,
+              imputedMonth: month1.value,
+              paymentYear: parseInt(month2.value.toString().slice(0, 4)),
+              paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
             notification('success', `완료!`)
+          }
         };
         return {
             modalCopy,
@@ -141,7 +145,11 @@ export default defineComponent({
         display: none;
     }
 }
-
+:deep.label-required {
+    label {
+        color: red;
+    }
+}
 ::v-deep .month-custom-2 {
     background-color: black;
     padding-left: 10px;

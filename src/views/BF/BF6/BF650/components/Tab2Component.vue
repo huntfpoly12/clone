@@ -3,12 +3,13 @@
         <a-row gutter="24" class="search-form-step-1 mt-10">
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <electronic-filing-type v-model:valueInput="dataSearch.type" />
+                    <electronic-filing-type :disabled="true" v-model:valueInput="dataSearch.type" />
                 </a-form-item>
             </a-col>
             <a-col>
                 <a-form-item label="제작요청일(기간)" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :maxRange="365"
+                        :multi-calendars="true" />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -37,10 +38,22 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
                 <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
-                        format="yyyy-MM-dd hh:mm" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
-                <DxColumn caption="제작현황" data-field="productionStatus" data-type="string" />
+                <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus"
+                    data-type="string" />
+                <template #productionStatus="{ data }">
+                    <a-tooltip placement="top" color="black" v-if="data.value == 2">
+                        <template #title>전자신고파일 다운로드</template>
+                        <span><production-status :typeTag="4" padding="1px 10px" /></span>
+                    </a-tooltip>
+                    <a-tooltip placement="top" color="black" v-if="data.value == -1">
+                        <template #title>{{ data.data.causeOfProductionFailure }}</template>
+                        <span><production-status :typeTag="5" padding="1px 10px" /></span>
+                    </a-tooltip>
+                    <!-- <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
+                    <production-status :typeTag="5" v-if="data.value == -1" padding="1px 10px" /> -->
+                </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
                     <div style="text-align: center">
@@ -51,8 +64,7 @@
             </DxDataGrid>
         </div>
     </div>
-    <ElectronicFilingFileProductions :modalStatus="modalDetail" @closePopup="modalDetail = false"
-        :data="dataModalDetail" />
+    <ElectronicFilingFileProductions :modalStatus="modalDetail" @closePopup="modalDetail = false" :data="dataModalDetail" />
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -85,9 +97,9 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate: any = ref([dayjs().subtract(7, 'day'), dayjs()]);
         let trigger = ref(true)
-        let dataModalDetail:any = ref({})
+        let dataModalDetail: any = ref({})
         // ================== GRAPHQL=================
         //  QUERY : searchElectronicFilingFileProductions
         let {
@@ -134,26 +146,28 @@ export default defineComponent({
     }
 })
 </script> 
-<style scoped lang="scss" src="../style/style.scss">
-</style>
+<style scoped lang="scss" src="../style/style.scss"></style>
 <style lang="scss" scoped>
 :deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
     background: v-bind("styleCheckBox.ColorCheckBox");
     margin-top: -13px;
     margin-left: 3px;
 }
+
 :deep .dx-radiobutton-icon::before {
     border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
     width: 14px;
     height: 14px;
 }
+
 :deep .dx-radio-value-container {
     padding-right: 0px
 }
+
 :deep .dx-radiobutton {
     line-height: 18px;
 }
+
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
-}
-</style> 
+}</style> 

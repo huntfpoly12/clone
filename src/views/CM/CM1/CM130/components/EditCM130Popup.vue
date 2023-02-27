@@ -24,8 +24,7 @@
                     <a-row>
                         <a-col :span="14">
                             <a-form-item label="항목명" :label-col="labelCol" class="red">
-                                <default-text-box style="width: 150px; margin-right: 10px"
-                                :requied="true"
+                                <default-text-box style="width: 150px; margin-right: 10px" :required="true"
                                     v-model:valueInput="formState.name">
                                 </default-text-box>
                             </a-form-item>
@@ -35,8 +34,8 @@
                         <a-col :span="24">
                             <a-form-item label="과세구분/유형" :label-col="labelCol">
                                 <div style="width: 320px;">
-                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode"
-                                        :disabled="true"></TaxPay>
+                                    <TaxPay placeholder="선택" v-model:selectedValue="formState.taxPayCode" :disabled="true">
+                                    </TaxPay>
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -44,8 +43,7 @@
                     <a-row>
                         <a-col :span="24">
                             <a-form-item label="산출방법" :label-col="labelCol">
-                                <default-text-box style="width: 320px"
-                                placeholder="예) 통상시급 x 연장근로시간 x 1.5"
+                                <default-text-box style="width: 320px" placeholder="예) 통상시급 x 연장근로시간 x 1.5"
                                     v-model:valueInput="formState.formula">
                                 </default-text-box>
                             </a-form-item>
@@ -62,7 +60,7 @@
                     <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
                         @onClick="setModalVisible()" />
                     <button-basic class="button-form-modal" :loading="loading" :text="'저장하고 나가기'" :width="140"
-                        :type="'default'" :mode="'contained'" @onClick="onSubmit" />
+                        :type="'default'" :mode="'contained'" @onClick="onSubmit($event)" />
                 </div>
             </standard-form>
         </a-modal>
@@ -143,18 +141,23 @@ export default defineComponent({
             emit("closePopup", false);
         });
 
-        const onSubmit = () => {
-            let variables = {
-                companyId: companyId,
-                imputedYear: globalYear.value,
-                itemCode: formState.itemCode,
-                input: {
-                    name: formState.name,
-                    use: formState.use,
-                    formula: formState.formula
-                }
-            };
-            actionUpdateWithholdingConfigPayItem(variables)
+        const onSubmit = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let variables = {
+                    companyId: companyId,
+                    imputedYear: globalYear.value,
+                    itemCode: formState.itemCode,
+                    input: {
+                        name: formState.name,
+                        use: formState.use,
+                        formula: formState.formula
+                    }
+                };
+                actionUpdateWithholdingConfigPayItem(variables)
+            }
         };
         const setModalVisible = () => {
             if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
@@ -176,6 +179,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped src="../style/style.scss">
-
-</style>
+<style lang="scss" scoped src="../style/style.scss"></style>

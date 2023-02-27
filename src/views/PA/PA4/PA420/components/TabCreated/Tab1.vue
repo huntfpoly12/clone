@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">
+    <standard-form class="modal-add" name="tab-1-420">
         <a-row :gutter="16">
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -9,12 +9,8 @@
                 </a-form-item>
                 <a-form-item label="귀속/지급연월">
                     <div class="d-flex-center">
-                        <div class="month-custom-1 d-flex-center">
-                            귀 <month-picker-box v-model:valueDate="month1" width="65px" class="mr-5 ml-5" />
-                        </div>
-                        <div class="month-custom-2 d-flex-center">
-                            지 <month-picker-box v-model:valueDate="month2" class="ml-5" width="65px" />
-                        </div>
+                        <month-picker-box-custom v-model:valueDate="month1" text="귀" bgColor="gray"></month-picker-box-custom>
+                        <month-picker-box-custom v-model:valueDate="month2" text="지" ></month-picker-box-custom>
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
@@ -24,8 +20,16 @@
             </a-col>
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
+                  <div class="d-flex-center">
                     <employ-select :arrayValue="arrayEmploySelect" :required="true"
                         v-model:valueEmploy="dataForm.input.employeeId" width="300px" />
+                        <div class="ml-5 d-flex-center" >
+                            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                            <span class="custom-waring" style="width: 180px;">
+                              대상: 사원과 일용직사<br>원 중 퇴직금 대상자.
+                            </span>
+                        </div>
+                  </div>
                 </a-form-item>
 
                 <a-form-item label="입사일">
@@ -40,12 +44,12 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="임원여부">
-                    <switch-basic textCheck="X" textUnCheck="O" width="60px"
+                  <switch-basic textCheck="O" textUnCheck="X" width="60px"
                         v-model:valueSwitch="dataForm.input.executive" />
                 </a-form-item>
                 <a-form-item label="퇴직사유" class="label-required">
                     <select-box-common :arrSelect="arrayReasonResignation" :required="true"
-                        v-model:valueInput="dataForm.input.retirementReason" placeholder="영업자선택" width="300px" />
+                        v-model:valueInput="dataForm.input.retirementReason" placeholder="선택" width="300px" />
                 </a-form-item>
             </a-col>
             <div class="header-text-1">근속연수</div>
@@ -161,8 +165,8 @@
                         </div>
                     </div>
                 </a-form-item>
-                <a-form-item label="지급일">
-                    <date-time-box :required="false" width="150px"
+                <a-form-item label="지급일" class="label-required">
+                    <date-time-box :required="true" width="150px"
                         v-model:valueDate="dataForm.taxCalculationInput.lastRetiredYearsOfService.paymentDate" />
                 </a-form-item>
                 <a-form-item label="제외일수">
@@ -263,8 +267,6 @@
                 }}일</div>
             </a-col>
         </a-row>
-        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
-            style="display: none;" />
     </standard-form>
 </template>
 
@@ -274,22 +276,30 @@ import dayjs from "dayjs";
 import { arrayReasonResignationUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
-    props: {
-        dataForm: {
-            type: Object,
-            default: {}
-        },
-        arrayEmploySelect: {
-            type: Array,
-            default: []
-        },
-        actionNextStep: Number,
+  props: {
+    processKey: {
+        type: Object,
+        default: {}
+    },
+    dataForm: {
+        type: Object,
+        default: {}
+    },
+    arrayEmploySelect: {
+        type: Array,
+        default: []
+    },
+    actionNextStep: Number,
+        
     },
     setup(props, { emit }) {
         const joinedAt = ref()
-
-        let month1: any = ref(dayjs().format("YYYYMM"))
-        let month2: any = ref(dayjs().format("YYYYMM"))
+        // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
+        const monthInputed = props.processKey.imputedMonth < 9 ? props.processKey.imputedYear.toString() + '0' + props.processKey.imputedMonth.toString() : props.processKey.imputedYear.toString() + props.processKey.imputedMonth.toString()
+        const monthPayment = props.processKey.paymentMonth < 9 ? props.processKey.paymentYear.toString() + '0' + props.processKey.paymentMonth.toString() : props.processKey.paymentYear.toString() + props.processKey.paymentMonth.toString()
+        
+        let month1 = ref(monthInputed)
+        let month2 = ref(monthPayment)
 
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         const dataPrevRetiredYearsOfService: any = ref({})
@@ -400,7 +410,7 @@ export default defineComponent({
         }
         return {
             month1, month2, arrayReasonResignation, joinedAt, dataPrevRetiredYearsOfService, dataLastRetiredYearsOfService, dataSettlement, dayjs,
-            openNewTab, submitForm,
+            openNewTab, submitForm,monthInputed
         }
     }
 })

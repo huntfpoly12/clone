@@ -41,8 +41,8 @@ export const DataCreated = {
     employeeId: '',
     joinedAt: parseInt(dayjs().format('YYYYMMDD')),
     leavedAt: null,
-    retirementIncome: true,
-    weeklyWorkingHours: null,
+    retirementIncome: false,
+    weeklyWorkingHours: 40,
     department: '',
     responsibility: '',
 };
@@ -68,7 +68,7 @@ export const originDataInputUpdate = {
     nationalPensionDeduction: false,
     healthInsuranceDeduction: false,
     longTermCareInsuranceDeduction: false,
-    employeementInsuranceDeduction: false,
+    employeementInsuranceDeduction: true,
     insuranceSupport: false,
     nationalPensionSupportPercent: 0,
     employeementInsuranceSupportPercent: 0,
@@ -88,7 +88,7 @@ export const DataCreatedTable = {
     "deletable": false,
     "nationalPensionDeduction": false,
     "healthInsuranceDeduction": false,
-    "employeementInsuranceDeduction": false,
+    "employeementInsuranceDeduction": true,
     "nationalPensionSupportPercent": null,
     "employeementInsuranceSupportPercent": null,
 }

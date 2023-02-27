@@ -88,10 +88,3 @@ export default defineComponent({
     margin-right: 5px;
 }
 </style>
-
-<style>
-.ant-tooltip-inner {
-    color: black;
-    background-color: rgb(232, 232, 232);
-}
-</style>

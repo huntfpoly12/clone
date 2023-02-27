@@ -32,7 +32,7 @@
             <DxColumnFixing :enabled="true" />
             <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center" />
 
-            <template #pupop="{ data }" class="custom-action">
+            <template #pupop="{ data }">
               <div class="custom-action">
                 <a-space :size="10">
                   <a-tooltip color="black" placement="top">
@@ -43,8 +43,8 @@
               </div>
             </template>
             <template #foreignerChange="{ data: cellData }">
-              <div v-if="cellData.value">내</div>
-              <div v-else>외</div>
+              <div v-if="cellData.value" class="tag-foreigner">내</div>
+              <div v-else class="tag-foreigner">외</div>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
@@ -89,31 +89,31 @@
 
               <a-form-item label="본인" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="relationSummary" :readOnly="true" />
+                  <text-number-box width="200px" :value="relationSummary" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="배우자" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="womenSummary" :readOnly="true" />
+                  <text-number-box width="200px" :value="womenSummary" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="20세이하" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="basicDeductionSummary == 0 ? '' : basicDeductionSummary"
-                    :readOnly="true" />
+                    :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="60세이하" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="basicDeductionSummary2 == 0 ? '' : basicDeductionSummary2"
-                    :readOnly="true" />
+                    :disabled="true" />
                 </div>
               </a-form-item>
               <div class="header-text-2">자녀세액공제</div>
               <a-form-item label="자녀세액공제" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="descendantSummary == 0 ? '' : descendantSummary"
-                    :readOnly="true" />
+                    :disabled="true" />
                 </div>
               </a-form-item>
             </a-col>
@@ -122,29 +122,29 @@
               <div class="header-text-2">추가/세액공제</div>
               <a-form-item label="경로우대" class="display-flex" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="seniorSummary == 0 ? '' : seniorSummary" :readOnly="true" />
+                  <text-number-box width="200px" :value="seniorSummary == 0 ? '' : seniorSummary" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="장애인" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="disabledSummary == 0 ? '' : disabledSummary" :readOnly="true" />
+                  <text-number-box width="200px" :value="disabledSummary == 0 ? '' : disabledSummary" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="부녀자" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="womenSummary2 == 0 ? '' : womenSummary2" :readOnly="true" />
+                  <text-number-box width="200px" :value="womenSummary2 == 0 ? '' : womenSummary2" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="한부모" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="singleParentSummary == 0 ? '' : singleParentSummary"
-                    :readOnly="true" />
+                    :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="출산입양" label-align="right">
                 <div class="display-flex">
                   <text-number-box width="200px" :value="maternityAdoptionSummary == 0 ? '' : maternityAdoptionSummary"
-                    :readOnly="true" />
+                    :disabled="true" />
                 </div>
               </a-form-item>
             </a-col>

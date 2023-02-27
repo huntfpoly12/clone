@@ -64,7 +64,7 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-        const updateValue = (value: any) => {
+      const updateValue = (value: any) => {
             emit("update:valueInput", value);
         };
 
@@ -87,3 +87,8 @@ export default defineComponent({
     },
 });
 </script>
+<style lang="scss" scoped>
+:deep.dx-numberbox .dx-texteditor-input{  
+  text-align: right;  
+}  
+</style>

@@ -42,45 +42,57 @@
         </div>
     </a-col>
     <a-col :span="24">
-        <a-spin :spinning="(loadingTableDetail)" size="large">
+        <a-spin :spinning="loadingTableDetail" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                 :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사원" cell-template="tag" width="300px" />
+                <DxColumn caption="사원" cell-template="tag" width="300px" header-cell-template="title-header-사원"/>
+                <template #tag="{ data }">
+                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                        :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
+                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
+                        :forDailyUse="data.data.employeeType == 10 ? false : true" />
+                </template>
+                <template #title-header-사원="{}">
+                  <a-tooltip placement="top" class="custom-tooltip">
+                      <template #title>
+                        사원과 일용직사원 중 퇴직금 대상자
+                      </template>
+                      사원
+                  </a-tooltip>
+                </template>
                 <DxColumn caption="구분" cell-template="retirementType" data-type="string" />
+                <template #retirementType="{ data }">
+                    <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
+                    <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
+                </template>
                 <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" />
+                <template #joinedAt="{ data }">
+                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
+                </template>
                 <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" />
+                <template #leavedAt="{ data }">
+                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
+                </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
                     width="120px" />
                 <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
                     format="#,###" />
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
                     format="#,###" />
-                <DxColumn caption="공제" width="100px" data-field="totalDeduction" data-type="string" format="#,###" />
+                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" />
+                <template #total-deduction="{ data }">
+                  <a-tooltip placement="left">
+                      <template #title>소득세 {incomePayment} / 지방<br>소득세 {withholdingLocalIncomeTax}</template>     
+                      <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
+                  </a-tooltip>
+                </template>
                 <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
                     format="#,###" />
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
-                <DxColumn caption="지급일" data-field="paymentDay" data-type="string" />
-                <DxColumn caption="" cell-template="action" width="50px" />
-                <template #joinedAt="{ data }">
-                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
-                </template>
-                <template #leavedAt="{ data }">
-                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
-                </template>
-                <template #retirementType="{ data }">
-                    <div v-if="data.data.retirementType == 1" class="retirementType-1">퇴직</div>
-                    <div v-if="data.data.retirementType == 2" class="retirementType-2">중간</div>
-                </template>
-                <template #tag="{ data }" class="custom-action">
-                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
-                        :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
-                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                        :forDailyUse="data.data.employeeType == 10 ? true : false" />
-                </template>
-                <template #note="{ data }" class="custom-action">
+                <template #note="{ data }">
                     <div>
                         <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                             :typeValue="1" />
@@ -98,7 +110,12 @@
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </div>
                 </template>
-                <template #action="{ data }" class="custom-action">
+                <DxColumn caption="지급일" data-field="paymentDay" cell-template="payment-day" />
+                <template #payment-day="{ data }">
+                    {{ data.data.paymentDay < 10 ? "0"+ data.data.paymentDay :  data.data.paymentDay}}
+                </template>
+                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
+                <template #action="{ data }">
                     <div class="wf-100 text-center">
                         <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
                     </div>
@@ -126,10 +143,10 @@
         title="변경이력" typeHistory="pa-420" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataDelete"
+    <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
-        :processKey="dataTableDetail.processKey" />
+        :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
@@ -172,14 +189,14 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let statusButton = ref(props.statusButton)
-        let dataSourceDetail = ref([]);
-        let arrayEmploySelect: any = ref([])
+        const dataSourceDetail = ref([]);
+        const listEmployeeId = ref<any>([]);
         let placements = ["bottomRight"] as DropdownProps["placement"][];
         const keyDetailRow = ref()
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
-        const triggerDetail = ref<boolean>(false);
+        const triggerDetail = ref<boolean>(true);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -204,6 +221,15 @@ export default defineComponent({
         }));
         resTableDetail(res => {
             dataSourceDetail.value = res.data.getIncomeRetirements
+            // create array id already exist
+            res.data.getIncomeRetirements.map((item: any) => {
+            // The above code is checking if the employeeId is already in the listEmployeeId array. If it is
+            // not, then it will push the employeeId into the array.
+            if (!listEmployeeId.value.includes(item.employeeId)) {
+                listEmployeeId.value.push(item.employeeId)
+              }
+            })
+            
             triggerDetail.value = false
         })
         errorTableDetail(res => {
@@ -242,7 +268,7 @@ export default defineComponent({
         const changeIncomeTypeCode = (res: string) => {
             dataAction.input.incomeTypeCode = res
         }
-        const selectionChanged = (event: any) => {
+      const selectionChanged = (event: any) => {
             popupDataDelete.value = event.selectedRowKeys
         }
         const deleteItem = () => {
@@ -263,6 +289,13 @@ export default defineComponent({
         const actionClosePopup = () => {
             modalUpdate.value = false
         }
+
+        const closeChangePaymentDay = () => {
+          modalEdit.value = false
+          triggerDetail.value = true
+          refetchTableDetail()
+        }
+        
         const onItemClick = (key: String) => {
             if (key == 'history') {
                 modalHistory.value = true
@@ -307,7 +340,6 @@ export default defineComponent({
         return {
             keyDetailRow,
             modalAdd, modalUpdate,
-            arrayEmploySelect,
             statusButton,
             dataTableDetail,
             dataAction,
@@ -334,6 +366,8 @@ export default defineComponent({
             actionClosePopup,
             refetchTableDetail,
             resetFormNum,
+            listEmployeeId,
+            closeChangePaymentDay
         }
     }
 });

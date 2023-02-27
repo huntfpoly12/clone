@@ -4,7 +4,7 @@
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
             <a-row>
-                <a-spin :spinning="(loadingIncomeProcessWages)" size="large">
+                <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -229,14 +229,14 @@
                             :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                            key-expr="employee.employeeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
-                            @selection-changed="selectionChanged"
+                            key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
+                            @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
-                            <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple"
+                            <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
                             <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
-                            <template #tag="{ data }" class="custom-action">
+                            <template #tag="{ data }">
                                 <div class="custom-action">
                                     <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId"
                                         :name="data.data.employee.name" :status="data.data.employee.status"
@@ -252,7 +252,7 @@
                                 format="fixedPoint" />
                             <DxColumn alignment="left" class="min-w-240" caption="비고"
                                 cell-template="four-major-insurance" />
-                            <template #four-major-insurance="{ data }" class="custom-action">
+                            <template #four-major-insurance="{ data }">
                                 <div class="custom-action">
                                     <four-major-insurance v-if="data.data.employee.nationalPensionDeduction"
                                         :typeTag="1" :typeValue="1" />
@@ -272,7 +272,7 @@
                             </template>
                             <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay"
                                 cell-template="paymentDay" />
-                            <template #paymentDay="{ data }" class="custom-action">
+                            <template #paymentDay="{ data }">
                                 <div class="text-center">{{ data.data.paymentDay }}</div>
                             </template>
                             <DxSummary>
@@ -293,10 +293,10 @@
                 <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
                     title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
                     @checkConfirm="statusComfirmChange" />
-                <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
+                <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
                     typeModal="confirm" :title="Message.getMessage('PA110', '001').message" content=""
                     :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
-                    @checkConfirm="statusComfirmChangePrice" />
+                    @checkConfirm="statusComfirmChangePrice" /> -->
                 <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
                     @closePopup="modalCopy = false" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -358,12 +358,10 @@ export default defineComponent({
             paymentYear: globalYear.value,
             paymentMonth: dayjs().month() + 1,
         }
-        console.log(store.state.common.processKeyPA110);
-        
         const processKey = computed(() => store.state.common.processKeyPA110)
         const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
-        const dataCustomRes = ref<any>([])
+        const dataCustomRes: any = ref<any>([])
         const arrDataPoint = ref<any>([])
         const dataModalCopy = ref()
         const modalCopy = ref<boolean>(false);
@@ -372,7 +370,7 @@ export default defineComponent({
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
         let status = ref();
-        const modalChangeRowPrice = ref(false)
+        // const modalChangeRowPrice = ref(false)
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // call api getIncomeProcessWages for first table 
@@ -394,8 +392,7 @@ export default defineComponent({
                 dataSource.value = [{
                     companyId: companyId,
                 }]
-
-                dataCustomRes.value = [...initDataCustomRes]
+                dataCustomRes.value = JSON.parse(JSON.stringify(initDataCustomRes))
                 value.getIncomeProcessWages.forEach((data: any) => {
                     // create data to copy
                     arrDataPoint.value.push({
@@ -417,7 +414,7 @@ export default defineComponent({
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
-                        value: `${[data.value].reduce((total, status) => (status != 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })} (${[data].reduce((total, status) => (status == 0 ? total + 1 : total), 0).toLocaleString('en-US', { currency: 'VND' })})`,
+                        value: data.employeeStat ? `${filters.formatCurrency(data.employeeStat.employeeCount)}(${filters.formatCurrency(data.employeeStat.retireEmployeeCount)})` : 0,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
@@ -469,24 +466,20 @@ export default defineComponent({
                         value: filters.formatCurrency(data.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    // if (data.imputedMonth == (dayjs().month() + 1) && status.value) {
-                    //     status.value = data.status
-                    // }
-                    const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
-                    if (obj) {
-                        statusDisabledBlock.value = false;
-                    } else {
-                        status.value = null
-                        statusDisabledBlock.value = true;
-                    }
-                    if (isRunOnce.value) {
-                        isRunOnce.value = false;
-                        if (obj) {
-                            showDetailSelected(obj)
-                        }
-                    }
-
                 });
+            }
+            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
+            if (obj) {
+                statusDisabledBlock.value = false;
+            } else {
+                status.value = null
+                statusDisabledBlock.value = true;
+            }
+            if (isRunOnce.value) {
+                isRunOnce.value = false;
+                if (obj) {
+                    showDetailSelected(obj)
+                }
             }
         })
 
@@ -505,21 +498,23 @@ export default defineComponent({
             store.state.common.dataTaxPayInfo = value.getIncomeWages;
             // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
             if (value.getIncomeWages[0]) { // if have data
-                if (store.state.common.employeeId && value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId ?? null)) {
-                    store.state.common.focusedRowKey = store.state.common.employeeId
-                    store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                    store.state.common.focusedRowKey = store.state.common.incomeId
+                    // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                 } else {
-                    store.state.common.focusedRowKey = value.getIncomeWages[0].employeeId
+                    store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                     store.state.common.incomeId = value.getIncomeWages[0].incomeId
-                    store.state.common.employeeId = value.getIncomeWages[0].employeeId
+                    // store.state.common.employeeId = value.getIncomeWages[0].employeeId
                 }
                 store.state.common.actionAddItem = false
             } else {
                 store.state.common.actionAddItem = true
                 store.state.common.focusedRowKey = null;
                 store.state.common.incomeId = null;
-                store.state.common.employeeId = null;
+                // store.state.common.employeeId = null;
+                store.state.common.actionResetForm++;
             }
+            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             refetchDataProcessIncomeWages() //reset data table 1
@@ -541,18 +536,18 @@ export default defineComponent({
             rowEdit.value = data.data
             if (rowEdit.value.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
-                    if (store.state.common.statusChangeFormPrice) {
-                        modalChangeRowPrice.value = true;
-                    } else {
+                    // if (store.state.common.statusChangeFormPrice) {
+                    //     modalChangeRowPrice.value = true;
+                    // } else {
                         modalChangeRow.value = true;
-                    }
+                    // }
                 } else {
                     if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                         store.state.common.statusRowAdd = true
                     }
                     store.state.common.incomeId = data.data.incomeId
-                    store.state.common.employeeId = data.data.employeeId
+                    // store.state.common.employeeId = data.data.employeeId
                 }
                 if (store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
@@ -560,9 +555,13 @@ export default defineComponent({
             }
         }
         const selectionChanged = (data: any) => {
-            store.state.common.actionAddItem = true
-            store.state.common.focusedRowKey = null
-            dataRows.value = data.selectedRowsData
+            data.component.getSelectedRowsData().then((rowData: any) => {
+                dataRows.value = rowData
+                if ( rowData.length > 1 ) {
+                    // store.state.common.incomeId = rowData[0].
+                    store.state.common.focusedRowKey = store.state.common.incomeId
+                }
+            })
         }
         /**
          * show detail value of month
@@ -631,27 +630,31 @@ export default defineComponent({
                 (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
             } else {
                 if (!store.state.common.statusRowAdd) {
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
-                }
-            }
-            store.state.common.incomeId = rowEdit.value.incomeId
-            store.state.common.employeeId = rowEdit.value.employeeId
-        }
-        const statusComfirmChangePrice = (res: any) => {
-            if (res) {
-                (document.getElementById("button-action-dedution-pa110") as HTMLInputElement).click();
-                store.state.common.focusedRowKey = store.state.common.employeeId
-            } else {
-                if (!store.state.common.statusRowAdd) {
+                    store.state.common.actionAddItem = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = rowEdit.value.incomeId
-                store.state.common.employeeId = rowEdit.value.employeeId
+                // store.state.common.employeeId = rowEdit.value.employeeId
             }
+            
         }
+        // const statusComfirmChangePrice = (res: any) => {
+        //     if (res) {
+        //         (document.getElementById("button-action-dedution-pa110") as HTMLInputElement).click();
+        //         store.state.common.focusedRowKey = store.state.common.employeeId
+        //     } else {
+        //         if (!store.state.common.statusRowAdd) {
+        //             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+        //             store.state.common.statusRowAdd = true
+        //         }
+        //         store.state.common.incomeId = rowEdit.value.incomeId
+        //         store.state.common.employeeId = rowEdit.value.employeeId
+        //     }
+        // }
         watch(globalYear, (newVal) => {
+            store.state.common.processKeyPA110.imputedYear = newVal
+            store.state.common.processKeyPA110.paymentYear = newVal
             // IncomeWageDailiesTrigger.value = true;
             refetchDataTaxPayInfo() //reset data table 2
         })
@@ -681,7 +684,7 @@ export default defineComponent({
             status,
             setUnderline,
             modalChangeRow, statusComfirmChange,
-            modalChangeRowPrice, statusComfirmChangePrice,
+            // modalChangeRowPrice, statusComfirmChangePrice,
             Message,
             statusDisabledBlock,
         }

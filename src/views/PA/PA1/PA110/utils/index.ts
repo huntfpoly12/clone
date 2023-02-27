@@ -21,6 +21,7 @@ export const sampleDataIncomeWage = {
   workingHoursAtNight: 0,
   workingHoursOnHolidays: 0,
   payItems: [],
+  incomeId: "PA110",
 };
 export const initDataCustomRes = [
   { id: 1, name: "재직(퇴사)" },

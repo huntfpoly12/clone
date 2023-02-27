@@ -3,7 +3,7 @@
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
-    <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/>
+    <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/> -->
     <DxButton @click="onSubmit($event)" size="large"
         class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
@@ -24,18 +24,24 @@
             </div>
         </a-tooltip>
     </DxButton>
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
+        <div class="d-flex-center">
+            <checkbox-basic  :valueCheckbox="true" disabled="true" />
+            <span class="fz-12 pl-5">지급일변경</span>
+        </div>
+    </DxButton>
     <div class="custom-select-tab ml-4">
         <button class="button-open-tab"
             @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
     </div>
-    <DxDropDownButton class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
         item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
@@ -43,8 +49,8 @@
         </template>
     </DxDropDownButton>
 
-    <!-- <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" /> -->
+    <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
+        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
 
     <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -153,16 +159,18 @@ export default defineComponent({
         const onActionAddItem = (value: any) => {
             // store.state.common.actionAddItem = true;
             if (store.state.common.statusRowAdd) {
-                if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                    modalStatusAdd.value = true
-                } else {
+                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
+                //     modalStatusAdd.value = true
+                // } else {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = null;
-                    store.state.common.focusedRowKey = null;
-                }
+                    store.state.common.incomeId = 'PA110';
+                    store.state.common.focusedRowKey = 'PA110';
+                    // store.state.common.actionResetForm++;
+                // }
             } else {
-                notification('error', "nhập vàooooo")
+                modalStatusAdd.value = true
+                // notification('error', "nhập vàooooo")
             }
         }
         const editItem = (value: any) => {
@@ -266,11 +274,13 @@ export default defineComponent({
         //     store.state.common.actionSubmit++
         //     // emit('actionUpdate',actionUpdateItem.value++)
         // }
-        // const statusComfirmAdd = (val: any) => {
-        //     if (val) {
-        //         store.state.common.actionAddItem = 1;
-        //     }
-        // }
+        const statusComfirmAdd = (val: any) => {
+            if (val) { // action save form
+                store.state.common.actionSubmit++
+            } else { // reset form
+                store.state.common.actionResetForm++;
+            }
+        }
         return {
             deleteItem,
             editItem,
@@ -300,7 +310,7 @@ export default defineComponent({
             // updateData,
             store,
             modalStatusAdd,
-            // statusComfirmAdd,
+            statusComfirmAdd,
         };
     },
 });

@@ -21,7 +21,7 @@
                 <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
               </a-form-item>
               <a-form-item label="나이" label-align="right">
-                <default-text-box width="200px" :readOnly="true" v-model:valueInput="ageCount"></default-text-box>
+                <default-text-box width="200px" :disabled="true" v-model:valueInput="ageCount"></default-text-box>
               </a-form-item>
               <a-form-item label="기본공제" label-align="right" class="red">
                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
@@ -31,12 +31,22 @@
                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
               </a-form-item>
               <a-form-item label="한부모" label-align="right">
-                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
+                <div class="input-text">
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.singleParent" />
+                  <span style="color: #888888; font-size:11px">
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 부녀자 공제와 중복 공제 불가
+                  </span>
+                </div>
               </a-form-item>
             </a-col>
             <a-col :span="12">
               <a-form-item label="경로우대" label-align="right">
-                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" />
+                <div class="input-text">
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" :disabled="isDisabledSenior"/>
+                  <span style="color: #888888; font-size:11px">
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 만 70세 이상
+                  </span>
+                </div>
               </a-form-item>
               <a-form-item label="장애인" label-align="right">
                 <disabled-type-radio-group v-model:valueRadioCheck="formState.disabled"></disabled-type-radio-group>
@@ -45,8 +55,13 @@
                 <maternity-adoption-radio-box
                   v-model:valueRadioCheck="formState.maternityAdoption"></maternity-adoption-radio-box>
               </a-form-item>
-              <a-form-item label="자녀세액공제" label-align="right">
-                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
+              <a-form-item label="자녀세액공제" label-align="right" class="d-flex-nowrap">
+                <div class="input-text long-text">
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
+                  <span style="color: #888888; font-size:11px">
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 7세 이상 20세 이하의 자녀인 경우 공제 대상
+                  </span>
+                </div>
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
                 <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
@@ -104,7 +119,7 @@ export default defineComponent({
       name: '',
     //   foreigner: false,
       residentId: '',
-      basicDeduction: null,
+      basicDeduction: 0,
       women: false,
       singleParent: false,
       senior: false,
@@ -115,16 +130,17 @@ export default defineComponent({
       index: 2,
     };
     const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
-    const messageSave = Message.getMessage('COMMON', '106').message
+    const messageSave = Message.getMessage('COMMON', '106').message;
+    const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
 
     const setModalVisible = () => {
       emit('closePopup', false);
     };
     const notifcationTax = () => {
-            notification('warning', taxWaring);
-            setTimeout(()=> {
-                formState.women = false;
-            }, 200)
+      notification('warning', taxWaring);
+      setTimeout(()=> {
+          formState.women = false;
+      }, 200)
     }
     watch(()=>formState.women, (newValue) => {
         if (newValue == true  && formState.singleParent == true) {
@@ -161,15 +177,16 @@ export default defineComponent({
     }
     });
     // const foreigner = ref<Number|Boolean>(formState.foreigner == true ? 1 : 0);
-    watch(formState.foreigner, (newValue) => {
+    watch(()=>formState.foreigner, (newValue) => {
       if (newValue) {
         formState.foreigner = true;
-        labelResidebId.value = '주민등록번호';
+        labelResidebId.value = '외국인번호 유효성';
     } else {
         formState.foreigner = false;
-        labelResidebId.value = '외국인번호 유효성';
+        labelResidebId.value = '주민등록번호';
       }
-    });
+    },{deep:true});
+    //residenId
     const residentId = ref('');
     watch(residentId, (newValue: any) => {
       formState.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
@@ -224,14 +241,15 @@ export default defineComponent({
       }
     };
     watch(()=>formState.residentId,(newVal)=> {
-            let count;
-            if(newVal.length==13){
-                count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
-                ageCount.value = convertAge(count);
-            }else if(newVal.length<13){
-                count  = newVal.toString();
-                ageCount.value = convertAge(count);
-            }
+      let count;
+      if(newVal.length==13){
+          count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
+          ageCount.value = convertAge(count);
+        }else if(newVal.length<13){
+          count  = newVal.toString();
+          ageCount.value = convertAge(count);
+        }
+        isDisabledSenior.value = ageCount.value < 70 ? true : false;
     },{deep: true})
     watch(isForeignerPA120,(newVal: any)=>{
         formState.foreigner = newVal;
@@ -248,13 +266,14 @@ export default defineComponent({
       setModalVisible,
       labelResidebId,
       createNewEmployeeWageDependent,
+      isDisabledSenior
     };
   },
 });
 </script>
 <style lang="scss" scoped>
 #add-new-dependent-pa-120 {
-  ::v-deep .ant-form-item-label>label {
+  :deep .ant-form-item-label>label {
     width: 135px;
     padding-left: 10px;
   }
@@ -268,7 +287,7 @@ export default defineComponent({
     }
   }
 
-  ::v-deep .red {
+  :deep .red {
     label {
       color: red;
     }
@@ -284,9 +303,17 @@ export default defineComponent({
     margin-bottom: 5px;
   }
   .switchForeigner {
-        :deep .ant-switch {
-            background-color: #1890ff;
-        }
+    :deep .ant-switch {
+        background-color: #1890ff;
     }
+  }
+  :deep .ant-row.ant-form-item.d-flex-nowrap {
+    display: flex !important;
+    flex-wrap: nowrap;
+    .long-text {
+      align-items: start;
+      padding-top: 3px;
+    }
+  }
 }
 </style>

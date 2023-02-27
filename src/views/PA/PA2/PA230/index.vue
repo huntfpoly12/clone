@@ -8,7 +8,7 @@
                         <a-row :gutter="[24, 8]">
                             <a-col>
                                 <div class="d-flex-center">
-                                    <label class="lable-item">구분 :</label>
+                                    <label class="lable-item">서식 설정 :</label>
                                     <radio-group :arrayValue="radioCheckDataSearch"
                                         v-model:valueRadioCheck="checkBoxOption" layoutCustom="horizontal"
                                         class="mt-7" />
@@ -22,22 +22,15 @@
                             </a-col>
                         </a-row>
                     </a-col>
-                    <a-col :span="12" style="text-align: right;">
-                      <img src="@/assets/images/printGroup.png" alt="" height="30" class="mail-230"
-                            @click="printFunc" />
-                      <img src="@/assets/images/emailGroup.png" alt="" height="30" class="mail-230"
-                            @click="sendMail" />
-                    </a-col>
                 </a-row>
             </div>
             <div class="page-content">
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="휴대폰" class="red">
+                        <a-form-item label="서식 설정" class="red">
                             <div class="format-settings-text">
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span class="style-note">본 설정으로 적용된 서식으로 출력 및
-                                    메일발송 됩니다.</span>
+                                <span class="style-note">본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</span>
                             </div>
                         </a-form-item>
                         <div class="tax-select">
@@ -54,7 +47,31 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
+                    @selection-changed="selectionChanged"
+                    @cell-prepared="onCellPrepared"
+                    @row-prepared="onRowPrepared"
+                    
+                    >
+                    <DxToolbar>
+                        <DxItem template="pagination-send-group-mail" />
+                        <DxItem template="send-group-print" />
+                    </DxToolbar>
+                    <template #pagination-send-group-mail>
+                    <div class="custom-mail-group">
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                                @click="sendMail" />
+                        </DxButton>
+                    </div>
+                    </template>
+                    <template #send-group-print>
+                        <div class="custom-mail-group">
+                            <DxButton @click="printFunc" id="print">
+                                <img src="@/assets/images/printGroup.png" alt=""
+                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                            </DxButton>
+                            <Tooltip target="#print" content="출력 / 저장" />
+                        </div>
+                    </template>
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxSelection mode="multiple" :fixed="true" />
                     <DxColumn caption="성명" cell-template="employee-info" width="300" />
@@ -86,8 +103,8 @@
                     </template>
                     <DxColumn caption="구분" cell-template="status" width="100"/>
                     <template #status="{ data }">
-                        <span class="status-red" v-if="data.data.status != 0">계속</span>
-                        <span class="status-blue" v-else>중도</span>
+                        <span class="status-blue" v-if="data.data.employee.status != 0">계속</span>
+                        <span class="status-red" v-else>중도</span>
                     </template>
                     <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" width="160"/>
                     <DxColumn caption="" cell-template="pupop" width="100" />
@@ -96,16 +113,18 @@
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="sendMail(data.data.employee)" />
-                            <img src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
-                                @click="printFunc(data.data.employeeId)" />
+                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
+                              @click="printFunc(data.data.employeeId)" />
+                            <Tooltip :target="`#print-action${data.data.employeeId}`" content="출력 / 저장" />
                         </div>
                     </template>
-                    <DxSummary>
+                    <DxSummary >
                         <DxTotalItem :customize-text="customTextSummaryInfo" show-in-column="성명"/>
-                        <DxTotalItem column="totalPay" summary-type="sum" display-format="총급여계합계: {0}"
+                        <DxTotalItem column="totalPay" name="total_summary" summary-type="sum" display-format="총급여계합계: {0}"
                             value-format="#,###" />        
                     </DxSummary>
                 </DxDataGrid>
+                
             </div>
         </div>
     </a-spin>
@@ -117,6 +136,8 @@
                     placeholder="abc@example.com" />
                 <span class="ml-5">로 메일을 발송하시겠습니까?</span>
             </div>
+
+            <!-- sendmail multiple users -->
             <div v-else class="form-mail-2">
                 <img src="@/assets/images/emailGroup.png" alt="" >
                 <div>
@@ -145,7 +166,9 @@ import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
+import { DxTooltip } from 'devextreme-vue/tooltip';
 import { companyId, userId } from "@/helpers/commonFunction";
+import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
@@ -153,17 +176,19 @@ import mutations from "@/graphql/mutations/PA/PA2/PA230/index";
 import notification from "@/utils/notification";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
+import Tooltip from '@/components/common/Tooltip.vue';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem
+        DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem,DxButton,DxTooltip,Tooltip
     },
     setup() {
+        const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
         const checkBoxOption = ref(1);
         const checkBoxOption2 = ref(1);
-        const store = useStore();
         const trigger = ref<boolean>(true);
         const modalSendMail = ref<boolean>(false);
         const triggerPrint = ref<boolean>(false);
@@ -197,6 +222,7 @@ export default defineComponent({
             },
             "employeeIds": []
         })
+        
         // =========================== GRAPHQL =======================================
         const {
             refetch: refetchPrint,
@@ -225,7 +251,8 @@ export default defineComponent({
         });
         // QUERY NAME : getUser
         const {
-            onResult: onResultUserInf
+            onResult: onResultUserInf,
+            result: resultUserInf,
         } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
             fetchPolicy: "no-cache",
         }));
@@ -275,22 +302,21 @@ export default defineComponent({
                 ]
                 switchTypeSendMail.value = true
             } else {
+                emailAddress.value = resultUserInf.value.getUser.email
                 switchTypeSendMail.value = false
                 if (selectedItemKeys.value.length < 2) {
                     notification('error', Message.getCommonMessage('601').message)
                     return;
                 } else {
-                    selectedItemKeys.value.map((val: any) => {
-                        let dataChecked = dataSource.value.filter((data: any) => data.employeeId === val)[0]
-                        dataSendEmail.value.employeeInputs = [
-                            {
-                                "receiverName": dataChecked.employee.name,
-                                "receiverAddress": dataChecked.employee.email,
-                                "senderName": sessionStorage.getItem("username"),
-                                "employeeId": dataChecked.employeeId
-                            }
-                        ]
-                    })
+                  dataSendEmail.value.employeeInputs = selectedItemKeys.value.map((val: any) => {
+                    let dataChecked = dataSource.value.find((data: any) => data.employeeId === val)
+                    return  {
+                      "receiverName": dataChecked.employee.name,
+                      "receiverAddress": dataChecked.employee.email || emailAddress.value,
+                      "senderName": sessionStorage.getItem("username"),
+                      "employeeId": dataChecked.employeeId
+                    }
+                  })
                 }
             }
             modalSendMail.value = true
@@ -351,7 +377,7 @@ export default defineComponent({
           let 중도 = 0;
           dataSource.value.map((val: any) => {
             total++
-            if (val.status != 0) {
+            if (val.employee.status !== 0) {
               계속++
             } else {
               중도++
@@ -366,6 +392,20 @@ export default defineComponent({
             selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo
         };
     },
+    methods: {
+      onCellPrepared(e: any) {
+        if(!e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' &&  e.cellElement.getAttribute('aria-colindex') === '6'){
+          e.cellElement.colSpan = 2
+        }
+      },
+      onRowPrepared(e: any) {
+        const isRowSummary = e.rowElement.classList.contains('dx-footer-row')
+        if(isRowSummary){
+          e.rowElement.removeChild(e.rowElement.lastChild)
+        }
+      }
+      
+    }
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss" >
