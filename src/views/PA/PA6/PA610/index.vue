@@ -38,6 +38,7 @@
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
+              focusedRowIndex="0"
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -55,13 +56,12 @@
                   location="after"
                   css-class="cell-button-add"
                 >
-                <DxButton icon="plus" >
+                <DxButton icon="plus" @click="addRow">
                   <a-tooltip color="black" placement="top">
                       <template #title>신규</template>
                       <PlusOutlined style="font-size: 16px" />
                   </a-tooltip>
               </DxButton>
-                <!-- <DxButton icon="plus" @click="addRow" /> -->
                 </DxItem>
                 <DxItem name="addRowButton" show-text="always" />
               </DxToolbar>
@@ -254,17 +254,9 @@
                 <id-number-text-box
                   v-model:valueInput="dataShow.residentId"
                   width="200px"
-                  v-if="store.state.common.activeAddRowPA610 == false"
                   placeholder="숫자 13자리"
                   :required="true"
                   :disabled="!isNewRow && !dataShow.deletable"
-                />
-                <id-number-text-box
-                  v-model:valueInput="dataShow.residentId"
-                  width="200px"
-                  v-else
-                  placeholder="숫자 13자리"
-                  :required="true"
                 />
               </a-form-item>
               <a-form-item label="소득구분" label-align="right" class="red">
@@ -389,7 +381,7 @@ export default defineComponent({
     const focusedRowKey = ref<string | number>(0); // focused row key
     let previousRowData = ref(); // save previous row data when focus row change
     const dataShow: any = ref({ ...valueDefaultAction }); // data show in form when click row or add new row
-    const selectRowKey = ref<string | number>(0); // key of row selected in gridData
+    const selectRowKeyAction = ref<string | number>(0); // key of row selected in gridData
     const dataSource = ref<DataSource>(); // data source of grid
     const popupDataHistory = ref([]); // data for history popup
     const modalHistoryStatus = ref<boolean>(false); // status of history popup
@@ -472,7 +464,7 @@ export default defineComponent({
         }
         isNewRow.value = true;
       } else {
-        notification("error", Message.getCommonMessage('301').message);
+        notification("error", Message.getCommonMessage('501').message);
       }
     };
     // TODO handle onFocusedRowChanging to row
@@ -494,7 +486,7 @@ export default defineComponent({
             isNewRow.value = false;
           });
         } else {
-          selectRowKey.value = e.rows[e.newRowIndex].key;
+          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           previousRowData.value = { ...e.rows[e.newRowIndex].data };
           isDiscard.value = true;
           e.cancel = true;
@@ -511,10 +503,10 @@ export default defineComponent({
           !compareObject(dataShow.value, previousRowData.value)
         ) {
           isDiscard.value = true;
-          selectRowKey.value = e.rows[e.newRowIndex].key;
+          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           e.cancel = true;
         } else {
-          selectRowKey.value = e.rows[e.newRowIndex].key;
+          selectRowKeyAction.value = e.rows[e.newRowIndex].key;
         }
       }
     };
@@ -532,7 +524,7 @@ export default defineComponent({
         // when have new row and click row other then discard
         if (focusedRowKey.value === 0) {
           storeDataSource.value.remove(0).then(() => {
-            focusedRowKey.value = selectRowKey.value;
+            focusedRowKey.value = selectRowKeyAction.value;
             dataShow.value = { ...previousRowData.value };
             dataGridRef.value?.refresh();
           });
@@ -540,7 +532,7 @@ export default defineComponent({
         } else {
           // when change other row and want to add row
           storeDataSource.value.insert(valueDefaultAction).then((result) => {
-            selectRowKey.value = 0;
+            selectRowKeyAction.value = 0;
             focusedRowKey.value = 0;
             dataShow.value = result;
             dataGridRef.value?.refresh();
@@ -550,8 +542,8 @@ export default defineComponent({
         storeDataSource.value
           .update(previousRowData.value.key, previousRowData.value)
           .then((value) => {
-            focusedRowKey.value = selectRowKey.value || 0;
-            storeDataSource.value.byKey(selectRowKey.value).then((value) => {
+            focusedRowKey.value = selectRowKeyAction.value || 0;
+            storeDataSource.value.byKey(selectRowKeyAction.value).then((value) => {
               dataShow.value = value;
             });
             dataGridRef.value?.refresh();
@@ -576,7 +568,7 @@ export default defineComponent({
       previousRowData.value = { ...dataShow.value };
       // update when click discard
       if (!isNewRow.value) {
-        focusedRowKey.value = selectRowKey.value;
+        focusedRowKey.value = selectRowKeyAction.value;
       } else {
         storeDataSource.value.insert(valueDefaultAction).then((result) => {
           focusedRowKey.value = 0;
@@ -605,7 +597,7 @@ export default defineComponent({
       await refetchData();
       // previousRowData.value = { ...res.data.createEmployeeBusiness }
       focusedRowKey.value = res.data.createEmployeeBusiness.employeeId;
-      selectRowKey.value = res.data.createEmployeeBusiness.employeeId;
+      selectRowKeyAction.value = res.data.createEmployeeBusiness.employeeId;
       valueCallApiGetEmployeeBusiness.incomeTypeCode =
         dataShow.value.incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = parseInt(

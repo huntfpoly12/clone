@@ -27,11 +27,10 @@
             <div class="page-content">
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="휴대폰" class="red">
+                        <a-form-item label="서식 설정" class="red">
                             <div class="format-settings-text">
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span class="style-note">본 설정으로 적용된 서식으로 출력 및
-                                    메일발송 됩니다.</span>
+                                <span class="style-note">본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</span>
                             </div>
                         </a-form-item>
                         <div class="tax-select">
@@ -114,9 +113,9 @@
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="sendMail(data.data.employee)" />
-                                <img src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
-                                  @click="printFunc(data.data.employeeId)" />
-                                 
+                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
+                              @click="printFunc(data.data.employeeId)" />
+                            <Tooltip :target="`#print-action${data.data.employeeId}`" content="출력 / 저장" />
                         </div>
                     </template>
                     <DxSummary >
