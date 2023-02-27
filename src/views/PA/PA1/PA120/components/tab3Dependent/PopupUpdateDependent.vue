@@ -3,13 +3,17 @@
         <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
             :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
             <!-- <a-spin :spinning="loading" size="large"> -->
-              {{ formState }} formState
+              <!-- {{ formState }} formState <br />
+              {{ dependentItem }} dependentItem <br /> -->
+              <!-- {{ convertAge(dependentItem?.residentId) }} dependentItem <br /> -->
+              <!-- {{ itemSelected }} itemSelected <br /> -->
+
                 <div class="page-content" id="add-new-dependent-pa-120">
                     <a-row>
                         <a-col :span="12">
                             <a-form-item label="연말관계" label-align="right" class="red">
                                 <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation" :disabled="formState.relation == 0"
-                                    :required="true"></dependants-relation-select-box>
+                                    :required="true" :itemSelected="itemSelected"></dependants-relation-select-box>
                             </a-form-item>
                             <a-form-item label="성명" label-align="right" class="red">
                                 <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true" :disabled="disabledButton"
@@ -30,7 +34,7 @@
                             </a-form-item>
                             <a-form-item label="기본공제" label-align="right" class="red">
                                 <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
-                                    :required="true" :disabled="disabledButton"/>
+                                    :required="true" :disabled="disabledButton" :ageCount="ageCount"/>
                             </a-form-item>
                             <a-form-item label="부녀자" label-align="right">
                                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
@@ -47,7 +51,7 @@
                         <a-col :span="12">
                             <a-form-item label="경로우대" label-align="right">
                               <div class="input-text">
-                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" :disabled="isDisabledSenior"/>
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.senior" :disabled="isDisabledSenior"/>
                                 <span style="color: #888888; font-size:11px">
                                   <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 만 70세 이상
                                 </span>
@@ -70,7 +74,7 @@
                               </div>
                             </a-form-item>
                             <a-form-item label="위탁관계" label-align="right">
-                                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
+                                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20" :disabled="consignDisabled"
                                     v-model:valueInput="formState.consignmentRelationship"></default-text-box>
                             </a-form-item>
                             <!-- <a-form-item label="세대주여부" label-align="right">
@@ -82,7 +86,7 @@
                 </div>
                 <a-row style="margin-top: 40px" justify="center">
                   <button-basic style="margin-right: 20px" text="삭제" mode="contained" :width="90"
-                      :disabled="disabledButton" @onClick="actionDeleteFuc($event)" />
+                      :disabled="disabledButton || formState.relation == 0" @onClick="actionDeleteFuc($event)" />
                   <button-basic text="저장" type="default" mode="contained" :width="90"
                       @onClick="actionUpdated($event)" />
                 </a-row>
@@ -95,16 +99,14 @@
 </template>
 <script lang="ts">
 
-import { defineComponent, reactive, ref, computed, watch, onMounted } from "vue";
+import { defineComponent, reactive, ref, computed, watch, watchEffect } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
 import mutations from "@/graphql/mutations/PA/PA1/PA120";
-import queries from "@/graphql/queries/PA/PA1/PA120";
 import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
 import {taxWaring} from '../../utils/index'
 import { Message } from "@/configs/enum";
-
 const contentDelete = Message.getMessage('PA120', '002').message
 export default defineComponent({
     components: {},
@@ -113,40 +115,25 @@ export default defineComponent({
         idRowEdit: {
             type: Number
         },
-        idRowIndex: {
-            type: Number
-        },
         dependentItem: Object,
+        relationAll: {
+          type: Array,
+          default: [],
+        }
     },
     setup(props, { emit }) {
-        const dataSource = ref([]);
         const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
         const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
-        const ageCount = ref();
         const modalStatusDelete = ref(false)
         const idAction = ref()
         let disabledButton = ref<boolean>(false);
         const labelResidebId = ref("주민등록번호");
-        let initialFormState = {
-            relation: null,
-            name: '',
-            foreigner: false,
-            residentId: '',
-            basicDeduction: null,
-            women: true,
-            singleParent: false,
-            senior: false,
-            disabled: 0,
-            maternityAdoption: 0,
-            descendant: true,
-            consignmentRelationship: '',
-        };
-        let formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value  });
-        let formState2 = reactive<any>({ ...initialFormState });
+        let formState = reactive<any>({ ...props.dependentItem, foreigner: isForeignerPA120.value, residentId: props.dependentItem?.residentId.replace('-', '')});
+        const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
         const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
-
+        const itemSelected = ref<any>([...props.relationAll]);
         const setModalVisible = () => {
             emit('closePopup', false);
         };
@@ -166,14 +153,14 @@ export default defineComponent({
                 notifcationTax();
             }
         },{deep:true});
-        const senior = ref(formState.senior == true ? 1 : 0);
-        watch(senior, (newValue) => {
-            if (newValue == 1) {
-                formState.senior = true;
-            } else {
-                formState.senior = false;
-            }
-        });
+        // const senior = ref(formState.senior == true ? 1 : 0);
+        // watch(senior, (newValue) => {
+        //     if (newValue == 1) {
+        //         formState.senior = true;
+        //     } else {
+        //         formState.senior = false;
+        //     }
+        // });
         const descendant = ref(formState.descendant == true ? 1 : 0);
         watch(descendant, (newValue) => {
             if (newValue == 1) {
@@ -200,15 +187,9 @@ export default defineComponent({
             labelResidebId.value = '주민등록번호';
         }
         },{deep:true});
-        watch(() => props.modalStatus, (newValue: any) => {
-            if (newValue) {
-                Object.assign(formState, initialFormState);
-            }
-        });
         // get employer dependent
         watch(()=>props.dependentItem,(newVal:any)=>{
-          if(newVal){
-            formState = {...newVal}
+            itemSelected.value=itemSelected.value.filter((item:any)=>item.value !== newVal.relation);
             formState.relation = newVal.relation
             formState.foreigner = newVal.foreigner
             formState.residentId = newVal.residentId.replace('-', '');
@@ -221,43 +202,7 @@ export default defineComponent({
             formState.descendant = newVal.descendant
             formState.consignmentRelationship = newVal.consignmentRelationship
             ageCount.value = convertAge(formState.residentId)
-          }
         },{deep:true})
-        // const originDataDetail = ref({
-        //     companyId: companyId,
-        //     imputedYear: globalYear.value,
-        //     employeeId: ref(props.idRowEdit).value
-        // })
-        // const {
-        //     refetch: refetchValueDetail,
-        //     result,
-        //     loading
-        // } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
-        //     fetchPolicy: "no-cache",
-        // }))
-        // watch(result, (value) => {
-        //     if (props.idRowIndex) {
-        //         dataSource.value = value.getEmployeeWage.dependents;
-        //         trigger.value = false;
-        //         formState2 = {
-        //             ...dataSource.value
-        //         }
-        //         formState.name = formState2[props.idRowIndex - 1].name
-        //         formState.relation = formState2[props.idRowIndex - 1].relation
-        //         formState.foreigner = formState2[props.idRowIndex - 1].foreigner
-        //         formState.residentId = formState2[props.idRowIndex - 1].residentId.replace('-', '');
-        //         formState.basicDeduction = formState2[props.idRowIndex - 1].basicDeduction
-        //         formState.women = formState2[props.idRowIndex - 1].women
-        //         formState.singleParent = formState2[props.idRowIndex - 1].singleParent
-        //         formState.senior = formState2[props.idRowIndex - 1].senior
-        //         formState.disabled = formState2[props.idRowIndex - 1].disabled
-        //         formState.maternityAdoption = formState2[props.idRowIndex - 1].maternityAdoption
-        //         formState.descendant = formState2[props.idRowIndex - 1].descendant
-        //         formState.consignmentRelationship = formState2[props.idRowIndex - 1].consignmentRelationship
-        //         ageCount.value = convertAge(formState.residentId)
-
-        //     }
-        // });
         watch(()=>formState.residentId,(newVal)=> {
             let count;
             if(newVal.length==13){
@@ -268,6 +213,7 @@ export default defineComponent({
                 ageCount.value = convertAge(count);
             }
             isDisabledSenior.value = ageCount.value < 70 ? true : false;
+            formState.senior = ageCount.value < 70 ? false : props.dependentItem?.senior;
         },{deep: true})
         const {
             mutate,
@@ -277,7 +223,7 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(res => {
+        onDone(() => {
             emit('closePopup', false)
             notification('success', '업데이트 완료!')
             emit('upDateData');
@@ -287,36 +233,33 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                delete formState.householder;
-                formState.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
-                let newValDataEdit = {
-                    ...formState
-                };
-                let dataCallUpdate = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    employeeId: ref(props.idRowEdit).value,
-                    index: props.idRowIndex,
-                    input: newValDataEdit,
-                };
-                mutate(dataCallUpdate)
-                newValDataEdit = {}
+              let newValDataEdit = {
+                ...formState
+              };
+              newValDataEdit.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
+              delete newValDataEdit?.employeeId;
+              delete newValDataEdit?.incomeTypeCode;
+              delete newValDataEdit?.index;
+              delete newValDataEdit?.residentIdValidity;
+              delete newValDataEdit?.__typename;
+              delete newValDataEdit?.householder;
+
+              let dataCallUpdate = {
+                  companyId: companyId,
+                  imputedYear: globalYear.value,
+                  employeeId: ref(props.idRowEdit).value,
+                  index: formState.index,
+                  input: newValDataEdit,
+              };
+              mutate(dataCallUpdate)
             }
         }
         watch(() => formState.relation, (value) => {
             if (value == 0) {
                 disabledButton.value = true;
 
-            } else disabledButton.value = false
+            } else disabledButton.value = false;
         },{deep: true})
-        // watch(() => props.idRowIndex, (value) => {
-        //     trigger.value = true
-        //     refetchValueDetail()
-        // })
-        // watch(() => ref(props.idRowEdit).value, (value) => {
-        //     originDataDetail.value.employeeId = value
-        // })
-        // delete
         const {
             mutate: actionDelete,
             onError: errorDelete,
@@ -329,42 +272,47 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
             trigger.value = true
             emit('closePopup', false)
-
+            emit('upDateData');
         })
         const actionDeleteFuc = (data: any) => {
             idAction.value = data
             modalStatusDelete.value = true
         }
         const statusComfirm = (res: any) => {
-            if (res == true)
+            if (res == true && formState.relation != 0)
                 actionDelete({
                     companyId: companyId,
                     imputedYear: globalYear.value,
                     employeeId: ref(props.idRowEdit).value,
-                    index: props.idRowIndex
+                    index: formState.index
                 })
 
         }
-        // watch(() => props.modalStatus, (value) => {
-        //     trigger.value = true
-        //     refetchValueDetail()
-        // })
-        //
         watch(isForeignerPA120,(newVal: any)=>{
             formState.foreigner = !newVal;
         })
+        // check consignment
+        const consignDisabled = ref(true);
+        watchEffect(()=>{
+          if((formState.relation == 4 || formState.relation ==8) && (ageCount.value > 7 && ageCount.value < 20)){
+            consignDisabled.value = false;
+          }else {
+            consignDisabled.value = true;
+          }
+        })
+        itemSelected.value=itemSelected.value.filter((item:any)=>item.value !== formState.relation);
         return {
             // women,
             // singleParent,
             // loading,
             householder,
-            senior,
+            // senior,
             descendant,
             formState,
             ageCount,
-            disabledButton,
+            disabledButton,convertAge,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
-            labelResidebId, actionDeleteFuc, modalStatusDelete,isDisabledSenior
+            labelResidebId, actionDeleteFuc, modalStatusDelete,isDisabledSenior,itemSelected,consignDisabled,
         };
     },
 });

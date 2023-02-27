@@ -2,7 +2,7 @@
     <div>
       <DxSelectBox
         :width="width"
-        :data-source="basicDeduction"
+        :data-source="basicDeductionData"
         placeholder="선택"
         :show-clear-button="clearButton"
         v-model:value="value"
@@ -54,6 +54,10 @@
         type: String,
         default: '',
       },
+      ageCount: {
+        type: [String, Number],
+        default: 0,
+      }
     },
     components: {
       DxSelectBox,
@@ -72,6 +76,7 @@
         }
         return bsDeduction;
       }) ;
+      let basicDeductionData = ref(basicDeduction.value);
       const app: any = getCurrentInstance();
       const messages = app.appContext.config.globalProperties.$messages;
       const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -89,9 +94,29 @@
           value.value = newValue;
         }
       );
+      watch(()=> props.ageCount,(newVal)=> {
+        if(newVal <= 20) {
+          value.value = 3;
+          basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+            return item.value != 3 ? {...item,disabled: true} : {...item};
+          })
+          return;
+        }
+        if(newVal >= 60) {
+          value.value = 4;
+          let newArr = basicDeductionData.value.map((item:any)=> {
+            return item.value != 4 ? {...item,disabled: true} : {...item};
+          })
+          basicDeductionData.value = [...newArr]
+          return;
+        }
+        basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+          return (item.value == 3) || (item.value ==4) ? {...item,disabled: true} : {...item};
+        })
+      }, {immediate: true})
       return {
         updateValue,
-        basicDeduction,
+        basicDeductionData,
         value,
         messageRequired
       };
