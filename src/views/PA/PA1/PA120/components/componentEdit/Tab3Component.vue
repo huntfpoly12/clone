@@ -108,7 +108,7 @@
                             <div class="display-flex">
                             <text-number-box
                                 width="200px"
-                                :value="womenSummary"
+                                :value="basicDeductionSummary0"
                                 :disabled="true"
                             />
                             </div>
@@ -199,12 +199,11 @@
                 </div>
             </a-col>
         </a-row>
-      
-        <PopupAddNewDependent :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false" :key="newForm"
-            :employeeId="idRowEdit" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData">
+        <PopupAddNewDependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false" :key="newForm"
+            :employeeId="idRowEdit" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" @upDateData="updateData" :relationAll="relationAll">
         </PopupAddNewDependent>
-        <PopupUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :key="idRowIndex"
-            :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length" :dependentItem="dependentItem">
+        <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :idRowEdit="idRowEdit"
+         :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
         </PopupUpdateDependent>
     </div>
 </template>
@@ -262,9 +261,8 @@ export default defineComponent({
         const contentDelete = Message.getMessage('PA120', '002').message
         const idAction = ref()
         const globalYear = computed(() => store.state.settings.globalYear);
-        const idRowIndex = ref()
         const relationSummary = ref();
-        const womenSummary = ref();
+        const basicDeductionSummary0 = ref();
         const basicDeductionSummary = ref();
         const basicDeductionSummary2 = ref();
         const descendantSummary = ref();
@@ -273,6 +271,7 @@ export default defineComponent({
         const womenSummary2 = ref();
         const singleParentSummary = ref();
         const maternityAdoptionSummary = ref();
+        const relationAll = ref();
         let formStateTab3 = reactive<any>({
             ...initFormStateTab3,
         })
@@ -283,11 +282,8 @@ export default defineComponent({
         };
         const dependentItem = ref();
         const actionEdit = (val: any) => {
-            idRowIndex.value = val.index;
             dependentItem.value = val;
             modalEditStatus.value = true
-            refetchData()
-
         }
 
         const onSubmit = (e: any) => {
@@ -309,25 +305,22 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        watch(() => modalEditStatus.value, (value) => {
-            if (value == false) {
-                trigger.value = true
-                refetchData()
-            }
-        })
         watch(result, (value) => {
             if (value) {
                 dataSource.value = value.getEmployeeWage.dependents;
                 trigger.value = false;
+                relationAll.value = value.getEmployeeWage.dependents.map((item: any) => ({
+                  value:item.relation
+                }))
                 relationSummary.value =
                     dataSource.value.some((item: { relation: string | number }) => {
                         return item.relation == 0;
                     }) === true
                         ? 'O'
                         : '';
-                womenSummary.value =
+                basicDeductionSummary0.value =
                     dataSource.value.filter((item: any) => {
-                        return item.women === true;
+                        return item.basicDeduction == 2;
                     }).length >= 1
                         ? 'O'
                         : '';
@@ -341,7 +334,7 @@ export default defineComponent({
                     }).length;
                 descendantSummary.value = dataSource.value.filter((item: any) => {
                     return item.descendant == true;
-                }).length;
+                }).length
                 seniorSummary.value = dataSource.value.filter((item: any) => {
                     return item.senior == true;
                 }).length;
@@ -358,7 +351,7 @@ export default defineComponent({
                     return item.senior == true;
                 }).length;
                 maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior == 0;
+                    return item.maternityAdoption != '해당없음';
                 }).length;
             }
         });
@@ -379,7 +372,7 @@ export default defineComponent({
         };
 
         return {
-            companyId, idAction, idRowIndex, loading,
+            companyId, idAction, loading,
             dataSource,
             modalEditStatus,
             modalStatus, formStateTab3,
@@ -389,7 +382,7 @@ export default defineComponent({
             hasStatus, updateData,
             onSubmit, contentDelete,
             per_page, move_column, colomn_resize, relationSummary,
-            womenSummary,
+            basicDeductionSummary0,
             basicDeductionSummary,
             basicDeductionSummary2,
             descendantSummary,
@@ -404,6 +397,7 @@ export default defineComponent({
             maternityAndAdoption,
             disabledType,
             dependentItem,
+            relationAll,
         }
     },
 });

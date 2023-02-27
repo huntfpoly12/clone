@@ -54,6 +54,10 @@
         type: String,
         default: '',
       },
+      itemSelected: {
+        type: Array,
+        default: [],
+      }
     },
     components: {
       DxSelectBox,
@@ -62,11 +66,11 @@
     },
     setup(props, { emit }) {
   
-      var  dependantsRelation : any  = computed(() => {
-          let dpRelation : any =  enum2Entries(DependantsRelation).map((value) => ({
-          value: value[1],
-          label: value[0],
-        }));
+      var dependantsRelation : any  = computed(() => {
+          let dpRelation : any =  enum2Entries(DependantsRelation).map((value) => {
+            const item1 = props.itemSelected.find((item2: any)=>{return (item2.value == value[1] && value[1] == 2)}) || value[1]==0;
+            return item1 ? {value: value[1], label: value[0], disabled: true} : { value: value[1], label: value[0]};
+        });
         if(props.selectAll){
             dpRelation.unshift({ value: null , label: '전체'});
         }

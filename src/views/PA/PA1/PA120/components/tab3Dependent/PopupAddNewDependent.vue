@@ -3,12 +3,14 @@
     <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
       :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
       <a-spin :spinning="loading" size="large">
+        <!-- {{ itemSelected }} itemSelected <br />
+        {{ formState }} formState <br /> -->
         <div class="page-content" id="add-new-dependent-pa-120">
           <a-row>
             <a-col :span="12">
               <a-form-item label="연말관계" label-align="right" class="red">
                 <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
-                  :required="true"></dependants-relation-select-box>
+                  :required="true" :itemSelected="itemSelected"></dependants-relation-select-box>
               </a-form-item>
               <a-form-item label="성명" label-align="right" class="red">
                 <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
@@ -24,7 +26,7 @@
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="ageCount"></default-text-box>
               </a-form-item>
               <a-form-item label="기본공제" label-align="right" class="red">
-                <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
+                <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction" :ageCount="ageCount"
                   :required="true" />
               </a-form-item>
               <a-form-item label="부녀자" label-align="right">
@@ -64,7 +66,7 @@
                 </div>
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
-                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
+                <default-text-box placeholder="최대 20자" width="200px" :disabled="consignDisabled" :maxCharacter="20"
                   v-model:valueInput="formState.consignmentRelationship"></default-text-box>
               </a-form-item>
               <!-- <a-form-item label="세대주여부" label-align="right">
@@ -84,7 +86,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, computed, watch } from 'vue';
+import { defineComponent, reactive, ref, computed, watch, onMounted, watchEffect } from 'vue';
 import { useMutation } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import mutations from '@/graphql/mutations/PA/PA1/PA120';
@@ -107,6 +109,10 @@ export default defineComponent({
       type: Number,
       default: 1,
     },
+    relationAll: {
+      type: Array,
+      default: [],
+    }
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -114,10 +120,10 @@ export default defineComponent({
     const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
     const ageCount = ref();
     const labelResidebId = ref('주민등록번호');
+    const itemSelected = ref<any>([...props.relationAll]);
     const initialFormState = {
       relation: null,
       name: '',
-    //   foreigner: false,
       residentId: '',
       basicDeduction: 0,
       women: false,
@@ -127,7 +133,7 @@ export default defineComponent({
       maternityAdoption: 0,
       descendant: true,
       consignmentRelationship: '',
-      index: 2,
+      index: itemSelected.value.length + 1,
     };
     const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
     const messageSave = Message.getMessage('COMMON', '106').message;
@@ -254,6 +260,22 @@ export default defineComponent({
     watch(isForeignerPA120,(newVal: any)=>{
         formState.foreigner = newVal;
     })
+    // let dpRelation : any =  enum2Entries(DependantsRelation).find((value) => {
+    //   const item1 = itemSelected.value.some((item2: any)=>{return item2.value == value[1]});
+    //   return !item1 ;
+    // }) ;
+    // check consignment
+    const consignDisabled = ref(true);
+    watchEffect(()=>{
+      if((formState.relation == 4 || formState.relation ==8) && (ageCount.value > 7 && ageCount.value < 20)){
+        consignDisabled.value = false;
+      }else {
+        consignDisabled.value = true;
+      }
+    })
+    onMounted(()=> {
+      formState.relation = 1;
+    })
     return {
       loading,
       householder,
@@ -266,7 +288,9 @@ export default defineComponent({
       setModalVisible,
       labelResidebId,
       createNewEmployeeWageDependent,
-      isDisabledSenior
+      isDisabledSenior,
+      itemSelected,
+      consignDisabled,
     };
   },
 });
