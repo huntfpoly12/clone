@@ -47,6 +47,9 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    format:{
+      type: [String, Number, Function],
+    }
   },
   components: {
     DxNumberBox,
@@ -75,7 +78,10 @@ export default defineComponent({
     return {
       updateValue,
       value,
-      messageRequired
+      messageRequired,
+      formatValue:(value:any)=> {
+      return value < 10 ? `0${value}` : value;
+    }
     };
   },
 });
