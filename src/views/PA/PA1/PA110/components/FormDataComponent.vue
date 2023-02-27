@@ -374,9 +374,14 @@ export default defineComponent({
             notification('success', Message.getMessage('COMMON', '106').message)
         })
         doneCreated(res => {
+            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            // store.state.common.incomeId = res.data.createIncomeWage.incomeId
             store.state.common.loadingTableInfo++
             notification('success', Message.getMessage('COMMON', '101').message)
         })

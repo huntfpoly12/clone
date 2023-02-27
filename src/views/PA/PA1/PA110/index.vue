@@ -531,10 +531,10 @@ export default defineComponent({
         /**
          * action edit employ tax pay
          */
-        let rowEdit = ref()
+        // let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
-            rowEdit.value = data.data
-            if (rowEdit.value.employeeId) { // if row data (not row add)
+            store.state.common.dataRowOnActive = data.data
+            if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
                     // if (store.state.common.statusChangeFormPrice) {
                     //     modalChangeRowPrice.value = true;
@@ -634,7 +634,7 @@ export default defineComponent({
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
-                store.state.common.incomeId = rowEdit.value.incomeId
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
                 // store.state.common.employeeId = rowEdit.value.employeeId
             }
             

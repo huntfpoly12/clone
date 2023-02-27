@@ -250,9 +250,14 @@ export default defineComponent({
 
         // ===================DONE GRAPQL==================================
         onDoneAdd((data: any) => {
+            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
+            }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
+            // store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
             store.state.common.loadingTableInfo++
             notification('success', messageAddSuccess)
         })
