@@ -304,6 +304,7 @@ export default defineComponent({
                     }
                 })
             })
+            store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
             triggerIncomeWageDaily.value = false;
             setTimeout(() => {
                 store.state.common.statusChangeFormEdit = false;
@@ -312,6 +313,9 @@ export default defineComponent({
 
 
         // ===================WATCH==================================
+        watch(() => store.state.common.loadingFormData, (value) => {
+            triggerIncomeWageDaily.value = true;
+        })
         // Watching the value of the store.state.common.actionAddItem and if it is true, it will do
         // some stuff.
         watch(() => store.state.common.actionAddItem, (value) => {
