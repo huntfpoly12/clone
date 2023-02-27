@@ -267,6 +267,8 @@
                 }}일</div>
             </a-col>
         </a-row>
+        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
+            style="display: none;" />
     </standard-form>
 </template>
 
