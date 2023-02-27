@@ -25,7 +25,10 @@
           </a-tooltip>
         </div>
       </template>
-      <DxColumn caption="지급일" data-field="paymentDay" width="60" alignment="left" />
+      <DxColumn caption="지급일" width="60" alignment="left" cell-template="paymentDay" />
+      <template #paymentDay="{data}">
+        {{ formatMonth(data.data.paymentDay) }}
+      </template>
       <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
         alignment="right" />
@@ -83,6 +86,7 @@ import {
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import filters from '@/helpers/filters';
+import { formatMonth } from '../utils/index';
 
 export default defineComponent({
   components: {
@@ -263,6 +267,7 @@ export default defineComponent({
       focusedRowKey,
       onRowClick,
       firsTimeRow,
+      formatMonth
     };
   },
 });
