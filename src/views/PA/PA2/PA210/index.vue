@@ -39,7 +39,7 @@
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
-                                :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                                :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                 :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                         </div>
                     </a-tooltip>
@@ -53,7 +53,7 @@
                         </template>
                         <div class="custom-grade-cell">
                             <DxButton
-                                :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                                :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                 :style="{ color: 'white', backgroundColor: 'black' }"
                                 :height="$config_styles.HeightInput" />
                         </div>
@@ -124,12 +124,12 @@
                     <div class="showO">{{ data.data.extraIncome ? 'ㅇ' : '' }}</div>
                 </template>
 
-                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="cell-center" format="fixedPoint" />
-                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="cell-center"
+                <DxColumn data-field="totalPayment" caption="총지급액 (A99)" css-class="money-column " format="fixedPoint" />
+                <DxColumn data-field="totalCollectedTaxAmount" caption="납부세액 소득세등 (A99)" css-class="money-column"
                     format="fixedPoint" />
-                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="cell-center"
+                <DxColumn data-field="nextMonthRefundTaxAmount" caption="(20) 차월이월 환급세액계" css-class="money-column"
                     format="fixedPoint" />
-                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="cell-center"
+                <DxColumn data-field="refundApplicationAmount" caption="(21) 환급 신청액" css-class="money-column"
                     format="fixedPoint" />
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
