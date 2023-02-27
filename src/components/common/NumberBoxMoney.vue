@@ -64,7 +64,7 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-        const updateValue = (value: any) => {
+      const updateValue = (value: any) => {
             emit("update:valueInput", value);
         };
 
