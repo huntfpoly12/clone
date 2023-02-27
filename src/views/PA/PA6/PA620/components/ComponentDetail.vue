@@ -68,8 +68,11 @@
                         </a-tooltip>
                       </div>
                     </template>
-                    <DxColumn width="80px" caption="지급일" data-field="paymentDay" :format="amountFormat"
+                    <DxColumn width="80px" caption="지급일" cell-template="paymentDay" :format="amountFormat"
                         data-type="string" />
+                        <template #paymentDay="{data}">
+                          {{ formatMonth(data.data.paymentDay) }}
+                        </template>
                     <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat"
                         data-type="string" />
                     <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string"
@@ -148,7 +151,7 @@
                                 <a-form-item label="소득세(공제)" label-align="right">
                                     <div class="d-flex-center">
                                         <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
-                                            v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
+                                            v-model:valueInput="dataAction.input.withholdingIncomeTax" :format="formatMonth" /> 원
                                     </div>
                                 </a-form-item>
                                 <a-form-item label="지방소득세(공제)" label-align="right">
