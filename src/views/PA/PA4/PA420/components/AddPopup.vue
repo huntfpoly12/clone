@@ -195,7 +195,6 @@ export default defineComponent({
         }
 
       const created = (e: any) => {
-          console.log(e.validationGroup.validate())
             const variables: any = reactive({
                 companyId: companyId,
                 processKey: { ...dataForm.processKey },

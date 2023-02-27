@@ -334,64 +334,71 @@ export default defineComponent({
             companyId: companyId,
         }]
         dataCustomRes.value = JSON.parse(JSON.stringify(dataAddTableBigUtils))
-        if (respon.length > 0)
-        //alert(respon)
-              respon.map((val: any) => {
-                    // data table minify  
-                    let dataAdd = {
-                        imputedMonth: val.imputedMonth,
-                        imputedYear: val.imputedYear,
-                        paymentYear: val.paymentYear,
-                        paymentMonth: val.paymentMonth,
-                    }
 
-                    dataSource.value[0]['month' + val.imputedMonth] = val
-                    // data table detail
-                    dataCustomRes.value[0]['month' + val.imputedMonth] =
-                    {
-                        value: filters.formatCurrency(val.employeeStat?.employeeCount) + " (" + filters.formatCurrency(val.employeeStat?.retireEmployeeCount) + ")",
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[1]['month' + val.imputedMonth] =
-                    {
-                        value: filters.formatCurrency(val.incomeStat?.retirementBenefits),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.nonTaxableRetirementBenefits),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.taxableRetirementBenefits),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.incomePayment),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[6]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.incomePayment + val.incomeStat?.withholdingLocalIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[7]['month' + val.imputedMonth] = {
-                        value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingLocalIncomeTax),
-                        ...dataAdd
-                    }
 
-                    if (val.imputedMonth == (dayjs().month() + 1)) {
-                      valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = val.imputedMonth
-                      valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = val.imputedYear
-                      valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = val.paymentMonth
-                      valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = val.paymentYear
-                      //If there is data, then assign the status with the status of the month in focus
-                      statusButton.value = val.status
-                    }
-                    
-                })
+        if (respon.length > 0) {
+            respon.map((val: any) => {
+              // data table minify  
+              let dataAdd = {
+                imputedMonth: val.imputedMonth,
+                imputedYear: val.imputedYear,
+                paymentYear: val.paymentYear,
+                paymentMonth: val.paymentMonth,
+              }
+
+              dataSource.value[0]['month' + val.imputedMonth] = val
+              // data table detail
+              dataCustomRes.value[0]['month' + val.imputedMonth] =
+              {
+                value: filters.formatCurrency(val.employeeStat?.employeeCount) + " (" + filters.formatCurrency(val.employeeStat?.retireEmployeeCount) + ")",
+                ...dataAdd
+              }
+              dataCustomRes.value[1]['month' + val.imputedMonth] =
+              {
+                value: filters.formatCurrency(val.incomeStat?.retirementBenefits),
+                ...dataAdd
+              }
+              dataCustomRes.value[2]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.nonTaxableRetirementBenefits),
+                ...dataAdd
+              }
+              dataCustomRes.value[3]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.taxableRetirementBenefits),
+                ...dataAdd
+              }
+              dataCustomRes.value[4]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
+                ...dataAdd
+              }
+              dataCustomRes.value[5]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
+                ...dataAdd
+              }
+              dataCustomRes.value[6]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax + val.incomeStat?.withholdingLocalIncomeTax),
+                ...dataAdd
+              }
+              dataCustomRes.value[7]['month' + val.imputedMonth] = {
+                value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingIncomeTax - val.incomeStat?.withholdingLocalIncomeTax),
+                ...dataAdd
+              }
+
+              if (val.imputedMonth == (dayjs().month() + 1)) {
+                valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = val.imputedMonth
+                valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = val.imputedYear
+                valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = val.paymentMonth
+                valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = val.paymentYear
+                //If there is data, then assign the status with the status of the month in focus
+                statusButton.value = val.status
+              }
+
+            })
+          } else { //If the data is empty, set the value datetime as 0
+                valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = 0
+                valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = 0
+                valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = 0
+                valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = 0
+          }
         })
         errorGetIncomeProcessBusinesses(res => {
             notification('error', res.message)

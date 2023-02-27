@@ -2,12 +2,8 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{ dataTableDetail.processKey.imputedYear }}-{{
-                    dataTableDetail.processKey.imputedMonth
-                }}</div>
-                <div class="text-box-2">지 {{ dataTableDetail.processKey.paymentYear }}-{{
-                    dataTableDetail.processKey.paymentMonth
-                }}</div>
+                <div class="text-box-1">귀 {{`${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}`}}</div>
+                <div class="text-box-2">지 {{`${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}`}}</div>
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">
@@ -50,7 +46,7 @@
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사원" cell-template="tag" width="300px" header-cell-template="title-header-사원"/>
                 <template #tag="{ data }">
-                    <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
+                    <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
                         :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                         :foreigner="data.data.employee.foreigner" :checkStatus="false"
                         :forDailyUse="data.data.employeeType == 10 ? false : true" />
@@ -77,20 +73,20 @@
                     <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
-                    width="120px" />
+                    width="120px" css-class="money-column"/>
                 <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
-                    format="#,###" />
+                    format="#,###" css-class="money-column"/>
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
-                    format="#,###" />
-                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" />
+                    format="#,###" css-class="money-column"/>
+                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" css-class="money-column"/>
                 <template #total-deduction="{ data }">
                   <a-tooltip placement="left">
-                      <template #title>소득세 {incomePayment} / 지방<br>소득세 {withholdingLocalIncomeTax}</template>     
+                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방<br>소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
                       <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="차인지급액" width="130px" data-field="employee.totalPay" data-type="string"
-                    format="#,###" />
+                <DxColumn caption="차인지급액" width="130px" data-field="actualPayment" data-type="string"
+                    format="#,###" css-class="money-column"/>
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <template #note="{ data }">
                     <div>
@@ -207,7 +203,7 @@ export default defineComponent({
         const modalUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
         const resetFormNum = ref(1);
-        let checkActionValue = ref(true) // disabeld button
+        let checkActionValue = ref(props.statusButton!=10) // disabeld button
         let dataAction: any = reactive({
             ...dataActionUtils
         })
@@ -256,10 +252,12 @@ export default defineComponent({
                 refetchTableDetail()
             }
         }, { deep: true })
-        watch(() => dataTableDetail, (newValue) => {
-        }, { deep: true })
+      
         watch(() => props.statusButton, (newValue) => {
-            statusButton.value = newValue
+          statusButton.value = newValue
+          if (newValue != 10) {
+            checkActionValue.value = true
+          } 
         })
         // ================FUNCTION============================================   
         const addRow = () => {

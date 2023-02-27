@@ -337,6 +337,7 @@ export default defineComponent({
         const trigger = ref<boolean>(false)
         const variables: any = ref({})
         const dataIncomeRetirementTax: any = ref({ ...initialIncomeRetirementTax })
+        
         const {
             result,
             loading,
@@ -373,6 +374,13 @@ export default defineComponent({
             trigger.value = true;
         }
 
+        // if there is any change in the two inputs retirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = retirementBenefits - nonTaxableRetirementBenefits)
+        watch(() => [props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits,
+                    props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits], () => {
+            props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits =
+            props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits -
+            props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits
+        }) 
         return {
             loading,
             calculateIncomeRetirementTax,

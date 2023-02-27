@@ -396,6 +396,12 @@ export default defineComponent({
             if (dataRequestCaculate.value.input)
                 refetchCaculate()
         }
+        // if there is any change in the two inputs definedRetirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = definedRetirementBenefits - nonTaxableRetirementBenefits)
+        watch(() => [dataGet.value.specification.definedRetirementBenefits,
+                      dataGet.value.specification.nonTaxableRetirementBenefits], () => {
+                        dataGet.value.specification.taxableRetirementBenefits =
+                        dataGet.value.specification.definedRetirementBenefits - dataGet.value.specification.nonTaxableRetirementBenefits
+        }) 
         return {
             dataGet,
             dayjs,
