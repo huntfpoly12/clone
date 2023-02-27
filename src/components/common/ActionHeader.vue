@@ -5,28 +5,36 @@
     </a-typography-title>
     <div class="list-action">
       <a-tooltip v-if="buttonSearch">
-        <template #title>조회</template>
-        <DxButton @click="actionHeader($event, 'Search')">
+        <template #title>검색</template>
+        <span>
+          <DxButton @click="actionHeader($event, 'Search')">
           <SearchOutlined />
         </DxButton>
+        </span>
       </a-tooltip>
       <a-tooltip v-if="buttonSave">
         <template #title>저장</template>
+        <span>
         <DxButton @click="actionHeader($event, 'Save')" size="large">
           <SaveOutlined />
         </DxButton>
+        </span>
       </a-tooltip>
       <a-tooltip v-if="buttonDelete">
         <template #title>삭제</template>
+        <span>
         <DxButton @click="actionHeader($event, 'Delete')" size="large">
           <DeleteOutlined />
         </DxButton>
+        </span>
       </a-tooltip>
       <a-tooltip v-if="buttonPrint">
         <template #title>출력</template>
+        <span>
         <DxButton @click="actionHeader($event, 'Print')" size="large">
           <PrinterOutlined />
         </DxButton>
+        </span>
       </a-tooltip>
     </div>
   </div>
