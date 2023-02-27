@@ -56,7 +56,7 @@
         </div>
         <a-row :gutter="16">
             <a-col :span="24"><b>차인지급액</b> <b>{{
-                $filters.formatCurrency(originDataUpdate.input.monthlyWage +
+                $filters.formatCurrency(originDataUpdate.input.monthlyWage -
                     totalDeduction)
             }} </b> 원
             </a-col>
@@ -383,8 +383,8 @@ export default defineComponent({
         const callFuncCalculate = async () => {
             let dataDefault = originDataUpdate.value.input
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = calculateHealthInsuranceEmployee(dataDefault.monthlyWage)
-            let total3 = calculateLongTermCareInsurance(dataDefault.monthlyWage)
+            let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
+            let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
             let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
             let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
