@@ -3,7 +3,7 @@
     <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
         :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
-        :multi-calendars="multiCalendars">
+        :multi-calendars="multiCalendars" :auto-position="true">
     </Datepicker>
 </template>
 <script lang="ts">
