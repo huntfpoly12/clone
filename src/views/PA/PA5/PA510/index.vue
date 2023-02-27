@@ -503,10 +503,10 @@ export default defineComponent({
         }
 
         // action click row table 2
-        let rowEdit = ref()
+        // let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
-            rowEdit.value = data.data
-            if (rowEdit.value.employeeId) { // if row data (not row add)
+            store.state.common.dataRowOnActive = data.data
+            if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
                 if (store.state.common.statusChangeFormEdit) {
                     // if (store.state.common.statusChangeFormPrice) {
                     //     modalChangeRowPrice.value = true;
@@ -535,68 +535,66 @@ export default defineComponent({
                     store.state.common.focusedRowKey = store.state.common.incomeId
                 }
             })
-
-            // dataRows.value = data.selectedRowsData
         }
-const showDetailSelected = (data: any) => {
-    IncomeWageDailiesTrigger.value = true;
-    status.value = data.status
-    store.state.common.processKeyPA510.imputedMonth = data.imputedMonth
-    store.state.common.processKeyPA510.paymentYear = data.paymentYear
-    store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
-    statusDisabledBlock.value = false;
-    store.state.common.statusRowAdd = true;
-}
-const statusComfirmChange = (res: any) => {
-    if (res) {
-        (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
-    } else {
-        if (!store.state.common.statusRowAdd) {
-            store.state.common.actionAddItem = false
-            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-            store.state.common.statusRowAdd = true
+        const showDetailSelected = (data: any) => {
+            IncomeWageDailiesTrigger.value = true;
+            status.value = data.status
+            store.state.common.processKeyPA510.imputedMonth = data.imputedMonth
+            store.state.common.processKeyPA510.paymentYear = data.paymentYear
+            store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
+            statusDisabledBlock.value = false;
+            store.state.common.statusRowAdd = true;
         }
-        store.state.common.incomeId = rowEdit.value.incomeId
-    }
+        const statusComfirmChange = (res: any) => {
+            if (res) {
+                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+            } else {
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.actionAddItem = false
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            }
 
-}
+        }
 
-const copyMonth = (month: number) => {
-    dataModalCopy.value = month
-    modalCopy.value = true
-}
-const dataAddIncomeProcess = (data: any) => {
-    dataSource.value[0]['month' + data.imputedMonth] = data
-    dataSource.value[0]['month' + data.imputedMonth].status = 10
-    status.value = 10
-    // refetchDataTaxPayInfo()
-    IncomeWageDailiesTrigger.value = true; //reset data table 2
-    statusDisabledBlock.value = false;
-}
-return {
-    processKey,
-    loading,
-    status,
-    dataSource,
-    per_page, move_column, colomn_resize,
-    selectionChanged,
-    dataCustomRes,
-    showDetailSelected,
-    actionEditTaxPay,
-    dataRows,
-    loadingTaxPayInfo,
-    // customizeTotalMonthly,
-    copyMonth,
-    modalCopy,
-    dataModalCopy,
-    dataAddIncomeProcess,
-    statusComfirm,
-    store,
-    modalChangeRow, statusComfirmChange,
-    // modalChangeRowPrice, statusComfirmChangePrice,
-    statusDisabledBlock,
-    Message,
-}
+        const copyMonth = (month: number) => {
+            dataModalCopy.value = month
+            modalCopy.value = true
+        }
+        const dataAddIncomeProcess = (data: any) => {
+            dataSource.value[0]['month' + data.imputedMonth] = data
+            dataSource.value[0]['month' + data.imputedMonth].status = 10
+            status.value = 10
+            // refetchDataTaxPayInfo()
+            IncomeWageDailiesTrigger.value = true; //reset data table 2
+            statusDisabledBlock.value = false;
+        }
+        return {
+            processKey,
+            loading,
+            status,
+            dataSource,
+            per_page, move_column, colomn_resize,
+            selectionChanged,
+            dataCustomRes,
+            showDetailSelected,
+            actionEditTaxPay,
+            dataRows,
+            loadingTaxPayInfo,
+            // customizeTotalMonthly,
+            copyMonth,
+            modalCopy,
+            dataModalCopy,
+            dataAddIncomeProcess,
+            statusComfirm,
+            store,
+            modalChangeRow, statusComfirmChange,
+            // modalChangeRowPrice, statusComfirmChangePrice,
+            statusDisabledBlock,
+            Message,
+        }
 
     },
 })
