@@ -70,7 +70,7 @@
                 </template>
                 <DxSelection mode="multiple" />
                 <DxColumn caption="성명" cell-template="tag" width="300px" />
-                <template #tag="{ data }" class="custom-action">
+                <template #tag="{ data }">
                     <div class="custom-action">
                         <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                             :idCardNumber="data.data.residentId" :status="data.data.status"
@@ -79,7 +79,7 @@
                 </template>
                 <DxColumn caption="주민등록번호" data-field="residentId" width="150px" />
                 <DxColumn caption="비고" cell-template="four-major" />
-                <template #four-major="{ data }" class="custom-action">
+                <template #four-major="{ data }">
                     <div>
                         <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
                             :typeValue="1" />
@@ -106,7 +106,7 @@
                 <DxColumn caption="납부특례세액" />
                 <DxColumn caption="차감징수세액" />
                 <DxColumn :width="80" cell-template="pupop" />
-                <template #pupop="{ data }" class="custom-action">
+                <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center;">
                         <img @click="onOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 25px; margin-right: 3px;" />
