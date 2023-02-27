@@ -56,14 +56,14 @@
         </div>
         <a-row :gutter="16">
             <a-col :span="24"><b>차인지급액</b> <b>{{
-                $filters.formatCurrency(originDataUpdate.input.monthlyWage +
+                $filters.formatCurrency(originDataUpdate.input.monthlyWage -
                     totalDeduction)
             }} </b> 원
             </a-col>
         </a-row>
         <a-row :gutter="16">
             <a-col :span="10">
-                <div class="header-text-0">월급여
+                <div class="header-text-0">월급여 x
                     <span class="fz-14">
                         {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
                     </span>
@@ -92,7 +92,7 @@
                         <div class="d-flex-center">
                             <number-box width="170px" class="mr-5" 
                                 v-model:valueInput="originDataUpdate.input.workingDays"
-                                @changeInput="onChangeWorkingDays" :min="1" :max="31"/>
+                                @changeInput="onChangeWorkingDays" :min="1" :max="31" />
                             <span class="ml-10">일</span>
                         </div>
                     </a-form-item>
@@ -238,7 +238,7 @@ export default defineComponent({
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
-                originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction
+                originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction 
                 originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
                 setTimeout(() => {
                     originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
@@ -383,8 +383,8 @@ export default defineComponent({
         const callFuncCalculate = async () => {
             let dataDefault = originDataUpdate.value.input
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = calculateHealthInsuranceEmployee(dataDefault.monthlyWage)
-            let total3 = calculateLongTermCareInsurance(dataDefault.monthlyWage)
+            let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
+            let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
             let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
             let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
@@ -440,12 +440,12 @@ export default defineComponent({
                 originDataUpdate.value.input.workingDays : 0)
             originDataUpdate.value.input.dailyWage = dailyWage;
         }
-        const onChangeWorkingDays = () => {
-            if (originDataUpdate.value.input.monthlyPaycheck) {
+      const onChangeWorkingDays = () => {
+          if (originDataUpdate.value.input.monthlyPaycheck) {
                 let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
                     originDataUpdate.value.input.workingDays : 0));
                 originDataUpdate.value.input.monthlyWage = monthlyWage;
-            } else {
+          } else {
                 let dailyWage = Math.floor(originDataUpdate.value.input.workingDays > 0 ? originDataUpdate.value.input.monthlyWage /
                     originDataUpdate.value.input.workingDays : 0)
                 originDataUpdate.value.input.dailyWage = dailyWage;

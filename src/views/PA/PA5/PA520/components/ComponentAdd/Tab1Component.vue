@@ -101,9 +101,12 @@
                     </span>
                 </div>
             </a-form-item>
+            <a-form-item label="연락처" label-align="right">
+              <tel-text-box width="200px" v-model:valueInput="dataCreated.department" />
+            </a-form-item>
             <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
-                    width="200px" />
+                    width="200" />
             </a-form-item>
             <a-form-item label="직위" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.responsibility" :arrSelect="selectBoxData2"
@@ -210,15 +213,6 @@ export default defineComponent({
             }
         })
         watch(() => dataCreated, (value) => {
-            if (store.state.common.activeAddRowPA520 == true) {
-                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
-                dataTable.employeeId = value.employeeId
-                dataTable.name = value.name
-                dataTable.foreigner = value.foreigner
-                dataTable.status = value.retirementIncome
-                dataTable.residentId = value.residentId
-            }
-
             if (JSON.stringify(DataCreated) !== JSON.stringify(value))
                 store.state.common.checkChangeValueAddPA520 = true
             else
@@ -233,7 +227,9 @@ export default defineComponent({
         // convert dataCreated.name to uppercase
         watch(()=> dataCreated.name,(newVal)=> {
           dataCreated.name = newVal.toUpperCase();
-        },{deep: true})
+        }, { deep: true })
+
+        
         // ============ FUNCTION =============================
         const funcAddress = (data: any) => {
             dataCreated.zipcode = data.zonecode;
