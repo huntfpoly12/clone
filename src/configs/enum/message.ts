@@ -97,6 +97,12 @@ export class Message extends BaseType {
               // This item cannot be edited or deleted.
     });
   
+  //역통장내역
+    public static AC110 = new Message({
+        '001': { "message" : "새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?","yes": "네. 불러옵니다","no":"아니요"}, // If you have a new bank account details, call in addition. Frequent use may cause system load, so please be careful when using it. Will you still invite me?
+        
+    });
+  
     private static _ = Message.closeEnum();
 
     private constructor(

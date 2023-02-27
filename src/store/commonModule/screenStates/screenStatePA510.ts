@@ -25,6 +25,7 @@ const statesPA510 = {
     actionCopy: 1,
     loadingFormData: 1,
     selectionFilter: null,
+    dataRowOnActive: null,
 };
   
 export default statesPA510;
