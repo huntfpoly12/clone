@@ -213,7 +213,7 @@
                             :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                             :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                         <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                            :disabled="store.state.common.statusDisabledStatus" />
+                            :disabled="status == 30 || status == 40" />
                     </div>
                 </a-col>
                 <a-col :span="9">
@@ -291,7 +291,7 @@
                     <FormDataComponent />
                 </a-col>
                 <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-                    title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
+                :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
                     @checkConfirm="statusComfirmChange" />
                 <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
                     typeModal="confirm" :title="Message.getMessage('PA110', '001').message" content=""
@@ -522,7 +522,7 @@ export default defineComponent({
         })
 
         watch(() => status.value, (newVal) => {
-            if (userType != 'm' && (newVal == 30 || newVal == 40)) {
+            if (userType != 'm' && (newVal == 20 || newVal == 30 || newVal == 40)) {
                 store.state.common.statusDisabledStatus = true;
             } else {
                 store.state.common.statusDisabledStatus = false;
@@ -626,8 +626,9 @@ export default defineComponent({
             return monthClicked.value == monthInputed;
         }
         const statusComfirmChange = (res: any) => {
-            if (res) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+            if (res) { // action save form
+                // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                store.state.common.actionSubmit++
             } else {
                 if (!store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
