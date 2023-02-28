@@ -5,7 +5,7 @@
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40"/>
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40 || statusButton==20"/>
         </div>
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
@@ -74,10 +74,10 @@
                           {{ formatMonth(data.data.paymentDay) }}
                         </template>
                     <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat"
-                        data-type="string" />
+                        data-type="string"  alignment="right"/>
                     <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string"
                         :format="amountFormat" />
-                    <DxColumn caption="공제" cell-template="income-tax" width="100px" />
+                    <DxColumn caption="공제" cell-template="income-tax" width="100px"  alignment="right"/>
                     <template #income-tax="{ data }">
                       <a-tooltip placement="top">
                         <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -89,7 +89,7 @@
                     </a-tooltip>
                     </template>
                     <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string"
-                        :format="amountFormat" />
+                        :format="amountFormat"  alignment="right"/>
                     <DxSummary>
                         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
                         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
@@ -151,7 +151,7 @@
                                 <a-form-item label="소득세(공제)" label-align="right">
                                     <div class="d-flex-center">
                                         <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
-                                            v-model:valueInput="dataAction.input.withholdingIncomeTax" :format="formatMonth" /> 원
+                                            v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
                                     </div>
                                 </a-form-item>
                                 <a-form-item label="지방소득세(공제)" label-align="right">
@@ -177,7 +177,7 @@
             </a-spin>
         </a-col>
     </a-row>
-    <DeletePopup :modalStatus="modalDelete" @closePopup="actionDeleteSuccess" :data="popupDataDelete"
+    <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete=false" :data="popupDataDelete" @deleteDone="deleteDone"
         :processKey="dataTableDetail.processKey" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="dataTableDetail.processKey"
         title="변경이력" typeHistory="pa-620" />
@@ -520,6 +520,14 @@ export default defineComponent({
             resetForm()
             emit('createdDone', true);
             isNewRow.value = false;
+            focusedRowKey.value = null;
+        }
+        const deleteDone = () => {
+          triggerDetail.value = true;
+          resetForm();
+          isNewRow.value = false;
+          focusedRowKey.value = null;
+          disabledInput.value = false;
         }
         const onItemClick = (key: String) => {
             switch (key) {
@@ -583,6 +591,7 @@ export default defineComponent({
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeBusiness);
         doneCreated(res => {
+          console.log(`output->res`,res)
             focusedRowKey.value = res.data.createIncomeBusiness.incomeId
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
@@ -603,7 +612,9 @@ export default defineComponent({
             loading: loadingEdit,
             onDone: doneEdit,
         } = useMutation(mutations.updateIncomeBusiness);
-        doneEdit(() => {
+        doneEdit((res) => {
+            console.log(`output->res`,res.data.updateIncomeBusiness.incomeId)
+            focusedRowKey.value = res.data.updateIncomeBusiness.incomeId
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
             triggerDetail.value = true
@@ -620,6 +631,7 @@ export default defineComponent({
           if (!res.isValid) {
             res.brokenRules[0].validator.focus();
             isErrorForm.value = true;
+            focusedRowKey.value = dataAction.value.input.incomeId;
           } else {
             isErrorForm.value = false;
             let params = JSON.parse(JSON.stringify(dataAction.value));
@@ -643,7 +655,7 @@ export default defineComponent({
                 }
                 actionEdit(inputEdit)
             }
-            setTimeout(() => {
+            // setTimeout(() => {
               if (isErrorForm.value) {
                 focusedRowKey.value = dataAction.value.input.incomeId;
               } else {
@@ -651,7 +663,7 @@ export default defineComponent({
                 focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
                 isNewRow.value =false;
               }
-            }, 1000);
+            // }, 1000);
           }
         };
         //---------------------------------------------fn common--------------------------------
@@ -677,7 +689,7 @@ export default defineComponent({
         return {
             arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm,
+            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm,deleteDone, dataActionEdit, dataCallApiDetailEdit, isNewRow
         }
     }
 });
