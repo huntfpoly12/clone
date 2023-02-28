@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <standard-form action="" name="add-page-210">
+        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -134,7 +134,8 @@ export default defineComponent({
         openPopup: Number,
         actionSave: Number
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const formRefPa520Update = ref()
         const modalStatusChange = ref(false)
         const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
@@ -279,7 +280,7 @@ export default defineComponent({
             dataEdited.roadAddress = data.roadAddress;
         }
         const actionUpdated = (e: any) => {
-            var res = e.validationGroup.validate();
+            var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
@@ -311,7 +312,7 @@ export default defineComponent({
         }
         return {
             modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress, statusComfirm,Message
+            actionUpdated, funcAddress, statusComfirm,Message,formRefPa520Update
         };
     },
 });
