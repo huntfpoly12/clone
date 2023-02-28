@@ -210,11 +210,16 @@ export default defineComponent({
         if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
-          triggerIncomeExtra.value = true;
+          console.log(`output->fetch duw lieu`)
         }
       },
       { deep: true }
     );
+    watch(incomeExtraParam,(newVal: any)=> {
+      if(newVal){
+        triggerIncomeExtra.value = true;
+      }
+    })
     const {
       loading: loadingIncomeExtra,
       onError: onErrorIncomeExtra,

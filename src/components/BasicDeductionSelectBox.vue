@@ -1,5 +1,6 @@
 <template>
     <div>
+      <!-- {{ basicDeductionData }} basicDeductionData <br/> -->
       <DxSelectBox
         :width="width"
         :data-source="basicDeductionData"
@@ -95,23 +96,31 @@
         }
       );
       watch(()=> props.ageCount,(newVal)=> {
-        if(newVal <= 20) {
+        if(+newVal == 0) {
+          basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+            return {value: item.value,label: item.label};
+          })
+          value.value = 0;
+          return;
+        }
+        if(+newVal <= 20) {
           value.value = 3;
           basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
-            return item.value != 3 ? {...item,disabled: true} : {...item};
+            return item.value != 3 ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
           })
           return;
         }
-        if(newVal >= 60) {
+        if(+newVal >= 60) {
           value.value = 4;
           let newArr = basicDeductionData.value.map((item:any)=> {
-            return item.value != 4 ? {...item,disabled: true} : {...item};
+            return item.value != 4 ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
           })
           basicDeductionData.value = [...newArr]
           return;
         }
+        value.value = 0;
         basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
-          return (item.value == 3) || (item.value ==4) ? {...item,disabled: true} : {...item};
+          return (item.value == 3) || (item.value ==4) ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
         })
       }, {immediate: true})
       return {
