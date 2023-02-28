@@ -210,7 +210,7 @@ export default defineComponent({
         if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
-          console.log(`output->fetch duw lieu`)
+          // console.log(`output->fetch duw lieu`)
         }
       },
       { deep: true }
