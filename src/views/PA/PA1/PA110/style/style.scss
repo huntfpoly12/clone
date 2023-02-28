@@ -1,9 +1,9 @@
 #pa-110 {
     
-    ::v-deep .dx-master-detail-cell {
+    :deep .dx-master-detail-cell {
         padding: 0px;
     }
-    ::v-deep .ant-form-item-label {
+    :deep .ant-form-item-label {
         >label {
             width: 100px;
         }
@@ -37,7 +37,7 @@
 		margin-bottom: 10px;
     }
 
-    ::v-deep .custom-layout {
+    :deep .custom-layout {
         padding: 10px 10px 10px 0;
  
         >div {
@@ -88,7 +88,7 @@
     padding-left: 5px;
     padding-top: 5px;
 }
-::v-deep .custom-deduction {
+:deep .custom-deduction {
     // display: flex;
     // align-items: center;
     // justify-content: space-between;
@@ -109,7 +109,7 @@
   text-decoration: underline;
 }
 
-::v-deep .custom-layout col:first-child {
+:deep .custom-layout col:first-child {
     width: 40px !important;
 }
 #pa-110-gridContainer {
@@ -122,4 +122,11 @@
 }
 :deep .dx-datagrid-text-content {
     white-space: pre-wrap;
+}
+.disabledBlock {
+    pointer-events: none;
+    opacity: 0.8;
+}
+.custom-detail {
+    text-align: right;
 }

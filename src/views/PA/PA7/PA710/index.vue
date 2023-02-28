@@ -180,7 +180,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed } from "vue";
+import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
@@ -192,14 +192,10 @@ import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
-// import { DxTooltip } from 'devextreme-vue/tooltip';
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, 
-        // DxSorting,
-        // DxTooltip, 
-        // DxEditing,
     },
     setup() {
         const contentDelete = Message.getMessage('PA120', '002').message
@@ -485,15 +481,23 @@ export default defineComponent({
         }
 
         // ================WATCHING============================================
+        let runOne = ref(true);
         watch(result, (value) => {
             trigger.value = false;
-            if (value) {
+            if (value && value.getEmployeeExtras?.length) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
                         residentIdHide: value.residentId
                     }
                 })
+                if (runOne.value) {
+                    originDataDetail.value.employeeId = listEmployeeExtra.value[0].employeeId
+                    originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0].incomeTypeCode
+                    triggerDetail.value = true;
+                    statusFormUpdate.value = true;
+                    runOne.value = false;
+                }
                 // listEmployeeExtra.value = value.getEmployeeExtras
                 
             }
@@ -506,6 +510,9 @@ export default defineComponent({
                 resetFormNum.value++;
                 formState.value.nationalityCode = formState.value.nationalityCode == 'KR' ? null : formState.value.nationalityCode
             }
+        });
+        watchEffect(() => {
+            formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
         watch(globalYear, () => {
             trigger.value = true;

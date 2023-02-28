@@ -79,46 +79,5 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
-.grid {
-  display: grid;
-  gap: 2px;
-  min-height: 120px;
-  text-align: center;
-  .header {
-    height: 100%;
-    color: white;
-    font-size: 13px;
-    font-weight: bold;
-    background-color: rgb(91, 128, 185);
-  }
-  div {
-    background-color: rgb(233, 236, 243);
-    min-height: 30px;
-  }
-}
-.grid-cols-10 {
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-}
-.row-span-2 {
-  grid-row: span 2 / span 2;
-}
-.row-span-4 {
-  grid-row: span 4 / span 4;
-}
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-.col-span-3 {
-  grid-column: span 3 / span 3;
-}
-.col-span-4 {
-  grid-column: span 4 / span 4;
-}
-
-.justify-items-center {
-  justify-items: center;
-}
-.items-center {
-  align-items: center;
-}
+@import '../styles/index.scss';
 </style>

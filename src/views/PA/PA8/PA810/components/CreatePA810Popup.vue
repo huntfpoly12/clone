@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="50%" v-model:visible="visible" title="취득신고등록" centered
+  <a-modal class="form-modal" width="55%" v-model:visible="visible" title="취득신고등록" centered
            @cancel="$emit('closeModal')" :footer="null">
     <standard-form>
       <div class="form">
@@ -7,10 +7,10 @@
           <a-col span="12">
             <a-form-item label="직원유행">
               <a-radio-group v-model:value="employeeWageType">
-                <a-radio :value="EmployeeWageType.WAGE" @change="handleRadioChange" v-model="selectedRadioValue">
+                <a-radio :value="EmployeeWageType.WAGE" @change="handleRadioChange" v-model="stateSelectQuery.selectedRadioValue">
                   사원
                 </a-radio>
-                <a-radio :value="EmployeeWageType.WAGEDaily" @change="handleRadioChange" v-model="selectedRadioValue">
+                <a-radio :value="EmployeeWageType.WAGEDaily" @change="handleRadioChange" v-model="stateSelectQuery.selectedRadioValue">
                   일용직사원
                 </a-radio>
               </a-radio-group>
@@ -25,13 +25,13 @@
         <a-row :gutter="[0, 10]" class="item-group">
           <a-col span="12">
             <a-form-item label="업체명" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="name" :disabled="true"
+              <default-text-box width="200px" v-model:valueInput="infoCompany.name" :disabled="true"
                                 placeholder="한글,영문(대문자) 입력 가능"/>
             </a-form-item>
           </a-col>
           <a-col span="12">
             <a-form-item label="대표자명" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="presidentName" :disabled="true"
+              <default-text-box width="200px" v-model:valueInput="infoCompany.presidentName" :disabled="true"
                                 placeholder="한글,영문(대문자) 입력 가능"/>
             </a-form-item>
           </a-col>
@@ -39,7 +39,7 @@
             <a-form-item label="사업자등록번호" class="clr" label-align="left">
               <!-- :disabled="!canChangeableBizNumber" -->
               <biz-number-text-box
-                v-model:valueInput="bizNumber"
+                v-model:valueInput="infoCompany.bizNumber"
                 width="220"
                 :disabled="true"
                 messRequired="이항목은 필수 입력사항입니다!"
@@ -49,7 +49,7 @@
           </a-col>
           <a-col span="12">
             <a-form-item label="사업장관리번호" label-align="right">
-            <default-text-box width="200px" v-model:valueInput="adding" :disabled="true"
+            <default-text-box width="200px" v-model:valueInput="infoCompany.adding" :disabled="true"
               placeholder="한글,영문(대문자) 입력 가능"/>
             </a-form-item>
           </a-col>
@@ -90,16 +90,32 @@
               <a-row gutter="7">
                 <a-col span="12">
                   <a-form-item label="국적코드" label-align="right">
-                    <country-code-select-box style="width: 200px" v-model:valueCountry="employeeWage.nationalityCode"
-                                             :hiddenOptionKR="true" :disabled="true"/>
+                    <a-space align="center" :size="4">
+                      <text-number-box
+                        width="200px"
+                        v-model:valueInput="formData.nationalityNumber"
+                        :required="true"
+                        placeholder="1"
+                        :disabled="isChooseNationalPensionReport"
+                      />
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                    </a-space>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item label="체류자격" label-align="right">
-                    <!-- <country-code-select-box style="width: 200px" v-model:valueCountry="employeeWage.stayQualification"
-                                             :hiddenOptionKR="true" :disabled="true"/> -->
-                    <stay-qualification-select-box v-model:valueStayQualifiction="employeeWage.stayQualification" />
+                    <a-space align="center" :size="4">
+                      <text-number-box
+                        width="200px"
+                        v-model:valueInput="formData.stayQualification"
+                        :required="true"
+                        placeholder=""
+                        :disabled="isChooseNationalPensionReport"
+                      />
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                    </a-space>
                   </a-form-item>
+                  
                 </a-col>
               </a-row>
             </div>
@@ -137,10 +153,10 @@
                         width="200px"
                         v-model:valueInput="formData.nationalPensionAcquisitionCode"
                         :required="true"
-                        placeholder="1 - 18"
+                        placeholder="1"
                         :disabled="isChooseNationalPensionReport"
                       />
-                      <search-outlined :style="{fontSize: '20px'}"/>
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
                     </a-space>
                   </a-form-item>
                 </a-col>
@@ -165,13 +181,16 @@
               <a-row gutter="7">
                 <a-col span="12">
                   <a-form-item label="취득부호" label-align="right">
-                    <text-number-box
-                      width="200px"
-                      :required="true"
-                      placeholder="00"
-                      v-model:valueInput="formData.healthInsuranceAcquisitionCode"
-                      :disabled="isChooseHealthInsuranceReport"
-                    />
+                    <a-space align="center" :size="4">
+                      <text-number-box
+                        width="200px"
+                        :required="true"
+                        placeholder="00"
+                        v-model:valueInput="formData.healthInsuranceAcquisitionCode"
+                        :disabled="isChooseHealthInsuranceReport"
+                      />
+                      <SearchCodeButton :src="URL_CONST.URL_HEALTH_INSURANCE_ACQUISITION_CODE_CODE" />
+                    </a-space>
                   </a-form-item>
                 </a-col>
                 <a-col span="6">
@@ -179,8 +198,8 @@
                     <span class="check-box-tab1 mb-4 ml-15">
                       <checkbox-basic
                         label="보험증발송여부 "
-                        v-model:valueCheckbox="formData.contractWorker"
-                        :disabled="!formData.healthInsuranceReport"
+                        value="false"
+                        :disabled="true"
                       />
                     </span>
                   </a-form-item>
@@ -205,12 +224,15 @@
               <a-row gutter="7">
                 <a-col span="12">
                   <a-form-item label="직종부호" label-align="right">
-                    <text-number-box
+                    <a-space align="center" :size="4">
+                      <text-number-box
                       width="200px"
                       placeholder="232"
                       v-model:valueCheckbox="formData.jobTypeCode"
                       :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                     />
+                      <SearchCodeButton :src="URL_CONST.URL_JOB_TYPE_CODE_CODE" />
+                    </a-space>
                   </a-form-item>
                 </a-col>
                 <a-col span="4">
@@ -274,14 +296,20 @@
                           v-model:valueInput="formData.insuranceReductionCode"
                           width="150px"
                           :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                          placeholder="부호"
                         />
-                        <number-box
-                          :required="true"
-                          :spinButtons="true"
-                          v-model:valueInput="formData.insuranceReductionReasonCode"
-                          :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                          width="150px"
-                        />
+                        <a-space align="center" :size="4">
+                          <number-box
+                            :required="true"
+                            :spinButtons="true"
+                            v-model:valueInput="formData.insuranceReductionReasonCode"
+                            :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                            width="150px"
+                            placeholder="사유코드"
+                          />
+                          <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" />
+                        </a-space>
+                       
                       </a-space>
                     </span>
                     </a-form-item>
@@ -294,18 +322,107 @@
         </a-row>
       </div>
       <div class="fileuploader-container mt-20">
-        <a-form-item :label="'등본 등 증빙파일'" style="position: relative;">
-          <div>
-              <div class="d-flex">
-                  <input class="custom-file-input" type="file" />
-              </div>
-          </div>
-          
-          <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload">
-      </a-form-item>
+        <UploadFile @response-fileId="getFileId" />
       </div>
       <div class="mt-20">
-        <TableEmployeeWage :data="employeeWage"/>
+        <div class="grid grid-cols-12 items-center">
+          <div class="col-span-1 header flex">
+            <div class="header">피부양자</div>
+          </div>
+          <div class="col-span-11">
+            <div class="grid grid-cols-11 items-center">
+              <div class="row-span-2 header flex">
+                <div class="header">성명</div>
+              </div>
+              <div class="row-span-2 col-span-2 header flex">
+                <div class="header">주민등록증</div>
+              </div>
+              <div class="col-span-2 header flex">장애인, 극가유공자 부호</div>
+              <div class="col-span-4 header flex">외국인</div>
+              <div class="col-span-2 header flex">관계</div>
+              <div class="bg-gray flex">
+                <span>종별부호</span>
+                <SearchCodeButton :src="URL_CONST.URL_DISABLED_CODE_DEPENDENT" />
+              </div>
+              <div class="bg-gray flex">등록일</div>
+              <div class="bg-gray flex">
+                <span>등록국적일</span>
+                <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER_DEPENDENT" />
+              </div>
+              <div class="bg-gray flex">
+                <span>체류자격</span>
+                <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE_DEPENDENT" />
+              </div>
+              <div class="col-span-2 bg-gray flex">체류기간</div>
+              <div class="bg-gray flex">관계 코드</div>
+              <div class="bg-gray flex">내용</div>
+              <div class="bg-gray flex">(2)</div>
+              <div class="bg-gray flex col-span-2">(3)</div>
+              <div class="bg-gray flex">(4)</div>
+              <div class="bg-gray flex">10</div>
+              <div class="bg-gray flex">(5)</div>
+              <div class="bg-gray flex">(6)</div>
+              <div class="bg-gray flex col-span-2">(7)</div>
+              <div class="bg-gray flex">(8)</div>
+              <div class="bg-gray flex">(9)</div>
+              <!-- use v-loop employeeWage dependents-->
+              <template  v-for="(dependent, index) in employeeWage.dependents" :key="index">
+                <!-- Add more dependent properties as needed -->
+                
+                <div class="bg-gray flex">{{ employeeWage.name }}</div>
+                <div class="bg-gray flex col-span-2">{{ employeeWage.residentId }}</div>
+                <div class="bg-gray flex ">
+                  <text-number-box
+                    width="100%"
+                    v-model:valueInput="employeeWage.disabledCode"
+                    :required="true"
+                    placeholder=""
+                  />
+                </div>
+                <div class="bg-gray flex truncate">
+                  <!-- tool tip -->
+                  <a-tooltip placement="top" :title="employeeWage.disabledCode">
+                    <span>{{ employeeWage.disabledCode }}</span>
+                  </a-tooltip>
+                </div>
+                <div class="bg-gray flex">
+                  <text-number-box
+                    width="100%"
+                    v-model:valueInput="dependent.nationalityNumber"
+                    :required="true"
+                    placeholder=""
+                  />
+                </div>
+                <div class="bg-gray flex">
+                  <text-number-box
+                    width="100%"
+                    v-model:valueInput="dependent.stayQualification"
+                    :required="true"
+                    placeholder=""
+                  />
+                </div>
+                <div class="bg-gray flex col-span-2">
+                  <range-date-time-box 
+                    v-model:valueDate="dependent.contractExpiredDate" width="100%" 
+                    :maxRange="365"
+                   />
+                </div>
+                <div class="bg-gray flex">
+                  <template v-if="dependent.relation >= 0">
+                    {{getCodeOrLabel(dependent.relation).number }}
+                  </template>
+                </div>
+                <div class="bg-gray flex">
+                  <template v-if="dependent.relation >= 0">
+                    {{getCodeOrLabel(dependent.relation).label }}
+                  </template>
+                </div>
+            </template>
+
+            </div>
+            
+          </div>
+        </div>
       </div>
       <div class="d-flex justify-center mt-20">
         <button-basic :width="90" id="btn-save" @onClick="onSubmit($event)" style="margin: auto" mode="contained"
@@ -316,29 +433,38 @@
 </template>
 
 <script lang="ts">
-import {ref, defineComponent, watch, computed, reactive, toRefs} from 'vue';
-import {useStore} from 'vuex';
-import queries from '@/graphql/queries/PA/PA8/PA810/index';
-import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
-import {useMutation, useQuery } from '@vue/apollo-composable';
-import {companyId, openTab} from '@/helpers/commonFunction';
-import {DeleteOutlined, HistoryOutlined, SearchOutlined} from '@ant-design/icons-vue';
-import {DxDataGrid, DxColumn, DxScrolling, DxMasterDetail} from 'devextreme-vue/data-grid';
-import {DxFileUploader} from 'devextreme-vue/file-uploader';
-import DxButton from 'devextreme-vue/button';
-import notification from '@/utils/notification';
-import DateTimeBox from "@/components/common/DateTimeBox.vue";
+import UploadFile from "@/components/UploadFile.vue";
 import CheckboxBasic from "@/components/common/CheckboxBasic.vue";
-import getEmployeeWages from "@/graphql/queries/PA/PA8/PA810/getEmployeeWages";
-import StandardForm from "@/components/common/StandardForm.vue";
-import dayjs from 'dayjs';
-import NumberBox from "@/components/common/NumberBox.vue";
+import DateTimeBox from "@/components/common/DateTimeBox.vue";
 import EmploySelect from "@/components/common/EmploySelect.vue";
-import imgUpload from "@/components/UploadImage.vue";
+import NumberBox from "@/components/common/NumberBox.vue";
+import StandardForm from "@/components/common/StandardForm.vue";
+import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
+import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import getCompany from "@/graphql/queries/common/getCompany";
-import {Company} from "@/types/types";
+import { companyId } from '@/helpers/commonFunction';
+import { Company } from "@/types/types";
+import { DeleteOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons-vue';
+import { DependantsRelation, enum2Entries } from '@bankda/jangbuda-common';
+import { useMutation, useQuery } from '@vue/apollo-composable';
+import dayjs from 'dayjs';
+import DxButton from 'devextreme-vue/button';
+import { DxColumn, DxDataGrid, DxScrolling } from 'devextreme-vue/data-grid';
+import { DxFileUploader } from 'devextreme-vue/file-uploader';
+import { computed, defineComponent, reactive, ref, toRefs, watch } from 'vue';
+import { useStore } from 'vuex';
+import URL_CONST from './../const';
+import SearchCodeButton from './SearchCodeButton.vue';
 import TableEmployeeWage from './TableEmployeeWage.vue';
-
+import notification from "@/utils/notification";
+import INITIAL_DATA from './../utils'
+let dpRelation =  enum2Entries(DependantsRelation)
+const getCodeOrLabel = (id: number) => {
+  return {
+    number: id.toString(),
+    label: dpRelation[id][0].split('.')[1]
+  }
+};
 enum EmployeeWageType {
   WAGE = 10,
   WAGEDaily = 20
@@ -351,16 +477,6 @@ const getQuery = (type: EmployeeWageType) => {
       return queries.getEmployeeWageDailies;
   }
 };
-export const EMPLOYEE_WAGE = {
-      name: '',
-      residentId: '',
-      joinedAt: '',
-      totalPay: '',
-      president: '',
-      nationalityNumber: '',
-      nationalityCode: '',
-      stayQualification: '',
-    } 
 export default defineComponent({
   components: {
     EmploySelect,
@@ -376,8 +492,9 @@ export default defineComponent({
     DeleteOutlined,
     SearchOutlined,
     DxFileUploader,
-    imgUpload,
-    TableEmployeeWage
+    UploadFile,
+    TableEmployeeWage,
+    SearchCodeButton
 },
   setup(_, { emit}) {
     const store = useStore();
@@ -385,44 +502,17 @@ export default defineComponent({
     const {per_page, move_column, colomn_resize} = store.state.settings;
     const visible = ref(true);
     const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
-    const employeeWage = ref(EMPLOYEE_WAGE);
+    const employeeWage = ref(INITIAL_DATA.initialEmployeeWage);
     const employeeWages = ref();
     const employeeWageSelected = ref();
-    const formData = reactive({
-      name: '', // 2 - 6
-      bizNumber: '', // 3 so dang ky cong ty (api not register)
-      presidentName: '', // 4
-      adding: '', // 5 api not register
-      joinedAt: '', // 7 api not register
-      residentId: '', // 8
-      totalPay: '', // 9
-      president: false, // 10 no
-      nationalityNumber: 11, // 11 field required number, but component return string value
-      stayQualification: 12, // 12 field required number, but component return string value
-      nationalPensionReport: true, // 13
-      healthInsuranceReport: true, // 14
-      employeementInsuranceReport: true, // 15
-      industrialAccidentInsuranceReport: true, // 16
-      nationalPensionAcquisitionCode: 12, // 17
-      acquisitionMonthPayment: true, // 18
-      healthInsuranceAcquisitionCode: 1234, // 19
-      includeDependents: true,
-      jobTypeCode: 232, // 22
-      contractWorker: true, // 23
-      contractExpiredDate: '', // 24
-      jobSecurityFundSupportApplication: true, // 25
-      weeklyWorkingHours: 40, // 26
-      insuranceReductionCode: 27, // 27
-      insuranceReductionReasonCode: 28, // 28
-      dependentsEvidenceFileStorageId: '', // 1
-    });
+    const formData = reactive(INITIAL_DATA.InitialFormCreate);
     const infoCompany = reactive({
       name: '',
       adding: '', 
       presidentName: '',
       bizNumber: ''
     })
-    const state = reactive({
+    const stateSelectQuery = reactive({
       selectedRadioValue: EmployeeWageType.WAGE,
       query: queries.getEmployeeWages,
     });
@@ -432,9 +522,9 @@ export default defineComponent({
     const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.employeementInsuranceReport || formData.industrialAccidentInsuranceReport)) 
 
     const handleRadioChange = (event: Event) => {
-      state.selectedRadioValue = +(event.target as HTMLInputElement).value;
+      stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement).value;
       employeeWageSelected.value = null;
-      employeeWage.value = EMPLOYEE_WAGE;
+      employeeWage.value = INITIAL_DATA.initialEmployeeWage;
     };
     // Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
     const dataSource = ref([]);
@@ -461,19 +551,19 @@ export default defineComponent({
       imputedYear: globalYear.value,
     })
     const query = ref(queries.getEmployeeWages)
-    const { result: dataEmployeeWages } = useQuery(query, variables, () => ({
+    const { result: dataEmployeeWages, refetch: refetchDataEmployeeWages  } = useQuery(query, variables, () => ({
       fetchPolicy: 'no-cache',
     }));
     watch(dataEmployeeWages, (value) => {
       if (value) {
-        if (state.selectedRadioValue === EmployeeWageType.WAGE) {
+        if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
           employeeWages.value = value.getEmployeeWages;
         } else {
           employeeWages.value = value.getEmployeeWageDailies;
         }
       }
     }, {deep: true});
-    watch(() => state.selectedRadioValue, (newValue) => {
+    watch(() => stateSelectQuery.selectedRadioValue, (newValue) => {
       query.value = getQuery(newValue)
     });
   
@@ -482,34 +572,38 @@ export default defineComponent({
       if (value) {
         employeeWage.value = employeeWages.value.find((item: any) => item.employeeId === value);
       }
-    });
+    }, {deep: true});
 
     // Mutation
-    const { mutate } = useMutation(mutations.createMajorInsuranceCompanyEmployeeAcquisition, () => ({
+    const { mutate, onDone: onDoneCreateMajor, loading: loadingCreateMajor, onError: errorCreateMajor } = useMutation(mutations.createMajorInsuranceCompanyEmployeeAcquisition, () => ({
       fetchPolicy: 'no-cache',
     }));
-
-    // handle registration CardFile Storage upload
-    const getregCardFile = (img: any) => {
-      formData.dependentsEvidenceFileStorageId = img.id;
-      // formData.value.registrationCard = img;
-    };
 
     /// Submit form
     const onSubmit = (e: any) => {
       const res = e.validationGroup.validate()
+      // !res.isValid
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber, dependentsEvidenceFileStorageId,   ...newFormData} = formData;
-
+        const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber,   ...newFormData} = formData;
+        
+        const dependents = employeeWage.value.dependents.map((item: any) => {
+          return {
+            name: employeeWage.value.name,
+            residentId: employeeWage.value.residentId,
+            relationCode: getCodeOrLabel(item.relation).number,
+            nationalityNumber: item.nationalityNumber,
+            stayQualification: item.stayQualification,
+            stayPeriodFrom: item.contractExpiredDate[0],
+            stayPeriodTo: item.contractExpiredDate[1]
+          }
+        })
         const input = {
           ...newFormData,
           employeeId: Number(employeeWageSelected.value),
-          employeeType: state.selectedRadioValue,
-          contractExpiredDate: 12321312, //  Int cannot represent non 32-bit signed integer value: 1676971860000"
-          nationalPensionAcquisitionCode:1231,
-          // nationalityNumber: employeeWage.value.nationalityCode,
+          employeeType: stateSelectQuery.selectedRadioValue,
+          dependents,
         }
         mutate({
           ...variables,
@@ -524,6 +618,9 @@ export default defineComponent({
       }
 
     };
+    const getFileId = (fileId: {id: Number}) => {
+      formData.dependentsEvidenceFileStorageId = fileId.id;
+    }
     const formatDate = (date: any) => {
       return dayjs(date).format('YYYY/MM/DD')
     }
@@ -542,73 +639,22 @@ export default defineComponent({
       employeeWageType,
       EmployeeWageType,
       formatDate,
-      ...toRefs(state),
+      stateSelectQuery,
       handleRadioChange,
-      getregCardFile,
-      ...toRefs(infoCompany),
+      infoCompany,
       employeeWage,
       isChooseNationalPensionReport,
       isChooseHealthInsuranceReport,
-      isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
+      isChooseEmployeementInsuranceAndIndustrialAccidentInsurance,
+      URL_CONST,
+      getFileId,
+      dpRelation,
+      getCodeOrLabel,
     };
   }
 });
 </script>
 <style lang="scss" scoped>
 @import '../styles/index.scss';
-.fileuploader-container {
-  padding: 10px;
-  border: 1px solid #d3d3d3;
-  border-radius: 10px;
-}
-
-.fileName {
-  display: flex;
-  align-items: center;
-  padding-top: 4px;
-}
-
-.container_upload {
-  width: 100%;
-}
-
-.ant-form input[type="file"] {
-  display: block;
-  width: 200px;
-}
-
-.custom-file-input::-webkit-file-upload-button {
-  visibility: hidden;
-}
-
-.custom-file-input::before {
-  content: " 파일선택...";
-  display: inline-block;
-  width: 200px;
-  text-align: left;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-  line-height: 1.5715;
-  padding: 5px 10px;
-  padding-left: 40px;
-  white-space: nowrap;
-  -webkit-user-select: none;
-  cursor: pointer;
-  text-shadow: 1px 1px #fff;
-  font-weight: 700;
-  font-size: 10pt;
-}
-
-.iconUpload {
-  width: 20px; 
-  height: 20px; 
-  position: absolute;  
-  top: 50%; 
-  left: 10px;
-  transform: translate(0, -50%);
-}
-.ant-form-item {
-  margin-bottom: 0;
-}
 
 </style>

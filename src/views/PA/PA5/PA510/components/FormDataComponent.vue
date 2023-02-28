@@ -250,9 +250,14 @@ export default defineComponent({
 
         // ===================DONE GRAPQL==================================
         onDoneAdd((data: any) => {
+            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
+            }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
+            // store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
             store.state.common.loadingTableInfo++
             notification('success', messageAddSuccess)
         })
@@ -304,6 +309,7 @@ export default defineComponent({
                     }
                 })
             })
+            store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
             triggerIncomeWageDaily.value = false;
             setTimeout(() => {
                 store.state.common.statusChangeFormEdit = false;
@@ -312,6 +318,9 @@ export default defineComponent({
 
 
         // ===================WATCH==================================
+        watch(() => store.state.common.loadingFormData, (value) => {
+            triggerIncomeWageDaily.value = true;
+        })
         // Watching the value of the store.state.common.actionAddItem and if it is true, it will do
         // some stuff.
         watch(() => store.state.common.actionAddItem, (value) => {
@@ -395,7 +404,7 @@ export default defineComponent({
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
         // changed.
-        watch(() => arrDeduction, (res) => {
+        watch(() => arrDeduction.value, (res) => {
             let total = 0
             res.value?.map((val: any) => {
                 total += val.price
@@ -407,22 +416,26 @@ export default defineComponent({
         // dataIncomeWageDaily.value.
         watch(resultEmployeeWageDaily, async (res: any) => {
             employeeWageDailyTrigger.value = false;
-            let data = res.getEmployeeWageDaily;
-            await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
-            await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
-            await (dataIncomeWageDaily.value.workingDays = data.workingDays)
-            await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
-            await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
-            await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
-            await (dataIncomeWageDaily.value.employee.name = data.name)
-            await (arrDeduction.value?.map((dataRow: any) => {
-                dataRow.price = 0
-                data.deductionItems?.map((val: any) => {
-                    if (val.itemCode == dataRow.itemCode) {
-                        dataRow.price = val.amount
-                    }
-                })
-            }))
+            if (store.state.common.actionAddItem) {
+                let data = res.getEmployeeWageDaily;
+                await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
+                await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
+                await (dataIncomeWageDaily.value.workingDays = data.workingDays)
+                await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+                await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
+                await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
+                await (dataIncomeWageDaily.value.employee.name = data.name)
+                await (dataIncomeWageDaily.value.employee.status = data.status)
+                await (dataIncomeWageDaily.value.employee.foreigner = data.foreigner)
+                await (arrDeduction.value?.map((dataRow: any) => {
+                    dataRow.price = 0
+                    data.deductionItems?.map((val: any) => {
+                        if (val.itemCode == dataRow.itemCode) {
+                            dataRow.price = val.amount
+                        }
+                    })
+                }))
+             }
         }, { deep: true })
 
         // Watching the statusRowAdd property of the store.state.common object. If the value of

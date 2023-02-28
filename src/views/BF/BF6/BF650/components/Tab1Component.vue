@@ -27,7 +27,7 @@
                     <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -35,7 +35,7 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
+                    <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col>
@@ -102,7 +102,7 @@
             </a-spin>
         </div>
     </div>
-    <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="modalConfirmMail = false" :data="dataModalSave" />
+    <PopupConfirmSave :modalStatus="modalConfirmMail" @refresh="refetch" @closePopup="modalConfirmMail = false" :data="dataModalSave" />
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -178,6 +178,7 @@ export default defineComponent({
         })
         // =================== WATCH ====================
         watch(() => props.searchStep, () => {
+          console.log('dataSearch', dataSearch.value)
             dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
             dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
             if (dataSearch.value) {
@@ -185,6 +186,14 @@ export default defineComponent({
                 refetchTable()
             }
         }, { deep: true })
+
+        // watch beforeProduction of dataSearch
+        watch(() => dataSearch.value.beforeProduction, () => {
+          dataSearch.value.beforeProduction 
+            ? dataSearch.value.productionStatuses = [0, 1, 2, -1]
+            : dataSearch.value.productionStatuses = []
+        }, { deep: true })
+        
         // ================== FUNCTION ================== 
         const openModalSave = () => {
             modalConfirmMail.value = true
@@ -234,6 +243,10 @@ export default defineComponent({
                 watchFirstRun.value = false;
             }
         };
+        const refetch = () => {
+            trigger.value = true
+            refetchTable()
+        }
         return {
             customTextSummary,
             loadingTable,
@@ -246,8 +259,10 @@ export default defineComponent({
             selectionChanged, openModalSave,
             dateTime,
             productionStatusData,
+            refetch
         }
     }
 })
 </script> 
 <style scoped lang="scss" src="../style/style.scss"></style>
+

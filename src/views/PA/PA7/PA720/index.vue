@@ -183,13 +183,16 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
+    <!-- {{compareType2()}} compareType2 <br/>
+    {{compareType1()}} compareType1 <br/>
+    {{compareType}} compareType <br/> -->
     <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
         <DxButton :text="'귀 ' + inputDateTax"
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDateTax"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="isExpiredStatus"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="isExpiredStatus || statusParam.status == 20"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
@@ -459,12 +462,13 @@ export default defineComponent({
     const onFormDone = () => {
       changeFommDone.value++;
       formTaxRef.value.isEdit = true;
-      // c onsole.log(`output->`, formPA720.value.input.incomeId);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
     };
     const onDelDone = () => {
       changeFommDone.value++;
       taxPayRef.value.focusedRowKey = null;
+      taxPayRef.value.selectedRowKeys = [];
       resetForm();
     };
     watch(changeFommDone, () => {
@@ -474,6 +478,7 @@ export default defineComponent({
       if (emit) {
         changeFommDone.value++;
         taxPayRef.value.focusedRowKey = null;
+        taxPayRef.value.selectedRowKeys = [];
         resetForm();
       }
       modalEdit.value = false;
@@ -534,6 +539,7 @@ export default defineComponent({
       resetForm();
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
     };
@@ -566,16 +572,20 @@ export default defineComponent({
       if (ok) {
         let ele = document.getElementById('save-js') as HTMLInputElement;
         ele.click();
-        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       } else {
+        if(isClickMonthDiff.value){
+          onChangeMonth(changeMonthDataFake.value);
+          isClickMonthDiff.value = false;
+          compareType.value = 1;
+          return;
+        }
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
             // c onsole.log(`output-> toi dang o so 1`);
             addNewRow();
-            setTimeout(() => {
               taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-            }, 50);
+              taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
             return;
           }
         }
@@ -593,12 +603,16 @@ export default defineComponent({
     const editTax = async (emit: any, firsTimeRow: boolean) => {
       // c onsole.log(`output->firsTimeRow`,firsTimeRow)
       compareType.value = 2;
+      if(firsTimeRow){
+        formTaxRef.value.isEdit = true;
+        editTaxParam.value = emit;
+        return;
+      }
       if (isNewRowPA720.value) {
         if (compareType1()) {
-          if(!firsTimeRow){
-            await delNewRow();
-          }
+          await delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
+          taxPayRef.value.selectedRowKeys = [emit.incomeId];
           editTaxParam.value = emit;
           // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
           formTaxRef.value.isEdit = true;
@@ -641,7 +655,7 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
-    //---------------submit-------------------
+    //-----------------------submit-------------------------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const addItemClick = ref(true);
     const onSubmit = async () => {
@@ -649,14 +663,21 @@ export default defineComponent({
       setTimeout(() => {
         if (isErrorFormPA720.value) {
           taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+          taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
           addItemClick.value = !addItemClick.value;
           // c onsole.log(`error-back ve back ve form`, formPA720);
         } else {
           editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
           taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
+          taxPayRef.value.selectedRowKeys = compareType.value == 1 ? [formPA720.value.input.incomeId] : [editTaxParamFake.value.incomeId];
+          // c onsole.log(`error-back ve back ve form`, formPA720);
           store.state.common.isNewRowPA720 = false;
+          if(isClickMonthDiff.value){
+            onChangeMonth(changeMonthDataFake.value);
+            isClickMonthDiff.value = false ;
+          }
         }
-      }, 1000);
+      }, 800);
     };
     const onSave = async (e: any) => {
       var res = e.validationGroup.validate();
@@ -664,6 +685,8 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
         addItemClick.value = !addItemClick.value;
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       } else {
         store.commit('common/actionSavePA720');
         await onSubmit();
@@ -689,20 +712,31 @@ export default defineComponent({
     });
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
+    const changeMonthDataFake = ref();
+    const isClickMonthDiff = ref(false);
+    // fnc click month fake
+    const onChangeMonth=( obj: any )=>{
+      taxPayRef.value.firsTimeRow = true;
+        let datObj = {
+          imputedYear: obj?.imputedYear,
+          imputedMonth: obj?.imputedMonth,
+          paymentYear: obj?.paymentYear,
+          paymentMonth: obj?.paymentMonth,
+        };
+        store.state.common.processKeyPA720.processKey = datObj;
+        statusParam.value = { ...processKeyPA720.value, status: obj.status };
+        month.value = obj.imputedMonth;
+        store.state.common.isNewRowPA720 = false;
+    }
     // fnc click month
     const showDetailSelected = (obj: any) => {
-      taxPayRef.value.firsTimeRow = true;
-      let datObj = {
-        imputedYear: obj?.imputedYear,
-        imputedMonth: obj?.imputedMonth,
-        paymentYear: obj?.paymentYear,
-        paymentMonth: obj?.paymentMonth,
-      };
-      store.state.common.processKeyPA720.processKey = datObj;
-      statusParam.value = { ...processKeyPA720.value, status: obj.status };
-      // resetForm();
-      month.value = obj.imputedMonth;
-      store.state.common.isNewRowPA720 = false;
+      if(compareType2()){
+        onChangeMonth(obj);
+      }else {
+        rowChangeStatus.value = true;
+        changeMonthDataFake.value = obj;
+        isClickMonthDiff.value = true;
+      }
     };
 
     //-----------------check tag > 30 40 -------------------------
@@ -765,6 +799,9 @@ export default defineComponent({
       isNewRowPA720,
       onDelDone,
       isExpiredStatus,
+      compareType2,
+      compareType1,
+      compareType
     };
   },
 });

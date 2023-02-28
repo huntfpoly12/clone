@@ -215,6 +215,7 @@ import DeletePopupTaxPay from "./Popup/DeletePopupTaxPay.vue"
 import DeletePopupMidTerm from "./Popup/DeletePopupMidTerm.vue"
 import queries120 from '@/graphql/queries/PA/PA1/PA120/index';
 import { sampleDataIncomeWage } from "../utils/index"
+import { Message } from "@/configs/enum";
 
 export default defineComponent({
     components: {
@@ -370,14 +371,19 @@ export default defineComponent({
         actionUpdateDone(res => {
             store.state.common.loadingTableInfo++
             triggerDetail.value = true;
-            notification('success', '업데이트 완료!')
+            notification('success', Message.getMessage('COMMON', '106').message)
         })
         doneCreated(res => {
+            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
-            store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            // store.state.common.incomeId = res.data.createIncomeWage.incomeId
             store.state.common.loadingTableInfo++
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '101').message)
         })
 
         errorCreated(res => {
@@ -386,6 +392,9 @@ export default defineComponent({
         })
 
         // ===================WATCH==================================
+        watch(() => store.state.common.loadingFormData, (value) => {
+            triggerDetail.value = true;
+        })
         watch(() => dataConfigDeductions.value, (value) => {
             calculateTax();
             // store.state.common.statusChangeFormPrice = true;
@@ -576,6 +585,7 @@ export default defineComponent({
                     store.state.common.statusChangeFormEdit = false;
                     store.state.common.statusChangeFormPrice = false;
                 }, 200);
+                store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
             }
         })
         watch(resCalcIncomeWageTax, (value) => {

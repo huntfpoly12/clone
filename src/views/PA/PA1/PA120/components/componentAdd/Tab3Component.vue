@@ -19,8 +19,7 @@
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" caption="나이" cell-template="ageChange" />
-            <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
-              cell-template="basicDeductionChange" />
+            <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction" cell-template="basicDeductionChange" />
             <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
             <DxColumn alignment="left" caption="한부모" data-field="singleParent" cell-template="singleParentChange" />
             <DxColumn alignment="left" caption="경로 우대" data-field="senior" cell-template="SeniorChange" />
@@ -37,7 +36,7 @@
                 <a-space :size="10">
                   <a-tooltip color="black" placement="top">
                     <template #title>편집</template>
-                    <EditOutlined @click="actionEdit(data.data.index)" />
+                    <EditOutlined @click="actionEdit(data.data)" />
                   </a-tooltip>
                 </a-space>
               </div>
@@ -73,9 +72,9 @@
             <template #maternityAdoptionChange="{ data: cellData }">
               <div v-if="cellData.value">{{ maternityAndAdoption(cellData.value) }}</div>
             </template>
-            <!-- <template #consignmentRelationshipChange="{ data: cellData }">
+          <!-- <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
-            </template> -->
+              </template> -->
             <template #relationChange="{ data: cellData }">
               {{ $filters.formatRelation(cellData.value) }}
             </template>
@@ -94,7 +93,7 @@
               </a-form-item>
               <a-form-item label="배우자" label-align="right">
                 <div class="display-flex">
-                  <text-number-box width="200px" :value="womenSummary" :disabled="true" />
+                  <text-number-box width="200px" :value="basicDeductionSummary0" :disabled="true" />
                 </div>
               </a-form-item>
               <a-form-item label="20세이하" label-align="right">
@@ -152,14 +151,11 @@
         </div>
       </a-col>
     </a-row>
-    <popup-add-new-dependent :modalStatus="modalAddNewDependent" @closePopup="
-   modalAddNewDependent = false;
-    " :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData"
-      :key="newForm"></popup-add-new-dependent>
-    <PopupEditUpdateDependent :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-      @upDateData="updateData" :idRowIndex="idRowIndex" :idRowEdit="idRowEdit" :dataSourceLen="dataSource.length"
-      :key="idRowIndex">
-    </PopupEditUpdateDependent>
+    {{ relationAll }}
+    <popup-add-new-dependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false;" 
+      :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData" :key="newForm" :relationAll="relationAll"/>
+    <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
+      :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll"></PopupUpdateDependent>
   </div>
 </template>
 <script lang="ts">
@@ -181,18 +177,18 @@ import {
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue';
-import PopupEditUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue';
+import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue';
 import { EditOutlined } from '@ant-design/icons-vue';
 
 import { useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import { companyId, convertAge } from '@/helpers/commonFunction';
 import BtnCheck from '@/views/PA/PA1/PA120/components/btnCheck/BtnCheck.vue';
-import { basicDeduction,disabledType,maternityAndAdoption } from '../../utils/index'
+import { basicDeduction, disabledType, maternityAndAdoption } from '../../utils/index'
 export default defineComponent({
   components: {
     PopupAddNewDependent,
-    PopupEditUpdateDependent,
+    PopupUpdateDependent,
     DxDataGrid,
     EditOutlined,
     DxColumn,
@@ -222,7 +218,6 @@ export default defineComponent({
     const modalAddNewDependent = ref<boolean>(false);
     const modalEditStatus = ref<boolean>(false);
     const globalYear = computed(() => store.state.settings.globalYear);
-    const idRowIndex = ref();
 
     const originDataDetail = reactive({
       companyId: companyId,
@@ -234,7 +229,7 @@ export default defineComponent({
       originDataDetail
     );
     const relationSummary = ref();
-    const womenSummary = ref();
+    const basicDeductionSummary0 = ref();
     const basicDeductionSummary = ref();
     const basicDeductionSummary2 = ref();
     const descendantSummary = ref();
@@ -245,50 +240,55 @@ export default defineComponent({
     const maternityAdoptionSummary = ref();
     const editForm = ref();
     const idRowEdit = ref(props.employeeId);
-    const newForm = ref(0)
+    const newForm = ref(0);
+    const relationAll = ref();
     watch(result, (value) => {
       if (value) {
-        dataSource.value = value.getEmployeeWage.dependents;
+        let data = value.getEmployeeWage.dependents;
+        dataSource.value = data;
         trigger.value = false;
+        relationAll.value = data.map((item: any) =>({
+          value:item.relation
+        }))
         relationSummary.value =
-          dataSource.value.some((item: { relation: string | number }) => {
+          data.some((item: { relation: string | number }) => {
             return item.relation == 0;
           }) === true
             ? 'O'
             : '';
-        womenSummary.value =
-          dataSource.value.filter((item: any) => {
-            return item.women === true;
+        basicDeductionSummary0.value =
+          data.filter((item: any) => {
+            return item.basicDeduction == 2;
           }).length >= 1
             ? 'O'
             : '';
-        basicDeductionSummary.value = dataSource.value.filter((item: any) => {
+        basicDeductionSummary.value = data.filter((item: any) => {
           return item.basicDeduction == 3;
         }).length;
-        basicDeductionSummary2.value = dataSource.value.filter((item: any) => {
+        basicDeductionSummary2.value = data.filter((item: any) => {
           return item.basicDeduction == 4;
         }).length;
-        descendantSummary.value = dataSource.value.filter((item: any) => {
+        descendantSummary.value = data.filter((item: any) => {
           return item.descendant == true;
         }).length;
-        seniorSummary.value = dataSource.value.filter((item: any) => {
+        seniorSummary.value = data.filter((item: any) => {
           return item.senior == true;
         }).length;
-        disabledSummary.value = dataSource.value.filter((item: any) => {
+        disabledSummary.value = data.filter((item: any) => {
           return item.senior == 0;
         }).length;
-        disabledSummary.value = dataSource.value.filter((item: any) => {
+        disabledSummary.value = data.filter((item: any) => {
           return item.senior == 0;
         }).length;
-        womenSummary2.value = dataSource.value.filter((item: any) => {
+        womenSummary2.value = data.filter((item: any) => {
           return item.senior == 0;
         }).length;
-        singleParentSummary.value = dataSource.value.filter((item: any) => {
+        singleParentSummary.value = data.filter((item: any) => {
           return item.senior == true;
         }).length;
-        maternityAdoptionSummary.value = dataSource.value.filter(
+        maternityAdoptionSummary.value = data.filter(
           (item: any) => {
-            return item.senior == 0;
+            return item.maternityAdoption != '해당없음';
           }
         ).length;
       }
@@ -301,8 +301,9 @@ export default defineComponent({
       newForm.value++;
       //   editForm.value.onResetForm();
     };
+    const dependentItem = ref();
     const actionEdit = (val: any) => {
-      idRowIndex.value = val;
+      dependentItem.value = val;
       modalEditStatus.value = true;
     };
     watch(
@@ -344,7 +345,7 @@ export default defineComponent({
       hasStatus,
       updateData,
       relationSummary,
-      womenSummary,
+      basicDeductionSummary0,
       basicDeductionSummary,
       basicDeductionSummary2,
       descendantSummary,
@@ -354,13 +355,14 @@ export default defineComponent({
       singleParentSummary,
       maternityAdoptionSummary,
       editForm,
-      idRowIndex,
+      dependentItem,
       idRowEdit,
       loading,
       convertAge,
       newForm,
-      basicDeduction,maternityAndAdoption,
-      disabledType
+      basicDeduction, maternityAndAdoption,
+      disabledType,
+      relationAll
     };
   },
 });

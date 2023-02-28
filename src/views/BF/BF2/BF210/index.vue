@@ -8,7 +8,7 @@
                         <label class="lable-item">회원종류 :</label>
                         <DxSelectBox id="custom-templates" :data-source="productsValue" display-expr="name" value-expr="id"
                             item-template="item" :height="$config_styles.HeightInput" style="width:140px"
-                            field-template="field" @value-changed="changeValueType">
+                            field-template="field" @value-changed="changeValueType" :value="dataSearch.type">
                             <template #field="{ data }">
                                 <Field :fieldData="data" />
                             </template>
@@ -73,7 +73,11 @@
                         </div>
                     </template>
                     <template #button-template>
-                        <DxButton icon="plus" @click="openAddNewModal" />
+                        <a-tooltip placement="top" color="black">
+                            <template #title>신규</template>
+                            <div><DxButton icon="plus" @click="openAddNewModal" /></div>
+                        </a-tooltip>
+                        
                     </template>
                     <DxColumn data-field="active" caption="상태" css-class="cell-center" cell-template="check-box" />
                     <template #check-box="{ data }">
@@ -94,7 +98,7 @@
                     <DxColumn data-field="groupCode" caption="소속코드" />
                     <DxColumn data-field="groupName" caption="소속명" />
                     <DxColumn cell-template="pupop" :width="100" css-class="cell-center" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
                                 <a-tooltip color="black" placement="top">
@@ -107,7 +111,7 @@
                                 </a-tooltip>
                                 <a-tooltip color="black" placement="top">
                                     <template #title>로그인이력</template>
-                                    <login-outlined @click="modalLogin(data)" />
+                                    <LoginOutlined @click="modalLogin(data)" />
                                 </a-tooltip>
                             </a-space>
                         </div>
@@ -138,7 +142,7 @@ import AddNew210Poup from "./components/AddNew210Poup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import PopLogin from "./components/PopLogin.vue";
 import DxButton from "devextreme-vue/button";
-import { EditOutlined, HistoryOutlined } from "@ant-design/icons-vue";
+import { EditOutlined, HistoryOutlined, LoginOutlined } from "@ant-design/icons-vue";
 import DxSelectBox from 'devextreme-vue/select-box';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF2/BF210/index";
@@ -162,6 +166,7 @@ export default defineComponent({
         EditBF210Popup,
         HistoryPopup,
         PopLogin,
+        LoginOutlined,
         DxSelectBox,
         Field,
     },
