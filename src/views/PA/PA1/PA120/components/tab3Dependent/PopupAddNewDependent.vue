@@ -220,6 +220,7 @@ export default defineComponent({
     onDoneAdd((res) => {
       notification('success', messageSave);
       emit('upDateData');
+      setModalVisible();
     });
 
     onError((error) => {
@@ -242,7 +243,6 @@ export default defineComponent({
             },
           };
           createEmployeeWageDependent(dataNew);
-          setModalVisible();
         }
       }
     };
