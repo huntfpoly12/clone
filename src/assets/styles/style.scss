@@ -176,6 +176,16 @@ $lenght: 50;
 .custom-grade-cell {
   margin: 3px 10px;
 }
+
+.money-column {
+  text-align: right !important;
+}
 .dx-button-ghost {
   border: none;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

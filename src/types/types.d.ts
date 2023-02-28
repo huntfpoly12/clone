@@ -100,6 +100,177 @@ export type AuthenticationPaginatedObject = {
   totalCount: Scalars['Int'];
 };
 
+/** Backer (후원자) */
+export type Backer = {
+  __typename?: 'Backer';
+  /** activation status (활성여부) */
+  active: Scalars['Boolean'];
+  /** extended address (확장주소) */
+  addressExtend?: Maybe<Scalars['String']>;
+  /** backer code (후원자코드) */
+  backerCode: Scalars['String'];
+  /** business registration number (사업자등록번호) */
+  bizNumber?: Maybe<Scalars['String']>;
+  /** generation date (생성일) */
+  createdAt: Scalars['DateScalar'];
+  /** generators (생성자) */
+  createdBy: Scalars['String'];
+  /** donation organization status (기부금단체여부) */
+  donationOrganization?: Maybe<Scalars['Boolean']>;
+  /** fundraising institution status (모금기관여부) */
+  fundrasingInstitution?: Maybe<Scalars['Boolean']>;
+  /** ip address (IP주소) */
+  ip: Scalars['String'];
+  /** backer name (후원자명) */
+  name: Scalars['String'];
+  /** type of non-profit corporation (비영리법인구분) */
+  nonProfitCorpType?: Maybe<Scalars['Int']>;
+  /** other contents (기타내용) */
+  otherContents?: Maybe<Scalars['String']>;
+  /** contact phone number (연락처) */
+  phone?: Maybe<Scalars['String']>;
+  /** decrypted resident registration number (주민등록번호) */
+  residentId?: Maybe<Scalars['String']>;
+  /** road name address (도로명주소) */
+  roadAddress?: Maybe<Scalars['String']>;
+  /** type of backer (후원자구분) */
+  type: Scalars['Int'];
+  /** revised date (수정일) */
+  updatedAt: Scalars['DateScalar'];
+  /** modifiers (수정자) */
+  updatedBy: Scalars['String'];
+  /** use status (이용여부) */
+  use: Scalars['Boolean'];
+};
+
+/** Backer registration input (후원자 등록 입력) */
+export type BackerCreateInput = {
+  /** extended address (확장주소) */
+  addressExtend?: InputMaybe<Scalars['String']>;
+  /** business registration number (사업자등록번호) */
+  bizNumber?: InputMaybe<Scalars['String']>;
+  /** donation organization status (기부금단체여부) */
+  donationOrganization?: InputMaybe<Scalars['Boolean']>;
+  /** fundraising institution status (모금기관여부) */
+  fundrasingInstitution?: InputMaybe<Scalars['Boolean']>;
+  /** backer name (후원자명) */
+  name: Scalars['String'];
+  /** type of non-profit corporation (비영리법인구분) */
+  nonProfitCorpType?: InputMaybe<Scalars['Int']>;
+  /** other contents (기타내용) */
+  otherContents?: InputMaybe<Scalars['String']>;
+  /** contact phone number (연락처) */
+  phone?: InputMaybe<Scalars['String']>;
+  /** resident registration number (주민등록번호) */
+  residentId?: InputMaybe<Scalars['String']>;
+  /** road name address (도로명주소) */
+  roadAddress?: InputMaybe<Scalars['String']>;
+  /** type of backer (후원자구분) */
+  type: Scalars['Int'];
+  /** use status (이용여부) */
+  use: Scalars['Boolean'];
+  /** registration year (등록연도) */
+  year: Scalars['Int'];
+};
+
+/** Backer change history (후원자 변경이력) */
+export type BackerLog = {
+  __typename?: 'BackerLog';
+  /** activation status (활성여부) */
+  active: Scalars['Boolean'];
+  /** extended address (확장주소) */
+  addressExtend?: Maybe<Scalars['String']>;
+  /** backer code (후원자코드) */
+  backerCode: Scalars['String'];
+  /** business registration number (사업자등록번호) */
+  bizNumber?: Maybe<Scalars['String']>;
+  /** generation date (생성일) */
+  createdAt: Scalars['DateScalar'];
+  /** generators (생성자) */
+  createdBy: Scalars['String'];
+  /** donation organization status (기부금단체여부) */
+  donationOrganization?: Maybe<Scalars['Boolean']>;
+  /** fundraising institution status (모금기관여부) */
+  fundrasingInstitution?: Maybe<Scalars['Boolean']>;
+  /** ip address (IP주소) */
+  ip: Scalars['String'];
+  /** recorded date (기록일) */
+  loggedAt: Scalars['DateScalar'];
+  /** backer name (후원자명) */
+  name: Scalars['String'];
+  /** type of non-profit corporation (비영리법인구분) */
+  nonProfitCorpType?: Maybe<Scalars['Int']>;
+  /** other contents (기타내용) */
+  otherContents?: Maybe<Scalars['String']>;
+  /** contact phone number (연락처) */
+  phone?: Maybe<Scalars['String']>;
+  /** remarks (비고) */
+  remark: Scalars['String'];
+  /** road name address (도로명주소) */
+  roadAddress?: Maybe<Scalars['String']>;
+  /** timestamp (타임스탬프) */
+  ts: Scalars['Float'];
+  /** type of backer (후원자구분) */
+  type: Scalars['Int'];
+  /** revised date (수정일) */
+  updatedAt: Scalars['DateScalar'];
+  /** modifiers (수정자) */
+  updatedBy: Scalars['String'];
+  /** use status (이용여부) */
+  use: Scalars['Boolean'];
+};
+
+/** Client paginated object (후원자 페이징) */
+export type BackerPaginatedObject = {
+  __typename?: 'BackerPaginatedObject';
+  /** Backer list (후원자 목록) */
+  datas: Array<Backer>;
+  /** page number (페이지번호) */
+  page: Scalars['Int'];
+  /** number of page rows (페이지행수) */
+  rows: Scalars['Int'];
+  /** total list count (전체목록건수) */
+  totalCount: Scalars['Int'];
+};
+
+/** Backer search filter (후원자 검색 필터) */
+export type BackerSearchFilter = {
+  /** include non use (이용중지포함여부) */
+  includeNonUse: Scalars['Boolean'];
+  /** backer name (후원자명) */
+  name?: InputMaybe<Scalars['String']>;
+  /** page number (페이지번호) */
+  page?: InputMaybe<Scalars['Int']>;
+  /** contact phone number (연락처) */
+  phone?: InputMaybe<Scalars['String']>;
+  /** number of page rows (페이지행수) */
+  rows: Scalars['Int'];
+  /** type of backer (후원자구분) */
+  type?: InputMaybe<Scalars['Int']>;
+};
+
+/** Backer correction input (후원자 수정 입력) */
+export type BackerUpdateInput = {
+  /** extended address (확장주소) */
+  addressExtend?: InputMaybe<Scalars['String']>;
+  /** business registration number (사업자등록번호) */
+  bizNumber?: InputMaybe<Scalars['String']>;
+  /** donation organization status (기부금단체여부) */
+  donationOrganization?: InputMaybe<Scalars['Boolean']>;
+  /** fundraising institution status (모금기관여부) */
+  fundrasingInstitution?: InputMaybe<Scalars['Boolean']>;
+  /** backer name (후원자명) */
+  name: Scalars['String'];
+  /** contact phone number (연락처) */
+  phone?: InputMaybe<Scalars['String']>;
+  /** resident registration number (주민등록번호) */
+  residentId?: InputMaybe<Scalars['String']>;
+  /** road name address (도로명주소) */
+  roadAddress?: InputMaybe<Scalars['String']>;
+  /** use status (이용여부) */
+  use: Scalars['Boolean'];
+};
+
 /** Bankbook (통장) */
 export type Bankbook = {
   __typename?: 'Bankbook';
@@ -4515,13 +4686,15 @@ export type MajorInsuranceCompanyEmployeeAcquisitionDependentInput = {
   /** name (이름) */
   name: Scalars['String'];
   /** foreign nationality number (외국인국적번호) */
-  nationalityNumber?: InputMaybe<Scalars['Int']>;
+  nationalityNumber?: InputMaybe<Scalars['String']>;
   /** dependent relationship code (피부양자관계코드) */
-  relationCode: Scalars['Int'];
+  relationCode: Scalars['String'];
   /** resident registration number / foreigner number (주민등록번호/외국인번호) / Format : 13자리 숫자 */
   residentId: Scalars['String'];
   /** period of stay [YYYYMMDD] (체류기간/외국인한정) */
-  stayPeriod?: InputMaybe<Scalars['Int']>;
+  stayPeriodFrom?: InputMaybe<Scalars['Int']>;
+  /** period of stay [YYYYMMDD] (체류기간/외국인한정) */
+  stayPeriodTo?: InputMaybe<Scalars['Int']>;
   /** the qualifications required to stay (체류자격/외국인한정) */
   stayQualification?: InputMaybe<Scalars['String']>;
 };
@@ -4545,7 +4718,7 @@ export type MajorInsuranceCompanyEmployeeAcquisitionInput = {
   /** employeement insurance report status (고용보험신고여부) */
   employeementInsuranceReport: Scalars['Boolean'];
   /** health insurance acquisition code (건강보험 취득부호) */
-  healthInsuranceAcquisitionCode?: InputMaybe<Scalars['Int']>;
+  healthInsuranceAcquisitionCode?: InputMaybe<Scalars['String']>;
   /** health insurance report status (건강보험신고여부) */
   healthInsuranceReport: Scalars['Boolean'];
   /** whether dependents are included (피부양자포함여부) */
@@ -4559,15 +4732,15 @@ export type MajorInsuranceCompanyEmployeeAcquisitionInput = {
   /** job security fund support application status (일자리안정자금지원신청여부) */
   jobSecurityFundSupportApplication?: InputMaybe<Scalars['Boolean']>;
   /** job type code (직종코드) */
-  jobTypeCode?: InputMaybe<Scalars['Int']>;
+  jobTypeCode?: InputMaybe<Scalars['String']>;
   /** national pension acquisition code (국민연금 취득부호) */
-  nationalPensionAcquisitionCode?: InputMaybe<Scalars['Int']>;
+  nationalPensionAcquisitionCode?: InputMaybe<Scalars['String']>;
   /** national pension report status (국민연금신고여부) */
   nationalPensionReport: Scalars['Boolean'];
   /** foreign nationality number (외국인국적번호) */
-  nationalityNumber?: InputMaybe<Scalars['Int']>;
+  nationalityNumber?: InputMaybe<Scalars['String']>;
   /** the qualifications required to stay (체류자격) */
-  stayQualification?: InputMaybe<Scalars['Int']>;
+  stayQualification?: InputMaybe<Scalars['String']>;
   /** weekly prescribed working hours (주간 규정 근무시간) */
   weeklyWorkingHours?: InputMaybe<Scalars['Int']>;
 };
@@ -4690,8 +4863,6 @@ export type MajorInsuranceCompanyEmployeeLeaveOfAbsence = {
 
 /** major insurance employees leave of absence input (4대보험직원휴직 입력) */
 export type MajorInsuranceCompanyEmployeeLeaveOfAbsenceInput = {
-  /** acquisition payment exception reason code (국민연금 납부예외사유부호) */
-  acquisitionPaymentExceptionReasonCode?: InputMaybe<Scalars['String']>;
   /** employee number (사번) */
   employeeId: Scalars['Int'];
   /** employee type (직원유형) */
@@ -4712,6 +4883,8 @@ export type MajorInsuranceCompanyEmployeeLeaveOfAbsenceInput = {
   leaveOfAbsenceRequestFileStorageId?: InputMaybe<Scalars['Int']>;
   /** national pension report status (국민연금신고여부) */
   nationalPensionReport: Scalars['Boolean'];
+  /** acquisition payment exception reason code (국민연금 납부예외사유부호) */
+  pensionPaymentExceptionReasonCode?: InputMaybe<Scalars['String']>;
   /** start date of leave (휴직시작일) */
   startDateOfLeave: Scalars['String'];
   /** type of leave ( 휴직유형 ) */
@@ -4923,6 +5096,138 @@ export type MajorInsuranceCompanyEmployeeLossLog = {
   workingStatus: Scalars['Int'];
 };
 
+/** Major insurance company employee return to work (4대보험직원복직) */
+export type MajorInsuranceCompanyEmployeeReturnToWork = {
+  __typename?: 'MajorInsuranceCompanyEmployeeReturnToWork';
+  /** acceptance number (접수번호) */
+  accedpedNumber?: Maybe<Scalars['String']>;
+  /** acceptance date (접수일) */
+  acceptedAt?: Maybe<Scalars['DateScalar']>;
+  /** activation status (활성여부) */
+  active: Scalars['Boolean'];
+  /** company serial number (사업자일련번호) */
+  companyId: Scalars['Int'];
+  /** completion date (완료일) */
+  completedAt?: Maybe<Scalars['DateScalar']>;
+  /** generation date (생성일) */
+  createdAt: Scalars['DateScalar'];
+  /** generators (생성자) */
+  createdBy: Scalars['String'];
+  /** employee number (사번) */
+  employeeId: Scalars['Int'];
+  /** employee type (직원유형) */
+  employeeType: Scalars['Int'];
+  /** employeement insurance report status (고용보험신고여부) */
+  employeementInsuranceReport: Scalars['Boolean'];
+  /** health insurance report status (건강보험신고여부) */
+  healthInsuranceReport: Scalars['Boolean'];
+  /** imputed year (귀속연도) */
+  imputedYear: Scalars['Int'];
+  /** industrial accident insurance report status (산재보험신고여부) */
+  industrialAccidentInsuranceReport: Scalars['Boolean'];
+  /** ip address (IP주소) */
+  ip: Scalars['String'];
+  /** memo (메모) */
+  memo?: Maybe<Scalars['String']>;
+  /** name (이름) */
+  name: Scalars['String'];
+  /** national pension report status (국민연금신고여부) */
+  nationalPensionReport: Scalars['Boolean'];
+  /** registration date (등록일) */
+  registeredAt: Scalars['DateScalar'];
+  /** resident registration number / foreigner number (주민등록번호 / 외국인번호) */
+  residentId: Scalars['String'];
+  /** major insurance company employee type (4대보험직원 유형) */
+  type: Scalars['Int'];
+  /** revised date (수정일) */
+  updatedAt: Scalars['DateScalar'];
+  /** modifiers (수정자) */
+  updatedBy: Scalars['String'];
+  /** major insurance company employee work serial number (4대보험직원업무 일련번호) */
+  workId: Scalars['Int'];
+  /** Major insurance working status (4대보험 업무상태) */
+  workingStatus: Scalars['Int'];
+};
+
+/** major insurance employees return to work input (4대보험직원복직 입력) */
+export type MajorInsuranceCompanyEmployeeReturnToWorkInput = {
+  /** employee number (사번) */
+  employeeId: Scalars['Int'];
+  /** employee type (직원유형) */
+  employeeType: Scalars['Int'];
+  /** health insurance report status (건강보험신고여부) */
+  healthInsuranceReport: Scalars['Boolean'];
+  /** health insurance salary payment year during leave of absence (건강보험 휴직기간 지급받은보수) */
+  healthSalaryPaymentYearDuringLeaveOfAbsence?: InputMaybe<Array<MajorInsuranceCompanyEmployeeSalaryDuringLeaveOfAbsenceInput>>;
+  /** health insurance installment payments count (건강보험 휴직기간 보수 분할납부횟수) */
+  heathInstallmentPaymentCount?: InputMaybe<Scalars['Int']>;
+  /** national pension report status (국민연금신고여부) */
+  nationalPensionReport: Scalars['Boolean'];
+  /** pension payment at return month (국민연금 재개월납부희망여부) */
+  pensionPaymentAtReturnMonth?: InputMaybe<Scalars['Boolean']>;
+  /** Scheduled date of resumption of payment ( 납부재개예정일 ) */
+  returnDate: Scalars['String'];
+  /** salary after return ( 복귀후 급여 ) */
+  salaryAfterReturn: Scalars['Int'];
+};
+
+/** Major insurance company employee return to work change history (4대보험직원복직 변경이력) */
+export type MajorInsuranceCompanyEmployeeReturnToWorkLog = {
+  __typename?: 'MajorInsuranceCompanyEmployeeReturnToWorkLog';
+  /** acceptance number (접수번호) */
+  accedpedNumber?: Maybe<Scalars['String']>;
+  /** acceptance date (접수일) */
+  acceptedAt?: Maybe<Scalars['DateScalar']>;
+  /** activation status (활성여부) */
+  active: Scalars['Boolean'];
+  /** company serial number (사업자일련번호) */
+  companyId: Scalars['Int'];
+  /** completion date (완료일) */
+  completedAt?: Maybe<Scalars['DateScalar']>;
+  /** generation date (생성일) */
+  createdAt: Scalars['DateScalar'];
+  /** generators (생성자) */
+  createdBy: Scalars['String'];
+  /** employee number (사번) */
+  employeeId: Scalars['Int'];
+  /** employee type (직원유형) */
+  employeeType: Scalars['Int'];
+  /** employeement insurance report status (고용보험신고여부) */
+  employeementInsuranceReport: Scalars['Boolean'];
+  /** health insurance report status (건강보험신고여부) */
+  healthInsuranceReport: Scalars['Boolean'];
+  /** imputed year (귀속연도) */
+  imputedYear: Scalars['Int'];
+  /** industrial accident insurance report status (산재보험신고여부) */
+  industrialAccidentInsuranceReport: Scalars['Boolean'];
+  /** ip address (IP주소) */
+  ip: Scalars['String'];
+  /** recorded date (기록일) */
+  loggedAt: Scalars['DateScalar'];
+  /** memo (메모) */
+  memo?: Maybe<Scalars['String']>;
+  /** name (이름) */
+  name: Scalars['String'];
+  /** national pension report status (국민연금신고여부) */
+  nationalPensionReport: Scalars['Boolean'];
+  /** registration date (등록일) */
+  registeredAt: Scalars['DateScalar'];
+  /** remarks (비고) */
+  remark: Scalars['String'];
+  /** timestamp (타임스탬프) */
+  ts: Scalars['Float'];
+  /** major insurance company employee type (4대보험직원 유형) */
+  type: Scalars['Int'];
+  /** revised date (수정일) */
+  updatedAt: Scalars['DateScalar'];
+  /** modifiers (수정자) */
+  updatedBy: Scalars['String'];
+  /** major insurance company employee work serial number (4대보험직원업무 일련번호) */
+  workId: Scalars['Int'];
+  /** Major insurance working status (4대보험 업무상태) */
+  workingStatus: Scalars['Int'];
+};
+
 /** Major insurance company employee salarychange (4대보험 직원 보수변경) */
 export type MajorInsuranceCompanyEmployeeSalaryChange = {
   __typename?: 'MajorInsuranceCompanyEmployeeSalaryChange';
@@ -5055,6 +5360,14 @@ export type MajorInsuranceCompanyEmployeeSalaryChangeLog = {
   workId: Scalars['Int'];
   /** Major insurance working status (4대보험 업무상태) */
   workingStatus: Scalars['Int'];
+};
+
+/** major insurance employees salary during leave ob absence input (4대보험직원 휴직기간 지급받은 보수정보 입력) */
+export type MajorInsuranceCompanyEmployeeSalaryDuringLeaveOfAbsenceInput = {
+  /** total salary payment (보수총액) */
+  totalSalary: Scalars['Int'];
+  /** salary payment year (보수 지급 년도) */
+  year: Scalars['String'];
 };
 
 /** Major insurance company join (4대보험 사업장가입) */
@@ -5640,6 +5953,24 @@ export type Mutation = {
    */
   cancelMajorInsuranceCompanyEmployeeLoss: MajorInsuranceCompanyEmployeeLoss;
   /**
+   * The major insurance employees return to work is canceled (4대보험직원복직을 취소한다).
+   *
+   * Return (반환) : Major insurance company employee return to work (4대보험직원복직)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (write)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
+   *
+   * Exception (예외) / 404 : If the major insurance employees return to work does not exist (4대보험직원복직이 존재하지 않을 경우)
+   *
+   * Exception (예외) / 412 : Where major insurance work have already been accepted (4대보험업무가 이미 접수된 경우)
+   */
+  cancelMajorInsuranceCompanyEmployeeReturnToWork: MajorInsuranceCompanyEmployeeReturnToWork;
+  /**
    * The salary change of major insurance employees is canceled (4대보험직원상실을 취소한다).
    *
    * Return (반환) : Major insurance company employee salary change (4대보험직원보수변경)
@@ -5975,6 +6306,20 @@ export type Mutation = {
    */
   copyIncomeWages: Array<IncomeWage>;
   /**
+   * Create a backer (후원자를 생성한다).
+   *
+   * Return (반환) : Backer (후원자)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.ACCOUNTING_WORK (write)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Work role exception (업무역할예외)
+   *
+   * Exception (예외) / 409 : Where there is a backer with the same resident registration number / business registration number (동일한 주민등록번호 / 사업자등록번호의 후원자가 존재할 경우)
+   */
+  createBacker: Backer;
+  /**
    * Register a bankbook (통장을 등록한다).
    *
    * Return (반환) : Bankbook (통장)
@@ -6256,6 +6601,22 @@ export type Mutation = {
    * Exception (예외) / 406 : Where there is no employee (직원이 존재하지 않을 경우)
    */
   createMajorInsuranceCompanyEmployeeLoss: MajorInsuranceCompanyEmployeeLoss;
+  /**
+   * Register the major insurance employees return to work (4대보험직원복직을 등록한다).
+   *
+   * Return (반환) : Major insurance company employee return to work (4대보험직원복직)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (write)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
+   *
+   * Exception (예외) / 406 : Where there is no employee (직원이 존재하지 않을 경우)
+   */
+  createMajorInsuranceCompanyEmployeeReturnToWork: MajorInsuranceCompanyEmployeeReturnToWork;
   /**
    * Register the salary change of major insurance employees (4대보험직원상실을 등록한다).
    *
@@ -7175,6 +7536,22 @@ export type Mutation = {
    */
   sendTaxWithholdingStatusReportEmail: Scalars['Int'];
   /**
+   * Modify the backer (후원자를 수정한다).
+   *
+   * Return (반환) : Backer (후원자)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.ACCOUNTING_WORK (write)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Work role exception (업무역할예외)
+   *
+   * Exception (예외) / 404 : If backer does not exist (후원자가 존재하지 않을 경우)
+   *
+   * Exception (예외) / 409 : Where there is a backer with the same resident registration number / business registration number (동일한 주민등록번호 / 사업자등록번호의 후원자가 존재할 경우)
+   */
+  updateBacker: Backer;
+  /**
    * Modify a bankbook (통장을 수정한다).
    *
    * Return (반환) : Bankbook (통장)
@@ -7212,8 +7589,6 @@ export type Mutation = {
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    *
    * Exception (예외) / 404 : If company information does not exist (사업자 정보가 존재하지 않는 경우)
-   *
-   * Exception (예외) / 406 : If the data you want to modify is not valid (수정할 데이터가 유효하지 않는 경우)
    */
   updateCompany: Company;
   /**
@@ -7652,6 +8027,13 @@ export type MutationCancelMajorInsuranceCompanyEmployeeLossArgs = {
 };
 
 
+export type MutationCancelMajorInsuranceCompanyEmployeeReturnToWorkArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+  workId: Scalars['Int'];
+};
+
+
 export type MutationCancelMajorInsuranceCompanyEmployeeSalaryChangeArgs = {
   companyId: Scalars['Int'];
   imputedYear: Scalars['Int'];
@@ -7797,6 +8179,12 @@ export type MutationCopyIncomeWagesArgs = {
 };
 
 
+export type MutationCreateBackerArgs = {
+  companyId: Scalars['Int'];
+  input: BackerCreateInput;
+};
+
+
 export type MutationCreateBankbookArgs = {
   bankbookInput: BankbookCreateInput;
   companyId: Scalars['Int'];
@@ -7914,6 +8302,13 @@ export type MutationCreateMajorInsuranceCompanyEmployeeLossArgs = {
   companyId: Scalars['Int'];
   imputedYear: Scalars['Int'];
   input: MajorInsuranceCompanyEmployeeLossInput;
+};
+
+
+export type MutationCreateMajorInsuranceCompanyEmployeeReturnToWorkArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+  input: MajorInsuranceCompanyEmployeeReturnToWorkInput;
 };
 
 
@@ -8344,6 +8739,13 @@ export type MutationSendTaxWithholdingStatusReportEmailArgs = {
 };
 
 
+export type MutationUpdateBackerArgs = {
+  backerCode: Scalars['String'];
+  companyId: Scalars['Int'];
+  input: BackerUpdateInput;
+};
+
+
 export type MutationUpdateBankbookArgs = {
   bankbookId: Scalars['Int'];
   bankbookInput: BankbookUpdateInput;
@@ -8362,10 +8764,10 @@ export type MutationUpdateClientArgs = {
 
 
 export type MutationUpdateCompanyArgs = {
-  cmsBank?: InputMaybe<CompanyCmsBankInput>;
-  detail?: InputMaybe<CompanyDetailInput>;
+  cmsBank: CompanyCmsBankInput;
+  detail: CompanyDetailInput;
   id: Scalars['Int'];
-  president?: InputMaybe<CompanyPresidentInput>;
+  president: CompanyPresidentInput;
 };
 
 
@@ -8865,6 +9267,32 @@ export type Query = {
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    */
   getAuthentications: AuthenticationPaginatedObject;
+  /**
+   * Return the backer (후원자를 반환한다).
+   *
+   * Return (반환) : Backer (후원자)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.ACCOUNTING_WORK (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Work role exception (업무역할예외)
+   *
+   * Exception (예외) / 404 : If backer does not exist (후원자가 존재하지 않을 경우)
+   */
+  getBacker: Backer;
+  /**
+   * Returns the change history of the backer (후원자의 변경이력을 반환한다).
+   *
+   * Return (반환) : change history of the backer (후원자의 변경이력)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.ACCOUNTING_WORK (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Work role exception (업무역할예외)
+   */
+  getBackerLogs: Array<BackerLog>;
   /**
    * Return the bankbook (통장을 반환한다).
    *
@@ -9746,6 +10174,16 @@ export type Query = {
    */
   getIncomesForTaxWithholdingStatusReport: Array<IncomeForTaxWithholdingStatusReport>;
   /**
+   * Returns local income tax for electronic filing (전자신고를 위한 지방소득세를 반환한다 / 귀속연월).
+   *
+   * Return (반환) : Withholding tax performance report (원천징수이행상황신고서)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   */
+  getLocalIncomeTaxElectronicFilings: Array<LocalIncomeTaxElectronicFiling>;
+  /**
    * Return the acquisition of the major insurance employees (4대보험직원취득을 반환한다).
    *
    * Return (반환) : Major insurance company employee acquisition (4대보험직원취득)
@@ -9943,6 +10381,72 @@ export type Query = {
    * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
    */
   getMajorInsuranceCompanyEmployeeLosses: Array<MajorInsuranceCompanyEmployeeLoss>;
+  /**
+   * Return the the major insurance employees return to work (4대보험직원복직을 반환한다).
+   *
+   * Return (반환) : Major insurance company employee return to work (4대보험직원복직)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (read)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.MAJOR_INSURANCE_WORK_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
+   *
+   * Exception (예외) / 404 : If the major insurance employees return to work does not exist (4대보험직원복직이 존재하지 않을 경우)
+   */
+  getMajorInsuranceCompanyEmployeeReturnToWork: MajorInsuranceCompanyEmployeeReturnToWork;
+  /**
+   * Return the URL of the report viewer for faxing the major insurance employees return to work (4대보험직원복직 팩스신고용 리포트 뷰어 URL을 반환한다).
+   *
+   * Return (반환) : URL of the report viewer for faxing the major insurance employees return to work (4대보험직원복직 팩스신고용 리포트 뷰어 URL)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (write)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.MAJOR_INSURANCE_WORK_MANAGE (write)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 404 : If the major insurance employees return to work does not exist (4대보험직원복직이 존재하지 않을 경우)
+   */
+  getMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrl: Scalars['String'];
+  /**
+   * Return the major insurance employees return to work change history (4대보험직원복직 변경이력을 반환한다).
+   *
+   * Return (반환) : Major insurance company employee return to work change history (4대보험직원복직 변경이력)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (read)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.MAJOR_INSURANCE_WORK_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
+   *
+   * Exception (예외) / 404 : If the major insurance employees return to work does not exist (4대보험직원복직이 존재하지 않을 경우)
+   */
+  getMajorInsuranceCompanyEmployeeReturnToWorkLogs: Array<MajorInsuranceCompanyEmployeeReturnToWorkLog>;
+  /**
+   * Returns the list of major insurance employees return to work (4대보험직원복직 목록을 반환한다).
+   *
+   * Return (반환) : Major insurance company employee return to work list (4대보험직원복직 목록)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.WITHHOLDING_WORK (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Withholding role exception (원천역할예외)
+   *
+   * Exception (예외) / 403 : Major insurance role exception (4대보험역할예외)
+   */
+  getMajorInsuranceCompanyEmployeeReturnToWorks: Array<MajorInsuranceCompanyEmployeeReturnToWork>;
   /**
    * Return the salary change of the major insurance employees (4대보험직원상실을 반환한다).
    *
@@ -10602,6 +11106,16 @@ export type Query = {
    */
   getWithholdingConfigPayItemsLogs: Array<WithholdingConfigPayItemLog>;
   /**
+   * Returns withholding tax for electronic filing (전자신고를 위한 원천세를 반환한다 / 귀속연월).
+   *
+   * Return (반환) : Withholding tax electronic filing list(원천세 전자신고 목록)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   */
+  getWithholdingTaxElectronicFilings: Array<WithholdingTaxElectronicFiling>;
+  /**
    * Check whether the sales representative name is correctable (수정가능한 영업자명인지 검사한다).
    *
    * Return (반환) : true / false
@@ -10679,6 +11193,18 @@ export type Query = {
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    */
   me: MyUserInfo;
+  /**
+   * Return the list of backers (후원자목록을 반환한다).
+   *
+   * Return (반환) : Backer paginated object (후원자 페이징)
+   *
+   * Necessary Role (필요역할) : WorkScreenRole.ACCOUNTING_WORK (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   *
+   * Exception (예외) / 403 : Work role exception (업무역할예외)
+   */
+  searchBackers: BackerPaginatedObject;
   /**
    * Return the list of clients (거래처목록을 반환한다).
    *
@@ -10918,6 +11444,16 @@ export type Query = {
    */
   searchTaxWithholdingStatusReports: TaxWithholdingStatusReportPaginatedObject;
   /**
+   * Search for a list of withholding performance reports (원천징수이행상황신고서 목록을 검색한다 / 귀속연월).
+   *
+   * Return (반환) : List of withholding tax performance reports (원천징수이행상황신고서 목록)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   */
+  searchTaxWithholdingStatusReportsByImputedYearMonth: Array<TaxWithholdingStatusReport>;
+  /**
    * Search the list of user views (회원뷰 목록을 검색한다).
    *
    * Return (반환) : User view paginated object (회원뷰 페이징)
@@ -11048,6 +11584,18 @@ export type QueryFindUsernameArgs = {
 export type QueryGetAuthenticationsArgs = {
   filter: PaginatedFilter;
   userId: Scalars['Int'];
+};
+
+
+export type QueryGetBackerArgs = {
+  backerCode: Scalars['String'];
+  companyId: Scalars['Int'];
+};
+
+
+export type QueryGetBackerLogsArgs = {
+  backerCode: Scalars['String'];
+  companyId: Scalars['Int'];
 };
 
 
@@ -11489,6 +12037,12 @@ export type QueryGetIncomesForTaxWithholdingStatusReportArgs = {
 };
 
 
+export type QueryGetLocalIncomeTaxElectronicFilingsArgs = {
+  imputedMonth: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+};
+
+
 export type QueryGetMajorInsuranceCompanyEmployeeAcquisitionArgs = {
   companyId: Scalars['Int'];
   imputedYear: Scalars['Int'];
@@ -11565,6 +12119,33 @@ export type QueryGetMajorInsuranceCompanyEmployeeLossLogsArgs = {
 
 
 export type QueryGetMajorInsuranceCompanyEmployeeLossesArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+};
+
+
+export type QueryGetMajorInsuranceCompanyEmployeeReturnToWorkArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+  workId: Scalars['Int'];
+};
+
+
+export type QueryGetMajorInsuranceCompanyEmployeeReturnToWorkFaxFilingReportViewUrlArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+  workId: Scalars['Int'];
+};
+
+
+export type QueryGetMajorInsuranceCompanyEmployeeReturnToWorkLogsArgs = {
+  companyId: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+  workId: Scalars['Int'];
+};
+
+
+export type QueryGetMajorInsuranceCompanyEmployeeReturnToWorksArgs = {
   companyId: Scalars['Int'];
   imputedYear: Scalars['Int'];
 };
@@ -11858,6 +12439,12 @@ export type QueryGetWithholdingConfigPayItemsLogsArgs = {
 };
 
 
+export type QueryGetWithholdingTaxElectronicFilingsArgs = {
+  imputedMonth: Scalars['Int'];
+  imputedYear: Scalars['Int'];
+};
+
+
 export type QueryIsSalesRepresentativeChangableNameArgs = {
   id: Scalars['Int'];
   name: Scalars['String'];
@@ -11892,6 +12479,12 @@ export type QueryIsSubscriptionRequestRegistableBizNumberArgs = {
 
 export type QueryIsUserRegistableUsernameArgs = {
   username: Scalars['String'];
+};
+
+
+export type QuerySearchBackersArgs = {
+  companyId: Scalars['Int'];
+  filter: BackerSearchFilter;
 };
 
 
@@ -12014,6 +12607,12 @@ export type QuerySearchSubscriptionRequestsArgs = {
 
 export type QuerySearchTaxWithholdingStatusReportsArgs = {
   filter: TaxWithholdingStatusReportSearchFilter;
+};
+
+
+export type QuerySearchTaxWithholdingStatusReportsByImputedYearMonthArgs = {
+  imputedMonth: Scalars['Int'];
+  imputedYear: Scalars['Int'];
 };
 
 

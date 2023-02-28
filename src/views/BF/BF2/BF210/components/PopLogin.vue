@@ -6,7 +6,8 @@
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxPaging :page-size="rowTable" />
-                <DxColumn data-field="createdAt" caption="기록일시" />
+                <DxColumn data-field="createdAt" caption="기록일시" data-type="date"
+                        format="yyyy-MM-dd hh:mm"/>
                 <DxColumn data-field="success" caption="성공여부" cell-template="modal-table" />
                 <template #modal-table="{ data }">
                     <a-tag :color="getColorTag(data.value)">{{ data.value == true ? '성공' : "실패"}}</a-tag>
@@ -66,33 +67,24 @@ export default defineComponent({
         })
 
         let arrayLog = ref([])
-
-        watch(() => props.idRow, (newVal) => {
-            trigger.value = true
-            setTimeout(() => {
-                let dataCall = {
-                    ...originData.value,
-                    userId: newVal,
-                }
-                refetchData(dataCall)
-            }, 500);
-
+        watch(() => props.modalStatus, (newVal) => {
+            if (newVal) {
+                originData.value.userId = props.idRow
+                trigger.value = true
+            }
         })
 
         watch(() => originData.value.page, (newVal) => {
-            let dataCall = {
-                ...originData.value,
-                page: newVal,
-            }
-            refetchData(dataCall)
-
+            originData.value.userId = props.idRow
+            trigger.value = true
         })
         //CHỉ viết trong setup
-        const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications, {}, () => ({
+        const { result, refetch: refetchData, loading, error, onResult } = useQuery(queries.getAuthentications, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
         onResult((res) => {
+            trigger.value = false;
             rowTable.value = res.data.getAuthentications.totalCount
             arrayLog.value = res.data.getAuthentications.datas
         })
