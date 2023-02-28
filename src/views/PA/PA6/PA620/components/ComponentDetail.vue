@@ -131,8 +131,8 @@
                                     :disabled="disabledInput || isDisabledForm" />
                             </a-form-item>
                             <a-form-item label="지급액" label-align="right">
-                                <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || statusButton==30||statusButton==40"
-                                    v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" />
+                                <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || statusButton==30||statusButton==40"
+                                    v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" />
                             </a-form-item>
                             <a-form-item label="세율" label-align="right">
                                 3%
