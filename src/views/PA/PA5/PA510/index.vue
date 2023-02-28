@@ -205,7 +205,7 @@
                     :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                    :disabled="store.state.common.statusDisabledStatus" />
+                    :disabled="status == 30 || status == 40" />
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
@@ -281,7 +281,7 @@
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
         <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
             :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" /> -->
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
@@ -480,7 +480,7 @@ export default defineComponent({
             // refetchDataTaxPayInfo() //reset data table 2
         })
         watch(() => status.value, (newVal) => {
-            if (userType != 'm' && (newVal == 30 || newVal == 40)) {
+            if (userType != 'm' && (newVal == 20 || newVal == 30 || newVal == 40)) {
                 store.state.common.statusDisabledStatus = true;
             } else {
                 store.state.common.statusDisabledStatus = false;

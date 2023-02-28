@@ -86,11 +86,11 @@
                             <DxColumn caption="대표자명" data-field="presidentName" />
                             <DxColumn caption="연락처" data-field="phone" />
                             <DxColumn caption="이용여부" cell-template="use" data-field="use" />
-                            <template #use="{ data }" class="custom-action">
+                            <template #use="{ data }">
                                 <tag-color-use :valueUse="data.value" />
                             </template>
                             <DxColumn cell-template="historyClient" />
-                            <template #historyClient="{ data }" class="custom-action">
+                            <template #historyClient="{ data }">
                                 <div class="custom-action" style="text-align: center">
                                     <HistoryOutlined v-if="data.data.clientId" style="font-size: 18px;"
                                         @click="modalHistory(data.data)" />
@@ -152,7 +152,7 @@
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail"
             title="변경이력" typeHistory="ac-610" />
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
-            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
             title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
         <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
@@ -172,6 +172,7 @@ import mutations from "@/graphql/mutations/AC/AC6/AC610/index";
 import queries from "@/graphql/queries/AC/AC6/AC610/index";
 import DxButton from "devextreme-vue/button";
 import { companyId } from "@/helpers/commonFunction";
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DxButton, HistoryPopup, SaveOutlined, DxScrolling,
@@ -444,7 +445,7 @@ export default defineComponent({
             listClient, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
             confimSaveWhenChangeRow, actionToAddFromEdit, formCreate, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             dataSearch, searching, changePage, actionSearch,
-            disableInputBizNumber, disableInputResidentId,
+            disableInputBizNumber, disableInputResidentId, Message,
         };
     },
 });
