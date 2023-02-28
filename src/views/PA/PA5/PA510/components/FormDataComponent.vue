@@ -400,6 +400,10 @@ export default defineComponent({
         watch(() => store.state.common.actionResetForm, (value) => {
             countKey.value++;
             dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+            arrDeduction.value?.map((data: any) => {
+                data.price = 0
+            })
+            store.state.common.statusChangeFormPrice = false
         })
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is

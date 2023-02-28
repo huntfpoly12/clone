@@ -424,6 +424,13 @@ export default defineComponent({
         watch(() => store.state.common.actionResetForm, (value) => {
             countKey.value++;
             dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+            // dataIW.value.employee.employeeId = null
+            dataConfigDeductions.value.map((data: any) => {
+                data.amount = 0
+            })
+            dataConfigPayItems.value.map((data: any) => {
+                data.amount = 0
+            })
             store.state.common.statusChangeFormPrice = false;
         })
 
