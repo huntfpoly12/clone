@@ -231,7 +231,7 @@
                 </a-col>
                 <!-- {{ processKeyPA620 }} processKeyPA620 <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    @createdDone="createdDone" ref="formRef"/>
+                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -402,14 +402,26 @@ export default defineComponent({
             dateType.value = data.paymentType;
             store.state.common.paymentDayPA620 = data.paymentDay;
         });
-        // ================FUNCTION============================================   
-        const showDetailSelected = (data: any) => {
+        // ================FUNCTION============================================ 
+        // fnc click month fake
+        const changeMonthDataFake = ref();
+        const onChangeMonth=( data: any )=>{
             store.commit("common/processKeyPA620", { imputedMonth: data.imputedMonth });
             statusButton.value = data.status
             store.state.common.processKeyPA620.imputedYear = data.imputedYear
             store.state.common.processKeyPA620.imputedMonth = data.imputedMonth
             store.state.common.processKeyPA620.paymentYear = data.paymentYear
             store.state.common.processKeyPA620.paymentMonth = data.paymentMonth;
+        }  
+        const showDetailSelected = (data: any) => {
+          if(formRef.value.compareForm()){
+            onChangeMonth(data)
+          }else {
+            formRef.value.isClickMonthDiff = true;
+            formRef.value.rowChangeStatus = true;
+            changeMonthDataFake.value = data;
+          }
+            
         }
         const saving = () => {
             actionSave.value++;
@@ -434,7 +446,10 @@ export default defineComponent({
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
         }
-
+        const changeNoSave = () => {
+          console.log(`output- chay vao day`,)
+          onChangeMonth(changeMonthDataFake.value)
+        }
         // ======================================== WATCH =========================================
         watch (globalYear, (newVal) => {
             isRunOnce.value = true;
@@ -445,7 +460,7 @@ export default defineComponent({
 
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
-            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef
+            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave
         };
     },
 });
