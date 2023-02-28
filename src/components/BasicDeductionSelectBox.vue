@@ -1,8 +1,9 @@
 <template>
     <div>
+      <!-- {{ basicDeductionData }} basicDeductionData <br/> -->
       <DxSelectBox
         :width="width"
-        :data-source="basicDeduction"
+        :data-source="basicDeductionData"
         placeholder="선택"
         :show-clear-button="clearButton"
         v-model:value="value"
@@ -54,6 +55,10 @@
         type: String,
         default: '',
       },
+      ageCount: {
+        type: [String, Number],
+        default: 0,
+      }
     },
     components: {
       DxSelectBox,
@@ -72,6 +77,7 @@
         }
         return bsDeduction;
       }) ;
+      let basicDeductionData = ref(basicDeduction.value);
       const app: any = getCurrentInstance();
       const messages = app.appContext.config.globalProperties.$messages;
       const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -89,9 +95,37 @@
           value.value = newValue;
         }
       );
+      watch(()=> props.ageCount,(newVal)=> {
+        if(+newVal == 0) {
+          basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+            return {value: item.value,label: item.label};
+          })
+          value.value = 0;
+          return;
+        }
+        if(+newVal <= 20) {
+          value.value = 3;
+          basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+            return item.value != 3 ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
+          })
+          return;
+        }
+        if(+newVal >= 60) {
+          value.value = 4;
+          let newArr = basicDeductionData.value.map((item:any)=> {
+            return item.value != 4 ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
+          })
+          basicDeductionData.value = [...newArr]
+          return;
+        }
+        value.value = 0;
+        basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
+          return (item.value == 3) || (item.value ==4) ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
+        })
+      }, {immediate: true})
       return {
         updateValue,
-        basicDeduction,
+        basicDeductionData,
         value,
         messageRequired
       };

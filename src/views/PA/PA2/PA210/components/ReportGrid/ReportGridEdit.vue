@@ -3,67 +3,69 @@
         style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
     <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
-        <div class="header-1">원천세신고서</div>
-        <div class="action-right">
-          <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status == 10">
-          <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding" v-if="dataSource[0].status == 10">
-          <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
-        </div>
-        <div class="table-detail">
-          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-            :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" 
-            :focused-row-enabled="true">
-            <DxScrolling mode="standard" show-scrollbar="always"/>
-            <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
-            <template #status="{ data }">
-              <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
-              <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
-                          :dataRow="data.data"/> -->
-            </template>
-            <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
-            <template #imputedYear-imputedMonth="{ data }">
-              <a-tooltip>
-                <template #title>
-                    귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
-                </template>
-                <div class="custom-grade-cell">
-                    <DxButton
-                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
-                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
-                </div>
-              </a-tooltip>
-            </template>
-            <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
-            <template #paymentYear-paymentMonth="{ data }">
-              <a-tooltip>
-                <template #title>
-                    지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
-                </template>
-                <div class="custom-grade-cell">
-                    <DxButton
-                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
-                        :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
-                </div>
-              </a-tooltip>
-            </template>
-            <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
-            <template #afterDeadline-index="{ data }">
-               <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
-            </template>
-            <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
-            <template #yearEndTaxAdjustment="{ data }">
-              <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
-            </template>
-            <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
-            <template #refund="{ data }">
-              <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" :disabled="true"/>
-            </template>
-            <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
-            <template #submission-date="{ data }">
-              <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10"></date-time-box>
-            </template>
-          </DxDataGrid>
+        <div class="header-report">
+          <div class="header-1">원천세신고서</div>
+          <div class="action-right">
+            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status == 10">
+            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholding" v-if="dataSource[0].status == 10">
+            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
+          </div>
+          <div class="table-detail">
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+              :show-borders="true" key-expr="index" :allow-column-reordering="move_column"
+              :allow-column-resizing="colomn_resize" :column-auto-width="true" 
+              :focused-row-enabled="true">
+              <DxScrolling mode="standard" show-scrollbar="always"/>
+              <DxColumn caption="마감 현황" cell-template="status" css-class="cell-center"/>
+              <template #status="{ data }">
+                <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
+                <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32"
+                            :dataRow="data.data"/> -->
+              </template>
+              <DxColumn caption="귀속연월" cell-template="imputedYear-imputedMonth" css-class="cell-center" />
+              <template #imputedYear-imputedMonth="{ data }">
+                <a-tooltip>
+                  <template #title>
+                      귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
+                  </template>
+                  <div class="custom-grade-cell">
+                      <DxButton
+                          :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                          :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                  </div>
+                </a-tooltip>
+              </template>
+              <DxColumn caption="지급연월" cell-template="paymentYear-paymentMonth" css-class="cell-center"/>
+              <template #paymentYear-paymentMonth="{ data }">
+                <a-tooltip>
+                  <template #title>
+                      지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
+                  </template>
+                  <div class="custom-grade-cell">
+                      <DxButton
+                          :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                          :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                  </div>
+                </a-tooltip>
+              </template>
+              <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
+              <template #afterDeadline-index="{ data }">
+                <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
+              </template>
+              <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
+              <template #yearEndTaxAdjustment="{ data }">
+                <DxCheckBox v-model:value="data.data.yearEndTaxAdjustment"  :disabled="true"/>
+              </template>
+              <DxColumn caption="환급" cell-template="refund" :width="80" css-class="cell-center"/>
+              <template #refund="{ data }">
+                <switch-basic v-model:valueSwitch="data.data.refund" :textCheck="'O'" :textUnCheck="'X'" :disabled="true"/>
+              </template>
+              <DxColumn caption="제출일" cell-template="submission-date" :width="160"/>
+              <template #submission-date="{ data }">
+                <date-time-box v-model:valueDate="data.data.submissionDate" :disabled="dataSource[0].status != 10"></date-time-box>
+              </template>
+            </DxDataGrid>
+          </div>
         </div>
         <div class="table-grid">
           <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
@@ -365,8 +367,6 @@ export default defineComponent({
 }
 .report-grid{
   padding: 20px 0px 0px 5px;
-  overflow-y: scroll;
-  overflow-x: hidden;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
@@ -389,8 +389,9 @@ export default defineComponent({
       height: 35px;
   }
   .table-grid{
-   
-    padding-bottom: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 700px;
   }
   :deep .wtHolder {
     width: 100% !important;

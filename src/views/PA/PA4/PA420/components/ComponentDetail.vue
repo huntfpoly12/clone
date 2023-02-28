@@ -2,8 +2,8 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{`${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}`}}</div>
-                <div class="text-box-2">지 {{`${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}`}}</div>
+                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear == 0 ? `${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}` :''}}</div>
+                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear == 0 ? `${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}` : ''}}</div>
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">

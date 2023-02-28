@@ -223,7 +223,7 @@
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
-                        <DxColumn caption="일용직사원" cell-template="tag" width="150" />
+                        <DxColumn caption="일용직사원" cell-template="tag" width="150"  />
                         <template #tag="{ data }">
                             <div class="custom-action">
                                 <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -231,10 +231,19 @@
                                     :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                             </div>
                         </template>
-                        <DxColumn width="75" caption="근무일수" data-field="workingDays" />
-                        <DxColumn width="85" caption="일급여" data-field="dailyWage" format="fixedPoint" />
-                        <DxColumn width="85" caption="월급여" data-field="monthlyWage" format="fixedPoint" />
-                        <DxColumn width="85" caption="공제" data-field="totalDeduction" cell-template="total-deduction" />
+                        <DxColumn width="75" caption="근무일수" cell-template="workingDays"/>
+                        <template #workingDays="{ data }">
+                            {{  data.data.workingDays }}
+                        </template>
+                        <DxColumn width="85" caption="일급여" format="fixedPoint" cell-template="dailyWage"/>
+                        <template #dailyWage="{ data }">
+                            {{  data.data.dailyWage }}
+                        </template>
+                        <DxColumn width="85" caption="월급여" format="fixedPoint" cell-template="monthlyWage"/>
+                        <template #monthlyWage="{ data }">
+                            {{  data.data.monthlyWage }}
+                        </template>
+                        <DxColumn width="85" caption="공제" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
                                 <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -245,7 +254,10 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn width="85" caption="차인지급액" data-field="actualPayment" format="fixedPoint" />
+                        <DxColumn width="85" caption="차인지급액"  format="fixedPoint" cell-template="actualPayment" />
+                        <template #actualPayment="{ data }">
+                            {{  data.data.actualPayment }}
+                        </template>
                         <DxColumn caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }">
                             <div class="custom-action custom-grade-cell">
@@ -265,7 +277,10 @@
                                     :ratio="data.data.employee.incomeTaxMagnification" />
                             </div>
                         </template>
-                        <DxColumn caption="지급일" data-field="paymentDay" width="60px" />
+                        <DxColumn caption="지급일" width="60px" cell-template="paymentDay"/>
+                        <template #paymentDay="{ data }">
+                            {{  data.data.paymentDay }}
+                        </template>
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
                             <DxTotalItem column="월급여" summary-type="sum" display-format="월급여합계: {0}" value-format="#,###" />
@@ -453,24 +468,27 @@ export default defineComponent({
         })
         watch(resultTaxPayInfo, (value) => {
             IncomeWageDailiesTrigger.value = false;
-            store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
-            // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
-            if (value.getIncomeWageDailies[0]) { // if have data
-                if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
-                    store.state.common.focusedRowKey = store.state.common.incomeId
-                    // store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+            if (value.getIncomeWageDailies) {
+                delete(value.getIncomeWageDailies.deductionItems)
+                store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
+                // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
+                if (value.getIncomeWageDailies[0]) { // if have data
+                    if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                        store.state.common.focusedRowKey = store.state.common.incomeId
+                        // store.state.common.incomeId = value.getIncomeWageDailies.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                    } else {
+                        store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
+                        store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
+                        // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
+                    }
+                    store.state.common.actionAddItem = false
                 } else {
-                    store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
-                    store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
-                    // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
+                    store.state.common.actionAddItem = true
+                    store.state.common.focusedRowKey = null;
+                    store.state.common.incomeId = null;
+                    // store.state.common.employeeId = null;
+                    store.state.common.actionResetForm++;
                 }
-                store.state.common.actionAddItem = false
-            } else {
-                store.state.common.actionAddItem = true
-                store.state.common.focusedRowKey = null;
-                store.state.common.incomeId = null;
-                // store.state.common.employeeId = null;
-                store.state.common.actionResetForm++;
             }
             store.state.common.resetArrayEmploySelect++
         })

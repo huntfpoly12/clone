@@ -50,9 +50,6 @@
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
-              <DxButton type="ghost" style="cursor: pointer" @click="onOpenModalUpdate(data.data)">
-                <ZoomInOutlined />
-              </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click="onCancelAcquistion(data.data.workId)">
                 <DeleteOutlined/>
               </DxButton>
@@ -65,33 +62,31 @@
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="취득신고등록"
                   typeHistory="pa-810"/>
     <CreatePA810Popup v-if="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
-    <ViewPA810Popup v-if="isEditModalStatus && dataRow" @closeModal="isEditModalStatus = false" :data="dataRow" />
+    <!-- <ViewPA810Popup v-if="isEditModalStatus && dataRow" @closeModal="isEditModalStatus = false" :data="dataRow" /> -->
   </div>
 </template>
 
 <script lang="ts">
-import {ref, defineComponent, watch, computed, reactive} from 'vue';
-import type { Ref } from 'vue'
-import {useStore} from 'vuex';
-import queries from '@/graphql/queries/PA/PA8/PA810/index';
-import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
-import {useMutation, useQuery} from '@vue/apollo-composable';
-import {companyId, openTab} from '@/helpers/commonFunction';
-import { HistoryOutlined, DownloadOutlined, ZoomInOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import {DxDataGrid, DxColumn, DxScrolling, DxMasterDetail, DxToolbar} from 'devextreme-vue/data-grid';
-import DxButton from 'devextreme-vue/button';
-import notification from '@/utils/notification';
-import CreatePA810Popup from './components/CreatePA810Popup.vue';
-import {DxItem} from 'devextreme-vue/select-box';
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import dayjs from "dayjs";
-import ViewPA810Popup from "@/views/PA/PA8/PA810/components/ViewPA810Popup.vue";
-import { MajorInsuranceCompanyEmployeeAcquisition } from "@/types/types";
 import imgUpload from "@/components/UploadImage.vue";
+import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
+import queries from '@/graphql/queries/PA/PA8/PA810/index';
+import { companyId } from '@/helpers/commonFunction';
+import notification from '@/utils/notification';
+// import ViewPA810Popup from "@/views/PA/PA8/PA810/components/ViewPA810Popup.vue";
+import { DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined } from '@ant-design/icons-vue';
+import { useMutation, useQuery } from '@vue/apollo-composable';
+import dayjs from "dayjs";
+import DxButton from 'devextreme-vue/button';
+import { DxColumn, DxDataGrid, DxScrolling, DxToolbar } from 'devextreme-vue/data-grid';
+import { DxItem } from 'devextreme-vue/select-box';
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+import CreatePA810Popup from './components/CreatePA810Popup.vue';
 
 export default defineComponent({
   components: {
-    ViewPA810Popup,
+    // ViewPA810Popup,
     HistoryPopup,
     DxDataGrid,
     DxColumn,
@@ -175,18 +170,18 @@ export default defineComponent({
     };
 
     // ---------update log------------
-    const isEditModalStatus = ref(false);
-    const dataRow = ref<MajorInsuranceCompanyEmployeeAcquisition>();
-    const handleUpdate = (e: any) => {
-      refetch();
-      isEditModalStatus.value = false;
-    };
-    const onOpenModalUpdate = (data: MajorInsuranceCompanyEmployeeAcquisition) => {
-      if(data) {
-        isEditModalStatus.value = true;
-        dataRow.value = data;
-      }
-    };
+    // const isEditModalStatus = ref(false);
+    // const dataRow = ref<MajorInsuranceCompanyEmployeeAcquisition>();
+    // const handleUpdate = (e: any) => {
+    //   refetch();
+    //   isEditModalStatus.value = false;
+    // };
+    // const onOpenModalUpdate = (data: MajorInsuranceCompanyEmployeeAcquisition) => {
+    //   if(data) {
+    //     isEditModalStatus.value = true;
+    //     dataRow.value = data;
+    //   }
+    // };
 
     //------mutation cancel acquistion ----
     const {
@@ -224,10 +219,10 @@ export default defineComponent({
           return dayjs(value).format('YYYY-MM-DD');
         }
       },
-      onOpenModalUpdate,
-      isEditModalStatus,
-      handleUpdate,
-      dataRow,
+      // onOpenModalUpdate,
+      // isEditModalStatus,
+      // handleUpdate,
+      // dataRow,
       handleCreate,
     };
   },

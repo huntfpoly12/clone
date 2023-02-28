@@ -42,6 +42,7 @@ export default defineComponent({
         onDone(() => {
             notification('success', `업데이트 완료!`)
             emit("closePopup", false)
+            emit("refresh", true)
         })
         onError(e => {
             notification('error', e.message)
@@ -74,3 +75,4 @@ export default defineComponent({
     }
 })
 </script>   
+

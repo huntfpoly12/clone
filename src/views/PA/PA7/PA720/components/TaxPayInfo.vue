@@ -1,12 +1,13 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ dataSourceDetail[0]}} -->
+    <!-- {{ selectedRowKeys}} selectedRowKeys <br/> -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-      focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
-      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick">
+      focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
+      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick" v-model:selected-row-keys="selectedRowKeys">
       <DxScrolling mode="standard" show-scrollbar="always" />
-      <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+      <!-- <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" /> -->
+      <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }">
@@ -201,25 +202,17 @@ export default defineComponent({
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
-    const selectionChanged = (data: any) => {
-      incomeIdDels.value = data.selectedRowsData.map((item: { incomeId: number }) => {
+    const selectedRowKeys = ref<any>([]);
+    const selectionChanged = (e: any) => {
+      incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
       });
-      paymentData.value = data.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
+      paymentData.value = e.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
         return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
       });
     };
     // set key again
-    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
-    const keyActivePA720 = computed(() => store.getters['common/keyActivePA720']);
     const focusedRowKey = ref<Number | null>(1);
-    watch(actionSavePA720, () => {
-      setTimeout(() => {
-        if (isErrorFormPA720.value || store.state.common.actionSaveTypePA720 === 1) {
-          focusedRowKey.value = keyActivePA720.value;
-        }
-      }, 100);
-    });
     const loadIndexInit = ref<Number>(0); // check click same row?
     watch(() => props.addItemClick, (newVal) => {
       loadIndexInit.value = -1;
@@ -247,7 +240,16 @@ export default defineComponent({
       } else {
         loadIndexInit.value = e.loadIndex;
       }
+      if(!selectedRowKeys.value.find((item: any) => item == focusedRowKey.value)) {
+        selectedRowKeys.value.push(focusedRowKey.value);
+      }
     };
+    const onCellClick = (e: any) => {
+      if(e.columnIndex === 0 && e.column.type =='selection') {
+        focusedRowKey.value = store.state.common.formPA720.input?.incomeId;
+        return;
+      }
+    }
     return {
       rowTable,
       per_page,
@@ -267,7 +269,9 @@ export default defineComponent({
       focusedRowKey,
       onRowClick,
       firsTimeRow,
-      formatMonth
+      formatMonth,
+      onCellClick,
+      selectedRowKeys,
     };
   },
 });
