@@ -5,94 +5,93 @@
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
           :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true">
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" ref="pa720GridRef">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn :caption="globalYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
             <span>지급연월 </span>
           </template>
-          <DxColumn caption="01" width="100px" cell-template="imputed-month1" />
+          <DxColumn caption="01" width="100px" cell-template="imputed-month1" :cssClass=" month == 1 &&'column-focus'"/>
           <template #imputed-month1="{ data }">
             <colorful-badge v-if="data.data.month_1" :value="data.data.month_1?.status"
-              :year="data.data.month_1?.paymentYear" :month="data.data.month_1?.paymentMonth" :isUnder="month == 1"
-              @click="showDetailSelected(data.data.month_1)" />
+              :year="data.data.month_1?.paymentYear" :month="data.data.month_1?.paymentMonth"              @click="showDetailSelected(data.data.month_1)" />
             <div v-else @click="onAddMonth(1)">[+]</div>
           </template>
-          <DxColumn caption="02" width="100px" cell-template="imputed-month2" />
+          <DxColumn caption="02" width="100px" cell-template="imputed-month2" :cssClass=" month == 2 &&'column-focus'" />
           <template #imputed-month2="{ data }">
             <colorful-badge v-if="data.data.month_2" :value="data.data.month_2?.status"
               :year="data.data.month_2?.paymentYear" :month="data.data.month_2?.paymentMonth"
-              @click="showDetailSelected(data.data.month_2)" :isUnder="month == 2" />
+              @click="showDetailSelected(data.data.month_2)"/>
             <div v-else @click="onAddMonth(2)">[+]</div>
           </template>
-          <DxColumn caption="03" width="100px" cell-template="imputed-month3" />
+          <DxColumn caption="03" width="100px" cell-template="imputed-month3" :cssClass=" month == 3 &&'column-focus'" />
           <template #imputed-month3="{ data }">
             <colorful-badge v-if="data.data.month_3" :value="data.data.month_3?.status"
               :year="data.data.month_3?.paymentYear" :month="data.data.month_3?.paymentMonth"
-              @click="showDetailSelected(data.data.month_3)" :isUnder="month == 3" />
+              @click="showDetailSelected(data.data.month_3)"/>
             <div v-else @click="onAddMonth(3)">[+]</div>
           </template>
-          <DxColumn caption="04" width="100px" cell-template="imputed-month4" />
+          <DxColumn caption="04" width="100px" cell-template="imputed-month4" :cssClass=" month == 4 &&'column-focus'" />
           <template #imputed-month4="{ data }">
             <colorful-badge v-if="data.data.month_4" :value="data.data.month_4?.status"
               :year="data.data.month_4?.paymentYear" :month="data.data.month_4?.paymentMonth"
-              @click="showDetailSelected(data.data.month_4)" :isUnder="month == 4" />
+              @click="showDetailSelected(data.data.month_4)"/>
             <div v-else @click="onAddMonth(4)">[+]</div>
           </template>
-          <DxColumn caption="05" width="100px" cell-template="imputed-month5" />
+          <DxColumn caption="05" width="100px" cell-template="imputed-month5" :cssClass=" month == 5 &&'column-focus'" />
           <template #imputed-month5="{ data }">
             <colorful-badge v-if="data.data.month_5" :value="data.data.month_5?.status"
               :year="data.data.month_5?.paymentYear" :month="data.data.month_5?.paymentMonth"
-              @click="showDetailSelected(data.data.month_5)" :isUnder="month == 5" />
+              @click="showDetailSelected(data.data.month_5)"/>
             <div v-else @click="onAddMonth(5)">[+]</div>
           </template>
-          <DxColumn caption="06" width="100px" cell-template="imputed-month6" />
+          <DxColumn caption="06" width="100px" cell-template="imputed-month6" :cssClass=" month == 6 &&'column-focus'" />
           <template #imputed-month6="{ data }">
             <colorful-badge v-if="data.data.month_6" :value="data.data.month_6?.status"
               :year="data.data.month_6?.paymentYear" :month="data.data.month_6?.paymentMonth"
-              @click="showDetailSelected(data.data.month_6)" :isUnder="month == 6" />
+              @click="showDetailSelected(data.data.month_6)"/>
             <div v-else @click="onAddMonth(6)">[+]</div>
           </template>
-          <DxColumn caption="07" width="100px" cell-template="imputed-month7" />
+          <DxColumn caption="07" width="100px" cell-template="imputed-month7" :cssClass=" month == 7 &&'column-focus'" />
           <template #imputed-month7="{ data }">
             <colorful-badge v-if="data.data.month_7" :value="data.data.month_7?.status"
               :year="data.data.month_7?.paymentYear" :month="data.data.month_7?.paymentMonth"
-              @click="showDetailSelected(data.data.month_7)" :isUnder="month == 7" />
+              @click="showDetailSelected(data.data.month_7)"/>
             <div v-else @click="onAddMonth(7)">[+]</div>
           </template>
-          <DxColumn caption="08" width="100px" cell-template="imputed-month8" />
+          <DxColumn caption="08" width="100px" cell-template="imputed-month8" :cssClass=" month == 8 &&'column-focus'" />
           <template #imputed-month8="{ data }">
             <colorful-badge v-if="data.data.month_8" :value="data.data.month_8?.status"
               :year="data.data.month_8?.paymentYear" :month="data.data.month_8?.paymentMonth"
-              @click="showDetailSelected(data.data.month_8)" :isUnder="month == 8" />
+              @click="showDetailSelected(data.data.month_8)"/>
             <div v-else @click="onAddMonth(8)">[+]</div>
           </template>
-          <DxColumn caption="09" width="100px" cell-template="imputed-month9" />
+          <DxColumn caption="09" width="100px" cell-template="imputed-month9" :cssClass=" month == 9 &&'column-focus'" />
           <template #imputed-month9="{ data }">
             <colorful-badge v-if="data.data.month_9" :value="data.data.month_9?.status"
               :year="data.data.month_9?.paymentYear" :month="data.data.month_9?.paymentMonth"
-              @click="showDetailSelected(data.data.month_9)" :isUnder="month == 9" />
+              @click="showDetailSelected(data.data.month_9)"/>
             <div v-else @click="onAddMonth(9)">[+]</div>
           </template>
-          <DxColumn caption="10" width="100px" cell-template="imputed-month10" />
+          <DxColumn caption="10" width="100px" cell-template="imputed-month10" :cssClass=" month == 10 &&'column-focus'" />
           <template #imputed-month10="{ data }">
             <colorful-badge v-if="data.data.month_10" :value="data.data.month_10?.status"
               :year="data.data.month_10?.paymentYear" :month="data.data.month_10?.paymentMonth"
-              @click="showDetailSelected(data.data.month_10)" :isUnder="month == 10" />
+              @click="showDetailSelected(data.data.month_10)"/>
             <div v-else @click="onAddMonth(10)">[+]</div>
           </template>
-          <DxColumn caption="11" width="100px" cell-template="imputed-month11" />
+          <DxColumn caption="11" width="100px" cell-template="imputed-month11" :cssClass=" month == 11 &&'column-focus'" />
           <template #imputed-month11="{ data }">
             <colorful-badge v-if="data.data.month_11" :value="data.data.month_11?.status"
               :year="data.data.month_11?.paymentYear" :month="data.data.month_11?.paymentMonth"
-              @click="showDetailSelected(data.data.month_11)" :isUnder="month == 11" />
+              @click="showDetailSelected(data.data.month_11)"/>
             <div v-else @click="onAddMonth(11)">[+]</div>
           </template>
-          <DxColumn caption="12" width="100px" cell-template="imputed-month12" />
+          <DxColumn caption="12" width="100px" cell-template="imputed-month12" :cssClass=" month == 12 &&'column-focus'" />
           <template #imputed-month12="{ data }">
             <colorful-badge v-if="data.data.month_12" :value="data.data.month_12?.status"
               :year="data.data.month_12?.paymentYear" :month="data.data.month_12?.paymentMonth"
-              @click="showDetailSelected(data.data.month_12)" :isUnder="month == 12" />
+              @click="showDetailSelected(data.data.month_12)"/>
             <div v-else @click="onAddMonth(12)">[+]</div>
           </template>
           <DxMasterDetail :enabled="true" template="row-detail" />
@@ -100,78 +99,78 @@
             <div class="table-detail">
               <DxDataGrid key-expr="id" :data-source="IncomeProcessExtrasCustom" :show-borders="false"
                 :column-auto-width="true" :allow-column-reordering="move_column" :show-column-headers="false"
-                :allow-column-resizing="colomn_resize" :focused-row-enabled="true">
+                :allow-column-resizing="colomn_resize">
                 <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first" data-type="string" />
                 <template #col-first="{ data }">
                   <b>{{ data.data.name }}</b><br />
                 </template>
-                <DxColumn caption="1" width="100px" cell-template="month-1" />
+                <DxColumn caption="1" width="100px" cell-template="month-1" alignment="right" :cssClass=" month == 1 &&'column-focus'"/>
                 <template #month-1="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month1)" v-if="data.data.month1">
                     {{ data.data.month1.value }}
                   </div>
                 </template>
-                <DxColumn caption="2" width="100px" cell-template="month-2" />
+                <DxColumn caption="2" width="100px" cell-template="month-2" alignment="right" :cssClass=" month == 2 &&'column-focus'" />
                 <template #month-2="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month2)" v-if="data.data.month2">
                     {{ data.data.month2.value }}
                   </div>
                 </template>
-                <DxColumn caption="3" width="100px" cell-template="month-3" />
+                <DxColumn caption="3" width="100px" cell-template="month-3" alignment="right" :cssClass=" month == 3 &&'column-focus'" />
                 <template #month-3="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month3)" v-if="data.data.month3">
                     {{ data.data.month3.value }}
                   </div>
                 </template>
-                <DxColumn caption="4" width="100px" cell-template="month-4" />
+                <DxColumn caption="4" width="100px" cell-template="month-4" alignment="right" :cssClass=" month == 4 &&'column-focus'" />
                 <template #month-4="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month4)" v-if="data.data.month4">
                     {{ data.data.month4.value }}
                   </div>
                 </template>
-                <DxColumn caption="5" width="100px" cell-template="month-5" />
+                <DxColumn caption="5" width="100px" cell-template="month-5" alignment="right" :cssClass=" month == 5 &&'column-focus'" />
                 <template #month-5="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month5)" v-if="data.data.month5">
                     {{ data.data.month5.value }}
                   </div>
                 </template>
-                <DxColumn caption="6" width="100px" cell-template="month-6" />
+                <DxColumn caption="6" width="100px" cell-template="month-6" alignment="right" :cssClass=" month == 6 &&'column-focus'" />
                 <template #month-6="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month6)" v-if="data.data.month6">
                     {{ data.data.month6.value }}
                   </div>
                 </template>
-                <DxColumn caption="7" width="100px" cell-template="month-7" />
+                <DxColumn caption="7" width="100px" cell-template="month-7" alignment="right" :cssClass=" month == 7 &&'column-focus'" />
                 <template #month-7="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month7)" v-if="data.data.month7">
                     {{ data.data.month7.value }}
                   </div>
                 </template>
-                <DxColumn caption="8" width="100px" cell-template="month-8" />
+                <DxColumn caption="8" width="100px" cell-template="month-8" alignment="right" :cssClass=" month == 8 &&'column-focus'" />
                 <template #month-8="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month8)" v-if="data.data.month8">
                     {{ data.data.month8.value }}
                   </div>
                 </template>
-                <DxColumn caption="9" width="100px" cell-template="month-9" />
+                <DxColumn caption="9" width="100px" cell-template="month-9" alignment="right" :cssClass=" month == 9 &&'column-focus'" />
                 <template #month-9="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month9)" v-if="data.data.month9">
                     {{ data.data.month9.value }}
                   </div>
                 </template>
-                <DxColumn caption="10" width="100px" cell-template="month-10" />
+                <DxColumn caption="10" width="100px" cell-template="month-10" alignment="right" :cssClass=" month == 10 &&'column-focus'" />
                 <template #month-10="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month10)" v-if="data.data.month10">
                     {{ data.data.month10.value }}
                   </div>
                 </template>
-                <DxColumn caption="11" width="100px" cell-template="month-11" />
+                <DxColumn caption="11" width="100px" cell-template="month-11" alignment="right" :cssClass=" month == 11 &&'column-focus'" />
                 <template #month-11="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month11)" v-if="data.data.month11">
                     {{ data.data.month11.value }}
                   </div>
                 </template>
-                <DxColumn caption="12" width="100px" cell-template="month-12" />
+                <DxColumn caption="12" width="100px" cell-template="month-12" alignment="right" :cssClass=" month == 12 &&'column-focus'" />
                 <template #month-12="{ data }">
                   <div class="hover-underlined" @click="showDetailSelected(data.data.month12)" v-if="data.data.month12">
                     {{ data.data.month12.value }}
@@ -192,7 +191,7 @@
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDateTax"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="isExpiredStatus || statusParam.status == 20"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
@@ -320,11 +319,10 @@ export default defineComponent({
     const modalCopy = ref<boolean>(false);
     const dataModalCopy = ref<number>(1);
     const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
-    // ------------mes popup--------------------
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const titleModalConfirm = ref(messageSave);
-
+    const pa720GridRef = ref();
     const inputDateTax = computed(() => {
       if (isColumnData.value) {
         return processKeyPA720.value.processKey?.imputedYear + '-' + formatMonth(processKeyPA720.value.processKey?.imputedMonth);
@@ -392,7 +390,7 @@ export default defineComponent({
             ...dataAdd,
           };
           IncomeProcessExtrasCustom.value[1]['month' + val?.imputedMonth] = {
-            value: val?.incomeStat?.incomePayment?.toLocaleString('en-US', {
+            value: val?.incomeStat?.paymentAmount?.toLocaleString('en-US', {
               currency: 'VND',
             }),
             ...dataAdd,
@@ -558,11 +556,9 @@ export default defineComponent({
           rowChangeStatus.value = true;
           return;
         }
-        // c onsole.log(`output- dang co new row compare ko loi`);
         return;
       }
       setTimeout(() => {
-        // c onsole.log(`output->type ko co newrow`, compareType1());
         addNewRow();
       }, 50);
       return;
@@ -582,7 +578,6 @@ export default defineComponent({
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
-            // c onsole.log(`output-> toi dang o so 1`);
             addNewRow();
               taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
               taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
@@ -590,7 +585,6 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          // c onsole.log(`output-> toi dang o so 2 `);
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
         }
@@ -601,7 +595,6 @@ export default defineComponent({
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
     const editTax = async (emit: any, firsTimeRow: boolean) => {
-      // c onsole.log(`output->firsTimeRow`,firsTimeRow)
       compareType.value = 2;
       if(firsTimeRow){
         formTaxRef.value.isEdit = true;
@@ -614,22 +607,18 @@ export default defineComponent({
           taxPayRef.value.focusedRowKey = emit.incomeId;
           taxPayRef.value.selectedRowKeys = [emit.incomeId];
           editTaxParam.value = emit;
-          // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
           formTaxRef.value.isEdit = true;
           return;
         }
-        // c onsole.log(`output->co new row, khac nhau`);
         editTaxParamFake.value = emit;
         rowChangeStatus.value = true;
         return;
       }
       if (!compareType2()) {
-        // c onsole.log(`output->row khac`);
         rowChangeStatus.value = true;
         editTaxParamFake.value = emit;
         return;
       } else {
-        // c onsole.log(`output->chuyen row bth. ko co newrow`);
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
       }
@@ -659,18 +648,15 @@ export default defineComponent({
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const addItemClick = ref(true);
     const onSubmit = async () => {
-      // c onsole.log(`output- on submit is called`,)
       setTimeout(() => {
         if (isErrorFormPA720.value) {
           taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
           taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
           addItemClick.value = !addItemClick.value;
-          // c onsole.log(`error-back ve back ve form`, formPA720);
         } else {
           editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
           taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
           taxPayRef.value.selectedRowKeys = compareType.value == 1 ? [formPA720.value.input.incomeId] : [editTaxParamFake.value.incomeId];
-          // c onsole.log(`error-back ve back ve form`, formPA720);
           store.state.common.isNewRowPA720 = false;
           if(isClickMonthDiff.value){
             onChangeMonth(changeMonthDataFake.value);
@@ -679,8 +665,8 @@ export default defineComponent({
         }
       }, 800);
     };
-    const onSave = async (e: any) => {
-      var res = e.validationGroup.validate();
+    const onSave = async () => {
+      var res = formTaxRef.value.pa720FormRef.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
@@ -692,7 +678,9 @@ export default defineComponent({
         await onSubmit();
       }
     };
+
     // -------------------Add data in month---------------------
+
     const onAddMonth = (val: number) => {
       dataModalCopy.value = val;
       modalCopy.value = true;
@@ -725,6 +713,8 @@ export default defineComponent({
         };
         store.state.common.processKeyPA720.processKey = datObj;
         statusParam.value = { ...processKeyPA720.value, status: obj.status };
+        pa720GridRef.value.instance.columnOption('02');
+        console.log(`output-`,pa720GridRef.value.instance.columnOption('02'));        
         month.value = obj.imputedMonth;
         store.state.common.isNewRowPA720 = false;
     }
@@ -741,7 +731,7 @@ export default defineComponent({
 
     //-----------------check tag > 30 40 -------------------------
     const isExpiredStatus = computed(() => {
-      if (statusParam.value.status > 20) {
+      if (statusParam.value.status > 10) {
         return true
       } return false
     })
@@ -796,12 +786,9 @@ export default defineComponent({
       openAddNewModal,
       onSave,
       onRowChangeComfirm,
-      isNewRowPA720,
       onDelDone,
       isExpiredStatus,
-      compareType2,
-      compareType1,
-      compareType
+      pa720GridRef,
     };
   },
 });
