@@ -461,7 +461,7 @@ export default defineComponent({
     const onFormDone = () => {
       changeFommDone.value++;
       formTaxRef.value.isEdit = true;
-      // c onsole.log(`output->`, formPA720.value.input.incomeId);
+      console.log(`output->`, formPA720.value.input.incomeId);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
     };
     const onDelDone = () => {
@@ -554,11 +554,11 @@ export default defineComponent({
           rowChangeStatus.value = true;
           return;
         }
-        // c onsole.log(`output- dang co new row compare ko loi`);
+        console.log(`output- dang co new row compare ko loi`);
         return;
       }
       setTimeout(() => {
-        // c onsole.log(`output->type ko co newrow`, compareType1());
+        console.log(`output->type ko co newrow`, compareType1());
         addNewRow();
       }, 50);
       return;
@@ -579,7 +579,7 @@ export default defineComponent({
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
-            // c onsole.log(`output-> toi dang o so 1`);
+            console.log(`output-> toi dang o so 1`);
             addNewRow();
             setTimeout(() => {
               taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
@@ -588,7 +588,7 @@ export default defineComponent({
           }
         }
         if (compareType.value == 2) {
-          // c onsole.log(`output-> toi dang o so 2 `);
+          console.log(`output-> toi dang o so 2 `);
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
         }
@@ -599,7 +599,7 @@ export default defineComponent({
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
     const editTax = async (emit: any, firsTimeRow: boolean) => {
-      // c onsole.log(`output->firsTimeRow`,firsTimeRow)
+      console.log(`output->firsTimeRow`,firsTimeRow)
       compareType.value = 2;
       if(firsTimeRow){
         formTaxRef.value.isEdit = true;
@@ -611,22 +611,22 @@ export default defineComponent({
           await delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
           editTaxParam.value = emit;
-          // c onsole.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
+          console.log(`output->chuyen row bth`, isNewRowPA720.value, emit);
           formTaxRef.value.isEdit = true;
           return;
         }
-        // c onsole.log(`output->co new row, khac nhau`);
+        console.log(`output->co new row, khac nhau`);
         editTaxParamFake.value = emit;
         rowChangeStatus.value = true;
         return;
       }
       if (!compareType2()) {
-        // c onsole.log(`output->row khac`);
+        console.log(`output->row khac`);
         rowChangeStatus.value = true;
         editTaxParamFake.value = emit;
         return;
       } else {
-        // c onsole.log(`output->chuyen row bth. ko co newrow`);
+        console.log(`output->chuyen row bth. ko co newrow`);
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
       }
@@ -652,16 +652,16 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
-    //---------------submit-------------------
+    //-----------------------submit-------------------------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
     const addItemClick = ref(true);
     const onSubmit = async () => {
-      // c onsole.log(`output- on submit is called`,)
+      console.log(`output- on submit is called`,)
       setTimeout(() => {
         if (isErrorFormPA720.value) {
           taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
           addItemClick.value = !addItemClick.value;
-          // c onsole.log(`error-back ve back ve form`, formPA720);
+          console.log(`error-back ve back ve form`, formPA720);
         } else {
           editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
           taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
@@ -679,6 +679,7 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
         addItemClick.value = !addItemClick.value;
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       } else {
         store.commit('common/actionSavePA720');
         await onSubmit();

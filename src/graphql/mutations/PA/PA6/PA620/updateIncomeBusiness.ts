@@ -1,17 +1,18 @@
 import gql from "graphql-tag";
 export default gql`
-mutation updateIncomeBusiness( 
+  mutation updateIncomeBusiness(
     $companyId: Int!
     $processKey: IncomeProcessKeyInput!
     $input: IncomeBusinessUpdateInput!
-    $incomeId : Int!
+    $incomeId: Int!
+  ) {
+    updateIncomeBusiness(
+      companyId: $companyId
+      processKey: $processKey
+      input: $input
+      incomeId: $incomeId
     ) {
-        updateIncomeBusiness( 
-            companyId : $companyId,
-            processKey: $processKey, 
-            input: $input,
-            incomeId : $incomeId
-        ){
-            incomeId
-        }
-}`
+      incomeId
+    }
+  }
+`;

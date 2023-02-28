@@ -51,8 +51,9 @@ export default defineComponent({
             notification('error', e.message)
         })
         successDelete(e => {
-            setModalVisible()
-            notification('success', ` 완료!`)
+            setModalVisible();
+            notification('success', ` 완료!`);
+            emit('deleteDone');
         })
         const onSubmit = (e: any) => {
             actionDelete({

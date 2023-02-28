@@ -6,7 +6,8 @@
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true"
       v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick">
       <DxScrolling mode="standard" show-scrollbar="always" />
-      <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+      <!-- <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" /> -->
+      <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }">
