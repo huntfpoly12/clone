@@ -119,7 +119,7 @@
                                     :name="item.name" :type="3"
                                     :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" />
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" subName="과세" width="100px" />
+                                    :name="item.name" :type="4" subName="공제" width="100px" />
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
