@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loadingCreated">
-        <standard-form action="" name="add-page-210">
+        <standard-form action="" formName="add-page-520" ref="formRefPa520Add">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
@@ -126,7 +126,8 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 export default defineComponent({
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const formRefPa520Add = ref()
         const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
@@ -233,7 +234,7 @@ export default defineComponent({
             dataCreated.roadAddress = data.roadAddress;
         }
         const actionCreated = (e: any) => {
-            var res = e.validationGroup.validate();
+            var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
@@ -257,7 +258,7 @@ export default defineComponent({
         }
         return {
             loadingCreated, activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionCreated, funcAddress,
+            actionCreated, funcAddress,formRefPa520Add
         };
     },
 });
