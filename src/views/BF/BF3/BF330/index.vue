@@ -66,7 +66,7 @@
                     </template>
                     <DxColumn data-field="code" caption="사업자코드" />
                     <DxColumn data-field="active" caption="상태" cell-template="active-cell" />
-                    <template #active-cell="{ data }" class="custom-action">
+                    <template #active-cell="{ data }">
                         {{ data.value === true ? '정상' : '해지' }}
                     </template>
                     <DxColumn data-field="name" caption="상호" data-type="date" />
@@ -81,13 +81,13 @@
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="서비스" cell-template="used-withholding"/>
-                    <template #used-withholding="{ data }" class="custom-action" >
+                    <template #used-withholding="{ data }">
                         회계 {{ data.data.usedAccountingCount }}{{  data.data.usedWithholding === true ? ', 원천' : '' }}
                     </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn :width="80" cell-template="pupop" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
                                 <a-tooltip  color="black" placement="top">
