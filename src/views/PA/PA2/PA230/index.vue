@@ -8,7 +8,7 @@
                         <a-row :gutter="[24, 8]">
                             <a-col>
                                 <div class="d-flex-center">
-                                    <label class="lable-item">서식 설정 :</label>
+                                    <label class="lable-item">구분 :</label>
                                     <radio-group :arrayValue="radioCheckDataSearch"
                                         v-model:valueRadioCheck="checkBoxOption" layoutCustom="horizontal"
                                         class="mt-7" />
@@ -106,7 +106,7 @@
                         <span class="status-blue" v-if="data.data.employee.status != 0">계속</span>
                         <span class="status-red" v-else>중도</span>
                     </template>
-                    <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" width="160"/>
+                    <DxColumn caption="총급여계" alignment="right" data-field="totalPay" format="#,###" data-type="string" width="160"/>
                     <DxColumn caption="" cell-template="pupop" width="100" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
@@ -196,7 +196,7 @@ export default defineComponent({
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                "imputedYear": globalYear,
+                "imputedYear": globalYear.value,
                 "leaved": null
             },
         });
@@ -249,6 +249,11 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
+        watch(globalYear, (value) => {
+            originData.value.filter.imputedYear = value
+            trigger.value = true;
+            refetchData()
+        }, { deep: true });
         // QUERY NAME : getUser
         const {
             onResult: onResultUserInf,
