@@ -230,6 +230,7 @@
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
+                            @cell-click="onCellClick"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -418,47 +419,42 @@ export default defineComponent({
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[2]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalTaxPay),
                         ...dataAdd
                     }
-                    dataCustomRes.value[3]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[2]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalTaxfreePay),
                         ...dataAdd
                     }
-                    dataCustomRes.value[4]['month' + data.imputedMonth] = {
-
+                    dataCustomRes.value[3]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        ...dataAdd
+                    }
+                    dataCustomRes.value[4]['month' + data.imputedMonth] = {
+                        // value: filters.formatCurrency(data.incomeStat?.1001),
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + data.imputedMonth] = {
-                        value: 0,
+                        // value: 1002,
                         ...dataAdd
                     }
                     dataCustomRes.value[6]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        // value: filters.formatCurrency(data.incomeStat?.1003),
                         ...dataAdd
                     }
                     dataCustomRes.value[7]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        // value: filters.formatCurrency(data.incomeStat?.1004),
                         ...dataAdd
                     }
                     dataCustomRes.value[8]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[9]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
                         ...dataAdd
                     }
-                    dataCustomRes.value[10]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[9]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
-                    dataCustomRes.value[11]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[10]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalDeduction),
                         ...dataAdd
                     }
@@ -557,17 +553,26 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
-                if ( rowData.length > 1 ) {
-                    // store.state.common.incomeId = rowData[0].
-                    store.state.common.focusedRowKey = store.state.common.incomeId
-                }
+                // if ( rowData.length > 1 ) {
+                //     // store.state.common.incomeId = rowData[0].
+                //     store.state.common.focusedRowKey = store.state.common.incomeId
+                // }
             })
         }
-        /**
-         * show detail value of month
-         * @param month 
-         */
+        const dataMonthNew: any = ref()
+        const checkClickMonth = ref<Boolean>(false)
+        // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
+            dataMonthNew.value = month
+            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+                modalChangeRow.value = true
+                checkClickMonth.value = true
+            } else {
+                activeNewMonth(month)
+            }
+        }
+        // A function that is called when a user clicks on a button.
+        const activeNewMonth = (month: any) => {
             status.value = month.status
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
@@ -630,33 +635,29 @@ export default defineComponent({
                 // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
                 store.state.common.actionSubmit++
             } else {
+                if (checkClickMonth.value) {
+                    activeNewMonth(dataMonthNew.value)
+                    checkClickMonth.value = false;
+                    return;
+                }
                 if (!store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-                // store.state.common.employeeId = rowEdit.value.employeeId
             }
             
         }
-        // const statusComfirmChangePrice = (res: any) => {
-        //     if (res) {
-        //         (document.getElementById("button-action-dedution-pa110") as HTMLInputElement).click();
-        //         store.state.common.focusedRowKey = store.state.common.employeeId
-        //     } else {
-        //         if (!store.state.common.statusRowAdd) {
-        //             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-        //             store.state.common.statusRowAdd = true
-        //         }
-        //         store.state.common.incomeId = rowEdit.value.incomeId
-        //         store.state.common.employeeId = rowEdit.value.employeeId
-        //     }
-        // }
+        // Setting the focusedRowKey to the incomeId.
+        const onCellClick = (e: any) => {
+            if(e.columnIndex === 0 && e.column.type =='selection') {
+                store.state.common.focusedRowKey = store.state.common.incomeId
+            }
+        }
         watch(globalYear, (newVal) => {
             store.state.common.processKeyPA110.imputedYear = newVal
             store.state.common.processKeyPA110.paymentYear = newVal
-            // IncomeWageDailiesTrigger.value = true;
             refetchDataTaxPayInfo() //reset data table 2
         })
         return {
@@ -687,7 +688,7 @@ export default defineComponent({
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             Message,
-            statusDisabledBlock,
+            statusDisabledBlock, onCellClick,
         }
 
     },

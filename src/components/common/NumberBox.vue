@@ -1,7 +1,7 @@
 <template>
   <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min"
+    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min" :format="isFormat && formatNumber"
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -47,8 +47,9 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    format:{
-      type: [String, Number, Function],
+    isFormat:{
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -76,14 +77,27 @@ export default defineComponent({
         value.value = newValue;
       }
     );
+    const formatNumber = (value: any) => {
+      if(value == 0) {
+        return '0';
+      }
+      if (value !== null && value !== undefined) {
+        return value.toLocaleString('en-US', {
+          minimumIntegerDigits: 2,
+          useGrouping: false
+        });
+      }
+      return value;
+    }
 
     return {
       updateValue,onChange,
       value,
       messageRequired,
       formatValue:(value:any)=> {
-      return value < 10 ? `0${value}` : value;
-    }
+        return value < 10 ? `0${value}` : value;
+      },
+      formatNumber
     };
   },
 });

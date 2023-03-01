@@ -249,4 +249,13 @@
     :deep .dx-datagrid-rowsview .dx-row-focused.dx-data-row>td:not(.dx-focused) {
       color: black;
     }
+    :deep .column-focus {
+      background-color: #5c95c5;
+      color: black;
+    }
+    :deep .dx-datagrid-headers {
+      .column-focus {
+        color: black;
+      }
+    }
 }
