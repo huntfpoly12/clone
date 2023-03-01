@@ -101,31 +101,46 @@
         <a-col style="flex: 0 0 28%">
           <div class="header-text-2">요약</div>
           <div class="summary">
-            <a-col :span="13">소득수당 합계:</a-col>
+            <a-col :span="13">소득수당 합계 
+              <a-tooltip placement="top" class="custom-tooltip">
+                <template #title>
+                  차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
+                </template>
+                <div style="text-align: center;" >
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
+                </div>
+              </a-tooltip> :
+            </a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{ $filters.formatCurrency(calculateVariables.totalTaxPay)
             }}</span> 원</a-col>
-            <a-col :span="13">수당 과세 합계:</a-col>
+            <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
               $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
-            <a-col :span="13">수당 비과세 합계:</a-col>
+            <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
               $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
             <a-col :span="13">공제 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
               $filters.formatCurrency(totalDeduction) }}</span> 원</a-col>
-            <a-col :span="13">차인지급액:</a-col>
-            <a-col style="display: inline-flex; justify-content: flex-end"><span>{{ $filters.formatCurrency(subPayment)
-            }}</span> 원</a-col>
-            <div class="text5">
-              <span>
-                <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" />
-                <p>차인지급액 = 수당 합계 - 공제 합계</p>
-              </span>
-            </div>
+            <a-col :span="13" style="font-weight: 600;">차인지급액
+              <a-tooltip placement="top" class="custom-tooltip">
+                <template #title>
+                  차인지급액 = 수당 합계 - 공제 합계
+                </template>
+                <div style="text-align: center;" >
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
+                </div>
+              </a-tooltip> :
+            </a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end; font-weight: 600"><span>{{ $filters.formatCurrency(subPayment)}}</span> 원</a-col>
           </div>
         </a-col>
         <a-col class="col-2" style="display: flex; flex-direction: column">
-          <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 = 과세 + 비과세</div>
+          <div class="header-text-2">
+            수당 항목 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
+             과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
+             {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
+          </div>
           <a-spin :spinning="loading1" size="large" style="height: 100%">
             <div class="deduction-main">
               <div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -750,9 +765,10 @@ export default defineComponent({
     span {
       display: flex;
       align-items: center;
-      font-size: 13px;
-      color: white;
       float: right;
+      font-size: 11px;
+      color: black;
+
 
       p {
         margin: 5px 0px 3px 10px;
@@ -870,9 +886,6 @@ export default defineComponent({
     div {
       margin-bottom: 5px;
 
-      span {
-        font-weight: bold;
-      }
     }
 
     .text5 {

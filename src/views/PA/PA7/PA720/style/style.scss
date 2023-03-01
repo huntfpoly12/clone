@@ -259,13 +259,4 @@
       padding: 0px 10px 0px;
     }
   }
-  :deep .column-focus {
-    background-color: #5c95c5;
-    color: black;
-  }
-  :deep .dx-datagrid-headers {
-    .column-focus {
-      color: black;
-    }
-  }
 }
