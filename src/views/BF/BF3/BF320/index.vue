@@ -89,7 +89,7 @@
                     <DxColumn data-field="canceledAt" caption="해지일자" />
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn :width="80" cell-template="pupop" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
                                 <a-tooltip color="black" placement="top">

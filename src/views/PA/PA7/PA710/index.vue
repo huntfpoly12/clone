@@ -36,7 +36,7 @@
                                 </DxButton>
                             </template>
                             <template #button-template>
-                                <DxButton icon="plus" @click="formCreate" />
+                                <DxButton icon="plus" @click="actionCreate" />
                             </template>
                             <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name"/>
                             <template #company-name="{ data }">
@@ -75,20 +75,19 @@
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
                             </template>
-                            <DxColumn :width="50" cell-template="pupop" />
+                            <DxColumn :width="50" cell-template="pupop" css-class="cell-center"/>
                             <template #pupop="{ data }">
-                                <div class="custom-action">
-                                    <a-space :size="10">
-                                        <DeleteOutlined v-if="data.data.deletable"
-                                            @click="statusRemoveRow ? modalStatusDelete = true : ''" />
-                                    </a-space>
-                                </div>
+                                <!-- <div style=""> -->
+                                    <DeleteOutlined v-if="data.data.deletable" style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
+                                        @click="statusRemoveRow ? modalStatusDelete = true : ''" />
+                                <!-- </div> -->
+                                
                             </template>
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
                 <a-col span="8" class="custom-layout">
-                    <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum">
+                    <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum"><StandardForm formName="pa-710-form" ref="pa710FormRef">
                         <a-form-item label="코드" :label-col="labelCol" class="red">
                             <div class="custom-note d-flex-center">
                                 <number-box :required="true" :width="200" v-model:valueInput="formState.employeeId"
@@ -148,9 +147,9 @@
                             <button-basic :text="'저장'" type="default" :mode="'contained'"
                                 @onClick="actionSave($event)" />
                         </div>
-                        <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
-                            id="active-save" />
-                    </a-spin>
+                        <!-- <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
+                            id="active-save" /> -->
+                    </StandardForm></a-spin>
                 </a-col>
             </a-row>
         </div>
@@ -174,9 +173,9 @@
         <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
         :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
         <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-            title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
-        <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
-            title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
+        <!-- <PopupMessage :modalStatus="confirmSave" @closePopup="confirmSave = false" :typeModal="'confirm'"
+            title="입력한 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="confimSaveWhenChangeRow" /> -->
     </div>
 </template>
 <script lang="ts">
@@ -224,11 +223,11 @@ export default defineComponent({
         // const statusRemoveRow = ref(true);
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
         }
         const originDataDetail: any = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: null,
             incomeTypeCode: null,
         });
@@ -319,8 +318,9 @@ export default defineComponent({
         });
 
         // ================FUNCTION============================================
+        const pa710FormRef = ref()
         const actionSave = (e: any) => {
-            var res = e.validationGroup.validate();
+            var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
                 if (statusFormUpdate.value) {
@@ -378,21 +378,21 @@ export default defineComponent({
         
 
         // When changing the value in the input form then moving to another row, check the valid form and display the popup
-        const actionToAddFromEdit = (e: any) => {
-            var res = e.validationGroup.validate();
-            //remove active row edit
-            const element = document.querySelector('.dx-row-focused');
-            if (element)
-                (element as HTMLInputElement).classList.remove("dx-row-focused");
+        // const actionToAddFromEdit = (e: any) => {
+        //     var res = e.validationGroup.validate();
+        //     //remove active row edit
+        //     const element = document.querySelector('.dx-row-focused');
+        //     if (element)
+        //         (element as HTMLInputElement).classList.remove("dx-row-focused");
 
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else
-                confirmSave.value = true
-        }
+        //     if (!res.isValid) {
+        //         res.brokenRules[0].validator.focus();
+        //     } else
+        //         confirmSave.value = true
+        // }
         const onSelectionClick = (data: any) => {
             dataRow = data.data
-            if (dataRow.employeeId) {
+            if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
                 originDataDetail.value.employeeId = data.data.employeeId
                 originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
@@ -411,20 +411,30 @@ export default defineComponent({
                 }
             }
         }
-        const formCreate = (e: any) => {
-            if (statusRemoveRow.value) {
-                if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
-                    modalStatusAdd.value = true
-                } else {
-                    statusRemoveRow.value = false;
-                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    resetFormNum.value++;
-                    focusedRowKey.value = 'PA710';
-                    statusFormUpdate.value = false;
-                }
-            } else {
-                modalStatusAdd.value = true;
+        const actionCreate = (e: any) => {
+            // if (statusRemoveRow.value) {
+            //     if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
+            //         modalStatusAdd.value = true
+            //     } else {
+            //         statusRemoveRow.value = false;
+            //         listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+            //         formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+            //         resetFormNum.value++;
+            //         focusedRowKey.value = 'PA710';
+            //         statusFormUpdate.value = false;
+            //     }
+            // } else {
+            //     modalStatusAdd.value = true;
+            // }
+            if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
+                modalStatusAdd.value = true
+            } else if(statusRemoveRow.value) {
+                statusRemoveRow.value = false;
+                listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+                formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+                resetFormNum.value++;
+                focusedRowKey.value = 'PA710';
+                statusFormUpdate.value = false;
             }
         }
 
@@ -484,7 +494,7 @@ export default defineComponent({
         let runOne = ref(true);
         watch(result, (value) => {
             trigger.value = false;
-            if (value && value.getEmployeeExtras?.length) {
+            if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
@@ -492,10 +502,15 @@ export default defineComponent({
                     }
                 })
                 if (runOne.value) {
-                    originDataDetail.value.employeeId = listEmployeeExtra.value[0].employeeId
-                    originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0].incomeTypeCode
-                    triggerDetail.value = true;
-                    statusFormUpdate.value = true;
+                    if (listEmployeeExtra.value.length) {
+                        originDataDetail.value.employeeId = listEmployeeExtra.value[0]?.employeeId
+                        originDataDetail.value.incomeTypeCode = listEmployeeExtra.value[0]?.incomeTypeCode
+                        triggerDetail.value = true;
+                        statusFormUpdate.value = true;
+                    } else {
+                        resetFormNum.value++;
+                        Object.assign(formState.value, initialState);
+                    }
                     runOne.value = false;
                 }
                 // listEmployeeExtra.value = value.getEmployeeExtras
@@ -515,13 +530,16 @@ export default defineComponent({
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
         watch(globalYear, () => {
+            runOne.value = true;
             trigger.value = true;
         });
 
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
-            confimSaveWhenChangeRow, actionToAddFromEdit, textCountry, formCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            contentDelete, modalStatusDelete, onSubmitDelete, statusRemoveRow, Message,
+            confimSaveWhenChangeRow, 
+            // actionToAddFromEdit, 
+            textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            contentDelete, modalStatusDelete, onSubmitDelete, statusRemoveRow, Message, pa710FormRef,
         };
     },
 });
