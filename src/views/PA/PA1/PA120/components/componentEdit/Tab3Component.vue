@@ -51,8 +51,8 @@
                             </div>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
-                            <div v-if="cellData.value" class="tag-foreigner">내</div>
-                            <div v-else class="tag-foreigner">외</div>
+                            <div v-if="cellData.value" class="tag-foreigner">외</div>
+                            <div v-else class="tag-foreigner">내</div>
                         </template>
                         <template #womenChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
@@ -298,7 +298,6 @@ export default defineComponent({
             employeeId: props.idRowEdit
         })
         const {
-            refetch: refetchData,
             result,
             loading,
         } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
@@ -355,14 +354,12 @@ export default defineComponent({
                 }).length;
             }
         });
-        watch(() => props.idRowEdit, (value) => {
+        watch(() => props.idRowEdit, () => {
             trigger.value = true
-            refetchData()
         })
 
-        const updateData = (emit: Boolean) => {
-            trigger.value = true
-            refetchData();
+        const updateData = () => {
+            trigger.value = true;
         };
         const hasStatus = (foreigner: Boolean) => {
             if (foreigner) {

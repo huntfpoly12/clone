@@ -5,12 +5,12 @@
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
             <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40 || statusButton==20"/>
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40"/>
         </div>
         <div class="d-flex">
-            <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
-            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || statusButton==30||statusButton==40" />
-            <DxButton @click="onSave" id="save-js-620" size="large" class="ml-4" :disabled="isDisabledForm || statusButton==30||statusButton==40">
+            <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || statusButton==30||statusButton==40 || statusButton==20" />
+            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || statusButton==30||statusButton==40 || statusButton==20" />
+            <DxButton @click="onSave" id="save-js-620" size="large" class="ml-4" :disabled="isDisabledForm || statusButton==30||statusButton==40 || statusButton==20">
                 <SaveOutlined style="font-size: 17px" />
             </DxButton>
             <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
@@ -31,7 +31,7 @@
                     </div>
                 </a-tooltip>
             </DxButton>
-            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || statusButton==30||statusButton==40">
+            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || statusButton==30||statusButton==40 || statusButton==20">
                 <div class="d-flex-center">
                     <checkbox-basic :valueCheckbox="true" :disabled="true" />
                     <span class="fz-12 pl-5">지급일변경</span>
@@ -103,12 +103,7 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
             <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
-              <!-- {{ dataAction }} dataAction <br/>
-              {{ dataActionEdit }} dataActionEdit <br/>
-              {{ dataCallApiDetailEdit }} dataCallApiDetailEdit <br/>
-              {{ isNewRow }} isNewRow <br/>
-              {{ compareForm() }} compareForm <br/>
-              {{ isClickMonthDiff }} isClickMonthDiff <br/> -->
+              <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right">
                     <employ-type-select :arrayValue="arrayEmploySelect"
                         v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
@@ -127,12 +122,12 @@
                                 </div>
                             </a-form-item>
                             <a-form-item label="지급일" label-align="right">
-                                <number-box :max="31" :min="1" width="150px" class="mr-5"
-                                    v-model:valueInput="dataAction.input.paymentDay"
+                                <number-box :max="31" :min="0" width="150px" class="mr-5"
+                                    v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
                                     :disabled="disabledInput || isDisabledForm" />
                             </a-form-item>
                             <a-form-item label="지급액" label-align="right">
-                                <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || statusButton==30||statusButton==40"
+                                <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || statusButton==30||statusButton==40 || statusButton==20"
                                     v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" />
                             </a-form-item>
                             <a-form-item label="세율" label-align="right">
@@ -175,6 +170,7 @@
                         </a-col>
                     </a-row>
                 </div>
+              </StandardForm>
             </a-spin>
         </a-col>
     </a-row>
@@ -284,6 +280,7 @@ export default defineComponent({
         let arrCallApiDelete: any = ref([]);
         const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         const editParam = ref([])
+        const pa620FormRef = ref();
 
         // ================GRAPQL==============================================
         // API QUERY TABLE SMALL LEFT SIDE
@@ -654,7 +651,7 @@ export default defineComponent({
         })
         const isErrorForm = ref(false);
         const onSave = (e:any) => {
-          var res = e.validationGroup.validate();
+          var res = pa620FormRef.value.validate();
           if (!res.isValid) {
             res.brokenRules[0].validator.focus();
             isErrorForm.value = true;
@@ -709,17 +706,10 @@ export default defineComponent({
           }
           return text;
         };
-        // --------- clear selection --------------------
-        // const gridRefName: any = ref("grid");
-        // const clearSelection = () => {
-        //   const dataGrid = this.$refs[this.dataGridRefName].instance;
-
-        //   dataGrid.clearSelection();
-        // };
         return {
             arrCallApiDelete, loadingOption, month1, month2, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, rowTable, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, arrDropDown, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, gridRefName, popupAddStatus, titleModalConfirm, copyFocusRowKey, isCompare, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm,deleteDone, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick
+            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm,deleteDone, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef
         }
     }
 });

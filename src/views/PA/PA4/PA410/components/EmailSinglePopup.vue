@@ -4,7 +4,7 @@
         <standard-form action="" name="email-single-430">
           
             <div class="custom-modal-send-email">
-              <img src="@/assets/images/email.svg" alt="" /><span>로 메일을 발송하시겠습니까?</span>
+              <img src="@/assets/images/email.svg" alt="" /><span>퇴직금 시뮬레이션 결과를</span>
               <div class="mail-input">
                 <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>

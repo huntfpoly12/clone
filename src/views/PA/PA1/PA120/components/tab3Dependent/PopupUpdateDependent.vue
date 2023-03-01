@@ -67,7 +67,7 @@
                             </a-form-item>
                             <a-form-item label="자녀세액공제" label-align="right" class="d-flex-nowrap">
                               <div class="input-text long-text">
-                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
+                                <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.descendant" />
                                 <span style="color: #888888; font-size:11px">
                                   <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 7세 이상 20세 이하의 자녀인 경우 공제 대상
                                 </span>
@@ -153,22 +153,6 @@ export default defineComponent({
                 notifcationTax();
             }
         },{deep:true});
-        // const senior = ref(formState.senior == true ? 1 : 0);
-        // watch(senior, (newValue) => {
-        //     if (newValue == 1) {
-        //         formState.senior = true;
-        //     } else {
-        //         formState.senior = false;
-        //     }
-        // });
-        const descendant = ref(formState.descendant == true ? 1 : 0);
-        watch(descendant, (newValue) => {
-            if (newValue == 1) {
-                formState.descendant = true;
-            } else {
-                formState.descendant = false;
-            }
-        });
         const householder = ref(formState.householder == true ? 1 : 0);
         watch(householder, (newValue) => {
             if (newValue == 1) {
@@ -307,7 +291,6 @@ export default defineComponent({
             // loading,
             householder,
             // senior,
-            descendant,
             formState,
             ageCount,
             disabledButton,convertAge,

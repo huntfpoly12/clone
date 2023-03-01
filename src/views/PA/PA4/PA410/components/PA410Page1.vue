@@ -29,7 +29,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const valueSelected = ref(0);
-        const isSelected = ref(true);
+        const isSelected = ref(false);
         const nextPage = () => {
             store.state.common.currentPagePA410 = 'PA410Page2';
             store.state.common.employeeIdPA410 = valueSelected.value;
@@ -52,7 +52,7 @@ export default defineComponent({
         const arrayEmployeeSelect = computed(() => {
           store.state.common.arrayEmployeePA410.push({
                                                       "type": null,
-                                                      "employeeId": null,
+                                                      "employeeId": 0,
                                                       "name": "익명",
                                                     })
           return store.state.common.arrayEmployeePA410

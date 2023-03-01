@@ -129,16 +129,6 @@
     </a-row>
     <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
-    <!-- <PopupMessage
-      :modalStatus="resetStatus"
-      @closePopup="resetStatus = false"
-      :typeModal="'confirm'"
-      :title="'처음부터 다시 입력하겠습니까?'"
-      :content="''"
-      :keyAccept="'1234'"
-      :okText="'확인'"
-      @checkConfirm="onResetComfirm"
-    /> -->
     <PopupMessage
       :modalStatus="rowChangeStatus"
       @closePopup="rowChangeStatus = false"
@@ -204,7 +194,6 @@ export default defineComponent({
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
-    const trigger = ref<boolean>(true);
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -250,6 +239,7 @@ export default defineComponent({
       notification('error', e.message);
     });
     //-----------------get employee wage and data source --------------------------------
+    const trigger = ref<boolean>(true);
     const {
       refetch: refetchData,
       result,
@@ -262,7 +252,16 @@ export default defineComponent({
       if (value) {
         dataSource.value = value.getEmployeeWages;
         trigger.value = false;
+      }else {
+        actionChangeComponent.value =1;
       }
+    });
+    //change year
+    watch (globalYear, () => {
+      trigger.value = true;
+      addComponentKey.value++;
+      store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      store.state.common.isNewRowPA120 = true;
     });
     // addcomponent
     const addComponentKey = ref(1);

@@ -305,7 +305,7 @@
   />
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistory" title="변경이력" typeHistory="pa-610"
   />
-  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" title="변경 내용을 저장하시겠습니까?" content="" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleConfirm"
+  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm"
   />
 </template>
 <script lang="ts">
@@ -464,7 +464,7 @@ export default defineComponent({
         }
         isNewRow.value = true;
       } else {
-        notification("error", Message.getCommonMessage('501').message);
+        notification("error", Message.getCommonMessage('301').message);
       }
     };
     // TODO handle onFocusedRowChanging to row
@@ -664,6 +664,7 @@ export default defineComponent({
       if (!res.isValid) {
         focusedRowKey.value = dataShow.value.employeeId;
         res.brokenRules[0].validator.focus();
+        isDiscard.value = false;  
       } else {
         // if form disabled => action edit
         if (!isNewRow.value) {
@@ -752,6 +753,7 @@ export default defineComponent({
       onFocusedRowChanging,
       loadingGetEmployeeBusinesses,
       formRef,
+      Message
     };
   },
 });
