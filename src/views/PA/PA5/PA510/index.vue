@@ -4,7 +4,7 @@
         <a-row>
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
-                    :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
+                    :show-borders="true" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />

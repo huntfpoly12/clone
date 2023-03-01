@@ -6,7 +6,7 @@
             <a-row>
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
+                        key-expr="companyId" :show-borders="true"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
