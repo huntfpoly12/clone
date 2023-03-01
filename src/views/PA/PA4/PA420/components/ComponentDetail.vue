@@ -2,8 +2,8 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear == 0 ? `${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}` :''}}</div>
-                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear == 0 ? `${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}` : ''}}</div>
+                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear != 0 ? `${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}` :''}}</div>
+                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear != 0 ? `${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}` : ''}}</div>
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">
@@ -73,12 +73,12 @@
                     <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
-                    width="120px" css-class="money-column"/>
+                    width="120px" alignment="right"/>
                 <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
-                    format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
-                    format="#,###" css-class="money-column"/>
-                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
+                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" alignment="right"/>
                 <template #total-deduction="{ data }">
                   <a-tooltip placement="left">
                       <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방<br>소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
@@ -86,7 +86,7 @@
                   </a-tooltip>
                 </template>
                 <DxColumn caption="차인지급액" width="130px" data-field="actualPayment" data-type="string"
-                    format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <template #note="{ data }">
                     <div>
