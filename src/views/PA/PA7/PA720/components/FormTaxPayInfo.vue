@@ -2,6 +2,7 @@
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
     <!-- {{ formPA720 }} formPA720 <br/>
     {{ formEditPA720 }} formEditPA720 <br/>
+    {{ getEmployeeExtrasParams }} getEmployeeExtrasParams <br/>
     {{ incomeExtraParam }} incomeExtraParam <br/> -->
     <standard-form formName="pa-720-form" ref="pa720FormRef">
 
@@ -178,10 +179,6 @@ export default defineComponent({
     let processKeyPA720: any = computed(() => store.getters['common/processKeyPA720']);
     const isEdit = ref(false);
     const getEmployeeExtrasTrigger = ref<boolean>(true);
-    const getEmployeeExtrasParams = reactive({
-      companyId: companyId,
-      imputedYear: processKeyPA720.value.processKey.imputedYear,
-    });
     const newDateLoading = ref<boolean>(false);
     const inputDateTax = computed(() => {
       if (props.isColumnData) {
@@ -202,6 +199,7 @@ export default defineComponent({
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
+    const messageUpdate =messages.getCommonMessage('106').message;
     const pa720FormRef = ref();
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
@@ -257,7 +255,11 @@ export default defineComponent({
     });
 
     //----------------------------get employee extras --------------------------------
-
+    const globalYear = computed(() => store.state.settings.globalYear);
+    const getEmployeeExtrasParams = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
     const arrayEmploySelect = ref<any>([]);
     const { result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
@@ -266,8 +268,8 @@ export default defineComponent({
       arrayEmploySelect.value = newValue.getEmployeeExtras;
     });
     //change year
-    const globalYear = computed(() => store.state.settings.globalYear);
-    watch(globalYear, (newVal) => {
+    watch(globalYear, (newVal, oldY) => {
+      console.log(`output->newVal`,newVal, oldY)
       getEmployeeExtrasParams.imputedYear = newVal;
     });
 
@@ -287,7 +289,7 @@ export default defineComponent({
         delete params.input.employeeId;
         delete params.input.incomeTypeCode;
         params.incomeId = incomeExtraParam.value.incomeId;
-        let updateData = { ...processKeyPA720.value, input: { ...params.input }, incomeId: props.editTax.incomeId }
+        let updateData = { ...processKeyPA720.value, input: { ...params.input }, incomeId: incomeExtraParam.value.incomeId }
         updateIncomeExtra(updateData);
         return;
       }
@@ -296,27 +298,29 @@ export default defineComponent({
     });
     // AFTER ACTION FORM
     createIncomeExtraDone((res) => {
-      emit('changeFommDone');
       notification('success', `업데이트 완료!`);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
       store.commit('common/formEditPA720', formPA720.value);
+      emit('changeFommDone', true);
     });
     updateIncomeExtraDone((res) => {
-      emit('changeFommDone');
-      notification('success', `업데이트 완료!`);
+      notification('success', messageUpdate);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       store.commit('common/formEditPA720', formPA720.value);
+      emit('changeFommDone', true);
     });
     createIncomeExtraError((res: any) => {
-      notification('error', res.message);
       store.state.common.isErrorFormPA720 = true;
+      notification('error', res.message);
+      emit('changeFommDone', false);
     });
     updateIncomeExtraError((res: any) => {
-      notification('error', res.message);
       store.state.common.isErrorFormPA720 = true;
+      notification('error', res.message);
+      emit('changeFommDone', false);
     })
 
     // ------------------------------calculate form fn--------------------------
@@ -373,7 +377,8 @@ export default defineComponent({
       loadingIncomeExtra,
       getEmployeeExtrasTrigger,
       formEditPA720,
-      pa720FormRef
+      pa720FormRef,
+      getEmployeeExtrasParams
     };
   },
 });
