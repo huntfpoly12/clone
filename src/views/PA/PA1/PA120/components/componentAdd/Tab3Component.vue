@@ -151,7 +151,6 @@
         </div>
       </a-col>
     </a-row>
-    {{ relationAll }}
     <popup-add-new-dependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false;" 
       :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData" :key="newForm" :relationAll="relationAll"/>
     <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"

@@ -205,7 +205,7 @@
                     :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                    :disabled="store.state.common.statusDisabledStatus" />
+                    :disabled="status == 30 || status == 40" />
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
@@ -219,6 +219,7 @@
                         :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
+                        @cell-click="onCellClick"
                         :selection-filter="store.state.common.selectionFilter"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
@@ -296,7 +297,7 @@
             </a-col>
         </a-row>
         <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-            title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmChange" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
         <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
             :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" /> -->
         <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
@@ -498,7 +499,7 @@ export default defineComponent({
             // refetchDataTaxPayInfo() //reset data table 2
         })
         watch(() => status.value, (newVal) => {
-            if (userType != 'm' && (newVal == 30 || newVal == 40)) {
+            if (userType != 'm' && (newVal == 20 || newVal == 30 || newVal == 40)) {
                 store.state.common.statusDisabledStatus = true;
             } else {
                 store.state.common.statusDisabledStatus = false;
@@ -547,25 +548,44 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
-                if ( rowData.length > 1 ) {
-                    // store.state.common.incomeId = rowData[0].
-                    store.state.common.focusedRowKey = store.state.common.incomeId
-                }
+                // if ( rowData.length > 1 ) {
+                //     // store.state.common.incomeId = rowData[0].
+                //     store.state.common.focusedRowKey = store.state.common.incomeId
+                // }
             })
         }
-        const showDetailSelected = (data: any) => {
+        const dataMonthNew: any = ref()
+        const checkClickMonth = ref<Boolean>(false)
+        // A function that is called when a user clicks on a month.
+        const showDetailSelected = (month: any) => {
+            dataMonthNew.value = month
+            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+                modalChangeRow.value = true
+                checkClickMonth.value = true
+            } else {
+                activeNewMonth(month)
+            }
+        }
+        const activeNewMonth = (month: any) => {
             IncomeWageDailiesTrigger.value = true;
-            status.value = data.status
-            store.state.common.processKeyPA510.imputedMonth = data.imputedMonth
-            store.state.common.processKeyPA510.paymentYear = data.paymentYear
-            store.state.common.processKeyPA510.paymentMonth = data.paymentMonth
+            status.value = month.status
+            store.state.common.processKeyPA510.imputedMonth = month.imputedMonth
+            store.state.common.processKeyPA510.paymentYear = month.paymentYear
+            store.state.common.processKeyPA510.paymentMonth = month.paymentMonth
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
         }
+
         const statusComfirmChange = (res: any) => {
             if (res) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                store.state.common.actionSubmit++
             } else {
+                if (checkClickMonth.value) {
+                    activeNewMonth(dataMonthNew.value)
+                    checkClickMonth.value = false;
+                    return;
+                }
                 if (!store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
@@ -587,6 +607,12 @@ export default defineComponent({
             // refetchDataTaxPayInfo()
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             statusDisabledBlock.value = false;
+        }
+        // Setting the focusedRowKey to the incomeId.
+        const onCellClick = (e: any) => {
+            if(e.columnIndex === 0 && e.column.type =='selection') {
+                store.state.common.focusedRowKey = store.state.common.incomeId
+            }
         }
         return {
             processKey,
@@ -610,7 +636,7 @@ export default defineComponent({
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             statusDisabledBlock,
-            Message,
+            Message, onCellClick,
         }
 
     },

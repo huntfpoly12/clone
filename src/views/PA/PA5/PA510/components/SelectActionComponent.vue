@@ -163,7 +163,9 @@ export default defineComponent({
                     // store.state.common.actionResetForm++;
                 // }
             } else {
-                modalStatusAdd.value = true
+                if (store.state.common.statusChangeFormAdd) {
+                    modalStatusAdd.value = true
+                }
                 // notification('error', "nhập vàooooo")
             }
         }
