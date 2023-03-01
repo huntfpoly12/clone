@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loadingCreated">
-        <standard-form action="" formName="add-page-520" ref="formRefPa520Add">
+        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
@@ -110,7 +110,7 @@
                     width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)"
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated()"
                     id="action-save" />
             </div>
         </standard-form>
@@ -219,7 +219,7 @@ export default defineComponent({
 
         }, { deep: true })
         watch(() => store.state.common.actionSaveAddPA520, (value) => {
-            document.getElementById('action-save')?.click()
+          actionCreated()
         }, { deep: true });
 
         // convert dataCreated.name to uppercase
@@ -233,7 +233,7 @@ export default defineComponent({
             dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
         }
-        const actionCreated = (e: any) => {
+        const actionCreated = () => {
             var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -258,7 +258,7 @@ export default defineComponent({
         }
         return {
             loadingCreated, activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionCreated, funcAddress,formRefPa520Add
+            actionCreated, funcAddress,formRefPa520Add,store
         };
     },
 });
