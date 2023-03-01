@@ -36,8 +36,8 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
-                <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
+                <DxColumn caption="사업자코드" data-field="electronicFilingId" data-type="string" />
+                <DxColumn caption="상호 주소" data-field="reportType" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus"

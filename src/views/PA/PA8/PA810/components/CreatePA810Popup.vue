@@ -5,8 +5,8 @@
       <div class="form">
         <a-row>
           <a-col span="12">
-            <a-form-item label="직원유행">
-              <a-radio-group v-model:value="employeeWageType">
+            <DxField label="직원유행">
+              <a-radio-group v-model:value="employeeWageType" class="d-flex items-center">
                 <a-radio :value="EmployeeWageType.WAGE" @change="handleRadioChange" v-model="stateSelectQuery.selectedRadioValue">
                   사원
                 </a-radio>
@@ -14,107 +14,101 @@
                   일용직사원
                 </a-radio>
               </a-radio-group>
-            </a-form-item>
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="업체명" label-align="right">
-              <employ-select :arrayValue="employeeWages" :required="true" width="300px" v-model:valueEmploy="employeeWageSelected"/>
-            </a-form-item>
+            <DxField label="직원선택">
+              <employ-select :arrayValue="employeeWages" :required="true"  v-model:valueEmploy="employeeWageSelected"/>
+            </DxField>
           </a-col>
         </a-row>
         <a-row :gutter="[0, 10]" class="item-group">
           <a-col span="12">
-            <a-form-item label="업체명" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="infoCompany.name" :disabled="true"
+            <DxField label="업체명">
+              <default-text-box  v-model:valueInput="infoCompany.name" :disabled="true"
                                 placeholder="한글,영문(대문자) 입력 가능"/>
-            </a-form-item>
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="대표자명" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="infoCompany.presidentName" :disabled="true"
-                                placeholder="한글,영문(대문자) 입력 가능"/>
-            </a-form-item>
+            <DxField label="대표자명">
+              <default-text-box v-model:valueInput="infoCompany.presidentName" :disabled="true"
+                placeholder="한글,영문(대문자) 입력 가능"/>
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="사업자등록번호" class="clr" label-align="left">
-              <!-- :disabled="!canChangeableBizNumber" -->
+            <DxField label="사업자등록번호">
               <biz-number-text-box
                 v-model:valueInput="infoCompany.bizNumber"
-                width="220"
                 :disabled="true"
                 messRequired="이항목은 필수 입력사항입니다!"
                 nameInput="companyBizNumber"
               />
-            </a-form-item>
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="사업장관리번호" label-align="right">
-            <default-text-box width="200px" v-model:valueInput="infoCompany.adding" :disabled="true"
-              placeholder="한글,영문(대문자) 입력 가능"/>
-            </a-form-item>
+            <DxField label="사업장관리번호">
+              <default-text-box  v-model:valueInput="infoCompany.adding" :disabled="true"
+                placeholder="한글,영문(대문자) 입력 가능"/>
+            </DxField>
           </a-col>
         </a-row>
+        <!-- 6 -->
         <a-row :gutter="[0, 10]" class="item-group">
           <a-col span="12">
-            <a-form-item label="성명" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="employeeWage.name" :disabled="true"
-                                placeholder="한글,영문(대문자) 입력 가능"/>
-            </a-form-item>
+            <DxField label="성명">
+              <default-text-box  v-model:valueInput="employeeWage.name" :disabled="true"
+                placeholder="한글,영문(대문자) 입력 가능"/>
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="주민등록증" label-align="right">
-              <id-number-text-box :disabled="true" v-model:valueInput="employeeWage.residentId"
-                                  width="150px"/>
-            </a-form-item>
+            <DxField label="주민등록번호">
+              <id-number-text-box :disabled="true" v-model:valueInput="employeeWage.residentId" />
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="주민등록증" label-align="right">
-              <default-text-box width="150px" v-model:valueInput="employeeWage.joinedAt"  :disabled="true" />
-            </a-form-item>
+            <DxField label="자격취득일(입사일)">
+              <default-text-box v-model:valueInput="employeeWage.joinedAt"  :disabled="true" />
+            </DxField>
           </a-col>
           <a-col span="12">
-            <a-form-item label="월급여" label-align="right">
-              <default-text-box width="200px" v-model:valueInput="employeeWage.totalPay" :disabled="true"
-                                placeholder="한글,영문(대문자) 입력 가능"/>
-            </a-form-item>
+            <DxField label="월급여">
+              <default-text-box  v-model:valueInput="employeeWage.totalPay" :disabled="true"
+                placeholder="한글,영문(대문자) 입력 가능"/>
+            </DxField>
           </a-col>
           <a-col span="24">
-            <a-form-item label="대표자여부" label-align="right">
-              <switch-basic v-model:valueSwitch="employeeWage.president" textCheck="O" textUnCheck="X"
-                            style="width: 80px" :disabled="true" />
-            </a-form-item>
+            <DxField label="대표자여부">
+              <switch-basic v-model:valueSwitch="employeeWage.president" textCheck="O" textUnCheck="X" :disabled="true" />
+            </DxField>
           </a-col>
           <a-col span="24">
             <div class="item-wrap">
               <span class="item-wrap-title">외국인</span>
-              <a-row gutter="7">
+              <a-row :gutter="[7, 20]">
                 <a-col span="12">
-                  <a-form-item label="국적코드" label-align="right">
-                    <a-space align="center" :size="4">
+                  <DxField label="국적코드">
+                    <div class="d-flex items-center gap-4">
                       <text-number-box
-                        width="200px"
                         v-model:valueInput="formData.nationalityNumber"
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
-                    </a-space>
-                  </a-form-item>
+                    </div>
+                  </DxField>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item label="체류자격" label-align="right">
-                    <a-space align="center" :size="4">
-                      <default-text-box
-                        width="200px"
+                  <DxField label="체류자격">
+                    <div class="d-flex items-center gap-4">
+                      <text-number-box
                         v-model:valueInput="formData.stayQualification"
                         :required="true"
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE" />
-                    </a-space>
-                  </a-form-item>
-                  
+                    </div>
+                  </DxField>
                 </a-col>
               </a-row>
             </div>
@@ -122,7 +116,7 @@
         </a-row>
         <a-row :gutter="[0, 10]" class="item-group">
           <a-col span="24">
-            <a-form-item label="대보험 공제 여부" label-align="right">
+            <a-form-item label="4대보험 선택" label-align="right">
               <a-space align="center" :size="8">
                 <span class="check-box-tab1">
                   <checkbox-basic label="국민연금" v-model:valueCheckbox="formData.nationalPensionReport"></checkbox-basic>
@@ -146,29 +140,26 @@
               <span class="item-wrap-title">국민연금</span>
               <a-row gutter="7">
                 <a-col span="12">
-                  <a-form-item label="취득부호" label-align="right">
-                    <a-space align="center" :size="4">
+                  <DxField label="취득부호">
+                    <div class="flex items-center">
                       <text-number-box
-                        width="200px"
                         v-model:valueInput="formData.nationalPensionAcquisitionCode"
                         :required="true"
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
-                      <SearchCodeButton :src="URL_CONST.URL_NATIONAL_PERSON_ACQUISITION_CODE" />
-                    </a-space>
-                  </a-form-item>
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                    </div>
+                  </DxField>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item label="" label-align="right">
-                    <span class="check-box-tab1 mb-4 ml-15">
-                      <checkbox-basic
-                        label="취득월 납부 희망여부"
-                        v-model:valueCheckbox="formData.acquisitionMonthPayment"
-                        :disabled="isChooseNationalPensionReport"
-                      />
-                    </span>
-                  </a-form-item>
+                  <div class="h-full d-flex justify-content-end px-10">
+                    <checkbox-basic
+                      label="취득월 납부 희망여부"
+                      v-model:valueCheckbox="formData.acquisitionMonthPayment"
+                      :disabled="isChooseNationalPensionReport"
+                    />
+                  </div>
                 </a-col>
               </a-row>
             </div>
@@ -179,39 +170,34 @@
               <span class="item-wrap-title">건강보험</span>
               <a-row gutter="7">
                 <a-col span="12">
-                  <a-form-item label="취득부호" label-align="right">
-                    <a-space align="center" :size="4">
+                  <DxField label="취득부호">
+                    <div class="d-flex items-center">
                       <text-number-box
-                        width="200px"
                         :required="true"
                         placeholder="00"
                         v-model:valueInput="formData.healthInsuranceAcquisitionCode"
                         :disabled="isChooseHealthInsuranceReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_HEALTH_INSURANCE_ACQUISITION_CODE_CODE" />
-                    </a-space>
-                  </a-form-item>
+                    </div>
+                  </DxField>
                 </a-col>
                 <a-col span="6">
-                  <a-form-item label="" label-align="right">
-                    <span class="check-box-tab1 mb-4 ml-15">
-                      <checkbox-basic
-                        label="보험증발송여부 "
-                        value="false"
-                        :disabled="true"
-                      />
-                    </span>
-                  </a-form-item>
+                  <div class="h-full d-flex items-center">
+                    <checkbox-basic
+                      label="보험증발송여부 "
+                      value="false"
+                      :disabled="true"
+                    />
+                  </div>
                 </a-col>
                 <a-col span="6">
-                  <a-form-item label="" label-align="right">
-                    <span class="check-box-tab1 mb-4 ml-15">
-                      <checkbox-basic
-                        label="피부양자신청"
-                        v-model:valueCheckbox="formData.includeDependents"
+                  <div class="h-full d-flex items-center">
+                    <checkbox-basic
+                      label="피부양자신청"
+                      v-model:valueCheckbox="formData.includeDependents"
                       />
-                    </span>
-                  </a-form-item>
+                  </div>
                 </a-col>
               </a-row>
             </div>
@@ -221,98 +207,85 @@
             <div class="item-wrap">
               <span class="item-wrap-title">고용산재</span>
               <a-row gutter="7">
-                <a-col span="10">
-                  <a-form-item label="직종부호" label-align="right">
-                    <a-space align="center" :size="4">
+                <a-col span="7">
+                  <DxField label="직종부호">
+                    <div class="flex items-start">
                       <text-number-box
-                      width="200px"
-                      placeholder="232"
-                      v-model:valueInput="formData.jobTypeCode"
-                      :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                    />
-                      <SearchCodeButton :src="URL_CONST.URL_JOB_TYPE_CODE_CODE" />
-                    </a-space>
-                  </a-form-item>
-                </a-col>
-                <a-col span="6">
-                  <a-form-item label="" label-align="right">
-                    <span class="check-box-tab1 mb-4 ml-15">
-                      <checkbox-basic
-                        label="계약직여부"
-                        v-model:valueInput="formData.contractWorker"
+                        placeholder="232"
+                        v-model:valueInput="formData.jobTypeCode"
                         :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                       />
-                    </span>
-                  </a-form-item>
+                      <SearchCodeButton :src="URL_CONST.URL_JOB_TYPE_CODE_CODE" />
+                    </div>
+                  </DxField>
                 </a-col>
-                <a-col span="8">
-                  <a-form-item label="" label-align="right"
-                               :style="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance && styleDisable">
-                    <a-form-item label="계약종료일" label-align="right" >
+                <a-col span="7">
+                  <div class="h-full flex items-center justify-content-start px-10">
+                    <checkbox-basic
+                      label="계약직여부"
+                      v-model:valueInput="formData.contractWorker"
+                      :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                  />
+                  </div>
+                </a-col>
+                <a-col span="9">
+                  <DxField label="계약종료일">
+                    <div class="h-full flex items-center">
                       <date-time-box
-                        class="ml-10"
-                        width="145px"
+                        
                         default="2022-12-12"
                         dateFormat="YYYY-MM-DD"
                         v-model="formData.contractExpiredDate"
                         :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                       />
-                    </a-form-item>
+                    </div>
+                  </DxField>  
                     <!--                      <label class="lable-item">계약종료일:</label>-->
-                  </a-form-item>
                 </a-col>
-                  <a-col span="8">
+                  <a-col span="7">
                     <a-form-item label="" label-align="right" style="padding-left: 10px">
                       <checkbox-basic
-                        label="일자리안정자금지원신청 신청"
+                        label="일자리안정자금지원 신청                        "
                         v-model:valueCheckbox="formData.jobSecurityFundSupportApplication"
                         :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                       />
                     </a-form-item>
                   </a-col>
-                  <a-col span="8">
-                    <a-form-item label="주소정근로시간"
-                                 :style="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance && styleDisable"
-                                 label-align="right">
-                    <span class="check-box-tab1 mb-4">
-                    <number-box
-                      :required="true"
-                      :spinButtons="true"
-                      v-model:valueInput="formData.weeklyWorkingHours"
-                      width="150px"
-                      :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                    />
-                    </span>
-                    </a-form-item>
-                  </a-col>
-                  <a-col span="8">
-                    <a-form-item label="보험료부과구분부호 및 사유" label-align="right"
-                                 :style="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance && styleDisable">
-                    <span class="check-box-tab1 mb-4">
-                      <a-space direction="vertical" :size="4">
+                  <a-col span="7">
+                    <DxField label="주소정근로시간">
+                      <div class="flex justify-content-start">
                         <number-box
                           :required="true"
                           :spinButtons="true"
+                          v-model:valueInput="formData.weeklyWorkingHours"
+                          
+                          :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                        />
+                        </div>
+                    </DxField>
+                  </a-col>
+                  <a-col span="9" class="relative">
+                    <DxField label="보험료부과구분부호 및 사유" :style="'align-items: start'">
+                      <div class="w-full flex flex-col gap-1">
+                        <number-box
+                          :spinButtons="true"
                           v-model:valueInput="formData.insuranceReductionCode"
-                          width="150px"
                           :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                           placeholder="부호"
+                          width="100%"
                         />
-                        <a-space align="center" :size="4">
-                          <number-box
-                            :required="true"
-                            :spinButtons="true"
-                            v-model:valueInput="formData.insuranceReductionReasonCode"
-                            :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                            width="150px"
-                            placeholder="사유코드"
-                          />
-                          <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="750" />
-                        </a-space>
-                       
-                      </a-space>
-                    </span>
-                    </a-form-item>
+                        <number-box
+                          :spinButtons="true"
+                          v-model:valueInput="formData.insuranceReductionReasonCode"
+                          :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                          placeholder="사유코드"
+                          width="100%"
+                        />
+                      </div>
+                      <div class="absolute" style="bottom: 0; right: 0; transform: translateX(80%)">
+                        <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="780" />
+                      </div>
+                    </DxField>
                   </a-col>
               </a-row>
 
@@ -354,8 +327,8 @@
               <template  v-for="(dependent, index) in employeeWage.dependents" :key="index">
                 <!-- Add more dependent properties as needed -->
                 
-                <div class="bg-gray flex">{{ employeeWage.name }}</div>
-                <div class="bg-gray flex col-span-2">{{ employeeWage.residentId }}</div>
+                <div class="bg-gray flex">{{ dependent.name }}</div>
+                <div class="bg-gray flex col-span-2">{{ dependent.residentId }}</div>
                 <div class="bg-gray flex ">
                   <a-tooltip placement="top" :title="dependent.disabledCode">
                     <!-- tool tip -->
@@ -445,6 +418,7 @@ import SearchCodeButton from './SearchCodeButton.vue';
 import TableEmployeeWage from './TableEmployeeWage.vue';
 import notification from "@/utils/notification";
 import INITIAL_DATA from './../utils'
+import DxField from "./DxField.vue";
 import filters from "@/helpers/filters";
 let dpRelation =  enum2Entries(DependantsRelation)
 const getCodeOrLabel = (id: number) => {
@@ -482,7 +456,8 @@ export default defineComponent({
     DxFileUploader,
     UploadFile,
     TableEmployeeWage,
-    SearchCodeButton
+    SearchCodeButton,
+    DxField
 },
   setup(_, { emit}) {
     const store = useStore();
@@ -584,7 +559,7 @@ export default defineComponent({
             stayQualification: item.stayQualification,
             stayPeriodFrom: item?.contractExpiredDate ? item.contractExpiredDate[0] : filters.formatDateToInterger(new Date().getTime()),
             stayPeriodTo: item?.contractExpiredDate ? item.contractExpiredDate[1] : filters.formatDateToInterger(new Date().setDate(new Date().getDate() + 7)),
-            disabledRegisteredDate: filters.formatDateToInterger(item.disabledRegisteredDate) || 0
+            disabledRegisteredDate: item.disabledRegisteredDate ? filters.formatDateToInterger(item.disabledRegisteredDate) : 0
           }
         })
         const input = {

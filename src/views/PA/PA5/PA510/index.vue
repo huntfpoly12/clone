@@ -11,7 +11,7 @@
                     <template #imputed-year="{}">
                         <span>지급연월</span>
                     </template>
-                    <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
+                    <DxColumn width="100px" caption="01" cell-template="imputed-month1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 &&'column-focus'"/>
                     <template #imputed-month1="{ data }">
                         <div v-if="data.data.month1">
                             <colorful-badge class="hover-underlined" :value="data.data.month1.status"
@@ -21,7 +21,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="02" cell-template="imputed-month2" />
+                    <DxColumn width="100px" caption="02" cell-template="imputed-month2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 &&'column-focus'"/>
                     <template #imputed-month2="{ data }">
                         <div v-if="data.data.month2">
                             <colorful-badge class="hover-underlined" :value="data.data.month2.status"
@@ -31,7 +31,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="03" cell-template="imputed-month3" />
+                    <DxColumn width="100px" caption="03" cell-template="imputed-month3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 &&'column-focus'"/>
                     <template #imputed-month3="{ data }">
                         <div v-if="data.data.month3">
                             <colorful-badge class="hover-underlined" :value="data.data.month3.status"
@@ -41,7 +41,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="04" cell-template="imputed-month4" />
+                    <DxColumn width="100px" caption="04" cell-template="imputed-month4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 &&'column-focus'"/>
                     <template #imputed-month4="{ data }">
                         <div v-if="data.data.month4">
                             <colorful-badge class="hover-underlined" :value="data.data.month4.status"
@@ -51,7 +51,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="05" cell-template="imputed-month5" />
+                    <DxColumn width="100px" caption="05" cell-template="imputed-month5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 &&'column-focus'"/>
                     <template #imputed-month5="{ data }">
                         <div v-if="data.data.month5">
                             <colorful-badge class="hover-underlined" :value="data.data.month5.status"
@@ -61,7 +61,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="06" cell-template="imputed-month6" />
+                    <DxColumn width="100px" caption="06" cell-template="imputed-month6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 &&'column-focus'"/>
                     <template #imputed-month6="{ data }">
                         <div v-if="data.data.month6">
                             <colorful-badge class="hover-underlined" :value="data.data.month6.status"
@@ -71,7 +71,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="07" cell-template="imputed-month7" />
+                    <DxColumn width="100px" caption="07" cell-template="imputed-month7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 &&'column-focus'"/>
                     <template #imputed-month7="{ data }">
                         <div v-if="data.data.month7">
                             <colorful-badge class="hover-underlined" :value="data.data.month7.status"
@@ -81,7 +81,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="08" cell-template="imputed-month8" />
+                    <DxColumn width="100px" caption="08" cell-template="imputed-month8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 &&'column-focus'"/>
                     <template #imputed-month8="{ data }">
                         <div v-if="data.data.month8">
                             <colorful-badge class="hover-underlined" :value="data.data.month8.status"
@@ -91,7 +91,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="09" cell-template="imputed-month9" />
+                    <DxColumn width="100px" caption="09" cell-template="imputed-month9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 &&'column-focus'"/>
                     <template #imputed-month9="{ data }">
                         <div v-if="data.data.month9">
                             <colorful-badge class="hover-underlined" :value="data.data.month9.status"
@@ -101,7 +101,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="10" cell-template="imputed-month10" />
+                    <DxColumn width="100px" caption="10" cell-template="imputed-month10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 &&'column-focus'"/>
                     <template #imputed-month10="{ data }">
                         <div v-if="data.data.month10">
                             <colorful-badge class="hover-underlined" :value="data.data.month10.status"
@@ -111,7 +111,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="11" cell-template="imputed-month11" />
+                    <DxColumn width="100px" caption="11" cell-template="imputed-month11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 &&'column-focus'"/>
                     <template #imputed-month11="{ data }">
                         <div v-if="data.data.month11">
                             <colorful-badge class="hover-underlined" :value="data.data.month11.status"
@@ -121,7 +121,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="12" cell-template="imputed-month12" />
+                    <DxColumn width="100px" caption="12" cell-template="imputed-month12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 &&'column-focus'"/>
                     <template #imputed-month12="{ data }">
                         <div v-if="data.data.month12">
                             <colorful-badge class="hover-underlined" :value="data.data.month12.status"
@@ -140,52 +140,52 @@
                             <template #col-first="{ data }">
                                 <b>{{ data.data.name }}</b><br>
                             </template>
-                            <DxColumn width="100px" cell-template="month-1" />
+                            <DxColumn width="100px" cell-template="month-1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 &&'column-focus'"/>
                             <template #month-1="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month1)">{{ data.data.month1.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-2" />
+                            <DxColumn width="100px" cell-template="month-2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 &&'column-focus'"/>
                             <template #month-2="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month2)">{{ data.data.month2.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-3" />
+                            <DxColumn width="100px" cell-template="month-3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 &&'column-focus'"/>
                             <template #month-3="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month3)">{{ data.data.month3.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-4" />
+                            <DxColumn width="100px" cell-template="month-4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 &&'column-focus'"/>
                             <template #month-4="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month4)">{{ data.data.month4.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-5" />
+                            <DxColumn width="100px" cell-template="month-5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 &&'column-focus'"/>
                             <template #month-5="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month5)">{{ data.data.month5.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-6" />
+                            <DxColumn width="100px" cell-template="month-6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 &&'column-focus'"/>
                             <template #month-6="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month6)">{{ data.data.month6.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-7" />
+                            <DxColumn width="100px" cell-template="month-7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 &&'column-focus'"/>
                             <template #month-7="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month7)">{{ data.data.month7.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-8" />
+                            <DxColumn width="100px" cell-template="month-8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 &&'column-focus'"/>
                             <template #month-8="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month8)">{{ data.data.month8.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-9" />
+                            <DxColumn width="100px" cell-template="month-9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 &&'column-focus'"/>
                             <template #month-9="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month9)">{{ data.data.month9.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-10" />
+                            <DxColumn width="100px" cell-template="month-10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 &&'column-focus'"/>
                             <template #month-10="{ data }">
                                 <div class="custom-detail" v-if="data.data.month10">{{ data.data.month10.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-11" />
+                            <DxColumn width="100px" cell-template="month-11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 &&'column-focus'"/>
                             <template #month-11="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month11)">{{ data.data.month11.value }}
                                 </div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-12" />
+                            <DxColumn width="100px" cell-template="month-12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 &&'column-focus'"/>
                             <template #month-12="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month12)">{{ data.data.month12.value }}
                                 </div>
@@ -199,10 +199,10 @@
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <DxButton
-                    :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
+                    :text="'귀 ' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 <DxButton
-                    :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
+                    :text="'지 ' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
                     :disabled="status == 30 || status == 40" />
@@ -236,15 +236,15 @@
                         <template #workingDays="{ data }">
                             {{  data.data.workingDays }}
                         </template>
-                        <DxColumn width="85" caption="일급여" format="fixedPoint" cell-template="dailyWage"/>
+                        <DxColumn css-class="money-column" width="85" caption="일급여" cell-template="dailyWage"/>
                         <template #dailyWage="{ data }">
-                            {{  data.data.dailyWage }}
+                            {{  $filters.formatCurrency(data.data.dailyWage) }}
                         </template>
-                        <DxColumn width="85" caption="월급여" format="fixedPoint" cell-template="monthlyWage"/>
+                        <DxColumn css-class="money-column" width="85" caption="월급여" cell-template="monthlyWage"/>
                         <template #monthlyWage="{ data }">
-                            {{  data.data.monthlyWage }}
+                            {{  $filters.formatCurrency(data.data.monthlyWage) }}
                         </template>
-                        <DxColumn width="85" caption="공제" cell-template="total-deduction" />
+                        <DxColumn css-class="money-column" width="85" caption="공제" cell-template="total-deduction" />
                         <template #total-deduction="{ data }">
                             <a-tooltip placement="top">
                                 <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -255,9 +255,9 @@
                                 </span>
                             </a-tooltip>
                         </template>
-                        <DxColumn width="85" caption="차인지급액"  format="fixedPoint" cell-template="actualPayment" />
+                        <DxColumn css-class="money-column" width="85" caption="차인지급액" cell-template="actualPayment" />
                         <template #actualPayment="{ data }">
-                            {{  data.data.actualPayment }}
+                            {{  $filters.formatCurrency(data.data.actualPayment) }}
                         </template>
                         <DxColumn caption="비고" cell-template="four-major-insurance" />
                         <template #four-major-insurance="{ data }">
@@ -284,10 +284,9 @@
                         </template>
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
-                            <DxTotalItem column="월급여" summary-type="sum" display-format="월급여합계: {0}" value-format="#,###" />
-                            <DxTotalItem column="공제" summary-type="sum" display-format="공제합계: {0}" value-format="#,###" />
-                            <DxTotalItem column="차인지급액" summary-type="sum" display-format="차인지급액합계: {0}"
-                                value-format="#,###" />
+                            <DxTotalItem column="월급여"  :customize-text="customMonthlyWage"/>
+                            <DxTotalItem column="공제" :customize-text="customTotalDeduction" />
+                            <DxTotalItem column="차인지급액" :customize-text="customActualPayment"/>
                         </DxSummary>
                     </DxDataGrid>
                 </a-spin>
@@ -426,29 +425,30 @@ export default defineComponent({
                     // data table detail
                     dataCustomRes.value[0]['month' + val.imputedMonth] =
                     {
-                        value: val.employeeStat ? `${filters.formatCurrency(val.employeeStat.employeeCount)}(${filters.formatCurrency(val.employeeStat.retireEmployeeCount)})` : 0,
+                        value: `${filters.formatCurrency(val.employeeStat?.employeeCount)}
+                        (${filters.formatCurrency(val.employeeStat?.retireEmployeeCount)})`,
                         ...dataAdd
                     }
 
                     dataCustomRes.value[1]['month' + val.imputedMonth] =
                     {
-                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.incomePayment) : 0,
+                        value: filters.formatCurrency(val.incomeStat?.incomePayment),
                         ...dataAdd
                     }
                     dataCustomRes.value[2]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.withholdingIncomeTax) : 0,
+                        value: filters.formatCurrency(val.incomeStat?.withholdingIncomeTax),
                         ...dataAdd
                     }
                     dataCustomRes.value[3]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.withholdingLocalIncomeTax) : 0,
+                        value: filters.formatCurrency(val.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
                     dataCustomRes.value[4]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.totalDeduction) : 0,
+                        value: filters.formatCurrency(val.incomeStat?.totalDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + val.imputedMonth] = {
-                        value: val.incomeStat ? filters.formatCurrency(val.incomeStat.actualPayment) : 0,
+                        value: filters.formatCurrency(val.incomeStat?.actualPayment),
                         ...dataAdd
                     }
                 })
@@ -614,6 +614,27 @@ export default defineComponent({
                 store.state.common.focusedRowKey = store.state.common.incomeId
             }
         }
+        const customMonthlyWage = () => {
+            let sum = 0
+            store.state.common.dataTaxPayInfo?.map((row: any) => {
+                sum+= row.monthlyWage
+            })
+            return `월급여합계: ` + filters.formatCurrency(sum);
+        }
+        const customTotalDeduction = () => {
+            let sum = 0
+            store.state.common.dataTaxPayInfo?.map((row: any) => {
+                sum+= row.totalDeduction
+            })
+            return `공제합계: ` + filters.formatCurrency(sum);
+        }
+        const customActualPayment = () => {
+            let sum = 0
+            store.state.common.dataTaxPayInfo?.map((row: any) => {
+                sum+= row.actualPayment
+            })
+            return `차인지급액합계: ` + filters.formatCurrency(sum);
+        }
         return {
             processKey,
             loading,
@@ -637,6 +658,7 @@ export default defineComponent({
             // modalChangeRowPrice, statusComfirmChangePrice,
             statusDisabledBlock,
             Message, onCellClick,
+            customMonthlyWage, customTotalDeduction,  customActualPayment,
         }
 
     },

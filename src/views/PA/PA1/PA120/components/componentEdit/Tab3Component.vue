@@ -21,16 +21,15 @@
                         <DxColumn alignment="left" caption="성명" data-field="name" />
                         <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
                         <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
-                        <DxColumn alignment="left" caption="나이" data-field="Age" cell-template="ageChange" />
-                        <DxColumn alignment="left" caption="기본공제" data-field="basicDeduction"
+                        <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header"/>
+                        <DxColumn alignment="left" header-cell-template="basicDeduction-header" data-field="basicDeduction"
                             cell-template="basicDeductionChange" />
-                        <DxColumn alignment="left" caption="부녀자" data-field="women" cell-template="womenChange" />
-                        <DxColumn alignment="left" caption="한부모" data-field="singleParent"
-                            cell-template="singleParentChange" />
-                        <DxColumn alignment="left" caption="경로 우대" data-field="senior" cell-template="SeniorChange" />
+                        <DxColumn alignment="left" header-cell-template="women-header" data-field="women" cell-template="womenChange" />
+                        <DxColumn alignment="left" header-cell-template="singleParent-header" data-field="singleParent" cell-template="singleParentChange" />
+                        <DxColumn alignment="left" header-cell-template="senior-header" data-field="senior" cell-template="SeniorChange" />
                         <DxColumn alignment="left" caption="장애인 " data-field="disabled"
                             cell-template="disabledChange" />
-                        <DxColumn alignment="left" caption="자녀" data-field="descendant"
+                        <DxColumn alignment="left" header-cell-template="descendant-header" data-field="descendant"
                             cell-template="DescendantChange" />
                         <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
                             cell-template="maternityAdoptionChange" />
@@ -81,11 +80,69 @@
                         <template #maternityAdoptionChange="{ data: cellData }">
                             <div v-if="cellData.value">{{ maternityAndAdoption(cellData.value) }}</div>
                         </template>
-                        <!-- <template #consignmentRelationshipChange="{ data: cellData }">
-                            <BtnCheck :value="cellData.value" />
-                        </template> -->
                         <template #householderChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />
+                        </template>
+                        <template #age-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              주민등록번호로 해당 원천년도 기준 나이 자동 계산
+                            </template>
+                            <div style="text-align: center;" >
+                              나이
+                            </div>
+                          </a-tooltip>
+                        </template>
+                        <template #basicDeduction-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              주민등록번호로 해당 원천년도 기준 나이 자동 계산 <br/>
+                              다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함
+                            </template>
+                            <div style="text-align: center;" >
+                              나이
+                            </div>
+                          </a-tooltip>
+                        </template>
+                        <template #women-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              한부모가족 공제와 중복 공제 불가
+                            </template>
+                            <div style="text-align: center;" >
+                              부녀자
+                            </div>
+                          </a-tooltip>
+                        </template>
+                        <template #singleParent-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              부녀자 공제와 중복 공제 불가 
+                            </template>
+                            <div style="text-align: center;" >
+                              한부모
+                            </div>
+                          </a-tooltip>
+                        </template>
+                        <template #senior-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              만 70세 이상 
+                            </template>
+                            <div style="text-align: center;" >
+                              경로 우대
+                            </div>
+                          </a-tooltip>
+                        </template>
+                        <template #descendant-header>
+                          <a-tooltip placement="top" class="custom-tooltip">
+                            <template #title>
+                              7세 이상 20세 이하의 자녀인 경우 공제 대상
+                            </template>
+                            <div style="text-align: center;" >
+                              자녀
+                            </div>
+                          </a-tooltip>
                         </template>
                     </DxDataGrid>
                 </a-spin>
@@ -338,19 +395,16 @@ export default defineComponent({
                     return item.senior == true;
                 }).length;
                 disabledSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior == 0;
-                }).length;
-                disabledSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior == 0;
+                    return item.disabled != 0;
                 }).length;
                 womenSummary2.value = dataSource.value.filter((item: any) => {
-                    return item.senior == 0;
+                    return item.women == true;
                 }).length;
                 singleParentSummary.value = dataSource.value.filter((item: any) => {
                     return item.senior == true;
                 }).length;
                 maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
-                    return item.maternityAdoption != '해당없음';
+                    return item.maternityAdoption != '0';
                 }).length;
             }
         });

@@ -3,7 +3,7 @@ export const sampleDataIncomeWage = {
   monthlyWage: 0,
   dailyWage: 0,
   workingDays: 0,
-  paymentDay: 0,
+  paymentDay: 1,
   deductionItems: [],
   employee: {
     employeeId: null,
