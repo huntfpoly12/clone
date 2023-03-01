@@ -16,7 +16,7 @@
       
     </a-tooltip>
 
-    <a-modal v-model:visible="isOpen" footer="" :mask-closable="false" :width="610" :bodyStyle="{padding: '50px 24px'}">
+    <a-modal v-model:visible="isOpen" footer="" :mask-closable="false" :width="widthModal" :bodyStyle="{padding: '50px 24px'}">
       <iframe
         :src="src"
         type="application/pdf"
@@ -49,6 +49,10 @@ export default defineComponent({
     width: {
       type: String,
       default: "28",
+    },
+    widthModal: {
+      type: Number,
+      default: 610,
     },
     src: {
       type: String,

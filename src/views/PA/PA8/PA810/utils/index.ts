@@ -1,3 +1,4 @@
+import filters from "@/helpers/filters";
 export type InitialFormCreateType = {
   name: string;
   bizNumber: string;
@@ -13,7 +14,7 @@ export type InitialFormCreateType = {
   healthInsuranceReport: boolean;
   employeementInsuranceReport: boolean;
   industrialAccidentInsuranceReport: boolean;
-  nationalPensionAcquisitionCode: Number;
+  nationalPensionAcquisitionCode: string;
   acquisitionMonthPayment: boolean;
   healthInsuranceAcquisitionCode: string;
   includeDependents: boolean;
@@ -22,7 +23,7 @@ export type InitialFormCreateType = {
   contractExpiredDate?: Number;
   jobSecurityFundSupportApplication: boolean;
   weeklyWorkingHours: number;
-  insuranceReductionCode: string;
+  insuranceReductionCode: number | string;
   insuranceReductionReasonCode: string;
   dependentsEvidenceFileStorageId?: Number;
 };
@@ -35,15 +36,15 @@ const InitialFormCreate: InitialFormCreateType = {
   residentId: "", // 8
   totalPay: "", // 9
   president: false, // 10 no
-  nationalityNumber: "1", // 11 field required number, but component return string value
+  nationalityNumber: "", // 11 field required number, but component return string value
   stayQualification: "", // 12 field required number, but component return string value
   nationalPensionReport: true, // 13
   healthInsuranceReport: true, // 14
   employeementInsuranceReport: true, // 15
   industrialAccidentInsuranceReport: true, // 16
-  nationalPensionAcquisitionCode: 1, // 17
+  nationalPensionAcquisitionCode: "1", // 17
   acquisitionMonthPayment: false, // 18
-  healthInsuranceAcquisitionCode: "", // 19
+  healthInsuranceAcquisitionCode: "00", // 19
   includeDependents: true, // 21
   jobTypeCode: "232", // 22
   contractWorker: true, // 23
@@ -63,9 +64,10 @@ const initialEmployeeWage = {
   nationalityNumber: "",
   nationalityCode: "",
   stayQualification: "",
-  disabledCode: "1", // no field
   dependents: [
     {
+      disabledCode: "",
+      disabledRegisteredDate: 0,
       name: "",
       nationalityNumber: "",
       relationCode: "",
@@ -75,7 +77,12 @@ const initialEmployeeWage = {
       stayPeriodFrom: "",
       stayPeriodTo: "",
       stayQualification: "",
-      contractExpiredDate: [],
+      contractExpiredDate: [
+        filters.formatDateToInterger(new Date().getTime()),
+        filters.formatDateToInterger(
+          new Date().setDate(new Date().getDate() + 7)
+        ),
+      ],
     },
   ],
 };

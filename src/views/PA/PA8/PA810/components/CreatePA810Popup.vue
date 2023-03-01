@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="55%" v-model:visible="visible" title="취득신고등록" centered
+  <a-modal class="form-modal" width="75%" v-model:visible="visible" title="취득신고등록" centered
            @cancel="$emit('closeModal')" :footer="null">
     <standard-form>
       <div class="form">
@@ -94,8 +94,7 @@
                       <text-number-box
                         width="200px"
                         v-model:valueInput="formData.nationalityNumber"
-                        :required="true"
-                        placeholder="1"
+                        placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
@@ -105,14 +104,14 @@
                 <a-col span="12">
                   <a-form-item label="체류자격" label-align="right">
                     <a-space align="center" :size="4">
-                      <text-number-box
+                      <default-text-box
                         width="200px"
                         v-model:valueInput="formData.stayQualification"
                         :required="true"
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
-                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                      <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE" />
                     </a-space>
                   </a-form-item>
                   
@@ -153,10 +152,10 @@
                         width="200px"
                         v-model:valueInput="formData.nationalPensionAcquisitionCode"
                         :required="true"
-                        placeholder="1"
+                        placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
-                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONAL_PERSON_ACQUISITION_CODE" />
                     </a-space>
                   </a-form-item>
                 </a-col>
@@ -222,25 +221,25 @@
             <div class="item-wrap">
               <span class="item-wrap-title">고용산재</span>
               <a-row gutter="7">
-                <a-col span="12">
+                <a-col span="10">
                   <a-form-item label="직종부호" label-align="right">
                     <a-space align="center" :size="4">
                       <text-number-box
                       width="200px"
                       placeholder="232"
-                      v-model:valueCheckbox="formData.jobTypeCode"
+                      v-model:valueInput="formData.jobTypeCode"
                       :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                     />
                       <SearchCodeButton :src="URL_CONST.URL_JOB_TYPE_CODE_CODE" />
                     </a-space>
                   </a-form-item>
                 </a-col>
-                <a-col span="4">
+                <a-col span="6">
                   <a-form-item label="" label-align="right">
                     <span class="check-box-tab1 mb-4 ml-15">
                       <checkbox-basic
                         label="계약직여부"
-                        v-model:valueCheckbox="formData.contractWorker"
+                        v-model:valueInput="formData.contractWorker"
                         :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                       />
                     </span>
@@ -249,8 +248,9 @@
                 <a-col span="8">
                   <a-form-item label="" label-align="right"
                                :style="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance && styleDisable">
-                    <a-form-item label="계약종료일" label-align="right">
+                    <a-form-item label="계약종료일" label-align="right" >
                       <date-time-box
+                        class="ml-10"
                         width="145px"
                         default="2022-12-12"
                         dateFormat="YYYY-MM-DD"
@@ -307,7 +307,7 @@
                             width="150px"
                             placeholder="사유코드"
                           />
-                          <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" />
+                          <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="750" />
                         </a-space>
                        
                       </a-space>
@@ -324,19 +324,13 @@
       <div class="fileuploader-container mt-20">
         <UploadFile @response-fileId="getFileId" />
       </div>
-      <div class="mt-20">
+      <div class="mt-20 table-container">
         <div class="grid grid-cols-12 items-center">
-          <div class="col-span-1 header flex">
-            <div class="header">피부양자</div>
-          </div>
+          <div class="col-span-1 header flex">피부양자</div>
           <div class="col-span-11">
             <div class="grid grid-cols-11 items-center">
-              <div class="row-span-2 header flex">
-                <div class="header">성명</div>
-              </div>
-              <div class="row-span-2 col-span-2 header flex">
-                <div class="header">주민등록증</div>
-              </div>
+              <div class="row-span-2 header flex">성명</div>
+              <div class="row-span-2 col-span-2 header flex">주민등록증</div>
               <div class="col-span-2 header flex">장애인, 극가유공자 부호</div>
               <div class="col-span-4 header flex">외국인</div>
               <div class="col-span-2 header flex">관계</div>
@@ -356,15 +350,6 @@
               <div class="col-span-2 bg-gray flex">체류기간</div>
               <div class="bg-gray flex">관계 코드</div>
               <div class="bg-gray flex">내용</div>
-              <div class="bg-gray flex">(2)</div>
-              <div class="bg-gray flex col-span-2">(3)</div>
-              <div class="bg-gray flex">(4)</div>
-              <div class="bg-gray flex">10</div>
-              <div class="bg-gray flex">(5)</div>
-              <div class="bg-gray flex">(6)</div>
-              <div class="bg-gray flex col-span-2">(7)</div>
-              <div class="bg-gray flex">(8)</div>
-              <div class="bg-gray flex">(9)</div>
               <!-- use v-loop employeeWage dependents-->
               <template  v-for="(dependent, index) in employeeWage.dependents" :key="index">
                 <!-- Add more dependent properties as needed -->
@@ -372,38 +357,40 @@
                 <div class="bg-gray flex">{{ employeeWage.name }}</div>
                 <div class="bg-gray flex col-span-2">{{ employeeWage.residentId }}</div>
                 <div class="bg-gray flex ">
+                  <a-tooltip placement="top" :title="dependent.disabledCode">
+                    <!-- tool tip -->
                   <text-number-box
                     width="100%"
-                    v-model:valueInput="employeeWage.disabledCode"
-                    :required="true"
+                    v-model:valueInput="dependent.disabledCode"
                     placeholder=""
                   />
-                </div>
-                <div class="bg-gray flex truncate">
-                  <!-- tool tip -->
-                  <a-tooltip placement="top" :title="employeeWage.disabledCode">
-                    <span>{{ employeeWage.disabledCode }}</span>
                   </a-tooltip>
+                </div>
+                <div class="bg-gray flex">
+                  <date-time-box
+                      width="100%"
+                      dateFormat="YYYY-MM-DD"
+                      v-model="dependent.disabledRegisteredDate"
+                    />
                 </div>
                 <div class="bg-gray flex">
                   <text-number-box
                     width="100%"
                     v-model:valueInput="dependent.nationalityNumber"
-                    :required="true"
                     placeholder=""
                   />
                 </div>
-                <div class="bg-gray flex">
+                <div class="bg-gray flex col-span-.5">
                   <text-number-box
                     width="100%"
                     v-model:valueInput="dependent.stayQualification"
-                    :required="true"
                     placeholder=""
                   />
                 </div>
                 <div class="bg-gray flex col-span-2">
                   <range-date-time-box 
-                    v-model:valueDate="dependent.contractExpiredDate" width="100%" 
+                    width="100%" 
+                    v-model:valueDate="dependent.contractExpiredDate" 
                     :maxRange="365"
                    />
                 </div>
@@ -458,6 +445,7 @@ import SearchCodeButton from './SearchCodeButton.vue';
 import TableEmployeeWage from './TableEmployeeWage.vue';
 import notification from "@/utils/notification";
 import INITIAL_DATA from './../utils'
+import filters from "@/helpers/filters";
 let dpRelation =  enum2Entries(DependantsRelation)
 const getCodeOrLabel = (id: number) => {
   return {
@@ -587,7 +575,6 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
       } else {
         const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber,   ...newFormData} = formData;
-        
         const dependents = employeeWage.value.dependents.map((item: any) => {
           return {
             name: employeeWage.value.name,
@@ -595,8 +582,9 @@ export default defineComponent({
             relationCode: getCodeOrLabel(item.relation).number,
             nationalityNumber: item.nationalityNumber,
             stayQualification: item.stayQualification,
-            stayPeriodFrom: item.contractExpiredDate[0],
-            stayPeriodTo: item.contractExpiredDate[1]
+            stayPeriodFrom: item?.contractExpiredDate ? item.contractExpiredDate[0] : filters.formatDateToInterger(new Date().getTime()),
+            stayPeriodTo: item?.contractExpiredDate ? item.contractExpiredDate[1] : filters.formatDateToInterger(new Date().setDate(new Date().getDate() + 7)),
+            disabledRegisteredDate: filters.formatDateToInterger(item.disabledRegisteredDate) || 0
           }
         })
         const input = {
@@ -656,5 +644,8 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import '../styles/index.scss';
-
+.table-container {
+  .grid {
+  }
+}
 </style>
