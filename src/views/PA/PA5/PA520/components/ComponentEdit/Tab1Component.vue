@@ -107,7 +107,7 @@
                     width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)"
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated()"
                     id="action-update" />
             </div>
         </standard-form>
@@ -132,7 +132,6 @@ export default defineComponent({
     props: {
         idRowEdit: Number,
         openPopup: Number,
-        actionSave: Number
     },
   setup(props, { emit }) {
         const formRefPa520Update = ref()
@@ -263,9 +262,7 @@ export default defineComponent({
                 dataEdited.stayQualification = 'C-4'
             }
         })
-        watch(() => props.actionSave, () => {
-            document.getElementById('action-update')?.click()
-        })
+ 
         watch(dataEdited, () => {
             indexChange.value++
         }, { deep: true })
@@ -279,7 +276,7 @@ export default defineComponent({
             dataEdited.zipcode = data.zonecode;
             dataEdited.roadAddress = data.roadAddress;
         }
-        const actionUpdated = (e: any) => {
+        const actionUpdated = () => {
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -303,7 +300,7 @@ export default defineComponent({
         }
         const statusComfirm = (res: any) => {
           if (res == true) {
-            document.getElementById('action-update')?.click()
+            actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
             refetchValueDetail()
             indexChange.value = 1

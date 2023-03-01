@@ -328,7 +328,7 @@ export default defineComponent({
             })
             totalDeduction.value = total
         }, { deep: true })
-        watch(() => store.state.common.actionSavePA520, (res) => {
+        watch(() => store.state.common.actionSaveTab2PA520, (res) => {
             updateDeduction()
         }, { deep: true })
 
