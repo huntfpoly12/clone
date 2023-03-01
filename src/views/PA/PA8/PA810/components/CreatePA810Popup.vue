@@ -84,7 +84,7 @@
           <a-col span="24">
             <div class="item-wrap">
               <span class="item-wrap-title">외국인</span>
-              <a-row gutter="7">
+              <a-row :gutter="[7, 20]">
                 <a-col span="12">
                   <DxField label="국적코드">
                     <div class="d-flex items-center gap-4">
@@ -103,7 +103,7 @@
                       <text-number-box
                         v-model:valueInput="formData.stayQualification"
                         :required="true"
-                        placeholder="1"
+                        placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE" />
@@ -219,7 +219,7 @@
                     </div>
                   </DxField>
                 </a-col>
-                <a-col span="8">
+                <a-col span="7">
                   <div class="h-full flex items-center justify-content-start px-10">
                     <checkbox-basic
                       label="계약직여부"
@@ -228,7 +228,7 @@
                   />
                   </div>
                 </a-col>
-                <a-col span="8">
+                <a-col span="9">
                   <DxField label="계약종료일">
                     <div class="h-full flex items-center">
                       <date-time-box
@@ -251,7 +251,7 @@
                       />
                     </a-form-item>
                   </a-col>
-                  <a-col span="8">
+                  <a-col span="7">
                     <DxField label="주소정근로시간">
                       <div class="flex justify-content-start">
                         <number-box
@@ -264,28 +264,26 @@
                         </div>
                     </DxField>
                   </a-col>
-                  <a-col span="8" class="relative">
+                  <a-col span="9" class="relative">
                     <DxField label="보험료부과구분부호 및 사유" :style="'align-items: start'">
-                      <div class="flex items-start">
-                        <a-space direction="vertical" :size="4">
-                          <number-box
-                            :spinButtons="true"
-                            v-model:valueInput="formData.insuranceReductionCode"
-                            :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                            placeholder="부호"
-                          />
-                          <a-space align="center" :size="4">
-                            <number-box
-                              :spinButtons="true"
-                              v-model:valueInput="formData.insuranceReductionReasonCode"
-                              :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
-                              placeholder="사유코드"
-                            />
-                          </a-space>
-                        </a-space>
-                        <div class="absolute" style="bottom: 0; right: 0">
-                          <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="780" />
-                        </div>
+                      <div class="w-full flex flex-col gap-1">
+                        <number-box
+                          :spinButtons="true"
+                          v-model:valueInput="formData.insuranceReductionCode"
+                          :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                          placeholder="부호"
+                          width="100%"
+                        />
+                        <number-box
+                          :spinButtons="true"
+                          v-model:valueInput="formData.insuranceReductionReasonCode"
+                          :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                          placeholder="사유코드"
+                          width="100%"
+                        />
+                      </div>
+                      <div class="absolute" style="bottom: 0; right: 0; transform: translateX(80%)">
+                        <SearchCodeButton :src="URL_CONST.URL_INSURANCE_REDUCTION_REASON_CODE" :widthModal="780" />
                       </div>
                     </DxField>
                   </a-col>
@@ -329,8 +327,8 @@
               <template  v-for="(dependent, index) in employeeWage.dependents" :key="index">
                 <!-- Add more dependent properties as needed -->
                 
-                <div class="bg-gray flex">{{ employeeWage.name }}</div>
-                <div class="bg-gray flex col-span-2">{{ employeeWage.residentId }}</div>
+                <div class="bg-gray flex">{{ dependent.name }}</div>
+                <div class="bg-gray flex col-span-2">{{ dependent.residentId }}</div>
                 <div class="bg-gray flex ">
                   <a-tooltip placement="top" :title="dependent.disabledCode">
                     <!-- tool tip -->
