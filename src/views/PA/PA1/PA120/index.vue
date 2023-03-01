@@ -60,7 +60,14 @@
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
             </DxToolbar>
             <template #button-template>
-              <DxButton icon="plus" @click="openAddNewModal" />
+              <a-tooltip placement="top" class="custom-tooltip">
+                  <template #title>
+                    신규
+                  </template>
+                  <div style="text-align: center;" >
+                    <DxButton icon="plus" @click="openAddNewModal" />
+                  </div>
+              </a-tooltip>
             </template>
             <template #button-history="{}">
               <DxButton icon="plus">

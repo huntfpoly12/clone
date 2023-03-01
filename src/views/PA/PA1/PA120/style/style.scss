@@ -115,4 +115,7 @@
   :deep .ant-tabs {
     overflow: initial;
   }
+  :deep .custom-tooltip{
+    display: inline;
+  }
 }

@@ -713,8 +713,6 @@ export default defineComponent({
         };
         store.state.common.processKeyPA720.processKey = datObj;
         statusParam.value = { ...processKeyPA720.value, status: obj.status };
-        pa720GridRef.value.instance.columnOption('02');
-        console.log(`output-`,pa720GridRef.value.instance.columnOption('02'));        
         month.value = obj.imputedMonth;
         store.state.common.isNewRowPA720 = false;
     }
