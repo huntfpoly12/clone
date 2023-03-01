@@ -313,27 +313,24 @@ import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import notification from "@/utils/notification";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { DxColumn, DxDataGrid, DxEditing, DxExport, DxGrouping, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxSelection, DxToolbar } from "devextreme-vue/data-grid";
-import { FocusedRowChangedEvent, FocusedRowChangingEvent, RowClickEvent } from "devextreme/ui/data_grid";
+import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
 import { computed, defineComponent, reactive, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
 
 import HistoryPopup from "@/components/HistoryPopup.vue";
+import Tooltip from "@/components/common/Tooltip.vue";
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import { companyId, onExportingCommon } from "@/helpers/commonFunction";
 import { compareObject } from "@/utils";
-import { DeleteOutlined, EditOutlined, HistoryOutlined, MailOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, PrinterOutlined, SaveOutlined, SearchOutlined,
+import {
+DeleteOutlined, EditOutlined, HistoryOutlined, MailOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, PrinterOutlined, SaveOutlined, SearchOutlined,
 } from "@ant-design/icons-vue";
-import { Form, FormInstance } from "ant-design-vue";
 import DxButton from "devextreme-vue/button";
 import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import { ArrForeigner, origindata, valueDefaultAction } from "./utils";
-import Tooltip from "@/components/common/Tooltip.vue";
-import { ClickEvent } from "devextreme/ui/button";
-
-import FormWrapper from './components/FromWrapper.vue'
 
 export default defineComponent({
   name: 'MyForm',
@@ -364,7 +361,6 @@ export default defineComponent({
     PopupMessageCustom,
     Tooltip,
     PlusOutlined,
-    FormWrapper
 },
   setup() {
     const contentDelete = Message.getMessage("PA120", "002").message;
