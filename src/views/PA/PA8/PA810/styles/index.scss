@@ -69,8 +69,23 @@
 .justify-items-center {
   justify-items: center;
 }
+.justify-content-start {
+  justify-content: flex-start;
+}
 .items-center {
   align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
+.h-full {
+  height: 100%;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
 }
 
 @for $i from 1 through 12 {

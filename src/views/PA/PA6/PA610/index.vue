@@ -1,22 +1,22 @@
 <template>
   <action-header
     title="사업소득자등록"
-    @actionSave="saving($event)"
+    @actionSave="saving()"
     :buttonDelete="false"
   />
   <div id="pa-610">
     <div class="page-content">
       <a-row>
-        <a-col :span="3" class="total-user">
+        <a-col span="2" class="total-user">
           <div>
-            <span>{{ storeDataSourceCount }}</span>
-            <br />
-            <span>전체</span>
+              <span>{{ storeDataSourceCount }}</span>
+              <br>
+              <span>전체</span>
           </div>
           <div>
-            <img src="@/assets/images/user.svg" style="width: 70px" />
+              <img src="@/assets/images/user.svg" style="width: 39px;" />
           </div>
-        </a-col>
+      </a-col>
         <a-col :span="21"></a-col>
         <a-col :span="15" class="custom-layout">
           <a-spin
@@ -38,7 +38,7 @@
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
-              focusedRowIndex="0"
+              :focusedRowIndex="0"
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -91,7 +91,7 @@
               <template #tag="{ data }" class="custom-action">
                 <div class="custom-action" v-if="data.data.__typename">
                   <employee-info
-                    :idEmployee="data.data.employeeId"
+                    :idEmployee="+data.data.employeeId"
                     :name="data.data.name"
                     :idCardNumber="data.data.residentId"
                     :status="data.data.status"
@@ -101,7 +101,7 @@
                 </div>
                 <div class="custom-action" v-else>
                   <employee-info
-                    :idEmployee="data.data.employeeId"
+                    :idEmployee="+data.data.employeeId"
                     :name="data.data.name"
                     :status="data.data.status"
                     :foreigner="data.data.foreigner"
@@ -177,7 +177,7 @@
         <!-- section right -->
         <a-col :span="9" class="custom-layout">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
-            <a-form ref="formRef" :model="dataShow" >
+            <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
                 <div class="custom-note">
                   <text-number-box
@@ -291,11 +291,11 @@
                     mode="contained"
                     :width="90"
                     id="btn-save"
-                    @onClick="saving($event)"
+                    @onClick="saving()"
                   />
                 </a-col>
               </a-row>
-            </a-form>
+            </standard-form>
           </a-spin>
         </a-col>
       </a-row>
@@ -313,7 +313,7 @@ import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import notification from "@/utils/notification";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { DxColumn, DxDataGrid, DxEditing, DxExport, DxGrouping, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxSelection, DxToolbar } from "devextreme-vue/data-grid";
-import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
+import { FocusedRowChangedEvent, FocusedRowChangingEvent, RowClickEvent } from "devextreme/ui/data_grid";
 import { computed, defineComponent, reactive, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
 
@@ -324,15 +324,19 @@ import { companyId, onExportingCommon } from "@/helpers/commonFunction";
 import { compareObject } from "@/utils";
 import { DeleteOutlined, EditOutlined, HistoryOutlined, MailOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, PrinterOutlined, SaveOutlined, SearchOutlined,
 } from "@ant-design/icons-vue";
-import type { FormInstance } from "ant-design-vue";
+import { Form, FormInstance } from "ant-design-vue";
 import DxButton from "devextreme-vue/button";
 import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import { ArrForeigner, origindata, valueDefaultAction } from "./utils";
 import Tooltip from "@/components/common/Tooltip.vue";
+import { ClickEvent } from "devextreme/ui/button";
+
+import FormWrapper from './components/FromWrapper.vue'
 
 export default defineComponent({
+  name: 'MyForm',
   components: {
     DxDataGrid,
     DxColumn,
@@ -359,7 +363,8 @@ export default defineComponent({
     HistoryPopup,
     PopupMessageCustom,
     Tooltip,
-    PlusOutlined
+    PlusOutlined,
+    FormWrapper
 },
   setup() {
     const contentDelete = Message.getMessage("PA120", "002").message;
@@ -374,14 +379,15 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
 
     // Ref
+    const formWrapper = ref(null)
     const isDiscard = ref(false); // verify popup discard 
-    const formRef = ref<FormInstance>(); // ref of form
+    const formRef = ref(); // ref of form
     const gridRef = ref(); // ref of grid
     const isNewRow = ref(false); // check if new row is adding
-    const focusedRowKey = ref<string | number>(0); // focused row key
+    const focusedRowKey = ref<number>(0); // focused row key
     let previousRowData = ref(); // save previous row data when focus row change
     const dataShow: any = ref({ ...valueDefaultAction }); // data show in form when click row or add new row
-    const selectRowKeyAction = ref<string | number>(0); // key of row selected in gridData
+    const selectRowKeyAction = ref<number>(0); // key of row selected in gridData
     const dataSource = ref<DataSource>(); // data source of grid
     const popupDataHistory = ref([]); // data for history popup
     const modalHistoryStatus = ref<boolean>(false); // status of history popup
@@ -440,7 +446,7 @@ export default defineComponent({
     });
 
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
-    const storeDataSourceCount = computed(() => dataSource.value?.totalCount());
+    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
 
@@ -457,12 +463,16 @@ export default defineComponent({
         // create new row
           storeDataSource.value.insert(valueDefaultAction).then((result) => {
             focusedRowKey.value = 0;
-            dataShow.value = result;
+            // dataShow.value = result;
+
             previousRowData.value = { ...result };
             dataGridRef.value?.refresh();
           });
+          // formRef.value?.onValidate();
+
         }
         isNewRow.value = true;
+        formRef.value.resetValidate()
       } else {
         notification("error", Message.getCommonMessage('301').message);
       }
@@ -479,7 +489,7 @@ export default defineComponent({
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
               .then((value) => {
-                dataShow.value = value;
+                // dataShow.value = value;
                 previousRowData.value = { ...dataShow.value };
               });
             dataGridRef.value?.refresh();
@@ -517,6 +527,9 @@ export default defineComponent({
       previousRowData.value = { ...e.row?.data };
     };
 
+    // // handle onClick to row
+    // const onRowClick = (e: RowClickEvent) => {
+    // };
     // handle cancel popup
     const handleDiscardPopup = (e: boolean) => {
       isDiscard.value = e;
@@ -658,16 +671,16 @@ export default defineComponent({
         },
       };
     });
-    const saving = (e: any) => {
-      var res = e.validationGroup.validate();
-
+    const saving = () => {
+      const res = formRef.value.validate();
       if (!res.isValid) {
-        focusedRowKey.value = dataShow.value.employeeId;
+        isDiscard.value = false;
+        // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
         isDiscard.value = false;  
       } else {
         // if form disabled => action edit
-        if (!isNewRow.value) {
+        if (focusedRowKey && focusedRowKey.value !== 0) {
           actionUpdate(dataUpdate.value);
         } else {
           // if form disabled => action add
@@ -700,9 +713,8 @@ export default defineComponent({
     const handleConfirm = async (e: any) => {
       if (e) {
         const btn = document.querySelector('#btn-save') as HTMLButtonElement
-        if(btn)  {
-          btn.click()
-        }
+        if(btn) btn.click()
+
       }
     };
     const actionDelete = (employeeId: any, incomeTypeCode: any) => {
@@ -714,6 +726,9 @@ export default defineComponent({
       if (res) actionDeleteApi(valueCallApiGetEmployeeBusiness);
     };
     const modalHistory = () => (modalHistoryStatus.value = true);
+    const formItems = [
+        { dataField: 'name', label: 'Name' },
+      ]
 
     return {
       store,
@@ -753,7 +768,9 @@ export default defineComponent({
       onFocusedRowChanging,
       loadingGetEmployeeBusinesses,
       formRef,
-      Message
+      Message,
+      // onRowClick,
+      formWrapper
     };
   },
 });
