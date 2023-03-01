@@ -25,7 +25,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    width: String,
+    width: {
+      type: String,
+      default: "100%",
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {

@@ -42,12 +42,17 @@
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
-                        v-model:focused-row-key="focusedRowKey">
+                        v-model:focused-row-key="focusedRowKey" @exporting="onExporting">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
+                        <DxSearchPanel :visible="true" />
+                        <DxExport :enabled="true"/>
                         <DxPaging :enabled="false" />
                         <DxToolbar>
+                            <DxItem name="searchPanel" />
+                            <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
                             <DxItem location="after" template="button-history" css-class="cell-button-add" />
                             <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                            
                         </DxToolbar>
                         <template #button-template>
                           <a-tooltip placement="top" class="custom-tooltip">
@@ -120,8 +125,7 @@
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
                 <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
-                <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2"
-                    :actionSave="actionSave" />
+                <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2" />
             </a-col>
         </a-row>
     </div>
@@ -139,8 +143,8 @@ import { ref, defineComponent, watch, computed } from "vue"
 import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem } from "devextreme-vue/data-grid"
+import { companyId, onExportingCommon } from "@/helpers/commonFunction"
+import { DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxTotalItem ,DxExport} from "devextreme-vue/data-grid"
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue"
 import notification from "@/utils/notification"
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
@@ -148,18 +152,20 @@ import PA520PopupAddNew from "./components/PA520PopupAddNew.vue"
 import PA520PopupEdit from "./components/PA520PopupEdit.vue"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index"
 import { DataCreatedTable } from "./utils/index"
-
+import { Workbook } from "exceljs";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum"
+
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,
+        DxDataGrid, DxColumn, DxPaging, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxButton, DxTotalItem, EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined,DxExport,
         PA520PopupAddNew, PA520PopupEdit
     },
     setup() {
         const focusedRowKey = ref()
         const modalStatusChange = ref(false)
         const actionChangeComponent = ref(1)
-        const actionSave = ref(0)
         const contentDelete = Message.getMessage('PA120', '002').message
         const modalStatus = ref(false)
         const dataSource = ref([])
@@ -251,9 +257,23 @@ export default defineComponent({
             refetchData()
         }, { deep: true });
         // ======================= FUNCTION ================================
+        const onExporting = (e: { component: any; cancel: boolean; }) => {
+          const workbook = new Workbook();
+          const worksheet = workbook.addWorksheet('Employees');
 
+          exportDataGrid({
+            component: e.component,
+            worksheet,
+            autoFilterEnabled: true,
+          }).then(() => {
+            workbook.xlsx.writeBuffer().then((buffer) => {
+              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+            });
+          });
+          e.cancel = true;
+        }
         // Opening a modal window.
-      const openAddNewModal = () => {
+        const openAddNewModal = () => {
             // Adding a new row to the table.
           if (store.state.common.activeAddRowPA520 == false) {
               // Adding a new row to the grid.
@@ -267,7 +287,7 @@ export default defineComponent({
                 }, 100);
 
                 store.state.common.activeAddRowPA520 = true
-                resetAddComponent.value++;
+                
                 actionChangeComponent.value = 1
                 modalAddNewStatus.value = true
           }
@@ -321,8 +341,7 @@ export default defineComponent({
             refetchData()
         }
         const actionSaveFunc = () => {
-            actionSave.value++
-            store.state.common.actionSavePA520++
+            store.state.common.actionSaveAddPA520++
         }
         // A function that is called when the user clicks on the save button.
       const statusComfirmSave = (res: any) => {
@@ -338,7 +357,7 @@ export default defineComponent({
         }
         const confirmSaveAdd = (res: any) => {
           if (res == true) {
-            store.state.common.actionSaveAddPA520++
+            actionSaveFunc()
             // get employeeId (row key) last row in dataSourcePA520
             //focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
           } else if (!res && addRowOnclick.value) { 
@@ -367,7 +386,7 @@ export default defineComponent({
         }
 
         return {
-            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, actionSave, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, move_column, colomn_resize, contentDelete,
+            modalChangeValueAdd, focusedRowKey, modalStatusChange, store, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, move_column, colomn_resize, contentDelete,onExporting,
             confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,Message
         }
     },
