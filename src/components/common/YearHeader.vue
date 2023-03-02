@@ -1,40 +1,34 @@
 <template>
     <div class="year-header">  
         <label for="" class="label-year-header">회계•원천 귀속연도</label>
-        <caret-left-outlined class="arrow-plus"   @click="decrease"/><default-text-box width="90px" :disabled="true" :valueInput="year.toString()"/><caret-right-outlined class="arrow-plus"  @click="increase"/>
+        <caret-left-outlined class="arrow-plus"   @click="decrease"/><default-text-box width="90px" :disabled="true" :valueInput="globalYear.toString()"/><caret-right-outlined class="arrow-plus"  @click="increase"/>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent , ref, watch} from "vue";
+import { defineComponent , ref, computed} from "vue";
 import { useStore } from 'vuex';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons-vue';
-import dayjs, { Dayjs } from 'dayjs';
 export default defineComponent({
-    props: {
-        
-    },
     components: {
         CaretLeftOutlined,
         CaretRightOutlined
     },
-    setup(props, { emit }) {
+    setup() {
         const store = useStore();
         
-        const year = ref(dayjs().year());
+        const globalYear = computed(()=>store.state.settings.globalYear);
         const increase = ()=>{
-            year.value++;
-            store.state.settings.globalYear = year.value;
+            store.state.settings.globalYear++;
         }
 
         const decrease = ()=>{
-            year.value--;
-            store.state.settings.globalYear = year.value;
+            store.state.settings.globalYear--;
         }
 
         return {
-            year,
             increase,
             decrease,
+            globalYear
         }
     },
 });
