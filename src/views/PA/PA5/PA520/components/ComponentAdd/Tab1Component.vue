@@ -211,6 +211,14 @@ export default defineComponent({
             }
         })
         watch(() => dataCreated, (value) => {
+            if (store.state.common.activeAddRowPA520 == true) {
+                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
+                dataTable.employeeId = value.employeeId
+                dataTable.name = value.name
+                dataTable.foreigner = value.foreigner
+                dataTable.status = value.retirementIncome
+                dataTable.residentId = value.residentId
+            }
             if (JSON.stringify(DataCreated) !== JSON.stringify(value))
                 store.state.common.checkChangeValueAddPA520 = true
             else
