@@ -1,6 +1,7 @@
 <template>
     <div id="tab2-pa520">
         <div class="header-text-1">공제</div>
+        {{ dataDefaultGet }}------------------------------{{ originDataUpdate }}
         <a-row :gutter="16">
             <a-col :span="24">
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -63,9 +64,9 @@
         </a-row>
         <a-row :gutter="16">
             <a-col :span="10">
-                <div class="header-text-0">월급여 x
-                    <span class="fz-14">
-                        {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
+                <div class="header-text-0">
+                    <span>
+                      월급여{{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
                     </span>
                 </div>
                 <div>
@@ -105,7 +106,7 @@
                 </div>
             </a-col>
             <a-col :span="14">
-                <div class="header-text-0">공제 항목 <span class="fz-14">{{ $filters.formatCurrency(totalDeduction) }}
+                <div class="header-text-0"><span>공제 항목 {{ $filters.formatCurrency(totalDeduction) }}
                         원</span></div>
                 <a-spin :spinning="loading" size="large">
                     <div class="deduction-main">
@@ -186,6 +187,7 @@ export default defineComponent({
         let trigger = ref(false)
         let dataDefaultGet = ref()
         // ================== GRAPQL ====================================
+        // query get config from screen cm-130
         const {
           result: resultConfig,
         } = useQuery(
@@ -199,6 +201,7 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
+            originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
           }
         })    
           
@@ -284,12 +287,14 @@ export default defineComponent({
         })
         // ================== WATCH ====================================
         watch(() => originDataUpdate.value, (newVal) => {
-            let valueConvert = JSON.parse(dataDefaultGet.value)
-            if (valueConvert.input.nationalPensionSupportPercent == null)
-                valueConvert.input.nationalPensionSupportPercent = 0
-            if (valueConvert.input.employeementInsuranceSupportPercent == null)
-                valueConvert.input.employeementInsuranceSupportPercent = 0
-            if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
+          let valueConvert = JSON.parse(dataDefaultGet.value)
+            
+          if (valueConvert.input.nationalPensionSupportPercent == null)
+            valueConvert.input.nationalPensionSupportPercent = 0
+          if (valueConvert.input.employeementInsuranceSupportPercent == null)
+            valueConvert.input.employeementInsuranceSupportPercent = 0
+                
+          if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkStatusChangeValuePA520 = false
             } else {   
               store.state.common.checkStatusChangeValuePA520 = true
@@ -451,7 +456,7 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = dailyWage;
             }
         }
-        return {
+        return {dataDefaultGet,
             store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
             callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,typeCalculateColor
         };
