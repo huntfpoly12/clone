@@ -54,18 +54,26 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const convertBirthDay = (birthDay: any) => {
-            if (props.idCardNumber) {
-                let newBirthDay = birthDay.split("-")[0]
-                let typeYear = birthDay.split("-")[1].charAt(0)
-                if (props.idCardNumber?.length == 14
-                    && parseInt(props.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(props.idCardNumber.split('-')[0].slice(4, 6)) < 32) {
-                    if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
-                        return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-                    else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
-                        return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
-                }
-            }
-            return null;
+          if (birthDay.length == 14 && parseInt(birthDay.split('-')[0].slice(2, 4)) < 13 && parseInt(birthDay.split('-')[0].slice(4, 6)) < 32)
+          {          
+            let newBirthDay = birthDay.split("-")[0]
+            let typeYear = birthDay.split("-")[1].charAt(0)
+            if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
+                return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
+                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+          }
+
+          if (birthDay.length == 13 && parseInt(birthDay.slice(0, 5).slice(2, 4)) < 13 && parseInt(birthDay.slice(0, 5).slice(4, 6)) < 32) {
+            let newBirthDay = birthDay.slice(0, 5)
+            let typeYear =birthDay.slice(6, 12).charAt(0)
+            if (typeYear == 1 || typeYear == 2 || typeYear == 5 || typeYear == 6)
+                return '19' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+            else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8)
+                return '20' + newBirthDay.slice(0, 2) + '-' + newBirthDay.slice(2, 4) + '-' + newBirthDay.slice(4, 6)
+          }
+       
+          return null;
         }
         const employeeId = ref(props.employeeId);
         const onMouseover = () => {
