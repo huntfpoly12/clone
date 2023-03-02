@@ -230,7 +230,7 @@
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
-                            @cell-click="onCellClick"
+                            @focused-row-changing="onFocusedRowChanging"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -647,14 +647,13 @@ export default defineComponent({
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
-            
         }
-        // Setting the focusedRowKey to the incomeId.
-        const onCellClick = (e: any) => {
-            if(e.columnIndex === 0 && e.column.type =='selection') {
-                store.state.common.focusedRowKey = store.state.common.incomeId
+        // Preventing the user from selecting a row by clicking on the select button.
+        const onFocusedRowChanging = (e: any) => {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                e.cancel = true;
             }
-        }
+        };
         watch(globalYear, (newVal) => {
             store.state.common.processKeyPA110.imputedYear = newVal
             store.state.common.processKeyPA110.paymentYear = newVal
@@ -688,7 +687,7 @@ export default defineComponent({
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             Message,
-            statusDisabledBlock, onCellClick,
+            statusDisabledBlock, onFocusedRowChanging,
         }
 
     },

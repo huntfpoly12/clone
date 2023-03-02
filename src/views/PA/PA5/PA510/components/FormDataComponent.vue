@@ -135,7 +135,7 @@
                     <button-basic style="margin: 0px 5px" @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                 </div>
             </a-tooltip>
-            <button-basic style="margin: 0px 5px" @onClick="submitForm" mode="contained" type="default" text="저장" />
+            <button-basic style="margin: 0px 5px" @onClick="submitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
         </div>
     </standard-form>
 

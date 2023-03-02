@@ -4,10 +4,10 @@
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
     <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/> -->
-    <DxButton @click="onSubmit($event)" size="large"
+    <!-- <DxButton @click="onSubmit($event)" size="large"
         class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
-    </DxButton>
+    </DxButton> -->
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
         <a-tooltip color="black" placement="top">
             <template #title>근로소득자료 변경이력</template>

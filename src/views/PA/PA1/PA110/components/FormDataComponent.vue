@@ -174,6 +174,7 @@
                         <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" /> -->
                         <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
                         <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                        <button-basic style="margin: 0px 5px" @onClick="submitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
                         <!-- <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
                         <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
@@ -509,44 +510,7 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.actionSubmit, () => {
-            if (store.state.common.statusChangeFormPrice) {
-                store.state.common.focusedRowKey = dataIW.value?.incomeId
-                showErrorButton.value = true;
-            } else {
-                let payItems = dataConfigPayItems.value?.map((item: any) => {
-                    return {
-                        itemCode: item.itemCode,
-                        amount: item.amount
-                    }
-                })
-                let deductionItems = dataConfigDeductions.value?.map((item: any) => {
-                    return {
-                        itemCode: item.itemCode,
-                        amount: item.amount
-                    }
-                })
-                const variables: any = {
-                    companyId: companyId,
-                    processKey: { ...processKey.value },
-                    incomeId: store.state.common.incomeId,
-                    input: {
-                        workingDays: dataIW.value.workingDays,
-                        totalWorkingHours: dataIW.value.totalWorkingHours,
-                        overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                        workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                        workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                        payItems: payItems,
-                        deductionItems: deductionItems,
-                    }
-                };
-                if (store.state.common.actionAddItem) {
-                    variables.input.employeeId = dataIW.value.employee.employeeId,
-                        variables.input.paymentDay = dataIW.value.paymentDay,
-                        actionCreated(variables)
-                } else {
-                    actionUpdate(variables)
-                }
-            }
+            submitForm()
         })
 
         watch(result, (value) => {
@@ -666,6 +630,46 @@ export default defineComponent({
             store.state.common.statusChangeFormPrice = true;
         })
         // ======================= FUNCTION ================================
+        const submitForm = () => {
+            if (store.state.common.statusChangeFormPrice) {
+                store.state.common.focusedRowKey = dataIW.value?.incomeId
+                showErrorButton.value = true;
+            } else {
+                let payItems = dataConfigPayItems.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount
+                    }
+                })
+                let deductionItems = dataConfigDeductions.value?.map((item: any) => {
+                    return {
+                        itemCode: item.itemCode,
+                        amount: item.amount
+                    }
+                })
+                const variables: any = {
+                    companyId: companyId,
+                    processKey: { ...processKey.value },
+                    incomeId: store.state.common.incomeId,
+                    input: {
+                        workingDays: dataIW.value.workingDays,
+                        totalWorkingHours: dataIW.value.totalWorkingHours,
+                        overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
+                        workingHoursAtNight: dataIW.value.workingHoursAtNight,
+                        workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                        payItems: payItems,
+                        deductionItems: deductionItems,
+                    }
+                };
+                if (store.state.common.actionAddItem) {
+                    variables.input.employeeId = dataIW.value.employee.employeeId,
+                        variables.input.paymentDay = dataIW.value.paymentDay,
+                        actionCreated(variables)
+                } else {
+                    actionUpdate(variables)
+                }
+            }
+        }
         //  Calculate Pension Employee 
         const calculateTax = async () => {
             
@@ -748,6 +752,7 @@ export default defineComponent({
             loadingGetEmployeeWage,
             updateDataDeduction,
             showErrorButton,
+            submitForm,
         };
     },
 });
