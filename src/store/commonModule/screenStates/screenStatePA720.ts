@@ -35,7 +35,7 @@ let statesPA720 = {
   dataActionUtilsPA720 : {
     input: {
         paymentDay: 1,
-        employeeId: '',
+        employeeId: null,
         incomeTypeCode: "",
         paymentAmount: null,
         requiredExpenses: null,

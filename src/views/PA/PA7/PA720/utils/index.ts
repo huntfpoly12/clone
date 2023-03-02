@@ -60,8 +60,8 @@ export const taxDateIndex = {
 }
 
 export const formatMonth = (month: number) => {
-  if (month < 10) {
-    return '0' + month;
+  if (!month) {
+    return 0;
   }
-  return month;
+  return month < 10 ? '0' + month : month;
 };

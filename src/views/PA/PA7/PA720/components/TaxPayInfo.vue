@@ -133,7 +133,6 @@ export default defineComponent({
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
     const formPA720 = computed(() => store.getters['common/formPA720']);
-    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
 
     // ================GRAPQL==============================================
 
@@ -158,8 +157,7 @@ export default defineComponent({
         firsTimeRow.value = false;
       }
       if(res.data.getIncomeExtras.length == 0) {
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
-      store.commit('common/formEditPA720', formPA720.value);
+      onRowClick({ data: {} });
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -174,7 +172,6 @@ export default defineComponent({
       (newValue) => {
         dataTableDetail.value = newValue;
         triggerDetail.value = true;
-        // refetchIncomeExtras();
       },
       { deep: true }
     );
@@ -183,7 +180,6 @@ export default defineComponent({
       () => props.changeFommDone,
       () => {
         triggerDetail.value = true;
-        refetchIncomeExtras();
         firsTimeRow.value = false;
       }
     );
@@ -224,6 +220,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
+      selectedRowKeys.value = [data.incomeId];
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,
@@ -244,9 +241,6 @@ export default defineComponent({
         loadIndexInit.value = 0;
       } else {
         loadIndexInit.value = e.loadIndex;
-      }
-      if(!selectedRowKeys.value.find((item: any) => item == focusedRowKey.value)) {
-        selectedRowKeys.value.push(focusedRowKey.value);
       }
     };
     const onCellClick = (e: any) => {
