@@ -1,7 +1,7 @@
 <template>
   <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
-    <a-row>
+    <a-row :class="{'ele-opacity':!compareType2()}">
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
           :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
@@ -202,7 +202,7 @@
     {{ compareType1() }} compareType1 <br />
     {{ processKeyPA720 }} processKeyPA720 <br /> -->
     <!-- {{ changeYearDataFake }} changeYearDataFake <br /> -->
-    <a-row style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
+    <a-row :class="{'ele-opacity':!compareType2()}" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
         <DxButton :text="'귀 ' + inputDateTax"
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
@@ -216,10 +216,6 @@
         <DxButton class="ml-3" @click="onDeleteItem" :disabled="!isColumnData || isExpiredStatus">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
-        <DxButton @click="onSave" size="large" class="ml-4" :disabled="!isColumnData || isExpiredStatus" id="save-js">
-          <SaveOutlined style="font-size: 17px" />
-        </DxButton>
-
         <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="!isColumnData">
           <a-tooltip placement="top">
             <template #title>근로소득자료 변경이력</template>
@@ -249,13 +245,13 @@
       </a-col>
     </a-row>
     <a-row class="content-btm">
-      <a-col :span="13" class="custom-layout">
+      <a-col :class="{'ele-opacity':!compareType2()}" :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax"
           :changeFommDone="changeFommDone" :isRunOnce="isRunOnce" :addItemClick="addItemClick" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
         <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
-          :isColumnData="isColumnData" @changeFommDone="onFormDone" :key="resetFormNum"
+          :isColumnData="isColumnData" @changeFommDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
       </a-col>
     </a-row>
@@ -277,7 +273,6 @@
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import DxButton from 'devextreme-vue/button';
-import dayjs from 'dayjs';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
 import { companyId, openTab } from '@/helpers/commonFunction';
@@ -327,7 +322,6 @@ export default defineComponent({
     const editTaxParam = ref<any>({});
     const changeFommDone = ref(1);
     const formTaxRef = ref();
-    const resetFormNum = ref(1);
     const taxPayRef = ref();
     const deleteIncomeExtrasParam = ref<any>({});
     const changeIncomeExtraPaymentDayParam = ref<any>({ day: null });
@@ -450,15 +444,15 @@ export default defineComponent({
         isRunOnce.value = false;
         if (columnData.value[0]['month_' + processKeyPA720.value.processKey.imputedMonth]) {
           showDetailSelected(columnData.value[0]['month_' + `${processKeyPA720.value.processKey.imputedMonth}`]);
-        }else {
+        } else {
           // showDetailSelected(processKeyPA720.value.processKey);
           isColumnData.value = false;
           showDetailSelected({
-          imputedMonth: processKeyPA720.value.processKey.imputedMonth,
-          imputedYear: globalYear.value,
-          paymentMonth: processKeyPA720.value.processKey.imputedMonth,
-          paymentYear: globalYear.value,
-        });
+            imputedMonth: processKeyPA720.value.processKey.imputedMonth,
+            imputedYear: globalYear.value,
+            paymentMonth: processKeyPA720.value.processKey.imputedMonth,
+            paymentYear: globalYear.value,
+          });
         }
         return;
       }
@@ -467,10 +461,10 @@ export default defineComponent({
     const changeYear = (newVal: any) => {
       taxPayRef.value.firsTimeRow = true;
       isRunOnce.value = true;
-      // store.commit('common/processKeyPA720', newVal);
       resetForm();
-      resetFormNum.value++;
+      // resetFormNum.value++;
       incomeProcessExtrasParam.imputedYear = newVal;
+      formTaxRef.value.isEdit = false;
     }
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
@@ -479,7 +473,6 @@ export default defineComponent({
         changeYear(newVal)
       } else {
         rowChangeStatus.value = true;
-        // changeMonthDataFake.value = obj;
         isClickYearDiff.value = true;
         changeYearDataFake.value = oldVal;
       }
@@ -503,12 +496,10 @@ export default defineComponent({
       isRunOnce.value = true;
       taxPayRef.value.firsTimeRow = true;
     };
-    const onFormDone = (emit: any) => {
+    const onFormDone = (emit: Boolean) => {
       if (emit) {
         changeFommDone.value++;
         formTaxRef.value.isEdit = true;
-        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       }
       onSubmit();
     };
@@ -520,9 +511,8 @@ export default defineComponent({
     });
     const actionEditDaySuccess = (emit: String) => {
       if (emit) {
-        // onCopyDone();
+        store.commit('common/formEditPA720', formPA720.value);
         changeFommDone.value++;
-        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       }
       modalEdit.value = false;
     };
@@ -568,21 +558,21 @@ export default defineComponent({
     };
     //function common
     const resetForm = async () => {
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
-      store.commit('common/formEditPA720', formPA720.value);
-      resetFormNum.value++;
+      await formTaxRef.value.pa720FormRef.resetValidate();
       formTaxRef.value.newDateLoading = false;
+      store.commit('common/formPA720', dataActionUtilsPA720.value);
+      store.commit('common/formEditPA720', dataActionUtilsPA720.value);
     };
-    const addNewRow = () => {
-      resetForm();
+    const addNewRow = async () => {
+      await resetForm();
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
+      formTaxRef.value.isEdit = false;
     };
-    const delNewRow = async () => {
-      await resetForm();
+    const delNewRow = () => {
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
       store.state.common.isNewRowPA720 = false;
       compareType.value = 2;
@@ -609,7 +599,7 @@ export default defineComponent({
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        let ele = document.getElementById('save-js') as HTMLInputElement;
+        let ele = document.getElementById('pa720-save-js') as HTMLInputElement;
         ele.click();
       } else {
         if (isClickMonthDiff.value) {
@@ -621,6 +611,10 @@ export default defineComponent({
           changeYear(globalYear.value);
           isClickMonthDiff.value = false;
           return;
+        }
+        if (isClickEditDiff.value) {
+          onEditItem();
+          isClickEditDiff.value = false;
         }
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail.length - 1);
@@ -645,18 +639,22 @@ export default defineComponent({
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
-    const editTax = async (emit: any, firsTimeRow: boolean) => {
+    const editTax = (emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
+      if (!emit.incomeId) {
+        resetForm()
+        formTaxRef.value.isEdit = false;
+        return;
+      }
       editTaxParamFake.value = emit;
       if (firsTimeRow) {
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
-        console.log(`output firsTimeRow`,)
         return;
       }
       if (isNewRowPA720.value) {
         if (compareType1()) {
-          await delNewRow();
+          delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
           taxPayRef.value.selectedRowKeys = [emit.incomeId];
           editTaxParam.value = emit;
@@ -667,7 +665,6 @@ export default defineComponent({
         return;
       }
       if (!compareType2()) {
-        console.log(`output loi 2`,)
         rowChangeStatus.value = true;
         return;
       } else {
@@ -688,13 +685,22 @@ export default defineComponent({
       }
     };
     // -------------------- Edit item in tax table --------------------
-    const editItem = () => {
+    const isClickEditDiff = ref(false);
+    const onEditItem = () => {
       if (taxPayRef.value.paymentData.length > 0) {
         modalEdit.value = true;
         changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
       } else {
         notification('warning', messageDelNoItem);
       }
+    }
+    const editItem = () => {
+      if (!compareType2()) {
+        rowChangeStatus.value = true;
+        isClickEditDiff.value = true;
+        return;
+      }
+      onEditItem();
     };
     //-----------------------submit-------------------------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
@@ -732,34 +738,29 @@ export default defineComponent({
           isClickMonthDiff.value = false;
           return;
         }
-      }
-    };
-    const onSave = async () => {
-      var res = formTaxRef.value.pa720FormRef.validate();
-      if (!res.isValid) {
-        res.brokenRules[0].validator.focus();
-        store.state.common.isErrorFormPA720 = true;
-        addItemClick.value = !addItemClick.value;
-        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
-        if (isClickYearDiff.value) {
-          myWatch();
-          store.state.settings.globalYear = changeYearDataFake.value;
-          myWatch = watch(globalYear, (newVal, oldVal) => {
-            if (compareType2()) {
-              changeYear(newVal)
-            } else {
-              rowChangeStatus.value = true;
-              isClickYearDiff.value = true;
-              changeYearDataFake.value = oldVal;
-            }
-          });
+        if (isClickEditDiff.value) {
+          onEditItem();
         }
-      } else {
-        store.commit('common/actionSavePA720');
-        // await onSubmit();
       }
     };
+    const subValidate = () => {
+      addItemClick.value = !addItemClick.value;
+      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+      if (isClickYearDiff.value) {
+        myWatch();
+        store.state.settings.globalYear = changeYearDataFake.value;
+        myWatch = watch(globalYear, (newVal, oldVal) => {
+          if (compareType2()) {
+            changeYear(newVal)
+          } else {
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
+      }
+    }
 
     // -------------------Add data in month---------------------
 
@@ -786,9 +787,7 @@ export default defineComponent({
     const isClickMonthDiff = ref(false);
     // fnc click month fake
     const onChangeMonth = (obj: any) => {
-      console.log(`output->obj`,obj)
       if (obj) {
-
         taxPayRef.value.firsTimeRow = true;
         let datObj = {
           imputedYear: obj?.imputedYear,
@@ -835,7 +834,6 @@ export default defineComponent({
       editTaxParam,
       changeFommDone,
       formTaxRef,
-      resetFormNum,
       taxPayRef,
       deleteIncomeExtrasParam,
       changeIncomeExtraPaymentDayParam,
@@ -868,7 +866,6 @@ export default defineComponent({
       resetForm,
       openTab,
       openAddNewModal,
-      onSave,
       onRowChangeComfirm,
       onDelDone,
       isExpiredStatus,
@@ -876,6 +873,7 @@ export default defineComponent({
       changeYearDataFake,
       compareType1,
       compareType2,
+      subValidate
     };
   },
 });
