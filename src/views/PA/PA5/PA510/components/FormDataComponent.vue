@@ -464,11 +464,11 @@ export default defineComponent({
             }
         })
 
-        watch(() => store.state.common.actionCopy, (newVal) => {
-            setTimeout(() => {
-                dataIncomeWageDaily.value.paymentDay = store.state.common.paymentDayCopy
-            }, 1000)
-        })
+        // watch(() => store.state.common.actionCopy, (newVal) => {
+        //     setTimeout(() => {
+        //         dataIncomeWageDaily.value.paymentDay = store.state.common.paymentDayCopy
+        //     }, 1000)
+        // })
 
         // Watching the store.state.common.resetArrayEmploySelect and when it changes it will reset the
         // arrayEmploySelect.value to [] and then it will do some other stuff.

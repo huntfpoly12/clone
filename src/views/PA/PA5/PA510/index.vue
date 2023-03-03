@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득자료입력" :buttonSave="false" :buttonDelete="false" />
     <div id="pa-510" class="page-content">
-        <a-row>
+        <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
                     :show-borders="true" :allow-column-reordering="move_column"
@@ -195,7 +195,9 @@
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
+        <a-row :class="{
+            'disabledBlock': statusDisabledBlock,
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <div v-if="!statusDisabledBlock">
@@ -212,14 +214,13 @@
                     <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                     <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
-                
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
-        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
-            <a-col :span="14" class="custom-layout">
+        <a-row :class="{'disabledBlock': statusDisabledBlock}">
+            <a-col :span="14" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"

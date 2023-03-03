@@ -69,6 +69,7 @@ import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
+import { sampleDataIncomeWageDaily } from "../../utils/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -185,8 +186,9 @@ export default defineComponent({
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
-            store.state.common.paymentDayCopy = paymentDayCopy.value
-            store.state.common.actionCopy++
+            // store.state.common.paymentDayCopy = paymentDayCopy.value
+            // store.state.common.actionCopy++
+            sampleDataIncomeWageDaily.paymentDay = paymentDayCopy.value
             store.state.common.resetArrayEmploySelect++
         };
 
