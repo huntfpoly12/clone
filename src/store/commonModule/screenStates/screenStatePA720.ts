@@ -39,7 +39,7 @@ let statesPA720 = {
         incomeTypeCode: "",
         paymentAmount: null,
         requiredExpenses: null,
-        taxRate: null,
+        taxRate: 20,
         withholdingIncomeTax: null,
         withholdingLocalIncomeTax: null,
         incomeId: "99axbzkk",

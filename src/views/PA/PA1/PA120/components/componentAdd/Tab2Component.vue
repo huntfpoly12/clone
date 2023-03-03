@@ -271,7 +271,7 @@ export default defineComponent({
             };
           }
           if (item.itemCode == 1012) {
-            item.value = itemValue11? Math.floor(+itemValue11 / 10) * 10 : 0;
+            item.value = itemValue11? Math.floor(+itemValue11 / 100) * 10 : 0;
             formStateTab2.deductionItems[4] = {
               itemCode: 1012,
               amount: value.calculateIncomeWageTax,
@@ -495,7 +495,7 @@ export default defineComponent({
       //   formStateTab2.employeementReductionStartDate = filters.formatDateToInterger(rangeDate.value[0]);
       //   formStateTab2.employeementReductionFinishDate = filters.formatDateToInterger(rangeDate.value[1]);
       // }
-        
+      stopTrack();
       formStateTab2.payItems = dataConfigPayItems.value?.map((item: any) => {
         return {
           itemCode: item.itemCode,

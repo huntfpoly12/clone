@@ -475,7 +475,7 @@ export default defineComponent({
             };
           }
           if (item.itemCode == 1012) {
-            item.value = itemValue11 ? Math.floor(+itemValue11 / 10) * 10 : 0;
+            item.value = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
             initFormTab2PA120.value.deductionItems[5] = {
               itemCode: 1012,
               amount: value.calculateIncomeWageTax,
@@ -563,8 +563,6 @@ export default defineComponent({
         }
         return accumulator + object.value;
       }, 0);
-      // triggerCalcIncomeWageTax.value = true;
-      // await refetchCalcIncomeWageTax();
       store.state.common.isAddFormErrorPA120 = false;
       isBtnYellow.value = false;
       if(!initFormTab2PA120.value?.employeementReductionStartDate){
@@ -666,7 +664,6 @@ export default defineComponent({
       stopTrack = watchEffect(() => {
         const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
         if (rest) {
-          // c onsole.log(`output -track 2`)
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
         }
