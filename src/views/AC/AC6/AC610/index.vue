@@ -27,7 +27,8 @@
                             :data-source="listClient.datas" :show-borders="true" key-expr="clientId"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick" v-model:focused-row-key="focusedRowKey"
-                            :focused-row-enabled="true">
+                            :focused-row-enabled="true"
+                          >
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxExport :enabled="true" />
@@ -111,12 +112,12 @@
 
                         <a-form-item label="사업자등록번호" :label-col="labelCol">
                             <biz-number-text-box v-model:valueInput="formState.bizNumber" :width="200"
-                                :disabled="disableInputBizNumber" />
+                                :disabled="!!formState.residentId" />
                         </a-form-item>
 
                         <a-form-item label="주민등록번호" :label-col="labelCol">
                             <id-number-text-box :width="200" v-model:valueInput="formState.residentId"
-                                :disabled="disableInputResidentId" />
+                                :disabled="!!formState.bizNumber" />
                         </a-form-item>
 
                         <a-form-item label="대표자명" :label-col="labelCol">
@@ -418,34 +419,13 @@ export default defineComponent({
                 // formState.value.clientId = value.searchClients.datas.find((val: any) => val.residentId == formState.value.residentId)?.clientId
             }
         });
-        const disableInputBizNumber = ref(false)
-        const disableInputResidentId = ref(false)
-        watch(() => [
-            formState.value.bizNumber,
-            formState.value.residentId
-        ], ([newA, newB]) => {
-            if (newA?.length) {
-                formState.value.residentId = null;
-                disableInputResidentId.value = true;
-            } else {
-                disableInputResidentId.value = false;;
-            }
-            if (newB?.length) {
-                formState.value.bizNumber = null;
-                disableInputBizNumber.value = true;
-            } else {
-                disableInputBizNumber.value = false;
-            }
-        });
-
         return {
             confirmSave, move_column, colomn_resize, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState,
             statusFormUpdate,
             originDataDetail,
             listClient, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd,
             confimSaveWhenChangeRow, actionToAddFromEdit, formCreate, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            dataSearch, searching, changePage, actionSearch,
-            disableInputBizNumber, disableInputResidentId, Message,
+            dataSearch, searching, changePage, actionSearch, Message,
         };
     },
 });
