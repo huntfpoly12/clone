@@ -227,8 +227,10 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
+                <!-- {{ processKeyPA620 }} processKeyPA620 <br/>
+                {{ valueCallApiGetIncomeProcessBusinesses }} valueCallApiGetIncomeProcessBusinesses <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave" @compareForm="compareForm"/>
+                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -236,7 +238,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, watch } from "vue";
+import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue";
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -246,7 +248,6 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUn
 import { origindata } from "./utils";
 import { companyId } from "@/helpers/commonFunction";
 import HistoryPopup from '@/components/HistoryPopup.vue';
-import dayjs from 'dayjs';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
@@ -360,21 +361,20 @@ export default defineComponent({
                         value: filters.formatCurrency(val.incomeStat?.actualPayment),
                         ...dataAdd
                     }
-                    // if (val.imputedMonth == (dayjs().month() + 1)) {
-                    //     statusButton.value = val.status
-                    //     // if(actionSave.value == 0){
-                    //     //     store.state.common.processKeyPA620.imputedYear = val.imputedYear
-                    //     //     store.state.common.processKeyPA620.imputedMonth = val.imputedMonth
-                    //     //     store.state.common.processKeyPA620.paymentYear = val.paymentYear
-                    //     //     store.state.common.processKeyPA620.paymentMonth = val.paymentMonth
-                    //     // }          
-                    // }
                 })
                 if (isRunOnce.value) {
-                    isRunOnce.value = false;
-                    if (dataSource.value[0]['month' + `${dayjs().month() + 1}`]) {
-                    showDetailSelected(dataSource.value[0]['month' + `${dayjs().month() + 1}`]);
-                    }
+                  if (dataSource.value[0]['month' + monthClicked.value]) {
+                    showDetailSelected(dataSource.value[0]['month' + monthClicked.value]);
+                  }else {
+                    isDisabledForm.value = true;
+                    showDetailSelected({
+                      imputedMonth: processKeyPA620.value.imputedMonth,
+                      imputedYear: globalYear.value,
+                      paymentMonth: processKeyPA620.value.imputedMonth,
+                      paymentYear: globalYear.value,
+                    });
+                  }
+                  isRunOnce.value = false;
                 }
 
             }
@@ -415,8 +415,16 @@ export default defineComponent({
             formRef.value.isClickMonthDiff = true;
             formRef.value.rowChangeStatus = true;
             changeMonthDataFake.value = data;
+          }  
+        }
+        const changeNoSave = (val: Number, year: any) => {
+          if(val === 0) {
+            onChangeMonth(changeMonthDataFake.value);
           }
-            
+          console.log(`output->year`,val, year)
+          if(val == 1) {
+            changeYear(globalYear.value);
+          }
         }
         const saving = () => {
             actionSave.value++;
@@ -441,24 +449,20 @@ export default defineComponent({
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
         }
-        const changeNoSave = () => {
-          onChangeMonth(changeMonthDataFake.value)
-        }
         // ======================================== WATCH =========================================
-        watch (globalYear, (newVal) => {
+        //change year
+        const changeYear = (newVal: any) => {
             isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
-            store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value });
-            formRef.value.resetForm();
-        })
-        const isCompareForm = ref(false);
-        const compareForm = (emit: any) => {
-          isCompareForm.value = emit;
-        }
+            // store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value });
+            // formRef.value.resetForm();
+        };
+        const isCompareForm = computed(()=>formRef.value?.compareForm());
+        
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
             setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            compareForm,isCompareForm
+            isCompareForm, valueCallApiGetIncomeProcessBusinesses
         };
     },
 });

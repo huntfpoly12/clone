@@ -105,7 +105,7 @@
             <a-col :span="13">소득수당 합계 
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
+                  수당 합계 = 수당 과세 + 수당 비과세
                 </template>
                 <div style="text-align: center;" >
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
@@ -122,7 +122,7 @@
             <a-col :span="13" style="font-weight: 600;">차인지급액
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  차인지급액 = 수당 합계 - 공제 합계
+                  차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
                 </template>
                 <div style="text-align: center;" >
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
