@@ -1,14 +1,14 @@
 #bf-610 {
 
-    :deep .custom-checkbox1 .dx-checkbox-text,
-    :deep .custom-checkbox2 .dx-checkbox-text {
+    :deep(.custom-checkbox1 .dx-checkbox-text),
+    :deep(.custom-checkbox2 .dx-checkbox-text) {
         margin-left: 5px;
         padding: 1px 20px;
         color: white;
         border-radius: 5px;
     }
 
-    :deep .custom-checkbox1 .dx-checkbox-text {
+    :deep(.custom-checkbox1 .dx-checkbox-text) {
         background-color: #376092;
     }
 
@@ -67,7 +67,7 @@
             border-radius: 5px;
             color: white;
             cursor: pointer;
-        } 
+        }
     }
     :deep .dx-checkbox-has-text.mr-5 {
         margin-right: 10px;
@@ -82,7 +82,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: 10px;
-        margin-bottom: 10px;
     }
 
 }
