@@ -1,5 +1,5 @@
 <template>
-    <action-header title="일용직사원등록" @actionSave="actionSaveFunc" :buttonSave="actionChangeComponent != 2"/>
+    <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
     <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="2" style="padding-right: 10px">
@@ -41,7 +41,7 @@
                 <a-spin :spinning="loading" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
-                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="openEditModal"
+                        :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="onRowClick"
                         v-model:focused-row-key="focusedRowKey" @exporting="onExporting">
                         <DxScrolling mode="standard" show-scrollbar="always"/>
                         <DxSearchPanel :visible="true" />
@@ -60,7 +60,7 @@
                                 신규
                               </template>
                               <div style="text-align: center;" >
-                                <DxButton icon="plus" @click="openAddNewModal" />
+                                <DxButton icon="plus" @click="onAddButtonClick" />
                               </div>
                           </a-tooltip>
                         </template>
@@ -116,7 +116,7 @@
                         <DxColumn cell-template="pupop" width="50" />
                         <template #pupop="{ data }">
                             <div v-if="data.data.deletable" class="custom-action text-center">
-                                <DeleteOutlined @click="actionDeleteFuc(data.data.employeeId)" />
+                                <DeleteOutlined @click="onDeleteRow(data.data.employeeId)" />
                             </div>
                         </template>
                     </DxDataGrid>
@@ -130,13 +130,13 @@
         </a-row>
     </div>
     <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
-        :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="statusComfirm" />
+        :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmDelete" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
     <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="statusComfirmSave" />
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted } from "vue"
@@ -156,6 +156,7 @@ import { Workbook } from "exceljs";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum"
+import { isDeclareTypeAlias } from "@babel/types"
 
 export default defineComponent({
     components: {
@@ -176,7 +177,8 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column)
         const trigger = ref<boolean>(true)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
-        const Id_RowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520)
+        const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520)
+        const idRowCurrentClick= computed(() =>store.state.common.idRowChangePa520)
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -187,6 +189,8 @@ export default defineComponent({
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
         let isMounted = false; // determine first page load
+        let isClickRow = false; // determine when action click row 
+        const isDelete = ref<boolean>(false); // determine when action click icon delete 
         const resetAddComponent = ref<number>(1);
         // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
@@ -222,28 +226,31 @@ export default defineComponent({
           if (value) {
             // If it's the first time the page loads, focus on the first row
             if (isMounted) {
-              openEditModal({ data : value.getEmployeeWageDailies[0] })
+              onRowClick({ data : value.getEmployeeWageDailies[0] })
               isMounted = false
+              isClickRow = false
             }
-
             store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
-
             // Total number of employees who have quit
             totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
             totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
- 
               if (store.state.common.rowIdSaveDonePa520 != 0) {
-    
                 // Get index row change 
-                let indexChange = store.state.common.dataSourcePA520.findIndex((val: any) => val.employeeId == Id_RowSaveDone.value)
-  
+                let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value
+                
+                let dataRowChange = store.state.common.dataSourcePA520.filter((val: any) => val.employeeId == idRowNextForcus) // If there is a click event on the row, it will assign the employee id to focus
+                console.log(idRowNextForcus);
+                console.log(dataRowChange);
+                console.log(isClickRow);
+
+                
                 // active row change
-                setTimeout(() => { 
-                  let a = document.body.querySelectorAll('.style-Id');
-                  (a[indexChange] as HTMLInputElement).click();
-                }, 100);
+                onRowClick({ data: dataRowChange[0] })
+                isClickRow = false
+                isDelete.value = false
               }
               trigger.value = false
+              
             }
         })
         watch(() => modalAddNewStatus.value, (value) => {
@@ -253,14 +260,14 @@ export default defineComponent({
             }
         })
         watch(globalYear, (value) => {
-            openAddNewModal()
+            onAddButtonClick()
             trigger.value = true
             originData.value.imputedYear = value
             refetchData()
         });
 
         // get datasource from store to client
-      watch(() => store.state.common.dataSourcePA520, (value) => {
+        watch(() => store.state.common.dataSourcePA520, (value) => {
             dataSource.value = value
         }, { deep: true });
 
@@ -285,7 +292,7 @@ export default defineComponent({
           e.cancel = true;
         }
         // Opening a modal window.
-        const openAddNewModal = () => {
+        const onAddButtonClick = () => {
             // Adding a new row to the table.
           if (store.state.common.activeAddRowPA520 == false) {
               // Adding a new row to the grid.
@@ -303,7 +310,6 @@ export default defineComponent({
                 actionChangeComponent.value = 1
                 modalAddNewStatus.value = true
           }
-
           if (store.state.common.activeAddRowPA520 && store.state.common.checkChangeValueAddPA520) {
             modalChangeValueAdd.value = true
             addRowOnclick.value = true
@@ -312,10 +318,15 @@ export default defineComponent({
         
         const modalChangeValueAdd = ref(false)
         // The above code is a function that is called when the user clicks on the edit button.
-        const openEditModal = (val: any) => {
+        const onRowClick = (val: any) => {
+            // if click delete icon do nothing
+            if (isDelete.value) {
+              return;
+            }
+            isClickRow = true
             store.state.common.idRowChangePa520 = val.data.employeeId
             if (store.state.common.checkChangeValueAddPA520 == true) {
-                modalChangeValueAdd.value = true
+              modalChangeValueAdd.value = true
             } else {
                 // change component edit
                 actionChangeComponent.value = 2
@@ -335,12 +346,13 @@ export default defineComponent({
         const modalHistory = () => {
             modalHistoryStatus.value = companyId
         }
-        const actionDeleteFuc = (data: any) => {
+        const onDeleteRow = (data: any) => {
+            isDelete.value = true
             idAction.value = data
             modalStatus.value = true
         }
         // A function that is called when the user clicks on the delete button.
-        const statusComfirm = (res: any) => {
+        const onConfirmDelete = (res: any) => {
             if (res == true)
                 actionDelete({
                     companyId: companyId,
@@ -352,13 +364,13 @@ export default defineComponent({
             trigger.value = true
             refetchData()
         }
-        const actionSaveFunc = () => {
+        const actionSave = () => {
             store.state.common.actionSaveAddPA520++
         }
         // A function that is called when the user clicks on the save button.
-      const statusComfirmSave = (res: any) => {
+        const statusComfirmSave = (res: any) => {
          if (res == true) {
-              actionSaveFunc()
+              actionSave()
               store.state.common.idRowChangePa520 = dataChange.value
               store.state.common.allowedChangedRowPA520 = true
               idRowEdit.value = dataChange.value
@@ -367,11 +379,9 @@ export default defineComponent({
           }
 
         }
-        const confirmSaveAdd = (res: any) => {
+        const confirmAndSaveAdd = (res: any) => {
           if (res == true) {
-            actionSaveFunc()
-            // get employeeId (row key) last row in dataSourcePA520
-            //focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
+            actionSave()    
           } else if (!res && addRowOnclick.value) { 
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -380,7 +390,7 @@ export default defineComponent({
             store.state.common.checkChangeValueAddPA520 = false
             // Setting the value of the addRowOnclick variable to false.
             addRowOnclick.value = false
-            openAddNewModal()
+            onAddButtonClick()
           } else {//Not save
             // Delete row add demo
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -399,7 +409,7 @@ export default defineComponent({
 
         return {
             modalChangeValueAdd, focusedRowKey, modalStatusChange, store, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, move_column, colomn_resize, contentDelete,onExporting,
-            confirmSaveAdd, statusComfirmSave, actionSaveFunc, closeAction, refetchData, actionDeleteFuc, modalHistory, openAddNewModal, openEditModal, statusComfirm,Message
+            confirmAndSaveAdd, statusComfirmSave, actionSave, closeAction, refetchData, onDeleteRow, modalHistory, onAddButtonClick, onRowClick, onConfirmDelete,Message
         }
     },
 })

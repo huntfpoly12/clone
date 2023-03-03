@@ -431,21 +431,19 @@ export default defineComponent({
           columnData.value[0]['month_' + val.imputedMonth] = val;
         });
       }
-      if (!columnData.value[0].hasData) {
-        showDetailSelected({
-          imputedMonth: processKeyPA720.value.processKey.imputedMonth,
-          imputedYear: globalYear.value,
-          paymentMonth: processKeyPA720.value.processKey.imputedMonth,
-          paymentYear: globalYear.value,
-        });
-      }
+      // if (!columnData.value[0].hasData) {
+      //   showDetailSelected({
+      //     imputedMonth: processKeyPA720.value.processKey.imputedMonth,
+      //     imputedYear: globalYear.value,
+      //     paymentMonth: processKeyPA720.value.processKey.imputedMonth,
+      //     paymentYear: globalYear.value,
+      //   });
+      // }
       isColumnData.value = columnData.value[0].hasData ? true : false;
       if (isRunOnce.value) {
-        isRunOnce.value = false;
         if (columnData.value[0]['month_' + processKeyPA720.value.processKey.imputedMonth]) {
           showDetailSelected(columnData.value[0]['month_' + `${processKeyPA720.value.processKey.imputedMonth}`]);
         } else {
-          // showDetailSelected(processKeyPA720.value.processKey);
           isColumnData.value = false;
           showDetailSelected({
             imputedMonth: processKeyPA720.value.processKey.imputedMonth,
@@ -454,6 +452,7 @@ export default defineComponent({
             paymentYear: globalYear.value,
           });
         }
+        isRunOnce.value = false;
         return;
       }
     });
@@ -787,6 +786,9 @@ export default defineComponent({
     const isClickMonthDiff = ref(false);
     // fnc click month fake
     const onChangeMonth = (obj: any) => {
+      if(!isRunOnce.value){
+        isColumnData.value = true;
+      }
       if (obj) {
         taxPayRef.value.firsTimeRow = true;
         let datObj = {

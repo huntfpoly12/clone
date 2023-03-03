@@ -53,7 +53,7 @@ export default defineComponent({
         successDelete(e => {
             setModalVisible();
             notification('success', ` 완료!`);
-            emit('deleteDone');
+            emit("closePopup", true)
         })
         const onSubmit = (e: any) => {
             actionDelete({

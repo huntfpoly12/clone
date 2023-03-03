@@ -4,7 +4,7 @@
     <div id="pa-620">
         <div class="page-content">
             <a-row>
-                <a-col :span="24" class="mt-10">
+                <a-col :span="24" class="mt-10" :class="{'ele-opacity':!isCompareForm}">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="companyId" :allow-column-reordering="move_column"
@@ -227,9 +227,8 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <!-- {{ processKeyPA620 }} processKeyPA620 <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave"/>
+                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave" @compareForm="compareForm"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -264,9 +263,7 @@ export default defineComponent({
         let actionSave = ref(0)
         let dataSource: any = ref([]);
         const store = useStore();
-        const per_page = computed(() => store.state.settings.per_page);
-        const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const { per_page, move_column, colomn_resize } = store.state.settings;
         const monthClicked = computed(() => store.state.common.processKeyPA620.imputedMonth);
         const rowTable = ref(0);
         const dataModalCopy: any = ref()
@@ -445,7 +442,6 @@ export default defineComponent({
             return monthClicked.value == monthInputed
         }
         const changeNoSave = () => {
-          console.log(`output- chay vao day`,)
           onChangeMonth(changeMonthDataFake.value)
         }
         // ======================================== WATCH =========================================
@@ -455,10 +451,14 @@ export default defineComponent({
             store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value });
             formRef.value.resetForm();
         })
-
+        const isCompareForm = ref(false);
+        const compareForm = (emit: any) => {
+          isCompareForm.value = emit;
+        }
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
-            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked
+            setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
+            compareForm,isCompareForm
         };
     },
 });
