@@ -200,12 +200,8 @@
             </a-row>
             <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
-                <a-col :span="5">
-                    <div style="display: flex;">
-                        <!-- <DxButton :text="'귀' + inputDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                        <DxButton :text="'지' + paymentDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" /> -->
+                <a-col>
+                    <div v-if="!statusDisabledBlock">
                         <DxButton
                             :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
@@ -215,8 +211,12 @@
                         <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
                             :disabled="status == 30 || status == 40" />
                     </div>
+                    <div v-else>
+                        <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                        <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                    </div>
                 </a-col>
-                <a-col :span="9">
+                <a-col>
                     <div style="float: right;display: flex;">
                         <SelectActionComponent :dataRows="dataRows" />
                     </div>
@@ -422,7 +422,7 @@ export default defineComponent({
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
-                        value: data.employeeStat ? `${filters.formatCurrency(data.employeeStat.employeeCount)}(${filters.formatCurrency(data.employeeStat.retireEmployeeCount)})` : 0,
+                        value: `${filters.formatCurrency(data.employeeStat?.employeeCount)}(${filters.formatCurrency(data.employeeStat?.retireEmployeeCount)})`,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
@@ -434,23 +434,23 @@ export default defineComponent({
                         ...dataAdd
                     }
                     dataCustomRes.value[3]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(data.incomeStat?.totalPay),
                         ...dataAdd
                     }
                     dataCustomRes.value[4]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1001),
+                        value: filters.formatCurrency(data.incomeStat?.totalNationalPensionDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + data.imputedMonth] = {
-                        // value: 1002,
+                        value: filters.formatCurrency(data.incomeStat?.totalHealthDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[6]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1003),
+                        value: filters.formatCurrency(data.incomeStat?.totalLongtermCareDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[7]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1004),
+                        value: filters.formatCurrency(data.incomeStat?.totalEmploymentDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[8]['month' + data.imputedMonth] = {

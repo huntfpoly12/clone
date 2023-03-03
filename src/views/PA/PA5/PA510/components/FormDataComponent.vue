@@ -1,14 +1,14 @@
 <template>
     <standard-form action="" name="add-page-210" class="formPA510" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
-        <a-spin :spinning="loading || loadingIncomeWageDaily" >
+        <a-spin :spinning="loading || loadingIncomeWageDaily" ><StandardForm formName="pa-510-form" ref="pa510FormRef">
             <a-row :key="countKey">
                 <a-col :span="12" style="padding-right: 10px">
-                    <a-form-item label="일용직사원">
+                    <a-form-item label="일용직사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
                             @onChange="onChange" :activeType20="false" />
                     </a-form-item>
-                    <a-form-item label="지급일">
+                    <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
                             :spinButtons="true" :disabled="!store.state.common.actionAddItem" :isFormat="true"/>
                     </a-form-item>
@@ -26,7 +26,7 @@
                             width="200px" :required="true" />
                     </a-form-item>
                     <a-form-item label="공제합계">
-                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.totalDeduction"
+                        <number-box-money :disabled="true" v-model:valueInput="totalDeduction"
                             width="200px" :required="true" />
                     </a-form-item>
                     <a-form-item label="차인지급액">
@@ -53,8 +53,8 @@
                             }}
                             원</a-typography-title>
                     </div>
-                    <div class="input-text">
-                        <span>일급/월급:</span>
+                    <div class="input-text red">
+                        <label>일급/월급:</label>
                         <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textCheck="'월급'"
                             :textUnCheck="'일급'" />
                         <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
@@ -68,9 +68,9 @@
                             근무일수</span>
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
-                    <a-form-item label="근무일수">
+                    <a-form-item label="근무일수" class="red">
                         <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            :spinButtons="true" min="1" max="31"/>
+                            :spinButtons="true" min="1" max="31" :required="true"/>
                     </a-form-item>
                     <div style="font-weight: bold;">
                         <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
@@ -92,7 +92,7 @@
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
                     <div class="top-content">
-                        <a-typography-title :level="5" style="margin-bottom: 0;">공제 항목 {{ totalDeduction }}
+                        <a-typography-title :level="5" style="margin-bottom: 0;">공제 항목 {{ $filters.formatCurrency(totalDeduction) }}
                             원</a-typography-title>
                     </div>
                     <a-spin :spinning="loadingDeductionItem" size="large">
@@ -119,7 +119,7 @@
                     </a-spin>
                 </a-col>
             </a-row>
-        </a-spin>
+        </StandardForm></a-spin>
         <div class="text-align-center mt-50" style="display: flex; justify-content: center;">
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
@@ -417,10 +417,10 @@ export default defineComponent({
         // changed.
         watch(() => arrDeduction.value, (res) => {
             let total = 0
-            res.value?.map((val: any) => {
+            arrDeduction.value?.map((val: any) => {
                 total += val.price
             })
-            totalDeduction.value = filters.formatCurrency(total)
+            totalDeduction.value = total
         }, { deep: true })
 
         // Watching the resultEmployeeWageDaily and when it changes, it will update the
@@ -432,7 +432,8 @@ export default defineComponent({
                 await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
                 await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
                 await (dataIncomeWageDaily.value.workingDays = data.workingDays)
-                await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+                // await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+                await (totalDeduction.value = data.totalDeduction)
                 await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
                 await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
                 await (dataIncomeWageDaily.value.employee.name = data.name)
@@ -528,10 +529,13 @@ export default defineComponent({
             modalDeductions.value = true;
         }
         const updateDataDeduction = () => {
+            let total = 0
             arrDeduction.value?.map((val: any) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.deductionItemCode))
                     val.price = val.priceNew
+                    total += val.priceNew
             })
+            totalDeduction.value = total
             store.state.common.statusChangeFormPrice = false;
             showErrorButton.value = false;
         }
@@ -546,42 +550,52 @@ export default defineComponent({
                 employeeWageDailyTrigger.value = true;
             }
         }
-        
+        const pa510FormRef = ref()
         const submitForm = () => {
-            if (store.state.common.statusChangeFormPrice) {
-                store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
-                showErrorButton.value = true;
+            var res = pa510FormRef.value.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+                // if (!store.state.common.actionAddItem) {
+                //     store.state.common.focusedRowKey = dataIW.value?.residentId
+                // } else {
+                //     store.state.common.focusedRowKey = !store.state.common.statusRowAdd ? null : 'PA710'
+                // }
             } else {
-                let arrDeductionItems: any = []
-                arrDeduction.value.forEach((value: any) => {
-                    arrDeductionItems.push({
-                        itemCode: value.itemCode,
-                        amount: value.price,
-                    })
-                })
-                let input = {
-                    dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
-                    monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
-                    workingDays: dataIncomeWageDaily.value.workingDays,
-                    deductionItems: arrDeductionItems,
-                }
-                if (store.state.common.actionAddItem) {
-                    mutateAdd({
-                        companyId: companyId,
-                        processKey: { ...processKey.value },
-                        input: {
-                            paymentDay: dataIncomeWageDaily.value.paymentDay,
-                            employeeId: dataIncomeWageDaily.value.employee.employeeId,
-                            ...input
-                        },
-                    })
+                if (store.state.common.statusChangeFormPrice) {
+                    store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
+                    showErrorButton.value = true;
                 } else {
-                    mutateUpdate({
-                        companyId: companyId,
-                        processKey: { ...processKey.value },
-                        incomeId: dataIncomeWageDaily.value.incomeId,
-                        input: input,
+                    let arrDeductionItems: any = []
+                    arrDeduction.value.forEach((value: any) => {
+                        arrDeductionItems.push({
+                            itemCode: value.itemCode,
+                            amount: value.price,
+                        })
                     })
+                    let input = {
+                        dailyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? Math.round(dataIncomeWageDaily.value.monthlyWage / dataIncomeWageDaily.value.workingDays) : dataIncomeWageDaily.value.dailyWage,
+                        monthlyWage: dataIncomeWageDaily.value.employee.monthlyPaycheck ? dataIncomeWageDaily.value.monthlyWage : dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays,
+                        workingDays: dataIncomeWageDaily.value.workingDays,
+                        deductionItems: arrDeductionItems,
+                    }
+                    if (store.state.common.actionAddItem) {
+                        mutateAdd({
+                            companyId: companyId,
+                            processKey: { ...processKey.value },
+                            input: {
+                                paymentDay: dataIncomeWageDaily.value.paymentDay,
+                                employeeId: dataIncomeWageDaily.value.employee.employeeId,
+                                ...input
+                            },
+                        })
+                    } else {
+                        mutateUpdate({
+                            companyId: companyId,
+                            processKey: { ...processKey.value },
+                            incomeId: dataIncomeWageDaily.value.incomeId,
+                            input: input,
+                        })
+                    }
                 }
             }
         }
@@ -597,6 +611,7 @@ export default defineComponent({
             return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
         }
         return {
+            pa510FormRef,
             dataIncomeWageDaily,
             arrDeduction,
             loadingDeductionItem,
