@@ -47,12 +47,12 @@
                 <a-form-item label="외국인 국적" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                     <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" />
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                        :disabled="disabledSelectBox" width="180px" />
+                        :disabled="disabledSelectBox" width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
             </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">

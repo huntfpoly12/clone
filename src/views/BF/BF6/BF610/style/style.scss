@@ -1,9 +1,7 @@
 #bf-610 {
 
     :deep .custom-checkbox1 .dx-checkbox-text,
-    :deep .custom-checkbox2 .dx-checkbox-text,
-    :deep .custom-checkbox3 .dx-checkbox-text,
-    :deep .custom-checkbox4 .dx-checkbox-text {
+    :deep .custom-checkbox2 .dx-checkbox-text {
         margin-left: 5px;
         padding: 1px 20px;
         color: white;
@@ -11,20 +9,13 @@
     }
 
     :deep .custom-checkbox1 .dx-checkbox-text {
-        background-color: #346CB0;
-    }
-
-    :deep .custom-checkbox2 .dx-checkbox-text {
         background-color: #376092;
     }
 
-    :deep .custom-checkbox3 .dx-checkbox-text {
-        background-color: #BE4B48;
+    :deep .custom-checkbox2 .dx-checkbox-text {
+        background-color: #C00000;
     }
 
-    :deep .custom-checkbox4 .dx-checkbox-text {
-        background-color: #953735;
-    }
 
     :deep .search-form {
         .clr label {
@@ -86,6 +77,12 @@
     }
     .showO {
         font-size: 20px;
+    }
+    .closing-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
+        margin-bottom: 10px;
     }
 
 }

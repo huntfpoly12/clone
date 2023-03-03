@@ -4,7 +4,7 @@
           <a-row justify="start" :gutter="[16, 8]">
               <a-col>
                   <a-form-item  label="신고구분 :"> 
-                    <electronic-filing-type v-model:valueInput="originData.type" width="200px"></electronic-filing-type> 
+                    <electronic-filing-type v-model:valueInput="originData.type" width="200px" :disabledList="[1,2,7,8,9]"></electronic-filing-type> 
                   </a-form-item>
               </a-col>
               <a-col>

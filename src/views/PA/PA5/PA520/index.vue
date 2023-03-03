@@ -139,7 +139,7 @@
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmSaveAdd" />
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue"
+import { ref, defineComponent, watch, computed, onMounted } from "vue"
 import DxButton from "devextreme-vue/button"
 import { useStore } from 'vuex'
 import { useQuery, useMutation } from "@vue/apollo-composable"
@@ -175,8 +175,8 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const move_column = computed(() => store.state.settings.move_column)
         const trigger = ref<boolean>(true)
-      const colomn_resize = computed(() => store.state.settings.colomn_resize)
-      const Id_RowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520)
+        const colomn_resize = computed(() => store.state.settings.colomn_resize)
+        const Id_RowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520)
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -186,6 +186,7 @@ export default defineComponent({
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
+        let isMounted = false; // determine first page load
         const resetAddComponent = ref<number>(1);
         // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
@@ -199,6 +200,10 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
+        //hook on mounted to change page load state
+        onMounted(() => {
+          isMounted = true;
+        });
         const {
             mutate: actionDelete,
             onError: errorDelete,
@@ -214,12 +219,18 @@ export default defineComponent({
         })
         // ======================= WATCH ================================== 
         watch(result, (value) => {
-            if (value) {
-                store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
+          if (value) {
+            // If it's the first time the page loads, focus on the first row
+            if (isMounted) {
+              openEditModal({ data : value.getEmployeeWageDailies[0] })
+              isMounted = false
+            }
 
-                // Total number of employees who have quit
-                totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
-                totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
+            store.state.common.dataSourcePA520 = value.getEmployeeWageDailies
+
+            // Total number of employees who have quit
+            totalUserOnl.value = value.getEmployeeWageDailies.filter((val: any) => val.status != 0).length
+            totalUserOff.value = value.getEmployeeWageDailies.filter((val: any) => val.status == 0).length
  
               if (store.state.common.rowIdSaveDonePa520 != 0) {
     
@@ -249,9 +260,10 @@ export default defineComponent({
         });
 
         // get datasource from store to client
-        watch(() => store.state.common.dataSourcePA520, (value) => {
+      watch(() => store.state.common.dataSourcePA520, (value) => {
             dataSource.value = value
         }, { deep: true });
+
         watch(() => store.state.common.rowIdSaveDonePa520, (value) => {
             trigger.value = true
             refetchData()
