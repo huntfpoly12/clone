@@ -199,10 +199,10 @@
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <DxButton
-                    :text="'귀 ' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
+                    :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
                     :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                 <DxButton
-                    :text="'지 ' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
+                    :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                     :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
                     :disabled="status == 30 || status == 40" />
@@ -280,7 +280,7 @@
                         </template>
                         <DxColumn caption="지급일" width="60px" cell-template="paymentDay"/>
                         <template #paymentDay="{ data }">
-                            {{  data.data.paymentDay }}
+                            {{  $filters.formatMonth(data.data.paymentDay) }}
                         </template>
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
@@ -320,6 +320,7 @@ import CopyMonth from "./components/Popup/CopyMonth.vue";
 import filters from "@/helpers/filters";
 import { userType } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
+
 export default defineComponent({
     components: {
         DxMasterDetail,
