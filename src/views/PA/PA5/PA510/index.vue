@@ -198,14 +198,21 @@
         <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton
-                    :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
-                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
-                <DxButton
-                    :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
-                    :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
-                <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                    :disabled="status == 30 || status == 40" />
+                <div v-if="!statusDisabledBlock">
+                    <DxButton
+                        :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                    <DxButton
+                        :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                    <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
+                        :disabled="status == 30 || status == 40" />
+                </div>
+                <div v-else>
+                    <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                    <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                </div>
+                
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />

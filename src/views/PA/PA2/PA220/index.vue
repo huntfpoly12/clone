@@ -69,15 +69,15 @@
                 </template>
                 <template #send-group-print>
                     <div class="custom-mail-group">
-                        <a-tooltip placement="top" color="black">
-                            <template #title>출력 / 저장</template>
-                            <div>
-                                <DxButton @click="onPrintGroup">
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
-                                </DxButton>
-                            </div>
-                        </a-tooltip>
+                        <DxButton @click="onPrintGroup">
+                            <a-tooltip>
+                                  <template #title>
+                                    출력 / 저장
+                                  </template>
+                                  <img src="@/assets/images/printGroup.png" alt=""
+                                      style="width: 35px; margin-right: 3px; cursor: pointer" /> 
+                            </a-tooltip>
+                        </DxButton>
                     </div>
                 </template>
                 <DxSelection mode="multiple" />

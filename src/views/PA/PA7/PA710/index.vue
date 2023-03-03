@@ -36,7 +36,12 @@
                                 </DxButton>
                             </template>
                             <template #button-template>
-                                <DxButton icon="plus" @click="actionCreate" />
+                                <a-tooltip placement="top">
+                                    <template #title>신규</template>
+                                    <div>
+                                        <DxButton icon="plus" @click="actionCreate" />
+                                    </div>
+                                </a-tooltip>
                             </template>
                             <DxColumn caption="성명 (상호)" cell-template="company-name" data-field="name"/>
                             <template #company-name="{ data }">
@@ -70,7 +75,7 @@
                                     </a-tooltip>
                                 </div>
                             </template>
-                            <DxColumn caption="소득부분" cell-template="grade-cell" data-field="incomeTypeName"/>
+                            <DxColumn caption="소득구분" cell-template="grade-cell" data-field="incomeTypeName"/>
                             <template #grade-cell="{ data }">
                                 <income-type :typeCode="data.data.incomeTypeCode"
                                     :typeName="data.data.incomeTypeName"></income-type>
@@ -197,7 +202,8 @@ export default defineComponent({
         DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, 
     },
     setup() {
-        const contentDelete = Message.getMessage('PA120', '002').message
+        // const contentDelete = Message.getMessage('PA120', '002').message
+        const contentDelete = ref('선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?')
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);

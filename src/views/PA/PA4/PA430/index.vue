@@ -6,7 +6,7 @@
                 <a-row :gutter="20">
                     <a-col>
                         <div class="income-earners dflex custom-flex">
-                            <label class="lable-item">소득자보관용: </label>
+                            <label class="lable-item">귀속기간: </label>
                             <div style="width: 70px;" class="label-belonging">귀속</div>
                         </div>
                     </a-col>
@@ -48,10 +48,9 @@
                             </a-form-item>
                         </div>
                     </a-col>
-
                     <a-col :span="12">
                         <strong class="lable-item">소득자보관용 :</strong>
-                        <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보관용'" />
+                        <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보고용'" />
                     </a-col>
                 </a-row>
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -71,10 +70,15 @@
                     </template>
                     <template #send-group-print>
                         <div class="custom-mail-group">
-                            <DxButton @click="onPrintGroup" class="bt-print-group">
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
-                            </DxButton>
+                          <DxButton @click="onPrintGroup" class="bt-print-group"> 
+                              <a-tooltip>
+                                  <template #title>
+                                    출력 / 저장
+                                  </template>
+                                  <img src="@/assets/images/printGroup.png" alt=""
+                                      style="width: 35px; margin-right: 3px; cursor: pointer" /> 
+                              </a-tooltip>
+                          </DxButton>
                         </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
