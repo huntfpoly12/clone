@@ -7,7 +7,7 @@
     <standard-form formName="pa-720-form" ref="pa720FormRef">
       <a-row>
         <a-col :span="24">
-          <a-form-item label="사업소득자" label-align="right" class="red">
+          <a-form-item label="기타소득자" label-align="right" class="red">
             <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus" :arrayValue="arrayEmploySelect"
               v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
               @incomeTypeCode="changeIncomeTypeCode" />
@@ -16,7 +16,7 @@
         <a-col span="24">
           <div class="header-text-1 mb-10">소득내역</div>
         </a-col>
-        <a-col :span="12" style="padding-right: 5px">
+        <a-col :span="12" class="input-group-4" style="padding-right: 5px">
           <a-form-item label="귀속/지급연월" style="display: flex">
             <div class="d-flex-center">
               <DxButton :text="'귀 ' + inputDateTax"
@@ -31,16 +31,22 @@
             <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus" width="150px"
               class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true" :isFormat="true" />
           </a-form-item>
-          <a-form-item label="지급액" class="red">
-            <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
-              v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-              :disabled="!isColumnData || isExpiredStatus"></number-box-money>
-          </a-form-item>
-          <a-form-item label="필요경비" class="red">
-            <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
-              v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
-              class="red"></number-box-money>
-          </a-form-item>
+          <div class="input-text">
+            <a-form-item label="지급액" class="red">
+              <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
+                v-model:valueInput="formPA720.input.paymentAmount" :required="true"
+                :disabled="!isColumnData || isExpiredStatus"></number-box-money>
+              <span class="ml-1">원</span>
+            </a-form-item>
+          </div>
+          <div class="input-text">
+            <a-form-item label="필요경비" class="red">
+              <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
+                v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
+                class="red"></number-box-money>
+              <span class="ml-1">원</span>
+            </a-form-item>
+          </div>
           <a-form-item label="세율" class="red">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" :value="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
@@ -60,14 +66,12 @@
           </a-form-item>
         </a-col>
         <a-col class="input-group-4" :span="12" style="padding-left: 5px">
-          <div class="">
-            <div class="header-text-2 mb-10">
-              공제합계원
-              <b>{{
-                $filters.formatCurrency(formPA720.input.withholdingIncomeTax +
-                  formPA720.input.withholdingLocalIncomeTax)
-              }}</b>원
-            </div>
+          <div class="header-text-2 mb-10">
+            공제합계
+            <b>{{
+              $filters.formatCurrency(formPA720.input.withholdingIncomeTax +
+                formPA720.input.withholdingLocalIncomeTax)
+            }}</b>원
           </div>
           <div class="input-text">
             <a-form-item label="소득세(공제)">
@@ -101,8 +105,9 @@
         </a-col>
       </a-row>
       <a-row justify="center" class="my-10 mt-20">
-        <button-basic text="저장" type="default" mode="contained" :width="90"
-          @onClick="onSubmitForm($event)" id="pa720-save-js"></button-basic>
+        <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSubmitForm($event)"
+          id="pa720-save-js" :disabled="!isColumnData || isExpiredStatus">
+        </button-basic>
       </a-row>
     </standard-form>
   </a-spin>
@@ -285,7 +290,7 @@ export default defineComponent({
         emit('subValidate');
         res.brokenRules[0].validator.focus();
         store.state.common.isErrorFormPA720 = true;
-        
+
       } else {
         let params = JSON.parse(JSON.stringify(formPA720.value));
         delete params.input.incomeId;
@@ -360,7 +365,7 @@ export default defineComponent({
       formPA720.value.input.incomeTypeCode = res;
       formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
     };
-    const resetForm = (e:any) => {
+    const resetForm = (e: any) => {
       e.validationGroup.reset();
     }
     return {

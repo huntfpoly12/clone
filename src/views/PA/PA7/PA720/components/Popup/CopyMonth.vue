@@ -12,7 +12,7 @@
       </div>
     </a-form-item>
     <a-form-item label="지급일" :colon="false" label-align="right">
-      <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" />
+      <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true"/>
     </a-form-item>
 
     <div class="text-align-center mt-30">

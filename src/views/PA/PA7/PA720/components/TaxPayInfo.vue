@@ -34,7 +34,10 @@
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
         alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
-      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
+      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
+      <template #taxRateSlot="{data}">
+        {{ data.value }}%
+      </template>
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">

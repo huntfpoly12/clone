@@ -1,9 +1,9 @@
 <template>
-    <div id="tab2-pa520">
-        <div class="header-text-1">공제</div>
-        {{ dataDefaultGet }}------------------------------{{ originDataUpdate }}
+    <div id="tab2-pa520"> 
+        <div class="header-text-1">공제</div> {{ originDataUpdate ==  dataDefaultGet}}
+       <pre>{{ dataDefaultGet }}</pre> ------------------------------<pre>{{ originDataUpdate }}</pre>
         <a-row :gutter="16">
-            <a-col :span="24">
+            <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
                     <div class="d-flex-center">
                         <checkbox-basic size="14px" label="국민연금" class="check-box-tab1"
@@ -268,7 +268,7 @@ export default defineComponent({
                 })
                 if (dataAddDedution)
                     originDataUpdate.value.input.deductionItems = dataAddDedution
-              dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
+                dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
             }
         })
         const {
@@ -354,25 +354,8 @@ export default defineComponent({
           () => originDataUpdate.value.input.workingDays
         ], () => {
           // delete item  no need in object , Just compare item watching
-          let defValue = JSON.parse(dataDefaultGet.value).input;
-          delete defValue.longTermCareInsuranceDeduction
-          delete defValue.insuranceSupport
-          delete defValue.nationalPensionSupportPercent
-          delete defValue.employeementInsuranceSupportPercent
-          delete defValue.monthlyPaycheck
-          delete defValue.workingDays
-          delete defValue.dailyWage
-          delete defValue.deductionItems
-          
-          let originValue = JSON.parse(JSON.stringify(originDataUpdate.value.input));
-          delete originValue.longTermCareInsuranceDeduction
-          delete originValue.insuranceSupport
-          delete originValue.nationalPensionSupportPercent
-          delete originValue.employeementInsuranceSupportPercent
-          delete originValue.monthlyPaycheck
-          delete originValue.workingDays
-          delete originValue.dailyWage
-          delete originValue.deductionItems
+          let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
+          let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
           // Compare two object if different change button color to orange
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
             typeCalculateColor.value = 'calculate'
@@ -380,6 +363,18 @@ export default defineComponent({
             typeCalculateColor.value = 'default'
           }
         })
+
+        const cleanObject = (object :  any) => {
+          delete object.longTermCareInsuranceDeduction
+          delete object.insuranceSupport
+          delete object.nationalPensionSupportPercent
+          delete object.employeementInsuranceSupportPercent
+          delete object.monthlyPaycheck
+          delete object.workingDays
+          delete object.dailyWage
+          delete object.deductionItems
+          return  object
+        }
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
             mutate(originDataUpdate.value)
