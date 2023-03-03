@@ -4,7 +4,7 @@
             {{ idEmployee }}
         </div>
         <div style="display: flex;align-items: flex-end;">
-            <a-tooltip placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
+            <a-tooltip zIndex="9999" placement="top" :color="convertBirthDay(idCardNumber) ? 'black' : 'red'"
                 v-if="idCardNumber && name && convertBirthDay(idCardNumber)">
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)" style="color: white;">{{ convertBirthDay(idCardNumber) }}</div>

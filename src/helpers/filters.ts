@@ -40,6 +40,12 @@ const filters = {
     },
     useImage(url: string) {
         return new URL(`/src/assets/images/${url}`, import.meta.url).href;
-    }
+    },
+    formatMonth(month: number) {
+        if (month < 10) {
+            return '0' + month;
+        }
+        return month;
+    },
 }
 export default filters;
