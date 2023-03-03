@@ -1,8 +1,12 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-    checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
+    <!-- checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
     checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
-    checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}
+    checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
+    activeAddRowPA520: {{ store.state.common.activeAddRowPA520 }}<br>
+    idRowChangePa520: {{ store.state.common.idRowChangePa520 }}<br>
+    actionChangeComponent: {{ actionChangeComponent }}<br>
+    {{ idRowEdit }} -->
     <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="2" style="padding-right: 10px">
@@ -126,13 +130,13 @@
                 </a-spin>
             </a-col>
             <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
-                <PA520PopupAddNew :modalStatus="modalAddNewStatus" @closePopup="closeAction"
+                <PA520PopupAddNew :modalStatus="isAddNewStatus" @closePopup="closeAction"
                     v-if="actionChangeComponent == 1" :key="resetAddComponent" />
                 <PA520PopupEdit :idRowEdit="idRowEdit" @closePopup="closeAction" v-if="actionChangeComponent == 2" />
             </a-col>
         </a-row>
     </div>
-    <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" typeModal="confirm"
+    <PopupMessage :modalStatus="modalComfirmDelete" @closePopup="modalComfirmDelete = false" typeModal="confirm"
         :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmDelete" />
     <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
         :idRowEdit="idRowEdit" typeHistory="pa-520" />
@@ -172,7 +176,7 @@ export default defineComponent({
         const modalChangeValueEdit = ref(false)
         const actionChangeComponent = ref(1)
         const contentDelete = Message.getMessage('PA120', '002').message
-        const modalStatus = ref(false)
+        const modalComfirmDelete = ref(false)
         const dataSource = ref([])
         const store = useStore()
         const totalUserOnl = ref(0)
@@ -188,7 +192,7 @@ export default defineComponent({
             imputedYear: globalYear.value,
         })
         const idAction = ref()
-        const modalAddNewStatus = ref<boolean>(false)
+        const isAddNewStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
         const idRowEdit = ref()
@@ -198,7 +202,6 @@ export default defineComponent({
         const resetAddComponent = ref<number>(1);
         // use to catch case click add button and change something after that click add button  again
         const addRowOnclick = ref<boolean>(false)
-        let dataChange = ref(0)
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -224,6 +227,7 @@ export default defineComponent({
             notification('success', `업데이트 완료!`)
             trigger.value = true
             refetchData()
+            focusedRowKey.value = store.state.common.dataSourcePA520[0].employeeId
         })
         // ======================= WATCH ================================== 
         watch(result, (value) => {
@@ -252,7 +256,7 @@ export default defineComponent({
               
             }
         })
-        watch(() => modalAddNewStatus.value, (value) => {
+        watch(() => isAddNewStatus.value, (value) => {
             if (value == false) {
                 trigger.value = true
                 refetchData()
@@ -305,7 +309,7 @@ export default defineComponent({
                 }, 100);
                 store.state.common.activeAddRowPA520 = true 
                 actionChangeComponent.value = 1
-                modalAddNewStatus.value = true
+                isAddNewStatus.value = true
           }
           if (store.state.common.activeAddRowPA520 && store.state.common.checkChangeValueAddPA520) {
             modalChangeValueAdd.value = true
@@ -316,45 +320,33 @@ export default defineComponent({
         const modalChangeValueAdd = ref(false)
         // The above code is a function that is called when the user clicks on the edit button.
         const onRowClick = (val: any) => {
-            // if click delete icon do nothing
-            if (isDelete.value) {
-              return
-            }
-            isClickRow = true
-            store.state.common.idRowChangePa520 = val.data.employeeId
-            actionChangeComponent.value = 2
-            focusedRowKey.value = val.data.employeeId
-            // for case Edit  but click other row
-            if (
-              store.state.common.checkChangeValueEditTab1PA520 == true
-              //|| store.state.common.checkChangeValueEditTab2PA520 == true |
-            ){
-              modalChangeValueEdit.value = true
-              return
-            }
-            // for case Add  but click other row
+          // if click delete icon do nothing
+          if (isDelete.value) {
+            return
+          }
+          isClickRow = true
+          store.state.common.idRowChangePa520 = val.data.employeeId
+          // for case Edit  but click other row
+          if (
+            store.state.common.checkChangeValueEditTab1PA520 == true
+            //|| store.state.common.checkChangeValueEditTab2PA520 == true |
+          ){
+            modalChangeValueEdit.value = true
+            return
+          }
+          // for case Add  but click other row
           if (store.state.common.checkChangeValueAddPA520 == true) {
-              alert()
-              modalChangeValueAdd.value = true
-              return
-            }
-           
-              idRowEdit.value = val.data.employeeId
-            
-        
-                // change component edit
-                // 
-                //
-                // if (store.state.common.activeAddRowPA520 == true) {
-                //     store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
-                //     store.state.common.activeAddRowPA520 = false
-                // }
-                // if (store.state.common.checkStatusChangeValuePA520 == true) {
-                //    // modalStatusChange.value = true
-                //     dataChange.value = val.data.employeeId
-                // } else {
-                    
-                // }
+            modalChangeValueAdd.value = true
+            return
+          } else { idRowEdit.value = val.data.employeeId }
+          
+          actionChangeComponent.value = 2
+          focusedRowKey.value = val.data.employeeId
+          //The case is creating but not entering data but clicking to another row
+          if (store.state.common.activeAddRowPA520 == true) {
+              store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
+              store.state.common.activeAddRowPA520 = false
+          }
             
         }
         const modalHistory = () => {
@@ -363,7 +355,7 @@ export default defineComponent({
         const onDeleteRow = (data: any) => {
             isDelete.value = true
             idAction.value = data
-            modalStatus.value = true
+            modalComfirmDelete.value = true
         }
         // A function that is called when the user clicks on the delete button.
         const onConfirmDelete = (res: any) => {
@@ -398,19 +390,21 @@ export default defineComponent({
         }
         const confirmAndSaveAdd = (res: any) => {
           if (res == true) {
+            focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
             actionSave()    
+           
           } else if (!res && addRowOnclick.value) { 
-            // Delete row add demo
+            // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store
             store.state.common.activeAddRowPA520 = false
             store.state.common.checkChangeValueAddPA520 = false
             // Setting the value of the addRowOnclick variable to false.
             addRowOnclick.value = false
-            alert()
+            alert('sdfsdfsdfs')
             onAddButtonClick()
           } else {//Not save
-            // Delete row add demo
+            // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store
             store.state.common.activeAddRowPA520 = false
@@ -426,7 +420,7 @@ export default defineComponent({
         }
 
         return {
-            modalChangeValueAdd, focusedRowKey, modalChangeValueEdit, store, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalStatus, loading, modalDeleteStatus, dataSource, modalHistoryStatus, modalAddNewStatus, move_column, colomn_resize, contentDelete,onExporting,
+            modalChangeValueAdd, focusedRowKey, modalChangeValueEdit, store, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalComfirmDelete, loading, modalDeleteStatus, dataSource, modalHistoryStatus, isAddNewStatus, move_column, colomn_resize, contentDelete,onExporting,
             confirmAndSaveAdd, comfirmAndSaveEdit, actionSave, closeAction, refetchData, onDeleteRow, modalHistory, onAddButtonClick, onRowClick, onConfirmDelete,Message
         }
     },
