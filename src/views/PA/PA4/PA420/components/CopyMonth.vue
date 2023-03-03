@@ -4,7 +4,7 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0' + month1 }}
+                    귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month1) }}
                 </div>
                 <month-picker-box-custom v-model:valueDate="month2"/>
            
@@ -27,6 +27,7 @@ import queries from "@/graphql/queries/CM/CM130/index"
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -72,7 +73,7 @@ export default defineComponent({
                     paymentMonth = month1.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ? paymentMonth : '0' + paymentMonth)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             trigger.value = false;
         });
 

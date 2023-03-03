@@ -4,7 +4,7 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
+                    귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
                 </div>
                 <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
             </div>
@@ -29,12 +29,8 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{
-                            data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth
-                        }}
-                        지 {{ data.paymentYear }}-{{
-                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
-                        }}
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
                         <DxTextBox style="display: none;" />
                     </span>
                     <span v-else style="padding: 4px">
@@ -43,13 +39,10 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{
-                        data.imputedMonth > 9 ? data.imputedMonth :
-                            '0' + data.imputedMonth
-                    }} 지
-                        {{ data.paymentYear }}-{{
-                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
-                        }}</span>
+                    <span>
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }} 
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
+                    </span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -75,6 +68,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import queries from "@/graphql/queries/PA/PA1/PA110/index"
 import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -128,7 +122,7 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ? paymentMonth : '0' + paymentMonth)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             trigger.value = false;
         });
         const updateValue = (value: any) => {

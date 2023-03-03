@@ -5,8 +5,8 @@
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
         :height="$config_styles.HeightInput" :disabled="disabled">
         <template #field-data="{ data }">
-            <div v-if="data" style="padding: 4px">
-                <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
+            <div v-if="data" style="padding-left: 4px">
+                <!-- <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
                     {{ data.employeeId }}
                 </span>
                 <span>{{ data.name }}</span>
@@ -17,7 +17,10 @@
                 </span>
                 <span class="tag-status" v-if="data.status == 0">퇴</span>
                 <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-                <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
+                <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span> -->
+                <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
+                                        :name="data.name" :status="data.status"
+                                        :foreigner="data.foreigner" :checkStatus="false" />
                 <DxTextBox style="display: none;" />
             </div>
             <div v-else style="padding: 4px">
@@ -26,7 +29,7 @@
             </div>
         </template>
         <template #item-data="{ data }">
-            <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
+            <!-- <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
                 {{ data.employeeId }}
             </span>
             <span>{{ data.name }}</span>
@@ -37,7 +40,10 @@
             </span>
             <span class="tag-status" v-if="data.status == 0">퇴</span>
             <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-            <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span>
+            <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span> -->
+            <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
+                                        :name="data.name" :status="data.status"
+                                        :foreigner="data.foreigner" :checkStatus="false" />
         </template>
 
         <DxValidator :name="nameInput">
