@@ -24,7 +24,7 @@ export type InitialFormCreateType = {
   jobSecurityFundSupportApplication: boolean;
   weeklyWorkingHours: number;
   insuranceReductionCode?: number;
-  insuranceReductionReasonCode?: string;
+  insuranceReductionReasonCode?: number;
   dependentsEvidenceFileStorageId?: Number;
 };
 const InitialFormCreate: InitialFormCreateType = {
@@ -47,7 +47,7 @@ const InitialFormCreate: InitialFormCreateType = {
   healthInsuranceAcquisitionCode: "00", // 19
   includeDependents: true, // 21
   jobTypeCode: "232", // 22
-  contractWorker: true, // 23
+  contractWorker: false, // 23
   // contractExpiredDate: "", // 24
   jobSecurityFundSupportApplication: false, // 25
   weeklyWorkingHours: 40, // 26
@@ -64,6 +64,7 @@ const initialEmployeeWage = {
   nationalityNumber: "",
   nationalityCode: "",
   stayQualification: "",
+  foreigner: false,
   dependents: [
     {
       disabledCode: "",

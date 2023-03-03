@@ -1,17 +1,17 @@
 import { getJwtObject } from "@bankda/jangbuda-common";
 import dayjs from 'dayjs';
-// common export data 
+// common export data
 import { Workbook } from "exceljs";
 import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import store from "@/store";
-import Router from '../router'; 
+import Router from '../router';
 
 let companyId: any = null
 let userType: any = null
 let userId: any = null
 let managerGrade: any = null
-let screenRoleInfo: any = null;  
+let screenRoleInfo: any = null;
 let token = sessionStorage.getItem("token");
 if (token) {
     const jwtObject = getJwtObject(token);
@@ -65,7 +65,7 @@ const convertAge = (idCart: any) => {
         const date2 = dayjs();
         return date2.diff(date1, 'year')
         }
-        
+
         else if (typeYear == 3 || typeYear == 4 || typeYear == 7 || typeYear == 8) {
             const bdDate2 = '20' + birthDay.slice(0, 2) + '-' + birthDay.slice(2, 4) + '-' + birthDay.slice(4, 6);
             const date1 = dayjs(bdDate2);
@@ -75,6 +75,33 @@ const convertAge = (idCart: any) => {
     }else {
         return 0;
     }
+}
+
+const convertBirthDayKorea = (residentId: string) => {
+  const birthYear = residentId.slice(0, 2);
+  const birthMonth = residentId.slice(2, 4);
+  const birthDay = residentId.slice(4, 6);
+  let century = '';
+
+  // check length of residentId
+  if (residentId.length !== 13 && residentId.length !== 14) {
+    return null;
+  }
+  // check birthMonth and birthDay is valid
+  if (parseInt(birthMonth) > 12 || parseInt(birthDay) > 31) {
+    return null;
+  }
+  const genderCode = residentId.length === 13 ? residentId.slice(6, 7) : residentId.slice(7, 8)
+
+  if (genderCode === '1' || genderCode === '2' || genderCode === '5' || genderCode === '6') {
+    century = '19';
+  } else if (genderCode === '3' || genderCode === '4' || genderCode === '7' || genderCode === '8') {
+    century = '20';
+  } else {
+    return null;
+  }
+
+  return century + birthYear + '-' + birthMonth + '-' + birthDay;
 }
 
 //국민연금 사용자 부담금 계산
@@ -147,5 +174,6 @@ export {
     calculateHealthInsuranceEmployee,
     calculateLongTermCareInsurance,
     calculateEmployeementInsuranceEmployee,
+    convertBirthDayKorea,
 }
 
