@@ -63,8 +63,13 @@
                 <template #send-group-print>
                     <div class="custom-mail-group">
                         <DxButton @click="onPrintGroup">
-                            <img src="@/assets/images/printGroup.png" alt=""
-                                style="width: 35px; margin-right: 3px; cursor: pointer" />
+                            <a-tooltip>
+                                  <template #title>
+                                    출력 / 저장
+                                  </template>
+                                  <img src="@/assets/images/printGroup.png" alt=""
+                                      style="width: 35px; margin-right: 3px; cursor: pointer" /> 
+                            </a-tooltip>
                         </DxButton>
                     </div>
                 </template>
