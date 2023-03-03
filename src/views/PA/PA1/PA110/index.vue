@@ -3,7 +3,7 @@
         <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
-            <a-row>
+            <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :show-borders="true"
@@ -198,7 +198,9 @@
                     </DxDataGrid>
                 </a-spin>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
+            <a-row :class="{
+            'disabledBlock': statusDisabledBlock,
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
                 <a-col>
                     <div v-if="!statusDisabledBlock">
@@ -222,8 +224,8 @@
                     </div>
                 </a-col>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
-                <a-col :span="12" class="custom-layout">
+            <a-row :class="{'disabledBlock': statusDisabledBlock}">
+                <a-col :span="12" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"

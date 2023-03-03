@@ -566,7 +566,7 @@ export default defineComponent({
             triggerCalcIncome.value = false
             if (value) {
                 dataConfigDeductions.value.find((item: any) => item.itemCode == 1011).amountNew = value.calculateIncomeWageTax
-                dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax / 10) * 10
+                dataConfigDeductions.value.find((item: any) => item.itemCode == 1012).amountNew = Math.floor(value.calculateIncomeWageTax / 100) * 10
             }
         })
 
@@ -616,11 +616,11 @@ export default defineComponent({
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
 
         })
-        watch(() => store.state.common.actionCopy, (newVal) => {
-            setTimeout(() => {
-                    dataIW.value.paymentDay = store.state.common.paymentDayCopy
-            }, 1000)
-        })
+        // watch(() => store.state.common.actionCopy, (newVal) => {
+        //     setTimeout(() => {
+        //             dataIW.value.paymentDay = store.state.common.paymentDayCopy
+        //     }, 1000)
+        // })
 
         watch(() => store.state.common.statusChangeFormPrice, (value) => {
             if (!value) {
