@@ -1,12 +1,12 @@
 import gql from "graphql-tag";
 export default gql`
-  query searchTaxWithholdingStatusReportsByImputedYearMonth(
-    $imputedYear: Int!
-    $imputedMonth: Int!
+  query searchTaxWithholdingStatusReportsByYearMonth(
+    $paymentYear: Int!
+    $paymentMonth: Int!
   ) {
-    searchTaxWithholdingStatusReportsByImputedYearMonth(
-      imputedYear: $imputedYear
-      imputedMonth: $imputedMonth
+    searchTaxWithholdingStatusReportsByYearMonth(
+      paymentYear: $paymentYear
+      paymentMonth: $paymentMonth
     ) {
       companyId
       imputedYear

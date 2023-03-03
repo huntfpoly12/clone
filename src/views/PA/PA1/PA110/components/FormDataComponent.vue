@@ -1,16 +1,16 @@
 <template>
     <div id="pa-110" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
-        <a-spin :spinning="loading || loadingGetEmployeeWage" size="large">
+        <a-spin :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
             <a-row class="row-1" :key="countKey">
                 <a-col :span="12">
-                    <a-form-item label="사원">
+                    <a-form-item label="사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
                             :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
                             @onChange="onUpdateValue" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
-                    <a-form-item label="지급일">
+                    <a-form-item label="지급일" class="red">
                         <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31" :isFormat="true"
                             :disabled="!store.state.common.actionAddItem" :spinButtons="true" :required="true" />
                     </a-form-item>
@@ -27,13 +27,13 @@
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-100">수당 과세합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItemTax" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItemTaxFree" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text2 d-flex-center">
                             <span class="w-100">수당 비과세 합계</span>
                             <number-box-money :disabled="true" width="100px"
-                                v-model:valueInput="dataIW.totalPayItemTaxFree" />
+                                v-model:valueInput="dataIW.totalPayItemTax" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text d-flex-center">
@@ -59,36 +59,39 @@
                             사원별 급여명세서에 표시 됩니다.
                         </span>
                     </div>
-                    <a-form-item label="근무일수" label-align="right">
+                    <a-form-item label="근무일수" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.workingDays" /><span style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.workingDays" :required="true"/>
+                            <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="총근로시간" label-align="right">
+                    <a-form-item label="총근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.totalWorkingHours" /><span style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
+                            <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="연장근로시간" label-align="right">
+                    <a-form-item label="연장근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.overtimeWorkingHours" /><span
-                                style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
+                            <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="야간근로시간" label-align="right">
+                    <a-form-item label="야간근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.workingHoursAtNight" /><span style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
+                            <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
-                    <a-form-item label="휴일근로시간" label-align="right">
+                    <a-form-item label="휴일근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
-                                v-model:valueInput="dataIW.workingHoursOnHolidays" /><span
-                                style="padding-left: 5px;">시간</span>
+                                v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
+                            <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
                 </a-col>
@@ -99,9 +102,9 @@
             <a-row :gutter="16">
                 <a-col :span="13">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{
-                        $filters.formatCurrency(dataIW.totalPayItemTax)
+                        $filters.formatCurrency(dataIW.totalPayItemTaxFree)
                     }} 과세 + {{
-    $filters.formatCurrency(dataIW.totalPayItemTaxFree)
+    $filters.formatCurrency(dataIW.totalPayItemTax)
 }} 비과세 </div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
@@ -116,7 +119,7 @@
                                         :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
                                         :width="'130px'" />
                                     <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :type="4" subName="과세" :width="'130px'" />
+                                        :name="item.name" :type="4" subName="공제" :width="'130px'" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
@@ -170,28 +173,28 @@
                                 <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                             </div>
                         </a-tooltip>
-                        <!-- <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" type="default" text="공제 재계산" />
-                        <button-basic style="margin: 0px 5px" @onClick="modalInsurance = true" mode="contained" type="default" text="4대보험 EDI 조회/적용" /> -->
-                        <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
-                        <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
-                        <!-- <DxButton @click="actionDedution" :text="'공제 재계산'" id="button-action-dedution-pa110"
-                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                        <DxButton @click="modalInsurance = true" :text="'4대보험 EDI 조회/적용'"
-                            :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px' }" :height="'33px'" />
-                        <DxButton @click="modalDeteleTaxpay = true" :text="'중도정산 삭제'"
-                            :style="{ color: 'white', backgroundColor: 'gray', margin: '0px 10px 0px 0px' }"
-                            :height="'33px'" />
-                        <DxButton @click="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''"
-                            :text="'중도정산 반영'" :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" /> -->
+                        <a-tooltip placement="top">
+                            <template #title>중도퇴사자 연말정산 반영</template>
+                            <div>
+                                <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
+                            </div>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template #title>중도퇴사자 연말정산 반영분 삭제</template>
+                            <div>
+                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                            </div>
+                        </a-tooltip>
+                        <button-basic style="margin: 0px 5px" @onClick="submitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
                     </div>
                 </a-col>
             </a-row>
-            <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false"
-                :data="dataConfigDeductions" @updateDate="updateDataDeduction" />
-            <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
-            <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
-            <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" :data="dataIW" />
-        </a-spin>
+        </StandardForm></a-spin>
+        <DeductionPopup :modalStatus="modalDeductions" @closePopup="modalDeductions = false"
+            :data="dataConfigDeductions" @updateDate="updateDataDeduction" />
+        <InsurancePopup :modalStatus="modalInsurance" @closePopup="modalInsurance = false" />
+        <DeletePopupTaxPay :modalStatus="modalDeteleTaxpay" @closePopup="modalDeteleTaxpay = false" />
+        <DeletePopupMidTerm :modalStatus="modalDeteleMidTerm" @closePopup="modalDeteleMidTerm = false" :data="dataIW" />
     </div>
 </template>
 <script lang="ts">
@@ -509,44 +512,7 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.actionSubmit, () => {
-            if (store.state.common.statusChangeFormPrice) {
-                store.state.common.focusedRowKey = dataIW.value?.incomeId
-                showErrorButton.value = true;
-            } else {
-                let payItems = dataConfigPayItems.value?.map((item: any) => {
-                    return {
-                        itemCode: item.itemCode,
-                        amount: item.amount
-                    }
-                })
-                let deductionItems = dataConfigDeductions.value?.map((item: any) => {
-                    return {
-                        itemCode: item.itemCode,
-                        amount: item.amount
-                    }
-                })
-                const variables: any = {
-                    companyId: companyId,
-                    processKey: { ...processKey.value },
-                    incomeId: store.state.common.incomeId,
-                    input: {
-                        workingDays: dataIW.value.workingDays,
-                        totalWorkingHours: dataIW.value.totalWorkingHours,
-                        overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
-                        workingHoursAtNight: dataIW.value.workingHoursAtNight,
-                        workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
-                        payItems: payItems,
-                        deductionItems: deductionItems,
-                    }
-                };
-                if (store.state.common.actionAddItem) {
-                    variables.input.employeeId = dataIW.value.employee.employeeId,
-                        variables.input.paymentDay = dataIW.value.paymentDay,
-                        actionCreated(variables)
-                } else {
-                    actionUpdate(variables)
-                }
-            }
+            submitForm()
         })
 
         watch(result, (value) => {
@@ -666,10 +632,59 @@ export default defineComponent({
             store.state.common.statusChangeFormPrice = true;
         })
         // ======================= FUNCTION ================================
+        const pa110FormRef = ref()
+        const submitForm = () => {
+            var res = pa110FormRef.value.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+                // if (!store.state.common.actionAddItem) {
+                //     store.state.common.focusedRowKey = dataIW.value?.residentId
+                // } else {
+                //     store.state.common.focusedRowKey = !store.state.common.statusRowAdd ? null : 'PA710'
+                // }
+            } else {
+                if (store.state.common.statusChangeFormPrice) {
+                    store.state.common.focusedRowKey = dataIW.value?.incomeId
+                    showErrorButton.value = true;
+                } else {
+                    let payItems = dataConfigPayItems.value?.map((item: any) => {
+                        return {
+                            itemCode: item.itemCode,
+                            amount: item.amount
+                        }
+                    })
+                    let deductionItems = dataConfigDeductions.value?.map((item: any) => {
+                        return {
+                            itemCode: item.itemCode,
+                            amount: item.amount
+                        }
+                    })
+                    const variables: any = {
+                        companyId: companyId,
+                        processKey: { ...processKey.value },
+                        incomeId: store.state.common.incomeId,
+                        input: {
+                            workingDays: dataIW.value.workingDays,
+                            totalWorkingHours: dataIW.value.totalWorkingHours,
+                            overtimeWorkingHours: dataIW.value.overtimeWorkingHours,
+                            workingHoursAtNight: dataIW.value.workingHoursAtNight,
+                            workingHoursOnHolidays: dataIW.value.workingHoursOnHolidays,
+                            payItems: payItems,
+                            deductionItems: deductionItems,
+                        }
+                    };
+                    if (store.state.common.actionAddItem) {
+                        variables.input.employeeId = dataIW.value.employee.employeeId,
+                            variables.input.paymentDay = dataIW.value.paymentDay,
+                            actionCreated(variables)
+                    } else {
+                        actionUpdate(variables)
+                    }
+                }
+            }
+        }
         //  Calculate Pension Employee 
         const calculateTax = async () => {
-            
-            // }));
             await (dataIW.value.totalPayItem = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
             }, 0));
@@ -733,6 +748,7 @@ export default defineComponent({
         }
 
         return {
+            pa110FormRef,
             loadingConfigPayItems, loadingConfigDeductions, loading,
             modalDeductions, globalYear,
             modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
@@ -748,6 +764,7 @@ export default defineComponent({
             loadingGetEmployeeWage,
             updateDataDeduction,
             showErrorButton,
+            submitForm,
         };
     },
 });

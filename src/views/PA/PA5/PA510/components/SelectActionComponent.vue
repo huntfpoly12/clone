@@ -3,9 +3,9 @@
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
-    <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
+    <!-- <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
-    </DxButton>
+    </DxButton> -->
     <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
         @click="onItemClick({ itemData: { event: 'History' } })">
         <a-tooltip placement="top">
@@ -273,9 +273,9 @@ export default defineComponent({
                 store.state.common.actionResetForm++;
             }
         }
-        const onSubmit = (e: any) => {
-            store.state.common.actionSubmit++
-        };
+        // const onSubmit = (e: any) => {
+        //     store.state.common.actionSubmit++
+        // };
 
         return {
             deleteItem,
@@ -302,7 +302,7 @@ export default defineComponent({
             popupDataEdit,
             modalStatusAdd, statusComfirmAdd,
             openTab,
-            onSubmit,
+            // onSubmit,
             store,
             emailAddress, Message,
         };

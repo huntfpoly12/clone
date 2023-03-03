@@ -3,7 +3,7 @@
         :width="500">
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
-                <DxButton :text="'귀' + processKeyPA620.imputedYear + ' ' + '-' + ( month1 > 9 ? month1 : ('0'+month1))"
+                <DxButton :text="'귀' + processKeyPA620.imputedYear + ' ' + '-' + $filters.formatMonth(month1)"
                 :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
                 <div class="d-flex-center">
                 <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
@@ -30,8 +30,8 @@
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth : '0'+data.imputedMonth }} 지 {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0'+data.paymentMonth
-                        }}
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
                         <DxTextBox style="display: none;" />
                     </span>
                     <span v-else style="padding: 4px">
@@ -40,8 +40,10 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{ data.imputedMonth > 9 ? data.imputedMonth : '0'+data.imputedMonth}} 지
-                        {{ data.paymentYear }}-{{ data.paymentMonth > 9 ? data.paymentMonth : '0'+data.paymentMonth }}</span>
+                    <span>
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
+                    </span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>

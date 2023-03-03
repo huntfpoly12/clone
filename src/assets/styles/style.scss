@@ -149,6 +149,11 @@ $lenght: 50;
     color: red;
   }
 }
+.red {
+  label {
+    color: red;
+  }
+}
 
 .style-note {
   line-height: 12px;
@@ -195,4 +200,7 @@ $lenght: 50;
 .column-focus {
   background-color: #5c95c5;
   color: black;
+}
+.ele-opacity {
+  opacity: 0.7;
 }

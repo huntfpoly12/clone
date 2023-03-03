@@ -1,4 +1,3 @@
-import { employees } from "./../views/CM/CM1/CM130/utils/data";
 const compareObject = (obj1: any, obj2: any) => {
   if (obj1 && obj2) {
     return (

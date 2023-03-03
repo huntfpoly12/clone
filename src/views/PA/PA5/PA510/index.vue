@@ -4,7 +4,7 @@
         <a-row>
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
-                    :focused-row-enabled="true" :show-borders="true" :allow-column-reordering="move_column"
+                    :show-borders="true" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn :caption="processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
@@ -198,14 +198,21 @@
         <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
-                <DxButton
-                    :text="'귀 ' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
-                    :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
-                <DxButton
-                    :text="'지 ' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
-                    :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
-                <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                    :disabled="status == 30 || status == 40" />
+                <div v-if="!statusDisabledBlock">
+                    <DxButton
+                        :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
+                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                    <DxButton
+                        :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
+                        :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                    <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
+                        :disabled="status == 30 || status == 40" />
+                </div>
+                <div v-else>
+                    <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                    <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                </div>
+                
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
@@ -219,7 +226,7 @@
                         :allow-column-reordering="move_column" :focused-row-enabled="true"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
-                        @cell-click="onCellClick"
+                        @focused-row-changing="onFocusedRowChanging"
                         :selection-filter="store.state.common.selectionFilter"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
@@ -280,7 +287,7 @@
                         </template>
                         <DxColumn caption="지급일" width="60px" cell-template="paymentDay"/>
                         <template #paymentDay="{ data }">
-                            {{  data.data.paymentDay }}
+                            {{  $filters.formatMonth(data.data.paymentDay) }}
                         </template>
                         <DxSummary>
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
@@ -320,6 +327,7 @@ import CopyMonth from "./components/Popup/CopyMonth.vue";
 import filters from "@/helpers/filters";
 import { userType } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
+
 export default defineComponent({
     components: {
         DxMasterDetail,
@@ -608,12 +616,6 @@ export default defineComponent({
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
-        // Setting the focusedRowKey to the incomeId.
-        const onCellClick = (e: any) => {
-            if(e.columnIndex === 0 && e.column.type =='selection') {
-                store.state.common.focusedRowKey = store.state.common.incomeId
-            }
-        }
         const customMonthlyWage = () => {
             let sum = 0
             store.state.common.dataTaxPayInfo?.map((row: any) => {
@@ -635,6 +637,12 @@ export default defineComponent({
             })
             return `차인지급액합계: ` + filters.formatCurrency(sum);
         }
+        // Preventing the user from selecting a row by clicking on the select button.
+        const onFocusedRowChanging = (e: any) => {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                e.cancel = true;
+            }
+        };
         return {
             processKey,
             loading,
@@ -657,8 +665,9 @@ export default defineComponent({
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             statusDisabledBlock,
-            Message, onCellClick,
+            Message,
             customMonthlyWage, customTotalDeduction,  customActualPayment,
+            onFocusedRowChanging,
         }
 
     },

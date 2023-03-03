@@ -12,11 +12,11 @@
       <div class="d-flex d-flex-center justify-content-center">
         <div class="btn-upload">
           <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload" />
-        <span>등본 등 증빙파일</span>
+          <span>{{ label }}</span>
         </div>
       </div>
     </a-upload>
-   
+
   </div>
 </template>
 
@@ -56,6 +56,10 @@ export default defineComponent({
       default: null,
       require: true,
     },
+    label: {
+      type: String,
+      default: '파일 선택'
+    }
   },
   components: {
     UploadOutlined,
@@ -120,7 +124,7 @@ export default defineComponent({
 .fileuploader-container {
   display: flex;
   align-items: center;
-  
+
   padding: 10px;
   border: 1px solid #d3d3d3;
   border-radius: 10px;
@@ -135,6 +139,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     background: #f5f5f5;
     border-radius: 10px;
     padding: 10px 20px;
@@ -149,7 +154,7 @@ export default defineComponent({
       font-weight: 500;
       color: #000;
     }
-   
+
   }
 }
 

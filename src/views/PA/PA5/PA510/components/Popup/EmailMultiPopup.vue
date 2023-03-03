@@ -2,8 +2,8 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
         <standard-form action="" name="email-single-630">
-            <img src="@/assets/images/emailGroup.png" alt="" style="width: 40px;">
             <div class="custom-modal-send-email">
+                <img src="@/assets/images/emailGroup.png" alt="" style="width: 50px;">
                 <div>
                     <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
                     <div style="display: flex;align-items: center;">

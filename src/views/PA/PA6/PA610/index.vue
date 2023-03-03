@@ -210,12 +210,13 @@
                   width="200px"
                   v-model:valueRadioCheck="dataShow.foreigner"
                   layoutCustom="horizontal"
+                  @update:valueRadioCheck="changeRadioForeigner"
                 />
               </a-form-item>
               <a-form-item
                 label="외국인 국적"
                 label-align="right"
-                :class="disabledInput2 ? '' : 'red'"
+                :class="!dataShow.foreigner ? '' : 'red'"
               >
                 <country-code-select-box
                   v-if="dataShow.foreigner"
@@ -237,10 +238,10 @@
               <a-form-item
                 label="외국인 체류자격"
                 label-align="right"
-                :class="disabledInput2 ? '' : 'red'"
+                :class="!dataShow.foreigner ? '' : 'red'"
               >
                 <stay-qualification-select-box
-                  :disabled="disabledInput2"
+                  :disabled="!dataShow.foreigner"
                   :required="dataShow.foreigner"
                   v-model:valueStayQualifiction="dataShow.stayQualification"
                   width="200px"
@@ -363,7 +364,7 @@ export default defineComponent({
     PlusOutlined,
 },
   setup() {
-    const contentDelete = Message.getMessage("PA120", "002").message;
+    const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';
 
     const store = useStore();
     const per_page = computed(() => store.state.settings.per_page);
@@ -646,6 +647,20 @@ export default defineComponent({
     const changeTextTypeCode = (text: any) => {
       dataShow.value.incomeTypeName = text;
     };
+    const changeRadioForeigner = (value: Boolean) => {
+        if(value === false) {
+          dataShow.value.nationality = '대한민국'
+          dataShow.value.nationalityCode = 'KR'
+        } else {
+          if(isNewRow.value) {
+            dataShow.value.nationality = ''
+            dataShow.value.nationalityCode = ''
+          } else {
+            dataShow.value.nationality = previousRowData.value.nationality
+            dataShow.value.nationalityCode = previousRowData.value.nationalityCode
+          }
+        }
+    }
     const dataUpdate = computed(() => {
       let residentId = dataShow.value.residentId.replace("-", "");
       return {
@@ -766,7 +781,8 @@ export default defineComponent({
       formRef,
       Message,
       // onRowClick,
-      formWrapper
+      formWrapper,
+      changeRadioForeigner
     };
   },
 });

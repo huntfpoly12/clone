@@ -6,7 +6,7 @@
             <a-row>
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
+                        key-expr="companyId" :show-borders="true"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
@@ -200,23 +200,23 @@
             </a-row>
             <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
-                <a-col :span="5">
-                    <div style="display: flex;">
-                        <!-- <DxButton :text="'귀' + inputDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                        <DxButton :text="'지' + paymentDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" /> -->
+                <a-col>
+                    <div v-if="!statusDisabledBlock">
                         <DxButton
-                            :text="'귀 ' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
+                            :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                         <DxButton
-                            :text="'지 ' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
+                            :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                             :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                         <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
                             :disabled="status == 30 || status == 40" />
                     </div>
+                    <div v-else>
+                        <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                        <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                    </div>
                 </a-col>
-                <a-col :span="9">
+                <a-col>
                     <div style="float: right;display: flex;">
                         <SelectActionComponent :dataRows="dataRows" />
                     </div>
@@ -230,7 +230,7 @@
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
-                            @cell-click="onCellClick"
+                            @focused-row-changing="onFocusedRowChanging"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -239,16 +239,25 @@
                             <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
-                                    <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId"
+                                    <employee-info :idEmployee="data.data.employee.employeeId" :idCardNumber="data.data.employee.residentId"
                                         :name="data.data.employee.name" :status="data.data.employee.status"
-                                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                                        :midTermSettlement="data.data.midTermSettlement" />
+                                        :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                                 </div>
                             </template>
                             <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" width="75" caption="공제" data-field="totalDeduction"
+                            <DxColumn alignment="left" width="75" caption="공제" cell-template="total-deduction" data-field="totalDeduction"
                                 format="fixedPoint" />
+                            <template #total-deduction="{ data }">
+                                <a-tooltip placement="top">
+                                    <template #title>소득세 {{ $filters.formatCurrency(data.data.incomePayment) }} / 지방소득세
+                                        {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
+                                    </template>
+                                    <span>
+                                        {{ $filters.formatCurrency(data.data.totalDeduction) }}
+                                    </span>
+                                </a-tooltip>
+                            </template>
                             <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment"
                                 format="fixedPoint" />
                             <DxColumn alignment="left" class="min-w-240" caption="비고"
@@ -274,7 +283,7 @@
                             <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay"
                                 cell-template="paymentDay" />
                             <template #paymentDay="{ data }">
-                                <div class="text-center">{{ data.data.paymentDay }}</div>
+                                <div class="text-center">{{  $filters.formatMonth(data.data.paymentDay) }}</div>
                             </template>
                             <DxSummary>
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
@@ -320,7 +329,6 @@ import filters from "@/helpers/filters";
 import notification from "@/utils/notification"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
-import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
 import { initDataCustomRes } from "./utils/index"
 import { userType } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
@@ -345,7 +353,6 @@ export default defineComponent({
         ProcessStatus,
         FormDataComponent,
         CopyMonth,
-        EmployeeInfoSettment
     },
     setup() {
         const store = useStore()
@@ -415,7 +422,7 @@ export default defineComponent({
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
-                        value: data.employeeStat ? `${filters.formatCurrency(data.employeeStat.employeeCount)}(${filters.formatCurrency(data.employeeStat.retireEmployeeCount)})` : 0,
+                        value: `${filters.formatCurrency(data.employeeStat?.employeeCount)}(${filters.formatCurrency(data.employeeStat?.retireEmployeeCount)})`,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
@@ -427,23 +434,23 @@ export default defineComponent({
                         ...dataAdd
                     }
                     dataCustomRes.value[3]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(data.incomeStat?.totalPay),
                         ...dataAdd
                     }
                     dataCustomRes.value[4]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1001),
+                        value: filters.formatCurrency(data.incomeStat?.totalNationalPensionDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + data.imputedMonth] = {
-                        // value: 1002,
+                        value: filters.formatCurrency(data.incomeStat?.totalHealthDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[6]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1003),
+                        value: filters.formatCurrency(data.incomeStat?.totalLongtermCareDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[7]['month' + data.imputedMonth] = {
-                        // value: filters.formatCurrency(data.incomeStat?.1004),
+                        value: filters.formatCurrency(data.incomeStat?.totalEmploymentDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[8]['month' + data.imputedMonth] = {
@@ -647,14 +654,13 @@ export default defineComponent({
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
-            
         }
-        // Setting the focusedRowKey to the incomeId.
-        const onCellClick = (e: any) => {
-            if(e.columnIndex === 0 && e.column.type =='selection') {
-                store.state.common.focusedRowKey = store.state.common.incomeId
+        // Preventing the user from selecting a row by clicking on the select button.
+        const onFocusedRowChanging = (e: any) => {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                e.cancel = true;
             }
-        }
+        };
         watch(globalYear, (newVal) => {
             store.state.common.processKeyPA110.imputedYear = newVal
             store.state.common.processKeyPA110.paymentYear = newVal
@@ -688,7 +694,7 @@ export default defineComponent({
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             Message,
-            statusDisabledBlock, onCellClick,
+            statusDisabledBlock, onFocusedRowChanging,
         }
 
     },

@@ -34,7 +34,10 @@
       <DxColumn caption="필요경비" data-field="requiredExpenses" :customize-text="formateMoney" width="100"
         alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
-      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" />
+      <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
+      <template #taxRateSlot="{data}">
+        {{ data.value }}%
+      </template>
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
       <template #incomLocalTax="{ data }">
         <a-tooltip placement="top">
@@ -65,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed, reactive } from 'vue';
+import { ref, defineComponent, watch, reactive, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useQuery } from '@vue/apollo-composable';
 import {
@@ -132,7 +135,7 @@ export default defineComponent({
     });
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
-    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
+    const formPA720 = computed(() => store.getters['common/formPA720']);
 
     // ================GRAPQL==============================================
 
@@ -148,13 +151,16 @@ export default defineComponent({
     }));
     resIncomeExtras((res) => {
       dataSourceDetail.value = res.data.getIncomeExtras;
+      if(!firsTimeRow.value && res.data.getIncomeExtras.length > 0) {
+        onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+      }
       if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
         firsTimeRow.value = false;
-        // }else {
-        //   store.commit('common/formPA720', store.getters['common/dataActionUtilsPA720']);
-        //   emit('resetForm')
+      }
+      if(res.data.getIncomeExtras.length == 0) {
+      onRowClick({ data: {} });
       }
       triggerDetail.value = false;
       loadingIncomeExtras.value = true;
@@ -169,7 +175,6 @@ export default defineComponent({
       (newValue) => {
         dataTableDetail.value = newValue;
         triggerDetail.value = true;
-        // refetchIncomeExtras();
       },
       { deep: true }
     );
@@ -178,7 +183,6 @@ export default defineComponent({
       () => props.changeFommDone,
       () => {
         triggerDetail.value = true;
-        refetchIncomeExtras();
         firsTimeRow.value = false;
       }
     );
@@ -219,6 +223,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
+      selectedRowKeys.value = [data.incomeId];
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,
@@ -240,13 +245,10 @@ export default defineComponent({
       } else {
         loadIndexInit.value = e.loadIndex;
       }
-      if(!selectedRowKeys.value.find((item: any) => item == focusedRowKey.value)) {
-        selectedRowKeys.value.push(focusedRowKey.value);
-      }
     };
     const onCellClick = (e: any) => {
       if(e.columnIndex === 0 && e.column.type =='selection') {
-        focusedRowKey.value = store.state.common.formPA720.input?.incomeId;
+        focusedRowKey.value = formPA720.value.input?.incomeId;
         return;
       }
     }

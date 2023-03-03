@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="75%" v-model:visible="visible" title="취득신고등록" centered
+  <a-modal class="form-modal" width="75%" v-model:visible="visible" title="취득신고 신규 등록" centered
            @cancel="$emit('closeModal')" :footer="null">
     <standard-form>
       <div class="form">
@@ -91,7 +91,8 @@
                       <text-number-box
                         v-model:valueInput="formData.nationalityNumber"
                         placeholder=""
-                        :disabled="isChooseNationalPensionReport"
+                        :required="!employeeWage.foreigner"
+                        :disabled="!employeeWage.foreigner || isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
                     </div>
@@ -102,9 +103,9 @@
                     <div class="d-flex items-center gap-4">
                       <text-number-box
                         v-model:valueInput="formData.stayQualification"
-                        :required="true"
+                        :required="!employeeWage.foreigner"
                         placeholder=""
-                        :disabled="isChooseNationalPensionReport"
+                        :disabled="!employeeWage.foreigner || isChooseNationalPensionReport"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE" />
                     </div>
@@ -148,12 +149,12 @@
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
-                      <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
+                      <SearchCodeButton :src="URL_CONST.URL_NATIONAL_PERSON_ACQUISITION_CODE" />
                     </div>
                   </DxField>
                 </a-col>
                 <a-col span="12">
-                  <div class="h-full d-flex justify-content-end px-10">
+                  <div class="h-full d-flex justify-content-start items-center">
                     <checkbox-basic
                       label="취득월 납부 희망여부"
                       v-model:valueCheckbox="formData.acquisitionMonthPayment"
@@ -223,7 +224,7 @@
                   <div class="h-full flex items-center justify-content-start px-10">
                     <checkbox-basic
                       label="계약직여부"
-                      v-model:valueInput="formData.contractWorker"
+                      v-model:valueCheckbox="formData.contractWorker"
                       :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                   />
                   </div>
@@ -232,14 +233,13 @@
                   <DxField label="계약종료일">
                     <div class="h-full flex items-center">
                       <date-time-box
-                        
                         default="2022-12-12"
                         dateFormat="YYYY-MM-DD"
                         v-model="formData.contractExpiredDate"
-                        :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
+                        :disabled="!formData.contractWorker || !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                       />
                     </div>
-                  </DxField>  
+                  </DxField>
                     <!--                      <label class="lable-item">계약종료일:</label>-->
                 </a-col>
                   <a-col span="7">
@@ -258,7 +258,7 @@
                           :required="true"
                           :spinButtons="true"
                           v-model:valueInput="formData.weeklyWorkingHours"
-                          
+
                           :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                         />
                         </div>
@@ -267,14 +267,14 @@
                   <a-col span="9" class="relative">
                     <DxField label="보험료부과구분부호 및 사유" :style="'align-items: start'">
                       <div class="w-full flex flex-col gap-1">
-                        <number-box
+                        <text-number-box
                           :spinButtons="true"
                           v-model:valueInput="formData.insuranceReductionCode"
                           :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
                           placeholder="부호"
                           width="100%"
                         />
-                        <number-box
+                        <text-number-box
                           :spinButtons="true"
                           v-model:valueInput="formData.insuranceReductionReasonCode"
                           :disabled="!isChooseEmployeementInsuranceAndIndustrialAccidentInsurance"
@@ -313,7 +313,7 @@
               </div>
               <div class="bg-gray flex">등록일</div>
               <div class="bg-gray flex">
-                <span>등록국적일</span>
+                <span>국적</span>
                 <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER_DEPENDENT" />
               </div>
               <div class="bg-gray flex">
@@ -326,7 +326,7 @@
               <!-- use v-loop employeeWage dependents-->
               <template  v-for="(dependent, index) in employeeWage.dependents" :key="index">
                 <!-- Add more dependent properties as needed -->
-                
+
                 <div class="bg-gray flex">{{ dependent.name }}</div>
                 <div class="bg-gray flex col-span-2">{{ dependent.residentId }}</div>
                 <div class="bg-gray flex ">
@@ -361,9 +361,9 @@
                   />
                 </div>
                 <div class="bg-gray flex col-span-2">
-                  <range-date-time-box 
-                    width="100%" 
-                    v-model:valueDate="dependent.contractExpiredDate" 
+                  <range-date-time-box
+                    width="100%"
+                    v-model:valueDate="dependent.contractExpiredDate"
                     :maxRange="365"
                    />
                 </div>
@@ -380,7 +380,7 @@
             </template>
 
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -471,7 +471,7 @@ export default defineComponent({
     const formData = reactive(INITIAL_DATA.InitialFormCreate);
     const infoCompany = reactive({
       name: '',
-      adding: '', 
+      adding: '',
       presidentName: '',
       bizNumber: ''
     })
@@ -480,10 +480,10 @@ export default defineComponent({
       query: queries.getEmployeeWages,
     });
 
-    const isChooseNationalPensionReport = computed(() => !formData.nationalPensionReport) 
-    const isChooseHealthInsuranceReport = computed(() => !formData.healthInsuranceReport) 
-    const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.employeementInsuranceReport || formData.industrialAccidentInsuranceReport)) 
-
+    const isChooseNationalPensionReport = computed(() => !formData.nationalPensionReport)
+    const isChooseHealthInsuranceReport = computed(() => !formData.healthInsuranceReport)
+    const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.employeementInsuranceReport || formData.industrialAccidentInsuranceReport))
+console.log('formData', !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance)
     const handleRadioChange = (event: Event) => {
       stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement).value;
       employeeWageSelected.value = null;
@@ -529,7 +529,7 @@ export default defineComponent({
     watch(() => stateSelectQuery.selectedRadioValue, (newValue) => {
       query.value = getQuery(newValue)
     });
-  
+
     //  get Employee Wage
     watch(employeeWageSelected, (value) => {
       if (value) {
@@ -568,6 +568,9 @@ export default defineComponent({
           employeeType: stateSelectQuery.selectedRadioValue,
           dependents,
         }
+        formData.insuranceReductionCode && (input.insuranceReductionCode = Number(formData.insuranceReductionCode))
+        formData.insuranceReductionReasonCode && (input.insuranceReductionReasonCode = Number(formData.insuranceReductionReasonCode))
+
         mutate({
           ...variables,
           input: input

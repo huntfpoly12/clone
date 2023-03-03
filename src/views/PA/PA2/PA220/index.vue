@@ -3,16 +3,22 @@
     <div id="pa-220">
         <div class="search-form">
             <a-row :gutter="[24, 8]">
-                <a-col :span="3">
+                <a-col>
                     <label class="lable-item">귀속연도 :</label>
                     <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                 </a-col>
-                <a-col :span="21">
+                <a-col>
                     <div class="selectRatio">
-                        <strong class="lable-item">구분 :</strong>
+                        <label class="lable-item">구분 :</label>
                         <radio-group :arrayValue="arrayRadioDivision"
-                            v-model:valueRadioCheck="searchParam.filter.leaved" :layoutCustom="'horizontal'"
-                            valueExpr="value" />
+                        v-model:valueRadioCheck="searchParam.filter.leaved" :layoutCustom="'horizontal'"
+                        valueExpr="value" />
+                    </div>
+                </a-col>
+                <a-col>
+                    <div class="selectRatio">
+                        <label class="lable-item">성명 :</label>
+                        <default-text-box v-model:valueInput="searchParam.filter.name"  width="200px" />
                     </div>
                 </a-col>
             </a-row>
@@ -38,7 +44,8 @@
                         </div>
                     </a-col>
                     <a-col :span="12">
-                        <div class="title-body-right">
+                        <div class="created-date">
+                            <label class="lable-item">작성일 :</label>
                             <date-time-box width="160px" v-model:valueDate="viewUrlParam.input.receiptDate"
                                 dateFormat="YYYY-MM-DD" />
                         </div>
@@ -55,7 +62,7 @@
                 </DxToolbar>
                 <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
                                 @click="sendMailGroup" />
                         </DxButton>
                     </div>
@@ -102,14 +109,18 @@
                             :ratio="data.data.employee.incomeTaxMagnification" />
                     </div>
                 </template>
-                <DxColumn caption="구분" />
-                <DxColumn caption="총급여액" />
-                <DxColumn caption="비과세금액" />
-                <DxColumn caption="결정세액" />
-                <DxColumn caption="기납부세액 (현)" />
-                <DxColumn caption="기납부세액 (전)" />
-                <DxColumn caption="납부특례세액" />
-                <DxColumn caption="차감징수세액" />
+                <DxColumn caption="구분" data-field="leaved" cell-template="leaved"/>
+                <template #leaved="{ data }">
+                    <span class="status-blue" v-if="data.data.leaved">중도</span>
+                    <span class="status-red" v-else>계속</span>
+                </template>
+                <DxColumn caption="총급여액" data-field="totalSalary"/>
+                <DxColumn caption="비과세금액" data-field="taxFreeIncome"/>
+                <DxColumn caption="결정세액" data-field="decidedTaxAmount"/>
+                <DxColumn caption="기납부세액 (현)" data-field="prePaidTaxAmount"/>
+                <!-- <DxColumn caption="기납부세액 (전)" />
+                <DxColumn caption="납부특례세액" /> -->
+                <DxColumn caption="차감징수세액" data-field="deductibleTaxAmount"/>
                 <DxColumn :width="80" cell-template="pupop" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center;">
@@ -192,7 +203,7 @@ export default defineComponent({
         const searchData = ref([]);
         const searchParam = reactive({
             companyId: companyId,
-            filter: { imputedYear: globalYear.value, leaved: null, name: null }
+            filter: { imputedYear: globalYear, leaved: null, name: null }
         })
         const searchTrigger = ref<boolean>(true)
         const {
@@ -212,7 +223,7 @@ export default defineComponent({
         })
         const onSearch = () => {
             searchTrigger.value = true;
-            refetchSearch()
+            // refetchSearch()
         }
 
         // PRINT VIEW URL

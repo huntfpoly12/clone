@@ -38,7 +38,7 @@ export const dataActionUtils = {
   input: {
     employeeId: null,
     incomeTypeCode: "",
-    paymentAmount: "",
+    paymentAmount: null,
     taxRate: 3,
     withholdingIncomeTax: 0,
     withholdingLocalIncomeTax: 0,

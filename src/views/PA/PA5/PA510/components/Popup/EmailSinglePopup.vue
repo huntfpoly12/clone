@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
-        <standard-form action="" name="email-single-630">
+        <standard-form action="" name="email-single-510">
             <div class="custom-modal-send-email">
                     <img src="@/assets/images/email.svg" alt="" />
                     <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
