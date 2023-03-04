@@ -50,7 +50,7 @@
                         :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
-                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">{{ dataEdited.stayQualification }}
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
                         :disabled="disabledSelectBox" width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
