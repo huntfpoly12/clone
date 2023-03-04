@@ -1,7 +1,7 @@
 <template>
     <div id="tab2-pa520"> 
-        <div class="header-text-1">공제</div> {{ originDataUpdate ==  dataDefaultGet}}
-       <pre>{{ dataDefaultGet }}</pre> ------------------------------<pre>{{ originDataUpdate }}</pre>
+        <div class="header-text-1">공제</div> {{ JSON.stringify(originDataUpdate) ==  (dataDefaultGet)}}
+       <pre>{{ dataDefaultGet }}</pre> <pre>{{ JSON.stringify(originDataUpdate) }}</pre>
         <a-row :gutter="16">
             <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -132,10 +132,11 @@
                 </a-spin>
             </a-col>
         </a-row>
-        <div class="button-action">
-            <button-basic text="공제계산" :type="typeCalculateColor" mode="contained"  @onClick="callFuncCalculate"/>
-            <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
+        <div class="button-action">      
+          <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
                 id="action-update" />
+            <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
+      
         </div>
     </div>
 </template>
@@ -164,7 +165,8 @@ export default defineComponent({
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const insuranceSupport = ref(false)
-        const typeCalculateColor = ref('default')
+        const isBtnYellow = ref(false)
+        const validateCalculate = ref(false)
         const caculateDone = ref(false)
         
         const originData = ref({
@@ -243,10 +245,10 @@ export default defineComponent({
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
                 originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction 
                 originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
-                setTimeout(() => {
-                    originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
-                    originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
-                }, 100);
+       
+                originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
+                originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
+               
                 originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent
                 originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent
                 originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
@@ -295,9 +297,9 @@ export default defineComponent({
             valueConvert.input.employeementInsuranceSupportPercent = 0
                 
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
-              store.state.common.checkStatusChangeValuePA520 = false
+              store.state.common.checkChangeValueEditTab2PA520 = false
             } else {   
-              store.state.common.checkStatusChangeValuePA520 = true
+              store.state.common.checkChangeValueEditTab2PA520 = true
             }
         }, { deep: true })
 
@@ -319,12 +321,12 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch(() => store.state.common.idRowChangePa520, (res) => {
-          if (!store.state.common.checkStatusChangeValuePA520) {
+          if (!store.state.common.checkChangeValueEditTab2PA520) {
               originDataDetail.value.employeeId = store.state.common.idRowChangePa520
               trigger.value = true
               refectchDetail()
           }
-          store.state.common.checkStatusChangeValuePA520 = false
+          store.state.common.checkChangeValueEditTab2PA520 = false
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -338,12 +340,12 @@ export default defineComponent({
         }, { deep: true })
 
         // If checkbox 4대보험 공제 여부 change is call calculate function
-        watch([
-          () => originDataUpdate.value.input.nationalPensionDeduction,
-          () => originDataUpdate.value.input.healthInsuranceDeduction,
-          () => originDataUpdate.value.input.employeementInsuranceDeduction,], ([res1, res2, res3]) => {
-            callFuncCalculate()
-          })
+        // watch([
+        //   () => originDataUpdate.value.input.nationalPensionDeduction,
+        //   () => originDataUpdate.value.input.healthInsuranceDeduction,
+        //   () => originDataUpdate.value.input.employeementInsuranceDeduction,], ([res1, res2, res3]) => {
+        //     callFuncCalculate()
+        //   })
         
         // if any change in tab 2 color button is change color orage
         watch([
@@ -358,12 +360,12 @@ export default defineComponent({
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
           // Compare two object if different change button color to orange
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
-            typeCalculateColor.value = 'calculate'
+            isBtnYellow.value = true
           } else {
-            typeCalculateColor.value = 'default'
+            isBtnYellow.value = false
           }
         })
-
+        // clean but the field is not needed when comparing object
         const cleanObject = (object :  any) => {
           delete object.longTermCareInsuranceDeduction
           delete object.insuranceSupport
@@ -377,8 +379,13 @@ export default defineComponent({
         }
         // ================== FUNCTION ==================================
         const updateDeduction = () => {
+          if (isBtnYellow.value) {
+            validateCalculate.value = true
+          } else {
             mutate(originDataUpdate.value)
-            store.state.common.checkStatusChangeValuePA520 = false
+            store.state.common.checkChangeValueEditTab2PA520 = false
+          }
+
         }
         const callFuncCalculate = async () => {
             let dataDefault = originDataUpdate.value.input
@@ -409,7 +416,8 @@ export default defineComponent({
                 })
             })
             originDataUpdate.value.input.deductionItems = arrCallApi
-           
+            isBtnYellow.value = false
+            validateCalculate.value = false
         }
         const funcCheckPrice = (id: any) => {
             let price = 0
@@ -453,7 +461,7 @@ export default defineComponent({
         }
         return {dataDefaultGet,
             store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
-            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,typeCalculateColor
+            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate
         };
     },
 });

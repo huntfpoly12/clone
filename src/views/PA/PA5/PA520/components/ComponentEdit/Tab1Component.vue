@@ -50,7 +50,7 @@
                         :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
-                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
+                    :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">{{ dataEdited.stayQualification }}
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
                         :disabled="disabledSelectBox" width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
@@ -112,11 +112,6 @@
             </div>
         </standard-form>
     </a-spin>
-    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" 
-        :okText="Message.getCommonMessage('501').yes" 
-        :cancelText="Message.getCommonMessage('501').no" 
-        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -135,7 +130,6 @@ export default defineComponent({
     },
   setup(props, { emit }) {
         const formRefPa520Update = ref()
-        const modalStatusChange = ref(false)
         const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
@@ -146,6 +140,7 @@ export default defineComponent({
         })
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        
         const originData = ref({
             companyId: companyId,
         })
@@ -154,8 +149,8 @@ export default defineComponent({
             imputedYear: globalYear.value,
             employeeId: props.idRowEdit
         })
-        let indexChange = ref(0)
-        let dataDefault = reactive({})
+        let dataDefault = ref({})
+        const trigger = ref(true)
         // ============ GRAPQL ===============================
         const {
             onResult: resGetDepartments,
@@ -198,10 +193,11 @@ export default defineComponent({
             onResult: getValueDefault,
             loading
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         getValueDefault(res => {
-            if (res.data) {
+          if (res.data) {
                 dataEdited.name = res.data.getEmployeeWageDaily.name
                 dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
                 dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
@@ -219,7 +215,8 @@ export default defineComponent({
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
-                dataDefault = JSON.stringify(dataEdited)
+                dataDefault.value = JSON.stringify(dataEdited)
+                trigger.value = false
             }
         })
         const {
@@ -231,28 +228,24 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
-          store.state.common.checkChangeValueAddPA520 = false
-          dataDefault = JSON.stringify(dataEdited)
+          store.state.common.checkChangeValueEditTab1PA520 = false
+          dataDefault.value = JSON.stringify(dataEdited)
           emit('closePopup', false)
           notification('success', '업데이트 완료!')
         })
         // ============ WATCH ================================ 
         watch(() => props.idRowEdit, (newVal) => {
-            if (dataDefault === JSON.stringify(dataEdited)) {
-                originDataDetail.value.employeeId = newVal
-                refetchValueDetail()
-            }
-            else {
-                modalStatusChange.value = true
-            }
+            originDataDetail.value.employeeId = newVal
+            trigger.value = true
+            refetchValueDetail()
         })
         watch(() => dataEdited.foreigner, (value: any) => {
-            if (value == true) {
+          if (value == true) {
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
                 dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = null
+                // dataEdited.stayQualification = null
             } else {
                 labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
@@ -263,8 +256,13 @@ export default defineComponent({
             }
         })
  
-        watch(dataEdited, () => {
-            indexChange.value++
+        watch(dataEdited, (newvl,oldvl) => {
+          // If the corrected data is different from the default data, change the check change status
+          if (dataDefault.value !== JSON.stringify(dataEdited)) {
+            store.state.common.checkChangeValueEditTab1PA520 = true
+          } else {
+            store.state.common.checkChangeValueEditTab1PA520 = false
+          }
         }, { deep: true })
 
         // convert dataCreated.name to uppercase
@@ -298,18 +296,16 @@ export default defineComponent({
                 mutate(dataCallCreat)
             }
         }
-        const statusComfirm = (res: any) => {
-          if (res == true) {
+        watch(() => store.state.common.actionUpdateTab1PA520, () => {
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
+            trigger.value = false
             refetchValueDetail()
-            indexChange.value = 1
-          }
-        
-        }
+        })
+
         return {
-            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress, statusComfirm,Message,formRefPa520Update
+            activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault
         };
     },
 });

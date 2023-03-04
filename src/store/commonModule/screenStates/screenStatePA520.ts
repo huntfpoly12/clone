@@ -3,12 +3,13 @@ const statesPA520 = {
   idRowChangePa520: 0,
   keyActiveStepPA520: '1',
   actionSavePA520: 0,
-  checkStatusChangeValuePA520: false,
+  checkChangeValueEditTab1PA520: false,
+  checkChangeValueEditTab2PA520: false,
+  checkChangeValueAddPA520: false,
   dataSourcePA520: {},
   activeAddRowPA520: false,
   rowIdSaveDonePa520: 0,
-  checkChangeValueAddPA520: false,
   actionSaveAddPA520: 0,
-  allowedChangedRowPA520: true
+  actionUpdateTab1PA520: 0,
 };
 export default statesPA520;
