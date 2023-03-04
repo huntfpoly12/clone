@@ -64,7 +64,7 @@
                     <template #send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti" class="bt-email-group">
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
                             </DxButton>
                         </div>
                     </template>
@@ -76,14 +76,14 @@
                                     출력 / 저장
                                   </template>
                                   <img src="@/assets/images/printGroup.png" alt=""
-                                      style="width: 35px; margin-right: 3px; cursor: pointer" /> 
+                                      style="width: 28px; margin-right: 3px; cursor: pointer" /> 
                               </a-tooltip>
                           </DxButton>
                         </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                     <DxColumn :width="250" caption="사원" cell-template="employee-info" />
-                    <template #employee-info="{ data }" class="custom-action">
+                    <template #employee-info="{ data }">
                         <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
