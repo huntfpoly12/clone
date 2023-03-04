@@ -71,11 +71,9 @@
                     <div class="custom-mail-group">
                         <DxButton @click="onPrintGroup">
                             <a-tooltip>
-                                  <template #title>
-                                    출력 / 저장
-                                  </template>
+                                  <template #title>출력 / 저장</template>
                                   <img src="@/assets/images/printGroup.png" alt=""
-                                      style="width: 35px; margin-right: 3px; cursor: pointer" /> 
+                                      style="width: 28px; margin-right: 3px; cursor: pointer" /> 
                             </a-tooltip>
                         </DxButton>
                     </div>

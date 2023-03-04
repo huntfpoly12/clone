@@ -566,6 +566,7 @@ export default defineComponent({
         const dataMonthNew: any = ref()
         const checkClickMonth = ref<Boolean>(false)
         // A function that is called when a user clicks on a month.
+        
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
             if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {

@@ -128,7 +128,12 @@
                     </a-col>
                     <a-col :span="12">
                         <div class="title-body-right">
-                            <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
+                            <a-form-item label="영수일">
+                                <div style="width: 150px">
+                                    <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
+                                </div>
+                            </a-form-item>
+                            <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
                         </div>
                     </a-col>
                 </a-row>
@@ -143,12 +148,15 @@
                         <DxItem template="group-print" />
                     </DxToolbar>
                     <template #group-print>
-                        <div class="custom-mail-group">
-                            <DxButton>
+                        <a-tooltip placement="top" color="black">
+                            <template #title>출력 / 저장</template>
+                            <div class="custom-mail-group">
+                                <DxButton>
                                 <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
                                     @click="printGroup" />
-                            </DxButton>
-                        </div>
+                                </DxButton>
+                            </div>
+                        </a-tooltip>
                     </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
@@ -160,7 +168,7 @@
                     </template>
                     <DxSelection mode="multiple" />
                     <DxColumn caption="성명 (상호)" cell-template="tag" />
-                    <template #tag="{ data }" class="custom-action">
+                    <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
