@@ -7,12 +7,12 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
+                <a-form-item label="제작요청일(기간)" label-align="left">
                     <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
+                <a-form-item label="제작상태" label-align="left">
                     <div class="mt-7">
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
@@ -36,8 +36,8 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
-                <DxColumn caption="신고구분"  cell-template="reportType"/>
+                <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
+                <DxColumn caption="신고유형/주기"  cell-template="reportType"/>
                 <template #reportType="{ data }">
                   <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
                   <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>

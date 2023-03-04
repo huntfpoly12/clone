@@ -10,7 +10,7 @@ export const dataSearchUtils = {
     "companyName": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
-    "excludeCancel": false,
+    "excludeCancel": true,
     "paymentYear": parseInt(dayjs().format('YYYY')),
     "paymentHalfYear": 1
 }
@@ -21,7 +21,7 @@ export const dataSearchStep2Utils = {
     "companyName": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
-    "excludeCancel": false,
+    "excludeCancel": true,
     "paymentYear": parseInt(dayjs().format('YYYY')),
     "paymentMonth": parseInt(dayjs().format('MM'))
 }
