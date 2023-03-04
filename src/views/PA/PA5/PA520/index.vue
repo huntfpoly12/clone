@@ -6,6 +6,8 @@
     activeAddRowPA520: {{ store.state.common.activeAddRowPA520 }}<br>
     idRowChangePa520: {{ store.state.common.idRowChangePa520 }}<br>
     actionChangeComponent: {{ actionChangeComponent }}<br>
+    addRowBtOnclick: {{ addRowBtOnclick  }}<br>
+    modalChangeValueEdit : {{  modalChangeValueEdit }}
     {{ idRowEdit }} -->
     <div id="pa-520" class="page-content">
         <a-row>
@@ -67,7 +69,7 @@
                                 신규
                               </template>
                               <div style="text-align: center;" >
-                                <DxButton icon="plus" @click="onAddButtonClick" />
+                                <DxButton icon="plus" @click="onAddBtClick" />
                               </div>
                           </a-tooltip>
                         </template>
@@ -195,13 +197,14 @@ export default defineComponent({
         const isAddNewStatus = ref<boolean>(false)
         const modalHistoryStatus = ref<boolean>(false)
         const modalDeleteStatus = ref<boolean>(false)
+        const modalChangeValueAdd = ref(false)
         const idRowEdit = ref()
         let isMounted = false; // determine first page load
         let isClickRow = false; // determine when action click row 
         const isDelete = ref<boolean>(false); // determine when action click icon delete 
         const resetAddComponent = ref<number>(1);
         // use to catch case click add button and change something after that click add button  again
-        const addRowOnclick = ref<boolean>(false)
+        const addRowBtOnclick = ref<boolean>(false) // to check is click button add row or not
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -263,7 +266,7 @@ export default defineComponent({
             }
         })
         watch(globalYear, (value) => {
-            onAddButtonClick()
+            onAddBtClick()
             trigger.value = true
             originData.value.imputedYear = value
             refetchData()
@@ -295,31 +298,44 @@ export default defineComponent({
           e.cancel = true;
         }
         // Opening a modal window.
-        const onAddButtonClick = () => {
+        const onAddBtClick = () => {
+          addRowBtOnclick.value = true
+          if (
+            store.state.common.checkChangeValueEditTab1PA520 == true
+            //|| store.state.common.checkChangeValueEditTab2PA520 == true |
+          ){
+            modalChangeValueEdit.value = true
+            return
+          }
             // Adding a new row to the table.
           if (store.state.common.activeAddRowPA520 == false) {
-              // Adding a new row to the grid.
-                let valueAddDefault = { ...DataCreatedTable }
-                store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
-               // Setting the focusedRowKey to null.
-                focusedRowKey.value = null
-                setTimeout(() => {
-                    let a = document.body.querySelectorAll('[aria-rowindex]');
-                    (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                }, 100);
-                store.state.common.activeAddRowPA520 = true 
+                funcAddNewRow()
                 actionChangeComponent.value = 1
                 isAddNewStatus.value = true
-          }
+          } 
           if (store.state.common.activeAddRowPA520 && store.state.common.checkChangeValueAddPA520) {
             modalChangeValueAdd.value = true
-            addRowOnclick.value = true
+            
           }
       }
-        
-        const modalChangeValueAdd = ref(false)
+
+      const funcAddNewRow = () => {
+        store.state.common.activeAddRowPA520 = true 
+        // Adding a new row to the grid.
+        let valueAddDefault = { ...DataCreatedTable }
+        store.state.common.dataSourcePA520 = JSON.parse(JSON.stringify(store.state.common.dataSourcePA520)).concat(valueAddDefault)
+        // Setting the focusedRowKey to null.
+        focusedRowKey.value = null
+        setTimeout(() => {
+            let a = document.body.querySelectorAll('[aria-rowindex]');
+            (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+        }, 100);
+        resetAddComponent.value++
+        actionChangeComponent.value = 1
+      }
         // The above code is a function that is called when the user clicks on the edit button.
-        const onRowClick = (val: any) => {
+      const onRowClick = (val: any) => {
+         
           // if click delete icon do nothing
           if (isDelete.value) {
             return
@@ -330,7 +346,7 @@ export default defineComponent({
           if (
             store.state.common.checkChangeValueEditTab1PA520 == true
             //|| store.state.common.checkChangeValueEditTab2PA520 == true |
-          ){
+          ){ 
             modalChangeValueEdit.value = true
             return
           }
@@ -380,11 +396,24 @@ export default defineComponent({
 
         // A function that is called when the user clicks on the save button.
         const comfirmAndSaveEdit = (res: any) => {
-         if (res == true) {
+          store.state.common.checkChangeValueEditTab1PA520 = false
+          if (res == true) {
             actionUpdate()
-            idRowEdit.value = focusedRowKey.value
+            
+            // In case you are editing and then click on another and agree to save the information, 
+            if (addRowBtOnclick.value) {
+              funcAddNewRow()
+            } else {
+              idRowEdit.value = focusedRowKey.value
+            }
+
           } else {
-            idRowEdit.value = focusedRowKey.value
+
+            if (addRowBtOnclick.value) {
+              funcAddNewRow()
+            } else {
+              idRowEdit.value = focusedRowKey.value
+            }
           }
 
         }
@@ -393,16 +422,16 @@ export default defineComponent({
             focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId
             actionSave()    
            
-          } else if (!res && addRowOnclick.value) { 
+          } else if (!res && addRowBtOnclick.value) { 
             // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store
             store.state.common.activeAddRowPA520 = false
             store.state.common.checkChangeValueAddPA520 = false
             // Setting the value of the addRowOnclick variable to false.
-            addRowOnclick.value = false
-            alert('sdfsdfsdfs')
-            onAddButtonClick()
+            addRowBtOnclick.value = false
+            resetAddComponent.value++ // increment one unit to reset the newly created form
+            onAddBtClick()
           } else {//Not save
             // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
@@ -421,7 +450,7 @@ export default defineComponent({
 
         return {
             modalChangeValueAdd, focusedRowKey, modalChangeValueEdit, store, resetAddComponent, actionChangeComponent, idRowEdit, totalUserOff, totalUserOnl, modalComfirmDelete, loading, modalDeleteStatus, dataSource, modalHistoryStatus, isAddNewStatus, move_column, colomn_resize, contentDelete,onExporting,
-            confirmAndSaveAdd, comfirmAndSaveEdit, actionSave, closeAction, refetchData, onDeleteRow, modalHistory, onAddButtonClick, onRowClick, onConfirmDelete,Message
+            confirmAndSaveAdd, comfirmAndSaveEdit, actionSave, closeAction, refetchData, onDeleteRow, modalHistory, onAddBtClick, onRowClick, onConfirmDelete,Message,addRowBtOnclick
         }
     },
 })

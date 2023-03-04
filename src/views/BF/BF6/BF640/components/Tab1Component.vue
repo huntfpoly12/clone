@@ -2,8 +2,8 @@
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="귀속연도" label-align="left">
-                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5" />
+                <a-form-item label="지급연도" label-align="left">
+                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5"  text="지"/>
                 </a-form-item>
                 <a-form-item label="제출대상구분" label-align="left">
                     <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
@@ -78,7 +78,7 @@
             </a-form-item>
             <a-form-item label="제출연월일" label-align="left">
                 <div class="d-flex-center">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                    <date-time-box width="150px" v-model:valueDate="dayReport" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
                         <div class="btn-modal-save" @click="openModalSave">
@@ -156,9 +156,11 @@ export default defineComponent({
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear: any = computed(() => store.state.settings.globalYear);
+        const dayReport = ref(`${globalYear.value}0802`);
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
-        let valueDefaultSwitch = ref(false)
+        let valueDefaultSwitch = ref(true)
         let dataSearch: any = ref({ ...dataSearchUtils })
         let typeCheckbox = ref<any>({
             checkbox1: false,
@@ -302,6 +304,18 @@ export default defineComponent({
                 }
             }
         }, { deep: true });
+
+        /**
+         *    If it is the first report of the year, the reporting date will be August 2 of this year. 
+          *   If the report is year - end, the reporting date will be February 1 of the following year
+         */
+        watch(() => dataSearch.value.paymentHalfYear, (newVal) => {
+            if (newVal == 1) {
+              dayReport.value= `${globalYear.value}0802`
+            } else {
+              dayReport.value= `${globalYear.value+1}0201`
+            }
+        }, { deep: true });
         
         const productionStatusData = (emitVal: any) => {
             productionStatusArr.value = [emitVal];
@@ -321,6 +335,7 @@ export default defineComponent({
           colomn_resize,
           move_column,
           modalConfirmMail,
+          dayReport,
           actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail
         }
     }
