@@ -55,7 +55,7 @@
                     <template #send-group-mail>
                         <div class="custom-mail-group">
                             <DxButton @click="actionOpenPopupEmailMulti">
-                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;" />
+                                <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
                             </DxButton>
                         </div>
                     </template>
@@ -63,13 +63,13 @@
                         <div class="custom-mail-group">
                             <DxButton @click="onPrintGroup">
                                 <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
                             </DxButton>
                         </div>
                     </template>
                     <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
-                    <template #tag="{ data }" class="custom-action">
+                    <template #tag="{ data }">
                         <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -78,7 +78,7 @@
                     </template>
                     <DxColumn caption="주민등록번호" data-field="employee.residentId" />
                     <DxColumn caption="소득부분" cell-template="grade-cell" :width="200" />
-                    <template #grade-cell="{ data }" class="custom-action">
+                    <template #grade-cell="{ data }">
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
                     </template>
@@ -102,7 +102,7 @@
                         <DxTotalItem column="원천징수세액 계" :customize-text="customTextSummaryWRST"/>
                     </DxSummary>
                     <DxColumn :width="80" cell-template="pupop" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
