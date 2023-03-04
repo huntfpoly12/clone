@@ -2,8 +2,8 @@
     <div id="step2">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="귀속연도" label-align="left">
-                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black"/>
+                <a-form-item label="지급연월" label-align="left">
+                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
                 </a-form-item>
             </a-col>
             <a-col class="ml-30">
@@ -74,7 +74,7 @@
             </a-form-item>
             <a-form-item label="제출연월일" label-align="left">
                 <div class="d-flex-center">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                    <date-time-box width="150px"  v-model:valueDate="dayReport" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
                         <div class="btn-modal-save" @click="openModalSave">
@@ -157,11 +157,11 @@ export default defineComponent({
     props: {
         searchStep: Number,
     },
-    setup(props) {
-        let datePayment = ref(parseInt(dayjs().format('YYYYMM')))
+  setup(props) {
+  
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
-        let valueDefaultSwitch = ref(false)
+        let valueDefaultSwitch = ref(true)
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref<any>({
@@ -175,6 +175,8 @@ export default defineComponent({
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const datePayment = ref(parseInt(dayjs().format('YYYYMM')))
+        const dayReport = ref(`${dayjs().format('YYYYMM')}${dayjs().daysInMonth()}`);
         let trigger = ref(true)
         let modalConfirmMail = ref(false)
         let dataModalSave = ref()
@@ -284,10 +286,16 @@ export default defineComponent({
                     typeCheckbox.value.checkbox1 = true;
                 }
             }
-        }, { deep: true });
-        
+         }, { deep: true });
+
+        // set last day of month for report
+        watch(datePayment, (newVal) => {
+          let month = newVal.toString().substring(4);
+          let year = newVal.toString().substring(0, 4);
+          dayReport.value = `${newVal}${dayjs(`${year}-${month}-01`).daysInMonth()}`
+        });
         return {
-            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
+            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
             selectionChanged, openModalSave,closeConfirmMail
         }
     }
