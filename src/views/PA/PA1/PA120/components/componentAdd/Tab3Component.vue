@@ -98,7 +98,7 @@
                   다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함
                 </template>
                 <div style="text-align: center;" >
-                  나이
+                  기본공제
                 </div>
               </a-tooltip>
             </template>

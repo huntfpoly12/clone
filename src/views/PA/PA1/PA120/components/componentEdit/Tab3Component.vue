@@ -100,7 +100,7 @@
                               다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함
                             </template>
                             <div style="text-align: center;" >
-                              나이
+                              기본공제
                             </div>
                           </a-tooltip>
                         </template>
@@ -389,22 +389,22 @@ export default defineComponent({
                         return item.basicDeduction == 4;
                     }).length;
                 descendantSummary.value = dataSource.value.filter((item: any) => {
-                    return item.descendant == true;
+                    return item.descendant;
                 }).length
                 seniorSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior == true;
+                    return item.senior;
                 }).length;
                 disabledSummary.value = dataSource.value.filter((item: any) => {
-                    return item.disabled != 0;
+                    return item.disabled;
                 }).length;
                 womenSummary2.value = dataSource.value.filter((item: any) => {
-                    return item.women == true;
+                    return item.women;
                 }).length;
                 singleParentSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior == true;
+                    return item.senior;
                 }).length;
                 maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
-                    return item.maternityAdoption != '0';
+                    return item.maternityAdoption;
                 }).length;
             }
         });

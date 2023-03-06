@@ -72,9 +72,11 @@
                         </template>
                     <DxColumn caption="지급액" width="100px" data-field="paymentAmount" :format="amountFormat"
                         data-type="string"  alignment="right"/>
-                    <DxColumn caption="세율" width="80px" data-field="taxRate" data-type="string"
-                        :format="amountFormat" />
-                    <DxColumn caption="공제" cell-template="income-tax" width="100px"  alignment="right"/>
+                    <DxColumn caption="세율" width="60px" data-field="taxRate" cell-template="taxRateSlot" alignment="left"/>
+                    <template #taxRateSlot="{data}">
+                      {{ data.value }}%
+                    </template>
+                    <DxColumn caption="공제" cell-template="income-tax" width="100px" alignment="right"/>
                     <template #income-tax="{ data }">
                       <a-tooltip placement="top">
                         <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
@@ -86,7 +88,7 @@
                     </a-tooltip>
                     </template>
                     <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string"
-                        :format="amountFormat"  alignment="right"/>
+                        :format="amountFormat" alignment="right"/>
                     <DxSummary>
                         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
                         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
@@ -125,13 +127,15 @@
                                 </div>
                             </a-form-item>
                             <a-form-item label="지급일" label-align="right">
-                                <number-box :max="31" :min="0" width="150px" class="mr-5"
+                                <number-box :max="31" :min="1" width="150px" class="mr-5"
                                     v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
                                     :disabled="disabledInput || isDisabledForm || isExpiredStatus" />
                             </a-form-item>
                             <a-form-item label="지급액" label-align="right">
+                                    <div class="d-flex-center">
                                 <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || isExpiredStatus"
-                                    v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" />
+                                    v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" /> 원
+                                    </div>
                             </a-form-item>
                             <a-form-item label="세율" label-align="right">
                                 3%
@@ -224,7 +228,7 @@ export default defineComponent({
         isDisabledForm: {
             type: Boolean,
             default: false,
-        }
+        },
     },
     setup(props, { emit }) {
         let disabledInput = ref(false)
@@ -390,6 +394,8 @@ export default defineComponent({
 
         const isNewRow = ref(false);
         const isClickMonthDiff = ref(false);
+        const isClickYearDiff = ref(false);
+        const changeYearDataFake = ref();
         //compare Data
         const compareType = ref(1); //0 is row change. 1 is add button;
         const compareForm = () => {
@@ -423,6 +429,15 @@ export default defineComponent({
           isNewRow.value = false;
           compareType.value = 2;
         };
+        let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+          if (compareForm()) {
+            emit('noSave', 1, newVal);
+          } else {
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
         //on add row
         const rowChangeStatus = ref<Boolean>(false);
         const openAddNewModal = async () => {
@@ -443,17 +458,18 @@ export default defineComponent({
             let ele = document.getElementById('save-js-620') as HTMLInputElement;
             ele.click();
           } else {
-            // if (isClickYearDiff.value) {
-            //   changeYear(globalYear.value);
-            //   isClickMonthDiff.value = false;
-            //   return;
-            // }
+            if (isClickYearDiff.value) {
+              emit('noSave', 1, globalYear.value);
+              isClickMonthDiff.value = false;
+              compareType.value = 1;
+              return;
+            }
             if (isClickEditDiff.value) {
               onEditItem();
               isClickEditDiff.value = false;
             }
             if(isClickMonthDiff.value){
-              emit('noSave');
+              emit('noSave', 0);
               isClickMonthDiff.value = false;
               compareType.value = 1;
               return;

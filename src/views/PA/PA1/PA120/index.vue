@@ -198,8 +198,6 @@ export default defineComponent({
     const arrRowEdit = computed(() => store.state.common.arrayRoweditedPA120);
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120);
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
-    const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
-    const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
     const originData = ref({
       companyId: companyId,
@@ -264,7 +262,8 @@ export default defineComponent({
       }
     });
     //change year
-    watch (globalYear, () => {
+    watch(globalYear, () => {
+      actionChangeComponent.value = 1;
       trigger.value = true;
       addComponentKey.value++;
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
