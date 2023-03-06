@@ -277,6 +277,7 @@ export default defineComponent({
         }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
+            productionStatusArr.value = []
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
                 dataSearch.value.productionStatuses.push(0)
@@ -336,7 +337,7 @@ export default defineComponent({
           move_column,
           modalConfirmMail,
           dayReport,
-          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail
+          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr
         }
     }
 })
