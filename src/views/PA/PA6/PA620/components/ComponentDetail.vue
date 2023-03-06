@@ -102,8 +102,11 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
+            <!-- {{ isNewRow }} isNewRow <br/>
+            {{ selectedRowKeys }} selectedRowKeys <br/>
+            {{ dataAction }} dataAction <br/> -->
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
-                <a-form-item label="사업소득자" label-align="right">
+                <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
                         v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
                         @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || isDisabledForm || isExpiredStatus" />
@@ -120,12 +123,12 @@
                                       :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
                                 </div>
                             </a-form-item>
-                            <a-form-item label="지급일" label-align="right">
+                            <a-form-item label="지급일" label-align="right" class="red">
                                 <number-box :max="31" :min="1" width="150px" class="mr-5"
                                     v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
-                                    :disabled="disabledInput || isDisabledForm || isExpiredStatus" />
+                                    :disabled="disabledInput || isDisabledForm || isExpiredStatus" :required="true"/>
                             </a-form-item>
-                            <a-form-item label="지급액" label-align="right">
+                            <a-form-item label="지급액" label-align="right" class="red">
                                     <div class="d-flex-center">
                                 <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || isExpiredStatus"
                                     v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" /> 원
@@ -326,11 +329,6 @@ export default defineComponent({
         errorOption((res)=>{
           notification('error', res.message);
         })
-        //change year
-        // watch(globalYear, (newVal) => {
-        //   dataCallApiGetOption.value.imputedYear = newVal;
-        //   triggerDetailOption.value = true;
-        // });
         // API QUERY DETAIL VALUE TO EDIT
         const {loading: loadingDetailEdit, onError: errorDetailEdit, result: resDetailEdit } = useQuery(queries.getIncomeBusiness, dataCallApiDetailEdit, () => ({
             enabled: triggerDetailDetailEdit.value,
@@ -381,7 +379,6 @@ export default defineComponent({
             dataAction.value.input.withholdingIncomeTax = objIncomeTax.incomeTax;
             dataAction.value.input.withholdingLocalIncomeTax = objIncomeTax.localIncomeTax;
             dataAction.value.input.actualPayment = dataAction.value.input.paymentAmount - dataAction.value.input.withholdingIncomeTax -dataAction.value.input.withholdingLocalIncomeTax;
-            emit('compareForm',compareForm());
         };
 
         // ======================= TRACK FORM CHANGE ================================
@@ -488,6 +485,7 @@ export default defineComponent({
         const idRowFake = ref();
         const onRowClick = async (item: any) => {
           compareType.value = 2;
+          selectedRowKeys.value = [item.data.incomeId];
           if (isNewRow.value) {
             if (compareForm()) {
               await delNewRow();
@@ -507,9 +505,6 @@ export default defineComponent({
           } else {
             dataCallApiDetailEdit.incomeId = item.data.incomeId;
           }
-          if(!selectedRowKeys.value.find((item: any) => item == focusedRowKey.value)) {
-            selectedRowKeys.value.push(focusedRowKey.value);
-          }
         };
         //watch to refetch datadetail
         watch(()=>dataCallApiDetailEdit.incomeId,(newVal)=>{
@@ -521,7 +516,6 @@ export default defineComponent({
         const changeIncomeTypeCode = (res: string, id: any) => {
             dataAction.value.input.incomeTypeCode = res;
             dataAction.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
-            emit('compareForm',compareForm());
         } 
         const selectedRowKeys = ref<any>([]);
         const onCellClick = (e: any) => {
@@ -624,17 +618,17 @@ export default defineComponent({
         // -------------------------ACTION FORM--------------------------------
 
         const onChangeFormdone = () => {
+            dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
             triggerDetail.value = true
-            isErrorForm.value = false;
             disabledInput.value = true;
             dataActionEdit.value.input = {...dataAction.value.input};
+            isNewRow.value = false;
             if (isClickYearDiff.value) {
               emit('noSave', 1, globalYear.value);
               isClickYearDiff.value = false;
               compareType.value = 1;
               return;
             }
-            emit('compareForm',compareForm());
         }
         const {
             mutate: actionCreated,
@@ -642,15 +636,21 @@ export default defineComponent({
             loading: loadingCreated,
             onDone: doneCreated,
         } = useMutation(mutations.createIncomeBusiness);
+
         doneCreated(res => {
-            focusedRowKey.value = res.data.createIncomeBusiness.incomeId
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
+            onChangeFormdone();           
+            dataAction.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
+            dataActionEdit.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
+            focusedRowKey.value = res.data.createIncomeBusiness.incomeId;
+            selectedRowKeys.value=[focusedRowKey.value];
         })
         errorCreated(res => {
             notification('error', res.message)
-            isErrorForm.value = true;
-            onChangeFormdone();
+            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+            selectedRowKeys.value = [compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value];
+            isNewRow.value =false;
         })
         // API EDIT 
         const {
@@ -660,27 +660,27 @@ export default defineComponent({
             onDone: doneEdit,
         } = useMutation(mutations.updateIncomeBusiness);
         doneEdit((res) => {
-            focusedRowKey.value = res.data.updateIncomeBusiness.incomeId
-            selectedRowKeys.value = [res.data.updateIncomeBusiness.incomeId];
+            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+            selectedRowKeys.value = [focusedRowKey.value];
+            isNewRow.value =false;
             emit('createdDone', true)
             notification('success', messageUpdate)
             onChangeFormdone();
-            emit('compareForm',compareForm());
             if (isClickEditDiff.value) {
               onEditItem();
             }
         })
         errorEdit(res => {
             notification('error', res.message);
-            isErrorForm.value = true;
+            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+            selectedRowKeys.value = [compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value];
+            isNewRow.value =false;
         })
         //
-        const isErrorForm = ref(false);
         const onSave = (e:any) => {
           var res = e.validationGroup.validate();
           if (!res.isValid) {
             res.brokenRules[0].validator.focus();
-            isErrorForm.value = true;
             focusedRowKey.value = dataAction.value.input.incomeId;
             selectedRowKeys.value = [dataAction.value.input.incomeId];
             if (isClickYearDiff.value) {
@@ -699,7 +699,6 @@ export default defineComponent({
               });
             }
           } else {
-            isErrorForm.value = false;
             let params = JSON.parse(JSON.stringify(dataAction.value));
             delete params.input.incomeId;
             delete params.input.employee;
@@ -717,33 +716,28 @@ export default defineComponent({
                 delete params.input.incomeTypeCode;
                 let inputEdit = {
                     ...dataCallApiDetailEdit,
+                    incomeId:dataAction.value.input.incomeId,
                     input: {...params.input}
                 }
                 actionEdit(inputEdit)
             }
-              if (isErrorForm.value) {
-                focusedRowKey.value = dataAction.value.input.incomeId;
-                selectedRowKeys.value = [dataAction.value.input.incomeId];
-              } else {
-                // dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
-                focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-                selectedRowKeys.value = [compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value];
-                isNewRow.value =false;
-              }
           }
         };
         //---------------------------------------------fn common--------------------------------
         const formatMonth = (month: any) => {
+            if(month==null){
+              return '';
+            }
             if (+month < 10) {
                 return '0' + month;
             }
-            return month;
+            return month ? month :'';
         };
         const checkLen = (text: String) => {
           if (text.length > 10) {
             return text.substring(0, 10) + '...';
           }
-          return text;
+          return text ? text : '';
         };
         return {
             loadingOption, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam,companyId,

@@ -1,6 +1,8 @@
 <template>
   <div class="tab-group">
     <SearchArea />
+    <!-- {{ filterBF620 }} filterBF620 <br />
+    {{ searchWithholdingParam }} searchWithholdingParam <br /> -->
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -23,8 +25,8 @@
     <div class="content-grid">
       <a-spin :spinning="searchWithholdingLoading" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" @selection-changed="selectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="company.code" />
@@ -45,7 +47,7 @@
               }" class="btn-date" />
             </a-tooltip>
           </template>
-          <DxColumn caption="귀속연월" cell-template="paymentYearMonth" width="102px" />
+          <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
           <template #paymentYearMonth="{ data }">
             <DxButton :text="'귀 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
               color: 'white',
@@ -65,13 +67,13 @@
             <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
             <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
           </template>
-          <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###"/>
+          <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
           <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
           <template #productionStatus="{ data }">
-            <GetStatusTable :dataProcduct="data.data"
+            <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
               @productionStatusData="productionStatusData" />
           </template>
           <DxSummary>
@@ -88,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch} from 'vue';
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
@@ -134,23 +136,25 @@ export default defineComponent({
 
     const dataSource = ref<any[]>([]);
     const searchWithholdingTrigger = ref(true);
+    let searchWithholdingParam = ref({
+      paymentMonth: filterBF620.value.paymentMonth,
+      paymentYear: filterBF620.value.paymentYear,
+    })
     const {
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
       refetch: searchWithholdingRefetch,
       onError: searchWithholdingError,
     } = useQuery(
-      queries.searchWithholdingTaxElectronicFilings,
-      {
-        filter: filterBF620.value,
-      },
+      queries.searchWithholdingTaxElectronicFilingsByYearMonth,
+      searchWithholdingParam,
       () => ({
-        enabled: searchWithholdingTrigger.value,
+        // enabled: eletroFillingTrigger.value,
         fetchPolicy: 'no-cache',
       })
     );
     watch(searchWithholdingResult, (newVal) => {
-      let data = newVal.searchWithholdingTaxElectronicFilings;
+      let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth;
       let result = Object.values(data.reduce((acc: any, curr: any) => {
         if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
           acc[curr.companyId] = curr;
@@ -159,11 +163,30 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       searchWithholdingTrigger.value = false;
+      // console.log(`output->data.beforeProduction`,data.beforeProduction)
+      // filterBF620.value.beforeProduction= data?.beforeProduction;
+      // filterBF620.value.productionStatuses= data.productionStatuses;
+      // filterBF620.value.companyCode= data.companyCode;
+      // filterBF620.value.companyName= data.companyName;
+      // filterBF620.value.manageUserId= data.manageUserId;
+      // filterBF620.value.salesRepresentativeId= data.salesRepresentativeId;
+      // filterBF620.value.excludeCancel= data.excludeCancel;
+      // filterBF620.value.reportType= data.reportType;
+      // filterBF620.value.withholdingTaxType= data.withholdingTaxType;
     });
     searchWithholdingError((res: any) => {
       notification('error', res.message)
     })
-    //------------------------SUM AREA----------------- 
+    watchEffect(() => {
+      if (filterBF620.value.paymentYear && filterBF620.value.paymentMonth) {
+        searchWithholdingParam.value = {
+          paymentMonth: filterBF620.value.paymentMonth,
+          paymentYear: filterBF620.value.paymentYear,
+        }
+      }
+    })
+
+    //------------------------SUM AREA------------------------------ 
     // count the number of status
 
     let productionStatusArr = ref<any>([]);
@@ -218,7 +241,7 @@ export default defineComponent({
         // variables.value = {
         //   filter: filterBF620.value,
         // };
-        searchWithholdingTrigger.value = true;
+        // searchWithholdingTrigger.value = true;
         searchWithholdingRefetch();
       },
       { deep: true }
@@ -268,7 +291,8 @@ export default defineComponent({
       afterDeadlineSummary,
       productStatusSummary,
       selectionChanged,
-      formatMonth
+      formatMonth,
+      searchWithholdingParam
     };
   },
 })
