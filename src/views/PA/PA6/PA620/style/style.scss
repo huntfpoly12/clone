@@ -258,4 +258,9 @@
         color: black;
       }
     }
+    .red {
+      :deep label {
+        color: red;
+      }
+    }
 }

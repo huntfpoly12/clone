@@ -2,8 +2,8 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear != 0 ? `${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}` :''}}</div>
-                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear != 0 ? `${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}` : ''}}</div>
+                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear != 0 ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
+                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear != 0 ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
                 <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
             </div>
             <div class="table-detail-right">
@@ -141,7 +141,7 @@
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
     <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
+    <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />

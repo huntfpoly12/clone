@@ -409,6 +409,9 @@ export default defineComponent({
             store.state.common.processKeyPA620.paymentMonth = data.paymentMonth;
         }  
         const showDetailSelected = (data: any) => {
+          if(!isRunOnce.value){
+            isDisabledForm.value = false;
+          }
           if(formRef.value.compareForm()){
             onChangeMonth(data)
           }else {
@@ -421,7 +424,6 @@ export default defineComponent({
           if(val === 0) {
             onChangeMonth(changeMonthDataFake.value);
           }
-          console.log(`output->year`,val, year)
           if(val == 1) {
             changeYear(globalYear.value);
           }
@@ -452,10 +454,10 @@ export default defineComponent({
         // ======================================== WATCH =========================================
         //change year
         const changeYear = (newVal: any) => {
+            formRef.value.resetForm();
             isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
             // store.commit("common/processKeyPA620", { imputedYear: globalYear.value, paymentYear: globalYear.value });
-            // formRef.value.resetForm();
         };
         const isCompareForm = computed(()=>formRef.value?.compareForm());
         

@@ -18,16 +18,18 @@
             <DxColumn alignment="left" caption="성명" data-field="name" />
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
-            <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header"/>
+            <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
             <DxColumn alignment="left" header-cell-template="basicDeduction-header" data-field="basicDeduction"
-                cell-template="basicDeductionChange" />
-            <DxColumn alignment="left" header-cell-template="women-header" data-field="women" cell-template="womenChange" />
-            <DxColumn alignment="left" header-cell-template="singleParent-header" data-field="singleParent" cell-template="singleParentChange" />
-            <DxColumn alignment="left" header-cell-template="senior-header" data-field="senior" cell-template="SeniorChange" />
-            <DxColumn alignment="left" caption="장애인 " data-field="disabled"
-                cell-template="disabledChange" />
+              cell-template="basicDeductionChange" />
+            <DxColumn alignment="left" header-cell-template="women-header" data-field="women"
+              cell-template="womenChange" />
+            <DxColumn alignment="left" header-cell-template="singleParent-header" data-field="singleParent"
+              cell-template="singleParentChange" />
+            <DxColumn alignment="left" header-cell-template="senior-header" data-field="senior"
+              cell-template="SeniorChange" />
+            <DxColumn alignment="left" caption="장애인 " data-field="disabled" cell-template="disabledChange" />
             <DxColumn alignment="left" header-cell-template="descendant-header" data-field="descendant"
-                cell-template="DescendantChange" />
+              cell-template="DescendantChange" />
             <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
               cell-template="maternityAdoptionChange" />
             <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship" />
@@ -77,7 +79,7 @@
             </template>
           <!-- <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
-              </template> -->
+                </template> -->
             <template #relationChange="{ data: cellData }">
               {{ $filters.formatRelation(cellData.value) }}
             </template>
@@ -86,7 +88,7 @@
                 <template #title>
                   주민등록번호로 해당 원천년도 기준 나이 자동 계산
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   나이
                 </div>
               </a-tooltip>
@@ -94,10 +96,10 @@
             <template #basicDeduction-header>
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  주민등록번호로 해당 원천년도 기준 나이 자동 계산 <br/>
+                  주민등록번호로 해당 원천년도 기준 나이 자동 계산 <br />
                   다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   기본공제
                 </div>
               </a-tooltip>
@@ -107,7 +109,7 @@
                 <template #title>
                   한부모가족 공제와 중복 공제 불가
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   부녀자
                 </div>
               </a-tooltip>
@@ -115,9 +117,9 @@
             <template #singleParent-header>
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  부녀자 공제와 중복 공제 불가 
+                  부녀자 공제와 중복 공제 불가
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   한부모
                 </div>
               </a-tooltip>
@@ -125,9 +127,9 @@
             <template #senior-header>
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
-                  만 70세 이상 
+                  만 70세 이상
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   경로 우대
                 </div>
               </a-tooltip>
@@ -137,7 +139,7 @@
                 <template #title>
                   7세 이상 20세 이하의 자녀인 경우 공제 대상
                 </template>
-                <div style="text-align: center;" >
+                <div style="text-align: center;">
                   자녀
                 </div>
               </a-tooltip>
@@ -215,10 +217,12 @@
         </div>
       </a-col>
     </a-row>
-    <popup-add-new-dependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent" @closePopup="modalAddNewDependent = false;" 
-      :employeeId="employeeId" :dataSourceLen="dataSource.length" @upDateData="updateData" :key="newForm" :relationAll="relationAll"/>
+    <popup-add-new-dependent v-if="modalAddNewDependent" :modalStatus="modalAddNewDependent"
+      @closePopup="modalAddNewDependent = false;" :employeeId="employeeId" :dataSourceLen="dataSource.length"
+      @upDateData="updateData" :key="newForm" :relationAll="relationAll" />
     <PopupUpdateDependent v-if="modalEditStatus" :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false"
-      :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll"></PopupUpdateDependent>
+      :idRowEdit="idRowEdit" :dependentItem="dependentItem" @upDateData="updateData" :relationAll="relationAll">
+    </PopupUpdateDependent>
   </div>
 </template>
 <script lang="ts">
@@ -310,8 +314,8 @@ export default defineComponent({
         let data = value.getEmployeeWage.dependents;
         dataSource.value = data;
         trigger.value = false;
-        relationAll.value = data.map((item: any) =>({
-          value:item.relation
+        relationAll.value = data.map((item: any) => ({
+          value: item.relation
         }))
         relationSummary.value =
           data.some((item: { relation: string | number }) => {
@@ -331,23 +335,23 @@ export default defineComponent({
         basicDeductionSummary2.value = data.filter((item: any) => {
           return item.basicDeduction == 4;
         }).length;
-        descendantSummary.value = data.filter((item: any) => {
-          return item.descendant == true;
-        }).length;
+        descendantSummary.value = dataSource.value.filter((item: any) => {
+          return item.descendant;
+        }).length
         seniorSummary.value = dataSource.value.filter((item: any) => {
-            return item.senior == true;
+          return item.senior;
         }).length;
         disabledSummary.value = dataSource.value.filter((item: any) => {
-            return item.disabled != 0;
+          return item.disabled;
         }).length;
         womenSummary2.value = dataSource.value.filter((item: any) => {
-            return item.women == true;
+          return item.women;
         }).length;
         singleParentSummary.value = dataSource.value.filter((item: any) => {
-            return item.senior == true;
+          return item.senior;
         }).length;
         maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
-            return item.maternityAdoption != '0';
+          return item.maternityAdoption;
         }).length;
       }
     });
@@ -471,6 +475,5 @@ export default defineComponent({
       margin: 5px 0px 3px 10px;
     }
   }
-}
-</style>
+}</style>
 

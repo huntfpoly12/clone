@@ -347,6 +347,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         onError(e => {
+            trigger.value = false;
             notification('error', e.message)
         })
 

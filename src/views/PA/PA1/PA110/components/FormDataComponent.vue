@@ -20,29 +20,29 @@
                 <a-col :span="14">
                     <div class="header-text-2">요약</div>
                     <div class="summary">
-                        <div class="text0 d-flex-center">
-                            <span class="w-100">소득수당합계</span>
+                        <div class="d-flex-center">
+                            <span class="w-120">소득수당합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItem" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text1 d-flex-center">
-                            <span class="w-100">수당 과세합계</span>
+                            <span class="w-110">수당 과세합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItemTaxFree" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text2 d-flex-center">
-                            <span class="w-100">수당 비과세 합계</span>
+                            <span class="w-110">수당 비과세 합계</span>
                             <number-box-money :disabled="true" width="100px"
                                 v-model:valueInput="dataIW.totalPayItemTax" />
                             <span class="pl-5">원</span>
                         </div>
-                        <div class="text d-flex-center">
-                            <span class="w-100">공제 합계</span>
+                        <div class="d-flex-center">
+                            <span class="w-120">공제 합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalDeduction" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="d-flex-center">
-                            <span class="w-100">차인지급액</span>
+                            <span class="w-120">차인지급액</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.subPayment" />
                             <span class="pl-5">원</span>
                             <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
@@ -54,7 +54,7 @@
                 </a-col>
                 <a-col :span="10" class="input-items">
                     <div class="header-text-2">근로시간
-                        <span class="d-flex-center fz-11 ml-10" style="color: gray;">
+                        <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
                             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             사원별 급여명세서에 표시 됩니다.
                         </span>
@@ -70,28 +70,28 @@
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
                                 v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
-                            <span style="padding-left: 5px;">일</span>
+                            <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
                                 v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
-                            <span style="padding-left: 5px;">일</span>
+                            <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="야간근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
                                 v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
-                            <span style="padding-left: 5px;">일</span>
+                            <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="휴일근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
                             <number-box :spinButtons="true" :min="0" width="70px"
                                 v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
-                            <span style="padding-left: 5px;">일</span>
+                            <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                 </a-col>
@@ -238,6 +238,7 @@ export default defineComponent({
         const modalDeteleTaxpay = ref<boolean>(false)
         const modalDeteleMidTerm = ref<boolean>(false)
         const triggerDetail = ref<boolean>(false);
+        const triggerEmployeeWages = ref<boolean>(true);
         const triggerCalcIncome = ref<boolean>(false);
         const employeeWageTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
@@ -273,6 +274,7 @@ export default defineComponent({
         // ============ GRAPQL ===============================
         // get employeewage
         const { loading: loadingEmployeeWage, onResult: resEmployeeWage } = useQuery(queries.getEmployeeWages, originData, () => ({
+            enabled: triggerEmployeeWages.value,
             fetchPolicy: "no-cache",
         }))
         const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
@@ -320,6 +322,7 @@ export default defineComponent({
 
         // ===================DONE GRAPQL==================================
         resEmployeeWage(value => {
+            triggerEmployeeWages.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWages
             if (store.state.common.actionAddItem) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
@@ -631,6 +634,11 @@ export default defineComponent({
         watch(() => dataIW.value.totalPayItem, (value) => {
             store.state.common.statusChangeFormPrice = true;
         })
+
+        watch(globalYear, (newVal) => {
+            originData.imputedYear = newVal
+            triggerEmployeeWages.value = true;
+        })
         // ======================= FUNCTION ================================
         const pa110FormRef = ref()
         const submitForm = () => {
@@ -746,6 +754,7 @@ export default defineComponent({
             originDataEmployeeWage.employeeId = employeeId
             employeeWageTrigger.value = true;
         }
+        
 
         return {
             pa110FormRef,

@@ -3,7 +3,7 @@ import getElectronicFilingsByLocalIncomeTax from "./getElectronicFilingsByLocalI
 import getElectronicFilingsByWithholdingTax from "./getElectronicFilingsByWithholdingTax";
 import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
 import searchLocalIncomeTaxElectronicFilings from "./searchLocalIncomeTaxElectronicFilings";
-import searchWithholdingTaxElectronicFilings from "./searchWithholdingTaxElectronicFilings";
+import searchWithholdingTaxElectronicFilingsByYearMonth from "./searchWithholdingTaxElectronicFilingsByYearMonth";
 
 const queries = {
     getCompaniesInElectronicFilingFile,
@@ -11,7 +11,7 @@ const queries = {
     getElectronicFilingsByWithholdingTax,
     searchElectronicFilingFileProductions,
     searchLocalIncomeTaxElectronicFilings,
-    searchWithholdingTaxElectronicFilings,
+    searchWithholdingTaxElectronicFilingsByYearMonth,
 };
 
 export default queries;
