@@ -89,6 +89,6 @@ export const DataCreatedTable = {
     "nationalPensionDeduction": false,
     "healthInsuranceDeduction": false,
     "employeementInsuranceDeduction": true,
-    "nationalPensionSupportPercent": null,
-    "employeementInsuranceSupportPercent": null,
+    "nationalPensionSupportPercent": 0,
+    "employeementInsuranceSupportPercent": 0,
 }
