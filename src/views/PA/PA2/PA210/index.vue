@@ -151,8 +151,12 @@
                     <div class="custom-action" style="text-align: center; ">
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
-                        <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
+                        <a-tooltip>
+                            <template #title>출력 / 저장</template>
+                            <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 28px; margin-left: 10px;" />
+                        </a-tooltip>
+                        
                     </div>
                 </template>
             </DxDataGrid>

@@ -9,7 +9,7 @@
               <a-col>
                 <div class="dflex custom-flex global-year">
                   <label class="lable-item">귀속연도 :</label>
-                  <a-tag color="#a3a2a0">{{ globalYear }}</a-tag>
+                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                 </div>
               </a-col>
             </a-row>
@@ -37,7 +37,7 @@
           <a-col :span="24">
             <strong class="lable-item">소득자보관용: </strong>
             <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-              :textUnCheck="'지급자 보관용'" />
+              :textUnCheck="'발행자보관용'" />
           </a-col>
         </a-row>
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
@@ -60,13 +60,16 @@
           <template #send-group-print>
             <div class="custom-mail-group">
               <DxButton @click="onPrintGroup">
-                <img src="@/assets/images/printGroup.png" alt=""
-                  style="width: 28px; margin-right: 3px; cursor: pointer" />
+                <a-tooltip>
+                  <template #title>출력 / 저장</template>
+                  <img src="@/assets/images/printGroup.png" alt=""
+                    style="width: 28px; margin-right: 3px; cursor: pointer" /> 
+                </a-tooltip>
               </DxButton>
             </div>
           </template>
-          <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-          <DxColumn caption="성명 (상호)" cell-template="tag" width="150" />
+          <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
+          <DxColumn caption="성명 (상호)" cell-template="tag" width="200" />
           <template #tag="{ data }">
             <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -74,7 +77,7 @@
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
-          <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+          <DxColumn caption="주민등록번호" :width="130" data-field="employee.residentId" />
           <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
           <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
@@ -113,7 +116,10 @@
             <div class="custom-action" style="text-align: center">
               <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                 style="width: 25px; margin-right: 3px; cursor: pointer" />
-              <img @click="onPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px" />
+                <a-tooltip>
+                  <template #title>출력 / 저장</template>
+                  <img @click="onPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px" />
+                </a-tooltip>
             </div>
           </template>
         </DxDataGrid>

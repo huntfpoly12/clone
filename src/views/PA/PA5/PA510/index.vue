@@ -365,6 +365,7 @@ export default defineComponent({
         let status: any = ref()
         const dataModalCopy: any = ref()
         const IncomeWageDailiesTrigger = ref<boolean>(false)
+        const trigger = ref<boolean>(true)
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -381,6 +382,7 @@ export default defineComponent({
             result,
             loading,
         } = useQuery(queries.getIncomeProcessWageDailies, originData, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         const {
@@ -402,11 +404,14 @@ export default defineComponent({
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
             originData.value.imputedYear = globalYear.value
-            refetchData() //reset data table 1
+            // refetchData() 
+            isRunOnce.value = true;
+            trigger.value = true; //reset data table 1
         })
 
         // ======================= WATCH ==================================
         watch(result, (value) => {
+            trigger.value = false;
             if (value) {
                 let respon = value.getIncomeProcessWageDailies
                 dataSource.value = [{
@@ -508,7 +513,8 @@ export default defineComponent({
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
-            refetchData() //reset data table 1
+            // refetchData() //reset data table 1
+            trigger.value = true; //reset data table 1
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             // refetchDataTaxPayInfo() //reset data table 2
         })
@@ -529,7 +535,8 @@ export default defineComponent({
                 store.state.common.processKeyPA510.paymentYear = newVal
                 IncomeWageDailiesTrigger.value = true; //reset data table 2
                 originData.value.imputedYear = newVal
-                refetchData()
+                trigger.value = true; //reset data table 1
+                // refetchData()
                 // refetchDataTaxPayInfo() //reset data table 2
             }
         })
@@ -614,7 +621,8 @@ export default defineComponent({
                     store.state.common.processKeyPA510.paymentYear = globalYear.value
                     IncomeWageDailiesTrigger.value = true; //reset data table 2
                     originData.value.imputedYear = globalYear.value
-                    refetchData()
+                    // refetchData()
+                    trigger.value = true; //reset data table 1
                     // refetchDataTaxPayInfo() //reset data table 2
                     checkClickYear.value = false;
                     return;

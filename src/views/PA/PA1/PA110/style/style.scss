@@ -130,3 +130,6 @@
 .custom-detail {
     text-align: right;
 }
+:deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
+    padding-top: 4px;
+}

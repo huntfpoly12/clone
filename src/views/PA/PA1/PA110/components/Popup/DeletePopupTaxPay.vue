@@ -53,7 +53,6 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) {
-        ;
 
         const setModalVisible = () => {
             emit("closePopup", false)

@@ -141,12 +141,16 @@
                         </div>
                     </template>
                     <DxColumn :width="80" cell-template="pupop" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
+                            <a-tooltip>
+                                <template #title>출력 / 저장</template>
+                                <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
                                 @click="actionPrint(data.data)" />
+                            </a-tooltip>
+                            
                         </div>
                     </template>
                     <DxSummary>

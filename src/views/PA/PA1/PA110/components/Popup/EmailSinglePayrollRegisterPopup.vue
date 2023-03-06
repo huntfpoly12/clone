@@ -4,14 +4,14 @@
         <standard-form action="" name="email-single-630">
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" />
-                <span>급여대장을 출력하시겠습니까? </span>
+                <span>급여대장을</span>
                 <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
                     v-model:value="valueSelect" value-expr="value" display-expr="name" :required="true">
                 </DxSelectBox>
             </div>
             <div class="custom-modal-send-email">
-                <img src="@/assets/images/email.svg" alt="" />
-                <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
+                <!-- <img src="@/assets/images/email.svg" alt="" /> -->
+                <mail-text-box width="150px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-50">
@@ -48,7 +48,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA510)
+        const processKey = computed(() => store.state.common.processKeyPA110)
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
             emailAddress.value = val?.employee.email
@@ -129,7 +129,7 @@ export default defineComponent({
     }
 
     span {
-        padding-left: 5px;
+        padding: 0 5px;
     }
 }
 
