@@ -4,14 +4,14 @@
         <standard-form action="" name="email-single-register-510">
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" />
-                <span>급여대장을 출력하시겠습니까? </span>
+                <span>급여대장을</span>
                 <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
                     v-model:value="valueSelect" value-expr="value" display-expr="name" :required="true">
                 </DxSelectBox>
             </div>
             <!-- <div class="custom-modal-send-email">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div> -->
             <div class="custom-modal-send-email">
-                <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"
+                <mail-text-box width="150px" :required="true" v-model:valueInput="emailAddress"
                     placeholder="abc@example.com" />
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>

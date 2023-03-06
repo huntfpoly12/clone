@@ -1,6 +1,6 @@
 @import "../../../../../assets/styles/settingStyle.scss";
 #pa-110 {
-    ::v-deep .ant-form-item-label>label {
+    :deep .ant-form-item-label>label {
         width: 130px;
         padding-left: 10px;
         margin-right: 20px;
@@ -15,13 +15,13 @@
         }
     }
 
-    .header-text-1 {
-        background-color: #558ED5;
-        padding: 5px;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 10px;
-    }
+    // .header-text-1 {
+    //     background-color: #558ED5;
+    //     padding: 5px;
+    //     font-weight: bold;
+    //     font-size: 18px;
+    //     margin-bottom: 10px;
+    // }
 
     .header-text-2 {
         background-color: #C6D9F1;
@@ -29,96 +29,96 @@
         font-weight: bold;
         font-size: 14px;
         margin-bottom: 10px;
-
-        span {
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            float: right;
-            margin: 0px 27px 0px 0px;
-
-            p {
-                margin: 0px 0px 3px 10px;
-            }
-        }
-    }
-
-    .header-text-3 {
-        background-color: #558ED5;
-        padding: 5px;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 10px;
-
-        span {
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            color: white;
-            float: right;
-
-            p {
-                margin: 5px 0px 3px 10px;
-            }
-        }
-    }
-
-    .ins-dedu {
         display: flex;
-
-        .check-box-tab1 {
-            margin-left: 35px;
-        }
-    }
-
-    .durunuri-insurance {
-        ::v-deep .ant-form-item-label>label {
-            width: 200px;
-            padding-left: 10px;
-        }
-
-        .switch-insurance {
-            margin-left: 72px;
-            width: 100px;
-        }
-    }
-
-    .empl-ins {
-        margin-bottom: 2px;
-
         span {
             display: flex;
             align-items: center;
+            // font-size: 13px;
+            // float: right;
+            // margin: 0px 27px 0px 0px;
 
-            p {
-                font-size: 11px;
-                margin-left: 5px;
-                margin-bottom: 0px;
-            }
+            // p {
+            //     margin: 0px 0px 3px 10px;
+            // }
         }
     }
 
-    .pension {
-        ::v-deep .dx-radiobutton {
-            margin: 0px 0px 0px 76px;
-        }
-    }
+    // .header-text-3 {
+    //     background-color: #558ED5;
+    //     padding: 5px;
+    //     font-weight: bold;
+    //     font-size: 18px;
+    //     margin-bottom: 10px;
 
-    .income-tax-app-rate {
-        ::v-deep .dx-radiobutton {
-            margin: 0px 0px 0px 50px;
-        }
-    }
+    //     span {
+    //         display: flex;
+    //         align-items: center;
+    //         font-size: 13px;
+    //         color: white;
+    //         float: right;
 
-    ::v-deep .red {
-        label {
-            color: red;
-        }
-    }
+    //         p {
+    //             margin: 5px 0px 3px 10px;
+    //         }
+    //     }
+    // }
+
+    // .ins-dedu {
+    //     display: flex;
+
+    //     .check-box-tab1 {
+    //         margin-left: 35px;
+    //     }
+    // }
+
+    // .durunuri-insurance {
+    //     ::v-deep .ant-form-item-label>label {
+    //         width: 200px;
+    //         padding-left: 10px;
+    //     }
+
+    //     .switch-insurance {
+    //         margin-left: 72px;
+    //         width: 100px;
+    //     }
+    // }
+
+    // .empl-ins {
+    //     margin-bottom: 2px;
+
+    //     span {
+    //         display: flex;
+    //         align-items: center;
+
+    //         p {
+    //             font-size: 11px;
+    //             margin-left: 5px;
+    //             margin-bottom: 0px;
+    //         }
+    //     }
+    // }
+
+    // .pension {
+    //     ::v-deep .dx-radiobutton {
+    //         margin: 0px 0px 0px 76px;
+    //     }
+    // }
+
+    // .income-tax-app-rate {
+    //     ::v-deep .dx-radiobutton {
+    //         margin: 0px 0px 0px 50px;
+    //     }
+    // }
+
+    // ::v-deep .red {
+    //     label {
+    //         color: red;
+    //     }
+    // }
 
     .deduction-main {
         // max-height: 200px;
-        overflow: scroll;
+        // overflow: scroll;
         // border: 1px solid #ddd;
         padding-left: 5px;
         padding-top: 5px;
@@ -141,21 +141,21 @@
         margin-bottom: $margin-bottom+px;
     }
 
-    .salary-item {
-        .sal-item {
-            display: flex;
-            align-items: center;
+    // .salary-item {
+    //     .sal-item {
+    //         display: flex;
+    //         align-items: center;
 
-            p {
-                margin: 0px;
-            }
-        }
+    //         p {
+    //             margin: 0px;
+    //         }
+    //     }
 
-        ::v-deep .ant-form-item-label>label {
-            width: 100px;
-            padding-left: 10px;
-        }
-    }
+    //     :deep .ant-form-item-label>label {
+    //         width: 100px;
+    //         padding-left: 10px;
+    //     }
+    // }
 
     .summary {
         padding-left: 10px;
@@ -167,22 +167,17 @@
             margin-bottom: $margin-bottom+px;
         }
 
-        .text5 {
-            span {
-                display: flex;
-                align-items: center;
-                font-size: 13px;
-                float: right;
-                margin: 0px 50px 0px 0px;
-
-                p {
-                    margin: 0px 0px 3px 10px;
-                }
-            }
-        }
-
-        .w-100 {
+        .w-120 {
             width: 120px;
+        }
+        .w-110 {
+            width: 110px;
+        }
+    }
+    .text1, .text2 {
+        margin-left: 10px;
+        span {
+            font-weight: unset;
         }
     }
 }
