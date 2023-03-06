@@ -198,9 +198,9 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
-    <!-- {{ compareType2() }} compareType2 <br />
+    {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
-    {{ processKeyPA720 }} processKeyPA720 <br /> -->
+    {{ processKeyPA720 }} processKeyPA720 <br />
     <!-- {{ changeYearDataFake }} changeYearDataFake <br /> -->
     <a-row :class="{'ele-opacity':!compareType2()}" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
@@ -467,7 +467,7 @@ export default defineComponent({
     }
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
-    let myWatch = watch(globalYear, (newVal, oldVal) => {
+    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
       if (compareType2()) {
         changeYear(newVal)
       } else {
@@ -710,9 +710,9 @@ export default defineComponent({
         taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
         addItemClick.value = !addItemClick.value;
         if (isClickYearDiff.value) {
-          myWatch();
+          watchGlobalYear();
           store.state.settings.globalYear = changeYearDataFake.value;
-          myWatch = watch(globalYear, (newVal, oldVal) => {
+          watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
             if (compareType2()) {
               changeYear(newVal)
             } else {
@@ -747,9 +747,9 @@ export default defineComponent({
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
       taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
       if (isClickYearDiff.value) {
-        myWatch();
+        watchGlobalYear();
         store.state.settings.globalYear = changeYearDataFake.value;
-        myWatch = watch(globalYear, (newVal, oldVal) => {
+        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
           if (compareType2()) {
             changeYear(newVal)
           } else {
