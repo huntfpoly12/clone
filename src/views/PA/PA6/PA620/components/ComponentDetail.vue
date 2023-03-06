@@ -102,12 +102,6 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
-            <!-- {{ dataAction }} dataAction <br/>
-            {{ dataActionEdit }} dataActionEdit <br/>
-            {{ compareForm() }} compareForm <br/>
-            {{ dataCallApiDetailEdit.incomeId }} dataCallApiDetailEdit.incomeId <br/>
-            {{ statusButton }} statusButton <br/>
-            {{ isExpiredStatus }} isExpiredStatus <br/> -->
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right">
                     <employ-type-select :arrayValue="arrayEmploySelect"
@@ -333,10 +327,10 @@ export default defineComponent({
           notification('error', res.message);
         })
         //change year
-        watch (globalYear, (newVal) => {
-          dataCallApiGetOption.value.imputedYear = newVal;
-          triggerDetailOption.value = true;
-        });
+        // watch(globalYear, (newVal) => {
+        //   dataCallApiGetOption.value.imputedYear = newVal;
+        //   triggerDetailOption.value = true;
+        // });
         // API QUERY DETAIL VALUE TO EDIT
         const {loading: loadingDetailEdit, onError: errorDetailEdit, result: resDetailEdit } = useQuery(queries.getIncomeBusiness, dataCallApiDetailEdit, () => ({
             enabled: triggerDetailDetailEdit.value,
@@ -432,6 +426,8 @@ export default defineComponent({
         let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
           if (compareForm()) {
             emit('noSave', 1, newVal);
+            dataCallApiGetOption.value.imputedYear = newVal;
+            triggerDetailOption.value = true;
           } else {
             rowChangeStatus.value = true;
             isClickYearDiff.value = true;
@@ -460,7 +456,7 @@ export default defineComponent({
           } else {
             if (isClickYearDiff.value) {
               emit('noSave', 1, globalYear.value);
-              isClickMonthDiff.value = false;
+              isClickYearDiff.value = false;
               compareType.value = 1;
               return;
             }
@@ -560,7 +556,7 @@ export default defineComponent({
               triggerDetailDetailEdit.value = true;
               emit('createdDone', true);
             }
-            modalDelete.value = false;
+            modalEdit.value = false;
         };
         const onItemClick = (key: String) => {
             switch (key) {
@@ -627,6 +623,19 @@ export default defineComponent({
 
         // -------------------------ACTION FORM--------------------------------
 
+        const onChangeFormdone = () => {
+            triggerDetail.value = true
+            isErrorForm.value = false;
+            disabledInput.value = true;
+            dataActionEdit.value.input = {...dataAction.value.input};
+            if (isClickYearDiff.value) {
+              emit('noSave', 1, globalYear.value);
+              isClickYearDiff.value = false;
+              compareType.value = 1;
+              return;
+            }
+            emit('compareForm',compareForm());
+        }
         const {
             mutate: actionCreated,
             onError: errorCreated,
@@ -637,15 +646,11 @@ export default defineComponent({
             focusedRowKey.value = res.data.createIncomeBusiness.incomeId
             emit('createdDone', true)
             notification('success', `업데이트 완료!`)
-            triggerDetail.value = true
-            isErrorForm.value = false;
-            disabledInput.value = true;
-            dataActionEdit.value.input = dataAction.value.input;
-            emit('compareForm',compareForm());
         })
         errorCreated(res => {
             notification('error', res.message)
             isErrorForm.value = true;
+            onChangeFormdone();
         })
         // API EDIT 
         const {
@@ -659,9 +664,7 @@ export default defineComponent({
             selectedRowKeys.value = [res.data.updateIncomeBusiness.incomeId];
             emit('createdDone', true)
             notification('success', messageUpdate)
-            triggerDetail.value = true
-            isErrorForm.value = false;
-            dataActionEdit.value.input = dataAction.value.input;
+            onChangeFormdone();
             emit('compareForm',compareForm());
             if (isClickEditDiff.value) {
               onEditItem();
@@ -671,6 +674,7 @@ export default defineComponent({
             notification('error', res.message);
             isErrorForm.value = true;
         })
+        //
         const isErrorForm = ref(false);
         const onSave = (e:any) => {
           var res = e.validationGroup.validate();
@@ -679,6 +683,21 @@ export default defineComponent({
             isErrorForm.value = true;
             focusedRowKey.value = dataAction.value.input.incomeId;
             selectedRowKeys.value = [dataAction.value.input.incomeId];
+            if (isClickYearDiff.value) {
+              watchGlobalYear();
+              store.state.settings.globalYear = changeYearDataFake.value;
+              watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+                if (compareForm()) {
+                  emit('noSave', 1, newVal);
+                  dataCallApiGetOption.value.imputedYear = newVal;
+                  triggerDetailOption.value = true;
+                } else {
+                  rowChangeStatus.value = true;
+                  isClickYearDiff.value = true;
+                  changeYearDataFake.value = oldVal;
+                }
+              });
+            }
           } else {
             isErrorForm.value = false;
             let params = JSON.parse(JSON.stringify(dataAction.value));

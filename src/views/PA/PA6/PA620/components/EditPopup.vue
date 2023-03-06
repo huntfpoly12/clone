@@ -6,7 +6,7 @@
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
                 <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
-                    :spinButtons="true" />
+                    :spinButtons="true" :isFormat="true" />
                 <span>일로 변경하시겠습니까?</span>
             </div>
             <div class="text-align-center mt-30">

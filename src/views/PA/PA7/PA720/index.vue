@@ -198,9 +198,9 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
-    {{ compareType2() }} compareType2 <br />
+    <!-- {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
-    {{ processKeyPA720 }} processKeyPA720 <br />
+    {{ processKeyPA720 }} processKeyPA720 <br /> -->
     <!-- {{ changeYearDataFake }} changeYearDataFake <br /> -->
     <a-row :class="{'ele-opacity':!compareType2()}" style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
@@ -734,7 +734,7 @@ export default defineComponent({
         }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
-          isClickMonthDiff.value = false;
+          isClickYearDiff.value = false;
           return;
         }
         if (isClickEditDiff.value) {
