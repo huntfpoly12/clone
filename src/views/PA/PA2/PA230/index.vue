@@ -58,7 +58,7 @@
                     </DxToolbar>
                     <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
                                 @click="sendMail" />
                         </DxButton>
                     </div>
@@ -67,7 +67,7 @@
                         <div class="custom-mail-group">
                             <DxButton @click="printFunc" id="print">
                                 <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
                             </DxButton>
                             <Tooltip target="#print" content="출력 / 저장" />
                         </div>

@@ -3,7 +3,7 @@
         <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
-            <a-row>
+            <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :show-borders="true"
@@ -198,7 +198,9 @@
                     </DxDataGrid>
                 </a-spin>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
+            <a-row :class="{
+            'disabledBlock': statusDisabledBlock,
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
                 <a-col>
                     <div v-if="!statusDisabledBlock">
@@ -222,8 +224,8 @@
                     </div>
                 </a-col>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
-                <a-col :span="12" class="custom-layout">
+            <a-row :class="{'disabledBlock': statusDisabledBlock}">
+                <a-col :span="12" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
@@ -378,6 +380,14 @@ export default defineComponent({
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
         let status = ref();
+        const originData = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+        })
+        const originDataTaxPayInfo = ref({
+            companyId: companyId,
+            processKey: processKey.value,
+        })
         // const modalChangeRowPrice = ref(false)
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
@@ -386,10 +396,7 @@ export default defineComponent({
             refetch: refetchDataProcessIncomeWages,
             result: resIncomeProcessWages,
             loading: loadingIncomeProcessWages
-        } = useQuery(queries.getIncomeProcessWages, {
-            companyId: companyId,
-            imputedYear: globalYear,
-        }, () => ({
+        } = useQuery(queries.getIncomeProcessWages, originData, () => ({
             fetchPolicy: "no-cache",
         }))
         // get data table detail getIncomeProcessWages
@@ -483,6 +490,8 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
+            } else {
+                activeNewMonth(dataMonthNew.value)
             }
         })
 
@@ -491,10 +500,7 @@ export default defineComponent({
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
             loading: loadingTaxPayInfo,
-        } = useQuery(queries.getIncomeWages, {
-            companyId: companyId,
-            processKey: processKey,
-        }, () => ({
+        } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
             fetchPolicy: "no-cache",
         }))
         watch(resultTaxPayInfo, (value) => {
@@ -520,6 +526,8 @@ export default defineComponent({
             store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
+            originData.value.imputedYear = globalYear.value
+            originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             refetchDataProcessIncomeWages() //reset data table 1
             refetchDataTaxPayInfo() //reset data table 2
         })
@@ -610,6 +618,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
+            originData.value.imputedYear = globalYear.value
             refetchDataProcessIncomeWages()
         })
 
@@ -647,6 +656,16 @@ export default defineComponent({
                     checkClickMonth.value = false;
                     return;
                 }
+                if (checkClickYear.value) {
+                    store.state.common.processKeyPA110.imputedYear = globalYear.value
+                    store.state.common.processKeyPA110.paymentYear = globalYear.value
+                    originData.value.imputedYear = globalYear.value
+                    originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
+                    refetchDataProcessIncomeWages() //reset data table 1
+                    refetchDataTaxPayInfo() //reset data table 2
+                    checkClickYear.value = false;
+                    return;
+                }
                 if (!store.state.common.statusRowAdd) {
                     store.state.common.actionAddItem = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
@@ -661,10 +680,19 @@ export default defineComponent({
                 e.cancel = true;
             }
         };
+        const checkClickYear = ref<Boolean>(false)
         watch(globalYear, (newVal) => {
-            store.state.common.processKeyPA110.imputedYear = newVal
-            store.state.common.processKeyPA110.paymentYear = newVal
-            refetchDataTaxPayInfo() //reset data table 2
+            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+                modalChangeRow.value = true
+                checkClickYear.value = true
+            } else {
+                store.state.common.processKeyPA110.imputedYear = newVal
+                store.state.common.processKeyPA110.paymentYear = newVal
+                originData.value.imputedYear = newVal
+                originDataTaxPayInfo.value.processKey.imputedYear = newVal
+                refetchDataProcessIncomeWages() //reset data table 1
+                refetchDataTaxPayInfo() //reset data table 2
+            }
         })
         return {
             globalYear,

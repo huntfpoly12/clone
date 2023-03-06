@@ -1,10 +1,11 @@
 <template>
     <div class="deduction">
-        <a-tooltip  color="black" placement="top" v-if="name.split('').length > 4 ">
+        <!-- <a-tooltip  color="black" placement="top" v-if="name.split('').length > 4 "> -->
+        <a-tooltip  color="black" placement="top">
             <template #title>{{ name }}</template>
             <span class="deducation-name" :style="{ 'width': width }">{{ name }}</span>
         </a-tooltip>
-        <span class="deducation-name" :style="{ 'width': width }" v-else>{{ name }}</span>
+        <!-- <span class="deducation-name" :style="{ 'width': width }" v-else>{{ name }}</span> -->
         <a-tooltip  color="black" placement="top" v-if="type == 1">
             <template #title>{{ subName }}</template>
             <div class="deduction-tag deduction-tag-1">

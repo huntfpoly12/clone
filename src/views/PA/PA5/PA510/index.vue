@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득자료입력" :buttonSave="false" :buttonDelete="false" />
     <div id="pa-510" class="page-content">
-        <a-row>
+        <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
                     :show-borders="true" :allow-column-reordering="move_column"
@@ -195,7 +195,9 @@
                 </DxDataGrid>
             </a-spin>
         </a-row>
-        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
+        <a-row :class="{
+            'disabledBlock': statusDisabledBlock,
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <div v-if="!statusDisabledBlock">
@@ -212,14 +214,13 @@
                     <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                     <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                 </div>
-                
             </a-col>
             <a-col class="">
                 <SelectActionComponent :dataRows="dataRows" />
             </a-col>
         </a-row>
-        <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
-            <a-col :span="14" class="custom-layout">
+        <a-row :class="{'disabledBlock': statusDisabledBlock}">
+            <a-col :span="14" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
@@ -366,7 +367,7 @@ export default defineComponent({
         const IncomeWageDailiesTrigger = ref<boolean>(false)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
@@ -400,6 +401,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
+            originData.value.imputedYear = globalYear.value
             refetchData() //reset data table 1
         })
 
@@ -473,6 +475,8 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
+            } else {
+                activeNewMonth(dataMonthNew.value)
             }
         })
         watch(resultTaxPayInfo, (value) => {
@@ -488,6 +492,7 @@ export default defineComponent({
                     } else {
                         store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
                         store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
+                        store.state.common.dataRowOnActive = value.getIncomeWageDailies[0]
                         // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
                     }
                     store.state.common.actionAddItem = false
@@ -502,6 +507,7 @@ export default defineComponent({
             store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
+            originData.value.imputedYear = globalYear.value
             refetchData() //reset data table 1
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             // refetchDataTaxPayInfo() //reset data table 2
@@ -513,11 +519,19 @@ export default defineComponent({
                 store.state.common.statusDisabledStatus = false;
             }
         })
+        const checkClickYear = ref<Boolean>(false)
         watch(globalYear, (newVal) => {
-            store.state.common.processKeyPA510.imputedYear = newVal
-            store.state.common.processKeyPA510.paymentYear = newVal
-            IncomeWageDailiesTrigger.value = true; //reset data table 2
-            // refetchDataTaxPayInfo() //reset data table 2
+            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+                modalChangeRow.value = true
+                checkClickYear.value = true
+            } else {
+                store.state.common.processKeyPA510.imputedYear = newVal
+                store.state.common.processKeyPA510.paymentYear = newVal
+                IncomeWageDailiesTrigger.value = true; //reset data table 2
+                originData.value.imputedYear = newVal
+                refetchData()
+                // refetchDataTaxPayInfo() //reset data table 2
+            }
         })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
@@ -565,6 +579,7 @@ export default defineComponent({
         const dataMonthNew: any = ref()
         const checkClickMonth = ref<Boolean>(false)
         // A function that is called when a user clicks on a month.
+        
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
             if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
@@ -592,6 +607,16 @@ export default defineComponent({
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
+                    return;
+                }
+                if (checkClickYear.value) {
+                    store.state.common.processKeyPA510.imputedYear = globalYear.value
+                    store.state.common.processKeyPA510.paymentYear = globalYear.value
+                    IncomeWageDailiesTrigger.value = true; //reset data table 2
+                    originData.value.imputedYear = globalYear.value
+                    refetchData()
+                    // refetchDataTaxPayInfo() //reset data table 2
+                    checkClickYear.value = false;
                     return;
                 }
                 if (!store.state.common.statusRowAdd) {

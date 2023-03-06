@@ -30,25 +30,25 @@
                       </div>
                   </a-form-item>
               </a-col>
-              <a-col style="display: flex;">
+              <a-col>
+                <div class="d-flex">
                   <div style="margin-right: 10px;">
                     <a-tooltip placement="top" color="black">
-                        <template #title>원천징수이행상황신고서 2</template>
-                        <div>마감상태 :</div>
+                      <template #title>원천징수이행상황신고서 2</template>
+                      <div>마감상태 :</div>
                     </a-tooltip>
                   </div>
-                  <div>
-                      <div class="closing-wrapper">
-                          <checkbox-basic label="입력중" class="mr-10 custom-checkbox1"
-                              v-model:valueCheckbox="statuses.checkbox1" />
-                          <checkbox-basic label="입력마감" class="mr-10 custom-checkbox1"
-                              v-model:valueCheckbox="statuses.checkbox2" />
-                          <checkbox-basic label="조정중" class="mr-10 custom-checkbox2"
-                              v-model:valueCheckbox="statuses.checkbox3" />
-                          <checkbox-basic label="조정마감" class="mr-10 custom-checkbox2"
-                              v-model:valueCheckbox="statuses.checkbox4" />
-                      </div>
+                  <div class="closing-wrapper">
+                    <checkbox-basic label="입력중" class="mr-10 custom-checkbox1"
+                                    v-model:valueCheckbox="statuses.checkbox1" />
+                    <checkbox-basic label="입력마감" class="mr-10 custom-checkbox1"
+                                    v-model:valueCheckbox="statuses.checkbox2" />
+                    <checkbox-basic label="조정중" class="mr-10 custom-checkbox2"
+                                    v-model:valueCheckbox="statuses.checkbox3" />
+                    <checkbox-basic label="조정마감" class="mr-10 custom-checkbox2"
+                                    v-model:valueCheckbox="statuses.checkbox4" />
                   </div>
+                </div>
               </a-col>
               <a-col>
                   <a-form-item label="사업자코드" label-align="left" class="mb-0 label-select">
@@ -230,7 +230,7 @@ export default defineComponent({
         correction: true, // 5
         afterTheDueDate: true // 6
       })
-      const reportType = reactive({ 
+      const reportType = reactive({
           oneMonth: true,
           sixMonth: true,
         })
@@ -309,13 +309,13 @@ export default defineComponent({
 
       const searchMonth = ref(new Date().getMonth() + 1)
       // create computed for search
-      
+
       const searchByYearAndMonth = computed(() => ({
         paymentYear: globalYear.value,
         paymentMonth: searchMonth.value,
       }))
       /*
-       * ============== API ============== 
+       * ============== API ==============
        */
 
       //  QUERY : searchTaxWithholdingStatusReportsByImputedYearMonth
@@ -354,7 +354,7 @@ export default defineComponent({
       })
 
       /*
-       * ============== WATCHING ============== 
+       * ============== WATCHING ==============
        */
       watch(() => [searchMonth, globalYear], ([newMonth, _]) => {
         if(newMonth.value === 13) {
@@ -368,7 +368,7 @@ export default defineComponent({
       }, { deep: true })
 
       /*
-       * ============== FUNCTION ============== 
+       * ============== FUNCTION ==============
        */
       function checkAllSameValue(obj: any) {
         const values = Object.values(obj);
@@ -398,16 +398,16 @@ export default defineComponent({
             filter.correction = true
             filter.afterTheDueDate = true
           } else {
-            filter.routine = classificationOfReport.routine 
+            filter.routine = classificationOfReport.routine
             filter.correction  = classificationOfReport.correction
             filter.afterTheDueDate = classificationOfReport.afterTheDueDate
           }
           // trigger.value = true
-          
+
           dataSource.value = dataOrigin.value.filter((item: any) => {
-            return filter.statuses.includes(item.status) 
+            return filter.statuses.includes(item.status)
               && filter.reportType.includes(item.reportType)
-              && 
+              &&
               ((filter.routine ? (item.index === 0 && item.afterDeadline === false) : false)
                 || (filter.correction ? (item.index > 0 && item.afterDeadline === false) : false)
                 || (filter.afterTheDueDate ? (item.index === 0 && item.afterDeadline === true) : false))
@@ -468,7 +468,7 @@ export default defineComponent({
 
       return {
           modalSendEmail,
-          // arraySelectBox, 
+          // arraySelectBox,
           dataSource, loadingTable, filter, arraySelectBox2, statuses, reportType, move_column, colomn_resize, modalStatus, modalPrint, dataCall,
           searching, closePopup, openModalStatus, changeStatusRowTable, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail,
           searchMonth,
@@ -479,5 +479,5 @@ export default defineComponent({
 </script>
 <style scoped lang="scss" src="./style/style.scss">
 
-</style> 
+</style>
 
