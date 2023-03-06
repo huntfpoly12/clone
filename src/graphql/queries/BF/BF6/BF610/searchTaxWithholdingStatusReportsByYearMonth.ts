@@ -55,6 +55,16 @@ export default gql`
         name
         address
       }
+      companyServiceContract {
+        compactSalesRepresentative {
+          name
+          id
+        }
+        manageCompactUser {
+          name
+          id
+        }
+      }
       detail {
         header {
           withholdingDutyName

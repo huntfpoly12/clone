@@ -19,22 +19,22 @@
         <template #button-template>
           <DxButton icon="plus" @click="openAddNewModal"/>
         </template>
-        <DxColumn caption="일련번호" data-field="workId" width="100"/>
-        <DxColumn caption="성명" data-field="name"/>
-        <DxColumn caption="생년월일" data-field="convertBirthday" cell-template="convertBirthday" width="100"/>
+        <DxColumn caption="일련번호" data-field="workId" width="100" alignment="center"/>
+        <DxColumn caption="성명" data-field="name" alignment="center"/>
+        <DxColumn caption="생년월일" data-field="convertBirthday" cell-template="convertBirthday" width="100" alignment="center"/>
         <template #convertBirthday="{ data }" class="">
           <div class="d-flex justify-content-center">{{ convertBirthDayKorea(data.data.residentId) }}</div>
         </template>
-        <DxColumn caption="주민등록증" data-field="residentId" width="150"/>
-        <DxColumn caption="상태" data-field="workingStatus" width="100"/>
-        <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat"/>
-        <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat"/>
-        <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat"/>
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="70"/>
+        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>
+        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center"/>
+        <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center"/>
+        <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center"/>
+        <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center"/>
+        <DxColumn caption="접수번호" data-field="accedpedNumber" width="70" alignment="center"/>
         <!-- api not field paymentYear -->
-        <DxColumn caption="FAX상태" data-field="paymentYear" width="70"/>
-        <DxColumn caption="메모" data-field="memo"/>
-        <DxColumn caption="신고서다운로드" cell-template="report" width="100"/>
+        <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>
+        <DxColumn caption="메모" data-field="memo" alignment="center"/>
+        <DxColumn caption="신고서다운로드" cell-template="report" width="100" alignment="center"/>
         <template #report="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.employeeId)">
@@ -43,7 +43,7 @@
           </div>
         </template>
         <DxScrolling column-rendering-mode="virtual"/>
-        <DxColumn caption="첨부파일다운로드" data-field="dependentsEvidenceFileStorageId" cell-template="dependentsEvidenceFileStorageId" width="80"/>
+        <DxColumn caption="첨부파일다운로드" data-field="dependentsEvidenceFileStorageId" cell-template="dependentsEvidenceFileStorageId" width="80" alignment="center"/>
         <template #dependentsEvidenceFileStorageId="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton v-if="data.data.dependentsEvidenceFileStorageId" type="ghost" class="" style="cursor: pointer">
@@ -51,8 +51,8 @@
             </DxButton>
           </div>
         </template>
-        <DxScrolling column-rendering-mode="virtual"/>
-        <DxColumn cell-template="action" width="150"/>
+        <DxScrolling column-rendering-mode="virtual" />
+        <DxColumn cell-template="action" width="150" alignment="center"/>
         <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="text-align: center">
             <a-space>
