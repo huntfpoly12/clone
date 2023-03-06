@@ -9,7 +9,7 @@
                             <a-col>
                                 <div class="dflex custom-flex global-year">
                                     <label class="lable-item">귀속연도 :</label>
-                                    <a-tag color="#a3a2a0">{{ globalYear }}</a-tag>
+                                    <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                                 </div>
                             </a-col>
                         </a-row>
@@ -40,7 +40,7 @@
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-                            :textUnCheck="'지급자 보관용'" />
+                            :textUnCheck="'발행자보관용'" />
                     </a-col>
                 </a-row>
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -62,12 +62,15 @@
                     <template #send-group-print>
                         <div class="custom-mail-group">
                             <DxButton @click="onPrintGroup">
-                                <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                                <a-tooltip>
+                                    <template #title>출력 / 저장</template>
+                                    <img src="@/assets/images/printGroup.png" alt=""
+                                        style="width: 28px; margin-right: 3px; cursor: pointer" /> 
+                                </a-tooltip>
                             </DxButton>
                         </div>
                     </template>
-                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
+                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
                     <DxColumn :width="250" caption="성명 (상호)" cell-template="tag" />
                     <template #tag="{ data }">
                         <div class="custom-action">
@@ -77,19 +80,17 @@
                         </div>
                     </template>
                     <DxColumn caption="주민등록번호" data-field="employee.residentId" />
-                    <DxColumn caption="소득부분" cell-template="grade-cell" :width="200" />
+                    <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" />
                     <template #grade-cell="{ data }">
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
                             :typeName="data.data.employee.incomeTypeName"></income-type>
                     </template>
-                    <DxColumn caption="지급총액" data-field="paymentAmount" :format="amountFormat" />
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" :format="amountFormat" />
-                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" :format="amountFormat" />
-                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax"/>
+                    <DxColumn caption="지급총액" data-field="paymentAmount" format="fixedPoint" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" format="fixedPoint" />
+                    <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" format="fixedPoint" />
+                    <DxColumn caption="원천징수세액 계" cell-template="sumWithholdingRuralSpecialTax" css-class="money-column"/>
                     <template #sumWithholdingRuralSpecialTax="{ data }" >
-                        <div style="text-align: right;">
-                            {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
-                        </div>
+                        {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
                     </template>
                     <DxSummary v-if="dataSource.length > 0">
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
@@ -106,8 +107,11 @@
                         <div class="custom-action" style="text-align: center;">
                             <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px;" />
-                            <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
+                            <a-tooltip>
+                                <template #title>출력 / 저장</template>
+                                <img @click="actionPrint(data.data)" src="@/assets/images/print.svg" alt=""
                                 style="width: 25px;" />
+                            </a-tooltip>
                         </div>
                     </template>
                 </DxDataGrid>
@@ -179,7 +183,7 @@ export default defineComponent({
         const modalEmailSingle = ref(false)
         const modalEmailMulti = ref(false)
         const dataSource: any = ref({})
-        const amountFormat = ref({ currency: 'VND', useGrouping: true })
+        // const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear,
@@ -311,6 +315,9 @@ export default defineComponent({
                 valueDefaultIncomeBusiness.value.input.type = 2
             }
         });
+        watch(globalYear, (newValue) => {
+            trigger.value = true;
+        })
 
         const searching = () => {
             trigger.value = true;
@@ -352,7 +359,7 @@ export default defineComponent({
             selectionChanged,
             emailUserLogin,
             actionPrint, onPrintGroup,
-            amountFormat,
+            // amountFormat,
             customTextSummaryWRST,
         };
     },
