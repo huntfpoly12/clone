@@ -79,7 +79,7 @@ export default defineComponent({
     );
     const formatNumber = (value: any) => {
       if(value == 0) {
-        return '0';
+        return '';
       }
       if (value !== null && value !== undefined) {
         return value.toLocaleString('en-US', {
