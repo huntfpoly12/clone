@@ -43,7 +43,7 @@ export default defineComponent({
             type: Object,
             default: {}
         },
-        emailAddress: String,
+        // emailAddress: String,
     },
     components: {
         DxSelectBox,
@@ -58,10 +58,13 @@ export default defineComponent({
             { name: '직위순', value: '직위' },
         ])
         const valueSelect = ref('사번')
-        watch(() => props.modalStatus, (val) => {
-            if (val) {
-                emailAddress.value = props.emailAddress
-            }
+        // watch(() => props.modalStatus, (val) => {
+        //     if (val) {
+        //         emailAddress.value = props.emailAddress
+        //     }
+        // });
+        watch(() => props.data, (val) => {
+            emailAddress.value = val?.employee.email
         });
 
         const setModalVisible = () => {

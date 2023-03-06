@@ -367,7 +367,7 @@ export default defineComponent({
         const IncomeWageDailiesTrigger = ref<boolean>(false)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: globalYear.value,
         })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
@@ -401,6 +401,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
+            originData.value.imputedYear = globalYear.value
             refetchData() //reset data table 1
         })
 
@@ -474,6 +475,8 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
+            } else {
+                activeNewMonth(dataMonthNew.value)
             }
         })
         watch(resultTaxPayInfo, (value) => {
@@ -489,6 +492,7 @@ export default defineComponent({
                     } else {
                         store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
                         store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
+                        store.state.common.dataRowOnActive = value.getIncomeWageDailies[0]
                         // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
                     }
                     store.state.common.actionAddItem = false
@@ -503,6 +507,7 @@ export default defineComponent({
             store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
+            originData.value.imputedYear = globalYear.value
             refetchData() //reset data table 1
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             // refetchDataTaxPayInfo() //reset data table 2
@@ -514,11 +519,19 @@ export default defineComponent({
                 store.state.common.statusDisabledStatus = false;
             }
         })
+        const checkClickYear = ref<Boolean>(false)
         watch(globalYear, (newVal) => {
-            store.state.common.processKeyPA510.imputedYear = newVal
-            store.state.common.processKeyPA510.paymentYear = newVal
-            IncomeWageDailiesTrigger.value = true; //reset data table 2
-            // refetchDataTaxPayInfo() //reset data table 2
+            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+                modalChangeRow.value = true
+                checkClickYear.value = true
+            } else {
+                store.state.common.processKeyPA510.imputedYear = newVal
+                store.state.common.processKeyPA510.paymentYear = newVal
+                IncomeWageDailiesTrigger.value = true; //reset data table 2
+                originData.value.imputedYear = newVal
+                refetchData()
+                // refetchDataTaxPayInfo() //reset data table 2
+            }
         })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
@@ -594,6 +607,16 @@ export default defineComponent({
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
+                    return;
+                }
+                if (checkClickYear.value) {
+                    store.state.common.processKeyPA510.imputedYear = globalYear.value
+                    store.state.common.processKeyPA510.paymentYear = globalYear.value
+                    IncomeWageDailiesTrigger.value = true; //reset data table 2
+                    originData.value.imputedYear = globalYear.value
+                    refetchData()
+                    // refetchDataTaxPayInfo() //reset data table 2
+                    checkClickYear.value = false;
                     return;
                 }
                 if (!store.state.common.statusRowAdd) {
