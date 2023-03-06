@@ -4413,6 +4413,14 @@ export type IncomeWageStatView = {
   paymentYear: Scalars['Int'];
   /** total deduction (공제합계) */
   totalDeduction: Scalars['Float'];
+  /** total employment insurance deduction (고용보험 공제합계) */
+  totalEmploymentDeduction: Scalars['Float'];
+  /** total health insurance deduction (건강보험 공제합계) */
+  totalHealthDeduction: Scalars['Float'];
+  /** total long-term care insurance deduction (장기요양보험 공제합계) */
+  totalLongtermCareDeduction: Scalars['Float'];
+  /** total national pension deduction (국민연금 공제합계) */
+  totalNationalPensionDeduction: Scalars['Float'];
   /** total salary + allowance (급여+재수당합계) */
   totalPay: Scalars['Float'];
   /** total taxable benefits (과세급여헙계) */
@@ -4593,6 +4601,8 @@ export type LocalIncomeTaxElectronicFiling = {
   company: Company;
   /** company serial number (사업자일련번호) */
   companyId: Scalars['Int'];
+  /** Company service contract (사업자서비스계약) */
+  companyServiceContract: CompanyServiceContract;
   /** imputed month (귀속월) */
   imputedMonth: Scalars['Int'];
   /** imputed year (귀속연도) */
@@ -4683,6 +4693,10 @@ export type MajorInsuranceCompanyEmployeeAcquisition = {
 
 /** Acquisition of major insurance employees dependents input (4대보험직원취득 피부양자 입력) */
 export type MajorInsuranceCompanyEmployeeAcquisitionDependentInput = {
+  /** disabled persion code (장애인, 국가유공자 부호) */
+  disabledCode?: InputMaybe<Scalars['String']>;
+  /** disabled person registered date (장애인, 국가유공자 등록일) */
+  disabledRegisteredDate?: InputMaybe<Scalars['Int']>;
   /** name (이름) */
   name: Scalars['String'];
   /** foreign nationality number (외국인국적번호) */
@@ -4872,7 +4886,7 @@ export type MajorInsuranceCompanyEmployeeLeaveOfAbsenceInput = {
   /** employeement insurance report status (고용보험신고여부) */
   employeementInsuranceReport: Scalars['Boolean'];
   /** end date of leave (휴직종료예정일) */
-  endDateOfLeave: Scalars['String'];
+  endDateOfLeave: Scalars['Int'];
   /** health insurance payment exception code (건강보험 납부예외사유부호) */
   healthInsurancePaymentExceptionReasonCode?: InputMaybe<Scalars['String']>;
   /** health insurance report status (건강보험신고여부) */
@@ -4886,7 +4900,7 @@ export type MajorInsuranceCompanyEmployeeLeaveOfAbsenceInput = {
   /** acquisition payment exception reason code (국민연금 납부예외사유부호) */
   pensionPaymentExceptionReasonCode?: InputMaybe<Scalars['String']>;
   /** start date of leave (휴직시작일) */
-  startDateOfLeave: Scalars['String'];
+  startDateOfLeave: Scalars['Int'];
   /** type of leave ( 휴직유형 ) */
   typeOfLeave: Scalars['Float'];
 };
@@ -5166,7 +5180,7 @@ export type MajorInsuranceCompanyEmployeeReturnToWorkInput = {
   /** pension payment at return month (국민연금 재개월납부희망여부) */
   pensionPaymentAtReturnMonth?: InputMaybe<Scalars['Boolean']>;
   /** Scheduled date of resumption of payment ( 납부재개예정일 ) */
-  returnDate: Scalars['String'];
+  returnDate: Scalars['Int'];
   /** salary after return ( 복귀후 급여 ) */
   salaryAfterReturn: Scalars['Int'];
 };
@@ -5290,7 +5304,7 @@ export type MajorInsuranceCompanyEmployeeSalaryChangeInput = {
   /** change reason (소득 변경 사유) */
   changeReason?: InputMaybe<Scalars['Float']>;
   /** change yearmonth (소득 변경 연월) */
-  changeYearmonth: Scalars['String'];
+  changeYearmonth: Scalars['Float'];
   /** employee number (사번) */
   employeeId: Scalars['Int'];
   /** employee type (직원유형) */
@@ -5367,7 +5381,7 @@ export type MajorInsuranceCompanyEmployeeSalaryDuringLeaveOfAbsenceInput = {
   /** total salary payment (보수총액) */
   totalSalary: Scalars['Int'];
   /** salary payment year (보수 지급 년도) */
-  year: Scalars['String'];
+  year: Scalars['Int'];
 };
 
 /** Major insurance company join (4대보험 사업장가입) */
@@ -5476,7 +5490,7 @@ export type MajorInsuranceCompanyJoinInput = {
   /** electronic receiver resident number (전자고지수신자 주민등록번호) */
   electronicReceiverResidentNumber?: InputMaybe<Scalars['String']>;
   /** employeement insurance apply date (고용보험 성립일) */
-  employeementInsuranceApplyDate?: InputMaybe<Scalars['String']>;
+  employeementInsuranceApplyDate?: InputMaybe<Scalars['Int']>;
   /** employeement insurance employee target number (고용보험 피보험자 수 ) */
   employeementInsuranceEmployeeTargetNumber?: InputMaybe<Scalars['Float']>;
   /** employeement insurance  fulltime worker count (고용보험 상시근로자 수) */
@@ -5502,7 +5516,7 @@ export type MajorInsuranceCompanyJoinInput = {
   /** health insurance account item 3 (건강보험 회계종목 3) */
   healthInsuranceAccountItem3?: InputMaybe<Scalars['String']>;
   /** health insurance apply date (건강보험 적용일) */
-  healthInsuranceApplyDate?: InputMaybe<Scalars['String']>;
+  healthInsuranceApplyDate?: InputMaybe<Scalars['Int']>;
   /** health insurance employee target number (건강보험 가입대상자 수) */
   healthInsuranceEmployeeTargetNumber?: InputMaybe<Scalars['Float']>;
   /** health insurance haed office manage number (건강보험 본점 사업장관리번호) */
@@ -5512,7 +5526,7 @@ export type MajorInsuranceCompanyJoinInput = {
   /** health insurance specific code (건강보험 사업장 특성부호) */
   healthInsuranceSpecificCode?: InputMaybe<Scalars['String']>;
   /** industrial accident insurance apply date (산재보험 성립일 ) */
-  industrialAccidentInsuranceApplyDate?: InputMaybe<Scalars['String']>;
+  industrialAccidentInsuranceApplyDate?: InputMaybe<Scalars['Int']>;
   /** industrial accident insurance business type (산재보험 사업의형태 ) */
   industrialAccidentInsuranceBusinessType?: InputMaybe<Scalars['Float']>;
   /** industrial accident insurance business type code (산재보험 사업종류코드 ) */
@@ -5532,7 +5546,7 @@ export type MajorInsuranceCompanyJoinInput = {
   /** industrial accident insurance main workplace manage number (산재보험 주된사업장 사업장관리번호) */
   industrialAccidentMainWorkplaceManageNumber?: InputMaybe<Scalars['String']>;
   /** national pension apply date (국민연금 적용일) */
-  nationalPensionApplyDate?: InputMaybe<Scalars['String']>;
+  nationalPensionApplyDate?: InputMaybe<Scalars['Int']>;
   /** national pension employee count (국민연금 근로자수) */
   nationalPensionEmployeeCount?: InputMaybe<Scalars['Float']>;
   /** national pension employee target number (국민연금 가입대상자 수) */
@@ -5554,7 +5568,7 @@ export type MajorInsuranceCompanyJoinInput = {
   /** president tel (대표자 전화번호) */
   presidentTel?: InputMaybe<Scalars['String']>;
   /** report date (신고일) */
-  reportDate: Scalars['String'];
+  reportDate: Scalars['Int'];
 };
 
 /** Major insurance company employee loss change history (4대보험 사업장가입 변경이력) */
@@ -5666,19 +5680,19 @@ export type MajorInsuranceCompanyOutInput = {
   /** company tel (사업장 전화번호) */
   companyTel?: InputMaybe<Scalars['String']>;
   /** employeement insurance  date of close (고용보험 소멸일) */
-  employeementInsuranceCloseDate?: InputMaybe<Scalars['String']>;
+  employeementInsuranceCloseDate?: InputMaybe<Scalars['Int']>;
   /** employeement insurance  number of employee (고용보험 근로자 수) */
-  employeementInsuranceEmployeeNumber?: InputMaybe<Scalars['Float']>;
+  employeementInsuranceEmployeeNumber?: InputMaybe<Scalars['Int']>;
   /** employeement insurance report status (고용보험신고여부) */
   employeementInsuranceReport: Scalars['Boolean'];
   /** health insurance number of employee (건강보험 근로자 수) */
-  healthInsuranceEmployeeNumber?: InputMaybe<Scalars['Float']>;
+  healthInsuranceEmployeeNumber?: InputMaybe<Scalars['Int']>;
   /** health insurance report status (건강보험신고여부) */
   healthInsuranceReport: Scalars['Boolean'];
   /** industrial accident insurance date of close (산재보험 소멸일) */
-  industrialAccidentInsuranceCloseDate?: InputMaybe<Scalars['String']>;
+  industrialAccidentInsuranceCloseDate?: InputMaybe<Scalars['Int']>;
   /** industrial accident insurance  number of employee (산재보험 근로자 수) */
-  industrialAccidentInsuranceEmployeeNumber?: InputMaybe<Scalars['Float']>;
+  industrialAccidentInsuranceEmployeeNumber?: InputMaybe<Scalars['Int']>;
   /** industrial accident insurance report status (산재보험신고여부) */
   industrialAccidentInsuranceReport: Scalars['Boolean'];
   /** report due to 1year without workers(신고사유 근로자없이 1년경과 여부) */
@@ -5688,7 +5702,7 @@ export type MajorInsuranceCompanyOutInput = {
   /** report due to business shutdown (신고사유 휴업여부) */
   isShutdown?: InputMaybe<Scalars['Boolean']>;
   /** issue date (사유발생일) */
-  issueDate: Scalars['String'];
+  issueDate: Scalars['Int'];
   /** national pension closing period (국민연금 휴업기간) */
   nationalPensionClosingPeriod?: InputMaybe<Scalars['String']>;
   /** national pension integration company address (국민연금 통폐합시 흡수하는 사업장 주소) */
@@ -5708,7 +5722,7 @@ export type MajorInsuranceCompanyOutInput = {
   /** president tel (대표자 전화번호) */
   presidentTel?: InputMaybe<Scalars['String']>;
   /** report date (신고일) */
-  reportDate: Scalars['String'];
+  reportDate: Scalars['Int'];
   /** reason for report (신고사유) */
   reportReason: Scalars['Float'];
 };
@@ -9023,7 +9037,7 @@ export type Partner = {
   /** generators (생성자) */
   createdBy: Scalars['String'];
   /** description (설명) */
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   /** partner serial number (파트너일련번호) */
   id: Scalars['Int'];
   /** ip address (IP주소) */
@@ -10174,16 +10188,6 @@ export type Query = {
    */
   getIncomesForTaxWithholdingStatusReport: Array<IncomeForTaxWithholdingStatusReport>;
   /**
-   * Returns local income tax for electronic filing (전자신고를 위한 지방소득세를 반환한다 / 귀속연월).
-   *
-   * Return (반환) : Withholding tax performance report (원천징수이행상황신고서)
-   *
-   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
-   *
-   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
-   */
-  getLocalIncomeTaxElectronicFilings: Array<LocalIncomeTaxElectronicFiling>;
-  /**
    * Return the acquisition of the major insurance employees (4대보험직원취득을 반환한다).
    *
    * Return (반환) : Major insurance company employee acquisition (4대보험직원취득)
@@ -11106,16 +11110,6 @@ export type Query = {
    */
   getWithholdingConfigPayItemsLogs: Array<WithholdingConfigPayItemLog>;
   /**
-   * Returns withholding tax for electronic filing (전자신고를 위한 원천세를 반환한다 / 귀속연월).
-   *
-   * Return (반환) : Withholding tax electronic filing list(원천세 전자신고 목록)
-   *
-   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
-   *
-   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
-   */
-  getWithholdingTaxElectronicFilings: Array<WithholdingTaxElectronicFiling>;
-  /**
    * Check whether the sales representative name is correctable (수정가능한 영업자명인지 검사한다).
    *
    * Return (반환) : true / false
@@ -11389,6 +11383,16 @@ export type Query = {
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    */
   searchLocalIncomeTaxElectronicFilings: Array<LocalIncomeTaxElectronicFiling>;
+  /**
+   * Search for local income tax for electronic filing (전자신고를 위한 지방소득세를 검색한다 / 지급연월).
+   *
+   * Return (반환) : Withholding tax performance report (원천징수이행상황신고서)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   */
+  searchLocalIncomeTaxElectronicFilingsByYearMonth: Array<LocalIncomeTaxElectronicFiling>;
   /** Search public institution information (공공기관정보를 검색한다). */
   searchPublicInstitutions: Array<CompetentTaxOfficeLegalDong>;
   /**
@@ -11444,7 +11448,7 @@ export type Query = {
    */
   searchTaxWithholdingStatusReports: TaxWithholdingStatusReportPaginatedObject;
   /**
-   * Search for a list of withholding performance reports (원천징수이행상황신고서 목록을 검색한다 / 귀속연월).
+   * Search for a list of withholding performance reports (원천징수이행상황신고서 목록을 검색한다 / 지급연월).
    *
    * Return (반환) : List of withholding tax performance reports (원천징수이행상황신고서 목록)
    *
@@ -11452,7 +11456,7 @@ export type Query = {
    *
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    */
-  searchTaxWithholdingStatusReportsByImputedYearMonth: Array<TaxWithholdingStatusReport>;
+  searchTaxWithholdingStatusReportsByYearMonth: Array<TaxWithholdingStatusReport>;
   /**
    * Search the list of user views (회원뷰 목록을 검색한다).
    *
@@ -11473,6 +11477,16 @@ export type Query = {
    * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
    */
   searchWithholdingTaxElectronicFilings: Array<WithholdingTaxElectronicFiling>;
+  /**
+   * Search for withholding tax for electronic filing (전자신고를 위한 원천세를 검색한다 / 지급연월).
+   *
+   * Return (반환) : Withholding tax electronic filing list(원천세 전자신고 목록)
+   *
+   * Necessary Role (필요역할) : AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE (read)
+   *
+   * Exception (예외) / 400,401,403 : Certification common exception (인증공통예외)
+   */
+  searchWithholdingTaxElectronicFilingsByYearMonth: Array<WithholdingTaxElectronicFiling>;
   /**
    * Check if password reset key is valid (비밀번호 재설정 키가 유효한지 검사한다).
    *
@@ -12037,12 +12051,6 @@ export type QueryGetIncomesForTaxWithholdingStatusReportArgs = {
 };
 
 
-export type QueryGetLocalIncomeTaxElectronicFilingsArgs = {
-  imputedMonth: Scalars['Int'];
-  imputedYear: Scalars['Int'];
-};
-
-
 export type QueryGetMajorInsuranceCompanyEmployeeAcquisitionArgs = {
   companyId: Scalars['Int'];
   imputedYear: Scalars['Int'];
@@ -12439,12 +12447,6 @@ export type QueryGetWithholdingConfigPayItemsLogsArgs = {
 };
 
 
-export type QueryGetWithholdingTaxElectronicFilingsArgs = {
-  imputedMonth: Scalars['Int'];
-  imputedYear: Scalars['Int'];
-};
-
-
 export type QueryIsSalesRepresentativeChangableNameArgs = {
   id: Scalars['Int'];
   name: Scalars['String'];
@@ -12580,6 +12582,12 @@ export type QuerySearchLocalIncomeTaxElectronicFilingsArgs = {
 };
 
 
+export type QuerySearchLocalIncomeTaxElectronicFilingsByYearMonthArgs = {
+  paymentMonth: Scalars['Int'];
+  paymentYear: Scalars['Int'];
+};
+
+
 export type QuerySearchPublicInstitutionsArgs = {
   keyword: Scalars['String'];
 };
@@ -12610,9 +12618,9 @@ export type QuerySearchTaxWithholdingStatusReportsArgs = {
 };
 
 
-export type QuerySearchTaxWithholdingStatusReportsByImputedYearMonthArgs = {
-  imputedMonth: Scalars['Int'];
-  imputedYear: Scalars['Int'];
+export type QuerySearchTaxWithholdingStatusReportsByYearMonthArgs = {
+  paymentMonth: Scalars['Int'];
+  paymentYear: Scalars['Int'];
 };
 
 
@@ -12623,6 +12631,12 @@ export type QuerySearchUsersArgs = {
 
 export type QuerySearchWithholdingTaxElectronicFilingsArgs = {
   filter: ElectronicFilingWithholdingTaxSearchFilter;
+};
+
+
+export type QuerySearchWithholdingTaxElectronicFilingsByYearMonthArgs = {
+  paymentMonth: Scalars['Int'];
+  paymentYear: Scalars['Int'];
 };
 
 
@@ -13616,6 +13630,8 @@ export type TaxWithholdingStatusReport = {
   company: Company;
   /** company serial number (사업자일련번호) */
   companyId: Scalars['Int'];
+  /** Company service contract (사업자서비스계약) */
+  companyServiceContract: CompanyServiceContract;
   /** generation date (생성일) */
   createdAt: Scalars['DateScalar'];
   /** generators (생성자) */
@@ -14646,6 +14662,8 @@ export type WithholdingTaxElectronicFiling = {
   company: Company;
   /** company serial number (사업자일련번호) */
   companyId: Scalars['Int'];
+  /** Company service contract (사업자서비스계약) */
+  companyServiceContract: CompanyServiceContract;
   /** imputed month (귀속월) */
   imputedMonth: Scalars['Int'];
   /** imputed year (귀속연도) */

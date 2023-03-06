@@ -1,7 +1,9 @@
 #bf-610 {
 
     :deep(.custom-checkbox1 .dx-checkbox-text),
-    :deep(.custom-checkbox2 .dx-checkbox-text) {
+    :deep(.custom-checkbox2 .dx-checkbox-text),
+    :deep(.custom-checkbox3 .dx-checkbox-text),
+    :deep(.custom-checkbox4 .dx-checkbox-text) {
         margin-left: 5px;
         padding: 1px 20px;
         color: white;
@@ -9,11 +11,21 @@
     }
 
     :deep(.custom-checkbox1 .dx-checkbox-text) {
-        background-color: #376092;
+      background-color: #376092;
+      border: 3px solid rgba(255, 255, 255, 0);
+    }
+    :deep(.custom-checkbox2 .dx-checkbox-text) {
+      background-color: #376092;
+      border: 3px solid #558ED5 !important;
     }
 
-    :deep .custom-checkbox2 .dx-checkbox-text {
+    :deep .custom-checkbox3 .dx-checkbox-text {
+      border: 3px solid rgba(255, 255, 255, 0);
+      background-color: #C00000;
+    }
+    :deep .custom-checkbox4 .dx-checkbox-text {
         background-color: #C00000;
+      border: 3px solid #953735 !important;
     }
 
 

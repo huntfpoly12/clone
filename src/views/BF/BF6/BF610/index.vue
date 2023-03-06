@@ -10,7 +10,7 @@
                   </a-form-item> -->
                   <a-form-item label="지급연월" label-align="left" class="clr mb-0 label-select">
                       <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
-                          v-model:valueInput="searchMonth" type="2" />
+                          v-model:valueInput="searchMonth" type="1" />
                   </a-form-item>
                   <!-- <a-form-item label="" label-align="left" class="clr mb-0 label-select">
                   </a-form-item> -->
@@ -34,18 +34,18 @@
                 <div class="d-flex">
                   <div style="margin-right: 10px;">
                     <a-tooltip placement="top" color="black">
-                      <template #title>원천징수이행상황신고서 2</template>
+                      <template #title>원천징수이행상황신고서</template>
                       <div>마감상태 :</div>
                     </a-tooltip>
                   </div>
                   <div class="closing-wrapper">
                     <checkbox-basic label="입력중" class="mr-10 custom-checkbox1"
                                     v-model:valueCheckbox="statuses.checkbox1" />
-                    <checkbox-basic label="입력마감" class="mr-10 custom-checkbox1"
+                    <checkbox-basic label="입력마감" class="mr-10 custom-checkbox2"
                                     v-model:valueCheckbox="statuses.checkbox2" />
-                    <checkbox-basic label="조정중" class="mr-10 custom-checkbox2"
+                    <checkbox-basic label="조정중" class="mr-10 custom-checkbox3"
                                     v-model:valueCheckbox="statuses.checkbox3" />
-                    <checkbox-basic label="조정마감" class="mr-10 custom-checkbox2"
+                    <checkbox-basic label="조정마감" class="mr-10 custom-checkbox4"
                                     v-model:valueCheckbox="statuses.checkbox4" />
                   </div>
                 </div>
@@ -60,11 +60,19 @@
               </a-col>
               <a-col>
                   <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
-                      <list-manager-dropdown v-model:valueInput="filter.manageUserId" width="150px" />
+                      <!-- <list-manager-dropdown v-model:valueInput="filter.manageUserId" width="150px" /> -->
+                      <select-box-common 
+                        :arrSelect="managerCompactUserList"
+                        v-model:valueInput="filter.manageCompactUserId"
+                        displayeExpr="name" valueExpr="id" width="150px" />
                   </a-form-item>
                   <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
-                      <list-sales-dropdown v-model:valueInput="filter.salesRepresentativeId"
-                          width="150px" />
+                      <!-- <list-sales-dropdown v-model:valueInput="filter.salesRepresentativeId"
+                          width="150px" /> -->
+                      <select-box-common 
+                        :arrSelect="managerSalesRepresentative"
+                        v-model:valueInput="filter.compactSalesRepresentativeId"
+                        displayeExpr="name" valueExpr="id" width="150px" />
                   </a-form-item>
               </a-col>
               <a-col>
@@ -76,14 +84,25 @@
       <div class="page-content">
           <a-spin :spinning="loadingTable" size="large">
               <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                  :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                  :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxPaging :page-size="10"/>
+                <DxPager
+                  :visible="true"
+                  :show-page-size-selector="true"
+                  :allowed-page-sizes="[10, 20, 50]"
+                  :show-navigation-buttons="true"
+                  />
                   <DxScrolling mode="standard" show-scrollbar="always" />
                   <DxSelection mode="multiple" :fixed="true" />
                   <DxColumn caption="출력 메일" cell-template="action" />
                   <template #action="{ data }">
+                    <a-tooltip>
+                      <template #title>출력 / 저장</template>
                       <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
-                          @click="actionPrint(data.data)">
+                           @click="actionPrint(data.data)">
+                    </a-tooltip>
+
                       <img src="@/assets/images/email.svg" alt="" style="width: 25px;"
                           @click="actionSendEmail(data.data)" />
                   </template>
@@ -112,19 +131,23 @@
                   </template>
                   <DxColumn caption="귀속연월" cell-template="imputed" />
                   <template #imputed="{ data }">
+                    <a-tooltip color="black" placement="topLeft" :title="data.data.reportType === 1 ? `귀속기간 ${convertToDate(data.data?.imputedFinishYearMonth)}` : `소득별 마감현황 ${convertToDate(data.data.imputedStartYearMonth)}-${convertToDate(data.data.imputedFinishYearMonth)}`">
                       <div class="tag-custom-1">
-                          {{ data.data.imputedYear }}-{{
-                              data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
-                          }}
-                              </div>
+                        {{ data.data.imputedYear }}-{{
+                            data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
+                        }}
+                      </div>
+                    </a-tooltip>
                   </template>
                   <DxColumn caption="지급연월" cell-template="payment" />
                   <template #payment="{ data }">
+                    <a-tooltip color="black" placement="topLeft" :title="data.data.reportType === 1 ? `지급기간 ${convertToDate(data.data?.imputedFinishYearMonth)}` : `지급기간 ${convertToDate(data.data.paymentStartYearMonth)}-${convertToDate(data.data.paymentFinishYearMonth)}`">
                       <div class="tag-custom-2">
-                          {{ data.data.paymentYear }}-{{
-                              data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
-                          }}
-                              </div>
+                        {{ data.data.paymentYear }}-{{
+                            data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
+                        }}
+                    </div>
+                    </a-tooltip>
                   </template>
                   <DxColumn caption="신고 주기" cell-template="reportType" />
                   <template #reportType="{ data }">
@@ -182,6 +205,15 @@
                   <DxColumn caption="납부세액 소득세등 (A99)" data-field="totalCollectedTaxAmount" format="#,###" />
                   <DxColumn caption="(20) 차월이월 환급세액계" data-field="nextMonthRefundTaxAmount" format="#,###" />
                   <DxColumn caption="(21) 환급 신청액" data-field="refundApplicationAmount" format="#,###" />
+                  <DxSummary >
+                    <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryEntering"/>
+                    <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryInputDeadline"/>
+                    <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryAdjusting"/>
+                    <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryAdjustmentDeadline"/>
+
+                    <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummaryOneMonth"/>
+                    <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummarySixMonth"/>
+                  </DxSummary>
               </DxDataGrid>
           </a-spin>
       </div>
@@ -198,7 +230,7 @@ import notification from "@/utils/notification";
 import { PlusOutlined, } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import { DxColumn, DxDataGrid, DxItem, DxScrolling, DxSelection, DxToolbar } from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxItem, DxScrolling, DxSelection, DxToolbar, DxSummary, DxTotalItem, DxPaging, DxPager } from "devextreme-vue/data-grid";
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useStore } from 'vuex';
 import PopupAddStatus from "./components/PopupAddStatus.vue";
@@ -207,13 +239,19 @@ import PopupSendEmail from "./components/PopupSendEmail.vue";
 export default defineComponent({
   components: {
       DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
-      , PopupAddStatus, PopupPrint, PopupSendEmail
+      , PopupAddStatus, PopupPrint, PopupSendEmail, DxSummary, DxTotalItem,DxPaging, DxPager
+  },
+  computed: {
+
   },
   setup() {
       let dataSource: any = ref([])
       let trigger = ref(true)
       const store = useStore()
+      const token = computed(()=>sessionStorage.getItem("token"))
+      store.dispatch('auth/getUserInfor', token.value);
       const globalYear: any = computed(() => store.state.settings.globalYear)
+      const userInfor: any = computed(() => store.state.auth.userInfor)
 
       const filter = reactive({
         page: 1,
@@ -222,8 +260,8 @@ export default defineComponent({
         statuses: [10, 20, 30, 40], // 7
         companyCode: '', // 8
         companyName: '', // 9
-        manageUserId: null, // 10
-        salesRepresentativeId: null, // 11
+        manageCompactUserId: null, // 10
+        compactSalesRepresentativeId: null, // 11
         excludeCancel: true, // 12
         reportType: [0], // 3
         routine: true, // 4
@@ -242,55 +280,55 @@ export default defineComponent({
       let arraySelectBox2 = computed(() => [
           {
               key: 1,
-              value: "지 " + globalYear.value + "-01"
+              value: "귀 " + globalYear.value + "-01"
           },
           {
               key: 2,
-              value: "지 " + globalYear.value + "-02"
+              value: "귀 " + globalYear.value + "-02"
           },
           {
               key: 3,
-              value: "지 " + globalYear.value + "-03"
+              value: "귀 " + globalYear.value + "-03"
           },
           {
               key: 4,
-              value: "지 " + globalYear.value + "-04"
+              value: "귀 " + globalYear.value + "-04"
           },
           {
               key: 5,
-              value: "지 " + globalYear.value + "-05"
+              value: "귀 " + globalYear.value + "-05"
           },
           {
               key: 6,
-              value: "지 " + globalYear.value + "-06"
+              value: "귀 " + globalYear.value + "-06"
           },
           {
               key: 7,
-              value: "지 " + globalYear.value + "-07"
+              value: "귀 " + globalYear.value + "-07"
           },
           {
               key: 8,
-              value: "지 " + globalYear.value + "-08"
+              value: "귀 " + globalYear.value + "-08"
           },
           {
               key: 9,
-              value: "지 " + globalYear.value + "-09"
+              value: "귀 " + globalYear.value + "-09"
           },
           {
               key: 10,
-              value: "지 " + globalYear.value + "-10"
+              value: "귀 " + globalYear.value + "-10"
           },
           {
               key: 11,
-              value: "지 " + globalYear.value + "-11"
+              value: "귀 " + globalYear.value + "-11"
           },
           {
               key: 12,
-              value: "지 " + globalYear.value + "-12"
+              value: "귀 " + globalYear.value + "-12"
           },
           {
               key: 13,
-              value: "지 " + (globalYear.value + 1) + "-1"
+              value: "귀 " + (globalYear.value + 1) + "-1"
           },
       ])
       let statuses = reactive({
@@ -403,7 +441,6 @@ export default defineComponent({
             filter.afterTheDueDate = classificationOfReport.afterTheDueDate
           }
           // trigger.value = true
-
           dataSource.value = dataOrigin.value.filter((item: any) => {
             return filter.statuses.includes(item.status)
               && filter.reportType.includes(item.reportType)
@@ -413,6 +450,8 @@ export default defineComponent({
                 || (filter.afterTheDueDate ? (item.index === 0 && item.afterDeadline === true) : false))
               && item.company.code.toLocaleLowerCase().includes(filter.companyCode.toLocaleLowerCase())
               && item.company.name.toLocaleLowerCase().includes(filter.companyName.toLocaleLowerCase())
+              && (filter.manageCompactUserId === null || filter.manageCompactUserId === item.companyServiceContract.manageCompactUser?.id)
+              && (filter.compactSalesRepresentativeId === null || filter.compactSalesRepresentativeId === item.companyServiceContract.compactSalesRepresentative?.id)
           })
       }
 
@@ -461,11 +500,56 @@ export default defineComponent({
           dataCall.value = {
               reportId: data.reportId,
               companyId: data.companyId,
+              senderName: data.company.name,
+              receiverName: userInfor.value.username,
+              receiverAddress: userInfor.value.email,
               imputedYear: data.imputedYear,
           }
           modalSendEmail.value = true
       }
+      
+      let entering = 0
+      let inputDeadline = 0
+      let adjusting  = 0
+      let adjustmentDeadline = 0
 
+      let oneMonthStatus = 0
+      let sixMonthStatus = 0
+  
+      watch(dataSource, (value) => {
+        const result = value.reduce((acc: any, curr: any ) => {
+          return [
+            acc[0] + (curr.status === 10 ? 1 : 0),
+            acc[1] + (curr.status === 20 ? 1 : 0),
+            acc[2] + (curr.status === 30 ? 1 : 0),
+            acc[3] + (curr.status === 40 ? 1 : 0),
+            acc[4] + (curr.reportType === 1 ? 1 : 0),
+            acc[5] + (curr.reportType === 6 ? 1 : 0),
+          ]
+        }, [0, 0, 0, 0, 0, 0])
+        entering = result[0]
+        inputDeadline = result[1]
+        adjusting = result[2]
+        adjustmentDeadline = result[3]
+        oneMonthStatus = result[4]
+        sixMonthStatus = result[5]
+
+      }, {deep: true})
+
+    const customTextSummaryEntering = () =>  `입력중 (${entering})`
+    const customTextSummaryInputDeadline = () =>  `입력마감 (${inputDeadline})`
+    const customTextSummaryAdjusting = () =>  `조정중 (${adjusting})`
+    const customTextSummaryAdjustmentDeadline = () =>  `조정마감 (${adjustmentDeadline})`
+
+    const customTextSummaryOneMonth = () =>  `매월 (${oneMonthStatus})`
+    const customTextSummarySixMonth = () =>  `반기 (${sixMonthStatus})`
+    const managerCompactUserList = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.manageCompactUser?.name, id: i.companyServiceContract.manageCompactUser?.id})).filter((i:any) => !!i.name))
+    const managerSalesRepresentative = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.compactSalesRepresentative?.name, id: i.companyServiceContract.compactSalesRepresentative?.id})).filter((i:any) => i.name))
+
+    const convertToDate = (date: number | null) => {
+      if (date === null) return null
+      return date.toString().slice(0, 4) + '-' + date.toString().slice(4)
+    };
       return {
           modalSendEmail,
           // arraySelectBox,
@@ -473,6 +557,15 @@ export default defineComponent({
           searching, closePopup, openModalStatus, changeStatusRowTable, closePopupPrint, actionPrint, closeSendEmail, actionSendEmail,
           searchMonth,
           classificationOfReport,
+          customTextSummaryEntering,
+          customTextSummaryInputDeadline,
+          customTextSummaryAdjusting,
+          customTextSummaryAdjustmentDeadline,
+          customTextSummaryOneMonth,
+          customTextSummarySixMonth,
+          managerCompactUserList,
+          managerSalesRepresentative,
+          convertToDate
       }
   }
 })
