@@ -116,6 +116,9 @@ export const basicDeduction = (idRelation: any) => {
   return obj[0].label;
 };
 export const disabledType = (idRelation: any) => {
+  if(!idRelation){
+    return '';
+  }
   let disType: any = enum2Entries(DisabledType).map((value) => ({
     id: value[1],
     text: value[0],
@@ -127,6 +130,9 @@ export const disabledType = (idRelation: any) => {
   return obj[0].text;
 };
 export const maternityAndAdoption = (idRelation: any) => {
+  if(!idRelation){
+    return '';
+  }
   let mtAndAdoption: any = enum2Entries(MaternityAndAdoption).map((value) => ({
     id: value[1],
     text: value[0],
