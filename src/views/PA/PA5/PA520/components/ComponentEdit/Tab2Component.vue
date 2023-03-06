@@ -1,7 +1,7 @@
 <template>
     <div id="tab2-pa520"> 
-        <div class="header-text-1">공제</div> {{ JSON.stringify(originDataUpdate) ==  (dataDefaultGet)}}
-       <pre>{{ dataDefaultGet }}</pre> <pre>{{ JSON.stringify(originDataUpdate) }}</pre>
+      <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
+        <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -37,12 +37,12 @@
                 </a-row>
               </div>
 
-                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
+                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.nationalPensionSupportPercent }}
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
                 </a-form-item>
-                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
+                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.employeementInsuranceSupportPercent }}
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
@@ -133,11 +133,11 @@
             </a-col>
         </a-row>
         <div class="button-action">      
-          <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
+          <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
-            <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
-      
+          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
         </div>
+      </a-spin>
     </div>
 </template>
 <script lang="ts">
@@ -191,6 +191,7 @@ export default defineComponent({
         // ================== GRAPQL ====================================
         // query get config from screen cm-130
         const {
+          loading: loadingConfig,
           result: resultConfig,
         } = useQuery(
               queriescm130.getWithholdingConfig,
@@ -222,12 +223,12 @@ export default defineComponent({
                         ...val,
                         price: price
                     })
-                }
-                    
+                }   
             })
         })
 
         const {
+            loading: loadingEmployeeWageDaily,
             refetch: refectchDetail,
             onResult: resApiGetEmployeeWageDaily,
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
@@ -235,10 +236,10 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
 
-        resApiGetEmployeeWageDaily((e: any) => {
+        resApiGetEmployeeWageDaily((dtValue: any) => {
             trigger.value = false
-            if (e.data) {
-                let res = e.data.getEmployeeWageDaily
+            if (dtValue.data) {
+                let res = dtValue.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
@@ -248,9 +249,6 @@ export default defineComponent({
        
                 originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
                 originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
-               
-                originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent
                 originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
                 originDataUpdate.value.input.workingDays = res.workingDays
                 originDataUpdate.value.input.dailyWage = res.dailyWage
@@ -295,12 +293,12 @@ export default defineComponent({
             valueConvert.input.nationalPensionSupportPercent = 0
           if (valueConvert.input.employeementInsuranceSupportPercent == null)
             valueConvert.input.employeementInsuranceSupportPercent = 0
-                
+
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkChangeValueEditTab2PA520 = false
-            } else {   
+          } else {   
               store.state.common.checkChangeValueEditTab2PA520 = true
-            }
+          }
         }, { deep: true })
 
         // Event change value default
@@ -314,13 +312,13 @@ export default defineComponent({
             }
         }, { deep: true })
         // call api on tab 2 for the first time
-        if (store.state.common.idRowChangePa520 != 0) {
+        if (store.state.common.idRowChangePa520 != 0) { 
             originDataDetail.value.employeeId = store.state.common.idRowChangePa520
             trigger.value = true
             refectchDetail()
         }
         // call api on tab 2 next time
-        watch(() => store.state.common.idRowChangePa520, (res) => {
+        watch([()=> props.idRowEdit,() => store.state.common.idRowChangePa520], (res) => {
           if (!store.state.common.checkChangeValueEditTab2PA520) {
               originDataDetail.value.employeeId = store.state.common.idRowChangePa520
               trigger.value = true
@@ -336,16 +334,17 @@ export default defineComponent({
             totalDeduction.value = total
         }, { deep: true })
         watch(() => store.state.common.actionSaveTab2PA520, (res) => {
-            updateDeduction()
+            actionUpdated()
         }, { deep: true })
-
-        // If checkbox 4대보험 공제 여부 change is call calculate function
-        // watch([
-        //   () => originDataUpdate.value.input.nationalPensionDeduction,
-        //   () => originDataUpdate.value.input.healthInsuranceDeduction,
-        //   () => originDataUpdate.value.input.employeementInsuranceDeduction,], ([res1, res2, res3]) => {
-        //     callFuncCalculate()
-        //   })
+   
+        watch(() => store.state.common.actionUpdateTab2PA520, () => {
+          if (!isBtnYellow.value) {
+            actionUpdated()
+            originDataDetail.value.employeeId = props.idRowEdit
+            trigger.value = true
+            refectchDetail()
+          } 
+        })
         
         // if any change in tab 2 color button is change color orage
         watch([
@@ -363,6 +362,7 @@ export default defineComponent({
             isBtnYellow.value = true
           } else {
             isBtnYellow.value = false
+            validateCalculate.value = false
           }
         })
         // clean but the field is not needed when comparing object
@@ -378,7 +378,7 @@ export default defineComponent({
           return  object
         }
         // ================== FUNCTION ==================================
-        const updateDeduction = () => {
+      const actionUpdated = () => {
           if (isBtnYellow.value) {
             validateCalculate.value = true
           } else {
@@ -448,7 +448,7 @@ export default defineComponent({
                 originDataUpdate.value.input.workingDays : 0)
             originDataUpdate.value.input.dailyWage = dailyWage;
         }
-      const onChangeWorkingDays = () => {
+        const onChangeWorkingDays = () => {
           if (originDataUpdate.value.input.monthlyPaycheck) {
                 let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
                     originDataUpdate.value.input.workingDays : 0));
@@ -460,8 +460,8 @@ export default defineComponent({
             }
         }
         return {dataDefaultGet,
-            store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
-            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate
+            store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate
         };
     },
 });
