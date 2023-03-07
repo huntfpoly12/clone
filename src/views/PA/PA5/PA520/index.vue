@@ -1,5 +1,14 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
+     checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
+    checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
+    checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
+    activeAddRowPA520: {{ store.state.common.activeAddRowPA520 }}<br>
+    idRowChangePa520: {{ store.state.common.idRowChangePa520 }}<br>
+    actionChangeComponent: {{ actionChangeComponent }}<br>
+    addRowBtOnclick: {{ addRowBtOnclick  }}<br>
+    modalChangeValueEdit : {{  modalChangeValueEdit }}
+    {{ idRowEdit }}
     <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="2" style="padding-right: 10px">
@@ -138,7 +147,7 @@
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
     <!-- confirm for case add -->
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오fff" @checkConfirm="confirmAndSaveAdd" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted } from "vue"
@@ -343,6 +352,7 @@ export default defineComponent({
           // for case Add  but click other row
           if (store.state.common.checkChangeValueAddPA520 == true) {
             modalChangeValueAdd.value = true
+            addRowBtOnclick.value = false
             return
           } else { idRowEdit.value = val.data.employeeId }
           
@@ -428,7 +438,8 @@ export default defineComponent({
             addRowBtOnclick.value = false
             resetAddComponent.value++ // increment one unit to reset the newly created form
             onAddBtClick()
-          } else {//Not save
+          } else {//Not save 
+            alert()
             // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store

@@ -10,7 +10,7 @@
                   </a-form-item> -->
                   <a-form-item label="지급연월" label-align="left" class="clr mb-0 label-select">
                       <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
-                          v-model:valueInput="searchMonth" type="1" />
+                          v-model:valueInput="searchMonth" type="2" />
                   </a-form-item>
                   <!-- <a-form-item label="" label-align="left" class="clr mb-0 label-select">
                   </a-form-item> -->
@@ -124,23 +124,19 @@
                   </template>
                   <DxColumn caption="귀속연월" cell-template="imputed" />
                   <template #imputed="{ data }">
-                    <a-tooltip color="black" placement="topLeft" :title="data.data.reportType === 1 ? `귀속기간 ${convertToDate(data.data?.imputedFinishYearMonth)}` : `소득별 마감현황 ${convertToDate(data.data.imputedStartYearMonth)}-${convertToDate(data.data.imputedFinishYearMonth)}`">
-                      <div class="tag-custom-1">
-                        {{ data.data.imputedYear }}-{{
-                            data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
-                        }}
-                      </div>
-                    </a-tooltip>
+                    <div class="tag-custom-1">
+                      {{ data.data.imputedYear }}-{{
+                          data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
+                      }}
+                    </div>
                   </template>
                   <DxColumn caption="지급연월" cell-template="payment" />
                   <template #payment="{ data }">
-                    <a-tooltip color="black" placement="topLeft" :title="data.data.reportType === 1 ? `지급기간 ${convertToDate(data.data?.imputedFinishYearMonth)}` : `지급기간 ${convertToDate(data.data.paymentStartYearMonth)}-${convertToDate(data.data.paymentFinishYearMonth)}`">
-                      <div class="tag-custom-2">
-                        {{ data.data.paymentYear }}-{{
-                            data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
-                        }}
+                    <div class="tag-custom-2">
+                      {{ data.data.paymentYear }}-{{
+                          data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
+                      }}
                     </div>
-                    </a-tooltip>
                   </template>
                   <DxColumn caption="신고 주기" cell-template="reportType" />
                   <template #reportType="{ data }">
@@ -199,6 +195,7 @@
                   <DxColumn caption="(20) 차월이월 환급세액계" data-field="nextMonthRefundTaxAmount" format="#,###" />
                   <DxColumn caption="(21) 환급 신청액" data-field="refundApplicationAmount" format="#,###" />
                   <DxSummary >
+                    <DxTotalItem column="사업자코드" summary-type="count"  display-format="전체: {0}"/>
                     <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryEntering"/>
                     <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryInputDeadline"/>
                     <DxTotalItem show-in-column="마감 현황" cell-template="summaryStatus" :customize-text="customTextSummaryAdjusting"/>

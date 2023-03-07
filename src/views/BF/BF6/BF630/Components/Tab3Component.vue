@@ -100,7 +100,7 @@
       <a-spin :spinning="loadingIncomeBusinessPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사업자코드" data-field="company.code" />
@@ -142,6 +142,7 @@ import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
     DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup,GetStatusTable
@@ -287,17 +288,31 @@ export default defineComponent({
       refetchIncomeBusinessPayment()
     })
 
+    // ----------------request file---------
+
+    const selectionChanged = (event: any) => {
+    if (event.selectedRowsData)
+      companyIds = event.selectedRowsData.map((item: any) => {
+        return item.company.id
+      });
+    };
+    const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     // request file popup action
     const requestIncomeFile = () => {
-      dataRequestFile.value = {
-        companyIds : companyIds,
-        filter: originData,
-        emailInput: {
-          receiverName: userInfor.value.name,
-          receiverAddress: userInfor.value.email
+      if(companyIds.length) {
+        dataRequestFile.value = {
+          companyIds : companyIds,
+          filter: originData,
+          emailInput: {
+            receiverName: userInfor.value.name,
+            receiverAddress: userInfor.value.email
+          }
         }
+        modalRequestFile.value = true
+      }else {
+        notification('warning', messageDelNoItem);
       }
-      modalRequestFile.value = true
+      
     }
 
     let productionStatusArr = ref<any>([]);
@@ -341,7 +356,8 @@ export default defineComponent({
       dataRequestFile,
       dateSubmission,
       productStatusSummary,
-      productionStatusData
+      productionStatusData,
+      selectionChanged
     }
   }
 })
