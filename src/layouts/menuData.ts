@@ -37,7 +37,7 @@ export default [
 
   { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110" },
 
-  { name: "통장관리", url: "#", id: "cm-121" },
+  { name: "통장관리", url: "/dashboard/cm-121", id: "cm-121" },
   { name: "수급자관리", url: "#", id: "cm-124" },
   { name: "회계기타", url: "#", id: "cm-125" },
   { name: "계정코드", url: "#", id: "cm-126" },
