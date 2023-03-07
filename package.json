@@ -16,7 +16,7 @@
     "@trandung1291/common-tsv": "^0.0.4",
     "@types/file-saver-es": "^2.0.1",
     "@vue/apollo-composable": "^4.0.0-alpha.19",
-    "@vuepic/vue-datepicker": "^4.0.0",
+    "@vuepic/vue-datepicker": "^4.2.0",
     "ant-design-vue": "^3.2.11",
     "apollo-link-context": "^1.0.20",
     "axios": "^1.0.0",
