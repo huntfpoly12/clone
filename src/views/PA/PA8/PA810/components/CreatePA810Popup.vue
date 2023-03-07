@@ -1,5 +1,5 @@
 <template>
-  <a-modal class="form-modal" width="75%" v-model:visible="visible" title="취득신고 신규 등록" centered
+  <a-modal class="form-modal" width="60%" :bodyStyle="{'max-height': '90vh', 'overflow-y': 'scroll'}" v-model:visible="visible" title="취득신고 신규 등록" centered
            @cancel="$emit('closeModal')" :footer="null">
     <standard-form>
       <div class="form">
@@ -16,26 +16,28 @@
               </a-radio-group>
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="8">
             <DxField label="직원선택">
               <employ-select :arrayValue="employeeWages" :required="true"  v-model:valueEmploy="employeeWageSelected"/>
             </DxField>
           </a-col>
         </a-row>
         <a-row :gutter="[0, 10]" class="item-group">
-          <a-col span="12">
+          <a-col span="8">
             <DxField label="업체명">
               <default-text-box  v-model:valueInput="infoCompany.name" :disabled="true"
                                 placeholder="한글,영문(대문자) 입력 가능"/>
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="4" />
+          <a-col span="8">
             <DxField label="대표자명">
               <default-text-box v-model:valueInput="infoCompany.presidentName" :disabled="true"
                 placeholder="한글,영문(대문자) 입력 가능"/>
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="4" />
+          <a-col span="8">
             <DxField label="사업자등록번호">
               <biz-number-text-box
                 v-model:valueInput="infoCompany.bizNumber"
@@ -45,7 +47,8 @@
               />
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="4" />
+          <a-col span="8">
             <DxField label="사업장관리번호">
               <default-text-box  v-model:valueInput="infoCompany.adding" :disabled="true"
                 placeholder="한글,영문(대문자) 입력 가능"/>
@@ -54,29 +57,34 @@
         </a-row>
         <!-- 6 -->
         <a-row :gutter="[0, 10]" class="item-group">
-          <a-col span="12">
+          <div class="grid grid-cols-2">
+
+          </div>
+          <a-col span="8">
             <DxField label="성명">
               <default-text-box  v-model:valueInput="employeeWage.name" :disabled="true"
                 placeholder="한글,영문(대문자) 입력 가능"/>
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="4" />
+          <a-col span="8">
             <DxField label="주민등록번호">
               <id-number-text-box :disabled="true" v-model:valueInput="employeeWage.residentId" />
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="8">
             <DxField label="자격취득일(입사일)">
               <default-text-box v-model:valueInput="employeeWage.joinedAt"  :disabled="true" />
             </DxField>
           </a-col>
-          <a-col span="12">
+          <a-col span="4" />
+          <a-col span="8">
             <DxField label="월급여">
-              <default-text-box  v-model:valueInput="employeeWage.totalPay" :disabled="true"
-                placeholder="한글,영문(대문자) 입력 가능"/>
+              <text-number-box  :value="filters.formatCurrency(employeeWage.totalPay)" :disabled="true"
+                placeholder="한글,영문(대문자) 입력 가능" />
             </DxField>
           </a-col>
-          <a-col span="24">
+          <a-col span="12">
             <DxField label="대표자여부">
               <switch-basic v-model:valueSwitch="employeeWage.president" textCheck="O" textUnCheck="X" :disabled="true" />
             </DxField>
@@ -85,27 +93,28 @@
             <div class="item-wrap">
               <span class="item-wrap-title">외국인</span>
               <a-row :gutter="[7, 20]">
-                <a-col span="12">
+                <a-col span="8">
                   <DxField label="국적코드">
                     <div class="d-flex items-center gap-4">
                       <text-number-box
                         v-model:valueInput="formData.nationalityNumber"
                         placeholder=""
                         :required="!employeeWage.foreigner"
-                        :disabled="!employeeWage.foreigner || isChooseNationalPensionReport"
+                        :disabled="!employeeWage.foreigner"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_NATIONALITY_NUMBER" />
                     </div>
                   </DxField>
                 </a-col>
-                <a-col span="12">
+                <a-col span="4" />
+                <a-col span="8">
                   <DxField label="체류자격">
                     <div class="d-flex items-center gap-4">
-                      <text-number-box
+                      <default-text-box
                         v-model:valueInput="formData.stayQualification"
                         :required="!employeeWage.foreigner"
                         placeholder=""
-                        :disabled="!employeeWage.foreigner || isChooseNationalPensionReport"
+                        :disabled="!employeeWage.foreigner"
                       />
                       <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE" />
                     </div>
@@ -140,7 +149,7 @@
             <div class="item-wrap">
               <span class="item-wrap-title">국민연금</span>
               <a-row gutter="7">
-                <a-col span="12">
+                <a-col span="8">
                   <DxField label="취득부호">
                     <div class="flex items-center">
                       <text-number-box
@@ -153,7 +162,8 @@
                     </div>
                   </DxField>
                 </a-col>
-                <a-col span="12">
+                <a-col span="4" />
+                <a-col span="8">
                   <div class="h-full d-flex justify-content-start items-center">
                     <checkbox-basic
                       label="취득월 납부 희망여부"
@@ -170,7 +180,7 @@
             <div class="item-wrap">
               <span class="item-wrap-title">건강보험</span>
               <a-row gutter="7">
-                <a-col span="12">
+                <a-col span="8">
                   <DxField label="취득부호">
                     <div class="d-flex items-center">
                       <text-number-box
@@ -183,6 +193,8 @@
                     </div>
                   </DxField>
                 </a-col>
+                <a-col span="4" />
+
                 <a-col span="6">
                   <div class="h-full d-flex items-center">
                     <checkbox-basic
@@ -197,6 +209,7 @@
                     <checkbox-basic
                       label="피부양자신청"
                       v-model:valueCheckbox="formData.includeDependents"
+                      :disabled="isChooseHealthInsuranceReport"
                       />
                   </div>
                 </a-col>
@@ -229,7 +242,7 @@
                   />
                   </div>
                 </a-col>
-                <a-col span="9">
+                <a-col span="6">
                   <DxField label="계약종료일">
                     <div class="h-full flex items-center">
                       <date-time-box
@@ -264,7 +277,7 @@
                         </div>
                     </DxField>
                   </a-col>
-                  <a-col span="9" class="relative">
+                  <a-col span="6" class="relative">
                     <DxField label="보험료부과구분부호 및 사유" :style="'align-items: start'">
                       <div class="w-full flex flex-col gap-1">
                         <text-number-box
@@ -298,14 +311,14 @@
         <UploadFile @response-fileId="getFileId" />
       </div>
       <div class="mt-20 table-container">
-        <div class="grid grid-cols-12 items-center">
+        <div class="grid grid-cols-13 items-center">
           <div class="col-span-1 header flex">피부양자</div>
-          <div class="col-span-11">
-            <div class="grid grid-cols-11 items-center">
+          <div class="col-span-12">
+            <div class="grid grid-cols-12 items-center">
               <div class="row-span-2 header flex">성명</div>
               <div class="row-span-2 col-span-2 header flex">주민등록증</div>
               <div class="col-span-2 header flex">장애인, 극가유공자 부호</div>
-              <div class="col-span-4 header flex">외국인</div>
+              <div class="col-span-5 header flex">외국인</div>
               <div class="col-span-2 header flex">관계</div>
               <div class="bg-gray flex">
                 <span>종별부호</span>
@@ -320,7 +333,7 @@
                 <span>체류자격</span>
                 <SearchCodeButton :src="URL_CONST.URL_STAY_QUALIFICATION_CODE_DEPENDENT" />
               </div>
-              <div class="col-span-2 bg-gray flex">체류기간</div>
+              <div class="col-span-3 bg-gray flex">체류기간</div>
               <div class="bg-gray flex">관계 코드</div>
               <div class="bg-gray flex">내용</div>
               <!-- use v-loop employeeWage dependents-->
@@ -360,7 +373,7 @@
                     placeholder=""
                   />
                 </div>
-                <div class="bg-gray flex col-span-2">
+                <div class="bg-gray flex col-span-3">
                   <range-date-time-box
                     width="100%"
                     v-model:valueDate="dependent.contractExpiredDate"
@@ -532,7 +545,7 @@ export default defineComponent({
     //  get Employee Wage
     watch(employeeWageSelected, (value) => {
       if (value) {
-        employeeWage.value = employeeWages.value.find((item: any) => item.employeeId === value);
+        employeeWage.value = employeeWages.value.find((item: any) => item.employeeId === value)
       }
     }, {deep: true});
 
@@ -575,6 +588,8 @@ export default defineComponent({
           input: input
         }).then((res) => {
           notification('success', '저장되었습니다.');
+          Object.assign(formData, INITIAL_DATA.InitialFormCreate);
+          employeeWageSelected.value = null;
           emit('handleCreate')
         }).catch((err) => {
           console.log('err', err)
@@ -615,6 +630,7 @@ export default defineComponent({
       getFileId,
       dpRelation,
       getCodeOrLabel,
+      filters
     };
   }
 });
