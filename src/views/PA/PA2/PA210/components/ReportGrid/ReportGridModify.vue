@@ -313,10 +313,12 @@ export default defineComponent({
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
     doneChangeStatus(() => {
-        notification('success', `업부상태 변경되었습니다!`)
+      notification('success', `업부상태 변경되었습니다!`)
+      setModalVisible()
     })
     errChangeStatus((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
+      setModalVisible()
     })
 
     // The above code is a function that is called when the user clicks the "수정" button.
@@ -325,7 +327,20 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 61 && arrData[index][4]) {
+        if (
+            index >= 4 && index <= 61 &&
+            arrData[index][4] &&
+          (
+            arrData[index+1][5] != '' ||
+            arrData[index+1][6] != '' ||
+            arrData[index+1][7] != '' ||
+            arrData[index+1][8] != '' ||
+            arrData[index+1][9] != '' ||
+            arrData[index+1][10] != '' ||
+            arrData[index+1][11] != '' ||
+            arrData[index+1][12] != ''
+          )
+          ) {
           statement.push({
             code: arrData[index][4],
             numberOfPeopleModified: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
