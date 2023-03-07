@@ -3,7 +3,7 @@
         :width="500">
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
-                <DxButton :text="'귀' + processKeyPA620.imputedYear + ' ' + '-' + $filters.formatMonth(month1)"
+                <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
                 :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
                 <div class="d-flex-center">
                 <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
@@ -11,7 +11,7 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" />
+            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true"/>
         </a-form-item>
 
         <div class="text-align-center mt-30">
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed,onActivated, onDeactivated } from 'vue'
+import { defineComponent, reactive, ref, watch, computed } from 'vue'
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import DxSelectBox from "devextreme-vue/select-box";

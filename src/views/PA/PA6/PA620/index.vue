@@ -150,7 +150,6 @@
                                 <DxDataGrid key-expr="id" :data-source="dataCustomRes" :show-borders="false"
                                     :column-auto-width="true" :allow-column-reordering="move_column"
                                     :show-column-headers="false" :allow-column-resizing="colomn_resize">
-                                    <!-- <DxScrolling mode="standard" show-scrollbar="always" /> -->
                                     <DxColumn :caption="globalYear + ' 귀속월'" cell-template="col-first"
                                         data-type="string" />
                                     <template #col-first="{ data }">
@@ -228,9 +227,9 @@
                     </a-spin>
                 </a-col>
                 <!-- {{ processKeyPA620 }} processKeyPA620 <br/>
-                {{ valueCallApiGetIncomeProcessBusinesses }} valueCallApiGetIncomeProcessBusinesses <br/> -->
+                {{ statusButton }} statusButton <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
-                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave"/>
+                    @createdDone="createdDone" ref="formRef" @noSave="changeNoSave" @statusDone="statusDone"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
                     :dateType="dateType" @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
@@ -409,6 +408,7 @@ export default defineComponent({
             store.state.common.processKeyPA620.paymentMonth = data.paymentMonth;
         }  
         const showDetailSelected = (data: any) => {
+          console.log(`output->data`,data)
           if(!isRunOnce.value){
             isDisabledForm.value = false;
           }
@@ -433,6 +433,10 @@ export default defineComponent({
         }
         const createdDone = () => {
             refetchData()
+        }
+        const statusDone = (emitVal: any)=> {
+            refetchData();
+            statusButton.value = emitVal;
         }
         const addMonth = (month: number) => {
             dataModalCopy.value = month;
@@ -464,7 +468,7 @@ export default defineComponent({
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, dateType, isDisabledForm,
             setUnderline, createdDone, addMonth, saving, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            isCompareForm, valueCallApiGetIncomeProcessBusinesses
+            isCompareForm, valueCallApiGetIncomeProcessBusinesses,statusDone
         };
     },
 });

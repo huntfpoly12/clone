@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchAreaTab2 />
+    <SearchArea :tab1="false"/>
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -23,45 +23,39 @@
         </a-tooltip>
       </a-col>
     </a-row>
+    <!-- {{ dataSource }} dataSource <br/> -->
     <div class="content-grid">
       <a-spin :spinning="searchLocalIncomeLoading" size="large">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="companyId"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn caption="사업자코드" data-field="company.code" />
+          <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="상호 주소" cell-template="companyName" />
           <template #companyName="{ data }">
-            {{ data.data.company.name }}
-            {{ data.data.company.address }}
+            {{ data.data.name }}
+            {{ data.data.address }}
           </template>
-          <DxColumn caption="귀속연월" cell-template="inputYearMonth" />
+          <DxColumn caption="귀속연월" cell-template="inputYearMonth"  width="102px"/>
           <template #inputYearMonth="{ data }">
+            <!-- {{ data.data.imputedYear }} -->
             <a-tooltip color="black">
               <template #title>삭제</template>
-              <DxButton
-                :text="'귀' + data.data.imputedYear + '-' + data.data.imputedMonth"
-                :style="{ color: 'white', backgroundColor: 'gray' }"
-                :height="'33px'"
-              />
+              <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
+                color: 'white',
+                backgroundColor: 'gray',
+                height: $config_styles.HeightInput
+              }" class="btn-date" />
             </a-tooltip>
           </template>
-          <DxColumn caption="지급연월" cell-template="paymentYearMonth" />
+          <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
           <template #paymentYearMonth="{ data }">
-            <DxButton
-              :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth"
-              :style="{ color: 'white', backgroundColor: 'black' }"
-              :height="'33px'"
-            />
+            <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
+              color: 'white',
+              backgroundColor: 'black',
+              height: $config_styles.HeightInput
+            }" class="btn-date" />
           </template>
           <DxColumn caption="신고 주기" cell-template="reportType" />
           <template #reportType="{ data }">
@@ -75,7 +69,7 @@
             <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
             <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
           </template>
-          <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" />
+          <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" format="#,###" />
           <DxColumn caption="최종마감일시" data-field="refund" />
           <DxColumn caption="최종제작요청일시" data-field="wageIncomeSimplified" />
           <DxColumn caption="제작현황" cell-template="productionStatus" />
@@ -85,26 +79,29 @@
         </DxDataGrid>
       </a-spin>
     </div>
-    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :data="requestFileData" tab-name="tab2" @cancel="modalStatus = false" />
+    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :data="requestFileData" tab-name="tab2"
+      @cancel="modalStatus = false" />
   </div>
 </template>
   
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch } from 'vue';
-import SearchAreaTab2 from './SearchAreaTab2.vue';
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
+import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxButton } from 'devextreme-vue/select-box';
+import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
+import dayjs from 'dayjs';
+import { formatMonth } from '../utils/index'
 
 export default defineComponent({
   components: {
-    SearchAreaTab2,
+    SearchArea,
     RequestFilePopup,
     DxButton,
     DxDataGrid,
@@ -135,7 +132,6 @@ export default defineComponent({
         reportId: 2,
       },
     });
-    const eletroFillingTrigger = ref(true);
     const productionStatus = ref();
     // const {
     //   result: eletroFillingResult,
@@ -153,36 +149,75 @@ export default defineComponent({
 
     //Search with holding and data source
 
-    const dataSource = ref([]);
-    const searchLocalIncomeTrigger = ref(true);
+    const dataSource = ref<any[]>([]);
+    const filteredDataSource = ref<any[]>([]);
+    let searchLocalIncomeParam = ref({
+      paymentMonth: filterBF620.value.paymentMonth,
+      paymentYear: filterBF620.value.paymentYear,
+    })
     const {
       result: searchLocalIncomeResult,
       loading: searchLocalIncomeLoading,
-      refetch: searchLocalIncomeRefetch,
       onError: searchLocalIncomeError,
-      variables,
-    } = useQuery(queries.searchLocalIncomeTaxElectronicFilings, { filter: filterBF620.value }, () => ({
-      enabled: searchLocalIncomeTrigger.value,
+    } = useQuery(queries.searchLocalIncomeTaxElectronicFilingsByYearMonth, searchLocalIncomeParam, () => ({
       fetchPolicy: 'no-cache',
     }));
     watch(searchLocalIncomeResult, (newVal) => {
-      let data = newVal.searchLocalIncomeTaxElectronicFilings;
-      searchLocalIncomeTrigger.value = false;
-      dataSource.value = data;
+      let data = newVal.searchLocalIncomeTaxElectronicFilingsByYearMonth.map((item: any) => {
+        let arrData={};
+        if (item) {
+          arrData = {
+            code: item.company?.code,
+            name: item.company?.name,
+            address: item.company?.address,
+            manageUserId: item.companyServiceContract.manageUserId,
+            salesRepresentativeId: item.companyServiceContract.salesRepresentativeId,
+            active: item.companyServiceContract.active,
+            reportType: item.reportType,
+            afterDeadline: item.afterDeadline,
+            index: item.index,
+            localIncomeTaxAmount: item?.localIncomeTaxAmount,
+            refund: item?.refund,
+            wageIncomeSimplified: item?.wageIncomeSimplified,
+            companyId: item.companyId,
+            paymentYear: item.paymentYear,
+            paymentMonth: item.paymentMonth,
+            imputedYear: item.imputedYear,
+            imputedMonth: item.imputedMonth,
+          }
+        }
+        return arrData;
+      });
+      let result = Object.values(data.reduce((acc: any, curr: any) => {
+        if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
+          acc[curr.companyId] = curr;
+        }
+        return acc;
+      }, {}));
+      dataSource.value = [...result];
+      filteredDataSource.value = [...result];
     });
     searchLocalIncomeError((res: any) => {
       notification('error', res.message)
     })
-    
+    watchEffect(() => {
+      if (filterBF620.value.paymentYear && filterBF620.value.paymentMonth) {
+        searchLocalIncomeParam.value = {
+          paymentMonth: filterBF620.value.paymentMonth,
+          paymentYear: filterBF620.value.paymentYear,
+        }
+      }
+    })
+
 
     //on Search
 
     watch(
       () => props.search,
       () => {
-        variables.value = { filter: filterBF620.value };
-        searchLocalIncomeTrigger.value = true;
-        searchLocalIncomeRefetch();
+        // variables.value = { filter: filterBF620.value };
+        // searchLocalIncomeTrigger.value = true;
+        // searchLocalIncomeRefetch();
       },
       { deep: true }
     );
@@ -208,7 +243,6 @@ export default defineComponent({
     };
     return {
       filterBF620,
-      variables,
       searchLocalIncomeLoading,
       move_column,
       colomn_resize,
@@ -218,12 +252,14 @@ export default defineComponent({
       modalStatus,
       requestFileData,
       userInfor,
+      formatMonth,
     };
   },
 });
 </script>
 <style scoped lang="scss">
 @import '../style/style.scss';
+
 .lable-item {
   display: inline-block;
 }

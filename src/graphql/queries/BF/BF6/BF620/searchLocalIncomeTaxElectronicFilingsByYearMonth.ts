@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  query searchWithholdingTaxElectronicFilingsByYearMonth(
+  query searchLocalIncomeTaxElectronicFilingsByYearMonth(
     $paymentYear: Int!
     $paymentMonth: Int!
   ) {
-    searchWithholdingTaxElectronicFilingsByYearMonth(
+    searchLocalIncomeTaxElectronicFilingsByYearMonth(
       paymentYear: $paymentYear
       paymentMonth: $paymentMonth
     ) {
@@ -17,7 +17,7 @@ export default gql`
       reportType
       index
       afterDeadline
-      totalCollectedTaxAmount
+      localIncomeTaxAmount
       statusUpdatedAt
       lastProductionRequestedAt
       company {
