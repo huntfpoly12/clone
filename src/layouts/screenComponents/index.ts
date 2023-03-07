@@ -36,6 +36,9 @@ const BF630 = defineAsyncComponent(() =>
 const CM110 = defineAsyncComponent(() =>
     import("@/views/CM/CM1/CM110/index.vue")
 );
+const CM121 = defineAsyncComponent(() =>
+    import("@/views/CM/CM1/CM121/index.vue")
+);
 const CM130 = defineAsyncComponent(() =>
     import("@/views/CM/CM1/CM130/index.vue")
 );
@@ -117,6 +120,7 @@ export {
     BF650,
     BF630,
     CM110,
+    CM121,
     CM130,
     PA110,
     PA120,

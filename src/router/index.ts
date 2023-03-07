@@ -119,6 +119,10 @@ const routes = [
         component: () => import("../views/CM/CM1/CM110/index.vue"),
       },
       {
+        path: "cm-121",
+        component: () => import("../views/CM/CM1/CM121/index.vue"),
+      },
+      {
         path: "cm-130",
         component: () => import("../views/CM/CM1/CM130/index.vue"),
       },
