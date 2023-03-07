@@ -245,7 +245,18 @@ export default defineComponent({
       // create data of statementAndAmountOfTaxPaids
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if ( index >= 4 && index <= 32 && (arrData[index][5] != '' || arrData[index][6] != '' || arrData[index][7] != '' || arrData[index][8] != '' || arrData[index][9] != '' || arrData[index][10] != '' || arrData[index][11] != '' ||  arrData[index][12] != '')) {
+        if (
+            index >= 4 && index <= 32 &&
+            (
+              arrData[index][5] != '' ||
+              arrData[index][6] != '' ||
+              arrData[index][7] != '' ||
+              arrData[index][8] != '' ||
+              arrData[index][9] != '' ||
+              arrData[index][10] != '' ||
+              arrData[index][11] != '' ||
+              arrData[index][12] != ''
+            )) {
           statement.push({
             code: arrData[index][4],
             numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
