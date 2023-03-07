@@ -11,7 +11,7 @@
       </a-col>
       <a-col style="display: flex">
         <div>
-          <label class="lable-item ml-15">제출연월일:</label>
+          <label class="lable-item ml-15">작성일(지방소득세납부서:</label>
           <date-time-box width="150px" default="2022-12-12" dateFormat="YYYY-MM-DD" />
         </div>
         <a-tooltip placement="topLeft" color="black">
@@ -55,7 +55,7 @@
               />
             </a-tooltip>
           </template>
-          <DxColumn caption="귀속연월" cell-template="paymentYearMonth" />
+          <DxColumn caption="지급연월" cell-template="paymentYearMonth" />
           <template #paymentYearMonth="{ data }">
             <DxButton
               :text="'귀' + data.data.paymentYear + '-' + data.data.paymentMonth"

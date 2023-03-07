@@ -41,7 +41,7 @@
               :focusedRowIndex="0"
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
-              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
               <DxExport :enabled="true" />
               <DxToolbar>
                 <DxItem location="after" template="pagination-table" />
@@ -141,7 +141,8 @@
                 caption="소득구분"
                 cell-template="grade-cell"
                 width="300"
-                data-field="incomeTypeCode"
+                data-field="TypeCodeAndName"
+                :calculateCellValue="calculateIncomeTypeCodeAndName" 
               />
               <template #grade-cell="{ data }" class="custom-action">
                 <income-type
@@ -606,8 +607,8 @@ export default defineComponent({
       isNewRow.value = false;
       await refetchData();
       // previousRowData.value = { ...res.data.createEmployeeBusiness }
-      focusedRowKey.value = res.data.createEmployeeBusiness.employeeId;
-      selectRowKeyAction.value = res.data.createEmployeeBusiness.employeeId;
+      focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
+      selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
       valueCallApiGetEmployeeBusiness.incomeTypeCode =
         dataShow.value.incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = parseInt(
@@ -737,9 +738,9 @@ export default defineComponent({
       if (res) actionDeleteApi(valueCallApiGetEmployeeBusiness);
     };
     const modalHistory = () => (modalHistoryStatus.value = true);
-    const formItems = [
-        { dataField: 'name', label: 'Name' },
-      ]
+    function calculateIncomeTypeCodeAndName(rowData: any) {
+            return rowData.incomeTypeCode + ' ' + rowData.incomeTypeName;
+        }
 
     return {
       store,
@@ -782,7 +783,8 @@ export default defineComponent({
       Message,
       // onRowClick,
       formWrapper,
-      changeRadioForeigner
+      changeRadioForeigner,
+      calculateIncomeTypeCodeAndName
     };
   },
 });

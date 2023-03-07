@@ -2,12 +2,8 @@
   <div class="search-group">
     <a-row>
       <a-col>
-        <div class="search-date">
-          <span class="search-text mt-5">귀속연월</span>
-          <div class="search-date">
-            <month-picker-box-custom v-model:valueDate="month1" bgColor="gray"></month-picker-box-custom>
-          </div>
-          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10">
+        <div class="search-date" style="margin-left: 181px;">
+          <a-form-item label="신고주기" label-align="left" class="mb-0">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
             <checkbox-basic size="14" label="정기" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
@@ -15,7 +11,7 @@
         </div>
         <div class="search-date">
           <span class="search-text mt-5">지급연월</span>
-          <div class="search-date">
+          <div>
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
           <a-form-item label="신고구분" label-align="right" class=" ml-10">
@@ -27,12 +23,12 @@
       <a-col>
         <div class="search-production">
           <a-form-item label="최종제작상태">
-            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작전'" :textUnCheck="'제작후'" />
+            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작후'" :textUnCheck="'제작전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
           <div class="mt-5 production-check">
-            <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
+            <CheckboxGroup :disabled="!filterBF620.beforeProduction" :options="productionStatusesCheckbox"
               v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
@@ -74,7 +70,6 @@ export default defineComponent({
     const filterBF620 = computed(() => store.state.common.filterBF620);
     const radioCheckForeigner = ref([]);
     const foreigner = ref();
-    const month1: any = ref(dayjs().format('YYYY-MM'));
     const month2: any = ref(dayjs().format('YYYY-MM'));
     let reportType = reactive({
       checkbox1: true,
@@ -116,23 +111,10 @@ export default defineComponent({
       },
       { deep: true }
     );
-    // watch filterBF620.beforeProduction to change value
-    watch(
-      () => filterBF620.value.beforeProduction,
-      (newValue) => {
-        if (newValue) {
-        }
-      }
-    );
     //watch date
-    watch(month1, (newVal: any) => {
-      if (newVal) {
-        filterBF620.value.imputedYear = +month1.value.toString().slice(0, 4);
-        filterBF620.value.imputedMonth = +month1.value.toString().slice(4, 6);
-      }
-    });
     watch(month2, (newVal: any) => {
       if (newVal) {
+        console.log(`output-month2`,)
         filterBF620.value.paymentYear = +month2.value.toString().slice(0, 4);
         filterBF620.value.paymentMonth = +month2.value.toString().slice(4, 6);
       }
@@ -149,7 +131,6 @@ export default defineComponent({
       radioCheckForeigner,
       foreigner,
       filterBF620,
-      month1,
       month2,
       reportTypeCheckbox,
       productionStatusesCheckbox,

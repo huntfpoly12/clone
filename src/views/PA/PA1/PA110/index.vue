@@ -238,7 +238,7 @@
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
-                            <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
+                            <DxColumn width="200" caption="사원" cell-template="tag" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
                                     <employee-info :idEmployee="data.data.employee.employeeId" :idCardNumber="data.data.employee.residentId"
@@ -246,13 +246,13 @@
                                         :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                                 </div>
                             </template>
-                            <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay"
+                            <DxColumn css-class="money-column" width="75" caption="급여" data-field="totalPay"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" width="75" caption="공제" cell-template="total-deduction" data-field="totalDeduction"
+                            <DxColumn css-class="money-column" width="75" caption="공제" cell-template="total-deduction" data-field="totalDeduction"
                                 format="fixedPoint" />
                             <template #total-deduction="{ data }">
                                 <a-tooltip placement="top">
-                                    <template #title>소득세 {{ $filters.formatCurrency(data.data.incomePayment) }} / 지방소득세
+                                    <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
                                         {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
                                     </template>
                                     <span>
@@ -260,9 +260,9 @@
                                     </span>
                                 </a-tooltip>
                             </template>
-                            <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment"
+                            <DxColumn css-class="money-column" width="120" caption="차인지급액" data-field="actualPayment"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" class="min-w-240" caption="비고"
+                            <DxColumn class="min-w-240" caption="비고"
                                 cell-template="four-major-insurance" />
                             <template #four-major-insurance="{ data }">
                                 <div class="custom-action">
@@ -379,6 +379,7 @@ export default defineComponent({
         const dataRows = ref([])
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
+        const trigger = ref<boolean>(true)
         let status = ref();
         const originData = ref({
             companyId: companyId,
@@ -397,6 +398,7 @@ export default defineComponent({
             result: resIncomeProcessWages,
             loading: loadingIncomeProcessWages
         } = useQuery(queries.getIncomeProcessWages, originData, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         // get data table detail getIncomeProcessWages
@@ -528,7 +530,8 @@ export default defineComponent({
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
-            refetchDataProcessIncomeWages() //reset data table 1
+            // refetchDataProcessIncomeWages() //reset data table 1
+            trigger.value = true; //reset data table 1
             refetchDataTaxPayInfo() //reset data table 2
         })
 
@@ -619,7 +622,9 @@ export default defineComponent({
         successChangeIncomeProcess(e => {
             notification('success', `업데이트 완료!`)
             originData.value.imputedYear = globalYear.value
-            refetchDataProcessIncomeWages()
+            isRunOnce.value = true;
+            // refetchDataProcessIncomeWages()
+            trigger.value = true; //reset data table 1
         })
 
         /**
@@ -661,7 +666,8 @@ export default defineComponent({
                     store.state.common.processKeyPA110.paymentYear = globalYear.value
                     originData.value.imputedYear = globalYear.value
                     originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
-                    refetchDataProcessIncomeWages() //reset data table 1
+                    // refetchDataProcessIncomeWages() //reset data table 1
+                    trigger.value = true; //reset data table 1
                     refetchDataTaxPayInfo() //reset data table 2
                     checkClickYear.value = false;
                     return;
@@ -690,7 +696,8 @@ export default defineComponent({
                 store.state.common.processKeyPA110.paymentYear = newVal
                 originData.value.imputedYear = newVal
                 originDataTaxPayInfo.value.processKey.imputedYear = newVal
-                refetchDataProcessIncomeWages() //reset data table 1
+                // refetchDataProcessIncomeWages() //reset data table 1
+                trigger.value = true; //reset data table 1
                 refetchDataTaxPayInfo() //reset data table 2
             }
         })

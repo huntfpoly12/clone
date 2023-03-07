@@ -71,7 +71,13 @@ export default defineComponent({
             }
         })
         const onSubmitPrint = (e: any) => {
-            originData.value.input.sortType = valueSelect.value
+            originData.value.input =  {
+                imputedYear: processKey.value.imputedYear,
+                imputedMonth: processKey.value.imputedMonth,
+                paymentYear: processKey.value.paymentYear,
+                paymentMonth: processKey.value.paymentMonth,
+                sortType: valueSelect.value,
+            },
             trigger.value = true
         };
 

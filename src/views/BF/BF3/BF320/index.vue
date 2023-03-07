@@ -87,7 +87,7 @@
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
-                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
+                    <DxColumn data-field="servicePrice" caption="이용료" format="fixedPoint" data-type="number" />
                     <DxColumn :width="80" cell-template="pupop" />
                     <template #pupop="{ data }">
                         <div class="custom-action">
@@ -137,7 +137,7 @@ export default defineComponent({
     },
     setup() {
         // config grid
-        const amountFormat = { currency: 'VND', useGrouping: true }
+        // const amountFormat = { currency: 'VND', useGrouping: true }
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -185,7 +185,7 @@ export default defineComponent({
             }
         });
         return {
-            amountFormat,
+            // amountFormat,
             trigger,
             move_column,
             colomn_resize,

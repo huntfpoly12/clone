@@ -216,8 +216,11 @@
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="openPopup(data.data)" />
-                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                            <a-tooltip>
+                                <template #title>출력 / 저장</template>
+                                <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
                                 @click="actionPrint(data.data.employee.employeeId)" />
+                            </a-tooltip>
                         </div>
                     </template>
                 </DxDataGrid>

@@ -9,7 +9,7 @@
         justify-content: space-between;
     }
 
-    ::v-deep .ant-form-item-label {
+    :deep .ant-form-item-label {
         >label {
             width: 85px;
         }
@@ -39,7 +39,7 @@
         margin-bottom: 10px;
     }
 
-    ::v-deep .custom-layout {
+    :deep .custom-layout {
         padding: 10px 10px 10px 0;
 
         >div {
@@ -49,7 +49,7 @@
         }
     }
 
-    ::v-deep .ant-switch {
+    :deep .ant-switch {
         background-color: #1890ff;
     }
 
@@ -99,7 +99,7 @@
     padding-top: 5px;
 }
 
-::v-deep .custom-deduction {
+:deep .custom-deduction {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -115,7 +115,7 @@
     margin-bottom: $margin-bottom+px;;
 }
 
-::v-deep .dx-master-detail-cell {
+:deep .dx-master-detail-cell {
     padding: 0 !important;
 }
 
@@ -131,12 +131,12 @@
     text-decoration: underline;
 }
 
-::v-deep .dx-datagrid-text-content {
+:deep .dx-datagrid-text-content {
     white-space: pre-wrap;
     text-align: left !important;
 }
 
-::v-deep .dx-button-mode-contained {
+:deep .dx-button-mode-contained {
     height: 34px;
 }
 .disabledBlock {
@@ -156,4 +156,7 @@
 }
 .custom-detail {
     text-align: right;
+}
+:deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
+    padding-top: 4px;
 }

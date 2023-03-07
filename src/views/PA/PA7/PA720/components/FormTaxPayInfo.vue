@@ -27,12 +27,12 @@
                 class="btn-date" />
             </div>
           </a-form-item>
-          <a-form-item label="지급일" class="red">
+          <a-form-item label="지급일" class="red mt-15">
             <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus" width="150px"
               class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true" :isFormat="true" />
           </a-form-item>
           <div class="input-text">
-            <a-form-item label="지급액" class="red">
+            <a-form-item label="지급액" class="red mt-10">
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.paymentAmount" :required="true"
                 :disabled="!isColumnData || isExpiredStatus"></number-box-money>
