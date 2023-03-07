@@ -147,7 +147,7 @@
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
     <!-- confirm for case add -->
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오fff" @checkConfirm="confirmAndSaveAdd" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted } from "vue"
