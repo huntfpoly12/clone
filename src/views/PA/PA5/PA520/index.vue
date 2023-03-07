@@ -1,5 +1,14 @@
 <template>
     <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
+     checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
+    checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
+    checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
+    activeAddRowPA520: {{ store.state.common.activeAddRowPA520 }}<br>
+    idRowChangePa520: {{ store.state.common.idRowChangePa520 }}<br>
+    actionChangeComponent: {{ actionChangeComponent }}<br>
+    addRowBtOnclick: {{ addRowBtOnclick  }}<br>
+    modalChangeValueEdit : {{  modalChangeValueEdit }}
+    {{ idRowEdit }}
     <div id="pa-520" class="page-content">
         <a-row>
           <a-col :span="2" style="padding-right: 10px">
@@ -138,7 +147,7 @@
         :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
     <!-- confirm for case add -->
     <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오fff" @checkConfirm="confirmAndSaveAdd" />
+        :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted } from "vue"

@@ -37,12 +37,12 @@
                 </a-row>
               </div>
 
-                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.nationalPensionSupportPercent }}
+                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
                 </a-form-item>
-                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.employeementInsuranceSupportPercent }}
+                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
@@ -133,9 +133,9 @@
             </a-col>
         </a-row>
         <div class="button-action">      
+          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
           <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
-          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
         </div>
       </a-spin>
     </div>
