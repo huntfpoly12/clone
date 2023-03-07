@@ -352,6 +352,7 @@ export default defineComponent({
           // for case Add  but click other row
           if (store.state.common.checkChangeValueAddPA520 == true) {
             modalChangeValueAdd.value = true
+            addRowBtOnclick.value = false
             return
           } else { idRowEdit.value = val.data.employeeId }
           
@@ -437,7 +438,8 @@ export default defineComponent({
             addRowBtOnclick.value = false
             resetAddComponent.value++ // increment one unit to reset the newly created form
             onAddBtClick()
-          } else {//Not save
+          } else {//Not save 
+            alert()
             // Delete new row
             store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0, store.state.common.dataSourcePA520.length - 1)
             // Change status switch in store
