@@ -22,3 +22,4 @@ yarn.lock
 *.sln
 *.sw?
 .fleet
+codegen.yml
