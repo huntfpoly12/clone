@@ -13,8 +13,8 @@
             <a-col class="ml-30">
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
-                            textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
+                            textUnCheck="제작전" />
                         <div class="d-flex-center ml-5 ">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -24,25 +24,25 @@
                 <div class="production-check">
                     <div class="d-flex-center custom-checkbox-search" >
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -69,7 +69,7 @@
         <div class="title-table d-flex">
             <a-form-item label="파일 제작 설정" label-align="left">
                 <div class="custom-note d-flex-center">
-                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true"/>
                     <span class="d-flex-center">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                         <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
@@ -277,6 +277,7 @@ export default defineComponent({
         }
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
+            productionStatusArr.value = []
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
                 dataSearch.value.productionStatuses.push(0)
@@ -336,7 +337,7 @@ export default defineComponent({
           move_column,
           modalConfirmMail,
           dayReport,
-          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail
+          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr
         }
     }
 })

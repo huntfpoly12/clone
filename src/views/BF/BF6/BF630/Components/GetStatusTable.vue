@@ -7,7 +7,7 @@
     </a-spin>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, reactive, watch } from "vue";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import { useQuery } from "@vue/apollo-composable";
 
@@ -24,14 +24,36 @@ export default defineComponent({
     },
     setup(props, { emit }) {
       let arrStatus = ref([])
-      let dataSearch = ref({
+      const triggerTab1 = ref<boolean>(false);
+      const triggerTab2 = ref<boolean>(false);
+      const triggerTab3 = ref<boolean>(false);
+      const triggerTab4 = ref<boolean>(false);
+      let dataSearch = reactive({
             input: {
                 companyId: props.data?.companyId,
-                paymentYear: props.data?.paymentYear,
+                imputedYear: props.data?.imputedYear
             }
       })
-
-      const trigger = ref<boolean>(true);
+      
+      watch(dataSearch, (newVal) => {
+        if(newVal) {
+          if (props.tabName == 'tab1') {
+            triggerTab1.value = true
+          }
+          if (props.tabName == 'tab2') {
+            triggerTab2.value = true
+          }
+          if (props.tabName == 'tab3') {
+            triggerTab3.value = true
+          }
+          if (props.tabName == 'tab4') {
+            triggerTab4.value = true
+          }
+        }
+      },{
+        deep: true,
+        immediate: true
+      })
 
       // Query 
       let {
@@ -39,7 +61,7 @@ export default defineComponent({
         refetch: refetchTab1,
         loading : loadingTab1
       } = useQuery(queries.getElectronicFilingsByIncomeWagePaymentStatement, dataSearch, () => ({
-          enabled: trigger.value,
+          enabled: triggerTab1.value,
           fetchPolicy: "no-cache"
       }));
 
@@ -48,7 +70,7 @@ export default defineComponent({
         refetch: refetchTab2,
         loading : loadingTab2
       } = useQuery(queries.getElectronicFilingsByIncomeRetirementPaymentStatement, dataSearch, () => ({
-          enabled: trigger.value,
+          enabled: triggerTab2.value,
           fetchPolicy: "no-cache"
       }));
 
@@ -57,7 +79,7 @@ export default defineComponent({
         refetch: refetchTab3,
         loading : loadingTab3
       } = useQuery(queries.getElectronicFilingsByIncomeBusinessPaymentStatement, dataSearch, () => ({
-          enabled: trigger.value,
+          enabled: triggerTab3.value,
           fetchPolicy: "no-cache"
       }));
 
@@ -66,41 +88,44 @@ export default defineComponent({
         refetch: refetchTab4,
         loading : loadingTab4
       } = useQuery(queries.getElectronicFilingsByIncomeExtraPaymentStatement, dataSearch, () => ({
-          enabled: trigger.value,
+          enabled: triggerTab4.value,
           fetchPolicy: "no-cache"
       }));
 
       // active query by TAB
       if (props.tabName == 'tab1') {
-        trigger.value = true
+        triggerTab1.value = true
         refetchTab1();
         onResultTab1((res: any) => {
           arrStatus.value = res.data.getElectronicFilingsByIncomeWagePaymentStatement
-          trigger.value = false
+          triggerTab1.value = false
         })
       }
       if (props.tabName == 'tab2') {
-        trigger.value = true
+        triggerTab2.value = true
         refetchTab2();
         onResultTab2((res: any) => {
           arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement
-          trigger.value = false
+          triggerTab2.value = false
         })
       }
       if (props.tabName == 'tab3') {
-        trigger.value = true
+        triggerTab3.value = true
         refetchTab3();
         onResultTab3((res: any) => {
-          arrStatus.value = res.data.getElectronicFilingsByIncomeBusinessPaymentStatement
-          trigger.value = false
+          if (res.data) {
+            arrStatus.value = res.data.getElectronicFilingsByIncomeBusinessPaymentStatement
+            emit('productionStatusData', arrStatus.value[0]);
+            triggerTab3.value = false
+          }
         })
       }
       if (props.tabName == 'tab4') {
-        trigger.value = true
+        triggerTab4.value = true
         refetchTab4();
         onResultTab4((res: any) => {
           arrStatus.value = res.data.getElectronicFilingsByIncomeExtraPaymentStatement
-          trigger.value = false
+          triggerTab4.value = false
         })
       }
 

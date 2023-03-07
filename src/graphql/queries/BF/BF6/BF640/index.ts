@@ -7,8 +7,8 @@ import getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement from "./ge
 
 const queries = {
     searchIncomeWageSimplifiedPaymentStatementElectronicFilings: searchIncomeWageSimplifiedPaymentStatementElectronicFilings,
-    searchStep2: searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings,
-    searchStep3: searchElectronicFilingFileProductions,
+    searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings: searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings,
+    searchElectronicFilingFileProductions: searchElectronicFilingFileProductions,
     getElectronicFilingsByIncomeWageSimplifiedPaymentStatement: getElectronicFilingsByIncomeWageSimplifiedPaymentStatement,
     getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement: getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement,
     getCompaniesInElectronicFilingFile: getCompaniesInElectronicFilingFile,

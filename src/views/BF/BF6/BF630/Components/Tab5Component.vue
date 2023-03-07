@@ -39,10 +39,11 @@
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxColumn caption="코드명" data-field="fileStorageId" />
-                <DxColumn caption="신고구분" data-field="reportType" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt"/>
-                <DxColumn caption="아이디" data-field="productionRequestUserId"/>
+                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="참고사항" data-field="referenceInformation" />
+                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
+                        format="yyyy-MM-dd hh:mm" />
+                <DxColumn caption="아이디" data-field="productionRequestUser.id"/>
                 <DxColumn caption="제작현황" data-field="productionStatus" />
                 <DxColumn caption="상세보기" data-field="action" />
                 <template #action="{ }"> 

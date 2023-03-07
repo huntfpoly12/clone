@@ -9,7 +9,7 @@
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" text="네. 삭제합F니다" :width="140" type="default" mode="contained"
+                <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
                     @onClick="onSubmit" />
             </div>
         </standard-form>
