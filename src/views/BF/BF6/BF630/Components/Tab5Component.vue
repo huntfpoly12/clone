@@ -36,7 +36,7 @@
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxColumn caption="일련번호" data-field="electronicFilingId" />
@@ -45,10 +45,17 @@
                         format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUser.id"/>
                 <DxColumn caption="제작현황" data-field="productionStatus" />
-                <DxColumn caption="상세보기" data-field="action" />
-                <template #action="{ }"> 
-                     <img src="@/assets/images/searchPlus.png" style="width: 14px;" />
+                <DxColumn caption="상세보기" width="80px" cell-template="action"/>
+                <template #action="{ data }"> 
+                  <div style="text-align: center">
+                    <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
+                        @click="openPopupDetail(data.data)" />
+                  </div>
                 </template>
+
+                <DxSummary>
+                  <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />      
+                </DxSummary>
             </DxDataGrid>
         </a-spin>
     </div>
@@ -59,7 +66,7 @@
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
 import {companyId} from "@/helpers/commonFunction"
@@ -70,7 +77,7 @@ import CompaniesPopup from "./CompaniesPopup.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup,CompaniesPopup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
   },
   props: {
     activeSearch: {
@@ -92,7 +99,7 @@ export default defineComponent({
     const valueType = ref(0)
     const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
     const productionStatuses =  ref(0)
-    const dataSource = ref([])
+    const dataSource = ref<any>([])
     let companyIds = Array();
     const dataPopup = ref()
     const modalCompanies = ref<boolean>(false)
@@ -143,11 +150,14 @@ export default defineComponent({
     })
     watch(resElectronicFiling, (value) => {
       if (value) {
-        dataSource.value = value.searchElectronicFilingFileProductions
-        // create list company ID for request file
-        dataSource.value.map((item : any) => {
-          companyIds.push(item.companyId)
-        })
+        let data = value.searchElectronicFilingFileProductions;
+        let result = Object.values(data.reduce((acc: any, curr: any) => {
+          if (!acc[curr.electronicFilingId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.electronicFilingId].lastProductionRequestedAt))) {
+            acc[curr.electronicFilingId] = curr;
+          }
+          return acc;
+        }, {}));
+        dataSource.value = [...result];
       }
     })
     onErrorElectronicFiling(e => {
@@ -159,6 +169,11 @@ export default defineComponent({
       trigger.value = true;
       refetchElectronicFiling()
     })
+
+    const openPopupDetail = (data: any) => {
+      dataPopup.value = data
+      modalCompanies.value = true
+    }
    
     return {
       globalYear,
@@ -170,7 +185,8 @@ export default defineComponent({
       trigger,
       rangeDate,
       dataPopup,
-      productionStatuses
+      productionStatuses,
+      openPopupDetail
     }
   }
 })

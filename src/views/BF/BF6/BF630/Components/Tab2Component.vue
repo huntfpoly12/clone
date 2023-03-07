@@ -100,7 +100,7 @@
       <a-spin :spinning="loadingIncomeRetirementPayment || loadingElectronicFilings" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSelection mode="multiple" :fixed="true" />
                 <DxColumn caption="사업자코드" data-field="company.code" />
@@ -110,14 +110,17 @@
                   {{ data.data.company.address }}
                 </template>
                 <DxColumn caption="사업자등록번호" data-field="company.bizNumber"/>
-                <DxColumn caption="최종제작요청일시" cell-template="lastProductionRequestedAt"/>
-                <template #lastProductionRequestedAt="{ data }">
-                  {{ data.data.lastProductionRequestedAt }}
-                </template>
+                <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
+                        format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="제작현황" cell-template="imputed" />
                 <template #imputed="{data}"> 
-                  <get-status-table v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab2"/>
+                  <get-status-table v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab2" @productionStatusData="productionStatusData"/>
                 </template>
+
+                <DxSummary>
+                  <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                  <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
+                </DxSummary>
             </DxDataGrid>
         </a-spin>
     </div>
@@ -130,7 +133,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import DxCheckBox from 'devextreme-vue/check-box';
 import { useQuery } from "@vue/apollo-composable";
 import { useStore } from "vuex";
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import {SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -139,9 +142,10 @@ import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import RequestFilePopup from "./RequestFilePopup.vue";
 import GetStatusTable from "./GetStatusTable.vue";
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
-    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,RequestFilePopup,GetStatusTable
+    DxCheckBox,SaveOutlined,DxButton,DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem, RequestFilePopup,GetStatusTable
   },
   props: {
     activeSearch: {
@@ -216,11 +220,14 @@ export default defineComponent({
     })
     watch(resIncomeRetirementPayment, (value) => {
       if (value) {
-        dataSource.value = value.searchIncomeRetirementPaymentStatementElectronicFilings
-        // create list company ID for request file
-        dataSource.value.map((item : any) => {
-          companyIds.push(item.companyId)
-        })
+        let data = value.searchIncomeRetirementPaymentStatementElectronicFilings;
+        let result = Object.values(data.reduce((acc: any, curr: any) => {
+          if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
+            acc[curr.companyId] = curr;
+          }
+          return acc;
+        }, {}));
+        dataSource.value = [...result];
       }
     })
     onErrorIncomeRetirementPayment(e => {
@@ -281,18 +288,57 @@ export default defineComponent({
       refetchIncomeRetirementPayment()
     })
 
+      
+        // ----------------request file---------
+
+    const selectionChanged = (event: any) => {
+      if (event.selectedRowsData)
+        companyIds = event.selectedRowsData.map((item: any) => {
+          return item.company.id
+        });
+    };
+    const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+
     // request file popup action
     const requestIncomeFile = () => {
-      dataRequestFile.value = {
-        companyIds : companyIds,
-        filter: originData,
-        emailInput: {
-          receiverName: userInfor.value.name,
-          receiverAddress: userInfor.value.email
+      if(companyIds.length) {
+        dataRequestFile.value = {
+          companyIds : companyIds,
+          filter: originData,
+          emailInput: {
+            receiverName: userInfor.value.name,
+            receiverAddress: userInfor.value.email
+          }
         }
+        modalRequestFile.value = true
+      }else {
+        notification('warning', messageDelNoItem);
       }
-      modalRequestFile.value = true
     }
+
+    let productionStatusArr = ref<any>([]);
+    const countStatus = (arr: any[], type: number, propertyCompare: string) => {
+      if (Object.keys(arr).length === 0 || arr.length === 0) {
+        return 0;
+      }
+      let count = arr.reduce((acc: any, crr: any) => {
+        acc[crr[propertyCompare]] = acc[crr[propertyCompare]] ? acc[crr[propertyCompare]] + 1 : 1;
+        return acc;
+      }, {});
+      if (count[type]) {
+        return count[type];
+      }
+      return 0;
+    };
+    const productStatusSummary = () => {
+      return `제작전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
+        productionStatusArr.value,
+        1, 'productionStatus'
+      )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
+    };
+    const productionStatusData = (emitVal: any) => {
+      productionStatusArr.value = [emitVal];
+    };
     return {
       globalYear,
       originData,
@@ -310,7 +356,10 @@ export default defineComponent({
       requestIncomeFile,
       modalRequestFile,
       dataRequestFile,
-      dateSubmission
+      dateSubmission,
+      productStatusSummary,
+      productionStatusData,
+      selectionChanged
     }
   }
 })

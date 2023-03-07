@@ -97,16 +97,22 @@ export default defineComponent({
         triggerTab1.value = true
         refetchTab1();
         onResultTab1((res: any) => {
-          arrStatus.value = res.data.getElectronicFilingsByIncomeWagePaymentStatement
-          triggerTab1.value = false
+          if (res.data) {
+            arrStatus.value = res.data.getElectronicFilingsByIncomeWagePaymentStatement
+            emit('productionStatusData', arrStatus.value[0]);
+            triggerTab1.value = false
+          }
         })
       }
       if (props.tabName == 'tab2') {
         triggerTab2.value = true
         refetchTab2();
         onResultTab2((res: any) => {
-          arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement
-          triggerTab2.value = false
+          if (res.data) {
+            arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement
+            emit('productionStatusData', arrStatus.value[0]);
+            triggerTab2.value = false
+          }
         })
       }
       if (props.tabName == 'tab3') {
@@ -124,8 +130,11 @@ export default defineComponent({
         triggerTab4.value = true
         refetchTab4();
         onResultTab4((res: any) => {
-          arrStatus.value = res.data.getElectronicFilingsByIncomeExtraPaymentStatement
-          triggerTab4.value = false
+          if (res.data) {
+            arrStatus.value = res.data.getElectronicFilingsByIncomeExtraPaymentStatement
+            emit('productionStatusData', arrStatus.value[0]);
+            triggerTab4.value = false
+          }
         })
       }
 

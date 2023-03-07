@@ -1,7 +1,7 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
       :width="644">
-     <div class="grid-view-companies">
+     <div class="grid-view-companies pt-10">
         <div class="content-grid">
           <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
