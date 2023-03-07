@@ -97,8 +97,7 @@
                 </a-col>
 
             </a-row>
-            <div class="header-text-3">급여 / 공제
-            </div>
+            <div class="header-text-3">급여 / 공제</div>
             <a-row :gutter="16">
                 <a-col :span="13">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{

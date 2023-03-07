@@ -307,7 +307,7 @@
   />
   <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistory" title="변경이력" typeHistory="pa-610"
   />
-  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm"
+  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm"
   />
 </template>
 <script lang="ts">
@@ -316,7 +316,7 @@ import notification from "@/utils/notification";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { DxColumn, DxDataGrid, DxEditing, DxExport, DxGrouping, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxSelection, DxToolbar } from "devextreme-vue/data-grid";
 import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
-import { computed, defineComponent, reactive, ref, watchEffect } from "vue";
+import { computed, defineComponent, reactive, ref, watchEffect, watch } from "vue";
 import { useStore } from "vuex";
 
 import HistoryPopup from "@/components/HistoryPopup.vue";
@@ -411,6 +411,15 @@ export default defineComponent({
     watchEffect(() => {
       dataShow.value.name = dataShow.value.name?.toUpperCase() ?? '';
     });
+    watch(globalYear, () => {
+      selectRowKeyAction.value = 0;
+      previousRowData.value = {...valueDefaultAction};
+      focusedRowKey.value = 0;
+      // dataGridRef.value?.refresh();
+      formRef.value.resetValidate()
+      isNewRow.value = false
+      dataShow.value = valueDefaultAction;
+    });
 
     // ================GRAPHQL==============================================
     const valueCallApiGetEmployeeBusinesses = reactive({
@@ -461,18 +470,17 @@ export default defineComponent({
         // create new row
           storeDataSource.value.insert(valueDefaultAction).then((result) => {
             focusedRowKey.value = 0;
-            // dataShow.value = result;
-
+            dataShow.value = result;
             previousRowData.value = { ...result };
             dataGridRef.value?.refresh();
+            formRef.value.resetValidate()
           });
-          // formRef.value?.onValidate();
-
         }
         isNewRow.value = true;
-        formRef.value.resetValidate()
       } else {
-        notification("error", Message.getCommonMessage('301').message);
+         if (previousRowData.value && !compareObject(previousRowData.value, dataShow.value)) {
+          isDiscard.value = true;
+        }
       }
     };
     // TODO handle onFocusedRowChanging to row
@@ -532,6 +540,7 @@ export default defineComponent({
     const handleDiscardPopup = (e: boolean) => {
       isDiscard.value = e;
       if (isNewRow.value) {
+          formRef.value.resetValidate()
         // when have new row and click row other then discard
         if (focusedRowKey.value === 0) {
           storeDataSource.value.remove(0).then(() => {
@@ -543,6 +552,7 @@ export default defineComponent({
         } else {
           // when change other row and want to add row
           storeDataSource.value.insert(valueDefaultAction).then((result) => {
+            formRef.value.resetValidate()
             selectRowKeyAction.value = 0;
             focusedRowKey.value = 0;
             dataShow.value = result;
@@ -582,6 +592,7 @@ export default defineComponent({
         focusedRowKey.value = selectRowKeyAction.value;
       } else {
         storeDataSource.value.insert(valueDefaultAction).then((result) => {
+          formRef.value.resetValidate()
           focusedRowKey.value = 0;
           dataShow.value = result;
           previousRowData.value = { ...result };
@@ -589,7 +600,7 @@ export default defineComponent({
         });
       }
       isDiscard.value = false;
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage('106').message);
     });
     updateError((res) => {
       if (isDiscard.value) {
@@ -605,8 +616,7 @@ export default defineComponent({
     } = useMutation(mutations.createEmployeeBusiness);
     createdDone(async (res) => {
       isNewRow.value = false;
-      await refetchData();
-      // previousRowData.value = { ...res.data.createEmployeeBusiness }
+      
       focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
       selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
       valueCallApiGetEmployeeBusiness.incomeTypeCode =
@@ -614,6 +624,8 @@ export default defineComponent({
       valueCallApiGetEmployeeBusiness.employeeId = parseInt(
         dataShow.value.employeeId
       );
+      previousRowData.value = { ...dataShow.value };
+      await refetchData();
       notification("success", `업데이트 완료!`);
     });
     createdErr((res) => {
@@ -629,12 +641,15 @@ export default defineComponent({
       notification("error", res.message);
     });
     deleteDone(() => {
-      storeDataSource.value.remove(previousRowData.value.key).then(() => {
+      // previousRowData.value = { ...dataShow.value };
+      storeDataSource.value.remove(previousRowData.value.key).then((val) => {
         dataShow.value = { ...valueDefaultAction };
         previousRowData.value = { ...valueDefaultAction };
-        dataGridRef.value?.refresh();
+        refetchData()
         isDiscard.value = false;
       });
+      formRef.value.resetValidate()
+
       notification("success", `업데이트 완료!`);
     });
 
@@ -706,10 +721,7 @@ export default defineComponent({
               nationality: dataShow.value.nationality,
               nationalityCode: dataShow.value.nationalityCode,
               stayQualification: dataShow.value.stayQualification,
-              residentId:
-                dataShow.value.residentId.slice(0, 6) +
-                "-" +
-                dataShow.value.residentId.slice(6, 13),
+              residentId: dataShow.value.residentId.slice(0, 6) + "-" + dataShow.value.residentId.slice(6, 13),
               email: dataShow.value.email,
               employeeId: parseInt(
                 dataShow.value.employeeId ? dataShow.value.employeeId : ""
