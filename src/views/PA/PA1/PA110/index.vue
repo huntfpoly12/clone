@@ -233,6 +233,7 @@
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
                             @focused-row-changing="onFocusedRowChanging"
+                            ref="gridRef"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -381,6 +382,7 @@ export default defineComponent({
         const actionUpdateItem = ref<number>(0)
         const trigger = ref<boolean>(true)
         let status = ref();
+        const gridRef = ref(); // ref of grid
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -542,6 +544,12 @@ export default defineComponent({
                 store.state.common.statusDisabledStatus = false;
             }
         })
+        watch(() => store.state.common.statusRowAdd, (newVal) => {
+            if (!newVal) {
+                gridRef.value?.instance.deselectAll()
+                dataRows.value = []
+            }
+        })
         /**
          * action edit employ tax pay
          */
@@ -571,6 +579,10 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
+                if (rowData.find((element: any) => element.incomeId == "PA110" ?? null)) {
+                    gridRef.value?.instance.deselectAll()
+                    dataRows.value = []
+                }
                 // if ( rowData.length > 1 ) {
                 //     // store.state.common.incomeId = rowData[0].
                 //     store.state.common.focusedRowKey = store.state.common.incomeId
@@ -728,7 +740,7 @@ export default defineComponent({
             setUnderline,
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
-            Message,
+            Message, gridRef,
             statusDisabledBlock, onFocusedRowChanging,
         }
 

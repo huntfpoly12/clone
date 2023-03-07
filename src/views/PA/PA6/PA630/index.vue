@@ -46,6 +46,7 @@
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    ref="gridRef"
                     @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxToolbar>
@@ -174,7 +175,7 @@ export default defineComponent({
         const popupDataEmailMulti = ref({})
         const dataSelect = ref<any>([])
         const store = useStore();
-
+        const gridRef = ref(); // ref of grid
         const globalYear = computed(() => store.state.settings.globalYear);
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
@@ -225,6 +226,7 @@ export default defineComponent({
             onExportingCommon(e.component, e.cancel, "계약정보관리&심사");
         };
         const actionOpenPopupEmailSingle = (data: any) => {
+            gridRef.value?.instance.deselectAll()
             popupDataEmailSingle.value = {
                 companyId: companyId,
                 input: {
@@ -358,7 +360,7 @@ export default defineComponent({
             onCloseEmailMultiModal,
             selectionChanged,
             emailUserLogin,
-            actionPrint, onPrintGroup,
+            actionPrint, onPrintGroup, gridRef,
             // amountFormat,
             customTextSummaryWRST,
         };
