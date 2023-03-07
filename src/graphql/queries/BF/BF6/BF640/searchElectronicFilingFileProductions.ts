@@ -4,7 +4,6 @@ query SearchElectronicFilingFileProductions($filter: ElectronicFilingFileSearchF
     searchElectronicFilingFileProductions(filter: $filter) {
       electronicFilingId
       fileStorageId
-      reportType
       productionRequestedAt
       productionRequestUserId
       productionStatus

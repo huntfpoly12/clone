@@ -39,9 +39,7 @@
                 <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
                 <DxColumn caption="신고유형/주기"  cell-template="reportType"/>
                 <template #reportType="{ data }">
-                  <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-                  <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
-                  <div v-else></div>
+                  
                 </template>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
