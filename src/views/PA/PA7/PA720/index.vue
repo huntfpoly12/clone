@@ -208,12 +208,12 @@
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDateTax"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || isNewRowPA720"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
         <DxButton class="ml-4" icon="plus" @click="openAddNewModal" :disabled="!isColumnData || isExpiredStatus" />
-        <DxButton class="ml-3" @click="onDeleteItem" :disabled="!isColumnData || isExpiredStatus">
+        <DxButton class="ml-3" @click="onDeleteItem" :disabled="!isColumnData || isExpiredStatus || isNewRowPA720">
           <img style="width: 17px" src="@/assets/images/icon_delete.png" alt="" />
         </DxButton>
         <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true" :disabled="!isColumnData">
@@ -232,7 +232,7 @@
             </div>
           </a-tooltip>
         </DxButton>
-        <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="!isColumnData || isExpiredStatus">
+        <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="!isColumnData || isExpiredStatus || isNewRowPA720">
           <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -497,7 +497,9 @@ export default defineComponent({
     };
     const onFormDone = (emit: Boolean) => {
       if (emit) {
-        changeFommDone.value++;
+        if(!isClickMonthDiff){
+          changeFommDone.value++;
+        }
         formTaxRef.value.isEdit = true;
       }
       onSubmit();
@@ -790,6 +792,7 @@ export default defineComponent({
         isColumnData.value = true;
       }
       if (obj) {
+        console.log('chay vao day');
         taxPayRef.value.firsTimeRow = true;
         let datObj = {
           imputedYear: obj?.imputedYear,
@@ -875,7 +878,8 @@ export default defineComponent({
       changeYearDataFake,
       compareType1,
       compareType2,
-      subValidate
+      subValidate,
+      isNewRowPA720
     };
   },
 });

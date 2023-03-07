@@ -41,7 +41,7 @@
     </div>
     <a-row>
         <a-col :span="14" class="custom-layout" :class="{'ele-opacity':!compareForm()}">
-            <a-spin :spinning="(loadingTableDetail || loadingCreated || loadingEdit || loadingOption)" size="large">
+            <a-spin :spinning="(loadingTableDetail  || loadingOption)" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                     :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
                     :onRowClick="onRowClick" :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -51,7 +51,7 @@
                     <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                     <template #tag="{ data }">
                       <div>
-                        <button style="margin-right: 5px">
+                        <button class="btn-container">
                           {{ data.data.employeeId }}
                         </button>
                         {{ data.data?.employee?.name }}
@@ -101,10 +101,10 @@
             </a-spin>
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
-          <a-spin :spinning="(loadingCreated || loadingDetailEdit || loadingEdit || loadingTableDetail)" size="large">
-            <!-- {{ isNewRow }} isNewRow <br/>
-            {{ selectedRowKeys }} selectedRowKeys <br/>
-            {{ dataAction }} dataAction <br/> -->
+          <a-spin :spinning="(loadingDetailEdit || loadingTableDetail)" size="large">
+            {{ isNewRow }} isNewRow <br/>
+            {{ compareType }} compareType <br/>
+            {{ dataAction }} dataAction <br/>
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
@@ -396,9 +396,8 @@ export default defineComponent({
           delete daActionEditCompare.input.employee;
           if (JSON.stringify(daActionCompare.input) == JSON.stringify(daActionEditCompare.input)) {
             return true;
-          } else {
-            return false;
-          }
+          } 
+          return false;
         };
         //function common
         const resetForm = async () => {
@@ -441,13 +440,21 @@ export default defineComponent({
             }
             return;
           }
-            disabledInput.value = false;
-            addNewRow();
+          if (!compareForm()) {
+            compareType.value = 1;
+            rowChangeStatus.value = true;
+            return;
+          }
+          disabledInput.value = false;
+          addNewRow();
           return;
         };
         //row change confirm
         const onRowChangeComfirm = async (ok: boolean) => {
           if (ok) {
+            if(compareType.value==1){
+              compareType.value=3;
+            }
             let ele = document.getElementById('save-js-620') as HTMLInputElement;
             ele.click();
           } else {
@@ -474,6 +481,10 @@ export default defineComponent({
                 return;
               }
             }
+            if (compareType.value === 1) {
+              addNewRow();
+              return;
+            }
             if (compareType.value == 2) {
               dataCallApiDetailEdit.incomeId = idRowFake.value;
               isNewRow.value = false;
@@ -485,7 +496,8 @@ export default defineComponent({
         const idRowFake = ref();
         const onRowClick = async (item: any) => {
           compareType.value = 2;
-          selectedRowKeys.value = [item.data.incomeId];
+          idRowFake.value = item.data.incomeId;
+          // selectedRowKeys.value = [item.data.incomeId];
           if (isNewRow.value) {
             if (compareForm()) {
               await delNewRow();
@@ -494,13 +506,11 @@ export default defineComponent({
               dataCallApiDetailEdit.incomeId = item.data.incomeId;
               return;
             }
-            idRowFake.value = item.data.incomeId;
             rowChangeStatus.value = true;
             return;
           }
           if (!compareForm()) {
             rowChangeStatus.value = true;
-            idRowFake.value = item.data.incomeId;
             return;
           } else {
             dataCallApiDetailEdit.incomeId = item.data.incomeId;
@@ -548,6 +558,7 @@ export default defineComponent({
               triggerDetail.value = true;
               dataActionEdit.value.input = {...dataAction.value.input};
               triggerDetailDetailEdit.value = true;
+              selectedRowKeys.value = [dataAction.value.input.incomeId]
               emit('createdDone', true);
             }
             modalEdit.value = false;
@@ -605,7 +616,7 @@ export default defineComponent({
             focusedRowKey.value = dataAction.value.input.incomeId;
             selectedRowKeys.value = [dataAction.value.input.incomeId];
             notification('success', `업데이트 완료!`);
-            emit('createdDone', true)
+            emit('statusDone', e.data.changeIncomeProcessBusinessStatus.status);
         })
         const statusComfirm = () => {
             actionChangeIncomeProcessBusinessStatus({
@@ -619,7 +630,7 @@ export default defineComponent({
 
         const onChangeFormdone = () => {
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
-            triggerDetail.value = true
+            triggerDetail.value =  compareType.value == 2 ? true : false;
             disabledInput.value = true;
             dataActionEdit.value.input = {...dataAction.value.input};
             isNewRow.value = false;
@@ -639,18 +650,23 @@ export default defineComponent({
 
         doneCreated(res => {
             emit('createdDone', true)
-            notification('success', `업데이트 완료!`)
-            onChangeFormdone();           
+            notification('success', messageUpdate)
+            if(compareType.value==3){
+              triggerDetail.value =  true;
+              addNewRow();
+              compareType.value = 1;
+              return;
+            }
+            onChangeFormdone();
             dataAction.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
             dataActionEdit.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
-            focusedRowKey.value = res.data.createIncomeBusiness.incomeId;
+            focusedRowKey.value = compareType.value == 1 ? res.data.createIncomeBusiness.incomeId : idRowFake.value;
             selectedRowKeys.value=[focusedRowKey.value];
         })
         errorCreated(res => {
             notification('error', res.message)
-            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-            selectedRowKeys.value = [compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value];
-            isNewRow.value =false;
+            focusedRowKey.value = dataAction.value.input.incomeId;
+            selectedRowKeys.value = [dataAction.value.input.incomeId];
         })
         // API EDIT 
         const {
@@ -660,21 +676,26 @@ export default defineComponent({
             onDone: doneEdit,
         } = useMutation(mutations.updateIncomeBusiness);
         doneEdit((res) => {
+            emit('createdDone', true)
+            notification('success', messageUpdate)
+            if(compareType.value==3){
+              triggerDetail.value =  true;
+              addNewRow();
+              compareType.value = 1;
+              return;
+            }
+            onChangeFormdone();
             focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
             selectedRowKeys.value = [focusedRowKey.value];
             isNewRow.value =false;
-            emit('createdDone', true)
-            notification('success', messageUpdate)
-            onChangeFormdone();
             if (isClickEditDiff.value) {
               onEditItem();
             }
         })
         errorEdit(res => {
             notification('error', res.message);
-            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-            selectedRowKeys.value = [compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value];
-            isNewRow.value =false;
+            focusedRowKey.value = dataAction.value.input.incomeId;
+            selectedRowKeys.value = [dataAction.value.input.incomeId];
         })
         //
         const onSave = (e:any) => {
@@ -742,7 +763,7 @@ export default defineComponent({
         return {
             loadingOption, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess
+            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess,compareType
         }
     }
 });

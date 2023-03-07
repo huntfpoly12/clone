@@ -3,7 +3,7 @@
         :width="500">
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
-                <DxButton :text="'귀' + processKeyPA620.imputedYear + ' ' + '-' + $filters.formatMonth(month1)"
+                <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
                 :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
                 <div class="d-flex-center">
                 <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
@@ -11,7 +11,7 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" />
+            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true"/>
         </a-form-item>
 
         <div class="text-align-center mt-30">
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, computed,onActivated, onDeactivated } from 'vue'
+import { defineComponent, reactive, ref, watch, computed } from 'vue'
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import DxSelectBox from "devextreme-vue/select-box";
@@ -71,6 +71,7 @@ import { useStore } from 'vuex'
 import dayjs from "dayjs";
 import { Message } from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
+import queriesHolding from "@/graphql/queries/CM/CM130/index";
 
 export default defineComponent({
     props: {
@@ -80,10 +81,10 @@ export default defineComponent({
         monthVal: {
             type: Number,
         },
-        dateType: {
-            type: Number,
-            default: 1,
-        },
+        // dateType: {
+        //     type: Number,
+        //     default: 1,
+        // },
     },
     components: {
         DxSelectBox,
@@ -105,18 +106,34 @@ export default defineComponent({
             store.commit('common/paymentDayPA620', value);
           },
         });
+        // -----------------get config to check default date type--------------
+        const dateType = ref<number>(1);
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const { result: resultConfig, refetch: refetchHolding } = useQuery(
+            queriesHolding.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultConfig, (newVal) => {
+            const data = newVal.getWithholdingConfig;
+            dateType.value = data.paymentType;
+            store.state.common.paymentDayPA620 = data.paymentDay;
+        });
         // ----------set month source default because dependent on the set up before--------------
         let month2: any = ref();
-        watch(() => props.monthVal, (val) => {
+        watch(() => [props.monthVal, processKeyPA620.value.paymentYear], ([val]) => {
             month1.value = val;
             let yearMonth = `${processKeyPA620.value.paymentYear}${processKeyPA620.value.imputedMonth }`;
-            if(props.dateType == 2 && props.monthVal) {
+            if(dateType.value == 2 && props.monthVal) {
                 yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal + 1}`;
             }
-            if(props.dateType == 1) {
+            if(dateType.value == 1) {
                 yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal}`;
             }
             month2.value = yearMonth;
+            refetchHolding();
         });
         //-------------------------action copy data--------------------------------
         const {

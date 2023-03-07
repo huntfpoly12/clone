@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchArea />
+    <SearchArea :tab1="true"/>
     <!-- {{ filterBF620 }} filterBF620 <br />
     {{ searchWithholdingParam }} searchWithholdingParam <br /> -->
     <a-row class="top-table">
@@ -24,16 +24,16 @@
     </a-row>
     <div class="content-grid">
       <a-spin :spinning="searchWithholdingLoading" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" @selection-changed="selectionChanged">
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
+          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn caption="사업자코드" data-field="company.code" />
+          <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="상호 주소" cell-template="companyName" />
           <template #companyName="{ data }">
-            {{ data.data.company.name }}
-            {{ data.data.company.address }}
+            {{ data.data.name }}
+            {{ data.data.address }}
           </template>
           <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
           <template #inputYearMonth="{ data }">
@@ -49,7 +49,7 @@
           </template>
           <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
           <template #paymentYearMonth="{ data }">
-            <DxButton :text="'귀 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
+            <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
               color: 'white',
               backgroundColor: 'black',
               height: $config_styles.HeightInput
@@ -64,8 +64,9 @@
           <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
           <template #afterDeadline="{ data }">
             <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
-            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
-            <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
+            <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
+            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
+              data.data.index }}</div>
           </template>
           <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
           <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
@@ -99,7 +100,6 @@ import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
-import { companyId, } from '@/helpers/commonFunction';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
@@ -135,7 +135,7 @@ export default defineComponent({
     //-----------------------Search with holding and data source----------------
 
     const dataSource = ref<any[]>([]);
-    const searchWithholdingTrigger = ref(true);
+    const filteredDataSource = ref<any[]>([]);
     let searchWithholdingParam = ref({
       paymentMonth: filterBF620.value.paymentMonth,
       paymentYear: filterBF620.value.paymentYear,
@@ -143,7 +143,6 @@ export default defineComponent({
     const {
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
-      refetch: searchWithholdingRefetch,
       onError: searchWithholdingError,
     } = useQuery(
       queries.searchWithholdingTaxElectronicFilingsByYearMonth,
@@ -154,7 +153,31 @@ export default defineComponent({
       })
     );
     watch(searchWithholdingResult, (newVal) => {
-      let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth;
+      let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth.map((item: any) => {
+        let arrData={};
+        if (item) {
+          arrData = {
+            code: item.company.code,
+            name: item.company.name,
+            address: item.company.address,
+            manageUserId: item.companyServiceContract.manageUserId,
+            salesRepresentativeId: item.companyServiceContract.salesRepresentativeId,
+            active: item.companyServiceContract.active,
+            reportType: item.reportType,
+            afterDeadline: item.afterDeadline,
+            index: item.index,
+            totalCollectedTaxAmount: item.totalCollectedTaxAmount,
+            statusUpdatedAt: item.statusUpdatedAt,
+            lastProductionRequestedAt: item.lastProductionRequestedAt,
+            companyId: item.companyId,
+            paymentYear: item.paymentYear,
+            paymentMonth: item.paymentMonth,
+            imputedYear: item.imputedYear,
+            imputedMonth: item.imputedMonth,
+          }
+        }
+        return arrData;
+      });
       let result = Object.values(data.reduce((acc: any, curr: any) => {
         if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
           acc[curr.companyId] = curr;
@@ -162,17 +185,7 @@ export default defineComponent({
         return acc;
       }, {}));
       dataSource.value = [...result];
-      searchWithholdingTrigger.value = false;
-      // console.log(`output->data.beforeProduction`,data.beforeProduction)
-      // filterBF620.value.beforeProduction= data?.beforeProduction;
-      // filterBF620.value.productionStatuses= data.productionStatuses;
-      // filterBF620.value.companyCode= data.companyCode;
-      // filterBF620.value.companyName= data.companyName;
-      // filterBF620.value.manageUserId= data.manageUserId;
-      // filterBF620.value.salesRepresentativeId= data.salesRepresentativeId;
-      // filterBF620.value.excludeCancel= data.excludeCancel;
-      // filterBF620.value.reportType= data.reportType;
-      // filterBF620.value.withholdingTaxType= data.withholdingTaxType;
+      filteredDataSource.value = [...result];
     });
     searchWithholdingError((res: any) => {
       notification('error', res.message)
@@ -187,8 +200,8 @@ export default defineComponent({
     })
 
     //------------------------SUM AREA------------------------------ 
-    // count the number of status
 
+    // count the number of status
     let productionStatusArr = ref<any>([]);
     const watchFirstRun = ref(true);
     const countStatus = (arr: any[], type: number, propertyCompare: string) => {
@@ -226,11 +239,15 @@ export default defineComponent({
         watchFirstRun.value = false;
       }
     };
-    let arr = ref<any>([])
     const productionStatusData = (emitVal: any) => {
-      arr.value.push(emitVal);
       productionStatusArr.value = [emitVal];
-      reFreshDataGrid();
+      dataSource.value = dataSource.value.map((item: any) =>{
+        if(item.companyId == emitVal.companyId) {
+          return {...item, productionStatus: emitVal.productionStatus, beforeProduction: true}
+        }
+        return {...item, beforeProduction: false};
+      })
+      // reFreshDataGrid();
     };
 
     //--------------------on Search----------------------
@@ -238,11 +255,29 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        // variables.value = {
-        //   filter: filterBF620.value,
-        // };
-        // searchWithholdingTrigger.value = true;
-        searchWithholdingRefetch();
+        let { paymentYear, paymentMonth, ...compareObj } = filterBF620.value;
+        let arr = dataSource.value.filter((item: any) => {
+          return Object.keys(compareObj).every((key: any) => {
+            // console.log(`output->compareObj[key]`, key);
+            if (key == 'index' || key=='afterDeadline'){
+              if (compareObj.afterDeadline !== item.afterDeadline){
+                return false;
+              }
+              if((compareObj.index && item.index)||(compareObj.index === item.index)) {
+                return true;
+              }
+              return false;
+            }
+            if(key === 'productionStatuses'){
+              return compareObj.productionStatuses.findIndex((status:any)=> status === item.productionStatus)>-1;
+            }
+            if (compareObj[key]) {
+              return compareObj[key] === item[key];
+            }
+            return true;
+          })
+        })
+        filteredDataSource.value = arr;
       },
       { deep: true }
     );
@@ -292,7 +327,8 @@ export default defineComponent({
       productStatusSummary,
       selectionChanged,
       formatMonth,
-      searchWithholdingParam
+      searchWithholdingParam,
+      filteredDataSource
     };
   },
 })
