@@ -69,7 +69,7 @@
         <div class="title-table d-flex">
             <a-form-item label="파일 제작 설정" label-align="left">
                 <div class="custom-note d-flex-center">
-                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true"/>
                     <span class="d-flex-center">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                         <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>

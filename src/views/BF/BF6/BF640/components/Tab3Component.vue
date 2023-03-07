@@ -36,13 +36,10 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
-                <DxColumn caption="신고유형/주기"  cell-template="reportType"/>
-                <template #reportType="{ data }">
-                  
-                </template>
+                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="참고사항"  ata-field="referenceInformation"/>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
-                <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
+                <DxColumn caption="아이디" data-field="productionRequestUser.id" />
                 <DxColumn caption="제작현황" cell-template="제작현황" />
                 <template #제작현황="{ data }">
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
@@ -57,6 +54,9 @@
                             @click="openPopupDetail(data.data)" />
                     </div>
                 </template>
+                <DxSummary>
+                        <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />      
+                </DxSummary>
             </DxDataGrid>
           </a-spin>
         </div>
@@ -70,7 +70,7 @@ import { defineComponent, ref, computed, getCurrentInstance, watch } from "vue";
 import { dataSearchStep3Utils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -84,6 +84,8 @@ export default defineComponent({
     DxToolbar,
     DxSelection,
     DxColumn,
+    DxSummary,
+    DxTotalItem,
     DxItem,
     DxScrolling,
     DxRadioGroup,
