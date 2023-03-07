@@ -86,13 +86,6 @@
               <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                 :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxPaging :page-size="10"/>
-                <DxPager
-                  :visible="true"
-                  :show-page-size-selector="true"
-                  :allowed-page-sizes="[10, 20, 50]"
-                  :show-navigation-buttons="true"
-                  />
                   <DxScrolling mode="standard" show-scrollbar="always" />
                   <DxSelection mode="multiple" :fixed="true" />
                   <DxColumn caption="출력 메일" cell-template="action" />
@@ -573,4 +566,3 @@ export default defineComponent({
 <style scoped lang="scss" src="./style/style.scss">
 
 </style>
-
