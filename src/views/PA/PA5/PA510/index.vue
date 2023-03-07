@@ -228,6 +228,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         @focused-row-changing="onFocusedRowChanging"
+                        ref="gridRef"
                         :selection-filter="store.state.common.selectionFilter"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
@@ -374,6 +375,7 @@ export default defineComponent({
             companyId: companyId,
             processKey: processKey.value,
         })
+        const gridRef = ref(); // ref of grid
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // ======================= GRAPQL ================================
@@ -540,6 +542,12 @@ export default defineComponent({
                 // refetchDataTaxPayInfo() //reset data table 2
             }
         })
+        watch(() => store.state.common.statusRowAdd, (newVal) => {
+            if (!newVal) {
+                gridRef.value?.instance.deselectAll()
+                dataRows.value = []
+            }
+        })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
             actionChangeIncomeProcess({
@@ -577,10 +585,10 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
-                // if ( rowData.length > 1 ) {
-                //     // store.state.common.incomeId = rowData[0].
-                //     store.state.common.focusedRowKey = store.state.common.incomeId
-                // }
+                if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
+                    gridRef.value?.instance.deselectAll()
+                    dataRows.value = []
+                }
             })
         }
         const dataMonthNew: any = ref()
@@ -696,7 +704,7 @@ export default defineComponent({
             statusComfirm,
             store,
             modalChangeRow, statusComfirmChange,
-            // modalChangeRowPrice, statusComfirmChangePrice,
+            gridRef,
             statusDisabledBlock,
             Message,
             customMonthlyWage, customTotalDeduction,  customActualPayment,

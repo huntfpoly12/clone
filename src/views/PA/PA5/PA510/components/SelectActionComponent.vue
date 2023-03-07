@@ -152,21 +152,20 @@ export default defineComponent({
             }
         };
         const actionAddItem = () => {
-            if (store.state.common.statusRowAdd) {
-                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                //     modalStatusAdd.value = true
-                // } else {
-                    store.state.common.statusRowAdd = false;
-                    store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = 'PA510';
-                    store.state.common.focusedRowKey = 'PA510';
-                    // store.state.common.actionResetForm++;
-                // }
+            if (store.state.common.statusChangeFormEdit) {
+                modalStatusAdd.value = true
             } else {
-                if (store.state.common.statusChangeFormAdd) {
-                    modalStatusAdd.value = true
+                if (store.state.common.statusRowAdd) {
+                        store.state.common.statusRowAdd = false;
+                        store.state.common.actionAddItem = true;
+                        store.state.common.incomeId = 'PA510';
+                        store.state.common.focusedRowKey = 'PA510';
+                } else {
+                    if (store.state.common.statusChangeFormAdd) {
+                        modalStatusAdd.value = true
+                    }
+                    // notification('error', "nhập vàooooo")
                 }
-                // notification('error', "nhập vàooooo")
             }
         }
         const editItem = (value: any) => {
@@ -270,12 +269,16 @@ export default defineComponent({
             if (val) { // action save form
                 store.state.common.actionSubmit++
             } else { // reset form
-                store.state.common.actionResetForm++;
+                if (store.state.common.statusRowAdd) {
+                    store.state.common.statusRowAdd = false;
+                    store.state.common.actionAddItem = true;
+                    store.state.common.incomeId = 'PA510';
+                    store.state.common.focusedRowKey = 'PA510';
+                } else {
+                    store.state.common.actionResetForm++;
+                }
             }
         }
-        // const onSubmit = (e: any) => {
-        //     store.state.common.actionSubmit++
-        // };
 
         return {
             deleteItem,
