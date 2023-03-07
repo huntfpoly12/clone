@@ -9,8 +9,8 @@
             <a-col class="ml-30">
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
-                            textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
+                            textUnCheck="제작전" />
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -20,25 +20,25 @@
                 <div class="production-check">
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
-                            :disabled="dataSearch.beforeProduction">
+                            :disabled="!dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -188,7 +188,7 @@ export default defineComponent({
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.searchStep2, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings, { filter: dataSearch.value }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
@@ -279,7 +279,7 @@ export default defineComponent({
          // watch beforeProduction
          watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
             for (const key in typeCheckbox.value) {
-                if (newVal) {
+                if (!newVal) {
                     typeCheckbox.value[key] = false;
                 } else {
                     typeCheckbox.value[key] = false;
