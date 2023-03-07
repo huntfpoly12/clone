@@ -114,7 +114,7 @@ export default defineComponent({
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.searchStep3, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchElectronicFilingFileProductions, { filter: dataSearch.value }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));

@@ -403,7 +403,7 @@ import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import getCompany from "@/graphql/queries/common/getCompany";
 import { companyId } from '@/helpers/commonFunction';
-import { Company } from "@/types/types";
+import { Company } from "./../utils";
 import { DeleteOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import { DependantsRelation, enum2Entries } from '@bankda/jangbuda-common';
 import { useMutation, useQuery } from '@vue/apollo-composable';
@@ -483,7 +483,6 @@ export default defineComponent({
     const isChooseNationalPensionReport = computed(() => !formData.nationalPensionReport)
     const isChooseHealthInsuranceReport = computed(() => !formData.healthInsuranceReport)
     const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.employeementInsuranceReport || formData.industrialAccidentInsuranceReport))
-console.log('formData', !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance)
     const handleRadioChange = (event: Event) => {
       stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement).value;
       employeeWageSelected.value = null;

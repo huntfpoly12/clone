@@ -2,14 +2,8 @@ import gql from "graphql-tag";
 export default gql`
 query getElectronicFilingsByIncomeWagePaymentStatement($input: ElectronicFilingCompanyImputedYearKeyInput !) { 
   getElectronicFilingsByIncomeWagePaymentStatement(input: $input) {
+    type
     electronicFilingId
-    imputedYear
-    imputedMonth
-    paymentYear
-    paymentHalfYear
-    paymentMonth
-    withholdingTaxType
-    reportType
     productionStatus
     productionRequestedAt
     productionRequestUserId
@@ -17,12 +11,20 @@ query getElectronicFilingsByIncomeWagePaymentStatement($input: ElectronicFilingC
     productionStartedAt
     productionCompletedAt
     causeOfProductionFailure
+    referenceInformation
     createdAt
     createdBy
     updatedAt
     updatedBy
     ip
     active
+    productionRequestUser{
+      id
+      type
+      username
+      name
+      active
+    }
     fileStorage{
       name
       url
@@ -33,6 +35,6 @@ query getElectronicFilingsByIncomeWagePaymentStatement($input: ElectronicFilingC
       ip
       active
     }
-    }
   }
-  `
+}
+`
