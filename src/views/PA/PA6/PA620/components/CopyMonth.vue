@@ -294,4 +294,9 @@ export default defineComponent({
         display: none;
     }
 }
+:deep .btn-date {
+      div.dx-button-content {
+        padding: 0px 10px 0px;
+      }
+    }
 </style>
