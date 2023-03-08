@@ -233,10 +233,12 @@ export default defineComponent({
             onError: errUpdate
         } = useMutation(mutations.updateTaxWithholdingStatusReport);
     doneUpdate(() => {
-        notification('success', `업부상태 변경되었습니다!`)
+      notification('success', `업부상태 변경되었습니다!`)
+      setModalVisible()
     })
     errUpdate((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
+      setModalVisible()
     })
 
     const updateTaxWithholding = () => {
@@ -328,6 +330,7 @@ export default defineComponent({
 
     const actionCloseConfirm = (data: any) => {
       confirmStatus.value = false
+      setModalVisible()
     }
     const {
             mutate: actionChangeStatus,
