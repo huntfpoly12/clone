@@ -482,7 +482,7 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
-            } else {
+            } else if (obj) {
                 activeNewMonth(dataMonthNew.value)
             }
         })
@@ -528,10 +528,13 @@ export default defineComponent({
             }
         })
         const checkClickYear = ref<Boolean>(false)
-        watch(globalYear, (newVal) => {
-            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+        const dataYearNew = ref(globalYear.value)
+        watch(globalYear, (newVal, oldVal) => {
+            dataYearNew.value = newVal;
+            if (store.state.common.statusChangeFormEdit) {
                 modalChangeRow.value = true
-                checkClickYear.value = true
+                // checkClickYear.value = true
+                store.state.settings.globalYear = oldVal;
             } else {
                 store.state.common.processKeyPA510.imputedYear = newVal
                 store.state.common.processKeyPA510.paymentYear = newVal
@@ -619,19 +622,20 @@ export default defineComponent({
                 // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
                 store.state.common.actionSubmit++
             } else {
+                store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormAdd = false;
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
                     return;
                 }
-                if (checkClickYear.value) {
-                    store.state.common.processKeyPA510.imputedYear = globalYear.value
-                    store.state.common.processKeyPA510.paymentYear = globalYear.value
+                if (dataYearNew.value != globalYear.value) {
+                    store.state.settings.globalYear = dataYearNew.value
+                    store.state.common.processKeyPA510.imputedYear = dataYearNew.value
+                    store.state.common.processKeyPA510.paymentYear = dataYearNew.value
                     IncomeWageDailiesTrigger.value = true; //reset data table 2
-                    originData.value.imputedYear = globalYear.value
-                    // refetchData()
+                    originData.value.imputedYear = dataYearNew.value
                     trigger.value = true; //reset data table 1
-                    // refetchDataTaxPayInfo() //reset data table 2
                     checkClickYear.value = false;
                     return;
                 }

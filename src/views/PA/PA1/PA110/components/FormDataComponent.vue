@@ -409,7 +409,7 @@ export default defineComponent({
             calculateTax();
         }, { deep: true })
 
-        watch(() => store.state.common.incomeId, (value) => {
+        watch(() => store.state.common.incomeId, async (value) => {
             if (value && value != 'PA110') {
                 incomeWageParams.incomeId = value
                 triggerDetail.value = true;
@@ -421,13 +421,16 @@ export default defineComponent({
                     dataConfigPayItems.value.map((data: any) => {
                         data.amount = 0
                     })
-                    dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                    // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                    await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+                    await (store.state.common.statusChangeFormEdit = false);
+                    await (store.state.common.statusChangeFormAdd = false);
                 }
 
             }
         })
         // reset form data
-        watch(() => store.state.common.actionResetForm, (value) => {
+        watch(() => store.state.common.actionResetForm, async (value) => {
             countKey.value++;
             Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
             // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
@@ -438,7 +441,8 @@ export default defineComponent({
             dataConfigPayItems.value.map((data: any) => {
                 data.amount = 0
             })
-            store.state.common.statusChangeFormPrice = false;
+            await (store.state.common.statusChangeFormEdit = false);
+            await (store.state.common.statusChangeFormAdd = false);
         })
 
         watch(() => store.state.common.statusRowAdd, (newVal) => {
@@ -477,6 +481,7 @@ export default defineComponent({
                 })
                 setTimeout(() => {
                     store.state.common.statusChangeFormPrice = false;
+                    store.state.common.statusChangeFormAdd = false;
                 }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
