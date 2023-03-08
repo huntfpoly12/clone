@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    <!-- {{ formPA720.input }} formPA720 <br/>
-    {{ formEditPA720.input }} formEditPA720 <br/> -->
+    <!-- {{ formPA720.input }} formPA720 <br/> -->
+    <!-- {{ formEditPA720.input }} formEditPA720 <br/> -->
     <!-- {{ getEmployeeExtrasParams }} getEmployeeExtrasParams <br/>
     {{ incomeExtraParam }} incomeExtraParam <br/> -->
     <standard-form formName="pa-720-form" ref="pa720FormRef">
@@ -36,7 +36,7 @@
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.paymentAmount" :required="true"
                 :disabled="!isColumnData || isExpiredStatus"></number-box-money>
-              <span class="ml-1">원</span>
+              <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
@@ -44,13 +44,13 @@
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
                 class="red"></number-box-money>
-              <span class="ml-1">원</span>
+              <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <a-form-item label="세율" class="red">
-            <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" :value="formPA720.input.taxRate"
+            <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-              @value-changed="updateValue" :required="true" :disabled="!isColumnData || isExpiredStatus">
+               :required="true" :disabled="!isColumnData || isExpiredStatus">
               <template #item="{ data }">
                 <a-tooltip placement="top" zIndex="9999">
                   <template #title v-if="data?.tooltip">
@@ -77,14 +77,14 @@
             <a-form-item label="소득세(공제)">
               <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
                 v-model:valueInput="formPA720.input.withholdingIncomeTax" />
-              <span class="ml-1">원</span>
+              <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
               <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
                 v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" />
-              <span class="ml-1">원</span>
+              <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="top-con">
@@ -317,24 +317,24 @@ export default defineComponent({
       store.state.common.isErrorFormPA720 = false;
       formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
       store.commit('common/formEditPA720', formPA720.value);
-      emit('changeFommDone', true);
+      emit('onFormDone', true);
     });
     updateIncomeExtraDone((res) => {
       notification('success', messageUpdate);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       store.commit('common/formEditPA720', formPA720.value);
-      emit('changeFommDone', true);
+      emit('onFormDone', true);
     });
     createIncomeExtraError((res: any) => {
       store.state.common.isErrorFormPA720 = true;
       notification('error', res.message);
-      emit('changeFommDone', false);
+      emit('onFormDone', false);
     });
     updateIncomeExtraError((res: any) => {
       store.state.common.isErrorFormPA720 = true;
       notification('error', res.message);
-      emit('changeFommDone', false);
+      emit('onFormDone', false);
     })
 
     // ------------------------------calculate form fn--------------------------
