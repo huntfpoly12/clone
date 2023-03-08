@@ -243,7 +243,7 @@
                         </template>
                         <DxColumn width="75" caption="근무일수" cell-template="workingDays"/>
                         <template #workingDays="{ data }">
-                            {{  data.data.workingDays }}
+                            {{  $filters.formatMonth(data.data.workingDays) }}
                         </template>
                         <DxColumn css-class="money-column" width="85" caption="일급여" cell-template="dailyWage"/>
                         <template #dailyWage="{ data }">
