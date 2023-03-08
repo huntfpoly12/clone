@@ -1,5 +1,5 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus" />
@@ -24,7 +24,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
         <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
