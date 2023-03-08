@@ -3,7 +3,7 @@
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
-        :height="$config_styles.HeightInput" :disabled="disabled">
+        :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding-left: 4px">
                 <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
