@@ -406,7 +406,8 @@ export default defineComponent({
         // reset form data
         watch(() => store.state.common.actionResetForm, (value) => {
             countKey.value++;
-            dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+            Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+            // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             arrDeduction.value?.map((data: any) => {
                 data.price = 0
             })
