@@ -1,9 +1,9 @@
 export const initialState = {
-        name: null,
-        bizNumber: null,
-        residentId: null,
-        presidentName: null,
-        phone: null,
-        use: false,
-        clientId: null,
-}
+  name: "",
+  bizNumber: "",
+  residentId: "",
+  presidentName: "",
+  phone: "",
+  use: true,
+  clientId: 0,
+};
