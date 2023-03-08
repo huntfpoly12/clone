@@ -25,6 +25,7 @@ import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import { Message } from '@/configs/enum';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -46,13 +47,14 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+        const messageUpdate = Message.getMessage('COMMON', '106').message;
         const {
             mutate,
             onDone,
             onError,
         } = useMutation(mutations.changeIncomeBusinessPaymentDay);
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', messageUpdate)
             emit("closePopup", true)
         })
         onError((e: any) => {

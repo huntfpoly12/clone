@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ selectedRowKeys}} selectedRowKeys <br/> -->
+    <!-- {{ firsTimeRow}} firsTimeRow <br/> -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
@@ -12,7 +12,7 @@
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }">
         <div>
-          <button style="margin-right: 5px">
+          <button class="btn-container">
             {{ data.data.employeeId }}
           </button>
           {{ data.data?.employee?.name }}
@@ -223,6 +223,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
+      console.log(`output->data`,data);
       selectedRowKeys.value = [data.incomeId];
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
