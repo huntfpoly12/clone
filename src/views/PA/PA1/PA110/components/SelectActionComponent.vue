@@ -268,13 +268,13 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
                 store.state.common.actionSubmit++
-            } else { // reset form
-                if (store.state.common.statusRowAdd) {
+            } else { 
+                if (store.state.common.statusRowAdd) { // add row
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
                     store.state.common.incomeId = 'PA110';
                     store.state.common.focusedRowKey = 'PA110';
-                } else {
+                } else { // reset form
                     store.state.common.actionResetForm++;
                 }
             }
