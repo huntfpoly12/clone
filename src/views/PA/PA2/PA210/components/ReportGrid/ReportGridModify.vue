@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" :disabled="dataSource[0].status != 10"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
         </div> 
       </div>
   </a-modal>
@@ -92,6 +92,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
 
@@ -312,8 +313,9 @@ export default defineComponent({
             onError: errChangeStatus
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
-    doneChangeStatus(() => {
-      notification('success', `업부상태 변경되었습니다!`)
+    doneChangeStatus((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
       setModalVisible()
     })
     errChangeStatus((error) => {
@@ -448,6 +450,7 @@ export default defineComponent({
     // Creating a function that will close the confirm box.
     const actionCloseConfirm = () => {
       confirmStatus.value = false
+      setModalVisible()
     }
     return {
       setModalVisible,
