@@ -494,7 +494,7 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
-            } else {
+            } else if (obj)  {
                 activeNewMonth(dataMonthNew.value)
             }
         })
@@ -508,26 +508,28 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         watch(resultTaxPayInfo, (value) => {
-            store.state.common.dataTaxPayInfo = value.getIncomeWages;
-            // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
-            if (value.getIncomeWages[0]) { // if have data
-                if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
-                    store.state.common.focusedRowKey = store.state.common.incomeId
-                    // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+            if (value) {
+                store.state.common.dataTaxPayInfo = value.getIncomeWages;
+                // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
+                if (value.getIncomeWages[0]) { // if have data
+                    if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                        store.state.common.focusedRowKey = store.state.common.incomeId
+                        // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                    } else {
+                        store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
+                        store.state.common.incomeId = value.getIncomeWages[0].incomeId
+                        // store.state.common.employeeId = value.getIncomeWages[0].employeeId
+                    }
+                    store.state.common.actionAddItem = false
                 } else {
-                    store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
-                    store.state.common.incomeId = value.getIncomeWages[0].incomeId
-                    // store.state.common.employeeId = value.getIncomeWages[0].employeeId
+                    store.state.common.actionAddItem = true
+                    store.state.common.focusedRowKey = null;
+                    store.state.common.incomeId = null;
+                    // store.state.common.employeeId = null;
+                    store.state.common.actionResetForm++;
                 }
-                store.state.common.actionAddItem = false
-            } else {
-                store.state.common.actionAddItem = true
-                store.state.common.focusedRowKey = null;
-                store.state.common.incomeId = null;
-                // store.state.common.employeeId = null;
-                store.state.common.actionResetForm++;
+                store.state.common.resetArrayEmploySelect++
             }
-            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
@@ -668,20 +670,23 @@ export default defineComponent({
                 // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
                 store.state.common.actionSubmit++
             } else {
+                store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormAdd = false;
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
                     return;
                 }
-                if (checkClickYear.value) {
-                    store.state.common.processKeyPA110.imputedYear = globalYear.value
-                    store.state.common.processKeyPA110.paymentYear = globalYear.value
-                    originData.value.imputedYear = globalYear.value
-                    originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
+                if (dataYearNew.value != globalYear.value) {
+                    store.state.settings.globalYear = dataYearNew.value
+                    store.state.common.processKeyPA110.imputedYear = dataYearNew.value
+                    store.state.common.processKeyPA110.paymentYear = dataYearNew.value
+                    originData.value.imputedYear = dataYearNew.value
+                    originDataTaxPayInfo.value.processKey.imputedYear = dataYearNew.value
                     // refetchDataProcessIncomeWages() //reset data table 1
                     trigger.value = true; //reset data table 1
                     refetchDataTaxPayInfo() //reset data table 2
-                    checkClickYear.value = false;
+                    // checkClickYear.value = false;
                     return;
                 }
                 if (!store.state.common.statusRowAdd) {
@@ -698,11 +703,14 @@ export default defineComponent({
                 e.cancel = true;
             }
         };
-        const checkClickYear = ref<Boolean>(false)
-        watch(globalYear, (newVal) => {
-            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+        // const checkClickYear = ref<Boolean>(false)
+        const dataYearNew = ref(globalYear.value)
+        watch(globalYear, (newVal, oldVal) => {
+            dataYearNew.value = newVal;
+            if (store.state.common.statusChangeFormEdit) {
                 modalChangeRow.value = true
-                checkClickYear.value = true
+                // checkClickYear.value = true
+                store.state.settings.globalYear = oldVal;
             } else {
                 store.state.common.processKeyPA110.imputedYear = newVal
                 store.state.common.processKeyPA110.paymentYear = newVal

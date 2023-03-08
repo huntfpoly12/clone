@@ -320,6 +320,7 @@ export default defineComponent({
             triggerIncomeWageDaily.value = false;
             setTimeout(() => {
                 store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormAdd = false;
             }, 500);
         })
 
@@ -383,7 +384,7 @@ export default defineComponent({
         // Watching the value of incomeId in the store. If the value is not null, it will set the value
         // of incomeId in originDataIncomeWageDaily.value.incomeId to the value of incomeId in the
         // store. Then it will set triggerIncomeWageDaily.value to true.
-        watch(() => store.state.common.incomeId, (value) => {
+        watch(() => store.state.common.incomeId, async (value) => {
             if (value && value != 'PA510') {
                 originDataIncomeWageDaily.value.incomeId = value
                 triggerIncomeWageDaily.value = true;
@@ -392,7 +393,10 @@ export default defineComponent({
                     arrDeduction.value?.map((data: any) => {
                         data.price = 0
                     })
-                    dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                    // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                    await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+                    await (store.state.common.statusChangeFormEdit = false);
+                    await (store.state.common.statusChangeFormAdd = false);
                 }
             }
         })
@@ -404,14 +408,15 @@ export default defineComponent({
         })
 
         // reset form data
-        watch(() => store.state.common.actionResetForm, (value) => {
+        watch(() => store.state.common.actionResetForm, async (value) => {
             countKey.value++;
-            Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+            await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
             // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
             arrDeduction.value?.map((data: any) => {
                 data.price = 0
             })
-            store.state.common.statusChangeFormPrice = false
+            await (store.state.common.statusChangeFormEdit = false);
+            await (store.state.common.statusChangeFormAdd = false);
         })
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
