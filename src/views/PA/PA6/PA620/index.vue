@@ -392,7 +392,6 @@ export default defineComponent({
             store.state.common.processKeyPA620.paymentMonth = data.paymentMonth;
         }  
         const showDetailSelected = (data: any) => {
-          console.log(`output->data`,data)
           if(!isRunOnce.value){
             isDisabledForm.value = false;
           }

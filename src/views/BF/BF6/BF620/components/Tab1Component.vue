@@ -258,7 +258,6 @@ export default defineComponent({
         let { paymentYear, paymentMonth, ...compareObj } = filterBF620.value;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(compareObj).every((key: any) => {
-            // console.log(`output->compareObj[key]`, key);
             if (key == 'index' || key=='afterDeadline'){
               if (compareObj.afterDeadline !== item.afterDeadline){
                 return false;
