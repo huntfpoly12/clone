@@ -38,7 +38,7 @@
                       <div class="d-flex items-center gap-4 text-color-black">
                         <span>{{ dayjs(data.data.updatedAt).format("YYYY-MM-DD") }}</span>
                         <a-tag :color="getColorTag(data.data.statusUpdateUser.type)" class="mr-0">
-                            {{ data.value == "m" ? "매니저" : (data.value == "c" ? "고객사" : (data.value == "p" ? "파트너" : "영업자"))}}
+                            {{ data.data.statusUpdateUser.type == "m" ? "매니저" : (data.data.statusUpdateUser.type == "c" ? "고객사" : (data.data.statusUpdateUser.type == "p" ? "파트너" : "영업자"))}}
                         </a-tag>
                         <span>{{ data.data.statusUpdateUser.username }}</span>
                         <span>{{ data.data.statusUpdateUser.id }}</span>
@@ -90,7 +90,6 @@ export default defineComponent({
         }));
         resTable(res => {
             dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
-            console.log('dataSource', dataSource.value)
         })
         errorTable(res => {
             notification('error', res.message)
