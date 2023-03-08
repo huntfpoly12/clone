@@ -7,7 +7,7 @@
             <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)" />
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
-        <div class="step-content pt-20">
+        <div class="step-content pt-20">{{ dataDetailValue }}
             <form action="your-action">
                 <keep-alive>
                     <template v-if="step === 0">
