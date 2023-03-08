@@ -290,6 +290,7 @@ export default defineComponent({
         let actionSave = ref(0)
         let dataSource: any = ref([]);
         const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -298,7 +299,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
         const dataModalCopy: any = ref()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        
         const monthSeleted = ref<number>(0);
         const valueCallApiGetEmployeeBusiness = ref({
             companyId: companyId,

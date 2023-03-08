@@ -4,7 +4,7 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month1) }}
+                    귀 {{ store.state.settings.globalYear }}-{{ $filters.formatMonth(month1) }}
                 </div>
                 <month-picker-box-custom v-model:valueDate="month2"/>
            
@@ -94,7 +94,7 @@ export default defineComponent({
             res.brokenRules[0].validator.focus();
           } else {
             emit("dataAddIncomeProcess", {
-              imputedYear: props.processKey.imputedYear,
+              imputedYear: globalYear.value,
               imputedMonth: month1.value,
               paymentYear: parseInt(month2.value.toString().slice(0, 4)),
               paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
@@ -108,7 +108,7 @@ export default defineComponent({
             paymentDayCopy,
             month1, month2,
             setModalVisible,
-            onSubmit,
+            onSubmit,store
         }
     },
 })
