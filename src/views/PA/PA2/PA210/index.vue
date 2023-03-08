@@ -3,8 +3,8 @@
     <div class="page-content">
         <a-spin :spinning="loading" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="reportId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                :column-auto-width="true">
+                key-expr="reportId" :allow-column-reordering="move_column" :focused-row-enabled="true" :allow-column-resizing="colomn_resize" 
+                :column-auto-width="true"  :focused-row-key="store.state.common.focusedRowKeyPA210" :onRowClick="onRowClick">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxToolbar>
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -28,7 +28,7 @@
                     <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
                                 @dataRow="changeStatus" /> -->
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
-                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40" @click="data.data.status == 40 ? editRow(data.data, 'iconEdit') :''"/>
+                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
@@ -134,8 +134,11 @@
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')"
-                        style="border: none; margin-top: -2px;" />
+                    <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
+                        style="border: none; margin-top: -2px;" >
+                        <EyeFilled v-if="data.data.status == 40" :style="{fontSize: '20px', color: 'black'}"/>
+                        <EditFilled v-else :style="{fontSize: '20px', color: 'black'}"/>
+                    </DxButton>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
                 <template #add="{ data }">
@@ -188,7 +191,7 @@ import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid"
-import { HistoryOutlined } from "@ant-design/icons-vue"
+import { HistoryOutlined ,EyeFilled,EditFilled} from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
@@ -198,11 +201,12 @@ export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify
+        ReportGridModify,EyeFilled,EditFilled
     },
     setup() {
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
+        
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
@@ -383,13 +387,13 @@ export default defineComponent({
             }
         }
 
-        const viewReport = () => {
-        alert()
+        const onRowClick = (data: any) => {
+          store.state.common.focusedRowKeyPA210 = data.reportId
         }
         return {
             globalYear, move_column, colomn_resize, dayjs,
-            dataSource, loading,
-            getReportType,viewReport,
+            dataSource, loading,store,
+            getReportType,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
@@ -401,6 +405,7 @@ export default defineComponent({
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
+            onRowClick
             
         };
     },

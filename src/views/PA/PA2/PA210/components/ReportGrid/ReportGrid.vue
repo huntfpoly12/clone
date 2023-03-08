@@ -168,6 +168,7 @@ import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
 
@@ -304,12 +305,13 @@ export default defineComponent({
             onError: errChangeStatus
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
-    doneChangeStatus(() => {
-        notification('success', `업부상태 변경되었습니다!`)
-        emit('isDoneReport', false)
+    doneChangeStatus((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
+      emit('isDoneReport', false)
     })
     errChangeStatus((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
     })
 
     // The above code is creating a tax withholding report.
