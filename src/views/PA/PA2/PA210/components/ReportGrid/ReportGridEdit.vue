@@ -95,6 +95,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 
 // register Handsontable's modules
 registerAllModules();
@@ -232,8 +233,9 @@ export default defineComponent({
             onDone: doneUpdate,
             onError: errUpdate
         } = useMutation(mutations.updateTaxWithholdingStatusReport);
-    doneUpdate(() => {
-      notification('success', `업부상태 변경되었습니다!`)
+    doneUpdate((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.updateTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
       setModalVisible()
     })
     errUpdate((error) => {
