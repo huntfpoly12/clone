@@ -1,15 +1,15 @@
 <template>
     <div class="d-flex-center mt-10 title-action" :class="{'ele-opacity':!compareForm()}">
         <div>
-            <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
+            <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
-            <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
+            <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40"/>
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40||!compareForm()"/>
         </div>
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
-            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || isExpiredStatus" />
+            <DxButton class="ml-3" icon="trash" @click="deleteItem" :disabled="isDisabledForm || isExpiredStatus || isNewRow" />
             <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="modalHistory = true"
                 :disabled="isDisabledForm">
                 <a-tooltip placement="top">
@@ -28,7 +28,7 @@
                     </div>
                 </a-tooltip>
             </DxButton>
-            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || isExpiredStatus">
+            <DxButton @click="editPaymentDate" class="ml-4 custom-button-checkbox" :disabled="isDisabledForm || isExpiredStatus || isNewRow">
                 <div class="d-flex-center">
                     <checkbox-basic :valueCheckbox="true" :disabled="true" />
                     <span class="fz-12 pl-5">지급일변경</span>
@@ -117,9 +117,9 @@
                         <a-col :span="13">
                             <a-form-item label="귀속/지급연월" label-align="right">
                                 <div class="d-flex-center">
-                                  <DxButton :text="'귀' + inputDateTax" :disabled="isDisabledForm"
+                                  <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
                                       :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
-                                  <DxButton :text="'지' + paymentDateTax" :disabled="isDisabledForm"
+                                  <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
                                       :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
                                 </div>
                             </a-form-item>
@@ -306,6 +306,9 @@ export default defineComponent({
                 disabledInput.value = false;
                 resetForm();
             }
+            if(compareType.value == 3) {
+              addNewRow();
+            }
             triggerDetail.value = false
         })
         errorGetIncomeProcessBusinessesDetail(res => {
@@ -365,7 +368,6 @@ export default defineComponent({
             statusButton.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
-          console.log(`output->newVal`,newVal)
             isFirstChange.value = true;
             dataTableDetail.processKey = processKeyPA620.value;
             dataCallApiDetailEdit.processKey = newVal;
@@ -443,6 +445,7 @@ export default defineComponent({
           }
           if (!compareForm()) {
             rowChangeStatus.value = true;
+            compareType.value = 1;
             return;
           }
           disabledInput.value = false;
@@ -453,7 +456,7 @@ export default defineComponent({
         const onRowChangeComfirm = async (ok: boolean) => {
           if (ok) {
             if(compareType.value==1){
-              compareType.value=3;
+              compareType.value = 3;
             }
             let ele = document.getElementById('save-js-620') as HTMLInputElement;
             ele.click();
@@ -467,6 +470,7 @@ export default defineComponent({
             if (isClickEditDiff.value) {
               onEditItem();
               isClickEditDiff.value = false;
+              return;
             }
             if(isClickMonthDiff.value){
               emit('noSave', 0);
@@ -630,10 +634,12 @@ export default defineComponent({
 
         const onChangeFormdone = () => {
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
-            triggerDetail.value =  compareType.value == 2 ? true : false;
+            triggerDetail.value =  true;
             disabledInput.value = true;
             dataActionEdit.value.input = {...dataAction.value.input};
             isNewRow.value = false;
+            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+            selectedRowKeys.value=[focusedRowKey.value];
             if (isClickYearDiff.value) {
               emit('noSave', 1, globalYear.value);
               isClickYearDiff.value = false;
@@ -650,12 +656,16 @@ export default defineComponent({
 
         doneCreated(res => {
             emit('createdDone', true)
-            notification('success', messageUpdate)
-            onChangeFormdone();           
+            notification('success', messageSave)
+            if(compareType.value == 3){
+              dataActionEdit.value.input = {...dataAction.value.input};
+              triggerDetail.value = true;
+              disabledInput.value = false;
+              return;
+            }
             dataAction.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
             dataActionEdit.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
-            focusedRowKey.value = compareType.value == 1 ? res.data.createIncomeBusiness.incomeId : idRowFake.value;
-            selectedRowKeys.value=[focusedRowKey.value];
+            onChangeFormdone();           
         })
         errorCreated(res => {
             notification('error', res.message)
@@ -670,13 +680,18 @@ export default defineComponent({
             onDone: doneEdit,
         } = useMutation(mutations.updateIncomeBusiness);
         doneEdit((res) => {
-          console.log(`output->idRowFake.value`,idRowFake.value)
-            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-            selectedRowKeys.value = [focusedRowKey.value];
-            isNewRow.value =false;
-            if (isClickEditDiff.value) {
-              onEditItem();
-            }
+          emit('createdDone', true)
+          notification('success', messageUpdate)
+          if(compareType.value == 3){
+            dataActionEdit.value.input = {...dataAction.value.input};
+            triggerDetail.value = true;
+            disabledInput.value = false;
+            return;
+          }
+          onChangeFormdone();
+          if (isClickEditDiff.value) {
+            onEditItem();
+          }
         })
         errorEdit(res => {
             notification('error', res.message);
