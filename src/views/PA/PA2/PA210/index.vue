@@ -28,11 +28,11 @@
                     <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
                                 @dataRow="changeStatus" /> -->
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
-                        @checkConfirmRowTable="changeStatusRowTable" />
+                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40" @click="data.data.status == 40 ? editRow(data.data, 'iconEdit') :''"/>
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
-                    <a-tooltip>
+                    <a-tooltip color="blue">
                         <template #title>
                             귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth,
                                 data.data.imputedFinishYearMonth) }}
@@ -46,8 +46,8 @@
                 </template>
                 <DxColumn caption="지급 연월" cell-template="payment" />
                 <template #payment="{ data }">
-                    <a-tooltip>
-                        <template #title>
+                    <a-tooltip color="blue">
+                        <template #title >
                             지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth,
                                 data.data.paymentFinishYearMonth) }}
                         </template>
@@ -382,10 +382,14 @@ export default defineComponent({
                 return false;
             }
         }
+
+        const viewReport = () => {
+        alert()
+        }
         return {
             globalYear, move_column, colomn_resize, dayjs,
             dataSource, loading,
-            getReportType,
+            getReportType,viewReport,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,

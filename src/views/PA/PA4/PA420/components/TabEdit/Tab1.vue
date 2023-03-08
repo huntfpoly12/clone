@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">
+    <standard-form class="modal-add">{{ dataGet }}
         <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -264,10 +264,10 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, computed, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
-import { useStore } from 'vuex';
-import { companyId, openTab } from '@/helpers/commonFunction';
+import { openTab } from '@/helpers/commonFunction';
+import  filters from '@/helpers/filters';
 import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
 
@@ -286,8 +286,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
-        const monthInputed = props.processKey.imputedMonth < 9 ? props.processKey.imputedYear.toString() + '0' + props.processKey.imputedMonth.toString() : props.processKey.imputedYear.toString() + props.processKey.imputedMonth.toString()
-        const monthPayment =  props.processKey.paymentMonth < 9 ? props.processKey.paymentYear.toString()+'0'+props.processKey.paymentMonth.toString() : props.processKey.paymentYear.toString()+props.processKey.paymentMonth.toString()
+        const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
+        const monthPayment =  props.processKey.paymentYear.toString()+ filters.formatMonth(props.processKey.paymentMonth.toString()) 
         let month1 = ref(monthInputed)
         let month2 = ref(monthPayment)
 
@@ -313,8 +313,10 @@ export default defineComponent({
  
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         // =============== WATCH ==================================
-        watch(() => props.dataDetail, (value: any) => {
-            dataGet.value = value
+        watch(() => props.dataDetail, (value: any,oldValue : any) => {
+          dataGet.value = value
+          console.log(oldValue)
+          console.log(value)
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
@@ -322,11 +324,12 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
-        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
-        });
+        // watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
+        //     dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
+        // });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
+          if (newVal) {
             let val1: any = newVal.settlementStartDate?.toString()
             let val2: any = newVal.settlementFinishDate?.toString()
             let objectData = Formula.getDateOfService(
@@ -338,6 +341,7 @@ export default defineComponent({
             yearsOfService1.day = objectData.daysOfService
             yearsOfService1.month = objectData.monthsOfService
             yearsOfService1.year = objectData.yearsOfService
+          }
         }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {

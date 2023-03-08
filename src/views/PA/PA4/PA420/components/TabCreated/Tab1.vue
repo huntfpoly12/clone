@@ -277,6 +277,7 @@ import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
 import { arrayReasonResignationUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
+import  filters from '@/helpers/filters';
 export default defineComponent({
   props: {
     processKey: {
@@ -297,9 +298,8 @@ export default defineComponent({
     setup(props, { emit }) {
         const joinedAt = ref()
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
-        const monthInputed = props.processKey.imputedMonth < 9 ? props.processKey.imputedYear.toString() + '0' + props.processKey.imputedMonth.toString() : props.processKey.imputedYear.toString() + props.processKey.imputedMonth.toString()
-        const monthPayment = props.processKey.paymentMonth < 9 ? props.processKey.paymentYear.toString() + '0' + props.processKey.paymentMonth.toString() : props.processKey.paymentYear.toString() + props.processKey.paymentMonth.toString()
-        
+        const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
+        const monthPayment =  props.processKey.paymentYear.toString()+ filters.formatMonth(props.processKey.paymentMonth.toString()) 
         let month1 = ref(monthInputed)
         let month2 = ref(monthPayment)
 

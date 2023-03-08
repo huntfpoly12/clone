@@ -3,15 +3,16 @@ let statesBF620 = {
   filterBF620: {
     beforeProduction: false,
     productionStatuses: [],
-    companyCode: "",
-    companyName: "",
+    code: "",
+    name: "",
     manageUserId: 0,
     salesRepresentativeId: 0,
-    excludeCancel: true,
+    active: true,
     paymentYear: +dayjs().format("YYYY"),
     paymentMonth: +dayjs().format("MM"),
     reportType: 0,
-    withholdingTaxType: 1,
+    index: 0,
+    afterDeadline: false,
   },
 };
 

@@ -44,13 +44,12 @@
                         </div>
                     </a-col>
                 </a-row>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                <DxDataGrid ref="dataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged"
                     @cell-prepared="onCellPrepared"
                     @row-prepared="onRowPrepared"
-                    
                     >
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -288,6 +287,7 @@ export default defineComponent({
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
+          clearSelection()
             // If the retention style is number, send an email to one person. If it's an object type, send a group. 
             dataSendEmail.value.companyId = companyId
             dataSendEmail.value.input = {
@@ -373,7 +373,7 @@ export default defineComponent({
             }
         }
         const selectionChanged = (data: any) => {
-            selectedItemKeys.value = data.selectedRowKeys
+          selectedItemKeys.value = data.selectedRowKeys
         }
 
         const customTextSummaryInfo = () => {
@@ -391,10 +391,15 @@ export default defineComponent({
           })
           return '전체: ' + total + " (계속: " + 계속 + ", 중도: " + 중도 + ")"
         }
-
+        const dataGrid = ref()
+        const clearSelection = () => {
+          const dataGridRef = dataGrid.value?.instance;
+          dataGridRef?.clearSelection();
+        }
         return {
             loadingSendEmail, switchTypeSendMail, emailAddress, modalSendMail, loadingPrint, createDate, loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, checkBoxOption, checkBoxOption2,
-            selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo
+            selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo,
+            dataGrid
         };
     },
     methods: {
@@ -408,8 +413,7 @@ export default defineComponent({
         if(isRowSummary){
           e.rowElement.removeChild(e.rowElement.lastChild)
         }
-      }
-      
+      },
     }
 });
 </script>

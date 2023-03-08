@@ -3,19 +3,24 @@
     <a-row>
       <a-col>
         <div class="search-date" style="margin-left: 181px;">
-          <a-form-item label="신고주기" label-align="left" class="mb-0">
+          <a-form-item label="신고주기" label-align="left" class="mb-0" v-if="tab1">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
             <checkbox-basic size="14" label="정기" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
+          
         </div>
         <div class="search-date">
           <span class="search-text mt-5">지급연월</span>
           <div>
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
-          <a-form-item label="신고구분" label-align="right" class=" ml-10">
-            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
+          <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
+            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.reportType"
+              layoutCustom="horizontal" class="mt-1"></radio-group>
+          </a-form-item>
+          <a-form-item label="신고구분" label-align="left" class="ml-10" v-else>
+            <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="afterDeadLineIndex"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
         </div>
@@ -46,11 +51,11 @@
           </a-form-item>
         </a-row>
         <a-form-item label="영업자리스트">
-          <list-sales-dropdown width="150px" :required="true" v-model:valueInput="filterBF620.salesRepresentativeId" />
+          <list-sales-dropdown width="150px" v-model:valueInput="filterBF620.salesRepresentativeId" />
         </a-form-item>
       </a-col>
       <a-col class="search-4">
-        <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.excludeCancel" />
+        <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.active" />
       </a-col>
     </a-row>
   </div>
@@ -61,10 +66,16 @@ import { computed, defineComponent, reactive, ref, watch } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
-import { reportTypeCheckbox, productionStatusesCheckbox } from '../utils/index';
+import { reportTypeCheckbox, productionStatusesCheckbox, reportTypeTab2 } from '../utils/index';
 import CheckboxGroup from './CheckboxGroup.vue';
 export default defineComponent({
   components: { DxButton, CheckboxGroup },
+  props: {
+    tab1: {
+      type: Boolean,
+      default: true
+    }
+  },
   setup() {
     const store = useStore();
     const filterBF620 = computed(() => store.state.common.filterBF620);
@@ -121,12 +132,28 @@ export default defineComponent({
     });
     // watch beforeProduction
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
-      if (newVal) {
+      if (!newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
         filterBF620.value.productionStatuses = [0];
       }
     }, { deep: true })
+    // afterDeadLineIndex
+    const afterDeadLineIndex = ref(1);
+    watch(afterDeadLineIndex,(newVal: any)=> {
+      if(newVal === 1) {
+        filterBF620.value.index = 0;
+        filterBF620.value.afterDeadline = false;
+      }
+      if(newVal === 2) {
+        filterBF620.value.index = 1;
+        filterBF620.value.afterDeadline = false;
+      }
+      if(newVal === 3) {
+        filterBF620.value.index = 0;
+        filterBF620.value.afterDeadline = true;
+      }
+    })
     return {
       radioCheckForeigner,
       foreigner,
@@ -137,6 +164,8 @@ export default defineComponent({
       reportType,
       checkbox1: '',
       checkbox2,
+      afterDeadLineIndex,
+      reportTypeTab2
     };
   },
 });
