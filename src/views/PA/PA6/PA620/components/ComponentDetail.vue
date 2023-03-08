@@ -102,9 +102,9 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingDetailEdit || loadingTableDetail)" size="large">
-            {{ isNewRow }} isNewRow <br/>
+            <!-- {{ isNewRow }} isNewRow <br/>
             {{ compareType }} compareType <br/>
-            {{ dataAction }} dataAction <br/>
+            {{ dataAction }} dataAction <br/> -->
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
@@ -365,6 +365,7 @@ export default defineComponent({
             statusButton.value = newValue
         })
         watch(processKeyPA620, (newVal: any, oldV) => {
+          console.log(`output->newVal`,newVal)
             isFirstChange.value = true;
             dataTableDetail.processKey = processKeyPA620.value;
             dataCallApiDetailEdit.processKey = newVal;
@@ -441,7 +442,6 @@ export default defineComponent({
             return;
           }
           if (!compareForm()) {
-            compareType.value = 1;
             rowChangeStatus.value = true;
             return;
           }
@@ -651,13 +651,7 @@ export default defineComponent({
         doneCreated(res => {
             emit('createdDone', true)
             notification('success', messageUpdate)
-            if(compareType.value==3){
-              triggerDetail.value =  true;
-              addNewRow();
-              compareType.value = 1;
-              return;
-            }
-            onChangeFormdone();
+            onChangeFormdone();           
             dataAction.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
             dataActionEdit.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
             focusedRowKey.value = compareType.value == 1 ? res.data.createIncomeBusiness.incomeId : idRowFake.value;
@@ -676,15 +670,7 @@ export default defineComponent({
             onDone: doneEdit,
         } = useMutation(mutations.updateIncomeBusiness);
         doneEdit((res) => {
-            emit('createdDone', true)
-            notification('success', messageUpdate)
-            if(compareType.value==3){
-              triggerDetail.value =  true;
-              addNewRow();
-              compareType.value = 1;
-              return;
-            }
-            onChangeFormdone();
+          console.log(`output->idRowFake.value`,idRowFake.value)
             focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
             selectedRowKeys.value = [focusedRowKey.value];
             isNewRow.value =false;
