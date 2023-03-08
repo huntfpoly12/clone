@@ -111,6 +111,7 @@ export default defineComponent({
 .main {
     display: flex;
     align-items: flex-end;
+    padding: 2px 9px !important;
 }
 
 
