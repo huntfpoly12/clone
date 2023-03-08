@@ -401,7 +401,7 @@ export default defineComponent({
                     return item.women;
                 }).length;
                 singleParentSummary.value = dataSource.value.filter((item: any) => {
-                    return item.senior;
+                    return item.singleParent;
                 }).length;
                 maternityAdoptionSummary.value = dataSource.value.filter((item: any) => {
                     return item.maternityAdoption;

@@ -31,6 +31,7 @@
                           >
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                            <DxPaging page-size="10"/>
                             <DxExport :enabled="true" />
                             <DxToolbar>
                                 <DxItem location="after" template="pagination-table" />
@@ -165,7 +166,7 @@ import { defineComponent, ref, watch, computed, reactive } from "vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxPaging} from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState } from "./utils/index"
@@ -176,7 +177,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DxButton, HistoryPopup, SaveOutlined, DxScrolling,
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging
     },
     setup() {
         // config grid
@@ -246,9 +247,10 @@ export default defineComponent({
             }
             triggerDetail.value = false;
         })
-        onDoneAdd(() => {
+        onDoneAdd((e:any) => {
             trigger.value = true;
             dataRowOld = { ...formState.value }
+            focusedRowKey.value = e.data.createClient.clientId
             statusFormUpdate.value = true;
             statusRemoveRow.value = true;
             notification('success', `업데이트 완료되었습니다!`)

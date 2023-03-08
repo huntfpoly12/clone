@@ -60,7 +60,7 @@ export default [
           title: "회계설정",
           id: "cm-120",
           subMenus: [
-            { title: "통장관리", url: "#", id: "cm-121" },
+            { title: "통장관리", url: "/dashboard/cm-121", id: "cm-121" },
             { title: "수급자관리", url: "#", id: "cm-124" },
             { title: "회계기타", url: "#", id: "cm-125" },
             { title: "계정코드", url: "#", id: "cm-126" },
