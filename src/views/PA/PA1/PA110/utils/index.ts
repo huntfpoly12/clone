@@ -11,6 +11,7 @@ export const sampleDataIncomeWage = {
     totalDeduction: 0,
     monthlyPaycheck: true,
   },
+  totalPay: 0,
   totalPayItem: 0,
   totalPayItemTax: 0,
   totalPayItemTaxFree: 0,

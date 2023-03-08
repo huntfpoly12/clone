@@ -102,9 +102,9 @@
                 <a-col :span="13">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{
                         $filters.formatCurrency(dataIW.totalPayItemTaxFree)
-                    }} 과세 + {{
+                    }} 과 + {{
     $filters.formatCurrency(dataIW.totalPayItemTax)
-}} 비과세 </div>
+}} 비 </div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -429,7 +429,8 @@ export default defineComponent({
         // reset form data
         watch(() => store.state.common.actionResetForm, (value) => {
             countKey.value++;
-            dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+            Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+            // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
             // dataIW.value.employee.employeeId = null
             dataConfigDeductions.value.map((data: any) => {
                 data.amount = 0
