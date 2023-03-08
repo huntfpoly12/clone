@@ -188,11 +188,9 @@
     <!-- {{ isBtnYellow }} isBtnYellow <br/>
     {{ formStateTab2 }} formStateTab2 <br/>
     {{ rangeDate }} rangeDate <br/> -->
-    <a-row style="margin-top: 20px">
-      <a-col :span="8" :offset="8" style="text-align: center">
+    <a-row style="margin-top: 20px" justify="center">
         <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
         <button-basic id="btn-save-add-tab2" text="저장" type="default" mode="contained" :width="90" @onClick="createDeduction" />
-      </a-col>
     </a-row>
   </div>
 </template>
