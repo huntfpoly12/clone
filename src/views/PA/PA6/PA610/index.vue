@@ -382,6 +382,7 @@ export default defineComponent({
     const formRef = ref(); // ref of form
     const gridRef = ref(); // ref of grid
     const isNewRow = ref(false); // check if new row is adding
+    const isClickAddRow = ref(false); // check if click add row
     const focusedRowKey = ref<number>(0); // focused row key
     let previousRowData = ref(); // save previous row data when focus row change
     const dataShow: any = ref({ ...valueDefaultAction }); // data show in form when click row or add new row
@@ -479,6 +480,7 @@ export default defineComponent({
         isNewRow.value = true;
       } else {
          if (previousRowData.value && !compareObject(previousRowData.value, dataShow.value)) {
+          selectRowKeyAction.value = 0
           isDiscard.value = true;
         }
       }
@@ -615,18 +617,27 @@ export default defineComponent({
       onDone: createdDone,
     } = useMutation(mutations.createEmployeeBusiness);
     createdDone(async (res) => {
-      isNewRow.value = false;
-      
-      focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
-      selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
-      valueCallApiGetEmployeeBusiness.incomeTypeCode =
-        dataShow.value.incomeTypeCode;
-      valueCallApiGetEmployeeBusiness.employeeId = parseInt(
-        dataShow.value.employeeId
-      );
-      previousRowData.value = { ...dataShow.value };
+      // tạo mới xong và kiểm tra có phải là thêm mới hay không, nếu đúng thì thêm row mới
       await refetchData();
-      notification("success", `업데이트 완료!`);
+      if(isClickAddRow.value) {
+        storeDataSource.value.insert(valueDefaultAction).then((result) => {
+            focusedRowKey.value = 0;
+            dataShow.value = result;
+            previousRowData.value = { ...result };
+            dataGridRef.value?.refresh();
+            formRef.value.resetValidate()
+          });
+      } else {
+        focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
+        selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
+        valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
+        valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataShow.value.employeeId);
+        previousRowData.value = { ...dataShow.value };
+        // Nếu không phải thêm row mới thì isNewRow = false
+        isNewRow.value = false;
+      }
+      notification("success", Message.getCommonMessage('106').message);
+
     });
     createdErr((res) => {
       notification("error", res.message);
@@ -650,7 +661,7 @@ export default defineComponent({
       });
       formRef.value.resetValidate()
 
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage('106').message);
     });
 
     const onExporting = (e: any) => {
@@ -698,21 +709,18 @@ export default defineComponent({
         },
       };
     });
-    const saving = () => {
+    const handleSubmit = () => {
       const res = formRef.value.validate();
+      isDiscard.value = false;
       if (!res.isValid) {
-        isDiscard.value = false;
         // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
-        isDiscard.value = false;  
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {
           actionUpdate(dataUpdate.value);
         } else {
-          // if form disabled => action add
-          if(isDiscard.value) return
-          const newDateCreate = {
+          const newDataCreate = {
             companyId: companyId,
             imputedYear: globalYear.value,
             input: {
@@ -730,15 +738,20 @@ export default defineComponent({
               incomeTypeName: dataShow.value.incomeTypeName,
             },
           };
-          actionCreated(newDateCreate);
+          actionCreated(newDataCreate);
         }
       }
+    }
+    const saving = () => {
+      handleSubmit()
+      isClickAddRow.value = false;
+
     };
     const handleConfirm = async (e: any) => {
       if (e) {
-        const btn = document.querySelector('#btn-save') as HTMLButtonElement
-        if(btn) btn.click()
-
+        // kiểm tra xem có phải là thêm mới hay không
+        isClickAddRow.value = isNewRow.value && selectRowKeyAction.value === 0
+        handleSubmit()
       }
     };
     const actionDelete = (employeeId: any, incomeTypeCode: any) => {

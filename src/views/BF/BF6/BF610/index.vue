@@ -270,55 +270,55 @@ export default defineComponent({
       let arraySelectBox2 = computed(() => [
           {
               key: 1,
-              value: "귀 " + globalYear.value + "-01"
+              value: "지 " + globalYear.value + "-01"
           },
           {
               key: 2,
-              value: "귀 " + globalYear.value + "-02"
+              value: "지 " + globalYear.value + "-02"
           },
           {
               key: 3,
-              value: "귀 " + globalYear.value + "-03"
+              value: "지 " + globalYear.value + "-03"
           },
           {
               key: 4,
-              value: "귀 " + globalYear.value + "-04"
+              value: "지 " + globalYear.value + "-04"
           },
           {
               key: 5,
-              value: "귀 " + globalYear.value + "-05"
+              value: "지 " + globalYear.value + "-05"
           },
           {
               key: 6,
-              value: "귀 " + globalYear.value + "-06"
+              value: "지 " + globalYear.value + "-06"
           },
           {
               key: 7,
-              value: "귀 " + globalYear.value + "-07"
+              value: "지 " + globalYear.value + "-07"
           },
           {
               key: 8,
-              value: "귀 " + globalYear.value + "-08"
+              value: "지 " + globalYear.value + "-08"
           },
           {
               key: 9,
-              value: "귀 " + globalYear.value + "-09"
+              value: "지 " + globalYear.value + "-09"
           },
           {
               key: 10,
-              value: "귀 " + globalYear.value + "-10"
+              value: "지 " + globalYear.value + "-10"
           },
           {
               key: 11,
-              value: "귀 " + globalYear.value + "-11"
+              value: "지 " + globalYear.value + "-11"
           },
           {
               key: 12,
-              value: "귀 " + globalYear.value + "-12"
+              value: "지 " + globalYear.value + "-12"
           },
           {
               key: 13,
-              value: "귀 " + (globalYear.value + 1) + "-1"
+              value: "지 " + (globalYear.value + 1) + "-1"
           },
       ])
       let statuses = reactive({
