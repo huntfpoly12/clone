@@ -39,60 +39,53 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          <DxDataGrid
-            :show-row-lines="true"
-            :hoverStateEnabled="true"
-            :data-source="dataSource"
-            :show-borders="true"
-            key-expr="employeeId"
-            :allow-column-reordering="move_column"
-            :allow-column-resizing="colomn_resize"
-            :column-auto-width="true"
-            :onRowClick="actionEdit"
-            :focused-row-enabled="true"
-            id="pa-120-gridContainer"
-            :auto-navigate-to-focused-row="true"
-            v-model:focused-row-key="focusedRowKey"
-          >
+          <!-- {{ compareType1() }} compareType1() <br/>
+          {{ compareType2() }} compareType2() <br/>
+          {{ initFormStateTabPA120 }} initFormStateTabPA120 <br/>
+          {{ initFormStateTab1 }} initFormStateTab1 <br/> -->
+          <!-- {{ dataSource }} -->
+          <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+            :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
+            :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
+            <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
+              :search-visible-columns="['TypeCodeAndName']" />
+            <DxExport :enabled="true" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
+              <DxItem name="searchPanel" />
+              <DxItem name="exportButton" css-class="cell-button-export" />
               <DxItem location="after" template="button-history" css-class="cell-button-add" />
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
             </DxToolbar>
             <template #button-template>
               <a-tooltip placement="top" class="custom-tooltip">
-                  <template #title>
-                    신규
-                  </template>
-                  <div style="text-align: center;" >
-                    <DxButton icon="plus" @click="openAddNewModal" />
-                  </div>
+                <template #title>
+                  신규
+                </template>
+                <div style="text-align: center;">
+                  <DxButton icon="plus" @click="openAddNewModal" />
+                </div>
               </a-tooltip>
             </template>
-            <template #button-history="{}">
+            <template #button-history>
               <DxButton icon="plus">
                 <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
               </DxButton>
             </template>
-            <DxColumn caption="성명" width="180" cell-template="company-name" />
+            <DxColumn caption="성명" width="180" cell-template="company-name" data-field="name" />
             <template #company-name="{ data }">
-              <employee-info
-                :idEmployee="data.data.employeeId"
-                :name="data.data.name"
-                :idCardNumber="data.data.residentId"
-                :status="data.data.status"
-                :foreigner="data.data.foreigner"
-                :checkStatus="false"
-                @toolTopErorr="toolTopErorr"
-                :employeeId="data.data.employeeId"
-                @mouseenter="defaultVisible = true"
-                @mouseleave="defaultVisible = false"
-              />
+              <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
+                :idCardNumber="data.data.residentId" :status="data.data.status" :foreigner="data.data.foreigner"
+                :checkStatus="false" @toolTopErorr="toolTopErorr" :employeeId="data.data.employeeId"
+                @mouseenter="defaultVisible = true" @mouseleave="defaultVisible = false" />
             </template>
-            <DxColumn caption="주민등록번호" cell-template="residentId" width="110" />
+            <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
             <template #residentId="{ data }">
               <div v-if="data.data.residentId?.length == 14">
-                <a-tooltip placement="top" v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32" key="black">
+                <a-tooltip placement="top"
+                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
+                  key="black">
                   {{ data.data.residentId }}
                 </a-tooltip>
                 <a-tooltip placement="top" v-else title="ERROR" color="red">
@@ -105,16 +98,21 @@
                 </a-tooltip>
               </div>
             </template>
-            <DxColumn caption="비고" cell-template="grade-cell" width="410" />
+            <DxColumn caption="비고" cell-template="grade-cell" width="410" data-field="incomeTaxMagnification"
+              :calculateCellValue="calculateIncomeTypeCodeAndName" />
             <template #grade-cell="{ data }">
               <div>
                 <four-major-insurance v-if="data.data.nationalPensionDeduction" :typeTag="1" :typeValue="1" />
                 <four-major-insurance v-if="data.data.healthInsuranceDeduction" :typeTag="2" :typeValue="1" />
                 <four-major-insurance v-if="data.data.employeementInsuranceDeduction" :typeTag="4" :typeValue="1" />
-                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6" :ratio="data.data.nationalPensionSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7" :ratio="data.data.employeementInsuranceSupportPercent" />
-                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8" :ratio="data.data.employeementReductionRatePercent" />
-                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10" :ratio="data.data.incomeTaxMagnification" />
+                <four-major-insurance v-if="data.data.nationalPensionSupportPercent" :typeTag="6"
+                  :ratio="data.data.nationalPensionSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementInsuranceSupportPercent" :typeTag="7"
+                  :ratio="data.data.employeementInsuranceSupportPercent" />
+                <four-major-insurance v-if="data.data.employeementReductionRatePercent" :typeTag="8"
+                  :ratio="data.data.employeementReductionRatePercent" />
+                <four-major-insurance v-if="data.data.incomeTaxMagnification" :typeTag="10"
+                  :ratio="data.data.incomeTaxMagnification" />
               </div>
             </template>
             <DxColumn cell-template="pupop" width="30" />
@@ -130,28 +128,24 @@
         </a-spin>
       </a-col>
       <a-col :span="13" class="custom-layout">
-        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus" v-if="actionChangeComponent == 1" :key="addComponentKey" />
-        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2" :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
+        <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
+          v-if="actionChangeComponent == 1" :key="addComponentKey" />
+        <PA120PopupEdit :idRowEdit="idRowEdit" :modalStatus="modalEditStatus" v-if="actionChangeComponent == 2"
+          :arrRowEdit="arrRowEdit" :resetActiveKey="resetActiveKey" />
       </a-col>
     </a-row>
-    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete" okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
-    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력" :idRowEdit="idRowEdit" typeHistory="pa-120" />
-    <PopupMessage
-      :modalStatus="rowChangeStatus"
-      @closePopup="rowChangeStatus = false"
-      :typeModal="'confirm'"
-      :title="messageSave"
-      :content="''"
-      :keyAccept="'1234'"
-      :okText="'네'"
-      cancelText="아니요"
-      @checkConfirm="onRowChangeComfirm"
-    />
+    <PopupMessage :modalStatus="delStatus" @closePopup="delStatus = false" typeModal="confirm" :content="contentDelete"
+      okText="네" cancelText="아니요" @checkConfirm="statusComfirm" />
+    <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+      :idRowEdit="idRowEdit" typeHistory="pa-120" />
+    <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
+      :title="messageSave" :content="''" :keyAccept="'1234'" :okText="'네'" cancelText="아니요"
+      @checkConfirm="onRowChangeComfirm" />
   </div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxExport } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
@@ -181,9 +175,11 @@ export default defineComponent({
     PA120PopupEdit,
     DxScrolling,
     DxTooltip,
+    DxSearchPanel,
+    DxExport
   },
   setup() {
-    const actionChangeComponent = ref(1);
+    const actionChangeComponent = ref(2);
     const addNew = ref();
     const contentDelete = Message.getMessage('PA120', '002').message;
     const delStatus = ref(false);
@@ -236,7 +232,7 @@ export default defineComponent({
       refetchData();
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
       store.commit('common/editRowPA120', initFormStateTab1);
-      isFirstWeb.value = true;
+      // isFirstWeb.value = true;
       addComponentKey.value++;
       focusedRowKey.value = null;
     });
@@ -255,10 +251,15 @@ export default defineComponent({
     }));
     watch(result, (value) => {
       if (value) {
-        dataSource.value = value.getEmployeeWages;
+        const data = value.getEmployeeWages;
+        dataSource.value = data;
+        if (data.length > 0) {
+          idRowEdit.value = data[0].employeeId;
+        }
+
         trigger.value = false;
-      }else {
-        actionChangeComponent.value =1;
+      } else {
+        actionChangeComponent.value = 1;
       }
     });
     //change year
@@ -287,12 +288,13 @@ export default defineComponent({
     };
 
     //----------------compare Data----------------
+
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
     //function common
     const delNewRow = () => {
-      if (!isFirstWeb.value) {
-        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-      }
+      // if (!isFirstWeb.value) {
+      dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+      // }
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
       addComponentKey.value++;
       store.state.common.isNewRowPA120 = false;
@@ -307,18 +309,19 @@ export default defineComponent({
       compareType.value = 1;
     };
     const compareType = ref(1); //0 is row click. 1 is add button click;
-    const isChangeConfigPayItemsPA120 = computed(() => store.state.common.isChangeConfigPayItemsPA120);
     // Comparing the values of two objects.
     const compareType1 = () => {
-      if (JSON.stringify(initFormStateTab1) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
+      const { stayQualification, ...obj1 } = initFormStateTab1;
+      const { stayQualification: stayQualification2, ...obj2 } = initFormStateTabPA120.value;
+      if (JSON.stringify(obj1) == JSON.stringify(obj2) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
     };
     const compareType2 = () => {
-      if (isChangeConfigPayItemsPA120.value) {
-        return false;
-      }
+      // if (isChangeConfigPayItemsPA120.value) {
+      //   return false;
+      // }
       // JSON.stringify(editRowTab2) == JSON.stringify(initFormTab2)
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
@@ -326,7 +329,7 @@ export default defineComponent({
       return false;
     };
     //on add row
-    const isFirstWeb = ref(true);
+    // const isFirstWeb = ref(true);
     const openAddNewModal = async () => {
       actionChangeComponent.value = 1;
       if (isNewRowPA120.value) {
@@ -335,29 +338,27 @@ export default defineComponent({
           return;
         }
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
-        if (!isFirstWeb.value) {
-          dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-        }
+        // if (!isFirstWeb.value) {
+        dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+        // }
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         addComponentKey.value++;
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-        isFirstWeb.value = false;
+        // isFirstWeb.value = false;
         return;
       }
-      isFirstWeb.value = false;
+      // isFirstWeb.value = false;
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
-      setTimeout(() => {
-        addNewRow();
-      }, 50);
+      addNewRow();
       return;
     };
-    const tabCurrent = computed(()=> {
-      if(!isCalculateEditPA120.value) {
+    const tabCurrent = computed(() => {
+      if (!isCalculateEditPA120.value) {
         return 2;
       }
       return 1;
     })
-    const rowKeyTab2PA120 = computed(()=> store.state.common.rowKeyTab2PA120)
+    const rowKeyTab2PA120 = computed(() => store.state.common.rowKeyTab2PA120)
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
@@ -373,7 +374,7 @@ export default defineComponent({
             let ele = document.getElementById('btn-save-edit');
             ele?.click();
           }
-          if (compareType.value == 2 && tabCurrent.value  == 2) {
+          if (compareType.value == 2 && tabCurrent.value == 2) {
             let ele2 = document.getElementById('btn-save-edit-tab2');
             ele2?.click();
             let ele3 = document.getElementById('btn-save-add-tab2');
@@ -383,11 +384,11 @@ export default defineComponent({
         });
         Promise.all([promise1, promise2]);
         if (isAddFormErrorPA120.value) {
-          if (isFirstWeb.value) {
-            dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
-            store.state.common.isNewRowPA120 = true;
-            isFirstWeb.value = false;
-          }
+          // if (isFirstWeb.value) {
+          dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
+          store.state.common.isNewRowPA120 = true;
+          // isFirstWeb.value = false;
+          // }
           focusedRowKey.value = tabCurrent.value == 2 ? rowKeyTab2PA120.value : initFormStateTabPA120.value.employeeId;
           if (compareType.value == 1) {
             store.state.common.isNewRowPA120 = true;
@@ -399,16 +400,16 @@ export default defineComponent({
         }
       } else {
         if (isNewRowPA120.value) {
-          if (!isFirstWeb.value) {
-            focusedRowKey.value = null;
-            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
-          }
+          // if (!isFirstWeb.value) {
+          focusedRowKey.value = null;
+          dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
+          // }
           if (compareType.value == 1) {
             addNewRow();
             setTimeout(() => {
               focusedRowKey.value = initFormStateTabPA120.value.employeeId;
             }, 50);
-            isFirstWeb.value = false;
+            // isFirstWeb.value = false;
             return;
           }
         }
@@ -431,14 +432,14 @@ export default defineComponent({
           focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
           actionChangeComponent.value = 2;
-          isFirstWeb.value = false;
+          // isFirstWeb.value = false;
           return;
         }
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
         return;
       }
-      isFirstWeb.value = false;
+      // isFirstWeb.value = false;
       if (!compareType2()) {
         rowChangeStatus.value = true;
         idRow.value = data.data.employeeId;
@@ -495,6 +496,9 @@ export default defineComponent({
     watch(keyActivePA120, (newval: number) => {
       focusedRowKey.value = +newval;
     });
+    function calculateIncomeTypeCodeAndName(rowData: any) {
+      return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
+    }
     return {
       loading,
       idRowEdit,
@@ -536,15 +540,15 @@ export default defineComponent({
       compareType,
       messageSave,
       messageDel,
-      isFirstWeb,
+      // isFirstWeb,
       editRowPA120,
       compareType1,
       compareType2,
       tabCurrent,
       rowKeyTab2PA120,
+      calculateIncomeTypeCodeAndName
     };
   },
 });
 </script>
-<style lang="scss" scoped src="./style/style.scss" >
-</style>
+<style lang="scss" scoped src="./style/style.scss" ></style>

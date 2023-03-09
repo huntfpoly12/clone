@@ -102,9 +102,9 @@
         </a-col>
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingDetailEdit || loadingTableDetail)" size="large">
-            <!-- {{ isNewRow }} isNewRow <br/>
+            {{ isNewRow }} isNewRow <br/>
             {{ compareType }} compareType <br/>
-            {{ dataAction }} dataAction <br/> -->
+            {{ dataAction }} dataAction <br/>
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
@@ -391,7 +391,7 @@ export default defineComponent({
         const isClickYearDiff = ref(false);
         const changeYearDataFake = ref();
         //compare Data
-        const compareType = ref(1); //0 is row change. 1 is add button;
+        const compareType = ref(2); //2 is row change. 1 is add button;
         const compareForm = () => {
           let daActionCompare = JSON.parse(JSON.stringify(dataAction.value));
           delete daActionCompare.input.employee;
@@ -644,6 +644,16 @@ export default defineComponent({
               emit('noSave', 1, globalYear.value);
               isClickYearDiff.value = false;
               compareType.value = 1;
+              return;
+            }
+            if (isClickMonthDiff.value) {
+              emit('noSave', 0);
+              isClickMonthDiff.value = false;
+              return;
+            }
+            if (isClickYearDiff.value) {
+              emit('noSave', 1);
+              isClickYearDiff.value = false;
               return;
             }
         }
