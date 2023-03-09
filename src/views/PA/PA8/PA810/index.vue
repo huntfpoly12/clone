@@ -46,7 +46,7 @@
         <DxColumn caption="첨부파일다운로드" data-field="dependentsEvidenceFileStorageId" cell-template="dependentsEvidenceFileStorageId" width="80" alignment="center"/>
         <template #dependentsEvidenceFileStorageId="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
-            <DxButton v-if="data.data.dependentsEvidenceFileStorageId" type="ghost" class="" style="cursor: pointer">
+            <DxButton v-if="data.data.dependentsEvidenceFileStorageId" type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.employeeId)">
               <DownloadOutlined :size="12"/>
             </DxButton>
           </div>
@@ -152,7 +152,7 @@ export default defineComponent({
     //------get ReportViewUrl ----
 
     const fillRpTrigger = ref<boolean>(false);
-    const {refetch: fillRpRefetch, result: fillRpResult} = useQuery(
+    const {refetch: fillRpRefetch, result: fillRpResult, onError} = useQuery(
       queries.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
       actionParam,
       () => ({
@@ -162,6 +162,7 @@ export default defineComponent({
     );
     watch(fillRpResult, (newVal) => {
       if (newVal) {
+        console.log('newVal', newVal)
         window.open(newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl);
         fillRpTrigger.value = false;
       }
@@ -171,6 +172,9 @@ export default defineComponent({
       fillRpTrigger.value = true;
       fillRpRefetch();
     };
+    onError((e) => {
+      notification('error', e.message);
+    });
 
     //---------Modal create edit----------
     const isOpenModalCreate = ref(false);

@@ -69,7 +69,7 @@ const statesPA120 = {
   },
 
   isCompareEditPA120: true,
-  isNewRowPA120: true,
+  isNewRowPA120: false,
   isAddFormErrorPA120: false,
   isChangeConfigPayItemsPA120: false,
   isCalculateEditPA120: true,

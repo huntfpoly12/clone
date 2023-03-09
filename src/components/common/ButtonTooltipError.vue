@@ -1,11 +1,10 @@
 <template>
-    <div class="mytooltip">
-        <div class="mytext" :class="showError ? 'show' : ''">
-            <span>{{  textError }}</span>
-        </div>
-    </div>
-    <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
+    <a-tooltip  :title="textError" color='red' :visible="showError">
+      <div>
+        <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
         :type="statusChange ? 'calculate' : 'default'" :text="text" />
+      </div>
+    </a-tooltip>       
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -40,7 +39,7 @@ export default defineComponent({
 
         };
 
-        const clickButton = (e: any) => {
+      const clickButton = (e: any) => {
             emit("onClick", e);
         }
 

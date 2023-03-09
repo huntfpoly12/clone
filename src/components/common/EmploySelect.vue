@@ -3,24 +3,12 @@
         value-expr="employeeId" display-expr="employeeId"
         :value="valueEmploy" :name="nameInput"
         field-template="field-data" @value-changed="updateValue" @item-click="eventItemClick"
-        :height="$config_styles.HeightInput" :disabled="disabled">
+        :disabled="disabled">
         <template #field-data="{ data }">
             <div v-if="data" style="padding-left: 4px">
-                <!-- <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
-                    {{ data.employeeId }}
-                </span>
-                <span>{{ data.name }}</span>
-                <span
-                    v-if="data.idCardNumber?.length == 14
-    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
-                    {{ convertBirthDay(data.idCardNumber) }}
-                </span>
-                <span class="tag-status" v-if="data.status == 0">퇴</span>
-                <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-                <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span> -->
                 <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
                                         :name="data.name" :status="data.status"
-                                        :foreigner="data.foreigner" :checkStatus="false" />
+                                        :foreigner="data.foreigner" :checkStatus="false" :forDailyUse="activeType20 == true && data.type == 20"/>
                 <DxTextBox style="display: none;" />
             </div>
             <div v-else style="padding: 4px">
@@ -29,21 +17,9 @@
             </div>
         </template>
         <template #item-data="{ data }">
-            <!-- <span :class="[{ 'display-none': !data.employeeId }, 'style-Id']">
-                {{ data.employeeId }}
-            </span>
-            <span>{{ data.name }}</span>
-            <span
-                v-if="data.idCardNumber?.length == 14
-    && parseInt(data.idCardNumber.split('-')[0].slice(2, 4)) < 13 && parseInt(data.idCardNumber.split('-')[0].slice(4, 6)) < 32">
-                {{ convertBirthDay(data.idCardNumber) }}
-            </span>
-            <span class="tag-status" v-if="data.status == 0">퇴</span>
-            <span class="tag-foreigner" v-if="data.foreigner == true">외</span>
-            <span class="tag-type-20" v-if="activeType20 == true && data.type == 20">일용</span> -->
             <employee-info :idEmployee="data.employeeId" :idCardNumber="data.residentId"
                                         :name="data.name" :status="data.status"
-                                        :foreigner="data.foreigner" :checkStatus="false" />
+                                        :foreigner="data.foreigner" :checkStatus="false" :forDailyUse="activeType20 == true && data.type == 20"/>
         </template>
 
         <DxValidator :name="nameInput">
@@ -135,6 +111,7 @@ export default defineComponent({
 .main {
     display: flex;
     align-items: flex-end;
+    padding: 2px 9px !important;
 }
 
 

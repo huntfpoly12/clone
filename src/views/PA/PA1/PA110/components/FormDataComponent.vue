@@ -97,15 +97,14 @@
                 </a-col>
 
             </a-row>
-            <div class="header-text-3">급여 / 공제
-            </div>
+            <div class="header-text-3">급여 / 공제</div>
             <a-row :gutter="16">
                 <a-col :span="13">
                     <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{
                         $filters.formatCurrency(dataIW.totalPayItemTaxFree)
-                    }} 과세 + {{
+                    }} 과 + {{
     $filters.formatCurrency(dataIW.totalPayItemTax)
-}} 비과세 </div>
+}} 비 </div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -410,7 +409,7 @@ export default defineComponent({
             calculateTax();
         }, { deep: true })
 
-        watch(() => store.state.common.incomeId, (value) => {
+        watch(() => store.state.common.incomeId, async (value) => {
             if (value && value != 'PA110') {
                 incomeWageParams.incomeId = value
                 triggerDetail.value = true;
@@ -422,15 +421,19 @@ export default defineComponent({
                     dataConfigPayItems.value.map((data: any) => {
                         data.amount = 0
                     })
-                    dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                    // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                    await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+                    await (store.state.common.statusChangeFormEdit = false);
+                    await (store.state.common.statusChangeFormAdd = false);
                 }
 
             }
         })
         // reset form data
-        watch(() => store.state.common.actionResetForm, (value) => {
+        watch(() => store.state.common.actionResetForm, async (value) => {
             countKey.value++;
-            dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+            Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+            // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
             // dataIW.value.employee.employeeId = null
             dataConfigDeductions.value.map((data: any) => {
                 data.amount = 0
@@ -438,7 +441,8 @@ export default defineComponent({
             dataConfigPayItems.value.map((data: any) => {
                 data.amount = 0
             })
-            store.state.common.statusChangeFormPrice = false;
+            await (store.state.common.statusChangeFormEdit = false);
+            await (store.state.common.statusChangeFormAdd = false);
         })
 
         watch(() => store.state.common.statusRowAdd, (newVal) => {
@@ -477,6 +481,7 @@ export default defineComponent({
                 })
                 setTimeout(() => {
                     store.state.common.statusChangeFormPrice = false;
+                    store.state.common.statusChangeFormAdd = false;
                 }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value

@@ -194,12 +194,9 @@
       {{  isCalculateEditPA120 }} isCalculateEditPA120<br/>
       {{  isBtnYellow }} isBtnYellow<br/>
       {{  initFormTab2PA120 }} initFormTab2PA120<br/> -->
-      <a-row style="margin-top: 20px">
-        <a-col :span="8" :offset="8" style="text-align: center">
-          <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
-          <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2"
-            @onClick="updateDeduction" />
-        </a-col>
+      <a-row style="margin-top: 20px" justify="center">
+        <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
+        <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2" @onClick="updateDeduction" />
       </a-row>
     </a-spin>
   </div>

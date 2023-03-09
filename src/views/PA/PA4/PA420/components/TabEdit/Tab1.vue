@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">
+    <standard-form class="modal-add">{{ dataDetail }}
         <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -67,7 +67,7 @@
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
+                                  퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다.
                                 </template>
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             </a-tooltip>
@@ -139,7 +139,7 @@
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
+                                  퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다.
                                 </template>
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             </a-tooltip>
@@ -230,28 +230,12 @@
                     <div class="d-flex-center">
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
-                        <div class="ml-5 d-flex-center">
-                            <a-tooltip placement="top" class="custom-tooltip">
-                                <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
-                                </template>
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            </a-tooltip>
-                        </div>
                     </div>
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" />
-                        <div class="ml-5 d-flex-center">
-                            <a-tooltip placement="top" class="custom-tooltip">
-                                <template #title>
-                                    퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
-                                </template>
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            </a-tooltip>
-                        </div>
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
@@ -264,10 +248,10 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, computed, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
-import { useStore } from 'vuex';
-import { companyId, openTab } from '@/helpers/commonFunction';
+import { openTab } from '@/helpers/commonFunction';
+import  filters from '@/helpers/filters';
 import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
 
@@ -286,8 +270,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
-        const monthInputed = props.processKey.imputedMonth < 9 ? props.processKey.imputedYear.toString() + '0' + props.processKey.imputedMonth.toString() : props.processKey.imputedYear.toString() + props.processKey.imputedMonth.toString()
-        const monthPayment =  props.processKey.paymentMonth < 9 ? props.processKey.paymentYear.toString()+'0'+props.processKey.paymentMonth.toString() : props.processKey.paymentYear.toString()+props.processKey.paymentMonth.toString()
+        const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
+        const monthPayment =  props.processKey.paymentYear.toString()+ filters.formatMonth(props.processKey.paymentMonth.toString()) 
         let month1 = ref(monthInputed)
         let month2 = ref(monthPayment)
 
@@ -307,14 +291,14 @@ export default defineComponent({
             year: 0
         })
 
-        const dataGet: any = ref({
-            ...dataDefaultDetailUtils
-        })
+        const dataGet: any = ref(props.dataDetail)
  
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         // =============== WATCH ==================================
-        watch(() => props.dataDetail, (value: any) => {
-            dataGet.value = value
+        watch(() => props.dataDetail, (value: any,oldValue : any) => {
+          dataGet.value = value
+          console.log(oldValue)
+          console.log(value)
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
@@ -322,11 +306,12 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
-        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
-        });
+        // watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
+        //     dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
+        // });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
+          if (newVal) {
             let val1: any = newVal.settlementStartDate?.toString()
             let val2: any = newVal.settlementFinishDate?.toString()
             let objectData = Formula.getDateOfService(
@@ -338,6 +323,7 @@ export default defineComponent({
             yearsOfService1.day = objectData.daysOfService
             yearsOfService1.month = objectData.monthsOfService
             yearsOfService1.year = objectData.yearsOfService
+          }
         }, { deep: true });
 
         watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {

@@ -12,7 +12,8 @@ export default gql`
       reportId: $reportId
       input: $input
     ) {
-        companyId
+        companyId,
+        reportId
     }
   }
 `;

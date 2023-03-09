@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" :disabled="dataSource[0].status != 10"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
         </div> 
       </div>
   </a-modal>
@@ -92,6 +92,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
 
@@ -312,11 +313,14 @@ export default defineComponent({
             onError: errChangeStatus
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
-    doneChangeStatus(() => {
-        notification('success', `업부상태 변경되었습니다!`)
+    doneChangeStatus((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
+      setModalVisible()
     })
     errChangeStatus((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
+      setModalVisible()
     })
 
     // The above code is a function that is called when the user clicks the "수정" button.
@@ -325,7 +329,20 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 61 && arrData[index][4]) {
+        if (
+            index >= 4 && index <= 61 &&
+            arrData[index][4] &&
+          (
+            arrData[index+1][5] != '' ||
+            arrData[index+1][6] != '' ||
+            arrData[index+1][7] != '' ||
+            arrData[index+1][8] != '' ||
+            arrData[index+1][9] != '' ||
+            arrData[index+1][10] != '' ||
+            arrData[index+1][11] != '' ||
+            arrData[index+1][12] != ''
+          )
+          ) {
           statement.push({
             code: arrData[index][4],
             numberOfPeopleModified: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
@@ -433,6 +450,7 @@ export default defineComponent({
     // Creating a function that will close the confirm box.
     const actionCloseConfirm = () => {
       confirmStatus.value = false
+      setModalVisible()
     }
     return {
       setModalVisible,

@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="actionSave($event)" :buttonDelete="false" />
+    <action-header title="기타소득자등록" @actionSave="actionSave()" :buttonDelete="false" />
     <div id="pa-710">
         <div class="page-content">
             <a-row>
@@ -150,7 +150,7 @@
                         </a-form-item>
                         <div class="text-align-center mt-20">
                             <button-basic :text="'저장'" type="default" :mode="'contained'"
-                                @onClick="actionSave($event)" />
+                                @onClick="actionSave()" />
                         </div>
                         <!-- <button-basic @onClick="actionToAddFromEdit" mode="outlined" type="default" text="취소"
                             id="active-save" /> -->
@@ -325,7 +325,7 @@ export default defineComponent({
 
         // ================FUNCTION============================================
         const pa710FormRef = ref()
-        const actionSave = (e: any) => {
+        const actionSave = () => {
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -418,29 +418,21 @@ export default defineComponent({
             }
         }
         const actionCreate = (e: any) => {
-            // if (statusRemoveRow.value) {
-            //     if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
-            //         modalStatusAdd.value = true
-            //     } else {
-            //         statusRemoveRow.value = false;
-            //         listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-            //         formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-            //         resetFormNum.value++;
-            //         focusedRowKey.value = 'PA710';
-            //         statusFormUpdate.value = false;
-            //     }
-            // } else {
-            //     modalStatusAdd.value = true;
-            // }
-            if (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false) { // if status form add and form not null
+            let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+            let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+            if (statusChangeFormEdit) { // if status form add and form not null
                 modalStatusAdd.value = true
-            } else if(statusRemoveRow.value) {
-                statusRemoveRow.value = false;
-                listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                resetFormNum.value++;
-                focusedRowKey.value = 'PA710';
-                statusFormUpdate.value = false;
+            } else {
+                if (statusChangeFormAdd) { // if status form add and form not null
+                    modalStatusAdd.value = true
+                } else if(statusRemoveRow.value) {
+                    statusRemoveRow.value = false;
+                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+                    resetFormNum.value++;
+                    focusedRowKey.value = 'PA710';
+                    statusFormUpdate.value = false;
+                }
             }
         }
 
@@ -467,8 +459,19 @@ export default defineComponent({
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
-                resetFormNum.value++;
-                Object.assign(formState.value, initialState);
+                actionSave();
+            } else {
+                if(statusRemoveRow.value) { // add row
+                    statusRemoveRow.value = false;
+                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+                    resetFormNum.value++;
+                    focusedRowKey.value = 'PA710';
+                    statusFormUpdate.value = false;
+                } else { // reset form
+                    resetFormNum.value++;
+                    Object.assign(formState.value, initialState);
+                }
             }
         }
 

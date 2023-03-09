@@ -9,11 +9,11 @@
                 <template #title>
                     <div v-if="convertBirthDay(idCardNumber)" style="color: white;">{{ convertBirthDay(idCardNumber) }}</div>
                 </template>
-                <div class="text-center">
+                <div class="text-center" style="padding-top: 4px; height: 25px;">
                     {{ name }}
                 </div>
             </a-tooltip>
-            <div @mouseover="onMouseover" @mouseout="onMouseOut" v-else>{{ name }}</div>
+            <div  v-else @mouseover="onMouseover" @mouseout="onMouseOut" style="padding-top: 4px; height: 25px;">{{ name }}</div>
             <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner == true">외</span>
             <span class="tag-forDailyUse" v-if="forDailyUse == true">일용</span>

@@ -37,12 +37,12 @@
                 </a-row>
               </div>
 
-                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.nationalPensionSupportPercent }}
+                <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
                 </a-form-item>
-                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">{{ originDataUpdate.input.employeementInsuranceSupportPercent }}
+                <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
                         layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
@@ -66,7 +66,7 @@
             <a-col :span="10">
                 <div class="header-text-0">
                     <span>
-                      월급여{{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
+                      월급여 {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
                     </span>
                 </div>
                 <div>
@@ -91,14 +91,14 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
-                            <number-box width="170px" class="mr-5" 
+                            <number-box width="170px" class="mr-3" 
                                 v-model:valueInput="originDataUpdate.input.workingDays"
                                 @changeInput="onChangeWorkingDays" :min="1" :max="31" />
-                            <span class="ml-10">일</span>
+                            <span class="ml-2">일</span>
                         </div>
                     </a-form-item>
                     <div>
-                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b> 원
+                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b>원
                     </div>
                     <div>
                         월급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원</b>
@@ -133,9 +133,9 @@
             </a-col>
         </a-row>
         <div class="button-action">      
+          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
           <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
-          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
         </div>
       </a-spin>
     </div>
