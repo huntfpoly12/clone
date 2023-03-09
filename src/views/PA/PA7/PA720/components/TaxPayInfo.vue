@@ -171,7 +171,7 @@ export default defineComponent({
           props.addNewRow();
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
-          selectedRowKeys.value = [formPA720.value.input.incomeId];
+          store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
         // } else {
         //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
         }
@@ -220,7 +220,7 @@ export default defineComponent({
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
-    const selectedRowKeys = ref<any>([]);
+    const selectedRowKeys = computed(()=> store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
@@ -237,7 +237,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      selectedRowKeys.value = [data.incomeId];
+      store.commit('common/selectedRowKeysPA720',data.incomeId);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,

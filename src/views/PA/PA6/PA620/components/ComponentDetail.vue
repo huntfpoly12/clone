@@ -41,7 +41,9 @@
     </div>
     <a-row>
         <a-col :span="14" class="custom-layout" :class="{'ele-opacity':!compareForm()}">
-            <a-spin :spinning="(loadingTableDetail  || loadingOption)" size="large">
+            <a-spin :spinning="(loadingTableDetail)" size="large">
+              <!-- {{ selectedRowKeys }} selectedRowKeys <br/> -->
+              <!-- {{ dataSourceDetail }} dataSourceDetail <br/> -->
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                     :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
                     :onRowClick="onRowClick" :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -230,7 +232,7 @@ export default defineComponent({
     setup(props, { emit }) {
         let disabledInput = ref(false)
         let statusButton = ref(props.statusBt)
-        let dataSourceDetail = ref([]);
+        let dataSourceDetail = ref<any>([]);
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
@@ -291,14 +293,15 @@ export default defineComponent({
         }));
         const isFirstChange = ref(true);
         resIncomeProcessBusinessesDetail(res => {
+            selectedRowKeys.value = [];
             const val = res.data.getIncomeBusinesses;
             dataSourceDetail.value = val;
             //If you change the current year and no data, return the values to empty
             if (isFirstChange.value) {
-                focusedRowKey.value = val[0]?.incomeId;
-                selectedRowKeys.value = [val[0]?.incomeId];
-                idRowFake.value = dataAction.value.input.incomeId;
-                isFirstChange.value = false;
+              focusedRowKey.value = dataSourceDetail.value[0]?.incomeId;
+              selectedRowKeys.value = [dataSourceDetail.value[0]?.incomeId];
+              idRowFake.value = dataAction.value.input.incomeId;
+              isFirstChange.value = false;
                 disabledInput.value = true;
                 dataCallApiDetailEdit.incomeId = val[0]?.incomeId;
             }
@@ -340,6 +343,7 @@ export default defineComponent({
         watch(resDetailEdit, (newValue) => {
             if (newValue) {
                 let data = newValue.getIncomeBusiness;
+                selectedRowKeys.value=[data.incomeId];
                 let rowData: any = {};
                 rowData.paymentDay = data.paymentDay
                 rowData.employeeId = data.employeeId
@@ -350,10 +354,10 @@ export default defineComponent({
                 rowData.withholdingIncomeTax = data.withholdingIncomeTax
                 rowData.withholdingLocalIncomeTax = data.withholdingLocalIncomeTax;
                 rowData.actualPayment = data.actualPayment;
-                triggerDetailDetailEdit.value = false;
                 dataAction.value.input = rowData;
                 dataActionEdit.value.input = {...JSON.parse(JSON.stringify(rowData))};
                 disabledInput.value = true;
+                triggerDetailDetailEdit.value = false;
             }else {
               resetForm();
             }
@@ -502,7 +506,6 @@ export default defineComponent({
         const onRowClick = async (item: any) => {
           compareType.value = 2;
           idRowFake.value = item.data.incomeId;
-          // selectedRowKeys.value = [item.data.incomeId];
           if (isNewRow.value) {
             if (compareForm()) {
               await delNewRow();
@@ -518,6 +521,7 @@ export default defineComponent({
             rowChangeStatus.value = true;
             return;
           } else {
+            selectedRowKeys.value = [item.data.incomeId];
             dataCallApiDetailEdit.incomeId = item.data.incomeId;
           }
         };
@@ -532,7 +536,8 @@ export default defineComponent({
             dataAction.value.input.incomeTypeCode = res;
             dataAction.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
         } 
-        const selectedRowKeys = ref<any>([]);
+        
+        const selectedRowKeys = ref<any>([634]);
         const onCellClick = (e: any) => {
           if(e.columnIndex === 0 && e.column.type =='selection') {
             focusedRowKey.value = dataAction.value.input?.incomeId;
@@ -540,8 +545,8 @@ export default defineComponent({
           }
         }
         const selectionChanged = (event: any) => {
-            popupDataDelete.value = event.selectedRowKeys;
-            editParam.value = event.selectedRowsData.map((item: any)=> item.incomeId)
+            popupDataDelete.value = event.selectedRowKeys; 
+            editParam.value = event.selectedRowsData.map((item: any)=> item.incomeId);
         }
         const deleteItem = () => {
             if (popupDataDelete.value.length > 0) {
@@ -615,7 +620,9 @@ export default defineComponent({
             onDone: successChangeIncomeProcessBusinessStatus,
         } = useMutation(mutations.changeIncomeProcessBusinessStatus)
         errorChangeIncomeProcessBusinessStatus(e => {
-            notification('error', e.message)
+            notification('error', e.message);
+            // emit('statusDone', );
+
         })
         successChangeIncomeProcessBusinessStatus(e => {
             focusedRowKey.value = dataAction.value.input.incomeId;
@@ -658,6 +665,26 @@ export default defineComponent({
               return;
             }
         }
+        const onChangeFormError = () => {
+          if (isClickYearDiff.value) {
+            watchGlobalYear();
+            store.state.settings.globalYear = changeYearDataFake.value;
+            watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+              if (compareForm()) {
+                emit('noSave', 1, newVal);
+                dataCallApiGetOption.value.imputedYear = newVal;
+                triggerDetailOption.value = true;
+              } else {
+                compareType.value = 2;
+                rowChangeStatus.value = true;
+                isClickYearDiff.value = true;
+                changeYearDataFake.value = oldVal;
+              }
+            });
+          }
+          focusedRowKey.value = dataAction.value.input.incomeId;
+          selectedRowKeys.value = [dataAction.value.input.incomeId];
+        }
         const {
             mutate: actionCreated,
             onError: errorCreated,
@@ -679,9 +706,8 @@ export default defineComponent({
             onChangeFormdone();           
         })
         errorCreated(res => {
-            notification('error', res.message)
-            focusedRowKey.value = dataAction.value.input.incomeId;
-            selectedRowKeys.value = [dataAction.value.input.incomeId];
+            notification('error', res.message);
+            onChangeFormError();
         })
         // API EDIT 
         const {
@@ -706,8 +732,7 @@ export default defineComponent({
         })
         errorEdit(res => {
             notification('error', res.message);
-            focusedRowKey.value = dataAction.value.input.incomeId;
-            selectedRowKeys.value = [dataAction.value.input.incomeId];
+            onChangeFormError();
         })
         //
         const onSave = (e:any) => {

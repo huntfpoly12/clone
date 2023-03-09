@@ -458,6 +458,7 @@ export default defineComponent({
       // resetForm();
       incomeProcessExtrasParam.imputedYear = newVal;
       formTaxRef.value.isEdit = false;
+      store.commit('common/formEditPA720', formPA720.value);
     }
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
@@ -566,7 +567,7 @@ export default defineComponent({
       formTaxRef.value.isEdit = false;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+      store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
     };
     const saveToNewRow = () => {
       store.state.common.isNewRowPA720 = true;
@@ -629,7 +630,7 @@ export default defineComponent({
           if (compareType.value == 1) {
             addNewRow();
             taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-            taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+            store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
             return;
           }
         }
@@ -664,7 +665,7 @@ export default defineComponent({
         if (compareType1()) {
           delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
-          taxPayRef.value.selectedRowKeys = [emit.incomeId];
+          store.commit('common/selectedRowKeysPA720',emit.incomeId);
           editTaxParam.value = emit;
           formTaxRef.value.isEdit = true;
           return;
@@ -716,7 +717,7 @@ export default defineComponent({
     const onSubmit = () => {
       if (isErrorFormPA720.value) {
         taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+        store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
         addItemClick.value = !addItemClick.value;
         if (isClickYearDiff.value) {
           watchGlobalYear();
@@ -738,7 +739,7 @@ export default defineComponent({
         }
         editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
         taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
-        taxPayRef.value.selectedRowKeys = compareType.value == 1 ? [formPA720.value.input?.incomeId] : [editTaxParamFake.value.incomeId];
+        store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
         store.state.common.isNewRowPA720 = false;
         if (isClickMonthDiff.value) {
           onChangeMonth(changeMonthDataFake.value);
@@ -758,7 +759,7 @@ export default defineComponent({
     const subValidate = () => {
       addItemClick.value = !addItemClick.value;
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+      store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
       if (isClickYearDiff.value) {
         watchGlobalYear();
         store.state.settings.globalYear = changeYearDataFake.value;
