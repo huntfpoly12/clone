@@ -327,6 +327,7 @@ export default defineComponent({
         };
 
         const actionPrint = (data: any) => {
+            gridRef.value?.instance.deselectAll()
             valueDefaultIncomeBusiness.value.employeeKeys = [
                 { employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }
             ]

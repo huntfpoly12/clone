@@ -301,10 +301,11 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     const onPrint = (data: any) => {
+      gridRef.value?.instance.deselectAll()
       receiptReportViewUrlParam.employeeKeys = [{ employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }];
       receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
       receiptReportViewUrlTrigger.value = true;
-      refetchReceiptViewUrl();
+      // refetchReceiptViewUrl();
     };
     watch(
       resultReceiptReportViewUrl,
@@ -326,7 +327,7 @@ export default defineComponent({
         receiptReportViewUrlParam.employeeKeys = array
         receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
         receiptReportViewUrlTrigger.value = true;
-        refetchReceiptViewUrl();
+        // refetchReceiptViewUrl();
       } else {
         notification('error', messages.getCommonMessage('601').message)
       }
