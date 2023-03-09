@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    <!-- {{ formPA720.input }} formPA720 <br/> -->
-    <!-- {{ formEditPA720.input }} formEditPA720 <br/> -->
+    <!-- {{ formPA720.input}} formPA720 <br/>
+    {{ formEditPA720.input }} formEditPA720 <br/> -->
     <!-- {{ getEmployeeExtrasParams }} getEmployeeExtrasParams <br/>
     {{ incomeExtraParam }} incomeExtraParam <br/> -->
     <standard-form formName="pa-720-form" ref="pa720FormRef">
@@ -220,15 +220,11 @@ export default defineComponent({
         if (newValue?.incomeId) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
+          triggerIncomeExtra.value = true;
         }
       },
       { deep: true }
     );
-    watch(incomeExtraParam, (newVal: any) => {
-      if (newVal) {
-        triggerIncomeExtra.value = true;
-      }
-    })
     const {
       loading: loadingIncomeExtra,
       onError: onErrorIncomeExtra,
@@ -316,6 +312,7 @@ export default defineComponent({
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
+      formEditPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
       store.commit('common/formEditPA720', formPA720.value);
       emit('onFormDone', true);
     });
@@ -397,7 +394,8 @@ export default defineComponent({
       pa720FormRef,
       getEmployeeExtrasParams,
       onSubmitForm,
-      resetForm
+      resetForm,
+      triggerIncomeExtra,
     };
   },
 });
