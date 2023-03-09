@@ -39,6 +39,11 @@
     label {
         width: 80px;
     }
+    &-switch {
+      .ant-switch {
+        background-color: #1890ff;
+      }
+    }
 }
 :deep .form-item-bottom {
     label {

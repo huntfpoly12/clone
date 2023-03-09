@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 export default gql`
  query
-    getBankbooks($companyId: Int!, $fiscalYear: Int!, $facilityBusinessId: Int!) {
-        getBankbooks(companyId: $companyId,fiscalYear: $fiscalYear, facilityBusinessId: $facilityBusinessId) {
+    getBankbooks($companyId: Int!, $fiscalYear: Int!) {
+        getBankbooks(companyId: $companyId,fiscalYear: $fiscalYear) {
             facilityBusinessId
             bankbookId
             sort
