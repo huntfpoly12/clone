@@ -327,6 +327,7 @@ export default defineComponent({
             modalSendMail.value = true
         }
         const printFunc = (val: any) => {
+            clearSelection()
             triggerPrint.value = true
             dataPrint.value = {
                 ...dataPrint.value,
