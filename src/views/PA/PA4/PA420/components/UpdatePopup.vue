@@ -1,6 +1,8 @@
 <template>
     <a-modal :visible="statusModal" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
-        width="70%" style="top: 20px">
+        width="70%" style="top: 20px">     <pre style="height: 300px;">
+        {{ dataDetailValue }}
+      </pre>
         <div class="header-text-title mt-20">퇴직소득자료입력</div>
         <a-steps :current="step" type="navigation">
             <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)" />
@@ -15,16 +17,7 @@
                             :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
                     </template>
                 </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 1">
-                        <Tab2 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 2">
-                        <Tab3 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
+            
             </form>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
@@ -111,11 +104,14 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
+          if (newValue) {
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": true,
             }
+            console.log(dataDetailValue.value);
+          }
         })
         errorGetDetail(res => {
             notification('error', res.message)
@@ -213,7 +209,7 @@ export default defineComponent({
                     }
                 })
             );
-
+            console.log(cleanData)
             mutate(cleanData)
         }
         return {
