@@ -173,7 +173,7 @@
     <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="closeReportGridEdit" :dataReport="dataReport"
         :key="resetComponentEdit" />
     <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="closeReportGridModify"
-    :dataReport="dataReport" :key="resetComponentModify" />
+    :dataReport="dataReport" :key="resetComponentModify" :is-edit="isEdit"/>
 </template>
 <script lang="ts">
 
@@ -216,6 +216,7 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const statusReportGridEdit = ref<boolean>(false);
         const statusReportGridModify = ref<boolean>(false);
+        const isEdit = ref<boolean>(false);
         const resetComponentEdit = ref(0)
         const resetComponentModify = ref(0)
         const dataReport: any = ref([])
@@ -366,11 +367,19 @@ export default defineComponent({
             if (icon == 'iconEdit' && value.index == 0) {
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
+            } else if(icon == 'iconAdd') {
+                // set day to current day if is modify action
+                dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
+                statusReportGridModify.value = true;
+                resetComponentModify.value++
+                isEdit.value = false
             } else {
                 // set day to current day if is modify action
                 dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
+                isEdit.value = true
+                
             }
         };
         const checkModify = (data: any) => {
@@ -405,7 +414,8 @@ export default defineComponent({
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
-            onRowClick
+            onRowClick,
+            isEdit
             
         };
     },

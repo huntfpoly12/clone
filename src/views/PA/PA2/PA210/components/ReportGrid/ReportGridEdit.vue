@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">34563455345
     <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
         <div class="header-report">
@@ -85,9 +85,8 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { useMutation} from "@vue/apollo-composable";
 import { mergeCells, cellsSetting, dataInit, calculateWithholdingStatusReport, inputPosition, clearAllCellValue } from "./Gridsetting"
-import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
