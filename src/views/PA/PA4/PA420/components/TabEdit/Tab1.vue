@@ -52,7 +52,7 @@
                         v-model:valueInput="dataGet.specification.retirementReason" placeholder="선택" width="300px" />
                 </a-form-item>
             </a-col>
-            <div class="header-text-1">근속연수</div> 
+            <div class="header-text-1">근속연수</div>
             <a-col :span="24">
                 <checkbox-basic  label="중간지급여부" class="mb-10"
                     v-model:valueCheckbox="dataGet.checkBoxCallApi" />
@@ -62,7 +62,7 @@
                 <a-form-item label="정산시작(입사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
                         <date-time-box width="150px" :disabled="!dataGet.checkBoxCallApi"
-                            v-model:valueDate="prevSettlementStartDate"
+                            v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate"
                             :required="true" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
@@ -77,9 +77,9 @@
                 <a-form-item label="정산종료(퇴사)일" :class="dataGet.checkBoxCallApi ? 'label-required' : ''">
                     <div class="d-flex-center">
                         <date-time-box-custom width="150px" :disabled="!dataGet.checkBoxCallApi"
-                            v-model:valueDate="prevSettlementFinishDate"
+                            v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate"
                             :required="true"
-                            :startDate="dayjs(prevSettlementStartDate)" />
+                            :startDate="dayjs(dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate?.toString())" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -135,7 +135,7 @@
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="lastSettlementStartDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -150,7 +150,7 @@
                     <div class="d-flex-center">
                         <date-time-box-custom width="150px"
                             :startDate="dayjs(dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate?.toString())"
-                            v-model:valueDate="lastSettlementFinishDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate" />
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -229,13 +229,13 @@
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="settlementRetiredYearsOfServiceSettlementStartDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
                     </div>
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="settlementRetiredYearsOfServiceSettlementFinishDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" />
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
@@ -248,9 +248,9 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted, onActivated } from 'vue'
 import dayjs from "dayjs";
-import { calculateEmployeementInsuranceEmployee, openTab } from '@/helpers/commonFunction';
+import { openTab } from '@/helpers/commonFunction';
 import  filters from '@/helpers/filters';
 import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
@@ -294,22 +294,14 @@ export default defineComponent({
         const dataGet: any = ref({...dataDefaultDetailUtils})
  
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
-        const prevSettlementFinishDate = ref() //dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate
-        const prevSettlementStartDate = ref() //dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate
-        const lastSettlementStartDate = ref() //dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate
-        const settlementRetiredYearsOfServiceSettlementStartDate = ref()//dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate
-        const lastSettlementFinishDate = ref() //dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate
-        const settlementRetiredYearsOfServiceSettlementFinishDate = ref() //dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate
         // =============== WATCH ==================================
-        
-        watch(() => props.dataDetail, (value: any, oldValue: any) => {
-            if (value.specification.specificationDetail.prevRetiredYearsOfService == null) {
-              value.specification.specificationDetail.prevRetiredYearsOfService = dataDefaultDetailUtils.specification.specificationDetail.prevRetiredYearsOfService
-            }
-            if (value.specification.specificationDetail.prevRetirementBenefitStatus == null) {
-              value.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
-            }
+        watch(() => props.processKey, (newVal) => {
+            (document.getElementById("checkBox") as HTMLInputElement).click();
+        });
+
+        watch(() => props.dataDetail, (value: any,oldValue : any) => {
             dataGet.value = value
+            month1.value = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
@@ -317,79 +309,61 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
-        watch(() => prevSettlementStartDate.value, (newVal) => {
-          if (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService) {
-            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate = newVal
-            calculateDateOfService(dataGet.value.specification.specificationDetail.prevRetiredYearsOfService,'prevRetiredYearsOfService')
-          }
-        })
-
-        watch(() => lastSettlementStartDate.value, (newVal) => {
-          if (dataGet.value.specification.specificationDetail.lastRetiredYearsOfService) {
+        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
-            calculateDateOfService(dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, 'lastRetiredYearsOfService')
-          }
-        })
-        watch(() => lastSettlementFinishDate.value, (newVal) => {
-          if (dataGet.value.specification.specificationDetail.lastRetiredYearsOfService) {
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate = newVal
-            calculateDateOfService(dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, 'lastRetiredYearsOfService')
-          }
-        })
-      watch(() => settlementRetiredYearsOfServiceSettlementStartDate.value, (newVal) => {
-        alert('settlementRetiredYearsOfService')
-          if (dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService) {
-            dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newVal
-            calculateDateOfService(dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, 'settlementRetiredYearsOfService')
-          }
-        })
-      watch(() => settlementRetiredYearsOfServiceSettlementFinishDate.value, (newVal) => {
-          alert('settlementRetiredYearsOfService')
-          if (dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService) {
-            dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newVal
-            calculateDateOfService(dataGet.specification.specificationDetail.settlementRetiredYearsOfService, 'settlementRetiredYearsOfService')
-          }
-        })
-        watch(() => prevSettlementFinishDate.value, (newVal) => {
-          if (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService && dataGet.value.specification.specificationDetail.lastRetiredYearsOfService) {
-            dataGet.value.value.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate = newVal
-            dataGet.value.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
-            calculateDateOfService(dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, 'prevRetiredYearsOfService')
-            calculateDateOfService(dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, 'lastRetiredYearsOfService')
-          }
         });
 
-      const calculateDateOfService = (data: any, type: string) => {
-          let val1: any = data.settlementStartDate?.toString()
-          let val2: any = data.settlementFinishDate?.toString()
-          let objectData = Formula.getDateOfService(
+        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
+          if (newVal) {
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
+            let objectData = Formula.getDateOfService(
                 val1,
                 val2,
-                data.exclusionDays,
-                data.additionalDays);
-            if (type == 'prevRetiredYearsOfService') {
-              yearsOfService1.day = objectData.daysOfService
-              yearsOfService1.month = objectData.monthsOfService
-              yearsOfService1.year = objectData.yearsOfService
-            } else if(type == 'lastRetiredYearsOfService') {
-              yearsOfService2.day = objectData.daysOfService
-              yearsOfService2.month = objectData.monthsOfService
-              yearsOfService2.year = objectData.yearsOfService
-            } else {
-              yearsOfService3.day = objectData.daysOfService
-              yearsOfService3.month = objectData.monthsOfService
-              yearsOfService3.year = objectData.yearsOfService
-            }
+                newVal.exclusionDays,
+                newVal.additionalDays);
 
-        }
+            yearsOfService1.day = objectData.daysOfService
+            yearsOfService1.month = objectData.monthsOfService
+            yearsOfService1.year = objectData.yearsOfService
+          }
+        }, { deep: true });
+
+        watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
+            let objectData = Formula.getDateOfService(
+                val1,
+                val2,
+                newVal.exclusionDays,
+                newVal.additionalDays);
+
+            yearsOfService2.day = objectData.daysOfService
+            yearsOfService2.month = objectData.monthsOfService
+            yearsOfService2.year = objectData.yearsOfService
+        }, { deep: true });
+
+        watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => {
+            let val1: any = newVal.settlementStartDate?.toString()
+            let val2: any = newVal.settlementFinishDate?.toString()
+
+            let objectData = Formula.getDateOfService(
+                val1,
+                val2,
+                (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.exclusionDays + dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.exclusionDays),
+                (dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.additionalDays + dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.additionalDays));
+
+            yearsOfService3.day = objectData.daysOfService
+            yearsOfService3.month = objectData.monthsOfService
+            yearsOfService3.year = objectData.yearsOfService
+        }, { deep: true });
+
 
         let indexChange = ref(0)
         watch(() => [
-            prevSettlementStartDate.value,
-            lastSettlementFinishDate.value,
-            lastSettlementStartDate.value,
-            dataGet.value.checkBoxCallApi
-        ], ([newA, newB, newC, checkBoxNew]) => {
+            dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate, dataGet.value.checkBoxCallApi], ([newA, newB, newC, checkBoxNew], [prevA, prevB, prevC, checkBoxOld]) => {
                 if (indexChange)
                     if (checkBoxNew == true) {
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newA
@@ -422,13 +396,7 @@ export default defineComponent({
             dataGet,
             dayjs,
             openTabFuc,
-            submitForm, monthInputed,
-            prevSettlementFinishDate,
-            prevSettlementStartDate,
-            lastSettlementStartDate,
-            settlementRetiredYearsOfServiceSettlementStartDate,
-            lastSettlementFinishDate,
-            settlementRetiredYearsOfServiceSettlementFinishDate
+            submitForm,monthInputed
         }
     }
 })
