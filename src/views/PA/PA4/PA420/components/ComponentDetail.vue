@@ -113,7 +113,7 @@
                 <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
                 <template #action="{ data }">
                     <div class="wf-100 text-center">
-                        <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
+                        <EditOutlined class="fz-18" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
                     </div>
                 </template>
                 <DxSummary v-if="dataSourceDetail.length > 0">
