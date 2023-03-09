@@ -48,7 +48,8 @@
               </template>
               <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
               <template #afterDeadline-index="{ data }">
-                <DxButton :text="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
+                <DxButton v-if="isEdit" :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
+                <DxButton v-else :text="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
               </template>
               <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
               <template #yearEndTaxAdjustment="{ data }">
@@ -105,6 +106,10 @@ export default defineComponent({
     dataReport: {
       type: Array,
       default: [],
+    },
+    isEdit: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -164,6 +169,7 @@ export default defineComponent({
 
     watch(() => props.dataReport,(newValue : any) => {
       dataSource.value = newValue
+      dataSource
     })
     // load new data when first time open popup
     onMounted(() => {
@@ -381,7 +387,7 @@ export default defineComponent({
           paymentYear: dataSource.value[0].paymentYear,
           paymentMonth: dataSource.value[0].paymentMonth,
           reportType: dataSource.value[0].reportType,
-          index: dataSource.value[0].index + 1,  // increase index value 1
+          index: props.isEdit ? dataSource.value[0].index : dataSource.value[0].index + 1,  // increase index value 1
         },
         input:{
           paymentType: dataSource.value[0].paymentType,
