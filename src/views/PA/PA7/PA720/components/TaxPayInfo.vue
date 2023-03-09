@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ firsTimeRow}} firsTimeRow <br/>
-    {{ focusedRowKey}} focusedRowKey <br/> -->
+    <!-- {{ firsTimeRow }} firsTimeRow <br />
+    {{ focusedRowKey }} focusedRowKey <br /> -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
@@ -126,7 +126,7 @@ export default defineComponent({
     addItemClick: Boolean,
     addNewRow: {
       type: Function,
-      default: ()=> {},
+      default: () => { },
     },
     compareType: Number,
   },
@@ -143,7 +143,6 @@ export default defineComponent({
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
     const formPA720 = computed(() => store.getters['common/formPA720']);
-    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
 
     // ================GRAPQL==============================================
 
@@ -173,8 +172,8 @@ export default defineComponent({
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
           selectedRowKeys.value = [formPA720.value.input.incomeId];
-        } else {
-          onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+        // } else {
+        //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
         }
       }
       triggerDetail.value = false;
