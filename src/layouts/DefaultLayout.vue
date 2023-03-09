@@ -333,7 +333,7 @@ export default defineComponent({
             this.openKeys = ["bf-000", "bf-600"];
           }
           if (newValue.id.includes("cm-1")) {
-            this.openKeys = ["cm-000", "cm-100"];
+            this.openKeys = ["cm-100", "cm-120"];
           }
           if (newValue.id.includes("ac-1")) {
             this.openKeys = ["ac-000", "ac-100"];
@@ -600,7 +600,7 @@ export default defineComponent({
         case 'bf-000':
           classIcon = "dx-icon-card";
           break;
-        case 'cm-000':
+        case 'cm-100':
           classIcon = "dx-icon-inactivefolder";
           break;
         case 'ac-000':
