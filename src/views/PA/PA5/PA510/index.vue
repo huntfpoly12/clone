@@ -404,10 +404,11 @@ export default defineComponent({
             notification('error', e.message)
         })
         successChangeIncomeProcess(e => {
+            dataMonthNew.value.status = status.value
             notification('success', `업데이트 완료!`)
             originData.value.imputedYear = globalYear.value
             // refetchData() 
-            isRunOnce.value = true;
+            // isRunOnce.value = true;
             trigger.value = true; //reset data table 1
         })
 
@@ -563,26 +564,7 @@ export default defineComponent({
         // action click row table 2
         // let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
-            store.state.common.dataRowOnActive = data.data
-            if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                if (store.state.common.statusChangeFormEdit) {
-                    // if (store.state.common.statusChangeFormPrice) {
-                    //     modalChangeRowPrice.value = true;
-                    // } else {
-                    modalChangeRow.value = true;
-                    // }
-                } else {
-                    if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
-                        store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                        store.state.common.statusRowAdd = true
-                    }
-                    store.state.common.incomeId = data.data.incomeId
-                    // store.state.common.employeeId = data.data.employeeId
-                }
-                if (store.state.common.statusRowAdd) {
-                    store.state.common.actionAddItem = false
-                }
-            }
+            // tạm thời bỏ
         }
 
         const selectionChanged = (data: any) => {
@@ -686,6 +668,28 @@ export default defineComponent({
         const onFocusedRowChanging = (e: any) => {
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
+            } else {
+                store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
+                if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
+                    if (store.state.common.statusChangeFormEdit) {
+                        // if (store.state.common.statusChangeFormPrice) {
+                        //     modalChangeRowPrice.value = true;
+                        // } else {
+                        modalChangeRow.value = true;
+                        e.cancel = true;
+                        // }
+                    } else {
+                        if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                            store.state.common.statusRowAdd = true
+                        }
+                        store.state.common.incomeId = e.rows[e.newRowIndex]?.data.incomeId
+                        // store.state.common.employeeId = data.data.employeeId
+                    }
+                    if (store.state.common.statusRowAdd) {
+                        store.state.common.actionAddItem = false
+                    }
+                }
             }
         };
         return {

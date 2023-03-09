@@ -257,10 +257,10 @@ export default defineComponent({
 
         // ===================DONE GRAPQL==================================
         onDoneAdd((data: any) => {
-            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             } else { // if click submit
-                store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
+                store.state.common.incomeId = data.data.createIncomeWageDaily?.incomeId
             }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
@@ -271,7 +271,12 @@ export default defineComponent({
         onerrorAdd((e: any) => {
             notification('error', e.message)
         })
-        onDoneUpdate(() => {
+        onDoneUpdate((data: any) => {
+            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = data.data.updateIncomeWageDaily?.incomeId
+            }
             store.state.common.loadingTableInfo++
             triggerIncomeWageDaily.value = true;
             notification('success', messageUpdateSuccess)
@@ -390,13 +395,14 @@ export default defineComponent({
                 triggerIncomeWageDaily.value = true;
             } else {
                 if (!store.state.common.actionAddItem) {
-                    arrDeduction.value?.map((data: any) => {
-                        data.price = 0
-                    })
-                    // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
-                    await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
-                    await (store.state.common.statusChangeFormEdit = false);
-                    await (store.state.common.statusChangeFormAdd = false);
+                    onResetForm()
+                    // arrDeduction.value?.map((data: any) => {
+                    //     data.price = 0
+                    // })
+                    // // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+                    // await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+                    // await (store.state.common.statusChangeFormEdit = false);
+                    // await (store.state.common.statusChangeFormAdd = false);
                 }
             }
         })
@@ -409,14 +415,15 @@ export default defineComponent({
 
         // reset form data
         watch(() => store.state.common.actionResetForm, async (value) => {
-            countKey.value++;
-            await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
-            // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
-            arrDeduction.value?.map((data: any) => {
-                data.price = 0
-            })
-            await (store.state.common.statusChangeFormEdit = false);
-            await (store.state.common.statusChangeFormAdd = false);
+            onResetForm()
+            // countKey.value++;
+            // await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+            // // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+            // arrDeduction.value?.map((data: any) => {
+            //     data.price = 0
+            // })
+            // await (store.state.common.statusChangeFormEdit = false);
+            // await (store.state.common.statusChangeFormAdd = false);
         })
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
@@ -561,14 +568,11 @@ export default defineComponent({
             var res = pa510FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                // if (!store.state.common.actionAddItem) {
-                //     store.state.common.focusedRowKey = dataIW.value?.residentId
-                // } else {
-                //     store.state.common.focusedRowKey = !store.state.common.statusRowAdd ? null : 'PA710'
-                // }
+                store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
-                    store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
+                    // store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
+                    store.state.common.dataRowOnActive = dataIncomeWageDaily.value
                     showErrorButton.value = true;
                 } else {
                     let arrDeductionItems: any = []
@@ -604,6 +608,16 @@ export default defineComponent({
                     }
                 }
             }
+        }
+        const onResetForm = async () => {
+            countKey.value++;
+            await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
+            // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
+            await arrDeduction.value?.map((data: any) => {
+                data.price = 0
+            })
+            await (store.state.common.statusChangeFormEdit = false);
+            await (store.state.common.statusChangeFormAdd = false);
         }
         const showDailyWage = () => {
             let price = Math.round(dataIncomeWageDaily.value.monthlyWage /  dataIncomeWageDaily.value.workingDays)

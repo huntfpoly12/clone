@@ -428,6 +428,7 @@ export default defineComponent({
             dataCallApiGetOption.value.imputedYear = newVal;
             triggerDetailOption.value = true;
           } else {
+            compareType.value = 2;
             rowChangeStatus.value = true;
             isClickYearDiff.value = true;
             changeYearDataFake.value = oldVal;
@@ -724,6 +725,7 @@ export default defineComponent({
                   dataCallApiGetOption.value.imputedYear = newVal;
                   triggerDetailOption.value = true;
                 } else {
+                  compareType.value = 2;
                   rowChangeStatus.value = true;
                   isClickYearDiff.value = true;
                   changeYearDataFake.value = oldVal;

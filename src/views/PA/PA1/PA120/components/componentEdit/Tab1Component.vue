@@ -1,6 +1,8 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
+      <!-- {{ idRowEdit }} idRowEdit <br />
+      {{ openPopup }} openPopup <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -137,12 +139,14 @@ export default defineComponent({
     },
     idRowEdit: {
       type: Number,
+      default: 0,
     },
     openPopup: {
       type: Number,
     },
   },
   setup(props, { emit }) {
+    console.log(`output-1`,)
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     let isForeigner = ref(false);
@@ -235,11 +239,12 @@ export default defineComponent({
       imputedYear: globalYear.value,
       employeeId: props.idRowEdit,
     });
+    const getEmployeeWageTrigger = ref(false);
     const {
-      refetch: refetchValueDetail,
       result: getValueDefault,
       loading,
     } = useQuery(queries.getEmployeeWage, originDataDetail.value, () => ({
+      enabled: getEmployeeWageTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(getValueDefault, (value: any) => {
@@ -266,36 +271,15 @@ export default defineComponent({
       store.commit('common/editRowPA120', editRowData);
       store.commit('common/initFormStateTabPA120', editRowData);
       employeeId.value = data.employeeId;
+      getEmployeeWageTrigger.value = false
       // }
     });
     const { mutate, onError, onDone } = useMutation(mutations.updateEmployeeWage);
-    onError((e) => {
-      notification('error', e.message);
-    });
-    onDone((res) => {
-      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
-      notification('success', '업데이트 완료!');
-      store.commit('common/actionFormDonePA120');
-      store.state.common.isNewRowPA120 = false;
-      // store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      store.commit('common/editRowPA120', initFormStateTabPA120.value);
-    });
-
-    watch(() => props.idRowEdit, (value: any) => {
-      originDataDetail.value.employeeId = value;
-    });
-    watch(
-      () => props.openPopup,
-      () => {
-        refetchValueDetail();
-      }
-    );
-
     const actionUpdated = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        store.state.common.isAddFormErrorPA120 = true;
+        store.commit('common/actionFormErrorPA120');
       } else {
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
         delete editData.employeeId
@@ -310,6 +294,28 @@ export default defineComponent({
         store.state.common.isAddFormErrorPA120 = false;
       }
     };
+    onError((e) => {
+      notification('error', e.message);
+      store.commit('common/actionFormErrorPA120');
+    });
+    onDone((res) => {
+      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
+      notification('success', '업데이트 완료!');
+      store.commit('common/actionFormDonePA120');
+      store.state.common.isNewRowPA120 = false;
+      store.commit('common/editRowPA120', initFormStateTabPA120.value);
+    });
+
+    // watch(() => props.idRowEdit, (value: any) => {
+    //   originDataDetail.value.employeeId = value;
+    // });
+    if(props.idRowEdit){
+      getEmployeeWageTrigger.value = true;
+    }
+    watch(() => props.idRowEdit,(value: any) => {
+      originDataDetail.value.employeeId = value;
+      getEmployeeWageTrigger.value = true;
+    }, {deep: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
       initFormStateTabPA120.value.name = newVal.toUpperCase();

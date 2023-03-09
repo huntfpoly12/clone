@@ -173,7 +173,9 @@
     <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="closeReportGridEdit" :dataReport="dataReport"
         :key="resetComponentEdit" />
     <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="closeReportGridModify"
-    :dataReport="dataReport" :key="resetComponentModify" />
+    :dataReport="dataReport" :key="resetComponentModify"/>
+    <ReportGridEditModify v-if="statusReportGridEditModify" :modalStatus="statusReportGridEditModify" @closePopup="closeReportGridEditModify"
+    :dataReport="dataReport" :key="resetComponentModify"/>
 </template>
 <script lang="ts">
 
@@ -195,13 +197,14 @@ import { HistoryOutlined ,EyeFilled,EditFilled} from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import ReportGridEditModify from "./components/ReportGrid/ReportGridEditModify.vue";
 import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/index"
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify,EyeFilled,EditFilled
+        ReportGridModify,ReportGridEditModify,EyeFilled,EditFilled
     },
     setup() {
         const store = useStore();
@@ -216,6 +219,7 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const statusReportGridEdit = ref<boolean>(false);
         const statusReportGridModify = ref<boolean>(false);
+        const statusReportGridEditModify = ref<boolean>(false);
         const resetComponentEdit = ref(0)
         const resetComponentModify = ref(0)
         const dataReport: any = ref([])
@@ -314,6 +318,11 @@ export default defineComponent({
           refetchData()
         }
 
+        const closeReportGridEditModify = () => {
+          statusReportGridEditModify.value = false;
+          refetchData()
+        }
+
         const openModalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
@@ -366,10 +375,15 @@ export default defineComponent({
             if (icon == 'iconEdit' && value.index == 0) {
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
-            } else {
+            } else if(icon == 'iconAdd') {
                 // set day to current day if is modify action
                 dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
                 statusReportGridModify.value = true;
+                resetComponentModify.value++
+            } else {
+                // set day to current day if is modify action
+                dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
+                statusReportGridEditModify.value = true;
                 resetComponentModify.value++
             }
         };
@@ -399,14 +413,13 @@ export default defineComponent({
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
-            closePopupAddNew,closeReportGridEdit,closeReportGridModify,
-            editRow, statusReportGridEdit, dataReport, statusReportGridModify,
+            closePopupAddNew,closeReportGridEdit,closeReportGridModify,closeReportGridEditModify,
+            editRow, statusReportGridEdit, dataReport, statusReportGridModify,statusReportGridEditModify,
             dataPopup,
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
-            onRowClick
-            
+            onRowClick,   
         };
     },
 });
