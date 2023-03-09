@@ -106,6 +106,11 @@ export class Message extends BaseType {
     public static AC120 = new Message({
         '001': { "message" : "결의서 종류를 변경하면 기존 저장된 값들(물품내역 포함)은 모두 삭제 및 초기화됩니다. 그래도 진행하시겠습니까?","yes": "네. 진행합니다","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
     });
+  
+  //과목전용조서
+    public static AC570 = new Message({
+        '001': { "message" : "해당 과목전용조서 삭제시 전용일자 이후 등록된 예산서의 예산액이 틀려질 수도 있습니다. 그래도 삭제하시겠습니까?","yes": "네. 삭제합니","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
+    });
     private static _ = Message.closeEnum();
 
     private constructor(
