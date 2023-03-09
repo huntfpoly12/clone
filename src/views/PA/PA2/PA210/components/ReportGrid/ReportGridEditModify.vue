@@ -324,7 +324,7 @@ export default defineComponent({
       setModalVisible()
     })
     errChangeStatus((error) => {
-      notification('error', error.message)
+      //notification('error', error.message)
       setModalVisible()
     })
 
