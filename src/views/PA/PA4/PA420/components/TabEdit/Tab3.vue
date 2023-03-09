@@ -25,7 +25,7 @@
                 <a-form-item label="과세대상 퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" />
+                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" :disabled="true"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>

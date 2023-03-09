@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">{{ dataGet }}
+    <standard-form class="modal-add">{{ dataDetail }}
         <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -67,7 +67,7 @@
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
+                                  퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다.
                                 </template>
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             </a-tooltip>
@@ -139,7 +139,7 @@
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
+                                  퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의 다음날입니다.
                                 </template>
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                             </a-tooltip>
@@ -230,28 +230,12 @@
                     <div class="d-flex-center">
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
-                        <div class="ml-5 d-flex-center">
-                            <a-tooltip placement="top" class="custom-tooltip">
-                                <template #title>
-                                    퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.
-                                </template>
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            </a-tooltip>
-                        </div>
                     </div>
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
                             v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" />
-                        <div class="ml-5 d-flex-center">
-                            <a-tooltip placement="top" class="custom-tooltip">
-                                <template #title>
-                                    퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.
-                                </template>
-                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
-                            </a-tooltip>
-                        </div>
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
@@ -307,9 +291,7 @@ export default defineComponent({
             year: 0
         })
 
-        const dataGet: any = ref({
-            ...dataDefaultDetailUtils
-        })
+        const dataGet: any = ref(props.dataDetail)
  
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         // =============== WATCH ==================================

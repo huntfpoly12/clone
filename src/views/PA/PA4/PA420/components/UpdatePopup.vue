@@ -7,11 +7,11 @@
             <a-step :status="checkStepTwo" title="퇴직금계산" @click="changeStep(1)" />
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
-        <div class="step-content pt-20">{{ dataDetailValue }}
-            <form action="your-action">
+        <div class="step-content pt-20">
+            <form action="">
                 <keep-alive>
                     <template v-if="step === 0">
-                        <Tab1 :dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                        <Tab1 v-model:dataDetail="dataDetailValue" @closePopup="setModalVisible"
                             :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
                     </template>
                 </keep-alive>
