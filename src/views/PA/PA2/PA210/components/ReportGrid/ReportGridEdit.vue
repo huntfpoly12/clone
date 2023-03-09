@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">34563455345
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
     <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
         <div class="header-report">
