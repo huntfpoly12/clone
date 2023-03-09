@@ -20,8 +20,8 @@
                 <income-type :typeCode="data?.incomeTypeCode" :typeName="data?.name"
                     :incomeTypeName="data?.incomeTypeName" />
             </div> -->
-          <div class="employee-group">
-            <button style="margin-right: 5px">
+          <div class="employee-group" v-if="data.employeeId">
+            <button class="btn-container">
               {{ data.employeeId }}
             </button>
             {{ data?.name }}
@@ -158,6 +158,14 @@ export default defineComponent({
 }
 .employee-group {
   padding: 0 10px;
+}
+.btn-container {
+  margin-right: 5px;
+  text-align: center;
+  border: 1px solid rgb(164, 164, 164);
+  border-radius: 5px;
+  padding: 3px 4px;
+  height: 25px;
 }
 </style>
   

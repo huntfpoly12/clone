@@ -2,7 +2,7 @@ import getCompaniesInElectronicFilingFile from  "@/graphql/queries/common/getCom
 import getElectronicFilingsByLocalIncomeTax from "./getElectronicFilingsByLocalIncomeTax";
 import getElectronicFilingsByWithholdingTax from "./getElectronicFilingsByWithholdingTax";
 import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
-import searchLocalIncomeTaxElectronicFilings from "./searchLocalIncomeTaxElectronicFilings";
+import searchLocalIncomeTaxElectronicFilingsByYearMonth from "./searchLocalIncomeTaxElectronicFilingsByYearMonth";
 import searchWithholdingTaxElectronicFilingsByYearMonth from "./searchWithholdingTaxElectronicFilingsByYearMonth";
 
 const queries = {
@@ -10,7 +10,7 @@ const queries = {
     getElectronicFilingsByLocalIncomeTax,
     getElectronicFilingsByWithholdingTax,
     searchElectronicFilingFileProductions,
-    searchLocalIncomeTaxElectronicFilings,
+    searchLocalIncomeTaxElectronicFilingsByYearMonth,
     searchWithholdingTaxElectronicFilingsByYearMonth,
 };
 

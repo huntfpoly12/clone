@@ -208,7 +208,7 @@
                         :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                     <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                        :disabled="status == 30 || status == 40" />
+                        :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)" />
                 </div>
                 <div v-else>
                     <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
@@ -228,6 +228,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         @focused-row-changing="onFocusedRowChanging"
+                        ref="gridRef"
                         :selection-filter="store.state.common.selectionFilter"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
@@ -242,7 +243,7 @@
                         </template>
                         <DxColumn width="75" caption="근무일수" cell-template="workingDays"/>
                         <template #workingDays="{ data }">
-                            {{  data.data.workingDays }}
+                            {{  $filters.formatMonth(data.data.workingDays) }}
                         </template>
                         <DxColumn css-class="money-column" width="85" caption="일급여" cell-template="dailyWage"/>
                         <template #dailyWage="{ data }">
@@ -374,6 +375,7 @@ export default defineComponent({
             companyId: companyId,
             processKey: processKey.value,
         })
+        const gridRef = ref(); // ref of grid
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // ======================= GRAPQL ================================
@@ -480,7 +482,7 @@ export default defineComponent({
                 if (obj) {
                     showDetailSelected(obj)
                 }
-            } else {
+            } else if (obj) {
                 activeNewMonth(dataMonthNew.value)
             }
         })
@@ -526,10 +528,13 @@ export default defineComponent({
             }
         })
         const checkClickYear = ref<Boolean>(false)
-        watch(globalYear, (newVal) => {
-            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+        const dataYearNew = ref(globalYear.value)
+        watch(globalYear, (newVal, oldVal) => {
+            dataYearNew.value = newVal;
+            if (store.state.common.statusChangeFormEdit) {
                 modalChangeRow.value = true
-                checkClickYear.value = true
+                // checkClickYear.value = true
+                store.state.settings.globalYear = oldVal;
             } else {
                 store.state.common.processKeyPA510.imputedYear = newVal
                 store.state.common.processKeyPA510.paymentYear = newVal
@@ -538,6 +543,12 @@ export default defineComponent({
                 trigger.value = true; //reset data table 1
                 // refetchData()
                 // refetchDataTaxPayInfo() //reset data table 2
+            }
+        })
+        watch(() => store.state.common.statusRowAdd, (newVal) => {
+            if (!newVal) {
+                gridRef.value?.instance.deselectAll()
+                dataRows.value = []
             }
         })
         // ======================= FUNCTION ================================
@@ -577,10 +588,10 @@ export default defineComponent({
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
-                // if ( rowData.length > 1 ) {
-                //     // store.state.common.incomeId = rowData[0].
-                //     store.state.common.focusedRowKey = store.state.common.incomeId
-                // }
+                if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
+                    gridRef.value?.instance.deselectAll()
+                    dataRows.value = []
+                }
             })
         }
         const dataMonthNew: any = ref()
@@ -611,19 +622,20 @@ export default defineComponent({
                 // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
                 store.state.common.actionSubmit++
             } else {
+                store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormAdd = false;
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
                     return;
                 }
-                if (checkClickYear.value) {
-                    store.state.common.processKeyPA510.imputedYear = globalYear.value
-                    store.state.common.processKeyPA510.paymentYear = globalYear.value
+                if (dataYearNew.value != globalYear.value) {
+                    store.state.settings.globalYear = dataYearNew.value
+                    store.state.common.processKeyPA510.imputedYear = dataYearNew.value
+                    store.state.common.processKeyPA510.paymentYear = dataYearNew.value
                     IncomeWageDailiesTrigger.value = true; //reset data table 2
-                    originData.value.imputedYear = globalYear.value
-                    // refetchData()
+                    originData.value.imputedYear = dataYearNew.value
                     trigger.value = true; //reset data table 1
-                    // refetchDataTaxPayInfo() //reset data table 2
                     checkClickYear.value = false;
                     return;
                 }
@@ -696,7 +708,7 @@ export default defineComponent({
             statusComfirm,
             store,
             modalChangeRow, statusComfirmChange,
-            // modalChangeRowPrice, statusComfirmChangePrice,
+            gridRef,
             statusDisabledBlock,
             Message,
             customMonthlyWage, customTotalDeduction,  customActualPayment,

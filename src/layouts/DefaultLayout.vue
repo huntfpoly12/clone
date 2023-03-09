@@ -191,6 +191,7 @@ import {
   BF630,
   BF220,
   CM110,
+  CM121,
   CM130,
   PA110,
   PA120,
@@ -250,6 +251,7 @@ export default defineComponent({
     BF630,
     BF220,
     CM110,
+    CM121,
     CM130,
     PA110,
     PA120,
@@ -403,6 +405,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-650") return 'BF650';
       if (this.activeTab.id === "bf-630") return 'BF630';
       if (this.activeTab.id === "cm-110") return 'CM110';
+      if (this.activeTab.id === "cm-121") return 'CM121';
       if (this.activeTab.id === "cm-130") return 'CM130';
       if (this.activeTab.id === "pa-110") return 'PA110';
       if (this.activeTab.id === "pa-120") return 'PA120';

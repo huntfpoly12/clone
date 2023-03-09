@@ -1,8 +1,8 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
+    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus" />
     <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/> -->
     <!-- <DxButton @click="onSubmit($event)" size="large"
         class="ml-4" :disabled="store.state.common.statusDisabledStatus">
@@ -24,9 +24,9 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
         <div class="d-flex-center">
-            <checkbox-basic  :valueCheckbox="true" disabled="true" />
+            <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
@@ -34,15 +34,15 @@
         <button class="button-open-tab"
             @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
     </div>
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
-        item-template="item-field">
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장"
+        @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서" @item-click="onItemClick"
-        item-template="item-field">
+    <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownSalaryStatement" text="급여명세서"
+        @item-click="onItemClick" item-template="item-field">
         <template #item-field="{ data }">
             <div style="text-align: center;"><img :src="$filters.useImage(data.img)" alt=""
                     style="width: 25px; height: 25px;" /></div>
@@ -50,21 +50,20 @@
     </DxDropDownButton>
 
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-    :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
+        :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
 
     <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
-    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
-        @closePopup="modalPrintPayrollRegister = false" />
+    <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister" @closePopup="modalPrintPayrollRegister = false" />
     <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
     <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
-    <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
-        :data="popupDataEmailSingle" />
+    <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false" :data="popupDataEmailSingle" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="popupDataHistory" title="변경이력"
         typeHistory="pa-110" />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        :data="popupDataHistoryStatus" title="업무상태 변경이력" typeHistory="pa-status-110" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistoryStatus"
+        title="업무상태 변경이력" typeHistory="pa-status-110" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive, getCurrentInstance } from "vue";
@@ -145,9 +144,6 @@ export default defineComponent({
                 popupDataDelete.value = value
             }
         })
-        // watch(()=> props.actionAddItem,(newVal: Boolean)=> {
-        //     actionAddItem1.value = newVal;
-        // })
         const deleteItem = (value: any) => {
             if (props.dataRows.length) {
                 modalDelete.value = true;
@@ -158,22 +154,21 @@ export default defineComponent({
             }
         };
         const onActionAddItem = (value: any) => {
-            // store.state.common.actionAddItem = true;
-            if (store.state.common.statusRowAdd) {
-                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                //     modalStatusAdd.value = true
-                // } else {
+            if (store.state.common.statusChangeFormEdit) {
+                modalStatusAdd.value = true
+            } else {
+                if (store.state.common.statusRowAdd) {
                     store.state.common.statusRowAdd = false;
                     store.state.common.actionAddItem = true;
                     store.state.common.incomeId = 'PA110';
                     store.state.common.focusedRowKey = 'PA110';
-                    // store.state.common.actionResetForm++;
-                // }
-            } else {
-                if (store.state.common.statusChangeFormAdd) {
-                    modalStatusAdd.value = true
                 }
-                // notification('error', "nhập vàooooo")
+                else {
+                    if (store.state.common.statusChangeFormAdd) {
+                        modalStatusAdd.value = true
+                    }
+                    // notification('error', "nhập vàooooo")
+                }
             }
         }
         const editItem = (value: any) => {
@@ -262,13 +257,6 @@ export default defineComponent({
         }
         const onSubmit = (e: any) => {
             store.state.common.actionSubmit++
-            // var res = e.validationGroup.validate();
-            // if (!res.isValid) {
-            //     // res.brokenRules[0].validator.focus();
-            //     // focusedRowKey.value = formState.employeeId
-            // } else {
-            //     emit('actionSave', actionSaveItem.value++);
-            // }
         }
         /**
          *  Update value 
@@ -280,8 +268,15 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
                 store.state.common.actionSubmit++
-            } else { // reset form
-                store.state.common.actionResetForm++;
+            } else { 
+                if (store.state.common.statusRowAdd) { // add row
+                    store.state.common.statusRowAdd = false;
+                    store.state.common.actionAddItem = true;
+                    store.state.common.incomeId = 'PA110';
+                    store.state.common.focusedRowKey = 'PA110';
+                } else { // reset form
+                    store.state.common.actionResetForm++;
+                }
             }
         }
         return {
@@ -319,6 +314,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss" scoped  src="../style/style.scss" >
-
-</style>
+<style lang="scss" scoped  src="../style/style.scss" ></style>

@@ -1,10 +1,12 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ selectedRowKeys}} selectedRowKeys <br/> -->
+    <!-- {{ firsTimeRow}} firsTimeRow <br/>
+    {{ focusedRowKey}} focusedRowKey <br/> -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
-      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick" v-model:selected-row-keys="selectedRowKeys">
+      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick"
+      v-model:selected-row-keys="selectedRowKeys">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <!-- <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" /> -->
       <DxSelection select-all-mode="allPages" mode="multiple" />
@@ -12,7 +14,7 @@
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
       <template #tag="{ data }">
         <div>
-          <button style="margin-right: 5px">
+          <button class="btn-container">
             {{ data.data.employeeId }}
           </button>
           {{ data.data?.employee?.name }}
@@ -27,7 +29,7 @@
         </div>
       </template>
       <DxColumn caption="지급일" width="60" alignment="left" cell-template="paymentDay" />
-      <template #paymentDay="{data}">
+      <template #paymentDay="{ data }">
         {{ formatMonth(data.data.paymentDay) }}
       </template>
       <DxColumn caption="지급액" data-field="paymentAmount" :customize-text="formateMoney" width="100" alignment="right" />
@@ -35,7 +37,7 @@
         alignment="right" />
       <DxColumn caption="소득금액" data-field="incomePayment" :customize-text="formateMoney" width="100" alignment="right" />
       <DxColumn caption="세율" data-field="taxRate" width="45" alignment="left" cell-template="taxRateSlot" />
-      <template #taxRateSlot="{data}">
+      <template #taxRateSlot="{ data }">
         {{ data.value }}%
       </template>
       <DxColumn caption="공제" cell-template="incomLocalTax" width="85px" alignment="right" />
@@ -51,7 +53,7 @@
       </template>
       <DxColumn caption="차인지급액" data-field="actualPayment" :customize-text="formateMoney" width="120px"
         alignment="right" />
-      <DxSummary v-if="dataSourceDetail.length > 0">
+      <DxSummary v-if="dataSourceDetail?.length > 0">
         <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
         <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
           value-format="#,###" />
@@ -122,6 +124,11 @@ export default defineComponent({
       default: false,
     },
     addItemClick: Boolean,
+    addNewRow: {
+      type: Function,
+      default: ()=> {},
+    },
+    compareType: Number,
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -136,6 +143,7 @@ export default defineComponent({
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
     const formPA720 = computed(() => store.getters['common/formPA720']);
+    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
 
     // ================GRAPQL==============================================
 
@@ -144,26 +152,33 @@ export default defineComponent({
       refetch: refetchIncomeExtras,
       loading: loadingIncomeExtras,
       onError: errorIncomeExtras,
-      onResult: resIncomeExtras,
+      result: resIncomeExtras,
     } = useQuery(queries.getIncomeExtras, dataTableDetail, () => ({
       enabled: triggerDetail.value,
       fetchPolicy: 'no-cache',
     }));
-    resIncomeExtras((res) => {
-      dataSourceDetail.value = res.data.getIncomeExtras;
-      if(!firsTimeRow.value && res.data.getIncomeExtras.length > 0) {
-        onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+    watch(resIncomeExtras, async (res) => {
+      dataSourceDetail.value = res.getIncomeExtras;
+      if (firsTimeRow.value && res.getIncomeExtras[0]?.incomeId) {
+        focusedRowKey.value = res.getIncomeExtras[0]?.incomeId ?? 1;
+        onRowClick({ data: { incomeId: res.getIncomeExtras[0]?.incomeId } });
+        // firsTimeRow.value = false;
       }
-      if (firsTimeRow.value && res.data.getIncomeExtras[0]?.incomeId) {
-        focusedRowKey.value = res.data.getIncomeExtras[0]?.incomeId ?? 1;
-        onRowClick({ data: { incomeId: res.data.getIncomeExtras[0]?.incomeId } });
-        firsTimeRow.value = false;
+      if (res?.getIncomeExtras.length == 0) {
+        onRowClick({ data: {} });
       }
-      if(res.data.getIncomeExtras.length == 0) {
-      onRowClick({ data: {} });
+      if (!firsTimeRow.value && res?.getIncomeExtras?.length > 0) {
+        if (props.compareType == 3) {
+          props.addNewRow();
+          dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
+          focusedRowKey.value = formPA720.value.input.incomeId;
+          selectedRowKeys.value = [formPA720.value.input.incomeId];
+        } else {
+          onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+        }
       }
       triggerDetail.value = false;
-      loadingIncomeExtras.value = true;
+      // loadingIncomeExtras.value = true;
     });
     errorIncomeExtras((res) => {
       triggerDetail.value = false;
@@ -247,7 +262,7 @@ export default defineComponent({
       }
     };
     const onCellClick = (e: any) => {
-      if(e.columnIndex === 0 && e.column.type =='selection') {
+      if (e.columnIndex === 0 && e.column.type == 'selection') {
         focusedRowKey.value = formPA720.value.input?.incomeId;
         return;
       }
