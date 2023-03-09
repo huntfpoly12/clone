@@ -1,8 +1,6 @@
 <template>
     <a-modal :visible="statusModal" @cancel="setModalVisible" :mask-closable="false" class="confirm-md " footer=""
-        width="70%" style="top: 20px">     <pre style="height: 300px;">
-        {{ dataDetailValue }}
-      </pre>
+        width="70%" style="top: 20px">
         <div class="header-text-title mt-20">퇴직소득자료입력</div>
         <a-steps :current="step" type="navigation">
             <a-step :status="step === 0 ? 'process' : 'finish'" title="기본정보" @click="changeStep(0)" />
@@ -15,6 +13,16 @@
                     <template v-if="step === 0">
                         <Tab1 v-model:dataDetail="dataDetailValue" @closePopup="setModalVisible"
                             :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 1">
+                        <Tab2 v-model:dataDetail="dataDetailValue" />
+                    </template>
+                </keep-alive>
+                <keep-alive>
+                    <template v-if="step === 2">
+                        <Tab3 v-model:dataDetail="dataDetailValue" />
                     </template>
                 </keep-alive>
             
@@ -38,6 +46,7 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { useStore } from 'vuex';
+import { dataDefaultDetailUtils } from '../utils';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -105,12 +114,18 @@ export default defineComponent({
         }));
         resultGetDetail(newValue => {
           if (newValue) {
+            // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
+            if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService = dataDefaultDetailUtils.specification.specificationDetail.prevRetiredYearsOfService
+            }
+            if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus == null) {
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
+            }
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": true,
             }
-            console.log(dataDetailValue.value);
           }
         })
         errorGetDetail(res => {
@@ -209,7 +224,6 @@ export default defineComponent({
                     }
                 })
             );
-            console.log(cleanData)
             mutate(cleanData)
         }
         return {
