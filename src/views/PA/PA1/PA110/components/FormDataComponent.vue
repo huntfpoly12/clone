@@ -1,7 +1,7 @@
 <template>
     <div id="pa-110" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
-        <a-spin :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
-            <a-row class="row-1" :key="countKey">
+        <a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
+            <a-row class="row-1" >
                 <a-col :span="12">
                     <a-form-item label="사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
@@ -110,15 +110,15 @@
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
                                 <span>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                        :name="item.name" :type="1" subName="과세" :width="'130px'" />
+                                        :name="item.name" :type="1" subName="과세" :showTooltip="false" :width="'130px'" />
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" :width="'130px'" />
+                                        :name="item.name" :type="2" subName="상여(과세)" :showTooltip="false" :width="'130px'" />
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
-                                        :name="item.name" :type="3"
+                                        :name="item.name" :type="3" :showTooltip="false"
                                         :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission"
                                         :width="'130px'" />
                                     <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :type="4" subName="공제" :width="'130px'" />
+                                        :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
@@ -137,14 +137,14 @@
                             <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
                                 <span>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                            :name="item.name" :type="1" subName="과세" />
+                                            :name="item.name" :type="1" :showTooltip="false" subName="과세" />
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" />
+                                        :name="item.name" :type="2" :showTooltip="false" subName="상여(과세)" />
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                         :showTooltip="false" :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
                                     <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :width="'130px'" :type="4" subName="공제" />
+                                        :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
                                 </span>
                                 <div>
                                     <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
@@ -241,7 +241,8 @@ export default defineComponent({
         const triggerCalcIncome = ref<boolean>(false);
         const employeeWageTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
-
+        const triggerConfigPayItems = ref<boolean>(true);
+        const triggerConfigDeductions = ref<boolean>(true);
         const dataIW: any = ref(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
 
         const dataConfigPayItems: any = ref([]);
@@ -277,7 +278,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
         const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
-            // enabled: triggerConfigPayItems.value,
+            enabled: triggerConfigPayItems.value,
             fetchPolicy: "no-cache",
         }))
         const {
@@ -285,7 +286,7 @@ export default defineComponent({
             loading: loadingConfigDeductions,
             refetch: refetchConfigDeduction,
         } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
-            // enabled: triggerConfigDeductions.value,
+            enabled: triggerConfigDeductions.value,
             fetchPolicy: "no-cache",
         }))
         const {
@@ -334,6 +335,7 @@ export default defineComponent({
             }
         })
         resConfigPayItems(value => {
+            triggerConfigPayItems.value = false;
             if (value) {
                 dataConfigPayItems.value = []
                 value.data.getWithholdingConfigPayItems.map((item: any) => {
@@ -350,6 +352,7 @@ export default defineComponent({
             }
         });
         resConfigDeductions(value => {
+            triggerConfigDeductions.value = false;
             if (value) {
                 dataConfigDeductions.value = []
                 value.data.getWithholdingConfigDeductionItems.map((item: any) => {
@@ -375,15 +378,25 @@ export default defineComponent({
             notification('error', e.message)
         })
         actionUpdateDone(res => {
+            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            } else { // if click submit
+                store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
+            }
             store.state.common.loadingTableInfo++
             triggerDetail.value = true;
             notification('success', Message.getMessage('COMMON', '106').message)
         })
         doneCreated(res => {
-            if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+                console.log(1111);
+                
             } else { // if click submit
-                store.state.common.incomeId = res.data.createIncomeWage.incomeId
+                console.log(3333);
+                console.log(res.data.createIncomeWage);
+                
+                store.state.common.incomeId = res.data.createIncomeWage?.incomeId
             }
             store.state.common.statusRowAdd = true;
             store.state.common.actionAddItem = false;
@@ -415,34 +428,24 @@ export default defineComponent({
                 triggerDetail.value = true;
             } else {
                 if (!store.state.common.actionAddItem) {
-                    dataConfigDeductions.value.map((data: any) => {
-                        data.amount = 0
-                    })
-                    dataConfigPayItems.value.map((data: any) => {
-                        data.amount = 0
-                    })
-                    // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
-                    await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
-                    await (store.state.common.statusChangeFormEdit = false);
-                    await (store.state.common.statusChangeFormAdd = false);
+                    onResetForm()
+                    // dataConfigDeductions.value.map((data: any) => {
+                    //     data.amount = 0
+                    // })
+                    // dataConfigPayItems.value.map((data: any) => {
+                    //     data.amount = 0
+                    // })
+                    // // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+                    // await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+                    // await (store.state.common.statusChangeFormEdit = false);
+                    // await (store.state.common.statusChangeFormAdd = false);
                 }
 
             }
         })
         // reset form data
-        watch(() => store.state.common.actionResetForm, async (value) => {
-            countKey.value++;
-            Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
-            // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
-            // dataIW.value.employee.employeeId = null
-            dataConfigDeductions.value.map((data: any) => {
-                data.amount = 0
-            })
-            dataConfigPayItems.value.map((data: any) => {
-                data.amount = 0
-            })
-            await (store.state.common.statusChangeFormEdit = false);
-            await (store.state.common.statusChangeFormAdd = false);
+        watch(() => store.state.common.actionResetForm, (value) => {
+            onResetForm()
         })
 
         watch(() => store.state.common.statusRowAdd, (newVal) => {
@@ -568,6 +571,7 @@ export default defineComponent({
                     store.state.common.statusChangeFormPrice = false;
                 }, 200);
                 store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
+                store.state.common.focusedRowKey = store.state.common.incomeId
             }
         })
         watch(resCalcIncomeWageTax, (value) => {
@@ -650,15 +654,12 @@ export default defineComponent({
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                // if (!store.state.common.actionAddItem) {
-                //     store.state.common.focusedRowKey = dataIW.value?.residentId
-                // } else {
-                //     store.state.common.focusedRowKey = !store.state.common.statusRowAdd ? null : 'PA710'
-                // }
+                store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
-                    store.state.common.focusedRowKey = dataIW.value?.incomeId
+                    // store.state.common.focusedRowKey = dataIW.value?.incomeId
                     showErrorButton.value = true;
+                    store.state.common.dataRowOnActive = dataIW.value
                 } else {
                     let payItems = dataConfigPayItems.value?.map((item: any) => {
                         return {
@@ -758,6 +759,20 @@ export default defineComponent({
         const onUpdateValue = (employeeId: any) => {
             originDataEmployeeWage.employeeId = employeeId
             employeeWageTrigger.value = true;
+        }
+        const onResetForm = async () => {
+            countKey.value++;
+            await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
+            // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
+            // dataIW.value.employee.employeeId = null
+            await dataConfigDeductions.value.map((data: any) => {
+                data.amount = 0
+            })
+            await dataConfigPayItems.value.map((data: any) => {
+                data.amount = 0
+            })
+            await (store.state.common.statusChangeFormEdit = false);
+            await (store.state.common.statusChangeFormAdd = false);
         }
         
 
