@@ -274,9 +274,9 @@ export default defineComponent({
       arrayEmploySelect.value = newValue.getEmployeeExtras;
     });
     //change year
-    watch(globalYear, (newVal, oldY) => {
-      getEmployeeExtrasParams.imputedYear = newVal;
-    });
+    // watch(globalYear, (newVal, oldY) => {
+    //   getEmployeeExtrasParams.imputedYear = newVal;
+    // });
 
     //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
 

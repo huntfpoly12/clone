@@ -7,7 +7,6 @@
                     귀 {{ store.state.settings.globalYear }}-{{ $filters.formatMonth(month1) }}
                 </div>
                 <month-picker-box-custom v-model:valueDate="month2"/>
-           
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right" class="label-required">
@@ -68,7 +67,8 @@ export default defineComponent({
         watch(resultConfig, (value) => {
             let paymentMonth = month1.value
             if (value) {
-                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+              paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+              store.state.common.paymentDayPA420 = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month1.value + 1
                 }
@@ -77,7 +77,9 @@ export default defineComponent({
             trigger.value = false;
         });
 
-
+      watch(()=>paymentDayCopy.value, (newVal) => {
+          store.state.common.paymentDayPA420 = newVal
+        })
         watch(() => props.data, (val) => {
             month1.value = val
         });

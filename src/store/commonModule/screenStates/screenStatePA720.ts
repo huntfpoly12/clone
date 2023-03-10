@@ -32,7 +32,7 @@ let statesPA720 = {
       incomeId: "99axbzkk",
     },
   },
-  paymentDayPA720:4,
+  paymentDayPA720:1,
   dataActionUtilsPA720 : {
     input: {
         paymentDay: 1,

@@ -202,7 +202,11 @@ const routes = [
         path: "ac-610",
         component: () => import('../views/AC/AC6/AC610/index.vue'),
       },
-    ]
+      {
+        path: "ac-620",
+        component: () => import("../views/AC/AC6/AC620/index.vue"),
+      },
+    ],
   },
   { path: "/:pathMatch(.*)*", name: "not-found", component: NotFound },
 ];

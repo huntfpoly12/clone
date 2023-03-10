@@ -76,5 +76,8 @@ input.dp__input {
   pointer-events: none;
   cursor: default;
 }
+:deep .dx-list-item.dx-state-active {
+  color: black !important;
+}
 
 
