@@ -381,6 +381,7 @@ export default defineComponent({
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
         const trigger = ref<boolean>(true)
+        const triggerDataTaxPayInfo = ref<boolean>(true)
         let status = ref();
         const gridRef = ref(); // ref of grid
         const originData = ref({
@@ -506,9 +507,11 @@ export default defineComponent({
             result: resultTaxPayInfo,
             loading: loadingTaxPayInfo,
         } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+            enabled: triggerDataTaxPayInfo.value,
             fetchPolicy: "no-cache",
         }))
         watch(resultTaxPayInfo, (value) => {
+            triggerDataTaxPayInfo.value = false;
             if (value) {
                 store.state.common.dataTaxPayInfo = value.getIncomeWages;
                 // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
@@ -537,7 +540,8 @@ export default defineComponent({
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
-            refetchDataTaxPayInfo() //reset data table 2
+            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // refetchDataTaxPayInfo() 
         })
 
         watch(() => status.value, (newVal) => {
@@ -587,6 +591,7 @@ export default defineComponent({
         }
         // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             status.value = month.status
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
@@ -639,6 +644,7 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             status.value = 10
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
         /**
@@ -668,7 +674,8 @@ export default defineComponent({
                     originDataTaxPayInfo.value.processKey.imputedYear = dataYearNew.value
                     // refetchDataProcessIncomeWages() //reset data table 1
                     trigger.value = true; //reset data table 1
-                    refetchDataTaxPayInfo() //reset data table 2
+                    triggerDataTaxPayInfo.value = true; //reset data table 2
+                    // refetchDataTaxPayInfo() //reset data table 2
                     // checkClickYear.value = false;
                     return;
                 }
@@ -718,7 +725,8 @@ export default defineComponent({
                 originDataTaxPayInfo.value.processKey.imputedYear = newVal
                 // refetchDataProcessIncomeWages() //reset data table 1
                 trigger.value = true; //reset data table 1
-                refetchDataTaxPayInfo() //reset data table 2
+                // refetchDataTaxPayInfo() //reset data table 2
+                triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
         return {
