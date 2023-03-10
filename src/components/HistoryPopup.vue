@@ -5,7 +5,7 @@
             <a-spin tip="로딩 중..."
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
-                loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610">
+                loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" key-expr="ts" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -93,6 +93,7 @@ export default defineComponent({
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
+        let triggerCM121 = ref<boolean>(false);
         let triggerAC620 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
@@ -166,6 +167,13 @@ export default defineComponent({
                                 trigger110.value = true;
                                 // refetchCM110();
                             }
+                            break;
+                        case 'cm-121':
+                            dataQuery.value = {
+                              companyId: companyId,
+                              fiscalYear: globalYear
+                            }
+                            triggerCM121.value = true;
                             break;
                         case 'cm-220':
                             trigger220.value = true;
@@ -406,6 +414,7 @@ export default defineComponent({
                     triggerPA210.value = false;
                     triggerPA810.value = false;
                     triggerAC610.value = false;
+                    triggerCM121.value = false;
                     triggerAC620.value = false;
                 }
             }
@@ -498,6 +507,22 @@ export default defineComponent({
         watch(resultCM110, (value) => {
             if (value && value.getMyCompanyUserLogs) {
                 dataTableShow.value = value.getMyCompanyUserLogs;
+            }
+        });
+
+        // get getUserLogs  121
+        const { result: resultCM121, loading: loadingCM121, refetch: refetchCM121 } = useQuery(
+            queries.getBankbooksLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerCM121.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+
+        watch(resultCM121, (value) => {
+            if (value && value.getBankbooksLogs) {
+                dataTableShow.value = value.getBankbooksLogs;
             }
         });
 
@@ -858,6 +883,7 @@ export default defineComponent({
             loadingPA210,
             loadingPA810,
             loadingAC610,
+            loadingCM121,
             loadingAC620,
         }
     },

@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
     :placeholder="placeholder" v-model:value="value" mode="text" :disabled="disabled" :readOnly="readOnly"
-    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput">
+    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
     </DxValidator>
@@ -37,6 +37,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    maxLength: {
+      type: Number,
+      default: null,
+    }
   },
   components: {
     DxTextBox,

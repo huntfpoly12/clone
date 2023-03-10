@@ -36,6 +36,7 @@ import searchUsers from "./searchUsers";
 import getClientLogs from "./getClientLogs";
 import getBackerLogs from "./getBackerLogs";
 import getMajorInsuranceCompanyEmployeeAcquisitionLogs from "./getMajorInsuranceCompanyEmployeeAcquisitionLogs";
+import getBankbooksLogs from "./getBankbooksLogs";
 const queries = {
   getUser: getUser,
   getListSale: getListSale,
@@ -76,6 +77,7 @@ const queries = {
   getMajorInsuranceCompanyEmployeeAcquisitionLogs:
     getMajorInsuranceCompanyEmployeeAcquisitionLogs,
   getClientLogs: getClientLogs,
+  getBankbooksLogs: getBankbooksLogs,
   getBackerLogs: getBackerLogs,
 };
 
