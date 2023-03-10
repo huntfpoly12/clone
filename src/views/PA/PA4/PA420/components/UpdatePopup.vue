@@ -114,17 +114,20 @@ export default defineComponent({
         }));
         resultGetDetail(newValue => {
           if (newValue) {
+            let checkBoxCallApi = true
             // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
+              checkBoxCallApi = false
               newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService = dataDefaultDetailUtils.specification.specificationDetail.prevRetiredYearsOfService
             }
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus == null) {
+              checkBoxCallApi = false
               newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
             }
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
-                "checkBoxCallApi": true,
+                "checkBoxCallApi": checkBoxCallApi,
             }
           }
         })
