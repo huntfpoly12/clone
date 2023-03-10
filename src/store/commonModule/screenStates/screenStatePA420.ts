@@ -3,6 +3,7 @@ const statesPA420 = {
     storePagePA420: {
         checkMonthActive: false
     },
+    paymentDayPA420: 0,
     processKeyPA420: {
         imputedYear: dayjs().year(),
         imputedMonth: dayjs().month() + 1,
