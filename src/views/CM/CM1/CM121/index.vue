@@ -47,9 +47,9 @@
                 </div>
               </template>
               <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
-              <template #pupop="{}">
+              <template #pupop="{ data }">
                 <!-- <div style=""> -->
-                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;" />
+                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;" @click="deleteBankBook(data.data)"/>
                 <!-- </div> -->
               </template>
             </DxDataGrid>
@@ -165,7 +165,6 @@
             </div>
           </standard-form>
         </a-spin>
-        <!-- <DetailBankbook :dataDetailBankbook="dataDetailBankbook"/> -->
       </a-col>
       <PopupRegisterBankbook :isModalRegister="isModalRegister" @closePopup="isModalRegister = false"
         @dataRegisterBankbook="dataRegisterBankbook" />
@@ -183,15 +182,17 @@ import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
+import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
 import DxButton from "devextreme-vue/button";
 import DetailBankbook from './components/DetailBankbook.vue'
-import { FacilityBizType, BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
+import { FacilityBizType, BankType, enum2Entries } from "@bankda/jangbuda-common";
+// import { BankBookUseType } from "@bankda/jangbuda-common";
 import DxSelectBox from "devextreme-vue/select-box";
 import notification from '@/utils/notification';
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
-    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, DetailBankbook
+    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook
   },
   setup() {
     const store = useStore();
@@ -204,13 +205,27 @@ export default defineComponent({
     const facilityBizTypeCommon = FacilityBizType.all();
     const bankTypeCommon = BankType.all();
     const focusedRowKey = ref()
-    const bankbookUseType: any = computed(() => {
-      let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
-        value: value[1],
-        label: value[0],
-      }));
-      return bsDeduction;
-    });
+    // const bankbookUseType: any = computed(() => {
+    //   let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
+    //     value: value[1],
+    //     label: value[0],
+    //   }));
+    //   return bsDeduction;
+    // });
+    const bankbookUseType = [
+      {
+        value: 1,
+        label: "운영비",
+      },
+      {
+        value: 2,
+        label: "보조금",
+      },
+      {
+        value: 3,
+        label: "후원금",
+      }
+    ]
     let isTypeClassification = ref<boolean>(false)
     const cm121Form = ref()
     let dataDetailBankbook = reactive({
@@ -317,6 +332,28 @@ export default defineComponent({
       createBankbook(dataDetailBankbook)
     }
 
+    // delete bankbook
+    const {
+      mutate: deleteBankbook,
+      onDone: doneDeleteBankbook,
+      onError: errorDeleteBankbook
+    } = useMutation(mutations.deleteBankbook);
+    doneDeleteBankbook((e) => {
+      notification('success', `업데이트 완료!`)
+      triggerBankbooks.value = true
+    })
+    errorDeleteBankbook(e => {
+      notification('error', e.message)
+    })
+    const deleteBankBook = (data: any) => {
+      deleteBankbook({
+        companyId: companyId,
+        fiscalYear: globalYear.value,
+        facilityBusinessId: data.facilityBusinessId,
+        bankbookId: data.bankbookId
+      })
+    }
+
     return {
       move_column,
       colomn_resize,
@@ -332,7 +369,8 @@ export default defineComponent({
       isTypeClassification,
       submit,
       cm121Form,
-      focusedRowKey
+      focusedRowKey,
+      deleteBankBook
     }
   }
 });
