@@ -53,11 +53,7 @@ jobs:
       - name: Check Node Heap Size Limimt
         run: node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
 
-      - name: Increase Node Heap Size Limimt
-        run: export NODE_OPTIONS=--max_old_space_size=3000
-
-      - name: Check Node Heap Size Limimt
-        run: node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
-
       - name: Build vue
         run: npm run build
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
