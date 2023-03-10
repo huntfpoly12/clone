@@ -50,9 +50,6 @@ jobs:
           CI: true
           NODE_AUTH_TOKEN: ${{secrets._AUTH_TOKEN}}
 
-      - name: Check Node Heap Size Limimt
-        run: node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
-
       - name: Build vue
         run: npm run build
         env:

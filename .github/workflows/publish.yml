@@ -51,6 +51,8 @@ jobs:
 
       - name: Build vue
         run: npm run build
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
 
       - name: Upload S3 and Deploy CloudFront
         uses: lbertenasco/s3-deploy@v1
