@@ -135,7 +135,7 @@
                     <button-basic style="margin: 0px 5px" @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                 </div>
             </a-tooltip>
-            <button-basic style="margin: 0px 5px" @onClick="submitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
+            <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
         </div>
     </standard-form>
 
@@ -256,30 +256,32 @@ export default defineComponent({
         }))
 
         // ===================DONE GRAPQL==================================
-        onDoneAdd((data: any) => {
-            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-            } else { // if click submit
-                store.state.common.incomeId = data.data.createIncomeWageDaily?.incomeId
-            }
-            store.state.common.statusRowAdd = true;
-            store.state.common.actionAddItem = false;
-            // store.state.common.incomeId = data.data.createIncomeWageDaily.incomeId
-            store.state.common.loadingTableInfo++
+        onDoneAdd( async (data: any) => {
             notification('success', messageAddSuccess)
+
+            if (store.state.common.statusClickButtonSave) { // if click submit
+                store.state.common.incomeId = data.data.createIncomeWageDaily?.incomeId
+            } else { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+            }
+            await (store.state.common.statusRowAdd = true);
+            await (store.state.common.actionAddItem = false);
+            await store.state.common.loadingTableInfo++
+            
         })
         onerrorAdd((e: any) => {
             notification('error', e.message)
         })
-        onDoneUpdate((data: any) => {
-            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-            } else { // if click submit
-                store.state.common.incomeId = data.data.updateIncomeWageDaily?.incomeId
-            }
-            store.state.common.loadingTableInfo++
-            triggerIncomeWageDaily.value = true;
+        onDoneUpdate( async (data: any) => {
             notification('success', messageUpdateSuccess)
+            if (store.state.common.statusClickButtonSave) { // if click submit
+                store.state.common.incomeId = data.data.updateIncomeWageDaily?.incomeId
+            } else { // if click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+            }
+            await store.state.common.loadingTableInfo++
+            await (triggerIncomeWageDaily.value = true);
+            
         })
         onerrorUpdate((e: any) => {
             notification('error', e.message)
@@ -410,6 +412,7 @@ export default defineComponent({
         // Watching the value of actionSubmit and if it is true, it will execute the code inside the if
         // statement.
         watch(() => store.state.common.actionSubmit, (value) => {
+            store.state.common.statusClickButtonSave = false;
             submitForm()
         })
 
@@ -564,6 +567,10 @@ export default defineComponent({
             }
         }
         const pa510FormRef = ref()
+        const onSubmitForm = () => {
+            store.state.common.statusClickButtonSave = true;
+            submitForm()
+        }
         const submitForm = () => {
             var res = pa510FormRef.value.validate();
             if (!res.isValid) {
@@ -647,7 +654,7 @@ export default defineComponent({
             loadingIncomeWageDaily,
             store,
             countKey,
-            submitForm,
+            submitForm, onSubmitForm,
             showErrorButton,
             showDailyWage, showMonthlyWage
         };

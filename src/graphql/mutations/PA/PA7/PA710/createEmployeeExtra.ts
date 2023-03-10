@@ -11,5 +11,7 @@ mutation createEmployeeExtra(
             input: $input,
         ){
             type
+            employeeId
+            incomeTypeCode
         }
 }`

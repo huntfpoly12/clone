@@ -24,6 +24,7 @@ const statesPA110 = {
   loadingFormData: 1,
   selectionFilter: null,
   dataRowOnActive: null,
+  statusClickButtonSave: true,
 };
 
 export default statesPA110;

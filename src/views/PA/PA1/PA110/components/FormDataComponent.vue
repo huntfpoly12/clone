@@ -184,7 +184,7 @@
                                 <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
-                        <button-basic style="margin: 0px 5px" @onClick="submitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
+                        <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
                     </div>
                 </a-col>
             </a-row>
@@ -377,32 +377,44 @@ export default defineComponent({
         actionUpdateErr(e => {
             notification('error', e.message)
         })
-        actionUpdateDone(res => {
-            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-            } else { // if click submit
-                store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
-            }
-            store.state.common.loadingTableInfo++
-            triggerDetail.value = true;
+        actionUpdateDone(async res => {
             notification('success', Message.getMessage('COMMON', '106').message)
-        })
-        doneCreated(res => {
-            if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-                store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-                console.log(1111);
-                
-            } else { // if click submit
-                console.log(3333);
-                console.log(res.data.createIncomeWage);
-                
-                store.state.common.incomeId = res.data.createIncomeWage?.incomeId
+            // if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+            //     store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            // } else { // if click submit
+            //     store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
+            // }
+            if (store.state.common.statusClickButtonSave) { // if click submit
+                store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
+            } else {
+                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
-            store.state.common.statusRowAdd = true;
-            store.state.common.actionAddItem = false;
-            // store.state.common.incomeId = res.data.createIncomeWage.incomeId
-            store.state.common.loadingTableInfo++
+            await store.state.common.loadingTableInfo++
+            await (triggerDetail.value = true);
+            
+        })
+        doneCreated(async res => {
             notification('success', Message.getMessage('COMMON', '101').message)
+            // if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
+            //     store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+            //     console.log(1111);
+                
+            // } else { // if click submit
+            //     console.log(3333);
+            //     console.log(res.data.createIncomeWage);
+                
+            //     store.state.common.incomeId = res.data.createIncomeWage?.incomeId
+            // }
+            if (store.state.common.statusClickButtonSave) { // if click submit
+                store.state.common.incomeId = res.data.createIncomeWage?.incomeId
+            } else { // click save modal
+                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+            }
+            await (store.state.common.statusRowAdd = true);
+            await (store.state.common.actionAddItem = false);
+            // store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            await store.state.common.loadingTableInfo++
+            
         })
 
         errorCreated(res => {
@@ -523,6 +535,7 @@ export default defineComponent({
         })
 
         watch(() => store.state.common.actionSubmit, () => {
+            store.state.common.statusClickButtonSave = false;
             submitForm()
         })
 
@@ -650,6 +663,10 @@ export default defineComponent({
         })
         // ======================= FUNCTION ================================
         const pa110FormRef = ref()
+        const onSubmitForm = () => {
+            store.state.common.statusClickButtonSave = true;
+            submitForm()
+        }
         const submitForm = () => {
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
@@ -793,7 +810,7 @@ export default defineComponent({
             loadingGetEmployeeWage,
             updateDataDeduction,
             showErrorButton,
-            submitForm,
+            submitForm, onSubmitForm,
         };
     },
 });
