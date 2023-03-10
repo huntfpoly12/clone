@@ -26,13 +26,18 @@
           <div class="d-flex justify-content-center">{{ convertBirthDayKorea(data.data.residentId) }}</div>
         </template>
         <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>
-        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center"/>
+        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center" cell-template="workingStatus"/>
+        <template #workingStatus="{ data }">
+          <div>
+            {{ MajorInsuranceWorkingStatus[data.data.workingStatus] }}
+          </div>
+        </template>
         <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수번호" data-field="accedpedNumber" width="70" alignment="center"/>
         <!-- api not field paymentYear -->
-        <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>
+        <!-- <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/> -->
         <DxColumn caption="메모" data-field="memo" alignment="center"/>
         <DxColumn caption="신고서다운로드" cell-template="report" width="100" alignment="center"/>
         <template #report="{ data }" class="custom-action">
@@ -89,11 +94,18 @@ import dayjs from "dayjs";
 import DxButton from 'devextreme-vue/button';
 import { DxColumn, DxDataGrid, DxScrolling, DxToolbar } from 'devextreme-vue/data-grid';
 import { DxItem } from 'devextreme-vue/select-box';
-import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import CreatePA810Popup from './components/CreatePA810Popup.vue';
 import {Message} from "@/configs/enum";
 
+enum MajorInsuranceWorkingStatus {
+    등록 = 1,
+    접수 = 2,
+    완료 = 10,
+    오류 = -1,
+    취소 = 0
+}
 export default defineComponent({
   methods: {convertBirthDayKorea},
   components: {
@@ -141,6 +153,10 @@ export default defineComponent({
       dataSource.value = res.data.getMajorInsuranceCompanyEmployeeAcquisitions
     })
 
+    // watch change year
+    watchEffect(() => {
+      employeeAcquisitionsParam.imputedYear = globalYear.value;
+    })
     // -------history------
 
     const modalHistory = ref(false);
@@ -233,6 +249,7 @@ export default defineComponent({
       isDelete,
       contentDelete,
       handleCreate,
+      MajorInsuranceWorkingStatus
     };
   },
 });

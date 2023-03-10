@@ -1,11 +1,11 @@
 <template>
   <div style="margin-left: 5px">
-    <a-tooltip title="취득부호조회" placement="top" color="gray">
+    <a-tooltip :title="textTooltip" placement="top" color="gray">
       <div>
         <DxButton
           icon="search"
           :width="width"
-          :text="text"
+          :text="textBtn"
           type="ghost"
           styling-mode="outlined"
           @click="isOpen = true"
@@ -42,9 +42,13 @@ export default defineComponent({
     Tooltip
   },
   props: {
-    text: {
+    textBtn: {
       type: String,
       default: "",
+    },
+    textTooltip: {
+      type: String,
+      default: "취득부호조회",
     },
     width: {
       type: String,
