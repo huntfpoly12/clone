@@ -427,6 +427,7 @@ export default defineComponent({
             refetchData()
         }
         const addMonth = (month: number) => {
+            monthSeleted.value = month
             dataModalCopy.value = month
             modalCopy.value = true
         }

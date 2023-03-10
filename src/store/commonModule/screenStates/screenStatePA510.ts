@@ -9,7 +9,7 @@ const statesPA510 = {
     dataRowOld: null,
     incomeId: null,
     // employeeId: null,
-    actionAddItem: false,
+    statusFormAdd: false,
     statusChangeFormAdd: false,
     statusChangeFormEdit: false,
     loadingTableInfo: 0,
@@ -26,6 +26,9 @@ const statesPA510 = {
     loadingFormData: 1,
     selectionFilter: null,
     dataRowOnActive: null,
+    statusClickButtonSave: true,
+    statusClickButtonAdd: false,
+    addRow: 1,
 };
   
 export default statesPA510;

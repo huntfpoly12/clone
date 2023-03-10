@@ -63,7 +63,7 @@ export default [
   { name: "후원금전용계좌의 입출금명세", url: "#", id: "ac-590" },
 
   { name: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
-  { name: "후원자관리", url: "#", id: "ac-620" },
+  { name: "후원자 관리", url: "/dashboard/ac-620", id: "ac-620" },
   { name: "기부금영수증", url: "#", id: "ac-630" },
 
   { name: "근로소득자료입력", url: "/dashboard/pa-110", id: "pa-110" },

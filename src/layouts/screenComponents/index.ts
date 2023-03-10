@@ -106,6 +106,9 @@ const PA810 = defineAsyncComponent(() =>
 const AC610 = defineAsyncComponent(() =>
     import("@/views/AC/AC6/AC610/index.vue")
 );
+const AC620 = defineAsyncComponent(() =>
+    import("@/views/AC/AC6/AC620/index.vue")
+);
 
 export {
     BF310,
@@ -141,6 +144,7 @@ export {
     PA720,
     PA810,
     AC610,
+    AC620,
     Test,
     Example
 }

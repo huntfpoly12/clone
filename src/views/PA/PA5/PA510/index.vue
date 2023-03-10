@@ -1,7 +1,7 @@
 <template>
     <action-header title="일용직근로소득자료입력" :buttonSave="false" :buttonDelete="false" />
     <div id="pa-510" class="page-content">
-        <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
+        <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
             <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" key-expr="companyId"
                     :show-borders="true" :allow-column-reordering="move_column"
@@ -197,7 +197,7 @@
         </a-row>
         <a-row :class="{
             'disabledBlock': statusDisabledBlock,
-            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}"
             style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between;">
             <a-col>
                 <div v-if="!statusDisabledBlock">
@@ -208,7 +208,7 @@
                         :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                     <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                        :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)" />
+                        :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)" />
                 </div>
                 <div v-else>
                     <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
@@ -220,7 +220,7 @@
             </a-col>
         </a-row>
         <a-row :class="{'disabledBlock': statusDisabledBlock}">
-            <a-col :span="14" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
+            <a-col :span="14" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
                 <a-spin :spinning="loadingTaxPayInfo" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                         :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
@@ -492,7 +492,7 @@ export default defineComponent({
             if (value.getIncomeWageDailies) {
                 delete(value.getIncomeWageDailies.deductionItems)
                 store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
-                // if (value.getIncomeWageDailies[0] && !store.state.common.actionAddItem) { // if have data
+                // if (value.getIncomeWageDailies[0] && !store.state.common.statusFormAdd) { // if have data
                 if (value.getIncomeWageDailies[0]) { // if have data
                     if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
                         store.state.common.focusedRowKey = store.state.common.incomeId
@@ -503,14 +503,17 @@ export default defineComponent({
                         store.state.common.dataRowOnActive = value.getIncomeWageDailies[0]
                         // store.state.common.employeeId = value.getIncomeWageDailies[0].employeeId
                     }
-                    store.state.common.actionAddItem = false
+                    store.state.common.statusFormAdd = false
                 } else {
-                    store.state.common.actionAddItem = true
+                    store.state.common.statusFormAdd = true
                     store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
                     // store.state.common.employeeId = null;
                     store.state.common.actionResetForm++;
                 }
+            }
+            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                store.state.common.addRow++ // add row
             }
             store.state.common.resetArrayEmploySelect++
         })
@@ -546,11 +549,9 @@ export default defineComponent({
                 // refetchDataTaxPayInfo() //reset data table 2
             }
         })
-        watch(() => store.state.common.statusRowAdd, (newVal) => {
-            if (!newVal) {
-                gridRef.value?.instance.deselectAll()
-                dataRows.value = []
-            }
+        watch(() => store.state.common.addRow, (newVal) => {
+            gridRef.value?.instance.deselectAll()
+            dataRows.value = []
         })
         // ======================= FUNCTION ================================
         const statusComfirm = () => {
@@ -622,7 +623,7 @@ export default defineComponent({
                     return;
                 }
                 if (!store.state.common.statusRowAdd) {
-                    store.state.common.actionAddItem = false
+                    store.state.common.statusFormAdd = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
@@ -679,7 +680,7 @@ export default defineComponent({
                         e.cancel = true;
                         // }
                     } else {
-                        if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                        if (store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
                             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                             store.state.common.statusRowAdd = true
                         }
@@ -687,7 +688,7 @@ export default defineComponent({
                         // store.state.common.employeeId = data.data.employeeId
                     }
                     if (store.state.common.statusRowAdd) {
-                        store.state.common.actionAddItem = false
+                        store.state.common.statusFormAdd = false
                     }
                 }
             }

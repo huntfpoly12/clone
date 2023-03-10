@@ -20,6 +20,7 @@
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick"
+                            @focused-row-changing="onFocusedRowChanging"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -84,7 +85,7 @@
                             <template #pupop="{ data }">
                                 <!-- <div style=""> -->
                                     <DeleteOutlined v-if="data.data.deletable" style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
-                                        @click="statusRemoveRow ? modalStatusDelete = true : ''" />
+                                        @click="statusAddRow ? modalStatusDelete = true : ''" />
                                 <!-- </div> -->
                                 
                             </template>
@@ -225,8 +226,9 @@ export default defineComponent({
         let formState: any = ref({ ...initialState });
         let dataRow = reactive({ ...initialState });
         const resetFormNum = ref(1);
-        const statusRemoveRow = ref(true);
-        // const statusRemoveRow = ref(true);
+        const statusAddRow = ref(true);
+        const statusClickButtonSave = ref<boolean>(true);
+        const statusClickButtonAdd = ref<boolean>(false);
         const originData = {
             companyId: companyId,
             imputedYear: globalYear,
@@ -271,6 +273,7 @@ export default defineComponent({
                 formState.value.incomeTypeName = data.incomeTypeName
                 formState.value.deletable = data.deletable
                 dataRowOld = { ...formState.value }
+                dataRow = { ...formState.value }
                 focusedRowKey.value = data.residentId
             }
             triggerDetail.value = false;
@@ -278,19 +281,23 @@ export default defineComponent({
         const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
             mutations.deleteEmployeeExtra
         );
-        onDoneAdd(() => {
-            trigger.value = true;
-            if (focusedRowKey.value == dataRow.residentId) { // if click save modal
+        onDoneAdd(async (data) => {
+            notification('success', `업데이트 완료되었습니다!`)
+            await (trigger.value = true);
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                return
+            }
+            if (statusClickButtonSave.value) { // if click submit
+                originDataDetail.value.employeeId = data.data.createEmployeeExtra?.employeeId
+                originDataDetail.value.incomeTypeCode = data.data.createEmployeeExtra?.incomeTypeCode  
+            } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
-            } else { // if click submit
-                originDataDetail.value.employeeId = formState.value.employeeId
-                originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode  
             }
-            triggerDetail.value = true;
-            statusFormUpdate.value = true;
-            statusRemoveRow.value = true;
-            notification('success', `업데이트 완료되었습니다!`)
+            await (triggerDetail.value = true);
+            await (statusFormUpdate.value = true);
+            await (statusAddRow.value = true);
+            
         });
         onErrorAdd((e) => {
             focusedRowKey.value = 'PA710'
@@ -298,25 +305,27 @@ export default defineComponent({
         });
         onDoneDelete(() => {
             modalStatusDelete.value = false;
+            runOne.value = true;
             trigger.value = true;
-            resetFormNum.value++;
-            statusFormUpdate.value = false;
-            focusedRowKey.value = null;
-
-            Object.assign(formState.value, initialState);
+            // resetFormNum.value++;
+            // statusFormUpdate.value = false;
+            // focusedRowKey.value = null;
+            // Object.assign(formState.value, initialState);
         });
-        onDoneUpdate(() => {
-            trigger.value = true;
-            if (formState.value.residentId == focusedRowKey.value) {
-                originDataDetail.value.employeeId = formState.value.employeeId
-                originDataDetail.value.incomeTypeCode = formState.value.incomeTypeCode
-                dataRowOld = { ...formState.value }
-            } else {
+        onDoneUpdate(async (data) => {
+            notification('success', `업데이트 완료되었습니다!`)
+            await (trigger.value = true);
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                return
+            }
+            if (statusClickButtonSave.value) { // if click submit
+                originDataDetail.value.employeeId = data.data.updateEmployeeExtra?.employeeId
+                originDataDetail.value.incomeTypeCode = data.data.updateEmployeeExtra?.incomeTypeCode  
+            } else { // if click save modal
                 originDataDetail.value.employeeId = dataRow.employeeId
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
-            triggerDetail.value = true;
-            notification('success', `업데이트 완료되었습니다!`)
+            await (triggerDetail.value = true);
         });
         onErrorUpdate((e) => {
             triggerDetail.value = true;
@@ -326,14 +335,18 @@ export default defineComponent({
         // ================FUNCTION============================================
         const pa710FormRef = ref()
         const actionSave = () => {
+            statusClickButtonSave.value = true;
+            submitForm()
+        }
+        const submitForm = () => {
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                if (statusFormUpdate.value) {
-                    focusedRowKey.value = formState.value.residentId
-                } else {
-                    focusedRowKey.value = statusRemoveRow.value ? null : 'PA710'
-                }
+                // if (statusFormUpdate.value) {
+                //     focusedRowKey.value = formState.value.residentId
+                // } else {
+                //     focusedRowKey.value = statusAddRow.value ? null : 'PA710'
+                // }
                 // dataRow.employeeId = formState.value.employeeId
                 // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
@@ -397,19 +410,42 @@ export default defineComponent({
         //         confirmSave.value = true
         // }
         const onSelectionClick = (data: any) => {
-            dataRow = data.data
+            // dataRow = data.data
+            // if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
+            //     originDataDetail.value.employeeId = data.data.employeeId
+            //     originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
+            //     if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
+            //         modalStatus.value = true;
+            //     } else {
+            //         if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
+            //             modalStatus.value = true;
+            //         } else {
+            //             if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
+            //                 listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
+            //                 statusAddRow.value = true
+            //             }
+            //             triggerDetail.value = true;
+            //         }
+            //         statusFormUpdate.value = true;
+            //     }
+            // }
+        }
+        const onFocusedRowChanging = (e: any) => {
+            dataRow = e.rows[e.newRowIndex]?.data
             if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
-                originDataDetail.value.employeeId = data.data.employeeId
-                originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
+                originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
+                originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
+                    e.cancel = true;
                 } else {
                     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
                         modalStatus.value = true;
+                        e.cancel = true;
                     } else {
-                        if (!statusRemoveRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
+                        if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
                             listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-                            statusRemoveRow.value = true
+                            statusAddRow.value = true
                         }
                         triggerDetail.value = true;
                     }
@@ -422,16 +458,19 @@ export default defineComponent({
             let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
             if (statusChangeFormEdit) { // if status form add and form not null
                 modalStatusAdd.value = true
+                statusClickButtonAdd.value = true
             } else {
                 if (statusChangeFormAdd) { // if status form add and form not null
                     modalStatusAdd.value = true
-                } else if(statusRemoveRow.value) {
-                    statusRemoveRow.value = false;
-                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    resetFormNum.value++;
-                    focusedRowKey.value = 'PA710';
-                    statusFormUpdate.value = false;
+                    statusClickButtonAdd.value = true
+                } else if(statusAddRow.value) {
+                    addRow()
+                    // statusAddRow.value = false;
+                    // listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+                    // formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+                    // resetFormNum.value++;
+                    // focusedRowKey.value = 'PA710';
+                    // statusFormUpdate.value = false;
                 }
             }
         }
@@ -447,11 +486,12 @@ export default defineComponent({
         }
         const statusComfirm = (val: any) => {
             if (val) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
+                statusClickButtonSave.value = false;
+                submitForm();
             } else {
-                if (!statusRemoveRow.value) {
+                if (!statusAddRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-                    statusRemoveRow.value = true
+                    statusAddRow.value = true
                 }
                 statusFormUpdate.value = true
                 triggerDetail.value = true;
@@ -459,20 +499,25 @@ export default defineComponent({
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
-                actionSave();
+                statusClickButtonSave.value = false;
+                submitForm();
             } else {
-                if(statusRemoveRow.value) { // add row
-                    statusRemoveRow.value = false;
-                    listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                    formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    resetFormNum.value++;
-                    focusedRowKey.value = 'PA710';
-                    statusFormUpdate.value = false;
+                if(statusAddRow.value && statusClickButtonAdd.value) { // add row
+                    addRow()
                 } else { // reset form
                     resetFormNum.value++;
                     Object.assign(formState.value, initialState);
                 }
             }
+        }
+        const addRow = () => { 
+            statusClickButtonAdd.value = false;
+            statusAddRow.value = false;
+            listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
+            formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
+            resetFormNum.value++;
+            focusedRowKey.value = 'PA710';
+            statusFormUpdate.value = false;
         }
 
         const confimSaveWhenChangeRow = (status: any) => {
@@ -525,6 +570,9 @@ export default defineComponent({
                 // listEmployeeExtra.value = value.getEmployeeExtras
                 
             }
+            if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
+                addRow()
+            }
         });
         watch(() => formState.value.foreigner, (newValue) => {
             if (!newValue) {
@@ -538,17 +586,17 @@ export default defineComponent({
         watchEffect(() => {
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
-        watch(globalYear, () => {
+        watch(globalYear, (newVal, oldVal) => {
             runOne.value = true;
             trigger.value = true;
         });
 
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
-            confimSaveWhenChangeRow, 
+            confimSaveWhenChangeRow, onFocusedRowChanging,
             // actionToAddFromEdit, 
             textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            contentDelete, modalStatusDelete, onSubmitDelete, statusRemoveRow, Message, pa710FormRef,
+            contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef,
         };
     },
 });

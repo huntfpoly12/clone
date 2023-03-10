@@ -1,13 +1,13 @@
 <template>
-  <div class="dx-field px-10 d-flex items-center" :style="style">
-    <div class="dx-field-label">{{ label }}:</div>
+  <div :class="computedClass" :style="style">
+    <div class="dx-field-label" :title="label">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
   name: 'FormInput',
@@ -27,7 +27,30 @@ export default defineComponent({
     style: {
       type: String,
       default: ''
+    },
+    class: {
+      type: String,
+      default: ''
     }
-  }
+  },
+  setup(props) {
+    const computedClass = computed(() => {
+      return `dx-field px-10 d-flex items-center ${props.class}`;
+    });
+
+    return {
+      computedClass,
+    };
+  },
 })
 </script>
+<style lang="scss" scoped>
+.dx-field {
+  .dx-field-label {
+    width: 100px ;
+  }
+  .dx-field-value {
+    width: calc(100% - 100px) !important;
+  }
+}
+</style>

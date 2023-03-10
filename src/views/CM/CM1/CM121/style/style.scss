@@ -36,17 +36,25 @@
     }
 }
 :deep .form-item-top {
-    label {
-        width: 80px;
+  label {
+      width: 80px;
+  }
+  &-switch {
+    .ant-switch {
+      background-color: #1890ff;
     }
-    &-switch {
-      .ant-switch {
-        background-color: #1890ff;
-      }
-    }
+  }
 }
 :deep .form-item-bottom {
-    label {
-        width: 180px;
+  label {
+      width: 180px;
+  }
+  &-switch {
+    .ant-switch {
+      background-color: #d9534f;
+  }
+    .ant-switch-checked {
+      background-color: #5cb85c;
     }
+  }
 }
