@@ -215,6 +215,10 @@
                                 </standard-form>
                             </div>
                         </a-col>
+                        <button-basic style="margin-left: 350px;
+    margin-top: 20px;" :text="'저장'" type="default"
+                            @onClick="onSubmitConfig()"
+                        />
                     </a-row>
                     <SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
                         @dataEmit="changeValueAddress" title="원천설정" />

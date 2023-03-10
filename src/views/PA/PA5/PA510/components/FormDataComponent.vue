@@ -2,15 +2,15 @@
     <standard-form action="" name="add-page-210" class="formPA510" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
         <a-spin :spinning="loading || loadingIncomeWageDaily" ><StandardForm formName="pa-510-form" ref="pa510FormRef">
             <a-row :key="countKey">
-                <a-col :span="12" style="padding-right: 10px">
+                <a-col :span="12">
                     <a-form-item label="일용직사원" class="red">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
-                            @onChange="onChange" :activeType20="false" />
+                            @onChange="onChange" :activeType20="false" width="200px"/>
                     </a-form-item>
                     <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
-                            :spinButtons="true" :disabled="!store.state.common.actionAddItem" :isFormat="true"/>
+                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="200px"/>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -258,15 +258,18 @@ export default defineComponent({
         // ===================DONE GRAPQL==================================
         onDoneAdd( async (data: any) => {
             notification('success', messageAddSuccess)
-
+            await store.state.common.loadingTableInfo++
+            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                return
+            }
             if (store.state.common.statusClickButtonSave) { // if click submit
                 store.state.common.incomeId = data.data.createIncomeWageDaily?.incomeId
             } else { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
             await (store.state.common.statusRowAdd = true);
-            await (store.state.common.actionAddItem = false);
-            await store.state.common.loadingTableInfo++
+            await (store.state.common.statusFormAdd = false);
+            
             
         })
         onerrorAdd((e: any) => {
@@ -274,12 +277,16 @@ export default defineComponent({
         })
         onDoneUpdate( async (data: any) => {
             notification('success', messageUpdateSuccess)
+            await store.state.common.loadingTableInfo++
+            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                return
+            }
             if (store.state.common.statusClickButtonSave) { // if click submit
                 store.state.common.incomeId = data.data.updateIncomeWageDaily?.incomeId
             } else { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
-            await store.state.common.loadingTableInfo++
+            
             await (triggerIncomeWageDaily.value = true);
             
         })
@@ -289,7 +296,7 @@ export default defineComponent({
 
         resEmployeeWage(value => {
             dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
@@ -312,9 +319,12 @@ export default defineComponent({
             })
             triggerWithholdingConfigDeductionItems.value = false
         })
-        resIncomeWageDaily((value: any) => {
-            dataIncomeWageDaily.value = value.data.getIncomeWageDaily
-            store.state.common.dataRowOld = { ...value.data.getIncomeWageDaily }
+        resIncomeWageDaily((value: any) => { // get data of one row
+            triggerIncomeWageDaily.value = false;
+            let data = value.data.getIncomeWageDaily
+            dataIncomeWageDaily.value = data
+            store.state.common.dataRowOld = { ...data }
+            
             arrDeduction.value?.map((data: any) => {
                 data.price = 0
                 dataIncomeWageDaily.value.deductionItems?.map((val: any) => {
@@ -323,8 +333,8 @@ export default defineComponent({
                     }
                 })
             })
-            store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
-            triggerIncomeWageDaily.value = false;
+            store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
+            store.state.common.focusedRowKey = data.incomeId
             setTimeout(() => {
                 store.state.common.statusChangeFormEdit = false;
                 store.state.common.statusChangeFormAdd = false;
@@ -336,9 +346,9 @@ export default defineComponent({
         watch(() => store.state.common.loadingFormData, (value) => {
             triggerIncomeWageDaily.value = true;
         })
-        // Watching the value of the store.state.common.actionAddItem and if it is true, it will do
+        // Watching the value of the store.state.common.statusFormAdd and if it is true, it will do
         // some stuff.
-        watch(() => store.state.common.actionAddItem, (value) => {
+        watch(() => store.state.common.statusFormAdd, (value) => {
             if (value) {
                 countKey.value++;
                 employeeWageDailyParam.value.employeeId = null
@@ -360,7 +370,7 @@ export default defineComponent({
         })
         watch(() => dataIncomeWageDaily.value, (value) => {
             // Checking if the data in the store has changed.
-            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.actionAddItem && store.state.common.dataRowOld) {
+            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormPrice = true;
                 store.state.common.statusChangeFormEdit = true;
             } else {
@@ -396,7 +406,7 @@ export default defineComponent({
                 originDataIncomeWageDaily.value.incomeId = value
                 triggerIncomeWageDaily.value = true;
             } else {
-                if (!store.state.common.actionAddItem) {
+                if (!store.state.common.statusFormAdd) {
                     onResetForm()
                     // arrDeduction.value?.map((data: any) => {
                     //     data.price = 0
@@ -443,7 +453,7 @@ export default defineComponent({
         // dataIncomeWageDaily.value.
         watch(resultEmployeeWageDaily, async (res: any) => {
             employeeWageDailyTrigger.value = false;
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 let data = res.getEmployeeWageDaily;
                 await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
                 await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
@@ -468,16 +478,20 @@ export default defineComponent({
 
         // Watching the statusRowAdd property of the store.state.common object. If the value of
         // statusRowAdd is false, then it will add a new row to the table.
-        watch(() => store.state.common.statusRowAdd, (newVal) => {
-            if (!newVal) { // add row table
-                store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
-                dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
-                store.state.common.focusedRowKey = 'PA510'
-                // setTimeout(() => {
-                //     let a = document.body.querySelectorAll('[aria-rowindex]');
-                //     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                // }, 100);
-            }
+        // watch(() => store.state.common.statusRowAdd, (newVal) => {
+        //     if (!newVal) { // add row table
+        //         store.state.common.statusClickButtonAdd = false;
+        //         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
+        //         dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
+        //         store.state.common.focusedRowKey = 'PA510'
+        //     }
+        // })
+        watch(() => store.state.common.addRow, (newVal) => { // add row table
+            store.state.common.statusClickButtonAdd = false;
+            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
+            dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
+            store.state.common.focusedRowKey = 'PA510'
+            onResetForm()
         })
 
         // watch(() => store.state.common.actionCopy, (newVal) => {
@@ -490,7 +504,7 @@ export default defineComponent({
         // arrayEmploySelect.value to [] and then it will do some other stuff.
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
@@ -595,7 +609,7 @@ export default defineComponent({
                         workingDays: dataIncomeWageDaily.value.workingDays,
                         deductionItems: arrDeductionItems,
                     }
-                    if (store.state.common.actionAddItem) {
+                    if (store.state.common.statusFormAdd) {
                         mutateAdd({
                             companyId: companyId,
                             processKey: { ...processKey.value },
@@ -616,6 +630,7 @@ export default defineComponent({
                 }
             }
         }
+        // Resetting the form.
         const onResetForm = async () => {
             countKey.value++;
             await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
@@ -625,13 +640,17 @@ export default defineComponent({
             })
             await (store.state.common.statusChangeFormEdit = false);
             await (store.state.common.statusChangeFormAdd = false);
+            await (store.state.common.statusFormAdd = true); // trạng thái form add
+            await (store.state.common.statusChangeFormPrice = false)
         }
+
+        // A function that is being called in the Vue HTML.
         const showDailyWage = () => {
             let price = Math.round(dataIncomeWageDaily.value.monthlyWage /  dataIncomeWageDaily.value.workingDays)
             dataIncomeWageDaily.value.dailyWage = price ? price : dataIncomeWageDaily.value.dailyWage
             return filters.formatCurrency(dataIncomeWageDaily.value.dailyWage)
-            
         }
+        // A function that is being called in the HTML.
         const showMonthlyWage = () => {
             let price = dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays
             dataIncomeWageDaily.value.monthlyWage = price ? price : dataIncomeWageDaily.value.monthlyWage
