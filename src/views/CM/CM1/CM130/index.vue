@@ -516,6 +516,7 @@ export default defineComponent({
         onDoneUpdated(() => {
             notification('success', `업데이트 성공되었습니다!`)
             refetchConfig();
+            store.state.common.isDisableInsuranceSupport = formState.insuranceSupport;
         });
         const onSubmitConfig = () => {
             let variables = {

@@ -30,7 +30,7 @@
             <a-col :span="12"> 두루누리사회보험 공제 </a-col>
             <a-col :span="12" class="switch-bg">
               공제 여부:
-              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
+              <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance" :disabled="!isDisableInsuranceSupport"
                 v-model:valueSwitch="initFormTab2PA120.insuranceSupport" @onChange="onChangeSwitch1"></switch-basic>
             </a-col>
           </div>
@@ -39,13 +39,13 @@
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.nationalPensionSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
             </a-col>
             <a-col span="7"> 고용보험 적용율: </a-col>
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
             </a-col>
             <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
             <a-col span="17" class="income-tax-app-rate">
@@ -148,13 +148,13 @@
               <div v-for="item in dataConfigPayItems" :key="item.name" class="custom-deduction">
                 <span>
                   <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2" :name="item.name" :type="1"
-                    subName="공제" />
+                    subName="과세" />
                   <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2" :name="item.name" :type="2"
                     subName="상여(과세)" />
                   <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode" :name="item.name" :type="3"
                     :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + (item.taxFreeIncludeSubmission ? 'O' : 'X')" />
                   <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name"
-                    :type="4" subName="공제" />
+                    :type="4" subName="과세" />
                 </span>
                 <div>
                   <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value"
@@ -221,6 +221,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import Datepicker from '@vuepic/vue-datepicker';
 import filters from '@/helpers/filters';
 import DxButton from 'devextreme-vue/button';
+import { Message } from '@/configs/enum';
 
 type RangeValue = [Dayjs | null, Dayjs | null];
 export default defineComponent({
@@ -262,6 +263,8 @@ export default defineComponent({
       imputedYear: globalYear.value,
       employeeId: employeeId.value,
     })
+    const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport);
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -508,7 +511,7 @@ export default defineComponent({
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
-      dataConfigDeduction.value?.map((item: any) => {
+      dataConfigDeduction.value?.map((item: any) => { 
         if (item.itemCode == 1001) {
           let total1 = initFormTab2PA120.value.nationalPensionDeduction ? calculateNationalPensionEmployee(calculateVariables.totalTaxPay, initFormTab2PA120.value.nationalPensionSupportPercent) : 0;
           item.value = total1;
@@ -679,11 +682,12 @@ export default defineComponent({
         }
       });
       emit('closePopup', false);
-      notification('success', '업데이트 완료!');
+      notification('success', messageUpdate);
       store.commit('common/actionFormDonePA120');
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
+    
     return {
       loading1,
       loading2,
@@ -714,7 +718,8 @@ export default defineComponent({
       isAddFormErrorPA120,
       isBtnYellow,
       employeeWageParam,
-      triggerDetail
+      triggerDetail,
+      isDisableInsuranceSupport
     };
   },
 });
