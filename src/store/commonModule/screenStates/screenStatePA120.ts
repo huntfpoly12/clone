@@ -8,6 +8,7 @@ const statesPA120 = {
   isForeignerPA120: false,
   presidentPA120: false,
   presidentEditPA120: false,
+  isDisableInsuranceSupport: false,
   initFormStateTabPA120: {
     name: "",
     foreigner: false,
