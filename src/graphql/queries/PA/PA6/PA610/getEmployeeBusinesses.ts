@@ -14,6 +14,7 @@ export default gql`
       nationalityCode
       stayQualification
       deletable
+      __typename @skip(if: true)
     }
   }
 `;

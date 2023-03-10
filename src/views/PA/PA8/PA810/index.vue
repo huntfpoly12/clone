@@ -37,7 +37,7 @@
         <DxColumn caption="신고서다운로드" cell-template="report" width="100" alignment="center"/>
         <template #report="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.employeeId)">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12"/>
             </DxButton>
           </div>
