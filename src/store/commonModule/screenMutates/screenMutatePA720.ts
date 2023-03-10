@@ -35,6 +35,9 @@ const screenMutatePA720 = {
       paymentYear: payload,
     }
   },
+  selectedRowKeysPA720(state: any, payload: any){
+    state.selectedRowKeysPA720 = [payload]
+  }
 };
 
 export default screenMutatePA720;

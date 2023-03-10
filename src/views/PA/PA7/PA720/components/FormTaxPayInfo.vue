@@ -235,6 +235,9 @@ export default defineComponent({
     }));
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
+      if(data){
+        store.commit('common/selectedRowKeysPA720',data.incomeId);
+      }
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
       let editRowData: any = {};
