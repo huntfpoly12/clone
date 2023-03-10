@@ -7,7 +7,7 @@
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
             id="gridContainer">
-            <DxScrolling mode="standard" show-scrollbar="always" />
+            <DxScrolling mode="infinite" />
             <DxToolbar>
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
             </DxToolbar>
@@ -79,7 +79,7 @@
             </template>
           <!-- <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
-                </template> -->
+                  </template> -->
             <template #relationChange="{ data: cellData }">
               {{ $filters.formatRelation(cellData.value) }}
             </template>
@@ -462,7 +462,7 @@ export default defineComponent({
   padding: 5px;
   font-weight: bold;
   font-size: 18px;
-  margin: 30px 0px;
+  margin: 15px 0px;
 
   span {
     display: flex;
@@ -475,5 +475,10 @@ export default defineComponent({
       margin: 5px 0px 3px 10px;
     }
   }
-}</style>
+}
+
+#gridContainer {
+  max-height: 300px;
+}
+</style>
 

@@ -391,7 +391,7 @@ export default defineComponent({
         const isClickYearDiff = ref(false);
         const changeYearDataFake = ref();
         //compare Data
-        const compareType = ref(1); //0 is row change. 1 is add button;
+        const compareType = ref(2); //2 is row change. 1 is add button;
         const compareForm = () => {
           let daActionCompare = JSON.parse(JSON.stringify(dataAction.value));
           delete daActionCompare.input.employee;
@@ -428,6 +428,7 @@ export default defineComponent({
             dataCallApiGetOption.value.imputedYear = newVal;
             triggerDetailOption.value = true;
           } else {
+            compareType.value = 2;
             rowChangeStatus.value = true;
             isClickYearDiff.value = true;
             changeYearDataFake.value = oldVal;
@@ -646,6 +647,16 @@ export default defineComponent({
               compareType.value = 1;
               return;
             }
+            if (isClickMonthDiff.value) {
+              emit('noSave', 0);
+              isClickMonthDiff.value = false;
+              return;
+            }
+            if (isClickYearDiff.value) {
+              emit('noSave', 1);
+              isClickYearDiff.value = false;
+              return;
+            }
         }
         const {
             mutate: actionCreated,
@@ -714,6 +725,7 @@ export default defineComponent({
                   dataCallApiGetOption.value.imputedYear = newVal;
                   triggerDetailOption.value = true;
                 } else {
+                  compareType.value = 2;
                   rowChangeStatus.value = true;
                   isClickYearDiff.value = true;
                   changeYearDataFake.value = oldVal;
