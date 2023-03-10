@@ -48,9 +48,9 @@ export default defineComponent({
             onDone,
             onError,
         } = useMutation(mutations.changeIncomeExtraPaymentDay);
-        onDone(() => {
+        onDone((res) => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", true)
+            emit("closePopup", res.data.changeIncomeExtraPaymentDay.incomeId)
         })
         onError((e: any) => {
             notification('error', e.message)

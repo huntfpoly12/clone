@@ -1,7 +1,7 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ firsTimeRow}} firsTimeRow <br/>
-    {{ focusedRowKey}} focusedRowKey <br/> -->
+    <!-- {{ firsTimeRow }} firsTimeRow <br />
+    {{ focusedRowKey }} focusedRowKey <br /> -->
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
       :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
       focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
@@ -126,7 +126,7 @@ export default defineComponent({
     addItemClick: Boolean,
     addNewRow: {
       type: Function,
-      default: ()=> {},
+      default: () => { },
     },
     compareType: Number,
   },
@@ -143,7 +143,6 @@ export default defineComponent({
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
     const formPA720 = computed(() => store.getters['common/formPA720']);
-    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
 
     // ================GRAPQL==============================================
 
@@ -172,9 +171,9 @@ export default defineComponent({
           props.addNewRow();
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
-          selectedRowKeys.value = [formPA720.value.input.incomeId];
-        } else {
-          onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+          store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
+        // } else {
+        //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
         }
       }
       triggerDetail.value = false;
@@ -221,7 +220,7 @@ export default defineComponent({
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
-    const selectedRowKeys = ref<any>([]);
+    const selectedRowKeys = computed(()=> store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
@@ -238,7 +237,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      selectedRowKeys.value = [data.incomeId];
+      store.commit('common/selectedRowKeysPA720',data.incomeId);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,

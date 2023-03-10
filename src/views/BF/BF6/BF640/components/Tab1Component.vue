@@ -301,7 +301,6 @@ export default defineComponent({
                     typeCheckbox.value[key] = false;
                 } else {
                     typeCheckbox.value[key] = false;
-                    typeCheckbox.value.checkbox1 = true;
                 }
             }
         }, { deep: true });

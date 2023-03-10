@@ -398,6 +398,7 @@ export default defineComponent({
           if(formRef.value.compareForm()){
             onChangeMonth(data)
           }else {
+            formRef.value.compareType = 2;
             formRef.value.isClickMonthDiff = true;
             formRef.value.rowChangeStatus = true;
             changeMonthDataFake.value = data;

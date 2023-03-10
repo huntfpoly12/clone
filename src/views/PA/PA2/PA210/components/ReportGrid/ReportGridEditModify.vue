@@ -5,9 +5,9 @@
         <div class="header-report">
           <div class="header-1">원천세신고서</div>
           <div class="action-right">
-            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete">
-            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy">
-            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew"></button-basic>
+            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status != 20">
+            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status != 20">
+            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 20"></button-basic>
           </div>
           <div class="table-detail">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -48,7 +48,7 @@
               </template>
               <DxColumn caption="신고 종류" cell-template="afterDeadline-index" css-class="cell-center"/>
               <template #afterDeadline-index="{ data }">
-                <DxButton :text="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index + 1,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
+                <DxButton :text="getAfterDeadline(data.data.index,data.data.afterDeadline)?.tag_name" :style="getAfterDeadline(data.data.index,data.data.afterDeadline)?.style" :height="$config_styles.HeightInput" />
               </template>
               <DxColumn caption="연말" cell-template="yearEndTaxAdjustment" css-class="cell-center"/>
               <template #yearEndTaxAdjustment="{ data }">
@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" ></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" :readOnly="dataSource[0].status != 10"></hot-table>
         </div> 
       </div>
   </a-modal>
@@ -105,6 +105,10 @@ export default defineComponent({
     dataReport: {
       type: Array,
       default: [],
+    },
+    isEdit: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -164,6 +168,7 @@ export default defineComponent({
 
     watch(() => props.dataReport,(newValue : any) => {
       dataSource.value = newValue
+      dataSource
     })
     // load new data when first time open popup
     onMounted(() => {
@@ -214,8 +219,8 @@ export default defineComponent({
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
       }
-      trigger.value = true;
-      refetchData()
+      // trigger.value = true;
+      // refetchData()
 
       let hot = wrapper.value?.hotInstance; 
       //Put in a loop to set data into each cell
@@ -308,10 +313,10 @@ export default defineComponent({
     }
 
     const {
-            mutate: actionCreateTaxWithholding,
+            mutate: actionUpdateTaxWithholding,
             onDone: doneChangeStatus,
             onError: errChangeStatus
-    } = useMutation(mutations.createTaxWithholdingStatusReport);
+    } = useMutation(mutations.updateTaxWithholdingStatusReport);
         
     doneChangeStatus((result: any) => {
       store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
@@ -319,7 +324,7 @@ export default defineComponent({
       setModalVisible()
     })
     errChangeStatus((error) => {
-      notification('error', error.message)
+      //notification('error', error.message)
       setModalVisible()
     })
 
@@ -374,14 +379,14 @@ export default defineComponent({
       
       const variables = {
         companyId:companyId,
-        //reportId:dataSource.value[0].reportId,
+        reportId:dataSource.value[0].reportId,
         key:{
           imputedYear: dataSource.value[0].imputedYear,
           imputedMonth: dataSource.value[0].imputedMonth,
           paymentYear: dataSource.value[0].paymentYear,
           paymentMonth: dataSource.value[0].paymentMonth,
           reportType: dataSource.value[0].reportType,
-          index: dataSource.value[0].index + 1,  // increase index value 1
+          index: dataSource.value[0].index,
         },
         input:{
           paymentType: dataSource.value[0].paymentType,
@@ -438,7 +443,7 @@ export default defineComponent({
           }
         }
       }
-      actionCreateTaxWithholding(variables)
+      actionUpdateTaxWithholding(variables)
     }
 
     // The above code is creating a function called actionConfirmDelete. This function is setting the value

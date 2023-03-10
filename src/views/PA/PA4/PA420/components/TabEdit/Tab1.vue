@@ -1,5 +1,5 @@
 <template>
-    <standard-form class="modal-add">{{ dataDetail }}
+    <standard-form class="modal-add">
         <a-row :gutter="16"> 
             <a-col :span="12">
                 <a-form-item label="구분">
@@ -248,7 +248,7 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted, onActivated } from 'vue'
 import dayjs from "dayjs";
 import { openTab } from '@/helpers/commonFunction';
 import  filters from '@/helpers/filters';
@@ -291,14 +291,17 @@ export default defineComponent({
             year: 0
         })
 
-        const dataGet: any = ref(props.dataDetail)
+        const dataGet: any = ref({...dataDefaultDetailUtils})
  
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         // =============== WATCH ==================================
+        watch(() => props.processKey, (newVal) => {
+            (document.getElementById("checkBox") as HTMLInputElement).click();
+        });
+
         watch(() => props.dataDetail, (value: any,oldValue : any) => {
-          dataGet.value = value
-          console.log(oldValue)
-          console.log(value)
+            dataGet.value = value
+            month1.value = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
@@ -306,9 +309,9 @@ export default defineComponent({
             (document.getElementById("checkBox") as HTMLInputElement).click();
         });
 
-        // watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
-        //     dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
-        // });
+        watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
+        });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
           if (newVal) {

@@ -14,7 +14,8 @@
                 v-model:valueCheckbox="initFormTab2PA120.healthInsuranceDeduction"></checkbox-basic>
             </span>
             <span class="check-box-tab1 mb-4 ml-15">
-              <checkbox-basic class="" size="18px" label="고용보험" v-model:valueCheckbox="initFormTab2PA120.employeementInsuranceDeduction"
+              <checkbox-basic class="" size="18px" label="고용보험"
+                v-model:valueCheckbox="initFormTab2PA120.employeementInsuranceDeduction"
                 :disabled="presidentEditPA120"></checkbox-basic>
             </span>
 
@@ -30,8 +31,7 @@
             <a-col :span="12" class="switch-bg">
               공제 여부:
               <switch-basic switch-basic textCheck="Y" textUnCheck="N" class="switch-insurance"
-                v-model:valueSwitch="initFormTab2PA120.insuranceSupport"
-                @onChange="onChangeSwitch1"></switch-basic>
+                v-model:valueSwitch="initFormTab2PA120.insuranceSupport" @onChange="onChangeSwitch1"></switch-basic>
             </a-col>
           </div>
           <a-row :gutter="[0, 10]">
@@ -101,17 +101,18 @@
         <a-col style="flex: 0 0 28%">
           <div class="header-text-2">요약</div>
           <div class="summary">
-            <a-col :span="13">소득수당 합계 
+            <a-col :span="13">소득수당 합계
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
                   수당 합계 = 수당 과세 + 수당 비과세
                 </template>
-                <div style="text-align: center;" >
-                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
+                <div style="text-align: center;">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
                 </div>
               </a-tooltip> :
             </a-col>
-            <a-col style="display: inline-flex; justify-content: flex-end"><span>{{ $filters.formatCurrency(calculateVariables.totalTaxPay)
+            <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
+              $filters.formatCurrency(calculateVariables.totalTaxPay)
             }}</span> 원</a-col>
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
@@ -127,19 +128,20 @@
                 <template #title>
                   차인지급액 = 수당 합계 - 공제 합계 + 감면 합계
                 </template>
-                <div style="text-align: center;" >
-                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3"/>
+                <div style="text-align: center;">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px" class="mb-3" />
                 </div>
               </a-tooltip> :
             </a-col>
-            <a-col style="display: inline-flex; justify-content: flex-end; font-weight: 600"><span>{{ $filters.formatCurrency(subPayment)}}</span> 원</a-col>
+            <a-col style="display: inline-flex; justify-content: flex-end; font-weight: 600"><span>{{
+              $filters.formatCurrency(subPayment) }}</span> 원</a-col>
           </div>
         </a-col>
         <a-col class="col-2" style="display: flex; flex-direction: column">
           <div class="header-text-2">
             수당 항목 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
-             과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
-             {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
+            과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
+            {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
           <a-spin :spinning="loading1" size="large" style="height: 100%">
             <div class="deduction-main">
@@ -190,20 +192,25 @@
           </a-spin>
         </a-col>
       </a-row>
-      <!-- {{  isAddFormErrorPA120 }} isAddFormErrorPA120<br/>
-      {{  isCalculateEditPA120 }} isCalculateEditPA120<br/>
-      {{  isBtnYellow }} isBtnYellow<br/>
-      {{  initFormTab2PA120 }} initFormTab2PA120<br/> -->
+      <!-- {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br />
+      {{ isCalculateEditPA120 }} isCalculateEditPA120<br />
+      {{ isBtnYellow }} isBtnYellow<br />
+      {{ initFormTab2PA120 }} initFormTab2PA120<br />
+      {{ employeeWageParam }} employeeWageParam<br />
+      {{ triggerDetail }} triggerDetail<br /> -->
+      <!-- {{ employeeWageParam }} employeeWageParam<br /> -->
       <a-row style="margin-top: 20px" justify="center">
-        <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax" text="공제계산"/>
-        <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2" @onClick="updateDeduction" />
+        <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax"
+          text="공제계산" />
+        <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit-tab2"
+          @onClick="updateDeduction" />
       </a-row>
     </a-spin>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref, watch, computed, watchEffect, onMounted } from 'vue';
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import { useMutation, useQuery, useLazyQuery } from '@vue/apollo-composable';
 import { radioCheckPersenPension, radioCheckReductioRate, radioCheckReductionInput, IncomeTaxAppRate, initFormStateTab2 } from '../../utils/index';
 import { useStore } from 'vuex';
 import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEmployee, calculateLongTermCareInsurance, calculateEmployeementInsuranceEmployee } from '@/helpers/commonFunction';
@@ -248,10 +255,13 @@ export default defineComponent({
     const presidentEditPA120 = computed(() => store.state.common.presidentEditPA120);
 
     const globalYear = computed(() => store.state.settings.globalYear);
-    const triggerCalcIncome = ref<boolean>(false);
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
-
+    const employeeWageParam = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: employeeId.value,
+    })
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -265,101 +275,13 @@ export default defineComponent({
     watch(
       () => props.idRowEdit,
       async () => {
+        countRestFirstRun.value = 0;
+        countConfigPayItems.value = 0;
+        triggerDetail.value = false;
         await refetchConfigDeduction();
         await refetchConfigPayItems();
       }
     );
-
-    /**
-     * get Employee Wage
-     */
-
-    const {
-      refetch: refetchValueDetail,
-      result: resultGetEmployeeWage,
-      loading: loadingEmployeeWage,
-    } = useQuery(
-      queries.getEmployeeWage,
-      {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        employeeId: employeeId.value,
-      },
-      () => ({
-        fetchPolicy: 'no-cache',
-        enabled: triggerDetail.value,
-      })
-    );
-    watch(resultGetEmployeeWage, async (value) => {
-      if (value) {
-        let data = value.getEmployeeWage;
-        store.state.common.presidentEditPA120 = data.president;
-        let editRowData: any = {};
-        editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
-        editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
-        editRowData.longTermCareInsuranceDeduction = data.longTermCareInsuranceDeduction;
-        editRowData.employeementInsuranceDeduction = presidentEditPA120.value ? false : data.employeementInsuranceDeduction;
-        editRowData.insuranceSupport = data.insuranceSupport;
-        if (data?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
-          editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent ?? 0;
-        }
-        if (data?.employeementInsuranceSupportPercent >= 0 && editRowData.insuranceSupport) {
-          editRowData.employeementInsuranceSupportPercent = data.employeementInsuranceSupportPercent ?? 0;
-        }
-        if (data?.employeementReductionStartDate) {
-          editRowData.employeementReductionStartDate = data.employeementReductionStartDate;
-        }
-        if (data?.employeementReductionFinishDate) {
-          editRowData.employeementReductionFinishDate = data.employeementReductionFinishDate;
-          let ReductionStartDate = convertToDate(data.employeementReductionStartDate);
-          let ReductionFinishDate = convertToDate(data.employeementReductionFinishDate);
-          rangeDate.value = [ReductionStartDate, ReductionFinishDate];
-        }
-        if (data?.employeementReductionRatePercent) {
-          editRowData.employeementReductionRatePercent = data.employeementReductionRatePercent;
-        }
-        if (data?.employeementReductionInput) {
-          editRowData.employeementReductionInput = data.employeementReductionInput;
-        }
-        editRowData.payItems = data.payItems;
-        editRowData.deductionItems = data.deductionItems;
-        editRowData.employeementReduction = data.employeementReduction;
-        editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
-        store.state.common.rowKeyTab2PA120 = data.employeeId;
-        // c onsole.log(`output->editRowData`,editRowData)
-        store.state.common.editRowTab2PA120 = editRowData;
-        store.state.common.initFormTab2PA120 = editRowData;
-        // store.commit('common/editRowTab2PA120', editRowData);
-        // store.commit('common/initFormTab2PA120', editRowData);
-        // c onsole.log(`output->dataConfigPayItems.value`,dataConfigPayItems.value)
-        if (data.payItems && dataConfigPayItems.value.length > 0) {
-          dataConfigPayItems.value = dataConfigPayItems.value.map((item1: any) => {
-            delete item1.__typename;
-            const item2 = data.payItems.find((item2: any) => item2.itemCode === item1.itemCode);
-            delete item2?.__typename;
-            const value = item2 ? item2.amount : 0
-            return { ...item1, ...item2, value }
-          })
-        }
-        if (data.deductionItems && dataConfigDeduction.value.length > 0) {
-          dataConfigDeduction.value=dataConfigDeduction.value.map((item1: any) => {
-            delete item1.__typename;
-            let item2 = data.deductionItems.find((item2: any) => {
-              item2.value = item1.amount;
-            });
-            delete item2?.__typename;
-            let value = item1 ? item1.amount : 0;
-            return {...item1, ...item2,value}
-          });
-        }
-        calculateVariables.dependentCount = data.dependents.length > 0 ? data.dependents.length : 1;
-        calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
-          return accumulator + object.value;
-        }, 0);
-        store.state.common.isCalculateEditPA120 = true;
-        isBtnYellow.value = false;
-      }
-    });
 
     // get WithouthouldingConfigdeduction
 
@@ -424,13 +346,94 @@ export default defineComponent({
             value: 0,
           };
         });
-        // await refetchCalcIncomeWageTax();
-        triggerDetail.value = true;
-        refetchValueDetail({
+        employeeWageParam.value = {
           companyId: companyId,
           imputedYear: globalYear.value,
           employeeId: employeeId.value,
-        });
+        }
+        triggerDetail.value = true;
+      }
+    });
+
+    /**
+     * get Employee Wage
+     */
+    const {
+      result: resultGetEmployeeWage,
+      loading: loadingEmployeeWage,
+    } = useQuery(
+      queries.getEmployeeWage,
+      employeeWageParam,
+      () => ({
+        enabled: triggerDetail.value,
+        fetchPolicy: 'no-cache',
+      })
+    );
+    watch(resultGetEmployeeWage, async (value) => {
+      if (value) {
+        let data = value.getEmployeeWage;
+        store.state.common.presidentEditPA120 = data.president;
+        let editRowData: any = {};
+        editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
+        editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
+        editRowData.longTermCareInsuranceDeduction = data.longTermCareInsuranceDeduction;
+        editRowData.employeementInsuranceDeduction = presidentEditPA120.value ? false : data.employeementInsuranceDeduction;
+        editRowData.insuranceSupport = data.insuranceSupport;
+        if (data?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent ?? 0;
+        }
+        if (data?.employeementInsuranceSupportPercent >= 0 && editRowData.insuranceSupport) {
+          editRowData.employeementInsuranceSupportPercent = data.employeementInsuranceSupportPercent ?? 0;
+        }
+        if (data?.employeementReductionStartDate) {
+          editRowData.employeementReductionStartDate = data.employeementReductionStartDate;
+        }
+        if (data?.employeementReductionFinishDate) {
+          editRowData.employeementReductionFinishDate = data.employeementReductionFinishDate;
+          let ReductionStartDate = convertToDate(data.employeementReductionStartDate);
+          let ReductionFinishDate = convertToDate(data.employeementReductionFinishDate);
+          rangeDate.value = [ReductionStartDate, ReductionFinishDate];
+        }
+        if (data?.employeementReductionRatePercent) {
+          editRowData.employeementReductionRatePercent = data.employeementReductionRatePercent;
+        }
+        if (data?.employeementReductionInput) {
+          editRowData.employeementReductionInput = data.employeementReductionInput;
+        }
+        editRowData.payItems = data.payItems;
+        editRowData.deductionItems = data.deductionItems;
+        editRowData.employeementReduction = data.employeementReduction;
+        editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
+        store.state.common.rowKeyTab2PA120 = data.employeeId;
+        store.state.common.editRowTab2PA120 = editRowData;
+        store.state.common.initFormTab2PA120 = editRowData;
+        if (data.payItems && dataConfigPayItems.value.length > 0) {
+          dataConfigPayItems.value = dataConfigPayItems.value.map((item1: any) => {
+            delete item1.__typename;
+            const item2 = data.payItems.find((item2: any) => item2.itemCode === item1.itemCode);
+            delete item2?.__typename;
+            const value = item2 ? item2.amount : 0
+            return { ...item1, ...item2, value }
+          })
+        }
+        if (data.deductionItems && dataConfigDeduction.value.length > 0) {
+          dataConfigDeduction.value = dataConfigDeduction.value.map((item1: any) => {
+            delete item1.__typename;
+            let item2 = data.deductionItems.find((item2: any) => {
+              item2.value = item1.amount;
+            });
+            delete item2?.__typename;
+            let value = item1 ? item1.amount : 0;
+            return { ...item1, ...item2, value }
+          });
+        }
+        calculateVariables.dependentCount = data.dependents.length > 0 ? data.dependents.length : 1;
+        calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+          return accumulator + object.value;
+        }, 0);
+        store.state.common.isCalculateEditPA120 = true;
+        isBtnYellow.value = false;
+        triggerDetail.value = false;
       }
     });
 
@@ -562,7 +565,7 @@ export default defineComponent({
       }, 0);
       store.state.common.isAddFormErrorPA120 = false;
       isBtnYellow.value = false;
-      if(!initFormTab2PA120.value?.employeementReductionStartDate){
+      if (!initFormTab2PA120.value?.employeementReductionStartDate) {
         rangeDate.value = [null, null];
       }
     };
@@ -604,11 +607,15 @@ export default defineComponent({
       { deep: true }
     );
     //  // watch initFormTab2PA120 to check calculate button
-    const isAddFormErrorPA120 = computed(()=> store.state.common.isAddFormErrorPA120);
+    const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
+    let countConfigPayItems = ref(0);
     watch(
       () => dataConfigPayItems,
       (newVal) => {
-        if (newVal) {
+        if (countConfigPayItems.value < 2) {
+          countConfigPayItems.value++;
+          return;
+        } else {
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
         }
@@ -617,21 +624,27 @@ export default defineComponent({
     );
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
     const isBtnYellow = ref(false);
+    let countRestFirstRun = ref(0);
     let stopTrack = watchEffect(() => {
       const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
+      if (countRestFirstRun.value < 2) {
+        countRestFirstRun.value++;
+        return;
+      }
       if (rest) {
         store.state.common.isCalculateEditPA120 = false;
         isBtnYellow.value = true;
       }
-    });
-    
+    }
+    );
+
 
     /**
      *  Save form
      */
     const { mutate, onError, onDone } = useMutation(mutations.saveEmployeeWagePayDeductionReduction);
     const updateDeduction = () => {
-      if(isBtnYellow.value) {
+      if (isBtnYellow.value) {
         store.state.common.isAddFormErrorPA120 = true;
         return;
       }
@@ -671,7 +684,6 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
-
     return {
       loading1,
       loading2,
@@ -701,6 +713,8 @@ export default defineComponent({
       calculateVariables,
       isAddFormErrorPA120,
       isBtnYellow,
+      employeeWageParam,
+      triggerDetail
     };
   },
 });

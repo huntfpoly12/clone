@@ -5,6 +5,7 @@ let statesPA720 = {
   actionSavePA720: 0,
   actionSaveTypePA720: 0,
   isNewRowPA720:false,
+  selectedRowKeysPA720:[],
   formPA720: {
     input: {
       paymentDay: '',

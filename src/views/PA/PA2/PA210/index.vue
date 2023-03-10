@@ -136,8 +136,8 @@
                 <template #editIcon="{ data }">
                     <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
                         style="border: none; margin-top: -2px;" >
-                        <EyeFilled v-if="data.data.status == 40" :style="{fontSize: '20px', color: 'black'}"/>
-                        <EditFilled v-else :style="{fontSize: '20px', color: 'black'}"/>
+                        <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
+                        <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
                     </DxButton>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
@@ -152,14 +152,13 @@
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center; ">
+                      <a-tooltip>
+                        <template #title>출력 / 저장</template>
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
-                        <a-tooltip>
-                            <template #title>출력 / 저장</template>
-                            <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
+                    </a-tooltip>
+                    <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 28px; margin-left: 10px;" />
-                        </a-tooltip>
-                        
                     </div>
                 </template>
             </DxDataGrid>
@@ -173,7 +172,9 @@
     <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="closeReportGridEdit" :dataReport="dataReport"
         :key="resetComponentEdit" />
     <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="closeReportGridModify"
-    :dataReport="dataReport" :key="resetComponentModify" :is-edit="isEdit"/>
+    :dataReport="dataReport" :key="resetComponentModify"/>
+    <ReportGridEditModify v-if="statusReportGridEditModify" :modalStatus="statusReportGridEditModify" @closePopup="closeReportGridEditModify"
+    :dataReport="dataReport" :key="resetComponentModify"/>
 </template>
 <script lang="ts">
 
@@ -191,17 +192,18 @@ import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid"
-import { HistoryOutlined ,EyeFilled,EditFilled} from "@ant-design/icons-vue"
+import { HistoryOutlined ,ZoomInOutlined,EditOutlined} from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import ReportGridEditModify from "./components/ReportGrid/ReportGridEditModify.vue";
 import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/index"
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify,EyeFilled,EditFilled
+        ReportGridModify,ReportGridEditModify,ZoomInOutlined,EditOutlined
     },
     setup() {
         const store = useStore();
@@ -216,7 +218,7 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const statusReportGridEdit = ref<boolean>(false);
         const statusReportGridModify = ref<boolean>(false);
-        const isEdit = ref<boolean>(false);
+        const statusReportGridEditModify = ref<boolean>(false);
         const resetComponentEdit = ref(0)
         const resetComponentModify = ref(0)
         const dataReport: any = ref([])
@@ -315,6 +317,11 @@ export default defineComponent({
           refetchData()
         }
 
+        const closeReportGridEditModify = () => {
+          statusReportGridEditModify.value = false;
+          refetchData()
+        }
+
         const openModalHistory = (data: any) => {
             modalHistoryStatus.value = true;
         }
@@ -372,14 +379,11 @@ export default defineComponent({
                 dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
-                isEdit.value = false
             } else {
                 // set day to current day if is modify action
                 dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
-                statusReportGridModify.value = true;
+                statusReportGridEditModify.value = true;
                 resetComponentModify.value++
-                isEdit.value = true
-                
             }
         };
         const checkModify = (data: any) => {
@@ -408,15 +412,13 @@ export default defineComponent({
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
-            closePopupAddNew,closeReportGridEdit,closeReportGridModify,
-            editRow, statusReportGridEdit, dataReport, statusReportGridModify,
+            closePopupAddNew,closeReportGridEdit,closeReportGridModify,closeReportGridEditModify,
+            editRow, statusReportGridEdit, dataReport, statusReportGridModify,statusReportGridEditModify,
             dataPopup,
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
-            onRowClick,
-            isEdit
-            
+            onRowClick,   
         };
     },
 });

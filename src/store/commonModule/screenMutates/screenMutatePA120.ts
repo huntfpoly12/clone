@@ -1,6 +1,9 @@
 const screenMutatePA120 = {
   actionFormDonePA120(state: any) {
-    state.actionFormDonePA120 = !state.actionFormDonePA120;
+    state.actionFormDonePA120++;
+  },
+  actionFormErrorPA120(state: any) {
+    state.actionFormErrorPA120++;
   },
   keyActivePA120(state: any, data: Number) {
     state.keyActivePA120 = data;

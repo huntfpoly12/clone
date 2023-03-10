@@ -185,10 +185,6 @@ export default defineComponent({
         newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
     });
     const employeeId = ref(null);
-    watch(employeeId, (newValue: any, oldvalue) => {
-      initFormStateTabPA120.value.employeeId = parseInt(newValue);
-    });
-
 
     // getDepartments
     const {
@@ -271,6 +267,7 @@ export default defineComponent({
           imputedYear: globalYear.value,
           input: {
             ...initFormStateTabPA120.value,
+            employeeId: employeeId.value,
             joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
             leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
           },
@@ -278,21 +275,6 @@ export default defineComponent({
         createEmployeeWage(dataNew);
       }
     };
-// compare data
-    // const compareData = () => {
-    //   var formStateTab1Copy = reactive(initFormStateTabPA120);
-    //   initFormStateTab1.joinedAt = dayjs().format("YYYY-MM-DD");
-    //   if(JSON.stringify(formStateTab1Copy)!==JSON.stringify(initFormStateTab1)){
-    //       return false;
-    //     }
-    //   if(residentId.value !== ''){
-    //       return false;
-    //     }
-    //   if(employeeId.value == false){
-    //     return false;
-    //   }
-    //   return true;
-    // }
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
 // convert initFormStateTabPA120.value.name to uppercase
     watch(()=> initFormStateTabPA120.value.name,(newVal)=> {

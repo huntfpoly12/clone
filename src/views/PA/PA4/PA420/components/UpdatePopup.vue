@@ -25,6 +25,7 @@
                         <Tab3 v-model:dataDetail="dataDetailValue" />
                     </template>
                 </keep-alive>
+            
             </form>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
@@ -45,6 +46,7 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { useStore } from 'vuex';
+import { dataDefaultDetailUtils } from '../utils';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -111,11 +113,20 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
+          if (newValue) {
+            // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
+            if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService = dataDefaultDetailUtils.specification.specificationDetail.prevRetiredYearsOfService
+            }
+            if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus == null) {
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
+            }
             dataDetailValue.value =
             {
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": true,
             }
+          }
         })
         errorGetDetail(res => {
             notification('error', res.message)
@@ -213,7 +224,6 @@ export default defineComponent({
                     }
                 })
             );
-
             mutate(cleanData)
         }
         return {
