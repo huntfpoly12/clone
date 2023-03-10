@@ -10,7 +10,7 @@
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
                         <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
-                            textUnCheck="제작전" :disabled="true"/>
+                            textUnCheck="제작전"/>
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -137,7 +137,7 @@ import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSu
 import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
 import GetStatusTable from "./GetStatusTableStep2.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 import { Message } from "@/configs/enum";
 export default defineComponent({
@@ -193,8 +193,13 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dataSource.value = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
-            trigger.value = false
+          // sort array to get row last time update
+          let arrSort = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings.sort(function(a: any, b : any) {
+              return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
+          })
+          
+          dataSource.value = Array(arrSort[0])
+          trigger.value = false
         })
         errorTable((error: any) => {
             notification('error', error.message)
