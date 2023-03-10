@@ -136,8 +136,8 @@
                 <template #editIcon="{ data }">
                     <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
                         style="border: none; margin-top: -2px;" >
-                        <EyeFilled v-if="data.data.status == 40" :style="{fontSize: '20px', color: 'black'}"/>
-                        <EditFilled v-else :style="{fontSize: '20px', color: 'black'}"/>
+                        <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
+                        <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
                     </DxButton>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
@@ -152,14 +152,13 @@
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center; ">
+                      <a-tooltip>
+                        <template #title>출력 / 저장</template>
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
-                        <a-tooltip>
-                            <template #title>출력 / 저장</template>
-                            <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
+                    </a-tooltip>
+                    <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 28px; margin-left: 10px;" />
-                        </a-tooltip>
-                        
                     </div>
                 </template>
             </DxDataGrid>
@@ -193,7 +192,7 @@ import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid"
-import { HistoryOutlined ,EyeFilled,EditFilled} from "@ant-design/icons-vue"
+import { HistoryOutlined ,ZoomInOutlined,EditOutlined} from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
@@ -204,7 +203,7 @@ export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify,ReportGridEditModify,EyeFilled,EditFilled
+        ReportGridModify,ReportGridEditModify,ZoomInOutlined,EditOutlined
     },
     setup() {
         const store = useStore();
