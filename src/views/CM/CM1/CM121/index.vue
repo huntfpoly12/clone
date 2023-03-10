@@ -184,7 +184,6 @@ import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@an
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
 import DxButton from "devextreme-vue/button";
-import DetailBankbook from './components/DetailBankbook.vue'
 import { FacilityBizType, BankType, enum2Entries } from "@bankda/jangbuda-common";
 // import { BankBookUseType } from "@bankda/jangbuda-common";
 import DxSelectBox from "devextreme-vue/select-box";
