@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
-    "@bankda/jangbuda-common": "^0.7.3",
+    "@bankda/jangbuda-common": "^0.7.11",
     "@handsontable/vue3": "^12.3.0",
     "@trandung1291/common-tsv": "^0.0.4",
     "@types/file-saver-es": "^2.0.1",
