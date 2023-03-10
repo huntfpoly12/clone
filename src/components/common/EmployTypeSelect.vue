@@ -21,9 +21,9 @@
                     :incomeTypeName="data?.incomeTypeName" />
             </div> -->
           <div class="employee-group" v-if="data.employeeId">
-            <button class="btn-container">
+            <span class="btn-container">
               {{ data.employeeId }}
-            </button>
+            </span>
             {{ data?.name }}
             <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
               <template #title>
@@ -118,6 +118,10 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+:deep .dx-list-item.dx-state-active:focus {
+  border-color: blue;
+  box-shadow: 0 0 3px blue;
+}
 .main {
     display: flex;
     align-items: flex-end;
@@ -166,6 +170,10 @@ export default defineComponent({
   border-radius: 5px;
   padding: 3px 4px;
   height: 25px;
+  /* background: #ffffff; */
+}
+:deep .dx-list-item.dx-state-active {
+  color: black !important;
 }
 </style>
   
