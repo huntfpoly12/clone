@@ -324,7 +324,7 @@ import Tooltip from "@/components/common/Tooltip.vue";
 import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import { companyId, onExportingCommon } from "@/helpers/commonFunction";
-import { compareObject } from "@/utils";
+import { isEqualObject } from "@/utils";
 import {
 DeleteOutlined, EditOutlined, HistoryOutlined, MailOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, PrinterOutlined, SaveOutlined, SearchOutlined,
 } from "@ant-design/icons-vue";
@@ -465,22 +465,17 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !compareObject(previousRowData.value, dataShow.value)) {
+        if (previousRowData.value && !isEqualObject(previousRowData.value, dataShow.value)) {
           isDiscard.value = true;
         } else {
         // create new row
-          storeDataSource.value.insert(valueDefaultAction).then((result) => {
-            focusedRowKey.value = 0;
-            dataShow.value = result;
-            previousRowData.value = { ...result };
-            dataGridRef.value?.refresh();
-            formRef.value.resetValidate()
-          });
+          addNewRow()
         }
         isNewRow.value = true;
       } else {
-         if (previousRowData.value && !compareObject(previousRowData.value, dataShow.value)) {
+         if (previousRowData.value && !isEqualObject(previousRowData.value, dataShow.value)) {
           selectRowKeyAction.value = 0
+          isClickAddRow.value = true;
           isDiscard.value = true;
         }
       }
@@ -492,7 +487,7 @@ export default defineComponent({
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
-        if (compareObject(dataShow.value, valueDefaultAction)) {
+        if (isEqualObject(dataShow.value, valueDefaultAction)) {
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -518,7 +513,7 @@ export default defineComponent({
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
           previousRowData.value &&
-          !compareObject(dataShow.value, previousRowData.value)
+          !isEqualObject(dataShow.value, previousRowData.value)
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -549,6 +544,7 @@ export default defineComponent({
             focusedRowKey.value = selectRowKeyAction.value;
             dataShow.value = { ...previousRowData.value };
             dataGridRef.value?.refresh();
+            isClickAddRow.value && addNewRow()
           });
           isNewRow.value = false;
         } else {
@@ -620,16 +616,14 @@ export default defineComponent({
       // tạo mới xong và kiểm tra có phải là thêm mới hay không, nếu đúng thì thêm row mới
       await refetchData();
       if(isClickAddRow.value) {
-        storeDataSource.value.insert(valueDefaultAction).then((result) => {
-            focusedRowKey.value = 0;
-            dataShow.value = result;
-            previousRowData.value = { ...result };
-            dataGridRef.value?.refresh();
-            formRef.value.resetValidate()
-          });
+        addNewRow()
       } else {
-        focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
-        selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
+        if(selectRowKeyAction.value !==0) {
+          focusedRowKey.value = selectRowKeyAction.value
+        } else {
+          focusedRowKey.value = res.data.createEmployeeBusiness.residentId;
+          selectRowKeyAction.value = res.data.createEmployeeBusiness.residentId;
+        }
         valueCallApiGetEmployeeBusiness.incomeTypeCode = dataShow.value.incomeTypeCode;
         valueCallApiGetEmployeeBusiness.employeeId = parseInt(dataShow.value.employeeId);
         previousRowData.value = { ...dataShow.value };
@@ -709,7 +703,18 @@ export default defineComponent({
         },
       };
     });
-    const handleSubmit = () => {
+    const addNewRow = () => {
+      storeDataSource.value.insert(valueDefaultAction).then((result) => {
+        formRef.value.resetValidate()
+        selectRowKeyAction.value = 0;
+        focusedRowKey.value = 0;
+        dataShow.value = result;
+        previousRowData.value = { ...result };
+        dataGridRef.value?.refresh();
+        isClickAddRow.value = false;
+      });
+    }
+    const handleSubmit = async () => {
       const res = formRef.value.validate();
       isDiscard.value = false;
       if (!res.isValid) {
@@ -718,7 +723,7 @@ export default defineComponent({
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {
-          actionUpdate(dataUpdate.value);
+          await actionUpdate(dataUpdate.value);
         } else {
           const newDataCreate = {
             companyId: companyId,
@@ -738,7 +743,7 @@ export default defineComponent({
               incomeTypeName: dataShow.value.incomeTypeName,
             },
           };
-          actionCreated(newDataCreate);
+          await actionCreated(newDataCreate);
         }
       }
     }

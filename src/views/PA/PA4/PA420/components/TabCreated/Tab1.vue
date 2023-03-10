@@ -15,7 +15,7 @@
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
                     <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="dataForm.input.paymentDay" />
+                        v-model:valueInput="store.state.common.paymentDayPA420" />
                 </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -260,6 +260,7 @@ import dayjs from "dayjs";
 import { arrayReasonResignationUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
 import  filters from '@/helpers/filters';
+import { useStore } from 'vuex';
 export default defineComponent({
   props: {
     processKey: {
@@ -279,6 +280,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const joinedAt = ref()
+        const store = useStore();
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
         const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
         const monthPayment =  props.processKey.paymentYear.toString()+ filters.formatMonth(props.processKey.paymentMonth.toString()) 
@@ -291,8 +293,8 @@ export default defineComponent({
         const dataSettlement: any = ref({})
         // =============== GRAPQL ==================================
 
-
         // =============== WATCH ==================================
+  
         watch(month1, (value) => {
             props.dataForm.processKey.imputedYear = parseInt(value.toString().slice(0, 4))
             props.dataForm.processKey.imputedMonth = parseInt(value.toString().slice(4, 6))
@@ -321,7 +323,7 @@ export default defineComponent({
         });
 
         watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService, (value: any) => {
-            if (value.settlementStartDate && value.settlementFinishDate && value.exclusionDays && value.additionalDays) {
+            if (value.settlementStartDate && value.settlementFinishDate) {
                 dataPrevRetiredYearsOfService.value = Formula.getDateOfService(
                     new Date(value.settlementStartDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
                     new Date(value.settlementFinishDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
@@ -331,8 +333,8 @@ export default defineComponent({
             }
         }, { deep: true });
 
-        watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService, (value: any) => {
-            if (value.settlementStartDate && value.settlementFinishDate && value.exclusionDays && value.additionalDays) {
+      watch(() => props.dataForm.taxCalculationInput.lastRetiredYearsOfService, (value: any) => {
+            if (value.settlementStartDate && value.settlementFinishDate ) {
                 dataLastRetiredYearsOfService.value = Formula.getDateOfService(
                     new Date(value.settlementStartDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
                     new Date(value.settlementFinishDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
@@ -347,8 +349,7 @@ export default defineComponent({
             props.dataForm.incomeCalculationInput.additionalDays,
             props.dataForm.incomeCalculationInput.exclusionDays,
         ], () => {
-            if (props.dataForm.incomeCalculationInput.settlementStartDate && props.dataForm.incomeCalculationInput.settlementFinishDate
-                && props.dataForm.incomeCalculationInput.exclusionDays && props.dataForm.incomeCalculationInput.additionalDays) {
+            if (props.dataForm.incomeCalculationInput.settlementStartDate && props.dataForm.incomeCalculationInput.settlementFinishDate) {
                 dataSettlement.value = Formula.getDateOfService(
                     new Date(props.dataForm.incomeCalculationInput.settlementStartDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
                     new Date(props.dataForm.incomeCalculationInput.settlementFinishDate.toString().replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')),
@@ -389,12 +390,13 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                props.dataForm.input.paymentDay = store.state.common.paymentDayPA420
                 emit('nextPage', true)
             }
         }
         return {
             month1, month2, arrayReasonResignation, joinedAt, dataPrevRetiredYearsOfService, dataLastRetiredYearsOfService, dataSettlement, dayjs,
-            openNewTab, submitForm,monthInputed
+            openNewTab, submitForm,monthInputed,store
         }
     }
 })

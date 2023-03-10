@@ -112,7 +112,7 @@
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="sendMail(data.data.employee)" />
-                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
+                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
                               @click="printFunc(data.data.employeeId)" />
                             <Tooltip :target="`#print-action${data.data.employeeId}`" content="출력 / 저장" />
                         </div>

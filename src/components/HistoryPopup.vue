@@ -93,6 +93,7 @@ export default defineComponent({
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
+        let triggerAC620 = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -370,6 +371,11 @@ export default defineComponent({
                             dataQuery.value = props.data;
                             triggerAC610.value = true;
                             break;
+                        case 'ac-620':
+                            dataQuery.value = props.data;
+                            triggerAC620.value = true;
+                            refetchPA620();
+                            break;
                         default:
                             break;
                     }
@@ -400,6 +406,7 @@ export default defineComponent({
                     triggerPA210.value = false;
                     triggerPA810.value = false;
                     triggerAC610.value = false;
+                    triggerAC620.value = false;
                 }
             }
         );
@@ -787,6 +794,7 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        
         watch(resultAC610, (value) => {
             if (value) {
                 dataTableShow.value = value.getClientLogs;
@@ -794,6 +802,21 @@ export default defineComponent({
             triggerAC610.value = false;
         });
 
+        // get getClientLogs ac620
+        const { result: resultAC620, loading: loadingAC620, refetch: refetchAC620 } = useQuery(
+            queries.getBackerLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC610.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC620, (value) => {
+            if (value) {
+                dataTableShow.value = value.getClientLogs;
+            }
+            triggerAC620.value = false;
+        });
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -835,6 +858,7 @@ export default defineComponent({
             loadingPA210,
             loadingPA810,
             loadingAC610,
+            loadingAC620,
         }
     },
 

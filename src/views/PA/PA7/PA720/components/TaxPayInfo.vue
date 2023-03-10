@@ -158,23 +158,24 @@ export default defineComponent({
     }));
     watch(resIncomeExtras, async (res) => {
       dataSourceDetail.value = res.getIncomeExtras;
+
       if (firsTimeRow.value && res.getIncomeExtras[0]?.incomeId) {
         focusedRowKey.value = res.getIncomeExtras[0]?.incomeId ?? 1;
         onRowClick({ data: { incomeId: res.getIncomeExtras[0]?.incomeId } });
         // firsTimeRow.value = false;
       }
-      if (res?.getIncomeExtras.length == 0) {
-        onRowClick({ data: {} });
-      }
-      if (!firsTimeRow.value && res?.getIncomeExtras?.length > 0) {
+      if (!firsTimeRow.value && res) {
         if (props.compareType == 3) {
           props.addNewRow();
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
-          store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
-        // } else {
-        //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
+          store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+          // } else {
+          //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
         }
+      }
+      if (!res) {
+        onRowClick({ data: {} });
       }
       triggerDetail.value = false;
       // loadingIncomeExtras.value = true;
@@ -220,7 +221,7 @@ export default defineComponent({
     const formateMoney = (options: any) => {
       return filters.formatCurrency(options.value);
     };
-    const selectedRowKeys = computed(()=> store.state.common.selectedRowKeysPA720);
+    const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
@@ -237,7 +238,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      store.commit('common/selectedRowKeysPA720',data.incomeId);
+      store.commit('common/selectedRowKeysPA720', data.incomeId);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,
