@@ -1,7 +1,7 @@
 <template>
-  <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
+  <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min" :format="isFormat && formatNumber"
+    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :min="min" :format="isFormat && formatNumber"
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -65,11 +65,17 @@ export default defineComponent({
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
+    const maxNum = ref(props.max??0);
+    const updateValue = (e: any) => {
+      if (maxNum.value && e.value >= maxNum.value) {
+        e.component.option('value', maxNum.value);
+        emit("update:valueInput", maxNum.value);
+        return;
+      }
+      emit("update:valueInput", e.value);
     };
     const onChange = (e: any) => {
-            emit("changeInput",e);
+      emit("changeInput",e);
     }
     watch(
       () => props.valueInput,

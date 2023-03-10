@@ -268,7 +268,7 @@
     :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status = 10;"
-    :dateType="dateType" :paymentDay="paymentDay" @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" />
+    @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" />
   <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
     :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onRowChangeComfirm"
     :isConfirmIcon="false" />
@@ -292,7 +292,6 @@ import { HistoryOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
-import queriesHolding from '@/graphql/queries/CM/CM130/index';
 import { Message } from '@/configs/enum';
 import { formatMonth } from './utils/index';
 export default defineComponent({
@@ -390,6 +389,7 @@ export default defineComponent({
         { id: 5, name: '공제총액' },
         { id: 6, name: '차인지급액' },
       ];
+      console.log(`output- bang 1`,)
       if (responeData?.length > 0) {
         columnData.value[0].hasData = true;
         responeData.forEach((val: any) => {
@@ -435,9 +435,11 @@ export default defineComponent({
         });
       }
       isColumnData.value = columnData.value[0].hasData ? true : false;
+      console.log(`output->isRunOnce.value`,isRunOnce.value);
       if (isRunOnce.value) {
         if (columnData.value[0]['month_' + processKeyPA720.value.processKey.imputedMonth]) {
           showDetailSelected(columnData.value[0]['month_' + `${processKeyPA720.value.processKey.imputedMonth}`]);
+      console.log(`output->isRunOnce.value into`,isRunOnce.value);
         } else {
           isColumnData.value = false;
           showDetailSelected({
@@ -446,6 +448,7 @@ export default defineComponent({
             paymentMonth: processKeyPA720.value.processKey.imputedMonth,
             paymentYear: globalYear.value,
           });
+          console.log(`output->isRunOnce.value out`,isRunOnce.value);
         }
         isRunOnce.value = false;
         return;
@@ -459,6 +462,7 @@ export default defineComponent({
       incomeProcessExtrasParam.imputedYear = newVal;
       formTaxRef.value.isEdit = false;
       store.commit('common/formEditPA720', formPA720.value);
+      formTaxRef.value.getEmployeeExtrasParams.imputedYear = newVal;
     }
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
@@ -493,7 +497,9 @@ export default defineComponent({
     };
     const onFormDone = (emit: Boolean) => {
       if (emit) {
-        if (!isClickMonthDiff.value) {
+        console.log(`output->isClickMonthDiff.value`,isClickMonthDiff.value)
+        console.log(`output->isClickMonthDiff.value`,isClickYearDiff.value)
+        if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
         }
         formTaxRef.value.isEdit = true;
@@ -504,7 +510,9 @@ export default defineComponent({
       onCopyDone();
     };
     watch(changeFommDone, () => {
-      refetchIncomeProcessExtras();
+      // if(isClickYearDiff.value){
+        refetchIncomeProcessExtras();
+      // }
     });
     const actionEditDaySuccess = (emit: String) => {
       if (emit) {
@@ -626,6 +634,7 @@ export default defineComponent({
           isClickEditDiff.value = false;
         }
         if (isNewRowPA720.value) {
+          console.log(`output-chay vao day`,)
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value?.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
             addNewRow();
@@ -779,22 +788,10 @@ export default defineComponent({
     // -------------------Add data in month---------------------
 
     const onAddMonth = (val: number) => {
-      dataModalCopy.value = val;
       modalCopy.value = true;
+      dataModalCopy.value = val;
       // month.value = val;
     };
-    //get config to check default date type
-    const dateType = ref<number>(1);
-    const paymentDay = ref<number>(1);
-    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    const { result: resultConfig } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    watch(resultConfig, (newVal) => {
-      const data = newVal.getWithholdingConfig;
-      dateType.value = data.paymentType;
-      store.commit('common/paymentDayPA720', data.paymentDay);
-    });
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
     const changeMonthDataFake = ref();
@@ -866,10 +863,8 @@ export default defineComponent({
       isColumnData,
       paymentDateTax,
       inputDateTax,
-      dateType,
       addItemClick,
       formPA720,
-      paymentDay,
       rowChangeStatus,
       onDeleteItem,
       editItem,
