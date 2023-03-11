@@ -509,9 +509,6 @@ export default defineComponent({
                     Object.assign(formState.value, initialState);
                 }
             }
-            // if (statusClickButtonAdd.value) {
-            //     addRow()
-            // }
         }
         const addRow = () => { 
             statusClickButtonAdd.value = false;

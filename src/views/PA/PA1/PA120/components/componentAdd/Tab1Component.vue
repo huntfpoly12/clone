@@ -184,7 +184,7 @@ export default defineComponent({
       initFormStateTabPA120.value.residentId =
         newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
     });
-    const employeeId = ref(null);
+    const employeeId = ref();
 
     // getDepartments
     const {
@@ -267,7 +267,7 @@ export default defineComponent({
           imputedYear: globalYear.value,
           input: {
             ...initFormStateTabPA120.value,
-            employeeId: employeeId.value,
+            employeeId: +employeeId.value,
             joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
             leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
           },

@@ -59,7 +59,7 @@
                   css-class="cell-button-add"
                 />
               </DxToolbar>
-              
+
               <template #button-template>
                 <a-tooltip placement="top">
                   <template #title>거래처 등록</template>
@@ -225,7 +225,7 @@
       title="변경이력"
       typeHistory="ac-610"
     />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-610" />
+<!--    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-610" />-->
     <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm" />
   </div>
 </template>
@@ -276,7 +276,7 @@ export default defineComponent({
     const per_page = 1000;
     const column_resize = computed(() => store.state.settings.colomn_resize);
     // ref
-    const isDiscard = ref(false); // verify popup discard 
+    const isDiscard = ref(false); // verify popup discard
     const formRef = ref(); // ref of form
     const gridRef = ref(); // ref of grid
     const isNewRow = ref(false); // check if new row is adding
@@ -358,7 +358,7 @@ export default defineComponent({
         requireTotalCount: true,
       });
     });
-        
+
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
     // const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);

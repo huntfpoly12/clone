@@ -594,4 +594,3 @@ export default defineComponent({
 <style scoped lang="scss" src="./style/style.scss">
 
 </style>
-
