@@ -4,7 +4,7 @@
             <a-row class="row-1" >
                 <a-col :span="12">
                     <a-form-item label="사원" class="red">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.actionAddItem"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
                             :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
                             @onChange="onUpdateValue" />
                     </a-form-item>
@@ -12,7 +12,7 @@
                 <a-col :span="12">
                     <a-form-item label="지급일" class="red">
                         <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31" :isFormat="true"
-                            :disabled="!store.state.common.actionAddItem" :spinButtons="true" :required="true" />
+                            :disabled="!store.state.common.statusFormAdd" :spinButtons="true" :required="true" />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -181,7 +181,7 @@
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.actionAddItem ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
                         <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
@@ -324,7 +324,7 @@ export default defineComponent({
         resEmployeeWage(value => {
             triggerEmployeeWages.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWages
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
@@ -379,106 +379,95 @@ export default defineComponent({
         })
         actionUpdateDone(async res => {
             notification('success', Message.getMessage('COMMON', '106').message)
+            store.state.common.dataIncomeIdBackend = res.data.updateIncomeWage?.incomeId
+            await store.state.common.loadingTableInfo++
+            
+            // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+            //     return
+            // }
             // if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
             //     store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             // } else { // if click submit
             //     store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
             // }
-            if (store.state.common.statusClickButtonSave) { // if click submit
-                store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
-            } else {
-                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
-            }
-            await store.state.common.loadingTableInfo++
-            await (triggerDetail.value = true);
+            // if (store.state.common.statusClickButtonSave) { // if click submit
+            //     store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
+            // } else { // click save modal
+            //     store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+            // }
+            
+            // await (triggerDetail.value = true);
             
         })
         doneCreated(async res => {
             notification('success', Message.getMessage('COMMON', '101').message)
-            // if (store.state.common.focusedRowKey == store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-            //     store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-            //     console.log(1111);
-                
-            // } else { // if click submit
-            //     console.log(3333);
-            //     console.log(res.data.createIncomeWage);
-                
-            //     store.state.common.incomeId = res.data.createIncomeWage?.incomeId
-            // }
-            if (store.state.common.statusClickButtonSave) { // if click submit
-                store.state.common.incomeId = res.data.createIncomeWage?.incomeId
-            } else { // click save modal
-                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
-            }
-            await (store.state.common.statusRowAdd = true);
-            await (store.state.common.actionAddItem = false);
-            // store.state.common.incomeId = res.data.createIncomeWage.incomeId
+            store.state.common.dataIncomeIdBackend = res.data.createIncomeWage?.incomeId
             await store.state.common.loadingTableInfo++
+            // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+            //     return
+            // }
+            // if (store.state.common.statusClickButtonSave) { // if click submit
+            //     store.state.common.incomeId = res.data.createIncomeWage?.incomeId
+            // } else { // click save modal
+            //     store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+            // }
+            // await (store.state.common.statusRowAdd = true);
+            // await (store.state.common.statusFormAdd = false);
+            
             
         })
 
         errorCreated(res => {
-            store.state.common.loadingTableInfo++
+            // store.state.common.loadingTableInfo++
             notification('error', res.message)
         })
 
         // ===================WATCH==================================
         watch(() => store.state.common.loadingFormData, (value) => {
-            triggerDetail.value = true;
+            // triggerDetail.value = true;
+            if (value && value != 'PA110') {
+                incomeWageParams.incomeId = store.state.common.incomeId
+                triggerDetail.value = true;
+            } else {
+                if (!store.state.common.statusFormAdd) {
+                    onResetForm()
+                }
+            }
         })
+
         watch(() => dataConfigDeductions.value, (value) => {
             calculateTax();
-            // store.state.common.statusChangeFormPrice = true;
         }, { deep: true })
+
         watch(() => dataConfigPayItems.value, (value) => {
             calculateTax();
         }, { deep: true })
 
-        watch(() => store.state.common.incomeId, async (value) => {
-            if (value && value != 'PA110') {
-                incomeWageParams.incomeId = value
-                triggerDetail.value = true;
-            } else {
-                if (!store.state.common.actionAddItem) {
-                    onResetForm()
-                    // dataConfigDeductions.value.map((data: any) => {
-                    //     data.amount = 0
-                    // })
-                    // dataConfigPayItems.value.map((data: any) => {
-                    //     data.amount = 0
-                    // })
-                    // // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
-                    // await Object.assign(dataIW.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })));
-                    // await (store.state.common.statusChangeFormEdit = false);
-                    // await (store.state.common.statusChangeFormAdd = false);
-                }
-
-            }
-        })
+        // watch(() => store.state.common.incomeId, async (value) => {
+        //     if (value && value != 'PA110') {
+        //         incomeWageParams.incomeId = value
+        //         debugger
+        //         triggerDetail.value = true;
+        //     } else {
+        //         if (!store.state.common.statusFormAdd) {
+        //             onResetForm()
+        //         }
+        //     }
+        // })
         // reset form data
         watch(() => store.state.common.actionResetForm, (value) => {
             onResetForm()
         })
 
-        watch(() => store.state.common.statusRowAdd, (newVal) => {
-            if (!newVal) {
-                store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
-                // store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1].payItems = []
-                dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
-                store.state.common.focusedRowKey = 'PA110'
-                // dataIW.value.payItems = []
-                // dataIW.value.deductionItems = []
-                
-                // setTimeout(() => {
-                //     let a = document.body.querySelectorAll('[aria-rowindex]');
-                //     (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-                // }, 100);
-            } else {
-
-            }
+        watch(() => store.state.common.addRow, (newVal) => {
+            store.state.common.statusClickButtonAdd = false;
+            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
+            dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
+            store.state.common.focusedRowKey = 'PA110'
+            onResetForm()
         })
 
-        watch(() => store.state.common.actionAddItem, (value) => {
+        watch(() => store.state.common.statusFormAdd, (value) => {
             if (value) {
                 countKey.value++;
                 // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
@@ -503,7 +492,7 @@ export default defineComponent({
             }
         })
         watch(() => dataIW.value, (value) => {
-            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.actionAddItem && store.state.common.dataRowOld) {
+            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
             } else {
                 store.state.common.statusChangeFormEdit = false
@@ -523,7 +512,7 @@ export default defineComponent({
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
@@ -575,16 +564,17 @@ export default defineComponent({
                         }
                     });
                 })
-                originDataEmployeeWage.employeeId = data.employee.employeeId
-                employeeWageTrigger.value = true;
+                // originDataEmployeeWage.employeeId = data.employee.employeeId
+                // employeeWageTrigger.value = true;
                 calculateTax();
+                store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
+                store.state.common.focusedRowKey = data.incomeId
                 store.state.common.dataRowOld = { ...dataIW.value }
                 setTimeout(() => {
                     store.state.common.statusChangeFormEdit = false;
                     store.state.common.statusChangeFormPrice = false;
                 }, 200);
-                store.state.common.selectionFilter = ['incomeId', '=', store.state.common.incomeId]
-                store.state.common.focusedRowKey = store.state.common.incomeId
+                
             }
         })
         watch(resCalcIncomeWageTax, (value) => {
@@ -597,7 +587,7 @@ export default defineComponent({
 
         watch(resultEmployeeWage, async (newVal: any) => {
             employeeWageTrigger.value = false;
-            if (store.state.common.actionAddItem) {
+            if (store.state.common.statusFormAdd) {
                 await (dataIW.value.employee.name = newVal.getEmployeeWage.name);
                 await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
@@ -704,7 +694,7 @@ export default defineComponent({
                             deductionItems: deductionItems,
                         }
                     };
-                    if (store.state.common.actionAddItem) {
+                    if (store.state.common.statusFormAdd) {
                         variables.input.employeeId = dataIW.value.employee.employeeId,
                             variables.input.paymentDay = dataIW.value.paymentDay,
                             actionCreated(variables)
@@ -790,6 +780,8 @@ export default defineComponent({
             })
             await (store.state.common.statusChangeFormEdit = false);
             await (store.state.common.statusChangeFormAdd = false);
+            await (store.state.common.statusFormAdd = true); // trạng thái form add
+            await (store.state.common.statusChangeFormPrice = false)
         }
         
 

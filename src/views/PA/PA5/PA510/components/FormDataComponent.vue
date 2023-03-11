@@ -476,16 +476,7 @@ export default defineComponent({
              }
         }, { deep: true })
 
-        // Watching the statusRowAdd property of the store.state.common object. If the value of
-        // statusRowAdd is false, then it will add a new row to the table.
-        // watch(() => store.state.common.statusRowAdd, (newVal) => {
-        //     if (!newVal) { // add row table
-        //         store.state.common.statusClickButtonAdd = false;
-        //         store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
-        //         dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
-        //         store.state.common.focusedRowKey = 'PA510'
-        //     }
-        // })
+        // Watching the state of the store and when it changes, it is adding a new row to the table.
         watch(() => store.state.common.addRow, (newVal) => { // add row table
             store.state.common.statusClickButtonAdd = false;
             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))

@@ -42,10 +42,10 @@
           <!-- {{ compareType1() }} compareType1() <br />
           {{ compareType2() }} compareType2() <br />
           {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ isNewRowPA120 }} isNewRowPA120 <br />
+          {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
           {{ compareType }} compareType <br />
-          {{ focusedRowKey }} focusedRowKey <br />
           {{ isCalculateEditPA120 }} isCalculateEditPA120 <br /> -->
+          <!-- {{ focusedRowKey }} focusedRowKey <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -127,7 +127,6 @@
             </template>
             <DxScrolling column-rendering-mode="virtual" />
           </DxDataGrid>
-        {{ idRowEdit }} idRowEdit <br/>
         </a-spin>
       </a-col>
       <a-col :span="13" class="custom-layout">
@@ -263,6 +262,7 @@ export default defineComponent({
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
         isFirstRun.value = false;
+        idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
         actionChangeComponent.value = 1;
@@ -393,7 +393,6 @@ export default defineComponent({
         trigger.value = true;
         return;
       }
-      console.log(`output->form done`,)
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
       store.state.common.isNewRowPA120 = false;
@@ -408,6 +407,11 @@ export default defineComponent({
       // if (compareType.value == 1) {
       //   store.state.common.isNewRowPA120 = true;
       // }
+      if (tabCurrent.value == 2) {
+        store.commit('common/activeTabKeyPA120', '2');
+      }else {
+        store.commit('common/activeTabKeyPA120', '1');
+      }
       focusedRowKey.value = initFormStateTabPA120.value.employeeId;
     });
     //edit row
@@ -435,6 +439,7 @@ export default defineComponent({
         return;
       } else {
         idRowEdit.value = data.data.employeeId;
+        idRowFake.value = data.data.employeeId;
         if (actionChangeComponent.value == 1) {
           actionChangeComponent.value = 2;
         }
@@ -468,7 +473,7 @@ export default defineComponent({
     //   focusedRowKey.value = newVal;
     // })
     const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
-    const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
+    const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
     }
@@ -513,7 +518,7 @@ export default defineComponent({
       toolTopErorr,
       isResidentIdError,
       focusedRowKey,
-      resetTabPA120,
+      activeTabKeyPA120,
       keyActivePA120,
       defaultVisible,
       initFormStateTabPA120,
