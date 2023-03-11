@@ -31,14 +31,6 @@
         }
     }
 
-    // .header-text-3 {
-    //     background-color: #558ED5;
-    //     padding: 5px;
-    //     font-weight: bold;
-    //     font-size: 12px;
-    //     margin-bottom: 10px;
-    // }
-
     :deep .custom-layout {
         padding: 10px 10px 10px 0;
 
@@ -56,14 +48,6 @@
     .ml-3 {
         margin-left: 3px;
     }
-
-    // .custom-note {
-    //     >span {
-    //         font-size: 11px;
-    //         color: #666666;
-    //         padding-left: 5px;
-    //     }
-    // }
 
     .custom-grade-cell {
         display: flex;
@@ -92,9 +76,7 @@
 }
 
 .deduction-main {
-    // max-height: 200px;
     overflow: scroll;
-    // border: 1px solid #ddd;
     padding-left: 5px;
     padding-top: 5px;
 }
@@ -136,9 +118,6 @@
     text-align: left !important;
 }
 
-:deep .dx-button-mode-contained {
-    height: 34px;
-}
 .disabledBlock {
     pointer-events: none;
     opacity: 0.8;

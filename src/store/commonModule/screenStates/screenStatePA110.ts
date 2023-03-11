@@ -8,7 +8,7 @@ const statesPA110 = {
   },
   focusedRowKey: 1,
   incomeId: null,
-  actionAddItem: false,
+  statusFormAdd: false,
   actionSubmit: 0,
   loadingTableInfo: 0,
   statusRowAdd: true,
@@ -25,6 +25,8 @@ const statesPA110 = {
   selectionFilter: null,
   dataRowOnActive: null,
   statusClickButtonSave: true,
+  addRow: 1,
+  dataIncomeIdBackend: null,
 };
 
 export default statesPA110;
