@@ -21,22 +21,6 @@ export default gql`
             updatedBy
             ip
             active
-            facilityBusiness{
-              facilityBusinessId
-              name
-              longTermCareInstitutionNumber
-              facilityBizType
-              startYearMonth
-              capacity
-              registrationCardFileStorageId
-              price
-              createdAt
-              createdBy
-              updatedAt
-              updatedBy
-              ip
-              active
-            }
             lastScrapingStatus{
                 lastScrapingDate
                 scrapingStatus
