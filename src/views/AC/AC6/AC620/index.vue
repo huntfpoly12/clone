@@ -30,17 +30,17 @@
           <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
+              v-model:focused-row-key="focusedRowKey"
               :show-row-lines="true"
               :hoverStateEnabled="true"
               :dataSource="dataSource"
               :show-borders="true"
               key-expr="backerCode"
               :allow-column-reordering="move_column"
-              :allow-column-resizing="column_resize"
               :focused-row-enabled="true"
+              :allow-column-resizing="column_resize"
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
-              v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
@@ -51,7 +51,7 @@
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                <DxItem location="after" template="button-history" css-class="cell-button-add" />
+<!--                <DxItem location="after" template="button-history" css-class="cell-button-add" />-->
               </DxToolbar>
 
               <template #button-template>
@@ -62,11 +62,9 @@
                   </div>
                 </a-tooltip>
               </template>
-              <template #button-history>
-                  <DxButton>
-                      <HistoryOutlined @click="modalHistory" class="fz-18" />
-                  </DxButton>
-              </template>
+<!--              <template #button-history>-->
+<!--                 -->
+<!--              </template>-->
               <DxColumn caption="후원자코드" data-field="backerCode" alignment="center"/>
               <DxColumn caption="후원자명" data-field="name" alignment="center"/>
               <DxColumn caption="후원자구분" data-field="type" :customize-text="(cellInfo: any)=> BeckerType[cellInfo.value]" alignment="center"/>
@@ -135,6 +133,12 @@
               <template #use="{ data }">
                 <tag-color-use :valueUse="data.value" />
               </template>
+              <DxColumn cell-template="historyBacker" width="70px" alignment="center"/>
+              <template #historyBacker="{ data }">
+                <div class="custom-action" style="text-align: center" @click="handleClickShowHistory(data.data.backerCode)">
+                  <HistoryOutlined  style="font-size: 18px" class="" />
+                </div>
+              </template>
             </DxDataGrid>
           </a-spin>
         </a-col>
@@ -192,7 +196,7 @@
               style="width: 80px" />
               <span v-else>해당사항없음</span>
             </a-form-item>
-           
+
             <a-form-item label="주민등록번호" :label-col="labelCol">
               <div class="d-flex gap-6">
                 <id-number-text-box
@@ -211,7 +215,7 @@
                 </InfoToolTip>
               </div>
             </a-form-item>
-            
+
             <a-form-item label="사업자(고유)등록번호" :label-col="labelCol">
               <div class="d-flex gap-6">
                 <biz-number-text-box
@@ -224,11 +228,11 @@
                 <button-basic text="중복체크" :type="'default'" :mode="'contained'" />
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
-                </InfoToolTip> 
+                </InfoToolTip>
               </div>
             </a-form-item>
 
-          
+
 
             <a-form-item label="대표자명" :label-col="labelCol">
               <div class="d-flex gap-6 mb-5">
@@ -237,7 +241,7 @@
                 <post-code-button @dataAddress="funcAddress" text="주소검색"/>
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
-                </InfoToolTip> 
+                </InfoToolTip>
             </div>
             <default-text-box v-model:valueInput="formState.addressExtend" width="300px" placeholder="상세 주소 입력" />
             </a-form-item>
@@ -285,14 +289,7 @@
         </a-col>
       </a-row>
     </div>
-    <HistoryPopup
-      :modalStatus="modalHistoryStatus"
-      @closePopup="modalHistoryStatus = false"
-      :data="originDataDetail"
-      title="변경이력"
-      typeHistory="ac-620"
-    />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-610" />
+    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-620" />
     <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm" />
   </div>
 </template>
@@ -373,8 +370,8 @@ export default defineComponent({
     const selectRowKeyAction = ref<number>(0); // key of row selected in gridData
     const dataSource = ref<DataSource>(); // data source of grid
     const originDataDetail: any = ref({
-          companyId: companyId,
-          clientId: null,
+      companyId: companyId,
+      backerCode: null,
       }); // data detail of grid
     const trigger = ref<boolean>(true); // trigger for call api
     const modalHistoryStatus = ref<boolean>(false);
@@ -504,7 +501,7 @@ export default defineComponent({
         }
       }
     };
-    // TODO handle onFocusedRowChanging to row
+    // handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
       // create new row and click row other then check data input
       if (isNewRow.value) {
@@ -677,8 +674,8 @@ export default defineComponent({
       isClickAddRow.value = false;
     };
 
-    const modalHistory = (clientId: any) => {
-      originDataDetail.value.backerCode = clientId;
+    const handleClickShowHistory = (backerCode: any) => {
+      originDataDetail.value.backerCode = backerCode;
       modalHistoryStatus.value = true;
     };
 
@@ -707,7 +704,7 @@ export default defineComponent({
 
     const isShowFundrasingInstitution = computed(() =>  formState.value.type === 5 || formState.value.type === 6 || formState.value.type === 7);
     const isShowDonationOrganization = computed(() => formState.value.type !== 3 && formState.value.type !== 4);
-    
+
     return {
       confirmSave,
       move_column,
@@ -722,7 +719,7 @@ export default defineComponent({
       modalStatusAdd,
       actionToAddFromEdit,
       actionSave,
-      modalHistory,
+      handleClickShowHistory,
       dataSearch,
       searching,
       actionSearch,

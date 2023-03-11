@@ -52,7 +52,7 @@ import {
 } from "devextreme-vue/data-grid";
 import { ZoomInOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
-import dayjs from 'dayjs'; 
+import dayjs from 'dayjs';
 
 export default defineComponent({
     props: ['modalStatus', 'data', 'title', 'typeHistory', 'idRowEdit', 'companyId', 'historyData'],
@@ -118,7 +118,7 @@ export default defineComponent({
                     else {
                         dataQuery.value = { id: props.idRowEdit };
                     }
-                    
+
                     switch (props.typeHistory) {
                         case 'bf-320':
                             dataQuery.value = {
@@ -382,7 +382,7 @@ export default defineComponent({
                         case 'ac-620':
                             dataQuery.value = props.data;
                             triggerAC620.value = true;
-                            refetchPA620();
+                            // refetchAC620();
                             break;
                         default:
                             break;
@@ -819,7 +819,7 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        
+
         watch(resultAC610, (value) => {
             if (value) {
                 dataTableShow.value = value.getClientLogs;
@@ -832,13 +832,13 @@ export default defineComponent({
             queries.getBackerLogs,
             dataQuery,
             () => ({
-                enabled: triggerAC610.value,
+                enabled: triggerAC620.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultAC620, (value) => {
             if (value) {
-                dataTableShow.value = value.getClientLogs;
+                dataTableShow.value = value.getBackerLogs;
             }
             triggerAC620.value = false;
         });

@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-  query getBackerLogs($companyId: Int!, $backerCode: Int!) {
+  query getBackerLogs($companyId: Int!, $backerCode: String!) {
     getBackerLogs(companyId: $companyId, backerCode: $backerCode) {
       backerCode
       ts
