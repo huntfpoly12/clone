@@ -263,8 +263,9 @@ export default defineComponent({
         let itemValue11: Number ;
         dataConfigDeduction.value?.forEach((item: any) => {
           if (item.itemCode == 1011) {
-            item.value = value.calculateIncomeWageTax;
-            itemValue11 = value.calculateIncomeWageTax
+            let val = value.calculateIncomeWageTax*formStateTab2.value.formincomeTaxMagnification/100;
+            item.value = val;
+            itemValue11 = val;
             formStateTab2.deductionItems[4] = {
               itemCode: 1011,
               amount: value.calculateIncomeWageTax,
