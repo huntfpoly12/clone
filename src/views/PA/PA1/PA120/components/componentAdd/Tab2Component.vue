@@ -27,7 +27,7 @@
                 공제 여부: 
                 <switch-basic
                 class="switch-insurance"
-                switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.insuranceSupport"
+                switch-basic textCheck="Y" textUnCheck="N" v-model:valueSwitch="formStateTab2.insuranceSupport" :disabled="!isDisableInsuranceSupport"
                 ></switch-basic>
             </a-col>
         </div>
@@ -37,13 +37,13 @@
             국민연금 적용율:
            </a-col> 
            <a-col span="12">
-               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport"></radio-group>
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
            </a-col>
            <a-col span="7">
             고용보험 적용율:
            </a-col> 
            <a-col span="12">
-               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport"></radio-group>
+               <radio-group :arrayValue="radioCheckPersenPension" v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal" :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
            </a-col>
            <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
             <a-col span="17" class="income-tax-app-rate">
@@ -230,8 +230,10 @@ export default defineComponent({
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const isDisableInsuranceSupport = computed(() =>store.state.common.isDisableInsuranceSupport)
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,
+      insuranceSupport:isDisableInsuranceSupport
     });
     const triggerCalcIncome = ref<boolean>(false);
     const calculateVariables = reactive({
@@ -532,6 +534,7 @@ export default defineComponent({
     });
 
     // get config
+    
     const withholdingTrigger = ref(true);
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
     const { result: resultConfig} = useQuery(
@@ -548,6 +551,7 @@ export default defineComponent({
         withholdingTrigger.value=false;
       }
     })
+
     return {
       formStateTab2,
       loading1,
@@ -571,7 +575,8 @@ export default defineComponent({
       presidentPA120,
       isCalculateEditPA120,
       isAddFormErrorPA120,
-      isBtnYellow
+      isBtnYellow,
+      isDisableInsuranceSupport
     };
   },
 });

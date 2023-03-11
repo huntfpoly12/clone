@@ -127,6 +127,7 @@
             </template>
             <DxScrolling column-rendering-mode="virtual" />
           </DxDataGrid>
+        {{ idRowEdit }} idRowEdit <br/>
         </a-spin>
       </a-col>
       <a-col :span="13" class="custom-layout">
@@ -160,6 +161,7 @@ import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import queryCM130 from "@/graphql/queries/CM/CM130/index";
 
 export default defineComponent({
   components: {
@@ -252,26 +254,26 @@ export default defineComponent({
       const data = value.getEmployeeWages;
       dataSource.value = data;
       if(compareType.value == 3) {
-        console.log(`output->compareType.value`,dataSource.value)
         addNewRow();
         return;
       }
+      console.log(`output->data.length`,data.length)
       if (data.length > 0 && isFirstRun.value) {
+        console.log(`output->idRowEdit.value`,data[0].employeeId)
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
         isFirstRun.value = false;
       }
       if (data.length == 0) {
         actionChangeComponent.value = 1;
+        store.commit('common/initFormStateTabPA120', initFormStateTab1);
       }
       trigger.value = false;
     });
     //change year
     watch(globalYear, () => {
-      actionChangeComponent.value = 1;
+      isFirstRun.value = true;
       trigger.value = true;
-      addComponentKey.value++;
-      store.commit('common/initFormStateTabPA120', initFormStateTab1);
       store.state.common.isNewRowPA120 = true;
     });
     // addcomponent
@@ -470,6 +472,22 @@ export default defineComponent({
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
     }
+
+    // get config
+
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+    const { result: resultConfig} = useQuery(
+        queryCM130.getWithholdingConfig,
+        dataQuery,
+        () => ({
+          fetchPolicy: "no-cache",
+        })
+    );
+    watch(resultConfig,(newVal)=> {
+      if(newVal){
+        store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
+      }
+    })
     return {
       loading,
       idRowEdit,

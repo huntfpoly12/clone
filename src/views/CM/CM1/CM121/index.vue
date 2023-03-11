@@ -4,10 +4,13 @@
     <a-row class="cm-121_row">
       <a-col span="12" class="cm-121_main">
         <div class="cm-121_main-content">
-          <a-spin :spinning="false" size="large">
+          <a-spin
+            :spinning="loadingGetBankbooks || loadingCreateBankbook || loadingUpdateBankbook || loadingDeleteBankbook"
+            size="large">
             <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
               :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
-              key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey">
+              key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
+              v-model:focused-row-key="focusedRowKey" :onRowClick="selectionItem">
               <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :show-drag-icons="true" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
@@ -29,7 +32,7 @@
               </template>
               <template #button-history>
                 <DxButton icon="plus">
-                  <HistoryOutlined style="font-size: 18px;" />
+                  <HistoryOutlined style="font-size: 18px;" @click="modalHistory"/>
                 </DxButton>
               </template>
 
@@ -49,7 +52,8 @@
               <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
               <template #pupop="{ data }">
                 <!-- <div style=""> -->
-                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;" @click="deleteBankBook(data.data)"/>
+                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
+                  @click="deleteBankBook(data.data)" />
                 <!-- </div> -->
               </template>
             </DxDataGrid>
@@ -57,8 +61,8 @@
         </div>
       </a-col>
       <a-col span="12" class="cm-121_detail">
-        <a-spin :spinning="false" size="large">
-          <standard-form formName="cm-121-from" ref="cm121Form">
+        <a-spin :spinning="loadingCreateBankbook || loadingGetBankbook || loadingUpdateBankbook" size="large">
+          <standard-form formName="cm-121-from" ref="cm121Form" :key="countResetForm">
             <div>
               <p class="cm-121_detail-infomation">통장정보</p>
               <a-row class="cm-121_detail-infomation-top">
@@ -75,14 +79,14 @@
                   <a-form-item label="통장번호" class="form-item-top red">
                     <div class="custom-note d-flex-center">
                       <text-number-box :required="true" :width="150"
-                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber" />
+                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber" :disabled="!isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장별명" class="form-item-top red">
                     <div class="custom-note d-flex-center">
-                      <default-text-box :required="true" :width="150"
+                      <default-text-box :required="true" :width="150" placeholder="영어,한글,숫자만 가능"
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">중복 등록 불가</span>
@@ -92,7 +96,7 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valuSewitch="isTypeClassification" />
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -112,7 +116,7 @@
                   </a-form-item>
                   <a-form-item label="계정과목" class="form-item-top">
                     <default-text-box :required="true" :width="150"
-                      v-model:valueInput="dataDetailBankbook.bankbookInput.accountName" />
+                      v-model:valueInput="dataDetailBankbook.bankbookInput.accountName" placeholder="보통예금(101010103)" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -128,8 +132,8 @@
               <a-row class="cm-121_detail-infomation-bottom">
                 <a-col span="12">
                   <a-form-item label="스크래핑 이용 여부" class="form-item-bottom">
-                    <div class="custom-note d-flex-center">
-                      <switch-basic :textCheck="'포함'" :textUnCheck="'제외'"
+                    <div class="custom-note d-flex-center form-item-bottom-switch">
+                      <switch-basic :textCheck="'O'" :textUnCheck="'X'"
                         v-model:valueSwitch="dataDetailBankbook.bankbookInput.useScrap" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">이용하지 않는 경우 스크래<br />핑 중지가 되어 통장 불러<br />오기를 할 수 없습니다.</span>
@@ -137,25 +141,27 @@
                   </a-form-item>
                   <a-form-item label="사업자등록번호 (법인통장)" class="form-item-bottom red">
                     <text-number-box :required="true" :width="150"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.bizNumber" />
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.bizNumber" :disabled="!isTypeClassification" />
                   </a-form-item>
                   <a-form-item label="간편조회 ID" class="form-item-bottom red">
                     <default-text-box :required="true" :width="150"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.webId" />
+                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item label="통장 비밀번호 (숫자 4자리)" class="form-item-bottom red">
-                    <text-number-box :required="true" :width="150"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" />
+                    <text-number-box :required="true" :width="150" maxLength="4"
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword"
+                      :disabled="!dataDetailBankbook.bankbookInput.useScrap" />
                   </a-form-item>
                   <a-form-item label="생년월일 (개인통장)" class="form-item-bottom red">
                     <number-box :required="true" :width="150"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.birthday" />
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.birthday" :disabled="isTypeClassification" />
                   </a-form-item>
                   <a-form-item label="간편조회 PW" class="form-item-bottom red">
                     <default-text-box :required="true" :width="150"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.webPassword" />
+                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword"
+                      :disabled="!dataDetailBankbook.bankbookInput.useScrap" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -168,6 +174,10 @@
       </a-col>
       <PopupRegisterBankbook :isModalRegister="isModalRegister" @closePopup="isModalRegister = false"
         @dataRegisterBankbook="dataRegisterBankbook" />
+      <PopupDeleteBankbook :isModalDelete="isModalDelete" @closePopup="isModalDelete = false"
+        @agreeDeleteBankbook="agreeDeleteBankbook" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupHistoryData"
+        title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" />
     </a-row>
   </div>
 </template>
@@ -184,59 +194,68 @@ import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@an
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
 import DxButton from "devextreme-vue/button";
-import { FacilityBizType, BankType, enum2Entries } from "@bankda/jangbuda-common";
-// import { BankBookUseType } from "@bankda/jangbuda-common";
+import { FacilityBizType, BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
 import DxSelectBox from "devextreme-vue/select-box";
 import notification from '@/utils/notification';
+import HistoryPopup from "@/components/HistoryPopup.vue";
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
-    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook
+    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, HistoryPopup
   },
   setup() {
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear = computed(() => store.state.settings.globalYear)
+    const triggerBankbook = ref<boolean>(false);
     const triggerBankbooks = ref<boolean>(true);
     const dataSource = ref<any>([])
     let isModalRegister = ref<boolean>(false)
+    let isModalDelete = ref<boolean>(false)
+    let isDelete = ref<boolean>(false)
+    let isNewCreate = ref<boolean>(false)
     const facilityBizTypeCommon = FacilityBizType.all();
     const bankTypeCommon = BankType.all();
     const focusedRowKey = ref()
-    // const bankbookUseType: any = computed(() => {
-    //   let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
-    //     value: value[1],
-    //     label: value[0],
-    //   }));
-    //   return bsDeduction;
-    // });
-    const bankbookUseType = [
-      {
-        value: 1,
-        label: "운영비",
-      },
-      {
-        value: 2,
-        label: "보조금",
-      },
-      {
-        value: 3,
-        label: "후원금",
-      }
-    ]
+    let indexRow = ref()
+    let firstLoad = ref(true)
+    let countResetForm = ref(0)
+    const modalHistoryStatus = ref<boolean>(false);
+    let idRowEdit = ref<number>(0);
+    let popupHistoryData = ref();
+    let dataDelete = reactive({
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: null,
+      bankbookId: null
+    })
+    const paramBankbookDetail = reactive({
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: null,
+      bankbookId: null
+    })
+    const bankbookUseType: any = computed(() => {
+      let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
     let isTypeClassification = ref<boolean>(false)
     const cm121Form = ref()
-    let dataDetailBankbook = reactive({
+    let dataDetailBankbook = ref({
       companyId: companyId,
       fiscalYear: globalYear,
       facilityBusinessId: null,
+      bankbookId: null,
       bankbookInput: {
         bankbookNickname: '',
-        useType: null,
+        useType: 1,
         owner: '',
         useScrap: true,
-        sort: dataSource.value.length,
+        sort: null,
         type: null,
         bankbookNumber: null,
         classification: '',
@@ -256,8 +275,8 @@ export default defineComponent({
 
     const {
       result: resBankbooks,
-      onResult: onResBankbooks
-      // loading,
+      // onResult: onResBankbooks,
+      loading: loadingGetBankbooks,
       // refetch,
       // onError
     } = useQuery(queries.getBankbooks, {
@@ -268,13 +287,76 @@ export default defineComponent({
         enabled: triggerBankbooks.value,
         fetchPolicy: "no-cache",
       }))
-
     watch(resBankbooks, (value) => {
-      if(value.getBankbooks) {
-      dataSource.value = value.getBankbooks
-      focusedRowKey.value = value.getBankbooks[0].bankbookId
+      if (value.getBankbooks) {
+        dataSource.value = value.getBankbooks
+        if (firstLoad.value) {
+          focusedRowKey.value = value.getBankbooks[0].bankbookId
+          isCreate.value = false
+          paramBankbookDetail.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
+          paramBankbookDetail.bankbookId = value.getBankbooks[0].bankbookId
+          triggerBankbook.value = true
+        }
+        if (isNewCreate.value) {
+          focusedRowKey.value = value.getBankbooks[value.getBankbooks.length - 1].bankbookId
+          isCreate.value = false
+          paramBankbookDetail.facilityBusinessId = value.getBankbooks[value.getBankbooks.length - 1].facilityBusinessId
+          paramBankbookDetail.bankbookId = value.getBankbooks[value.getBankbooks.length - 1].bankbookId
+          triggerBankbook.value = true
+        }
+        if (isDelete.value) {
+          if (value.getBankbooks.length !== 0) {
+            if (value.getBankbooks.length - 1 < indexRow.value) {
+              focusedRowKey.value = value.getBankbooks[indexRow.value - 1].bankbookId
+              paramBankbookDetail.facilityBusinessId = value.getBankbooks[indexRow.value - 1].facilityBusinessId
+              paramBankbookDetail.bankbookId = value.getBankbooks[indexRow.value - 1].bankbookId
+            } else {
+              focusedRowKey.value = value.getBankbooks[indexRow.value].bankbookId
+              paramBankbookDetail.facilityBusinessId = value.getBankbooks[indexRow.value].facilityBusinessId
+              paramBankbookDetail.bankbookId = value.getBankbooks[indexRow.value].bankbookId
+            }
+            isCreate.value = false
+            triggerBankbook.value = true
+          }
+        }
+        isNewCreate.value = false
+        firstLoad.value = false
+        isDelete.value = false
       }
       triggerBankbooks.value = false
+    })
+
+    watch(() => isDelete.value, (value) => {
+      console.log('isDelete.valueisDelete.value', isDelete.value, focusedRowKey.value);
+    })
+    const {
+      result: resBankbook,
+      // onResult: onResBankbooks,
+      loading: loadingGetBankbook,
+      // refetch,
+      // onError
+    } = useQuery(queries.getBankbook, paramBankbookDetail,
+      () => ({
+        enabled: triggerBankbook.value,
+        fetchPolicy: "no-cache",
+      }))
+    watch(resBankbook, (value) => {
+      const data = value.getBankbook
+      dataDetailBankbook.value.facilityBusinessId = data.facilityBusinessId
+      dataDetailBankbook.value.bankbookId = data.bankbookId
+      dataDetailBankbook.value.bankbookInput.bankbookNumber = data.bankbookNumber
+      dataDetailBankbook.value.bankbookInput.bankbookNickname = data.bankbookNickname
+      dataDetailBankbook.value.bankbookInput.useType = data.useType
+      dataDetailBankbook.value.bankbookInput.owner = data.owner
+      dataDetailBankbook.value.bankbookInput.useScrap = data.useScrap
+      dataDetailBankbook.value.bankbookInput.accountName = data.accountName
+      dataDetailBankbook.value.bankbookInput.accountCode = data.accountCode
+      dataDetailBankbook.value.bankbookInput.type = data.type
+      dataDetailBankbook.value.bankbookInput.sort = data.sort
+      dataDetailBankbook.value.bankbookInput.accountCode = data.accountCode
+      isTypeClassification.value = data.classification === 'C' ? true : false
+      countResetForm.value++
+      triggerBankbook.value = false
     })
 
     const onReorder = (e: any) => {
@@ -292,50 +374,111 @@ export default defineComponent({
     }
 
     const dataRegisterBankbook = (data: any) => {
-      dataDetailBankbook.facilityBusinessId = data.facilityBiz
-      dataDetailBankbook.bankbookInput.type = data.type
+      dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
+      dataDetailBankbook.value.bankbookInput.type = data.type
+      dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length
+      dataDetailBankbook.value.bankbookId = null
+      dataDetailBankbook.value.bankbookInput.bankbookNumber = null
+      dataDetailBankbook.value.bankbookInput.bankbookNickname = ''
+      dataDetailBankbook.value.bankbookInput.useType = 1
+      dataDetailBankbook.value.bankbookInput.owner = ''
+      dataDetailBankbook.value.bankbookInput.useScrap = true
+      dataDetailBankbook.value.bankbookInput.accountName = ''
+      dataDetailBankbook.value.bankbookInput.accountCode = ''
       isTypeClassification.value = true
+      focusedRowKey.value = null
       isCreate.value = true
+      countResetForm.value++
       isModalRegister.value = false
     }
-
-    // select bankbook detail
-
-    watch(focusedRowKey, (value)=> {
-
-    })
 
     // create bankbook
     const {
       mutate: createBankbook,
       onDone: doneCreateBankbook,
-      onError: errorCreateBankbook
+      onError: errorCreateBankbook,
+      loading: loadingCreateBankbook,
     } = useMutation(mutations.createBankbook);
     doneCreateBankbook((e) => {
       notification('success', `업데이트 완료!`)
+      isNewCreate.value = true
+      triggerBankbooks.value = true
     })
     errorCreateBankbook(e => {
       notification('error', e.message)
     })
+
+    // update bankbook
+    const {
+      mutate: updateBankbook,
+      onDone: doneUpdateBankbook,
+      onError: errorUpdateBankbook,
+      loading: loadingUpdateBankbook,
+    } = useMutation(mutations.updateBankbook);
+    doneUpdateBankbook((e) => {
+      notification('success', `업데이트 완료!`)
+      triggerBankbooks.value = true
+    })
+    errorUpdateBankbook(e => {
+      notification('error', e.message)
+    })
+
+    watch(() => isTypeClassification.value, (value) => {
+      if (value) {
+        dataDetailBankbook.value.scrapingInfoInput.birthday = null
+      } else {
+        dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
+      }
+    })
+    watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
+      if (!value) {
+        dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
+        dataDetailBankbook.value.scrapingInfoInput.webPassword = ""
+        countResetForm.value++
+      }
+    })
+
     const submit = () => {
       const res = cm121Form.value.validate()
-      if(!res.isValid) {
+      if (!res.isValid) {
         res.brokenRules[0].validator.focus();
         return
       }
       if (isTypeClassification.value) {
-        dataDetailBankbook.bankbookInput.classification = 'C'
+        dataDetailBankbook.value.bankbookInput.classification = 'C'
       } else {
-        dataDetailBankbook.bankbookInput.classification = 'P'
+        dataDetailBankbook.value.bankbookInput.classification = 'P'
       }
-      createBankbook(dataDetailBankbook)
+
+      const data = JSON.parse(JSON.stringify(dataDetailBankbook.value))
+
+      if (isTypeClassification.value) {
+        delete data.scrapingInfoInput.birthday
+      } else {
+        delete data.scrapingInfoInput.bizNumber
+      }
+
+      if (!dataDetailBankbook.value.bankbookInput.useScrap) {
+        delete data.scrapingInfoInput.accountPassword
+        delete data.scrapingInfoInput.webPassword
+      }
+      if (isCreate.value) {
+        delete data.scrapingInfoInput.bankbookId
+        createBankbook(data)
+      } else {
+        updateBankbook(data)
+        doneUpdateBankbook(() => {
+          triggerBankbooks.value = true
+        })
+      }
     }
 
     // delete bankbook
     const {
       mutate: deleteBankbook,
       onDone: doneDeleteBankbook,
-      onError: errorDeleteBankbook
+      onError: errorDeleteBankbook,
+      loading: loadingDeleteBankbook,
     } = useMutation(mutations.deleteBankbook);
     doneDeleteBankbook((e) => {
       notification('success', `업데이트 완료!`)
@@ -345,12 +488,28 @@ export default defineComponent({
       notification('error', e.message)
     })
     const deleteBankBook = (data: any) => {
-      deleteBankbook({
-        companyId: companyId,
-        fiscalYear: globalYear.value,
-        facilityBusinessId: data.facilityBusinessId,
-        bankbookId: data.bankbookId
-      })
+      dataDelete.facilityBusinessId = data.facilityBusinessId
+      dataDelete.bankbookId = data.bankbookId
+      isModalDelete.value = true
+    }
+
+    const agreeDeleteBankbook = () => {
+      isDelete.value = true
+      isModalDelete.value = false
+      deleteBankbook(dataDelete)
+    }
+
+    const selectionItem = (event: any) => {
+      isCreate.value = false
+      if (paramBankbookDetail.bankbookId === event.data.bankbookId) return
+      indexRow.value = event.rowIndex
+      paramBankbookDetail.facilityBusinessId = event.data.facilityBusinessId
+      paramBankbookDetail.bankbookId = event.data.bankbookId
+      triggerBankbook.value = true
+    }
+
+    const modalHistory = (data: any) => {
+      modalHistoryStatus.value = true
     }
 
     return {
@@ -359,6 +518,7 @@ export default defineComponent({
       onReorder,
       dataSource,
       isModalRegister,
+      isModalDelete,
       showPopupRegister,
       dataRegisterBankbook,
       dataDetailBankbook,
@@ -369,7 +529,20 @@ export default defineComponent({
       submit,
       cm121Form,
       focusedRowKey,
-      deleteBankBook
+      deleteBankBook,
+      agreeDeleteBankbook,
+      loadingGetBankbooks,
+      loadingCreateBankbook,
+      loadingDeleteBankbook,
+      loadingGetBankbook,
+      loadingUpdateBankbook,
+      selectionItem,
+      isCreate,
+      countResetForm,
+      modalHistoryStatus,
+      modalHistory,
+      idRowEdit,
+      popupHistoryData
     }
   }
 });
