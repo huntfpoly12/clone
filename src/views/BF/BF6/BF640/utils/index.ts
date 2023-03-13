@@ -15,7 +15,7 @@ export const dataSearchUtils = {
     "paymentHalfYear": 1
 }
 export const dataSearchStep2Utils = {
-    "beforeProduction": true,
+    "beforeProduction": false,
     "productionStatuses": [],
     "companyCode": '',
     "companyName": '',

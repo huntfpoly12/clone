@@ -8,25 +8,22 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <form action="">
-                <keep-alive>
-                    <template v-if="step === 0">
-                        <Tab1 v-model:dataDetail="dataDetailValue" @closePopup="setModalVisible"
-                            :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
-                    </template>
-                </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 1">
-                        <Tab2 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 2">
-                        <Tab3 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
-            
-            </form>
+            <keep-alive>
+                <template v-if="step === 0">
+                    <Tab1 v-model:dataDetail="dataDetailValue" @closePopup="setModalVisible"
+                        :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
+                </template>
+            </keep-alive>
+            <keep-alive>
+                <template v-if="step === 1">
+                    <Tab2 v-model:dataDetail="dataDetailValue" />
+                </template>
+            </keep-alive>
+            <keep-alive>
+                <template v-if="step === 2">
+                    <Tab3 v-model:dataDetail="dataDetailValue" />
+                </template>
+            </keep-alive>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -115,6 +112,8 @@ export default defineComponent({
         resultGetDetail(newValue => {
           if (newValue) {
             let checkBoxCallApi = true
+            
+            
             // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
               checkBoxCallApi = false
@@ -129,6 +128,7 @@ export default defineComponent({
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": checkBoxCallApi,
             }
+            console.log(dataDetailValue.value ,'dddddddđ');
           }
         })
         errorGetDetail(res => {
@@ -182,7 +182,9 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = dataDetailValue.value.specification
+          let dataDefault = dataDetailValue.value.specification
+          console.log(dataDefault)
+            
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
@@ -217,15 +219,16 @@ export default defineComponent({
             }
             // remove all row name : __typename
             const cleanData = JSON.parse(
-                JSON.stringify(dataCallApiUpdate, (name, val) => {
-                    if (
-                        name === "__typename"
-                    ) {
-                        delete val[name];
-                    } else {
-                        return val;
-                    }
-                })
+              JSON.stringify(dataCallApiUpdate, (name, val) => {
+                if (
+                  name === "__typename" || 
+                  (!dataDetailValue.value.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
+                ) {
+                    delete val[name];
+                } else {
+                    return val;
+                }
+              })
             );
             mutate(cleanData)
         }
