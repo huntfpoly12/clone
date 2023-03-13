@@ -5,7 +5,7 @@
         <a-row>
           <a-col :span="8">
             <a-form-item  label="귀속연도">
-              <year-picker-box-custom v-model:valueDate="originData.imputedYear" :minYear="2022"></year-picker-box-custom>
+              <year-picker-box-custom v-model:valueDate="originData.imputedYear" :minYear="2022" color="#a6a6a6"></year-picker-box-custom>
             </a-form-item> 
           </a-col>
           <a-col :span="16">

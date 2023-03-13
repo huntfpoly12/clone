@@ -37,9 +37,9 @@
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" />
-                <DxColumn caption="참고사항"  ata-field="referenceInformation"/>
+                <DxColumn caption="참고사항"  data-field="referenceInformation"/>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
-                <DxColumn caption="아이디" data-field="productionRequestUser.id" />
+                <DxColumn caption="아이디" data-field="productionRequestUserId" />
                 <DxColumn caption="제작현황" cell-template="제작현황" />
                 <template #제작현황="{ data }">
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
