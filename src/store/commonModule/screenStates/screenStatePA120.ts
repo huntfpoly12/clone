@@ -4,11 +4,12 @@ const statesPA120 = {
   actionFormDonePA120: 1,
   actionFormErrorPA120: 1,
   keyActivePA120: 0,
-  resetTabPA120: '1',
+  activeTabKeyPA120: '1',
   isForeignerPA120: false,
   presidentPA120: false,
   presidentEditPA120: false,
   isDisableInsuranceSupport: false,
+  yearPA120: +dayjs().format("YYYY"),
   initFormStateTabPA120: {
     name: "",
     foreigner: false,

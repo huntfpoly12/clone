@@ -64,7 +64,7 @@ export default defineComponent({
     display: none;
     background-color: #d9534f;
     color: white;
-    z-index: 1;
+   
     left: 5px;
     width: max-content;
     bottom: -62px;

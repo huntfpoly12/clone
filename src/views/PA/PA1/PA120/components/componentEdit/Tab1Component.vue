@@ -1,8 +1,8 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      <!-- {{ idRowEdit }} idRowEdit <br />
-      {{ openPopup }} openPopup <br /> -->
+      <!-- {{ originDataDetail }} originDataDetail <br />
+      {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -148,7 +148,7 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(`output-1`,)
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
     const arrDepartments = ref([]);
@@ -236,14 +236,14 @@ export default defineComponent({
     // get employee Information
     const originDataDetail = ref<any>({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: yearPA120.value,
       employeeId: props.idRowEdit,
     });
     const getEmployeeWageTrigger = ref(false);
     const {
       result: getValueDefault,
       loading,
-    } = useQuery(queries.getEmployeeWage, originDataDetail.value, () => ({
+    } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
       enabled: getEmployeeWageTrigger.value,
       fetchPolicy: 'no-cache',
     }));
@@ -305,16 +305,10 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
     });
-
-    // watch(() => props.idRowEdit, (value: any) => {
-    //   originDataDetail.value.employeeId = value;
-    // });
-    if(props.idRowEdit){
-      getEmployeeWageTrigger.value = true;
-    }
     watch(() => props.idRowEdit,(value: any) => {
-      originDataDetail.value.employeeId = value;
+      originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
       getEmployeeWageTrigger.value = true;
+      // getEmployeeWageTrigger.value = true;
     }, {deep: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
@@ -367,7 +361,8 @@ export default defineComponent({
       initFormStateTabPA120,
       presidenStatus,
       presidentWaring,
-      onChangePresident
+      onChangePresident,
+      originDataDetail
     };
   },
 });

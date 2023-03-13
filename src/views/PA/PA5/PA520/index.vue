@@ -8,7 +8,7 @@
   actionChangeComponent: {{ actionChangeComponent }}<br>
   addRowBtOnclick: {{ addRowBtOnclick  }}<br>
   countBtOnclick: {{ countBtOnclick  }}<br>
-  modalChangeValueEdit : {{  modalChangeValueEdit }}
+  modalChangeValueEdit : {{  modalChangeValueEdit }}  {{ focusedRowKey }}
   {{ idRowEdit }} -->
   <div id="pa-520" class="page-content">
       <a-row>
@@ -49,11 +49,12 @@
       <a-row>
           <a-col :span="13" class="custom-layout">
               <a-spin :spinning="loading" size="large">
+                <div class="grid-table">
                   <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                       :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                       :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="onRowClick"
-                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting">
-                      <DxScrolling mode="standard" show-scrollbar="always"/>
+                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting" id="gridContainer">
+                      <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
                       <DxExport :enabled="true"/>
                       <DxPaging :enabled="false" />
@@ -130,6 +131,7 @@
                           </div>
                       </template>
                   </DxDataGrid>
+                </div>
               </a-spin>
           </a-col>
           <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
@@ -379,7 +381,7 @@ export default defineComponent({
       countBtOnclick.value++;
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true
-        //|| store.state.common.checkChangeValueEditTab2PA520 == true |
+        || store.state.common.checkChangeValueEditTab2PA520 == true 
       ) {
         modalChangeValueEdit.value = true;
         return;
@@ -487,16 +489,17 @@ export default defineComponent({
     // A function that is called when the user clicks on the save button.
     const comfirmAndSaveEdit = (res: any) => {
       if (res == true) {
-        store.state.common.checkChangeValueEditTab1PA520
+          store.state.common.checkChangeValueEditTab1PA520
           ? actionUpdate(1)
           : actionUpdate(2);
         // In case you are editing and then click on another and agree to save the information,
         if (addRowBtOnclick.value) {
           funcAddNewRow();
+          store.state.common.checkChangeValueEditTab2PA520 = false;
         } else {
           idRowEdit.value = focusedRowKey.value;
           // for case edit tab2 and click other row
-          //store.state.common.idRowChangePa520 = focusedRowKey.value
+          // store.state.common.idRowChangePa520 = focusedRowKey.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
       } else {
@@ -505,7 +508,7 @@ export default defineComponent({
         } else {
           idRowEdit.value = focusedRowKey.value;
           // for case edit tab2 and click other row
-          //store.state.common.idRowChangePa520 = focusedRowKey.value
+          store.state.common.idRowChangePa520 = focusedRowKey.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
       }
@@ -513,9 +516,7 @@ export default defineComponent({
     };
     const confirmAndSaveAdd = (res: any) => {
       if (res == true) {
-        focusedRowKey.value = store.state.common.dataSourcePA520
-          .slice(-1)
-          .pop().employeeId;
+        focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId;
         actionSave();
         addRowBtOnclick.value = false;
       } else if (!res && addRowBtOnclick.value) {

@@ -103,19 +103,15 @@ export default defineComponent({
         store.commit('common/paymentDayPA720', value);
       },
     });
-
+    const trigger = ref(false);
     //-----------get config to check default date type----------------
 
     const dateType = ref<number>(1);
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    const { result: resultConfig, refetch: refetchHolding, loading } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+    const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+      // enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
-    watch(() => props.modalStatus, (newVal: any) => {
-      if (newVal) {
-        refetchHolding();
-      }
-    })
     watch(resultConfig, (newVal) => {
       if (newVal) {
         const data = newVal.getWithholdingConfig;
@@ -139,7 +135,11 @@ export default defineComponent({
           yearMonth = `${globalYear.value}${props.month}`;
         }
         month2.value = yearMonth;
-      }
+        console.log(`output-11111`,11111)
+        trigger.value = true;
+        configRefetch();
+        findIncomeRefetch();
+      },{deep: true}
     );
 
     //-------------------------get date source copy--------------------------------
@@ -152,11 +152,13 @@ export default defineComponent({
         finishImputedYearMonth: parseInt(`${globalYear.value}12`),
       }
     })
-    const { result: resultFindIncomeProcessExtraStatViews, refetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+    const { result: resultFindIncomeProcessExtraStatViews, refetch: findIncomeRefetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+      enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(resultFindIncomeProcessExtraStatViews, (value) => {
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
+      trigger.value = true;
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
 
@@ -171,7 +173,7 @@ export default defineComponent({
     watch(globalYear, (newVal, oldVal) => {
       findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
       findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
-      refetch()
+      trigger.value = true;
     });
 
     //-------------------------action copy data--------------------------------
@@ -203,7 +205,6 @@ export default defineComponent({
           target: processKeyPA720.value.processKey,
         }
         mutate(param);
-        // emit('loadingTable')
       } else {
         notification('error', '날짜를 선택하세요.')
       }

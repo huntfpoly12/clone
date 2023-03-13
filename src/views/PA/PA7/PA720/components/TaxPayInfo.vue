@@ -143,6 +143,7 @@ export default defineComponent({
     const incomeIdDels = ref<any>([]);
     const paymentData = ref<any>([]);
     const formPA720 = computed(() => store.getters['common/formPA720']);
+    const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
 
     // ================GRAPQL==============================================
 
@@ -170,15 +171,14 @@ export default defineComponent({
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
           store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
-          // } else {
-          //   onRowClick({ data: { incomeId: formPA720.value.input?.incomeId } });
         }
       }
-      if (!res) {
+      if (res.getIncomeExtras.length == 0) {
         onRowClick({ data: {} });
+        store.commit('common/formPA720', dataActionUtilsPA720.value);
+        store.commit('common/formEditPA720', formPA720.value);
       }
       triggerDetail.value = false;
-      // loadingIncomeExtras.value = true;
     });
     errorIncomeExtras((res) => {
       triggerDetail.value = false;

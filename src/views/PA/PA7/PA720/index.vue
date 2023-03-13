@@ -201,7 +201,9 @@
     <!-- {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
     {{ compareType }} compareType <br />
-    {{ editTaxParam }} editTaxParam <br />
+    {{ formPA720.input }} formPA720.input <br />
+    {{ formEditPA720.input }} formEditPA720.input <br />
+    {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
     {{ editTaxParamFake }} editTaxParamFake <br /> -->
     <a-row :class="{ 'ele-opacity': !compareType2() }"
       style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
@@ -334,6 +336,7 @@ export default defineComponent({
     const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
     const titleModalConfirm = ref(messageSave);
     const pa720GridRef = ref();
     const inputDateTax = computed(() => {
@@ -389,7 +392,6 @@ export default defineComponent({
         { id: 5, name: '공제총액' },
         { id: 6, name: '차인지급액' },
       ];
-      console.log(`output- bang 1`,)
       if (responeData?.length > 0) {
         columnData.value[0].hasData = true;
         responeData.forEach((val: any) => {
@@ -435,11 +437,9 @@ export default defineComponent({
         });
       }
       isColumnData.value = columnData.value[0].hasData ? true : false;
-      console.log(`output->isRunOnce.value`,isRunOnce.value);
       if (isRunOnce.value) {
         if (columnData.value[0]['month_' + processKeyPA720.value.processKey.imputedMonth]) {
           showDetailSelected(columnData.value[0]['month_' + `${processKeyPA720.value.processKey.imputedMonth}`]);
-      console.log(`output->isRunOnce.value into`,isRunOnce.value);
         } else {
           isColumnData.value = false;
           showDetailSelected({
@@ -448,7 +448,6 @@ export default defineComponent({
             paymentMonth: processKeyPA720.value.processKey.imputedMonth,
             paymentYear: globalYear.value,
           });
-          console.log(`output->isRunOnce.value out`,isRunOnce.value);
         }
         isRunOnce.value = false;
         return;
@@ -458,7 +457,6 @@ export default defineComponent({
     const changeYear = (newVal: any) => {
       taxPayRef.value.firsTimeRow = true;
       isRunOnce.value = true;
-      // resetForm();
       incomeProcessExtrasParam.imputedYear = newVal;
       formTaxRef.value.isEdit = false;
       store.commit('common/formEditPA720', formPA720.value);
@@ -481,7 +479,7 @@ export default defineComponent({
 
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone, onError: onErrorChangeStatus } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageUpdate);
       refetchIncomeProcessExtras();
     });
     onErrorChangeStatus((res: any) => {
@@ -497,8 +495,6 @@ export default defineComponent({
     };
     const onFormDone = (emit: Boolean) => {
       if (emit) {
-        console.log(`output->isClickMonthDiff.value`,isClickMonthDiff.value)
-        console.log(`output->isClickMonthDiff.value`,isClickYearDiff.value)
         if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
         }
@@ -511,13 +507,16 @@ export default defineComponent({
     };
     watch(changeFommDone, () => {
       // if(isClickYearDiff.value){
-        refetchIncomeProcessExtras();
+      refetchIncomeProcessExtras();
       // }
     });
     const actionEditDaySuccess = (emit: String) => {
       if (emit) {
         store.commit('common/formEditPA720', formPA720.value);
         changeFommDone.value++;
+      }
+      if (emit == formPA720.value.input.incomeId) {
+        formTaxRef.value.triggerIncomeExtra = true;
       }
       modalEdit.value = false;
     };
@@ -527,6 +526,7 @@ export default defineComponent({
       isColumnData.value = true;
       month.value = emit.imputedMonth;
       statusParam.value = { ...processKeyPA720.value, status: 10 };
+      formTaxRef.value.isEdit = false;
     };
 
     // ======================= track change of form ================================
@@ -569,13 +569,15 @@ export default defineComponent({
       store.commit('common/formEditPA720', dataActionUtilsPA720.value);
     };
     const addNewRow = async () => {
+      // store.commit('common/formPA720', dataActionUtilsPA720.value);
+      // store.commit('common/formEditPA720', dataActionUtilsPA720.value);
       await resetForm();
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
       formTaxRef.value.isEdit = false;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
+      store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
     };
     const saveToNewRow = () => {
       store.state.common.isNewRowPA720 = true;
@@ -626,20 +628,23 @@ export default defineComponent({
         }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
-          isClickMonthDiff.value = false;
+          isClickYearDiff.value = false;
           return;
         }
         if (isClickEditDiff.value) {
           onEditItem();
           isClickEditDiff.value = false;
         }
+        if (isClickAddMonthDiff.value) {
+          addMonth(changeMonthDataFake.value);
+          isClickAddMonthDiff.value = false;
+        }
         if (isNewRowPA720.value) {
-          console.log(`output-chay vao day`,)
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value?.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
             addNewRow();
             taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-            store.commit('common/selectedRowKeysPA720',formPA720.value.input.incomeId);
+            store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
             return;
           }
         }
@@ -674,7 +679,7 @@ export default defineComponent({
         if (compareType1()) {
           delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
-          store.commit('common/selectedRowKeysPA720',emit.incomeId);
+          store.commit('common/selectedRowKeysPA720', emit.incomeId);
           editTaxParam.value = emit;
           formTaxRef.value.isEdit = true;
           return;
@@ -689,36 +694,6 @@ export default defineComponent({
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
       }
-    };
-    // -------------------- Delete item in tax table --------------------
-    const onDeleteItem = () => {
-      deleteIncomeExtrasParam.value = {
-        ...processKeyPA720.value,
-        incomeIds: taxPayRef.value.incomeIdDels,
-      };
-      if (deleteIncomeExtrasParam.value?.incomeIds.length > 0) {
-        modalDelete.value = true;
-      } else {
-        notification('warning', messageDelNoItem);
-      }
-    };
-    // -------------------- Edit item in tax table --------------------
-    const isClickEditDiff = ref(false);
-    const onEditItem = () => {
-      if (taxPayRef.value?.paymentData.length > 0) {
-        modalEdit.value = true;
-        changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
-      } else {
-        notification('warning', messageDelNoItem);
-      }
-    }
-    const editItem = () => {
-      if (!compareType2()) {
-        rowChangeStatus.value = true;
-        isClickEditDiff.value = true;
-        return;
-      }
-      onEditItem();
     };
     //-----------------------submit-------------------------------------
     const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
@@ -762,6 +737,11 @@ export default defineComponent({
         }
         if (isClickEditDiff.value) {
           onEditItem();
+          return;
+        }
+        if (isClickAddMonthDiff.value) {
+          addMonth(changeMonthDataFake.value);
+          return;
         }
       }
     };
@@ -784,12 +764,50 @@ export default defineComponent({
         });
       }
     }
-
+    // -------------------- Delete item in tax table --------------------
+    const onDeleteItem = () => {
+      deleteIncomeExtrasParam.value = {
+        ...processKeyPA720.value,
+        incomeIds: taxPayRef.value.incomeIdDels,
+      };
+      if (deleteIncomeExtrasParam.value?.incomeIds.length > 0) {
+        modalDelete.value = true;
+      } else {
+        notification('warning', messageDelNoItem);
+      }
+    };
+    // -------------------- Edit item in tax table --------------------
+    const isClickEditDiff = ref(false);
+    const onEditItem = () => {
+      if (taxPayRef.value?.paymentData.length > 0) {
+        modalEdit.value = true;
+        changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
+      } else {
+        notification('warning', messageDelNoItem);
+      }
+    }
+    const editItem = () => {
+      if (!compareType2()) {
+        rowChangeStatus.value = true;
+        isClickEditDiff.value = true;
+        return;
+      }
+      onEditItem();
+    };
     // -------------------Add data in month---------------------
-
-    const onAddMonth = (val: number) => {
+    const isClickAddMonthDiff = ref(false);
+    const addMonth = (val: number) => {
       modalCopy.value = true;
       dataModalCopy.value = val;
+    }
+    const onAddMonth = (val: number) => {
+      if (!compareType2()) {
+        rowChangeStatus.value = true;
+        isClickAddMonthDiff.value = true;
+        changeMonthDataFake.value = val;
+        return;
+      }
+      addMonth(val);
       // month.value = val;
     };
     // -------------------------click month in table top--------------
@@ -890,7 +908,9 @@ export default defineComponent({
       isNewRowPA720,
       compareType,
       saveToNewRow,
-      editTaxParamFake
+      editTaxParamFake,
+      formEditPA720,
+      dataActionUtilsPA720
     };
   },
 });

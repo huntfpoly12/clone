@@ -37,24 +37,22 @@
               </template>
 
 
-              <DxColumn caption="금융기관" data-field="dataSource" />
+              <DxColumn caption="금융기관" data-field="type" />
               <DxColumn caption="통장번호" data-field="bankbookNumber" />
               <DxColumn caption="통장용도" data-field="useType" />
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
-              <DxColumn caption="사업구분" data-field="useScrap" />
-              <DxColumn caption="스크래핑 이용 여부" data-field="f" />
+              <DxColumn caption="사업구분"  />
+              <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
-              <template #action="{}">
+              <template #action="{ data }">
                 <div style="text-align: center">
-                  <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;" />
+                  <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;" @click="showPopupLastScrapingStatus(data.data)" />
                 </div>
               </template>
-              <DxColumn :width="50" cell-template="pupop" css-class="cell-center" />
-              <template #pupop="{ data }">
-                <!-- <div style=""> -->
-                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
+              <DxColumn :width="50" cell-template="delete" css-class="cell-center"/>
+              <template #delete="{ data }">
+                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px"
                   @click="deleteBankBook(data.data)" />
-                <!-- </div> -->
               </template>
             </DxDataGrid>
           </a-spin>
@@ -176,6 +174,8 @@
         @dataRegisterBankbook="dataRegisterBankbook" />
       <PopupDeleteBankbook :isModalDelete="isModalDelete" @closePopup="isModalDelete = false"
         @agreeDeleteBankbook="agreeDeleteBankbook" />
+      <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus" @closePopup="isModalLastScrapingStatus = false"
+        @agreeDeleteBankbook="agreeDeleteBankbook" />
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupHistoryData"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" />
     </a-row>
@@ -193,6 +193,7 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScr
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
+import PopupLastScrapingStatus from './components/PopupLastScrapingStatus.vue'
 import DxButton from "devextreme-vue/button";
 import { FacilityBizType, BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
 import DxSelectBox from "devextreme-vue/select-box";
@@ -201,7 +202,7 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
-    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, HistoryPopup
+    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup
   },
   setup() {
     const store = useStore();
@@ -214,6 +215,7 @@ export default defineComponent({
     let isModalRegister = ref<boolean>(false)
     let isModalDelete = ref<boolean>(false)
     let isDelete = ref<boolean>(false)
+    let isModalLastScrapingStatus = ref<boolean>(false)
     let isNewCreate = ref<boolean>(false)
     const facilityBizTypeCommon = FacilityBizType.all();
     const bankTypeCommon = BankType.all();
@@ -224,6 +226,7 @@ export default defineComponent({
     const modalHistoryStatus = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     let popupHistoryData = ref();
+    let dataPopupScrapingStatus = ref<any>()
     let dataDelete = reactive({
       companyId: companyId,
       fiscalYear: globalYear.value,
@@ -287,10 +290,11 @@ export default defineComponent({
         enabled: triggerBankbooks.value,
         fetchPolicy: "no-cache",
       }))
+      
     watch(resBankbooks, (value) => {
       if (value.getBankbooks) {
         dataSource.value = value.getBankbooks
-        if (firstLoad.value) {
+        if (firstLoad.value && value.getBankbooks.length) {
           focusedRowKey.value = value.getBankbooks[0].bankbookId
           isCreate.value = false
           paramBankbookDetail.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
@@ -317,6 +321,10 @@ export default defineComponent({
             }
             isCreate.value = false
             triggerBankbook.value = true
+          }else {
+            focusedRowKey.value = null
+            resetDataDetail()
+            isCreate.value = true
           }
         }
         isNewCreate.value = false
@@ -326,9 +334,6 @@ export default defineComponent({
       triggerBankbooks.value = false
     })
 
-    watch(() => isDelete.value, (value) => {
-      console.log('isDelete.valueisDelete.value', isDelete.value, focusedRowKey.value);
-    })
     const {
       result: resBankbook,
       // onResult: onResBankbooks,
@@ -359,7 +364,16 @@ export default defineComponent({
       triggerBankbook.value = false
     })
 
+    
+    const {
+      mutate: reorderBankbooks,
+      onDone: doneReorderBankbooks,
+      onError: errorReorderBankbooks,
+      loading: loadingReorderBankbooks,
+    } = useMutation(mutations.reorderBankbooks);
+
     const onReorder = (e: any) => {
+      indexRow.value = e.toIndex
       const visibleRows = e.component.getVisibleRows();
       const toIndex = dataSource.value.findIndex((item: any) => item.bankbookId === visibleRows[e.toIndex].data.bankbookId);
       const fromIndex = dataSource.value.findIndex((item: any) => item.bankbookId === e.itemData.bankbookId);
@@ -367,6 +381,21 @@ export default defineComponent({
       newTasks.splice(fromIndex, 1);
       newTasks.splice(toIndex, 0, e.itemData);
       dataSource.value = newTasks;
+      reorderBankbooks({
+        companyId: companyId,
+        fiscalYear: globalYear.value,
+        facilityBusinessId: e.itemData.facilityBusinessId,
+        inputs: [
+          {
+            bankbookId: e.itemData.bankbookId,
+            sort: dataSource.value[fromIndex].sort
+          },
+          {
+            bankbookId: dataSource.value[fromIndex].bankbookId,
+            sort: e.itemData.sort,
+          },
+        ]
+      })
     }
 
     const showPopupRegister = () => {
@@ -374,9 +403,20 @@ export default defineComponent({
     }
 
     const dataRegisterBankbook = (data: any) => {
+      resetDataDetail()
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
-      dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length
+      isTypeClassification.value = true
+      focusedRowKey.value = null
+      isCreate.value = true
+      countResetForm.value++
+      isModalRegister.value = false
+    }
+
+    const resetDataDetail = () => {
+      dataDetailBankbook.value.facilityBusinessId = null
+      dataDetailBankbook.value.bankbookInput.type = null
+      dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length ? dataSource.value[dataSource.value.length-1].sort + 1 : 0
       dataDetailBankbook.value.bankbookId = null
       dataDetailBankbook.value.bankbookInput.bankbookNumber = null
       dataDetailBankbook.value.bankbookInput.bankbookNickname = ''
@@ -385,11 +425,12 @@ export default defineComponent({
       dataDetailBankbook.value.bankbookInput.useScrap = true
       dataDetailBankbook.value.bankbookInput.accountName = ''
       dataDetailBankbook.value.bankbookInput.accountCode = ''
-      isTypeClassification.value = true
-      focusedRowKey.value = null
-      isCreate.value = true
+      dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
+      dataDetailBankbook.value.scrapingInfoInput.birthday = null
+      dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
+      dataDetailBankbook.value.scrapingInfoInput.webId = ''
+      dataDetailBankbook.value.scrapingInfoInput.webPassword = ''
       countResetForm.value++
-      isModalRegister.value = false
     }
 
     // create bankbook
@@ -429,6 +470,7 @@ export default defineComponent({
       } else {
         dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
       }
+      countResetForm.value++
     })
     watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
       if (!value) {
@@ -508,8 +550,13 @@ export default defineComponent({
       triggerBankbook.value = true
     }
 
-    const modalHistory = (data: any) => {
+    const modalHistory = () => {
       modalHistoryStatus.value = true
+    }
+
+    const showPopupLastScrapingStatus = (data: any) => {
+      dataPopupScrapingStatus.value = data
+      isModalLastScrapingStatus.value = true
     }
 
     return {
@@ -542,7 +589,10 @@ export default defineComponent({
       modalHistoryStatus,
       modalHistory,
       idRowEdit,
-      popupHistoryData
+      popupHistoryData,
+      isModalLastScrapingStatus,
+      showPopupLastScrapingStatus,
+      dataPopupScrapingStatus
     }
   }
 });
