@@ -5,9 +5,9 @@
         <div class="header-report">
           <div class="header-1">원천세신고서</div>
           <div class="action-right">
-            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status != 20">
-            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status != 20">
-            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 20"></button-basic>
+            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status != 20 && dataSource[0].status != 40">
+            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status != 20 && dataSource[0].status != 40">
+            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 20 || dataSource[0].status == 40"></button-basic>
           </div>
           <div class="table-detail">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
