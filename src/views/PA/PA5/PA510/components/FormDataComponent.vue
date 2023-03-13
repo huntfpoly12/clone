@@ -185,9 +185,10 @@ export default defineComponent({
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref(0)
-        const triggerCalculateIncome: any = ref<boolean>(false)
-        const triggerWithholdingConfigDeductionItems: any = ref<boolean>(true)
-        const triggerIncomeWageDaily: any = ref<boolean>(false)
+        const triggerCalculateIncome = ref<boolean>(false)
+        const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
+        const triggerEmployeeWageDailies = ref<boolean>(true)
+        const triggerIncomeWageDaily = ref<boolean>(false)
         const countKey: any = ref(0)
         const employeeWageDailyTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
@@ -225,6 +226,7 @@ export default defineComponent({
             onResult: resEmployeeWage,
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             fetchPolicy: "no-cache",
+            enabled: triggerEmployeeWageDailies.value
         }))
         const {
             loading: loadingIncomeWageDaily,
@@ -295,6 +297,7 @@ export default defineComponent({
         })
 
         resEmployeeWage(value => {
+            triggerEmployeeWageDailies.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
             if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
@@ -345,6 +348,15 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(() => store.state.common.loadingFormData, (value) => {
             triggerIncomeWageDaily.value = true;
+        })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-510") {
+                triggerEmployeeWageDailies.value = true; //reset selected employee
+            }
+        })
+        watch(globalYear, (newVal) => {
+            originData.value.imputedYear = newVal
+            triggerEmployeeWageDailies.value = true;
         })
         // Watching the value of the store.state.common.statusFormAdd and if it is true, it will do
         // some stuff.

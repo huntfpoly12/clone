@@ -1,10 +1,10 @@
 <template>
-    <a-tooltip  :title="textError" color='red' :visible="showError">
+    <a-tooltip placement="bottom" :title="textError" color='red' :visible="showError">
       <div>
         <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
         :type="statusChange ? 'calculate' : 'default'" :text="text" />
       </div>
-    </a-tooltip>       
+    </a-tooltip>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -60,25 +60,25 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.mytooltip .mytext {
-    display: none;
-    background-color: #d9534f;
-    color: white;
+// .mytooltip .mytext {
+//     display: none;
+//     background-color: #d9534f;
+//     color: white;
    
-    left: 5px;
-    width: max-content;
-    bottom: -62px;
-    text-align: center;
-    border-radius: 5px;
-    padding: 7px;
-    position: absolute;
-}
+//     left: 5px;
+//     width: max-content;
+//     bottom: -62px;
+//     text-align: center;
+//     border-radius: 5px;
+//     padding: 7px;
+//     position: absolute;
+// }
 
-.mytooltip {
-    position: absolute;
-}
+// .mytooltip {
+//     position: absolute;
+// }
 
-.show {
-    display: block !important;
-}
+// .show {
+//     display: block !important;
+// }
 </style>

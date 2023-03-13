@@ -443,6 +443,12 @@ export default defineComponent({
             calculateTax();
         }, { deep: true })
 
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-110") {
+                triggerEmployeeWages.value = true; //reset data table 2
+            }
+        })
+
         // watch(() => store.state.common.incomeId, async (value) => {
         //     if (value && value != 'PA110') {
         //         incomeWageParams.incomeId = value
