@@ -6,6 +6,7 @@ let statesPA720 = {
   actionSaveTypePA720: 0,
   isNewRowPA720:false,
   selectedRowKeysPA720:[],
+  savePA710: 0,
   formPA720: {
     input: {
       paymentDay: '',
@@ -13,7 +14,7 @@ let statesPA720 = {
       incomeTypeCode: "",
       paymentAmount: '',
       requiredExpenses: '',
-      taxRate: '',
+      taxRate: 20,
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
@@ -26,7 +27,7 @@ let statesPA720 = {
       incomeTypeCode: "",
       paymentAmount: '',
       requiredExpenses: '',
-      taxRate: '',
+      taxRate: 20,
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
