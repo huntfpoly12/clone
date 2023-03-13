@@ -78,8 +78,12 @@ export class Message extends BaseType {
   //근로소득-일용직소득  계산   
   public static PA110 = new Message({
         '001': { "message" : "저장하기전에 공제계산해야합니다"}, // Do you want to deduct the change?
-      
-    });
+      });
+  
+  //퇴직소득자료입력   
+  public static PA420 = new Message({
+        '001': { "message" : "과세대상 퇴직급여가 0원이면 신고 불가합니다."}, // If the taxable retirement benefit is 0 won, it cannot be reported.
+      });
    
       //기초정보설정
     public static CM110 = new Message({
