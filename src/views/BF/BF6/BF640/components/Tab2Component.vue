@@ -1,7 +1,7 @@
 <template>
     <div id="step2">
         <a-row gutter="24" class="search-form-step-1">
-            <a-col>
+            <a-col>{{ dataSearch.beforeProduction }}
                 <a-form-item label="지급연월" label-align="left">
                     <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
                 </a-form-item>
@@ -9,7 +9,7 @@
             <a-col class="ml-30">
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
+                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작후"
                             textUnCheck="제작전"/>
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
@@ -20,25 +20,25 @@
                 <div class="production-check">
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search">
+                    <div class="d-flex-center custom-checkbox-search">{{  }}
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -162,6 +162,7 @@ export default defineComponent({
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(true)
+        let beforeProduction = ref(true)
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref<any>({
@@ -205,6 +206,10 @@ export default defineComponent({
             notification('error', error.message)
         })
         // =================== WATCH ====================
+        watch(beforeProduction, (newVal) => {
+          dataSearch.value.beforeProduction = !newVal
+        })
+
         watch(() => props.searchStep, () => {
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
@@ -281,8 +286,9 @@ export default defineComponent({
             }
         }
 
-         // watch beforeProduction
-         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
+        // watch beforeProduction
+        watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
+         
             for (const key in typeCheckbox.value) {
                 if (!newVal) {
                     typeCheckbox.value[key] = false;
@@ -301,7 +307,7 @@ export default defineComponent({
         });
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave,closeConfirmMail
+            selectionChanged, openModalSave,closeConfirmMail,beforeProduction
         }
     }
 })

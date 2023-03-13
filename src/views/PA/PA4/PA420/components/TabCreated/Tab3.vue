@@ -18,14 +18,14 @@
                 <a-form-item label="비과세퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits" />
+                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits" format="0,#,###" :min="0"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="과세대상 퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true"/>
+                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true" format="0,#,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top">
                             <template #title>= 퇴직급여(확정) - 비과세퇴직급여(확정)</template>
@@ -39,7 +39,7 @@
                     <div class="d-flex-top">
                         <div class="d-flex-center">
                             <number-box-money :required="false" width="150px"
-                                v-model:valueInput="dataForm.taxCalculationInput.taxCredit" />
+                                v-model:valueInput="dataForm.taxCalculationInput.taxCredit" format="0,#,###" :min="0"/>
                             <span class="pl-5 mr-5">원</span>
                             <a-tooltip placement="top">
                                 <template #title>거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
@@ -56,7 +56,7 @@
                 <a-form-item label="기납부(기과세이연)세액">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.prePaidDelayedTaxPaymentTaxAmount" />
+                            v-model:valueInput="dataForm.taxCalculationInput.prePaidDelayedTaxPaymentTaxAmount" format="0,#,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top">
                             <template #title>직전 중간정산시 소득세를 입력합니다.</template>

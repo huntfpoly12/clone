@@ -4,7 +4,7 @@
         :mask-invalid-message="maskMess" :height="$config_styles.HeightInput" :name="nameInput">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
-            <DxCustomRule :reevaluate="true" :message="maskMess" :validation-callback="validateDate" />
+            <DxCustomRule  :message="maskMess" :validation-callback="validateDate" />
         </DxValidator>
     </DxTextBox>
 
