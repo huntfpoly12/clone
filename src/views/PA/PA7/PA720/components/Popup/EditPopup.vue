@@ -6,7 +6,7 @@
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
                 <span>선택된 내역 지급일을</span>
                 <number-box width="70px" :required="true" :min="1" :max="31" v-model:valueInput="dayValue"
-                    :spinButtons="true" />
+                    :spinButtons="true" :isFormat="true"/>
                 <span>일로 변경하시겠습니까?</span>
             </div>
             <div v-else class="text-center">항목을 하나 선택해야합니다</div>
@@ -25,6 +25,7 @@ import { defineComponent,  ref,  } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
+import { Message } from '@/configs/enum';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -40,6 +41,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const dayValue = ref(1)
+        const messageUpdate = Message.getMessage('COMMON', '106').message;
         const setModalVisible = () => {
             emit("closePopup",'')
         };
@@ -49,7 +51,7 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.changeIncomeExtraPaymentDay);
         onDone((res) => {
-            notification('success', `업데이트 완료!`)
+            notification('success', messageUpdate)
             emit("closePopup", res.data.changeIncomeExtraPaymentDay.incomeId)
         })
         onError((e: any) => {

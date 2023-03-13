@@ -262,17 +262,22 @@ export default defineComponent({
 
     //----------------------------get employee extras --------------------------------
     const globalYear = computed(() => store.state.settings.globalYear);
+    const savePA710 = computed(()=>store.state.common.savePA710);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
     });
     const arrayEmploySelect = ref<any>([]);
-    const { result: resultEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
       arrayEmploySelect.value = newValue.getEmployeeExtras;
     });
+    
+    watch(savePA710, ()=> {
+      refetchEmployeeExtras();
+    })
     //change year
     // watch(globalYear, (newVal, oldY) => {
     //   getEmployeeExtrasParams.imputedYear = newVal;
