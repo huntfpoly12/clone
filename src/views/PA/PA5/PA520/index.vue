@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-   checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
+   <!-- checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
   checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
   checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
   activeAddRowPA520: {{ store.state.common.activeAddRowPA520 }}<br>
@@ -9,7 +9,7 @@
   addRowBtOnclick: {{ addRowBtOnclick  }}<br>
   countBtOnclick: {{ countBtOnclick  }}<br>
   modalChangeValueEdit : {{  modalChangeValueEdit }}  {{ focusedRowKey }}
-  {{ idRowEdit }}
+  {{ idRowEdit }} -->
   <div id="pa-520" class="page-content">
       <a-row>
         <a-col :span="2" style="padding-right: 10px">
@@ -49,11 +49,12 @@
       <a-row>
           <a-col :span="13" class="custom-layout">
               <a-spin :spinning="loading" size="large">
+                <div class="grid-table">
                   <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                       :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                       :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="onRowClick"
-                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting">
-                      <DxScrolling mode="standard" show-scrollbar="always"/>
+                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting" id="gridContainer">
+                      <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
                       <DxExport :enabled="true"/>
                       <DxPaging :enabled="false" />
@@ -130,6 +131,7 @@
                           </div>
                       </template>
                   </DxDataGrid>
+                </div>
               </a-spin>
           </a-col>
           <a-col :span="11" class="custom-layout" style="padding-right: 0px;">
@@ -145,7 +147,7 @@
       :idRowEdit="idRowEdit" typeHistory="pa-520" />
   <!-- confirm for case edit   -->
   <PopupMessage :modalStatus="modalChangeValueEdit" @closePopup="modalChangeValueEdit = false" typeModal="confirm"
-      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오ccc" @checkConfirm="comfirmAndSaveEdit" />
+      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
   <!-- confirm for case add -->
   <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
       :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
@@ -495,7 +497,6 @@ export default defineComponent({
           funcAddNewRow();
           store.state.common.checkChangeValueEditTab2PA520 = false;
         } else {
-          alert('ykyuiyuii')
           idRowEdit.value = focusedRowKey.value;
           // for case edit tab2 and click other row
           // store.state.common.idRowChangePa520 = focusedRowKey.value
@@ -505,7 +506,6 @@ export default defineComponent({
         if (addRowBtOnclick.value) {
           funcAddNewRow();
         } else {
-          alert('fffffffff')
           idRowEdit.value = focusedRowKey.value;
           // for case edit tab2 and click other row
           store.state.common.idRowChangePa520 = focusedRowKey.value

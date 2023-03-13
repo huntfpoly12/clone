@@ -335,7 +335,6 @@ export default defineComponent({
         }, { deep: true })
         watch(() => store.state.common.actionUpdateTab2PA520, () => {
           if (!isBtnYellow.value) {
-            // alert('vao day roi')
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
             trigger.value = true
@@ -378,7 +377,7 @@ export default defineComponent({
         }
         // ================== FUNCTION ==================================
       const actionUpdated = () => {
-          if (isBtnYellow.value) {alert()
+          if (isBtnYellow.value) {
             validateCalculate.value = true
           } else {
             mutate(originDataUpdate.value)

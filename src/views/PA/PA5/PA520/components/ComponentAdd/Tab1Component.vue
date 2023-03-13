@@ -216,7 +216,7 @@ export default defineComponent({
                 dataTable.employeeId = value.employeeId
                 dataTable.name = value.name
                 dataTable.foreigner = value.foreigner
-                dataTable.status = value.retirementIncome
+                dataTable.status = dataCreated.leavedAt ? false : true
                 dataTable.residentId = value.residentId
             }
             if (JSON.stringify(DataCreated) !== JSON.stringify(value))
