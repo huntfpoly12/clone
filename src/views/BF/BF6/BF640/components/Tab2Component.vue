@@ -30,7 +30,7 @@
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
-                    <div class="d-flex-center custom-checkbox-search">{{  }}
+                    <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
@@ -166,10 +166,10 @@ export default defineComponent({
         let keySelect = ref([])
         let dataSearch: any = ref({ ...dataSearchStep2Utils })
         let typeCheckbox = ref<any>({
-            checkbox1: false,
-            checkbox2: false,
-            checkbox3: false,
-            checkbox4: false,
+            checkbox1: true,
+            checkbox2: true,
+            checkbox3: true,
+            checkbox4: true,
         })
         let dataSource: any = ref([])
         const store = useStore()
@@ -291,10 +291,9 @@ export default defineComponent({
          
             for (const key in typeCheckbox.value) {
                 if (!newVal) {
-                    typeCheckbox.value[key] = false;
+                    typeCheckbox.value[key] = true;
                 } else {
                     typeCheckbox.value[key] = false;
-                    typeCheckbox.value.checkbox1 = true;
                 }
             }
          }, { deep: true });
