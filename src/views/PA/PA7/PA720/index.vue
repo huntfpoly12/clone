@@ -458,7 +458,6 @@ export default defineComponent({
     const changeYear = (newVal: any) => {
       taxPayRef.value.firsTimeRow = true;
       isRunOnce.value = true;
-      // resetForm();
       incomeProcessExtrasParam.imputedYear = newVal;
       formTaxRef.value.isEdit = false;
       store.commit('common/formEditPA720', formPA720.value);
@@ -626,7 +625,7 @@ export default defineComponent({
         }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
-          isClickMonthDiff.value = false;
+          isClickYearDiff.value = false;
           return;
         }
         if (isClickEditDiff.value) {
