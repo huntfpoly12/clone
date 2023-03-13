@@ -308,6 +308,7 @@ export default defineComponent({
     watch(() => props.idRowEdit,(value: any) => {
       originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
       getEmployeeWageTrigger.value = true;
+      // getEmployeeWageTrigger.value = true;
     }, {deep: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
