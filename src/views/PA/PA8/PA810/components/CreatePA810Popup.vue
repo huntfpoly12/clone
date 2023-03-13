@@ -1,7 +1,7 @@
 <template>
-  <a-modal class="form-modal" width="60%" :bodyStyle="{'max-height': '90vh', 'overflow-y': 'scroll'}" v-model:visible="visible" title="변경이력" centered
+  <a-modal class="form-modal" width="60%" :bodyStyle="{'max-height': '90vh', 'overflow-y': 'scroll'}" :visible="isOpenModalCreate" title="취득신고 신규 등록" centered
            @cancel="$emit('closeModal')" :footer="null">
-    <standard-form>
+    <standard-form ref="formRef">
       <div class="form">
         <a-row>
           <a-col span="12">
@@ -471,16 +471,22 @@ export default defineComponent({
     SearchCodeButton,
     DxField
 },
-  setup(_, { emit}) {
+  props: {
+    isOpenModalCreate: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup({ isOpenModalCreate }, { emit}) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const {per_page, move_column, colomn_resize} = store.state.settings;
-    const visible = ref(true);
     const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
     const employeeWage = ref(INITIAL_DATA.initialEmployeeWage);
     const employeeWages = ref();
     const employeeWageSelected = ref();
-    const formData = reactive(INITIAL_DATA.InitialFormCreate);
+    const formRef = ref();
+    const formData = ref({...INITIAL_DATA.InitialFormCreate});
     const infoCompany = reactive({
       name: '',
       adding: '',
@@ -492,9 +498,9 @@ export default defineComponent({
       query: queries.getEmployeeWages,
     });
 
-    const isChooseNationalPensionReport = computed(() => !formData.nationalPensionReport)
-    const isChooseHealthInsuranceReport = computed(() => !formData.healthInsuranceReport)
-    const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.employeementInsuranceReport || formData.industrialAccidentInsuranceReport))
+    const isChooseNationalPensionReport = computed(() => !formData.value.nationalPensionReport)
+    const isChooseHealthInsuranceReport = computed(() => !formData.value.healthInsuranceReport)
+    const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance = computed(() => (formData.value.employeementInsuranceReport || formData.value.industrialAccidentInsuranceReport))
     const handleRadioChange = (event: Event) => {
       stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement).value;
       employeeWageSelected.value = null;
@@ -559,13 +565,13 @@ export default defineComponent({
     }));
 
     /// Submit form
-    const onSubmit = (e: any) => {
+    const onSubmit = async (e: any) => {
       const res = e.validationGroup.validate()
       // !res.isValid
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber,   ...newFormData} = formData;
+        const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber,   ...newFormData} = formData.value;
         const dependents = employeeWage.value?.dependents ? employeeWage.value.dependents.map((item: any) => {
           return {
             name: employeeWage.value.name,
@@ -584,15 +590,15 @@ export default defineComponent({
           employeeType: stateSelectQuery.selectedRadioValue,
           dependents,
         }
-        formData.insuranceReductionCode && (input.insuranceReductionCode = Number(formData.insuranceReductionCode))
-        formData.insuranceReductionReasonCode && (input.insuranceReductionReasonCode = Number(formData.insuranceReductionReasonCode))
-
+        input.insuranceReductionCode &&= Number(formData.value.insuranceReductionCode)
+        input.insuranceReductionReasonCode &&= Number(formData.value.insuranceReductionReasonCode)
         mutate({
           ...variables,
           input: input
         }).then((res) => {
           notification('success', '저장되었습니다.');
-          Object.assign(formData, INITIAL_DATA.InitialFormCreate);
+          formData.value = {...INITIAL_DATA.InitialFormCreate};
+          employeeWage.value  = {...INITIAL_DATA.initialEmployeeWage};
           employeeWageSelected.value = null;
           emit('handleCreate')
         }).catch((err) => {
@@ -603,7 +609,7 @@ export default defineComponent({
 
     };
     const getFileId = (fileId: {id: Number}) => {
-      formData.dependentsEvidenceFileStorageId = fileId.id;
+      formData.value.dependentsEvidenceFileStorageId = fileId.id;
     }
     const formatDate = (date: any) => {
       return dayjs(date).format('YYYY/MM/DD')
@@ -614,7 +620,6 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      visible,
       onSubmit,
       formData,
       styleDisable: {opacity: .4},
@@ -638,7 +643,8 @@ export default defineComponent({
       col: {
         item: 9,
         space: 3
-      }
+      },
+      formRef
     };
   }
 });

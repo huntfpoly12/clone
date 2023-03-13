@@ -75,7 +75,7 @@
     </a-spin>
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="취득신고등록"
                   typeHistory="pa-810"/>
-    <CreatePA810Popup v-if="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
     <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
   </div>
 </template>

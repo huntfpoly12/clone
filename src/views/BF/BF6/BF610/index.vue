@@ -61,7 +61,7 @@
               <a-col>
                   <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
                       <!-- <list-manager-dropdown v-model:valueInput="filter.manageUserId" width="150px" /> -->
-                      <select-box-common 
+                      <select-box-common
                         :arrSelect="managerCompactUserList"
                         v-model:valueInput="filter.manageCompactUserId"
                         displayeExpr="name" valueExpr="id" width="150px" />
@@ -69,7 +69,7 @@
                   <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
                       <!-- <list-sales-dropdown v-model:valueInput="filter.salesRepresentativeId"
                           width="150px" /> -->
-                      <select-box-common 
+                      <select-box-common
                         :arrSelect="managerSalesRepresentative"
                         v-model:valueInput="filter.compactSalesRepresentativeId"
                         displayeExpr="name" valueExpr="id" width="150px" />
@@ -77,14 +77,14 @@
               </a-col>
               <a-col>
                   <switch-basic textCheck="해지제외" textUnCheck="해지포함"
-                      v-model:valueSwitch="filter.excludeCancel" />
+                      v-model:valueSwitch="filter.active" />
               </a-col>
           </a-row>
       </div>
       <div class="page-content">
           <a-spin :spinning="loadingTable" size="large">
               <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                :show-borders="true" key-expr="createdAt" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                   <DxScrolling mode="standard" show-scrollbar="always" />
                   <DxSelection mode="multiple" :fixed="true" />
@@ -203,7 +203,7 @@
 
                     <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummaryOneMonth"/>
                     <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummarySixMonth"/>
-                    
+
                     <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryRegular"/>
                     <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryEdit"/>
                     <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryAfter"/>
@@ -256,7 +256,7 @@ export default defineComponent({
         companyName: '', // 9
         manageCompactUserId: null, // 10
         compactSalesRepresentativeId: null, // 11
-        excludeCancel: true, // 12
+        active: true, // 12
         reportType: [0], // 3
         routine: true, // 4
         correction: true, // 5
@@ -362,7 +362,7 @@ export default defineComponent({
       }));
       // get data from api set to dataSource and dataOrigin
       resTable(res => {
-          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth
+          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth?.filter((item: any) => item.active)
           dataOrigin.value = res.data.searchTaxWithholdingStatusReportsByYearMonth
           trigger.value = false
       })
@@ -439,8 +439,8 @@ export default defineComponent({
           dataSource.value = dataOrigin.value.filter((item: any) => {
             return filter.statuses.includes(item.status)
               && filter.reportType.includes(item.reportType)
-              &&
-              ((filter.routine ? (item.index === 0 && item.afterDeadline === false) : false)
+              && (filter.active ? item.active : true)
+              && ((filter.routine ? (item.index === 0 && item.afterDeadline === false) : false)
                 || (filter.correction ? (item.index > 0 && item.afterDeadline === false) : false)
                 || (filter.afterTheDueDate ? (item.index === 0 && item.afterDeadline === true) : false))
               && item.company.code.toLocaleLowerCase().includes(filter.companyCode.toLocaleLowerCase())
@@ -502,7 +502,7 @@ export default defineComponent({
           }
           modalSendEmail.value = true
       }
-      
+
       let entering = 0
       let inputDeadline = 0
       let adjusting  = 0
@@ -510,11 +510,11 @@ export default defineComponent({
 
       let oneMonthStatus = 0
       let sixMonthStatus = 0
-      
+
       let regular = 0
       let edit = 0
       let after = 0
-  
+
       watch(dataSource, (value) => {
         const result = value.reduce((acc: any, curr: any ) => {
           return [
