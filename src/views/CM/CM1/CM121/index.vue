@@ -95,7 +95,8 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" />
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" 
+                      :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private"/>
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -275,6 +276,10 @@ export default defineComponent({
       },
     })
     let isCreate = ref<boolean>(false)
+    const isSetTypeClassification: any = ref({
+      corporate: true,
+      private: true
+    })
     // ============ GRAPQL ===============================
 
     // get list bankbook
@@ -405,6 +410,7 @@ export default defineComponent({
     })
 
     watch(resBankbook, (value) => {
+      resetDataDetail()
       const data = value.getBankbook
       dataDetailBankbook.value.facilityBusinessId = data.facilityBusinessId
       dataDetailBankbook.value.bankbookId = data.bankbookId
@@ -439,6 +445,21 @@ export default defineComponent({
       }
     })
 
+    watch(() => dataDetailBankbook.value.bankbookInput.type, (value) => {
+      if(value){
+        const typeItem: any = bankTypeCommon.find((item: any) => item.c == value)
+        isSetTypeClassification.value.corporate = typeItem.coporateScrapable
+        isSetTypeClassification.value.private = typeItem.privateScrapable
+        if ((isSetTypeClassification.value.corporate && isSetTypeClassification.value.private) || (isSetTypeClassification.value.corporate && !isSetTypeClassification.value.private)) {
+          isTypeClassification.value = true
+        }else {
+          isTypeClassification.value = false
+        }
+      }else {
+        isSetTypeClassification.value.corporate = true
+        isSetTypeClassification.value.private = true
+      }
+    })
     // -------METHODS-----------
 
     const onReorder = (e: any) => {
@@ -602,7 +623,8 @@ export default defineComponent({
       isModalLastScrapingStatus,
       showPopupLastScrapingStatus,
       dataPopupScrapingStatus,
-      onFocusedRowChanging
+      onFocusedRowChanging,
+      isSetTypeClassification
     }
   }
 });
