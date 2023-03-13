@@ -39,6 +39,7 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
+              height="500px"
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
@@ -142,7 +143,7 @@
                 cell-template="grade-cell"
                 width="300"
                 data-field="TypeCodeAndName"
-                :calculateCellValue="calculateIncomeTypeCodeAndName" 
+                :calculateCellValue="calculateIncomeTypeCodeAndName"
               />
               <template #grade-cell="{ data }" class="custom-action">
                 <income-type
@@ -157,8 +158,8 @@
                     placement="top"
                     v-if="data.data.deletable == true"
                     @click="actionDelete(data.data.employeeId,data.data.incomeTypeCode)"
+                    title=""
                   >
-                    <template #title>변경이력</template>
                     <DeleteOutlined />
                   </a-tooltip>
                 </div>
@@ -378,7 +379,7 @@ export default defineComponent({
 
     // Ref
     const formWrapper = ref(null)
-    const isDiscard = ref(false); // verify popup discard 
+    const isDiscard = ref(false); // verify popup discard
     const formRef = ref(); // ref of form
     const gridRef = ref(); // ref of grid
     const isNewRow = ref(false); // check if new row is adding
@@ -402,7 +403,7 @@ export default defineComponent({
     const disabledInput2 = ref(true);
     const isDiscardDelete = ref(false);
     const textResidentId = ref("주민등록번호");
-    
+
     const dataGridRef = computed(function () {
       return gridRef.value?.instance as any;
     }); // ref of grid Instance
@@ -661,26 +662,37 @@ export default defineComponent({
     const onExporting = (e: any) => {
       onExportingCommon(e.component, e.cancel, "영업자관리");
     };
-
     const changeTextCountry = (text: any) => {
+      console.log('text', text)
       dataShow.value.nationality = text;
     };
     const changeTextTypeCode = (text: any) => {
       dataShow.value.incomeTypeName = text;
     };
     const changeRadioForeigner = (value: Boolean) => {
-        if(value === false) {
-          dataShow.value.nationality = '대한민국'
-          dataShow.value.nationalityCode = 'KR'
+      console.log(value)
+      if(!value) {
+        dataShow.value.nationality = '대한민국'
+        dataShow.value.nationalityCode = 'KR'
+        dataShow.value.stayQualification = null
+      } else {
+        if(isNewRow.value) {
+          dataShow.value.nationality = ''
+          dataShow.value.nationalityCode = ''
+          dataShow.value.stayQualification = null
         } else {
-          if(isNewRow.value) {
-            dataShow.value.nationality = ''
-            dataShow.value.nationalityCode = ''
-          } else {
+          if(previousRowData.value.foreigner) {
             dataShow.value.nationality = previousRowData.value.nationality
             dataShow.value.nationalityCode = previousRowData.value.nationalityCode
+            dataShow.value.stayQualification = previousRowData.value.stayQualification
+          } else {
+            dataShow.value.nationality = ''
+            dataShow.value.nationalityCode = ''
+            dataShow.value.stayQualification = null
           }
+
         }
+      }
     }
     const dataUpdate = computed(() => {
       let residentId = dataShow.value.residentId.replace("-", "");
@@ -717,6 +729,7 @@ export default defineComponent({
     const handleSubmit = async () => {
       const res = formRef.value.validate();
       isDiscard.value = false;
+      console.log(dataShow.value)
       if (!res.isValid) {
         // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();

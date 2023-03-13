@@ -50,7 +50,7 @@
           <a-form-item label="세율" class="red">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-               :required="true" :disabled="!isColumnData || isExpiredStatus">
+               :required="true" :disabled="!isColumnData || isExpiredStatus" >
               <template #item="{ data }">
                 <a-tooltip placement="top" zIndex="9999">
                   <template #title v-if="data?.tooltip">

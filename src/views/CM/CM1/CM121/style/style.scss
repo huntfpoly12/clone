@@ -58,3 +58,7 @@
     }
   }
 }
+
+:deep .dx-command-drag {
+  cursor: move !important;
+}

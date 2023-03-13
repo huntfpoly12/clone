@@ -370,8 +370,7 @@ export default defineComponent({
         addNewRow()
       } else {
         isNewRow.value = false;
-        focusedRowKey.value = res.data.createClient.clientId;
-        selectRowKeyAction.value = res.data.createClient.clientId;
+        if(selectRowKeyAction.value === 0) focusedRowKey.value = res.data.createClient.clientId;
         previousRowData.value = { ...formState.value };
       }
       notification("success", Message.getCommonMessage('106').message);
