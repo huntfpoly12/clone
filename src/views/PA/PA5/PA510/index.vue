@@ -473,20 +473,20 @@ export default defineComponent({
                 })
             }
             const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
-            if (obj) {
+            if (obj) { // nếu có data source
                 statusDisabledBlock.value = false;
+                if (isRunOnce.value) {
+                    isRunOnce.value = false;
+                    showDetailSelected(obj)
+                } else {
+                    activeNewMonth(dataMonthNew.value)
+                }
             } else {
                 status.value = null
+                IncomeWageDailiesTrigger.value = true;
                 statusDisabledBlock.value = true;
             }
-            if (isRunOnce.value) {
-                isRunOnce.value = false;
-                if (obj) {
-                    showDetailSelected(obj)
-                }
-            } else if (obj) {
-                activeNewMonth(dataMonthNew.value)
-            }
+            
         })
         watch(resultTaxPayInfo, (value) => {
             IncomeWageDailiesTrigger.value = false;
@@ -540,20 +540,23 @@ export default defineComponent({
         const checkClickYear = ref<Boolean>(false)
         const dataYearNew = ref(globalYear.value)
         watch(globalYear, (newVal, oldVal) => {
-            dataYearNew.value = newVal;
-            if (store.state.common.statusChangeFormEdit) {
-                modalChangeRow.value = true
-                // checkClickYear.value = true
-                store.state.settings.globalYear = oldVal;
-            } else {
+            // dataYearNew.value = newVal;
+            // if (store.state.common.statusChangeFormEdit) {
+            //     modalChangeRow.value = true
+            //     // checkClickYear.value = true
+            //     store.state.settings.globalYear = oldVal;
+            // } else {
+                isRunOnce.value = true;
                 store.state.common.processKeyPA510.imputedYear = newVal
                 store.state.common.processKeyPA510.paymentYear = newVal
-                IncomeWageDailiesTrigger.value = true; //reset data table 2
+                // originDataTaxPayInfo.value.processKey.imputedYear = newVal
+                // originDataTaxPayInfo.value.processKey.paymentYear = newVal
                 originData.value.imputedYear = newVal
                 trigger.value = true; //reset data table 1
+                // IncomeWageDailiesTrigger.value = true; //reset data table 2
                 // refetchData()
                 // refetchDataTaxPayInfo() //reset data table 2
-            }
+            // }
         })
         watch(() => store.state.common.addRow, (newVal) => {
             gridRef.value?.instance.deselectAll()
@@ -602,11 +605,12 @@ export default defineComponent({
 
         // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
-            IncomeWageDailiesTrigger.value = true;
             status.value = month.status
+            store.state.common.processKeyPA510.imputedYear = month.imputedYear
             store.state.common.processKeyPA510.imputedMonth = month.imputedMonth
             store.state.common.processKeyPA510.paymentYear = month.paymentYear
             store.state.common.processKeyPA510.paymentMonth = month.paymentMonth
+            IncomeWageDailiesTrigger.value = true;
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
         }
