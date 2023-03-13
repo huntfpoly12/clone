@@ -153,7 +153,7 @@
                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null" :name="item.name" :type="4" subName="과세" />
               </span>
               <div>
-                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :min="0"> </number-box-money>
+                <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="item.value" :min="0" @onChange="onChangePayItem"> </number-box-money>
                 <span class="pl-5">원</span>
               </div>
             </div>
@@ -310,6 +310,33 @@ export default defineComponent({
       }
       store.state.common.isCalculateEditPA120 = true;
     });
+    const onChangePayItem = (emitVal: any) => {
+      console.log(`output->emitVal`,emitVal)
+      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+        return accumulator + object.value;
+      }, 0);
+      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+        if (object.tax) {
+          accumulator += object.value;
+        }
+        return accumulator;
+      }, 0);
+      totalPayItemTaxFree.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+        if (!object.tax) {
+          accumulator += object.value;
+        }
+        return accumulator;
+      }, 0);
+      totalDeduction.value = dataConfigDeduction.value.reduce((accumulator: any, object: any) => {
+        if (!accumulator) {
+          accumulator = 0;
+        }
+        if (!object.value) {
+          object.value = 0;
+        }
+        return accumulator + object.value;
+      }, 0);
+    }
 
     /**
      *  get Withouthoulding Config deduction
@@ -577,7 +604,8 @@ export default defineComponent({
       isCalculateEditPA120,
       isAddFormErrorPA120,
       isBtnYellow,
-      isDisableInsuranceSupport
+      isDisableInsuranceSupport,
+      onChangePayItem
     };
   },
 });

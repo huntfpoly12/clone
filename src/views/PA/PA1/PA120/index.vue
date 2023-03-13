@@ -44,7 +44,8 @@
           {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
           {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
           {{ compareType }} compareType <br />
-          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br /> -->
+          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
+          {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
           <!-- {{ focusedRowKey }} focusedRowKey <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -196,10 +197,6 @@ export default defineComponent({
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120);
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
-    const originData = ref({
-      companyId: companyId,
-      imputedYear: globalYear,
-    });
     const idAction = ref();
     const modalAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
@@ -242,6 +239,10 @@ export default defineComponent({
 
     const isFirstRun = ref(true);
     const trigger = ref<boolean>(true);
+    const originData = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
     const {
       result,
       loading,
@@ -256,25 +257,40 @@ export default defineComponent({
         addNewRow();
         return;
       }
-      console.log(`output->data.length`,data.length)
       if (data.length > 0 && isFirstRun.value) {
-        console.log(`output->idRowEdit.value`,data[0].employeeId)
+        console.log(`output->idRowEdit.value`, data[0].employeeId)
+        actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
         isFirstRun.value = false;
         idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
+        console.log(`output->length 0`)
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
       }
       trigger.value = false;
     });
     //change year
-    watch(globalYear, () => {
+    const isClickYearDiff = ref(false);
+    const changeYearDataFake = ref();
+    const changeYear = (newVal: any) => {
       isFirstRun.value = true;
+      originData.value.imputedYear = newVal;
       trigger.value = true;
-      store.state.common.isNewRowPA120 = true;
+      store.state.common.isNewRowPA120 = false;
+      store.state.common.yearPA120 = newVal;
+    }
+    watch(globalYear, (newVal, oldVal) => {
+      if (compareType2()) {
+        changeYear(newVal);
+      } else {
+        compareType.value = 2;
+        rowChangeStatus.value = true;
+        isClickYearDiff.value = true;
+        changeYearDataFake.value = oldVal;
+      }
     });
     // addcomponent
     const addComponentKey = ref(1);
@@ -314,6 +330,8 @@ export default defineComponent({
       return false;
     };
     const compareType2 = () => {
+      // console.log(`output->JSON.stringify(editRowPA120.value)`,JSON.stringify(editRowPA120.value))
+      // console.log(`output->JSON.stringify(initFormStateTabPA120.value)`,JSON.stringify(initFormStateTabPA120.value))
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
@@ -370,6 +388,11 @@ export default defineComponent({
 
         }
       } else {
+        if (isClickYearDiff.value) {
+          changeYear(globalYear.value);
+          isClickYearDiff.value = false;
+          return;
+        }
         if (isNewRowPA120.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
