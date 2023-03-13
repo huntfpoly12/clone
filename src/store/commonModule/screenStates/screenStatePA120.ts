@@ -9,6 +9,7 @@ const statesPA120 = {
   presidentPA120: false,
   presidentEditPA120: false,
   isDisableInsuranceSupport: false,
+  yearPA120: +dayjs().format("YYYY"),
   initFormStateTabPA120: {
     name: "",
     foreigner: false,
