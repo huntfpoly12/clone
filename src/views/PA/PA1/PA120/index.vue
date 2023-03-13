@@ -42,10 +42,11 @@
           <!-- {{ compareType1() }} compareType1() <br />
           {{ compareType2() }} compareType2() <br />
           {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ isNewRowPA120 }} isNewRowPA120 <br />
+          {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
           {{ compareType }} compareType <br />
-          {{ focusedRowKey }} focusedRowKey <br />
-          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br /> -->
+          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
+          {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
+          <!-- {{ focusedRowKey }} focusedRowKey <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -160,6 +161,7 @@ import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import queryCM130 from "@/graphql/queries/CM/CM130/index";
 
 export default defineComponent({
   components: {
@@ -195,10 +197,6 @@ export default defineComponent({
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120);
     const editRowPA120 = computed(() => store.state.common.editRowPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
-    const originData = ref({
-      companyId: companyId,
-      imputedYear: globalYear,
-    });
     const idAction = ref();
     const modalAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
@@ -241,6 +239,10 @@ export default defineComponent({
 
     const isFirstRun = ref(true);
     const trigger = ref<boolean>(true);
+    const originData = ref({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
     const {
       result,
       loading,
@@ -252,27 +254,43 @@ export default defineComponent({
       const data = value.getEmployeeWages;
       dataSource.value = data;
       if(compareType.value == 3) {
-        console.log(`output->compareType.value`,dataSource.value)
         addNewRow();
         return;
       }
       if (data.length > 0 && isFirstRun.value) {
+        console.log(`output->idRowEdit.value`, data[0].employeeId)
+        actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
         isFirstRun.value = false;
+        idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
+        console.log(`output->length 0`)
         actionChangeComponent.value = 1;
+        store.commit('common/initFormStateTabPA120', initFormStateTab1);
       }
       trigger.value = false;
     });
     //change year
-    watch(globalYear, () => {
-      actionChangeComponent.value = 1;
+    const isClickYearDiff = ref(false);
+    const changeYearDataFake = ref();
+    const changeYear = (newVal: any) => {
+      isFirstRun.value = true;
+      originData.value.imputedYear = newVal;
       trigger.value = true;
-      addComponentKey.value++;
-      store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      store.state.common.isNewRowPA120 = true;
+      store.state.common.isNewRowPA120 = false;
+      store.state.common.yearPA120 = newVal;
+    }
+    watch(globalYear, (newVal, oldVal) => {
+      if (compareType2()) {
+        changeYear(newVal);
+      } else {
+        compareType.value = 2;
+        rowChangeStatus.value = true;
+        isClickYearDiff.value = true;
+        changeYearDataFake.value = oldVal;
+      }
     });
     // addcomponent
     const addComponentKey = ref(1);
@@ -312,6 +330,8 @@ export default defineComponent({
       return false;
     };
     const compareType2 = () => {
+      // console.log(`output->JSON.stringify(editRowPA120.value)`,JSON.stringify(editRowPA120.value))
+      // console.log(`output->JSON.stringify(initFormStateTabPA120.value)`,JSON.stringify(initFormStateTabPA120.value))
       if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
@@ -368,6 +388,11 @@ export default defineComponent({
 
         }
       } else {
+        if (isClickYearDiff.value) {
+          changeYear(globalYear.value);
+          isClickYearDiff.value = false;
+          return;
+        }
         if (isNewRowPA120.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
@@ -391,7 +416,6 @@ export default defineComponent({
         trigger.value = true;
         return;
       }
-      console.log(`output->form done`,)
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
       store.state.common.isNewRowPA120 = false;
@@ -406,6 +430,11 @@ export default defineComponent({
       // if (compareType.value == 1) {
       //   store.state.common.isNewRowPA120 = true;
       // }
+      if (tabCurrent.value == 2) {
+        store.commit('common/activeTabKeyPA120', '2');
+      }else {
+        store.commit('common/activeTabKeyPA120', '1');
+      }
       focusedRowKey.value = initFormStateTabPA120.value.employeeId;
     });
     //edit row
@@ -433,6 +462,7 @@ export default defineComponent({
         return;
       } else {
         idRowEdit.value = data.data.employeeId;
+        idRowFake.value = data.data.employeeId;
         if (actionChangeComponent.value == 1) {
           actionChangeComponent.value = 2;
         }
@@ -466,10 +496,26 @@ export default defineComponent({
     //   focusedRowKey.value = newVal;
     // })
     const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
-    const resetTabPA120 = computed(() => store.getters['common/resetTabPA120']);
+    const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
     }
+
+    // get config
+
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+    const { result: resultConfig} = useQuery(
+        queryCM130.getWithholdingConfig,
+        dataQuery,
+        () => ({
+          fetchPolicy: "no-cache",
+        })
+    );
+    watch(resultConfig,(newVal)=> {
+      if(newVal){
+        store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
+      }
+    })
     return {
       loading,
       idRowEdit,
@@ -495,7 +541,7 @@ export default defineComponent({
       toolTopErorr,
       isResidentIdError,
       focusedRowKey,
-      resetTabPA120,
+      activeTabKeyPA120,
       keyActivePA120,
       defaultVisible,
       initFormStateTabPA120,

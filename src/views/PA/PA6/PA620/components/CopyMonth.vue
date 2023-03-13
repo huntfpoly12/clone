@@ -1,25 +1,27 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
+        <a-spin :spinning="loading">
+          <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
-                <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
-                :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
+              <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
+              :style="{cursor: 'context-menu',color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date mr-2"  />
                 <div class="d-flex-center">
                 <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
                 </div>
             </div>
-        </a-form-item>
-        <a-form-item label="지급일" label-align="right">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true"/>
-        </a-form-item>
-
-        <div class="text-align-center mt-30">
+          </a-form-item>
+          <a-form-item label="지급일" label-align="right">
+              <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA620" :isFormat="true"/>
+            </a-form-item>
+            
+          <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
                 @onClick="onSubmit" />
             <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
                 @onClick="openModalCopy" />
-        </div>
+          </div>
+        </a-spin>
     </a-modal>
 
     <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
@@ -109,17 +111,24 @@ export default defineComponent({
         // -----------------get config to check default date type--------------
         const dateType = ref<number>(1);
         const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-        const { result: resultConfig, refetch: refetchHolding } = useQuery(
-            queriesHolding.getWithholdingConfig,
-            dataQuery,
-            () => ({
-                fetchPolicy: "no-cache",
-            })
+        const { result: resultConfig, refetch: refetchHolding, loading } = useQuery(
+          queriesHolding.getWithholdingConfig,
+          dataQuery,
+          () => ({
+            fetchPolicy: "no-cache",
+          })
         );
+        watch(()=> props.modalStatus,(newVal: any) =>{
+          if(newVal){
+            refetchHolding();
+          }
+        })
         watch(resultConfig, (newVal) => {
+          if(newVal){
             const data = newVal.getWithholdingConfig;
             dateType.value = data.paymentType;
             store.state.common.paymentDayPA620 = data.paymentDay;
+          }
         });
         // ----------set month source default because dependent on the set up before--------------
         let month2: any = ref();
@@ -133,7 +142,6 @@ export default defineComponent({
                 yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal}`;
             }
             month2.value = yearMonth;
-            refetchHolding();
         });
         //-------------------------action copy data--------------------------------
         const {
@@ -234,6 +242,7 @@ export default defineComponent({
             updateValue,
             actionCopy,
             processKeyPA620,
+            loading
         }
     },
 })

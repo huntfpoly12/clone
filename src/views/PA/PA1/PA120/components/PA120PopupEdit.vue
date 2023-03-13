@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="false" size="large">
         <div id="pa-120" class="page-content">
-            <a-tabs v-model:activeKey="activeKey" @change="onChangeTab" type="card">
+            <a-tabs v-model:activeKey="activeTabKeyPA120" @change="onChangeTab" type="card">
                 <a-tab-pane key="1" tab="기본" class="tab1" >
                     <Tab1Component :idRowEdit="idRowEdit" />
                 </a-tab-pane>
@@ -37,7 +37,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const resetTabPA120 = computed(()=>store.getters['common/resetTabPA120']);
+        const activeTabKeyPA120 = computed(()=>store.state.common.activeTabKeyPA120);
         const activeKey = ref("1");
         // watchEffect(() => activeKey.value = props.resetActiveKey);
         const isTabchange = ref(true);
@@ -45,13 +45,13 @@ export default defineComponent({
             emit('closePopup', false)
         }
         const onChangeTab = (e:any) => {
-            store.commit('common/resetTabPA120', e)
+            store.commit('common/activeTabKeyPA120', e)
         }
         return {
             isTabchange,
             setModalVisible,
             activeKey,
-            resetTabPA120,
+            activeTabKeyPA120,
             onChangeTab,
         };
     },

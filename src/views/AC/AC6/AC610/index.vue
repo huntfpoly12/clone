@@ -2,7 +2,7 @@
   <action-header
     title="거래처 관리"
     @actionSave="actionSave($event)"
-    @actionSearch="actionSearch && searching($event)"
+    @actionSearch="searching($event)"
     :buttonDelete="false"
   />
   <div id="ac-610">
@@ -48,7 +48,7 @@
             >
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-              <DxPaging page-size="10" />
+              <DxPaging page-size="15" />
               <DxExport :enabled="true" />
               <DxToolbar>
                 <DxItem name="searchPanel" />
@@ -59,7 +59,7 @@
                   css-class="cell-button-add"
                 />
               </DxToolbar>
-              
+
               <template #button-template>
                 <a-tooltip placement="top">
                   <template #title>거래처 등록</template>
@@ -187,8 +187,8 @@
               <switch-basic
                 :width="50"
                 v-model:valueSwitch="formState.use"
-                :textCheck="'X'"
-                :textUnCheck="'O'"
+                :textCheck="'O'"
+                :textUnCheck="'X'"
               />
               <div style="margin-left: 10px; display: inline-table">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px" />
@@ -225,7 +225,7 @@
       title="변경이력"
       typeHistory="ac-610"
     />
-    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-610" />
+<!--    <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="originDataDetail" title="변경이력" typeHistory="ac-610" />-->
     <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm" />
   </div>
 </template>
@@ -276,7 +276,7 @@ export default defineComponent({
     const per_page = 1000;
     const column_resize = computed(() => store.state.settings.colomn_resize);
     // ref
-    const isDiscard = ref(false); // verify popup discard 
+    const isDiscard = ref(false); // verify popup discard
     const formRef = ref(); // ref of form
     const gridRef = ref(); // ref of grid
     const isNewRow = ref(false); // check if new row is adding
@@ -297,10 +297,8 @@ export default defineComponent({
     // const focusedRowKey: any = ref(null);
     const modalStatus = ref(false);
     const modalStatusAdd = ref(false);
-    let triggerDetail = ref(false);
     const listClient: any = ref([]);
 
-    const actionSearch: any = ref<boolean>(true);
     const dataSearch = ref({
       page: 1,
       rows: per_page,
@@ -311,6 +309,14 @@ export default defineComponent({
     });
     let confirmSave = ref(false);
 
+    const dataFilter = ref({
+      page: 1,
+      rows: per_page,
+      name: null,
+      presidentName: null,
+      phone: null,
+      includeNonUse: false,
+    });
     // ================GRAPHQL==============================================
     // add new client
     const {
@@ -334,7 +340,7 @@ export default defineComponent({
     } = useQuery(
       queries.searchClients,{
         companyId: companyId,
-        filter: dataSearch.value,
+        filter: dataFilter.value,
       },() => ({
         fetchPolicy: "no-cache",
         enabled: trigger.value,
@@ -352,7 +358,7 @@ export default defineComponent({
         requireTotalCount: true,
       });
     });
-        
+
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
     // const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
@@ -361,13 +367,7 @@ export default defineComponent({
     onDoneAdd(async (res: any) => {
       await refetchData();
       if(isClickAddRow.value) {
-        storeDataSource.value.insert(initialState).then((result) => {
-            focusedRowKey.value = 0;
-            formState.value = result;
-            previousRowData.value = { ...result };
-            dataGridRef.value?.refresh();
-            formRef.value.resetValidate()
-          });
+        addNewRow()
       } else {
         isNewRow.value = false;
         focusedRowKey.value = res.data.createClient.clientId;
@@ -380,26 +380,18 @@ export default defineComponent({
       notification("error", e.message);
     });
     onDoneUpdate(async (res) => {
+      await refetchData();
       previousRowData.value = { ...formState.value };
       // update when click discard
       if (!isNewRow.value) {
         focusedRowKey.value = selectRowKeyAction.value;
       } else {
-        storeDataSource.value.insert(initialState).then((result) => {
-          previousRowData.value = { ...result };
-          formRef.value.resetValidate()
-          focusedRowKey.value = 0;
-          formState.value = result;
-          previousRowData.value = { ...result };
-          dataGridRef.value?.refresh();
-        });
+        isClickAddRow.value && addNewRow()
       }
-      await refetchData();
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
     });
     onErrorUpdate((e) => {
-      triggerDetail.value = true;
       notification("error", e.message);
     });
 
@@ -409,6 +401,7 @@ export default defineComponent({
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
         if (previousRowData.value && !compareObject(previousRowData.value, formState.value)) {
+          isClickAddRow.value = true;
           isDiscard.value = true;
         } else {
           // create new row
@@ -427,6 +420,7 @@ export default defineComponent({
           !compareObject(previousRowData.value, formState.value)
         ) {
           selectRowKeyAction.value = 0;
+          isClickAddRow.value = true;
           isDiscard.value = true;
         }
       }
@@ -480,7 +474,17 @@ export default defineComponent({
       formState.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
-    const handleSubmit = () => {
+    const addNewRow = () => {
+      storeDataSource.value.insert(initialState).then((result) => {
+        formRef.value.resetValidate();
+        selectRowKeyAction.value = 0;
+        focusedRowKey.value = 0;
+        formState.value = result;
+        dataGridRef.value?.refresh();
+        isClickAddRow.value = false;
+      });
+    }
+    const handleSubmit = async () => {
       const res = formRef.value.validate();
         isDiscard.value = false;
         if (!res.isValid) {
@@ -502,7 +506,8 @@ export default defineComponent({
                 use: formState.value.use,
               },
             };
-            createClient(newDataCreate);
+            await createClient(newDataCreate);
+
           }
         }
     }
@@ -527,6 +532,7 @@ export default defineComponent({
             dataGridRef.value?.refresh();
           });
           isNewRow.value = false;
+          isClickAddRow.value && addNewRow()
         } else {
           // when change other row and want to add row
           storeDataSource.value.insert(initialState).then((result) => {
@@ -590,8 +596,9 @@ export default defineComponent({
 
     const searching = (e: any) => {
       trigger.value = true;
+      Object.assign(dataFilter.value, dataSearch.value)
       dataSearch.value.page = listClient.value.page;
-      actionSearch.value = false;
+      refetchData()
     };
 
     return {
@@ -611,7 +618,6 @@ export default defineComponent({
       modalHistory,
       dataSearch,
       searching,
-      actionSearch,
       Message,
       dataSource,
       onFocusedRowChanging,

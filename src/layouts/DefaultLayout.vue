@@ -72,7 +72,7 @@
             <!-- hide or show scroll arrows right when page width is exceeded -->
             <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight" />
           </nav>
-          
+
         </div>
       </div>
       <a-layout>
@@ -109,11 +109,11 @@
                           ]
                         "
                         @click.enter="addMenuTab(itemLevel1.id)"
-                      > 
+                      >
                       <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
                 </a-menu-item>
                 <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
-                  <!-- list sub menu level 2 if have subMenus --> 
+                  <!-- list sub menu level 2 if have subMenus -->
                   <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
                     <a-menu-item
                         v-if="!itemLevel2.hasOwnProperty('subMenus')"
@@ -125,11 +125,11 @@
                           ]
                         "
                         @click.enter="addMenuTab(itemLevel2.id)"
-                      > 
+                      >
                       <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
                     </a-menu-item>
-                    <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id"> 
-                      <a-menu-item 
+                    <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
+                      <a-menu-item
                         v-for="subMenu1 in itemLevel2.subMenus"
                         :key="subMenu1.id"
                         :class="[
@@ -156,7 +156,7 @@
           >
             <div class="main-content">
               <template v-if="activeTab">
-                <keep-alive :exclude="cachedTab">   
+                <keep-alive :exclude="cachedTab">
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -202,7 +202,7 @@ import {
   PA420,
   PA410,
   PA610,
-  PA620, 
+  PA620,
   PA630,
   PA530,
   PA520,
@@ -212,6 +212,7 @@ import {
   PA720,
   PA810,
   AC610,
+  AC620,
   Test,
   Example,
 } from "./screenComponents";
@@ -225,7 +226,7 @@ import {
   SearchOutlined,
   SaveOutlined,
   CloseCircleFilled,
-  CaretLeftOutlined, 
+  CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 export default defineComponent({
@@ -272,6 +273,7 @@ export default defineComponent({
     PA730,
     PA810,
     AC610,
+    AC620,
     Test,
     Example,
     MenuFoldOutlined,
@@ -282,13 +284,13 @@ export default defineComponent({
     SearchOutlined,
     SaveOutlined,
     CloseCircleFilled,
-    CaretLeftOutlined, 
+    CaretLeftOutlined,
     CaretRightOutlined
   },
   created() {
     menuData.forEach((item) => {
       if (this.$route.fullPath.includes(item.id)) {
-        // clear vuex value cachedTab 
+        // clear vuex value cachedTab
         this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
         this.activeTab = item;
         this.$store.state.common.activeTab = item
@@ -312,7 +314,7 @@ export default defineComponent({
   },
   watch: {
      activeTab: {
-      handler(newValue, oldVal) {   
+      handler(newValue, oldVal) {
          if (newValue) {
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
@@ -382,8 +384,8 @@ export default defineComponent({
       immediate: true,
     },
   },
-  
-  computed: { 
+
+  computed: {
     username() {
       if (sessionStorage.getItem("username")) {
         return sessionStorage.getItem("username");
@@ -426,6 +428,7 @@ export default defineComponent({
       if (this.activeTab.id === "pa-730") return 'PA730';
       if (this.activeTab.id === "pa-810") return 'PA810';
       if (this.activeTab.id === "ac-610") return 'AC610';
+      if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -462,7 +465,7 @@ export default defineComponent({
                     behavior: 'smooth',
           }) ;
        }
-        
+
     }
     const tabRight = (e)=>{
        if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
@@ -534,7 +537,7 @@ export default defineComponent({
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      // clear vuex value cachedTab 
+      // clear vuex value cachedTab
       let tabName = menuTab.value[item].id.toUpperCase().replaceAll('-', '')
       store.state.common.cachedTab = store.state.common.cachedTab.filter((item) => item != tabName )
 
@@ -558,7 +561,7 @@ export default defineComponent({
     /**
      * monitor cachedtabs variable on vuex to blow cachedtab variable at component
      */
-    watch(()=>store.state.common.cachedTab, (newValue)=>{     
+    watch(()=>store.state.common.cachedTab, (newValue)=>{
         cachedTab.value = newValue;
     }, { deep: true })
     const focusInput  = ()=>{
@@ -567,10 +570,10 @@ export default defineComponent({
     /**
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
-    watch(()=>store.state.common.activeTab, (newValue)=>{     
+    watch(()=>store.state.common.activeTab, (newValue)=>{
         activeTab.value = newValue;
     }, { deep: true })
-    
+
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1
@@ -592,7 +595,7 @@ export default defineComponent({
 
     /**
      * List icon in sidebar menu
-     * @param {*} id 
+     * @param {*} id
      */
     const iconClass = (id) => {
       let classIcon = ''

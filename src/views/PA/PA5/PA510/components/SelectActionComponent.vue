@@ -1,5 +1,5 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
@@ -23,7 +23,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic  :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -154,15 +154,18 @@ export default defineComponent({
         const actionAddItem = () => {
             if (store.state.common.statusChangeFormEdit) {
                 modalStatusAdd.value = true
+                store.state.common.statusClickButtonAdd = true;
             } else {
                 if (store.state.common.statusRowAdd) {
+                    store.state.common.addRow++ // add row
                         store.state.common.statusRowAdd = false;
-                        store.state.common.actionAddItem = true;
-                        store.state.common.incomeId = 'PA510';
-                        store.state.common.focusedRowKey = 'PA510';
+                        store.state.common.statusFormAdd = true;
+                        // store.state.common.incomeId = 'PA510';
+                        // store.state.common.focusedRowKey = 'PA510';
                 } else {
                     if (store.state.common.statusChangeFormAdd) {
                         modalStatusAdd.value = true
+                        store.state.common.statusClickButtonAdd = true;
                     }
                     // notification('error', "nhập vàooooo")
                 }
@@ -270,10 +273,11 @@ export default defineComponent({
                 store.state.common.actionSubmit++
             } else { // reset form
                 if (store.state.common.statusRowAdd) {
+                    store.state.common.addRow++ // add row
                     store.state.common.statusRowAdd = false;
-                    store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = 'PA510';
-                    store.state.common.focusedRowKey = 'PA510';
+                    store.state.common.statusFormAdd = true;
+                    // store.state.common.incomeId = 'PA510';
+                    // store.state.common.focusedRowKey = 'PA510';
                 } else {
                     store.state.common.actionResetForm++;
                 }

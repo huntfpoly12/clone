@@ -203,6 +203,10 @@
 
                     <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummaryOneMonth"/>
                     <DxTotalItem show-in-column="신고 주기" cell-template="reportType" :customize-text="customTextSummarySixMonth"/>
+                    
+                    <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryRegular"/>
+                    <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryEdit"/>
+                    <DxTotalItem show-in-column="신고 종류" cell-template="afterDeadline" :customize-text="customTextSummaryAfter"/>
                   </DxSummary>
               </DxDataGrid>
           </a-spin>
@@ -318,7 +322,7 @@ export default defineComponent({
           },
           {
               key: 13,
-              value: "지 " + (globalYear.value + 1) + "-1"
+              value: "지 " + (globalYear.value + 1) + "-01"
           },
       ])
       let statuses = reactive({
@@ -416,6 +420,7 @@ export default defineComponent({
           if(checkAllSameValue(statuses)){
             filter.statuses = [10, 20, 30, 40]
           } else {
+            filter.statuses = []
             if (statuses.checkbox1) filter.statuses.push(10)
             if (statuses.checkbox2) filter.statuses.push(20)
             if (statuses.checkbox3) filter.statuses.push(30)
@@ -505,6 +510,10 @@ export default defineComponent({
 
       let oneMonthStatus = 0
       let sixMonthStatus = 0
+      
+      let regular = 0
+      let edit = 0
+      let after = 0
   
       watch(dataSource, (value) => {
         const result = value.reduce((acc: any, curr: any ) => {
@@ -515,14 +524,22 @@ export default defineComponent({
             acc[3] + (curr.status === 40 ? 1 : 0),
             acc[4] + (curr.reportType === 1 ? 1 : 0),
             acc[5] + (curr.reportType === 6 ? 1 : 0),
+
+            acc[6] + (curr.index === 0 && !curr.afterDeadline ? 1 : 0),
+            acc[7] + (curr.index > 0 && !curr.afterDeadline ? 1 : 0),
+            acc[8] + (curr.afterDeadline ? 1 : 0)
           ]
-        }, [0, 0, 0, 0, 0, 0])
+        }, [0, 0, 0, 0, 0, 0, 0, 0, 0])
         entering = result[0]
         inputDeadline = result[1]
         adjusting = result[2]
         adjustmentDeadline = result[3]
         oneMonthStatus = result[4]
         sixMonthStatus = result[5]
+
+        regular = result[6]
+        edit = result[7]
+        after = result[8]
 
       }, {deep: true})
 
@@ -533,8 +550,19 @@ export default defineComponent({
 
     const customTextSummaryOneMonth = () =>  `매월 (${oneMonthStatus})`
     const customTextSummarySixMonth = () =>  `반기 (${sixMonthStatus})`
-    const managerCompactUserList = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.manageCompactUser?.name, id: i.companyServiceContract.manageCompactUser?.id})).filter((i:any) => !!i.name))
-    const managerSalesRepresentative = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.compactSalesRepresentative?.name, id: i.companyServiceContract.compactSalesRepresentative?.id})).filter((i:any) => i.name))
+
+    const customTextSummaryRegular = () =>  `정기 (${regular})`
+    const customTextSummaryEdit = () =>  `수정 (${edit})`
+    const customTextSummaryAfter = () =>  `기한후 (${after})`
+
+    const managerCompactUserList = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.manageCompactUser?.name, id: i.companyServiceContract.manageCompactUser?.id}))
+      .filter((item: any, index: number, self: any) =>
+        index === self.findIndex((t:any) => t.id === item.id && t.name === item.name && !!t.name)
+      ))
+    const managerSalesRepresentative = computed(() =>  dataOrigin.value?.map((i:any) => ({name: i.companyServiceContract.compactSalesRepresentative?.name, id: i.companyServiceContract.compactSalesRepresentative?.id}))
+      .filter((item: any, index: number, self: any) =>
+        index === self.findIndex((t:any) => t.id === item.id && t.name === item.name && !!t.name)
+      ))
 
     const convertToDate = (date: number | null) => {
       if (date === null) return null
@@ -555,7 +583,10 @@ export default defineComponent({
           customTextSummarySixMonth,
           managerCompactUserList,
           managerSalesRepresentative,
-          convertToDate
+          convertToDate,
+          customTextSummaryRegular,
+          customTextSummaryEdit,
+          customTextSummaryAfter
       }
   }
 })
@@ -563,4 +594,3 @@ export default defineComponent({
 <style scoped lang="scss" src="./style/style.scss">
 
 </style>
-

@@ -201,7 +201,9 @@
     <!-- {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
     {{ compareType }} compareType <br />
-    {{ editTaxParam }} editTaxParam <br />
+    {{ formPA720.input }} formPA720.input <br />
+    {{ formEditPA720.input }} formEditPA720.input <br />
+    {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
     {{ editTaxParamFake }} editTaxParamFake <br /> -->
     <a-row :class="{ 'ele-opacity': !compareType2() }"
       style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
@@ -268,7 +270,7 @@
     :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status = 10;"
-    :dateType="dateType" :paymentDay="paymentDay" @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" />
+    @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" />
   <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
     :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onRowChangeComfirm"
     :isConfirmIcon="false" />
@@ -292,7 +294,6 @@ import { HistoryOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import CopyMonth from './components/Popup/CopyMonth.vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
-import queriesHolding from '@/graphql/queries/CM/CM130/index';
 import { Message } from '@/configs/enum';
 import { formatMonth } from './utils/index';
 export default defineComponent({
@@ -335,6 +336,7 @@ export default defineComponent({
     const dataActionUtilsPA720 = computed(() => store.getters['common/dataActionUtilsPA720']);
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
     const titleModalConfirm = ref(messageSave);
     const pa720GridRef = ref();
     const inputDateTax = computed(() => {
@@ -455,9 +457,10 @@ export default defineComponent({
     const changeYear = (newVal: any) => {
       taxPayRef.value.firsTimeRow = true;
       isRunOnce.value = true;
-      // resetForm();
       incomeProcessExtrasParam.imputedYear = newVal;
       formTaxRef.value.isEdit = false;
+      store.commit('common/formEditPA720', formPA720.value);
+      formTaxRef.value.getEmployeeExtrasParams.imputedYear = newVal;
     }
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
@@ -476,7 +479,7 @@ export default defineComponent({
 
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone, onError: onErrorChangeStatus } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageUpdate);
       refetchIncomeProcessExtras();
     });
     onErrorChangeStatus((res: any) => {
@@ -492,7 +495,7 @@ export default defineComponent({
     };
     const onFormDone = (emit: Boolean) => {
       if (emit) {
-        if (!isClickMonthDiff.value) {
+        if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
         }
         formTaxRef.value.isEdit = true;
@@ -503,12 +506,17 @@ export default defineComponent({
       onCopyDone();
     };
     watch(changeFommDone, () => {
+      // if(isClickYearDiff.value){
       refetchIncomeProcessExtras();
+      // }
     });
     const actionEditDaySuccess = (emit: String) => {
       if (emit) {
         store.commit('common/formEditPA720', formPA720.value);
         changeFommDone.value++;
+      }
+      if (emit == formPA720.value.input.incomeId) {
+        formTaxRef.value.triggerIncomeExtra = true;
       }
       modalEdit.value = false;
     };
@@ -518,6 +526,7 @@ export default defineComponent({
       isColumnData.value = true;
       month.value = emit.imputedMonth;
       statusParam.value = { ...processKeyPA720.value, status: 10 };
+      formTaxRef.value.isEdit = false;
     };
 
     // ======================= track change of form ================================
@@ -560,13 +569,15 @@ export default defineComponent({
       store.commit('common/formEditPA720', dataActionUtilsPA720.value);
     };
     const addNewRow = async () => {
+      // store.commit('common/formPA720', dataActionUtilsPA720.value);
+      // store.commit('common/formEditPA720', dataActionUtilsPA720.value);
       await resetForm();
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
       formTaxRef.value.isEdit = false;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+      store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
     };
     const saveToNewRow = () => {
       store.state.common.isNewRowPA720 = true;
@@ -617,19 +628,23 @@ export default defineComponent({
         }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
-          isClickMonthDiff.value = false;
+          isClickYearDiff.value = false;
           return;
         }
         if (isClickEditDiff.value) {
           onEditItem();
           isClickEditDiff.value = false;
         }
+        if (isClickAddMonthDiff.value) {
+          addMonth(changeMonthDataFake.value);
+          isClickAddMonthDiff.value = false;
+        }
         if (isNewRowPA720.value) {
           taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value?.dataSourceDetail.length - 1);
           if (compareType.value == 1) {
             addNewRow();
             taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-            taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
+            store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
             return;
           }
         }
@@ -664,7 +679,7 @@ export default defineComponent({
         if (compareType1()) {
           delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
-          taxPayRef.value.selectedRowKeys = [emit.incomeId];
+          store.commit('common/selectedRowKeysPA720', emit.incomeId);
           editTaxParam.value = emit;
           formTaxRef.value.isEdit = true;
           return;
@@ -680,6 +695,75 @@ export default defineComponent({
         editTaxParam.value = emit;
       }
     };
+    //-----------------------submit-------------------------------------
+    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
+    const addItemClick = ref(true);
+    const onSubmit = () => {
+      if (isErrorFormPA720.value) {
+        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+        store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+        addItemClick.value = !addItemClick.value;
+        if (isClickYearDiff.value) {
+          watchGlobalYear();
+          store.state.settings.globalYear = changeYearDataFake.value;
+          watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+            if (compareType2()) {
+              changeYear(newVal)
+            } else {
+              compareType.value = 2;
+              rowChangeStatus.value = true;
+              isClickYearDiff.value = true;
+              changeYearDataFake.value = oldVal;
+            }
+          });
+        }
+      } else {
+        if (compareType.value == 3) {
+          return;
+        }
+        editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
+        taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
+        store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
+        store.state.common.isNewRowPA720 = false;
+        if (isClickMonthDiff.value) {
+          onChangeMonth(changeMonthDataFake.value);
+          isClickMonthDiff.value = false;
+          return;
+        }
+        if (isClickYearDiff.value) {
+          changeYear(globalYear.value);
+          isClickYearDiff.value = false;
+          return;
+        }
+        if (isClickEditDiff.value) {
+          onEditItem();
+          return;
+        }
+        if (isClickAddMonthDiff.value) {
+          addMonth(changeMonthDataFake.value);
+          return;
+        }
+      }
+    };
+    const subValidate = () => {
+      addItemClick.value = !addItemClick.value;
+      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
+      store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+      if (isClickYearDiff.value) {
+        watchGlobalYear();
+        store.state.settings.globalYear = changeYearDataFake.value;
+        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+          if (compareType2()) {
+            changeYear(newVal)
+          } else {
+            compareType.value = 2;
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
+      }
+    }
     // -------------------- Delete item in tax table --------------------
     const onDeleteItem = () => {
       deleteIncomeExtrasParam.value = {
@@ -710,90 +794,22 @@ export default defineComponent({
       }
       onEditItem();
     };
-    //-----------------------submit-------------------------------------
-    const isErrorFormPA720 = computed(() => store.getters['common/isErrorFormPA720']);
-    const addItemClick = ref(true);
-    const onSubmit = () => {
-      if (isErrorFormPA720.value) {
-        taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-        taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
-        addItemClick.value = !addItemClick.value;
-        if (isClickYearDiff.value) {
-          watchGlobalYear();
-          store.state.settings.globalYear = changeYearDataFake.value;
-          watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-            if (compareType2()) {
-              changeYear(newVal)
-            } else {
-              compareType.value = 2;
-              rowChangeStatus.value = true;
-              isClickYearDiff.value = true;
-              changeYearDataFake.value = oldVal;
-            }
-          });
-        }
-      } else {
-        if (compareType.value == 3) {
-          return;
-        }
-        editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
-        taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
-        taxPayRef.value.selectedRowKeys = compareType.value == 1 ? [formPA720.value.input?.incomeId] : [editTaxParamFake.value.incomeId];
-        store.state.common.isNewRowPA720 = false;
-        if (isClickMonthDiff.value) {
-          onChangeMonth(changeMonthDataFake.value);
-          isClickMonthDiff.value = false;
-          return;
-        }
-        if (isClickYearDiff.value) {
-          changeYear(globalYear.value);
-          isClickYearDiff.value = false;
-          return;
-        }
-        if (isClickEditDiff.value) {
-          onEditItem();
-        }
-      }
-    };
-    const subValidate = () => {
-      addItemClick.value = !addItemClick.value;
-      taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      taxPayRef.value.selectedRowKeys = [formPA720.value.input.incomeId];
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareType2()) {
-            changeYear(newVal)
-          } else {
-            compareType.value = 2;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-        });
-      }
-    }
-
     // -------------------Add data in month---------------------
-
-    const onAddMonth = (val: number) => {
-      dataModalCopy.value = val;
+    const isClickAddMonthDiff = ref(false);
+    const addMonth = (val: number) => {
       modalCopy.value = true;
+      dataModalCopy.value = val;
+    }
+    const onAddMonth = (val: number) => {
+      if (!compareType2()) {
+        rowChangeStatus.value = true;
+        isClickAddMonthDiff.value = true;
+        changeMonthDataFake.value = val;
+        return;
+      }
+      addMonth(val);
       // month.value = val;
     };
-    //get config to check default date type
-    const dateType = ref<number>(1);
-    const paymentDay = ref<number>(1);
-    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    const { result: resultConfig } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    watch(resultConfig, (newVal) => {
-      const data = newVal.getWithholdingConfig;
-      dateType.value = data.paymentType;
-      store.commit('common/paymentDayPA720', data.paymentDay);
-    });
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
     const changeMonthDataFake = ref();
@@ -865,10 +881,8 @@ export default defineComponent({
       isColumnData,
       paymentDateTax,
       inputDateTax,
-      dateType,
       addItemClick,
       formPA720,
-      paymentDay,
       rowChangeStatus,
       onDeleteItem,
       editItem,
@@ -894,7 +908,9 @@ export default defineComponent({
       isNewRowPA720,
       compareType,
       saveToNewRow,
-      editTaxParamFake
+      editTaxParamFake,
+      formEditPA720,
+      dataActionUtilsPA720
     };
   },
 });

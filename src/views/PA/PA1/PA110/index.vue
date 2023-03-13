@@ -3,7 +3,7 @@
         <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
-            <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
+            <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         key-expr="companyId" :show-borders="true"
@@ -200,7 +200,7 @@
             </a-row>
             <a-row :class="{
             'disabledBlock': statusDisabledBlock,
-            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}"
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
                 <a-col>
                     <div v-if="!statusDisabledBlock">
@@ -211,7 +211,7 @@
                             :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                             :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                         <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                            :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)" />
+                            :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)" />
                     </div>
                     <div v-else>
                         <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
@@ -225,7 +225,7 @@
                 </a-col>
             </a-row>
             <a-row :class="{'disabledBlock': statusDisabledBlock}">
-                <a-col :span="12" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.actionAddItem) || (store.state.common.statusChangeFormAdd&&store.state.common.actionAddItem)}">
+                <a-col :span="12" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
@@ -381,6 +381,7 @@ export default defineComponent({
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
         const trigger = ref<boolean>(true)
+        const triggerDataTaxPayInfo = ref<boolean>(true)
         let status = ref();
         const gridRef = ref(); // ref of grid
         const originData = ref({
@@ -393,6 +394,7 @@ export default defineComponent({
         })
         // const modalChangeRowPrice = ref(false)
         const isRunOnce = ref<boolean>(true);
+        const isRunOnceTaxPayInfo = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // call api getIncomeProcessWages for first table 
         const {
@@ -506,38 +508,57 @@ export default defineComponent({
             result: resultTaxPayInfo,
             loading: loadingTaxPayInfo,
         } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+            enabled: triggerDataTaxPayInfo.value,
             fetchPolicy: "no-cache",
         }))
         watch(resultTaxPayInfo, (value) => {
+            triggerDataTaxPayInfo.value = false;
             if (value) {
                 store.state.common.dataTaxPayInfo = value.getIncomeWages;
-                // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
+                // debugger
+                // if (value.getIncomeWages[0] && !store.state.common.statusFormAdd) { // if have data
                 if (value.getIncomeWages[0]) { // if have data
-                    if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
-                        store.state.common.focusedRowKey = store.state.common.incomeId
-                        // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
-                    } else {
-                        store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
-                        store.state.common.incomeId = value.getIncomeWages[0].incomeId
+                    // if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                    //     store.state.common.focusedRowKey = store.state.common.incomeId
+                    //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                    // } else {
+                        if (isRunOnceTaxPayInfo.value) {
+                            isRunOnceTaxPayInfo.value = false;
+                            store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
+                            store.state.common.incomeId = value.getIncomeWages[0].incomeId
+                            store.state.common.dataRowOnActive = value.getIncomeWages[0]
+                        } else {
+                            if (store.state.common.statusClickButtonSave) { // if click submit
+                                store.state.common.incomeId = store.state.common.dataIncomeIdBackend
+                            } else { // click save modal
+                                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+                            }
+                        }
                         // store.state.common.employeeId = value.getIncomeWages[0].employeeId
-                    }
-                    store.state.common.actionAddItem = false
+                    // }
+                    store.state.common.statusFormAdd = false
                 } else {
-                    store.state.common.actionAddItem = true
+                    store.state.common.statusFormAdd = true
                     store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
                     // store.state.common.employeeId = null;
                     store.state.common.actionResetForm++;
                 }
-                store.state.common.resetArrayEmploySelect++
             }
+            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                store.state.common.addRow++ // add row
+            } else { // call api detail
+                store.state.common.loadingFormData++
+            }
+            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
-            refetchDataTaxPayInfo() //reset data table 2
+            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // refetchDataTaxPayInfo() 
         })
 
         watch(() => status.value, (newVal) => {
@@ -547,11 +568,9 @@ export default defineComponent({
                 store.state.common.statusDisabledStatus = false;
             }
         })
-        watch(() => store.state.common.statusRowAdd, (newVal) => {
-            if (!newVal) {
-                gridRef.value?.instance.deselectAll()
-                dataRows.value = []
-            }
+        watch(() => store.state.common.addRow, (newVal) => {
+            gridRef.value?.instance.deselectAll()
+            dataRows.value = []
         })
         /**
          * action edit employ tax pay
@@ -587,6 +606,7 @@ export default defineComponent({
         }
         // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             status.value = month.status
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
@@ -639,6 +659,7 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             status.value = 10
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
         /**
@@ -668,16 +689,18 @@ export default defineComponent({
                     originDataTaxPayInfo.value.processKey.imputedYear = dataYearNew.value
                     // refetchDataProcessIncomeWages() //reset data table 1
                     trigger.value = true; //reset data table 1
-                    refetchDataTaxPayInfo() //reset data table 2
+                    triggerDataTaxPayInfo.value = true; //reset data table 2
+                    // refetchDataTaxPayInfo() //reset data table 2
                     // checkClickYear.value = false;
                     return;
                 }
                 if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
-                    store.state.common.actionAddItem = false
+                    store.state.common.statusFormAdd = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+                store.state.common.loadingFormData++
             }
         }
         // Preventing the user from selecting a row by clicking on the select button.
@@ -691,14 +714,16 @@ export default defineComponent({
                             modalChangeRow.value = true;
                             e.cancel = true;
                     } else { // cho chọn raw mới
-                        if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                        if (store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                            
                             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                             store.state.common.statusRowAdd = true
                         }
                         store.state.common.incomeId = e.rows[e.newRowIndex]?.data?.incomeId
+                        store.state.common.loadingFormData++
                     }
                     if (store.state.common.statusRowAdd) {
-                        store.state.common.actionAddItem = false
+                        store.state.common.statusFormAdd = false
                     }
                 }
             }
@@ -718,7 +743,8 @@ export default defineComponent({
                 originDataTaxPayInfo.value.processKey.imputedYear = newVal
                 // refetchDataProcessIncomeWages() //reset data table 1
                 trigger.value = true; //reset data table 1
-                refetchDataTaxPayInfo() //reset data table 2
+                // refetchDataTaxPayInfo() //reset data table 2
+                triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
         return {
