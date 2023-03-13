@@ -141,7 +141,7 @@
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
+                    :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -198,11 +198,11 @@
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
                     </template>
-                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="#,###" width="150px" />
-                    <DxColumn caption="비과세소득" data-field="totalTaxfreePay" format="#,###" width="150px" />
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="#,###" />
+                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="fixedPoint" width="150px" />
+                    <DxColumn caption="비과세소득" data-field="totalTaxfreePay" format="fixedPoint" width="150px" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" width="230px"
-                        format="#,###" />
+                        format="fixedPoint" />
                     <DxSummary>
                         <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
                         <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
@@ -215,11 +215,11 @@
                         <div class="custom-action" style="text-align: center;">
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
-                                @click="openPopup(data.data)" />
+                                @click.stop="openPopup(data.data)" />
                             <a-tooltip>
                                 <template #title>출력 / 저장</template>
                                 <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
-                                @click="actionPrint(data.data.employee.employeeId)" />
+                                @click.stop="actionPrint(data.data.employee.employeeId)" />
                             </a-tooltip>
                         </div>
                     </template>
@@ -268,6 +268,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        let vModalSelectedRowKeys: any = ref([])
         const arrCheckBoxSearch: any = reactive({
             quarter1: {
                 label: "1/4분기",
@@ -558,6 +559,7 @@ export default defineComponent({
             }
         };
         const openPopup = (res: any) => {
+            vModalSelectedRowKeys.value = [res.employee.employeeId]
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -600,6 +602,7 @@ export default defineComponent({
             return "과세소득합계: " + filters.formatCurrency(total)
         }
         const actionPrint = (res: any) => {
+            vModalSelectedRowKeys.value = [res]
             dataCallApiPrint.value = {
                 companyId: companyId,
                 employeeIds: [res],
@@ -636,7 +639,7 @@ export default defineComponent({
                 notification('error', Message.getCommonMessage('601').message)
         }
         const selectionChanged = (data: any) => {
-            selectedItemKeys.value = data.selectedRowKeys
+          selectedItemKeys.value = data.selectedRowKeys
         }
 
         const checkAll = () => {
@@ -698,7 +701,7 @@ export default defineComponent({
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
             printGroup, checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
-            clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4
+            clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4, vModalSelectedRowKeys
         };
     },
 });
