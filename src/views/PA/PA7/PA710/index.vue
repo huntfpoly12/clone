@@ -92,7 +92,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col span="8" class="custom-layout">
+                <a-col span="8" class="custom-layout" :class="{'disabledBlock': disabledBlock}">
                     <a-spin :spinning="loadingDetail" size="large" :key="resetFormNum"><StandardForm formName="pa-710-form" ref="pa710FormRef">
                         <a-form-item label="코드" :label-col="labelCol" class="red">
                             <div class="custom-note d-flex-center">
@@ -241,6 +241,10 @@ export default defineComponent({
         });
         let confirmSave = ref(false)
         const optionsRadio = ref([...initialOptionsRadio]);
+        let runOne = ref(true);
+        const dataYearNew = ref(globalYear.value)
+        const dataOldVal = ref(globalYear.value)
+        var disabledBlock = ref<boolean>(false);
 
         // ================GRAPQL==============================================
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
@@ -510,7 +514,8 @@ export default defineComponent({
                 }
             }
         }
-        const addRow = () => { 
+        const addRow = () => {
+            disabledBlock.value = false;
             statusClickButtonAdd.value = false;
             statusAddRow.value = false;
             listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
@@ -545,9 +550,9 @@ export default defineComponent({
         }
 
         // ================WATCHING============================================
-        let runOne = ref(true);
         watch(result, (value) => {
             trigger.value = false;
+            statusAddRow.value = true;
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
@@ -562,10 +567,16 @@ export default defineComponent({
                         triggerDetail.value = true;
                         statusFormUpdate.value = true;
                     } else {
+                        statusFormUpdate.value = false;
                         resetFormNum.value++;
                         Object.assign(formState.value, initialState);
                     }
                     runOne.value = false;
+                }
+                if (listEmployeeExtra.value.length) {
+                    disabledBlock.value = false;
+                } else {
+                    disabledBlock.value = true;
                 }
                 // listEmployeeExtra.value = value.getEmployeeExtras
                 
@@ -587,8 +598,21 @@ export default defineComponent({
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
         watch(globalYear, (newVal, oldVal) => {
-            runOne.value = true;
-            trigger.value = true;
+            // dataYearNew.value = newVal;
+            // dataOldVal.value = oldVal;
+            // console.log(1111);
+            
+            // let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+            // let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+            // if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
+            //     // await (modalStatusAdd.value = true)
+            //     a.value = true
+            //     // await (store.state.settings.globalYear = oldVal);
+            // } else {
+            //     a.value = false
+                runOne.value = true;
+                trigger.value = true;
+            // }
         });
 
         return {
@@ -596,7 +620,7 @@ export default defineComponent({
             confimSaveWhenChangeRow, onFocusedRowChanging,
             // actionToAddFromEdit, 
             textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef,
+            contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock,
         };
     },
 });

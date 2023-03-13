@@ -572,6 +572,11 @@ export default defineComponent({
             gridRef.value?.instance.deselectAll()
             dataRows.value = []
         })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-110") {
+                triggerDataTaxPayInfo.value = true; //reset data table 2
+            }
+        })
         /**
          * action edit employ tax pay
          */
