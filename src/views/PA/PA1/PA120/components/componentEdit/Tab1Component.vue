@@ -243,8 +243,13 @@ export default defineComponent({
     const {
       result: getValueDefault,
       loading,
+<<<<<<< HEAD
     } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
       enabled: getEmployeeWageTrigger.value,
+=======
+    } = useQuery(queries.getEmployeeWage, originDataDetail.value, () => ({
+      // enabled: getEmployeeWageTrigger.value,
+>>>>>>> eb398f6b9cb6f63e8541c5501950384402ccb18a
       fetchPolicy: 'no-cache',
     }));
     watch(getValueDefault, (value: any) => {
@@ -306,8 +311,14 @@ export default defineComponent({
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
     });
     watch(() => props.idRowEdit,(value: any) => {
+<<<<<<< HEAD
       originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
       getEmployeeWageTrigger.value = true;
+=======
+      console.log(`output->value`,value)
+      originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
+      // getEmployeeWageTrigger.value = true;
+>>>>>>> eb398f6b9cb6f63e8541c5501950384402ccb18a
     }, {deep: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
