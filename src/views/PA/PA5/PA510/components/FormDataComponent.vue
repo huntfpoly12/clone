@@ -124,8 +124,6 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
-                    <!-- <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" 
-                    :type="store.state.common.statusChangeFormPrice ? 'calculate' : 'default'" text="공제 재계산" /> -->
                     <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
                 </div>
             </a-tooltip>
@@ -328,20 +326,20 @@ export default defineComponent({
             dataIncomeWageDaily.value = data
             store.state.common.dataRowOld = { ...data }
             
-            arrDeduction.value?.map((data: any) => {
-                data.price = 0
+            arrDeduction.value?.map((row: any) => {
+                row.price = 0
                 dataIncomeWageDaily.value.deductionItems?.map((val: any) => {
-                    if (val.itemCode == data.itemCode) {
-                        data.price = val.amount
+                    if (val.itemCode == row.itemCode) {
+                        row.price = val.amount
                     }
                 })
             })
             store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
             store.state.common.focusedRowKey = data.incomeId
-            setTimeout(() => {
-                store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormAdd = false;
-            }, 500);
+            // setTimeout(() => {
+                // store.state.common.statusChangeFormEdit = false;
+                // store.state.common.statusChangeFormAdd = false;
+            // }, 500);
         })
 
 
@@ -383,7 +381,7 @@ export default defineComponent({
         watch(() => dataIncomeWageDaily.value, (value) => {
             // Checking if the data in the store has changed.
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
-                store.state.common.statusChangeFormPrice = true;
+                store.state.common.statusChangeFormPrice = true;               
                 store.state.common.statusChangeFormEdit = true;
             } else {
                 store.state.common.statusChangeFormEdit = false;
