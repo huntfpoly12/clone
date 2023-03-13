@@ -1,7 +1,7 @@
 <template>
     <div id="step2">
         <a-row gutter="24" class="search-form-step-1">
-            <a-col>{{ dataSearch.beforeProduction }}
+            <a-col>
                 <a-form-item label="지급연월" label-align="left">
                     <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
                 </a-form-item>
