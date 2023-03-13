@@ -135,9 +135,11 @@
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
                     <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
-                        style="border: none; margin-top: -2px;" >
-                        <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
-                        <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
+                        style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                          <div v-if="!loading">
+                            <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
+                            <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
+                          </div>
                     </DxButton>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
@@ -387,17 +389,13 @@ export default defineComponent({
             }
         };
         const checkModify = (data: any) => {
-            if (data.status == 40) {
-                let reportClassCodes = dataSource.value.filter((value: any) => value.reportClassCode == data.reportClassCode)
-                let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
-                if (indexMax == data.index) {
-                    return true;
-                } else {
-                    return false;
-                }
+          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode) && value.status == 40)
+          let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
+            if (indexMax == data.index) {
+              return true;
             } else {
-                return false;
-            }
+              return false;
+          }
         }
 
         const onRowClick = (data: any) => {
