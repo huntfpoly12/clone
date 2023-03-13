@@ -37,9 +37,13 @@
               </template>
 
 
-              <DxColumn caption="금융기관" data-field="type" />
+              <DxColumn caption="금융기관" data-field="type">
+                <DxLookup :data-source="bankTypeCommon" value-expr="c" display-expr="n" />
+              </DxColumn>
               <DxColumn caption="통장번호" data-field="bankbookNumber" />
-              <DxColumn caption="통장용도" data-field="useType" />
+              <DxColumn caption="통장용도" data-field="useType">
+                <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
+              </DxColumn>
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
               <DxColumn caption="사업구분" />
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
@@ -191,7 +195,7 @@ import queries from "@/graphql/queries/CM/CM121";
 import mutations from "@/graphql/mutations/CM/CM121";
 import dayjs, { Dayjs } from "dayjs";
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
@@ -204,7 +208,7 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
-    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup
+    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup, DxLookup
   },
   setup() {
     const store = useStore();
@@ -471,6 +475,10 @@ export default defineComponent({
       newTasks.splice(fromIndex, 1);
       newTasks.splice(toIndex, 0, e.itemData);
       dataSource.value = newTasks;
+      const sortTo = dataSource.value[fromIndex].sort
+      const sortFrom = e.itemData.sort
+      dataSource.value[toIndex].sort = sortTo
+      dataSource.value[fromIndex].sort = sortFrom
       reorderBankbooks({
         companyId: companyId,
         fiscalYear: globalYear.value,
@@ -478,11 +486,11 @@ export default defineComponent({
         inputs: [
           {
             bankbookId: e.itemData.bankbookId,
-            sort: dataSource.value[fromIndex].sort
+            sort: sortTo
           },
           {
             bankbookId: dataSource.value[fromIndex].bankbookId,
-            sort: e.itemData.sort,
+            sort: sortFrom
           },
         ]
       })
