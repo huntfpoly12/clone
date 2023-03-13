@@ -257,12 +257,12 @@ export default defineComponent({
     const triggerDetail = ref<boolean>(false);
     const presidentEditPA120 = computed(() => store.state.common.presidentEditPA120);
 
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     const initFormTab2PA120 = computed(() => store.state.common.initFormTab2PA120);
     const editRowTab2PA120 = computed(() => store.state.common.editRowTab2PA120);
     const employeeWageParam = ref({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: yearPA120.value,
       employeeId: employeeId.value,
     })
     const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport);
@@ -277,24 +277,24 @@ export default defineComponent({
       return dayjs(dateData, 'YYYY/MM/DD');
     };
     // change row data
-    watch(
-      () => props.idRowEdit,
-      async () => {
+    watchEffect(async()=>{
+      if(ref(props.idRowEdit).value || yearPA120){
+        console.log(`output->thay doi year va id`)
         countRestFirstRun.value = 0;
         countConfigPayItems.value = 0;
         triggerDetail.value = false;
+        // originDataDetail.value.imputedYear = yearPA120.value;
         await refetchConfigDeduction();
         await refetchConfigPayItems();
-        console.log('2');
         store.state.common.isCalculateEditPA120 = true;
       }
-    );
+    })
 
     // get WithouthouldingConfigdeduction
 
     const originDataDetail = ref({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: yearPA120.value,
       useOnly: true,
     });
     const {
@@ -386,7 +386,7 @@ export default defineComponent({
         });
         employeeWageParam.value = {
           companyId: companyId,
-          imputedYear: globalYear.value,
+          imputedYear: yearPA120.value,
           employeeId: employeeId.value,
         }
         triggerDetail.value = true;
@@ -481,7 +481,7 @@ export default defineComponent({
 
     const calculateVariables = reactive({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: yearPA120.value,
       totalTaxPay: -1,
       dependentCount: 1,
     })
@@ -699,7 +699,7 @@ export default defineComponent({
       });
       const variables = {
         companyId: companyId,
-        imputedYear: globalYear.value,
+        imputedYear: yearPA120.value,
         employeeId: employeeId.value,
         input: {
           ...initFormTab2PA120.value,

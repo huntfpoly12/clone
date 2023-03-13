@@ -1,8 +1,8 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      <!-- {{ originDataDetail }} originDataDetail <br />
-      {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
+      {{ originDataDetail }} originDataDetail <br />
+      <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -308,10 +308,10 @@ export default defineComponent({
     watch(() => props.idRowEdit,(value: any) => {
       originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
       getEmployeeWageTrigger.value = true;
-      // getEmployeeWageTrigger.value = true;
-    }, {deep: true});
+    }, {immediate: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
+        console.log(`output->newVal`,newVal);
       initFormStateTabPA120.value.name = newVal.toUpperCase();
     }, { deep: true })
     const changeTextCountry = (text: any) => {

@@ -241,7 +241,6 @@ export default defineComponent({
        emit('setTabsStatus', false);
        notification("success", `사원등록이 완료되었습니다! `);
        store.commit('common/actionFormDonePA120')
-       store.commit('common/keyActivePA120', employeeId.value);
        store.state.common.isCompareEditPA120 = false;
        store.state.common.isNewRowPA120 = false;
        store.state.common.isAddFormErrorPA120 = false;
@@ -278,7 +277,10 @@ export default defineComponent({
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
 // convert initFormStateTabPA120.value.name to uppercase
     watch(()=> initFormStateTabPA120.value.name,(newVal)=> {
-        initFormStateTabPA120.value.name = newVal.toUpperCase();
+      if(newVal){
+        console.log(`output->newVal`,newVal);
+        initFormStateTabPA120.value.name = newVal;
+      }
     },{deep: true})
     const changeTextCountry = (text: any) => {
         initFormStateTabPA120.value.nationality = text
