@@ -1,7 +1,7 @@
 <template>
     <div id="tab2-pa520"> 
       <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
-        <div class="header-text-1">공제</div>
+        <div class="header-text-1">공제</div> {{ store.state.common.idRowChangePa520 }} {{ idRowEdit }} {{ validateCalculate }}
         <a-row :gutter="16">
             <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -319,7 +319,7 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch([()=> props.idRowEdit,() => store.state.common.idRowChangePa520], (res) => {
-          if (!store.state.common.checkChangeValueEditTab2PA520) {
+          if (!store.state.common.checkChangeValueEditTab2PA520 && !isBtnYellow.value) {
               originDataDetail.value.employeeId = store.state.common.idRowChangePa520
               trigger.value = true
               refectchDetail()
@@ -333,17 +333,15 @@ export default defineComponent({
             })
             totalDeduction.value = total
         }, { deep: true })
-        watch(() => store.state.common.actionSaveTab2PA520, (res) => {
-            actionUpdated()
-        }, { deep: true })
-   
         watch(() => store.state.common.actionUpdateTab2PA520, () => {
           if (!isBtnYellow.value) {
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
             trigger.value = true
             refectchDetail()
-          } 
+          } else {
+            validateCalculate.value = true
+          }
         })
         
         // if any change in tab 2 color button is change color orage
