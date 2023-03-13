@@ -42,13 +42,14 @@
     <a-row>
         <a-col :span="14" class="custom-layout" :class="{'ele-opacity':!compareForm()}">
             <a-spin :spinning="(loadingTableDetail)" size="large">
-              <!-- {{ selectedRowKeys }} selectedRowKeys <br/> -->
+              <!-- {{ selectedRowKeys }} selectedRowKeys <br/>
+              {{ processKeyPA620 }} processKeyPA620 <br/> -->
               <!-- {{ dataSourceDetail }} dataSourceDetail <br/> -->
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
                     :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
                     :onRowClick="onRowClick" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     :focused-row-enabled="true" @selection-changed="selectionChanged" @cell-click="onCellClick"
-                    v-model:focused-row-key="focusedRowKey" v-model:selected-row-keys="selectedRowKeys">
+                    v-model:focused-row-key="focusedRowKey" v-model:selected-row-keys="selectedRowKeys" @contentReady="onContentReady">
                     <DxSelection select-all-mode="allPages" mode="multiple" />
                     <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                     <template #tag="{ data }">
@@ -293,7 +294,6 @@ export default defineComponent({
         }));
         const isFirstChange = ref(true);
         resIncomeProcessBusinessesDetail(res => {
-            selectedRowKeys.value = [];
             const val = res.data.getIncomeBusinesses;
             dataSourceDetail.value = val;
             //If you change the current year and no data, return the values to empty
@@ -343,7 +343,10 @@ export default defineComponent({
         watch(resDetailEdit, (newValue) => {
             if (newValue) {
                 let data = newValue.getIncomeBusiness;
-                selectedRowKeys.value=[data.incomeId];
+                if(!isClickEditDiff.value){
+                  selectedRowKeys.value = [data.incomeId];
+                }
+                console.log(`output->data.incomeId`,data)
                 let rowData: any = {};
                 rowData.paymentDay = data.paymentDay
                 rowData.employeeId = data.employeeId
@@ -537,7 +540,7 @@ export default defineComponent({
             dataAction.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
         } 
         
-        const selectedRowKeys = ref<any>([634]);
+        const selectedRowKeys = ref<any>([]);
         const onCellClick = (e: any) => {
           if(e.columnIndex === 0 && e.column.type =='selection') {
             focusedRowKey.value = dataAction.value.input?.incomeId;
@@ -563,12 +566,12 @@ export default defineComponent({
             }
             modalDelete.value = false;
         }
-        const actionEditSuccess = (val: Boolean) => {
-            if(val){
+        const actionEditSuccess = (val: any) => {
+            if(val == dataAction.value.input.incomeId){
               triggerDetail.value = true;
               dataActionEdit.value.input = {...dataAction.value.input};
               triggerDetailDetailEdit.value = true;
-              selectedRowKeys.value = [dataAction.value.input.incomeId]
+              selectedRowKeys.value = [dataAction.value.input.incomeId];
               emit('createdDone', true);
             }
             modalEdit.value = false;
@@ -641,13 +644,16 @@ export default defineComponent({
         // -------------------------ACTION FORM--------------------------------
 
         const onChangeFormdone = () => {
+          if(!isClickEditDiff.value){
+            selectedRowKeys.value = [dataAction.value.input.incomeId];
+            return;
+          }
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
             triggerDetail.value =  true;
             disabledInput.value = true;
             dataActionEdit.value.input = {...dataAction.value.input};
             isNewRow.value = false;
             focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-            selectedRowKeys.value=[focusedRowKey.value];
             if (isClickYearDiff.value) {
               emit('noSave', 1, globalYear.value);
               isClickYearDiff.value = false;
@@ -683,7 +689,9 @@ export default defineComponent({
             });
           }
           focusedRowKey.value = dataAction.value.input.incomeId;
-          selectedRowKeys.value = [dataAction.value.input.incomeId];
+          if(!isClickEditDiff.value){
+            selectedRowKeys.value = [dataAction.value.input.incomeId];
+          }
         }
         const {
             mutate: actionCreated,
@@ -694,7 +702,7 @@ export default defineComponent({
 
         doneCreated(res => {
             emit('createdDone', true)
-            notification('success', messageSave)
+            notification('success', `업데이트 완료!`)
             if(compareType.value == 3){
               dataActionEdit.value.input = {...dataAction.value.input};
               triggerDetail.value = true;
@@ -740,7 +748,9 @@ export default defineComponent({
           if (!res.isValid) {
             res.brokenRules[0].validator.focus();
             focusedRowKey.value = dataAction.value.input.incomeId;
-            selectedRowKeys.value = [dataAction.value.input.incomeId];
+            if(!isClickEditDiff.value){
+              selectedRowKeys.value = [dataAction.value.input.incomeId];
+            }
             if (isClickYearDiff.value) {
               watchGlobalYear();
               store.state.settings.globalYear = changeYearDataFake.value;
@@ -798,10 +808,14 @@ export default defineComponent({
           }
           return text ? text : '';
         };
+        //
+        const onContentReady = (e: any) => {
+          // selectedRowKeys.value = [dataAction.value.input.incomeId];
+        }
         return {
             loadingOption, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess,compareType
+            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess,compareType,onContentReady
         }
     }
 });

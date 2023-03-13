@@ -201,10 +201,10 @@
     <!-- {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
     {{ compareType }} compareType <br />
-    {{ formPA720.input }} formPA720.input <br />
     {{ formEditPA720.input }} formEditPA720.input <br />
     {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
     {{ editTaxParamFake }} editTaxParamFake <br /> -->
+    <!-- {{ formPA720.input }} formPA720.input <br /> -->
     <a-row :class="{ 'ele-opacity': !compareType2() }"
       style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
@@ -662,10 +662,15 @@ export default defineComponent({
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
-    const editTax = (emit: any, firsTimeRow: boolean) => {
+    const editTax = async(emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
       if (!emit.incomeId) {
-        resetForm()
+        // resetForm();
+        // await formTaxRef.value.pa720FormRef.resetValidate();
+        // setTimeout(()=>{
+        //   // store.commit('common/formPA720', dataActionUtilsPA720.value);
+        // },100)
+        // store.commit('common/formEditPA720', dataActionUtilsPA720.value);
         formTaxRef.value.isEdit = false;
         return;
       }
