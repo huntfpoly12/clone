@@ -260,7 +260,8 @@ export default defineComponent({
     });
     //change year
     const isClickYearDiff = ref(false);
-    const changeYearDataFake = ref();
+    // const changeYearDataFake = ref();
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     const changeYear = (newVal: any) => {
       isFirstRun.value = true;
       originData.value.imputedYear = newVal;
@@ -276,7 +277,7 @@ export default defineComponent({
         compareType.value = 2;
         rowChangeStatus.value = true;
         isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
+        store.state.common.yearPA120 = oldVal;
       }
     });
     // addcomponent
@@ -432,8 +433,7 @@ export default defineComponent({
         });
         isClickYearDiff.value = false;
         return;
-      }
-      if (tabCurrent.value == 2) {
+Current.value == 2) {
         store.commit('common/activeTabEditKeyPA120', '2');
       } else {
         store.commit('common/activeTabEditKeyPA120', '1');
