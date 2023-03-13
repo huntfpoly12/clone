@@ -338,6 +338,16 @@ export default defineComponent({
     const productionStatusData = (emitVal: any) => {
       productionStatusArr.value = [emitVal];
     };
+
+    watch(() => originData.beforeProduction, (value) => {
+      checkbox1.value = value
+      checkbox2.value = value
+      checkbox3.value = value
+      checkbox4.value = value
+    },
+    {
+      immediate: true
+    })
     return {
       globalYear,
       originData,
