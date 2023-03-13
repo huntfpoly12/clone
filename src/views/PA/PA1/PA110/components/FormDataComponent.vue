@@ -22,28 +22,28 @@
                     <div class="summary">
                         <div class="d-flex-center">
                             <span class="w-120">소득수당합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItem" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-110">수당 과세합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalPayItemTaxFree" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItemTaxFree" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="text2 d-flex-center">
                             <span class="w-110">수당 비과세 합계</span>
                             <number-box-money :disabled="true" width="100px"
-                                v-model:valueInput="dataIW.totalPayItemTax" />
+                                v-model:valueInput="totalPayItemTax" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="d-flex-center">
                             <span class="w-120">공제 합계</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.totalDeduction" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="totalDeduction" />
                             <span class="pl-5">원</span>
                         </div>
                         <div class="d-flex-center">
                             <span class="w-120">차인지급액</span>
-                            <number-box-money :disabled="true" width="100px" v-model:valueInput="dataIW.subPayment" />
+                            <number-box-money :disabled="true" width="100px" v-model:valueInput="subPayment" />
                             <span class="pl-5">원</span>
                             <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
                                 <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -100,10 +100,10 @@
             <div class="header-text-3">급여 / 공제</div>
             <a-row :gutter="16">
                 <a-col :span="13">
-                    <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(dataIW.totalPayItem) }} 원 = {{
-                        $filters.formatCurrency(dataIW.totalPayItemTaxFree)
+                    <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = {{
+                        $filters.formatCurrency(totalPayItemTaxFree)
                     }} 과 + {{
-    $filters.formatCurrency(dataIW.totalPayItemTax)
+    $filters.formatCurrency(totalPayItemTax)
 }} 비 </div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
@@ -131,7 +131,7 @@
                     </a-spin>
                 </a-col>
                 <a-col :span="11">
-                    <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(dataIW.totalDeduction) }} 원 </div>
+                    <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
                     <a-spin :spinning="loadingConfigDeductions" size="large">
                         <div class="deduction-main">
                             <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
@@ -271,6 +271,12 @@ export default defineComponent({
             incomeId: 0
         })
 
+        const totalPayItem = ref<number>(0)
+        const totalPayItemTax = ref<number>(0)
+        const totalPayItemTaxFree = ref<number>(0)
+        const totalDeduction = ref<number>(0)
+        const subPayment = ref<number>(0)
+
         // ============ GRAPQL ===============================
         // get employeewage
         const { loading: loadingEmployeeWage, onResult: resEmployeeWage } = useQuery(queries.getEmployeeWages, originData, () => ({
@@ -358,10 +364,10 @@ export default defineComponent({
                 value.data.getWithholdingConfigDeductionItems.map((item: any) => {
                     if ([1001, 1002, 1003, 1004, 1011, 1012].includes(item.itemCode)) {
                         let amount = 0
-                        dataIW.value.deductionItems.map((e: any) => {
-                            if (e.itemCode == item.itemCode)
-                                amount = e.amount
-                        })
+                        // dataIW.value.deductionItems.map((e: any) => {
+                        //     if (e.itemCode == item.itemCode)
+                        //         amount = e.amount
+                        // })
                         dataConfigDeductions.value.push({
                             itemCode: item.itemCode,
                             name: item.name,
@@ -425,7 +431,7 @@ export default defineComponent({
         // ===================WATCH==================================
         watch(() => store.state.common.loadingFormData, (value) => {
             // triggerDetail.value = true;
-            if (value && value != 'PA110') {
+            if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
                 incomeWageParams.incomeId = store.state.common.incomeId
                 triggerDetail.value = true;
             } else {
@@ -436,12 +442,21 @@ export default defineComponent({
         })
 
         watch(() => dataConfigDeductions.value, (value) => {
+            store.state.common.statusChangeFormEdit = true;
             calculateTax();
         }, { deep: true })
 
         watch(() => dataConfigPayItems.value, (value) => {
+            store.state.common.statusChangeFormEdit = true;
+            store.state.common.statusChangeFormPrice = true;
             calculateTax();
         }, { deep: true })
+
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-110") {
+                triggerEmployeeWages.value = true; //reset data table 2
+            }
+        })
 
         // watch(() => store.state.common.incomeId, async (value) => {
         //     if (value && value != 'PA110') {
@@ -494,6 +509,9 @@ export default defineComponent({
         watch(() => dataIW.value, (value) => {
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
+                // console.log(JSON.stringify(store.state.common.dataRowOld));
+                // console.log(JSON.stringify(dataIW.value));
+                
             } else {
                 store.state.common.statusChangeFormEdit = false
             }
@@ -528,10 +546,27 @@ export default defineComponent({
             submitForm()
         })
 
-        watch(result, (value) => {
+        watch(result, async (value) => {
             triggerDetail.value = false;
             let data = value.getIncomeWage
             if (data) {
+                await (dataConfigPayItems.value?.map((row: any) => {
+                    row.amount = 0
+                    data.payItems?.map((item: any) => {
+                        if (row.itemCode == item.itemCode) {
+                            row.amount = item.amount;
+                        }
+                    })
+                }));
+
+                await (dataConfigDeductions.value?.map((row: any) => {
+                    row.amount = 0
+                    data.deductionItems?.map((item: any) => {
+                        if (row.itemCode == item.itemCode) {
+                            row.amount = item.amount;
+                        }
+                    })
+                }));
                 dataIW.value.employee.employeeId = data.employee.employeeId
                 dataIW.value.paymentDay = data.paymentDay
                 dataIW.value.workingDays = data.workingDays
@@ -541,39 +576,28 @@ export default defineComponent({
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
                 dataIW.value.workingHoursOnHolidays = data.workingHoursOnHolidays
-                dataConfigPayItems.value?.map((data: any) => {
-                    data.amount = 0
-                })
-                data.payItems?.map((item: any) => {
-                    dataIW.value.payItems.push({ itemCode: item.itemCode, amount: item.amount })
-                    dataConfigPayItems.value?.find((Obj: any) => {
-                        if (item.itemCode == Obj.itemCode) {
-                            Obj.amount = item.amount;
-                        }
-                    });
-                })
 
-                dataConfigDeductions.value?.map((data: any) => {
-                    data.amount = 0
-                })
-                data.deductionItems?.map((item: any) => {
-                    dataIW.value.deductionItems.push({ itemCode: item.itemCode, amount: item.amount })
-                    dataConfigDeductions.value.find((Obj: any) => {
-                        if (item.itemCode == Obj.itemCode) {
-                            Obj.amount = item.amount;
-                        }
-                    });
-                })
-                // originDataEmployeeWage.employeeId = data.employee.employeeId
-                // employeeWageTrigger.value = true;
-                calculateTax();
+                // dataConfigDeductions.value?.map((item: any) => {
+                //     item.amount = 0
+                // })
+                // data.deductionItems?.map((item: any) => {
+                //     // dataIW.value.deductionItems.push({ itemCode: item.itemCode, amount: item.amount })
+                //     dataConfigDeductions.value.find((Obj: any) => {
+                //         if (item.itemCode == Obj.itemCode) {
+                //             Obj.amount = item.amount;
+                //         }
+                //     });
+                // })
+                // console.log(dataIW.value);
+                
+                store.state.common.dataRowOld = { ...dataIW.value }
                 store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
                 store.state.common.focusedRowKey = data.incomeId
-                store.state.common.dataRowOld = { ...dataIW.value }
-                setTimeout(() => {
-                    store.state.common.statusChangeFormEdit = false;
-                    store.state.common.statusChangeFormPrice = false;
-                }, 200);
+                
+                // setTimeout(() => {
+                    // store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormPrice = false;
+                // }, 200);
                 
             }
         })
@@ -592,7 +616,7 @@ export default defineComponent({
                 await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
 
-                await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
+                // await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
                 
                 await (dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction);
                 await (dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction);
@@ -602,30 +626,49 @@ export default defineComponent({
                 await (dataIW.value.employee.employeementReductionRatePercent = newVal.getEmployeeWage.employeementReductionRatePercent);
                 await (dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification);
 
-                if (newVal.getEmployeeWage.payItems) {
-                    dataConfigPayItems.value.map((data: any) => {
-                        data.amount = 0
-                    })
-                    newVal.getEmployeeWage.payItems.map((item: any) => {
-                        dataConfigPayItems.value.find((Obj: any) => {
-                            if (item.itemCode == Obj.itemCode) {
-                                Obj.amount = item.amount;
+                // if (newVal.getEmployeeWage.payItems) {
+                    // dataConfigPayItems.value.map((data: any) => {
+                    //     data.amount = 0
+                    // })
+                    // newVal.getEmployeeWage.payItems.map((item: any) => {
+                    //     dataConfigPayItems.value.find((Obj: any) => {
+                    //         if (item.itemCode == Obj.itemCode) {
+                    //             Obj.amount = item.amount;
+                    //         }
+                    //     });
+                    // })
+                    dataConfigPayItems.value?.map((row: any) => {
+                        row.amount = 0
+                        newVal.getEmployeeWage.payItems?.map((item: any) => {
+                            if (row.itemCode == item.itemCode) {
+                                row.amount = item.amount;
                             }
-                        });
-                    })
-                }
-                if (newVal.getEmployeeWage.deductionItems) {
-                    dataConfigDeductions.value.map((data: any) => {
-                        data.amount = 0
-                    })
-                    newVal.getEmployeeWage.deductionItems.map((item: any) => {
-                        dataConfigDeductions.value.find((Obj: any) => {
-                            if (item.itemCode == Obj.itemCode) {
-                                Obj.amount = item.amount;
+                        })
+                    });
+                // }
+                
+
+                
+                // if (newVal.getEmployeeWage.deductionItems) {
+                    // dataConfigDeductions.value.map((data: any) => {
+                    //     data.amount = 0
+                    // })
+                    // newVal.getEmployeeWage.deductionItems.map((item: any) => {
+                    //     dataConfigDeductions.value.find((Obj: any) => {
+                    //         if (item.itemCode == Obj.itemCode) {
+                    //             Obj.amount = item.amount;
+                    //         }
+                    //     });
+                    // })
+                    dataConfigDeductions.value?.map((row: any) => {
+                        row.amount = 0
+                        newVal.getEmployeeWage.deductionItems?.map((item: any) => {
+                            if (row.itemCode == item.itemCode) {
+                                row.amount = item.amount;
                             }
-                        });
-                    })
-                }
+                        })
+                    });
+                // }
                 calculateTax();
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
@@ -643,9 +686,9 @@ export default defineComponent({
             }
         })
         
-        watch(() => dataIW.value.totalPayItem, (value) => {
-            store.state.common.statusChangeFormPrice = true;
-        })
+        // watch(() => totalPayItem.value, (value) => {
+        //     store.state.common.statusChangeFormPrice = true;
+        // })
 
         watch(globalYear, (newVal) => {
             originData.imputedYear = newVal
@@ -704,49 +747,50 @@ export default defineComponent({
                 }
             }
         }
+        
         //  Calculate Pension Employee 
         const calculateTax = async () => {
-            await (dataIW.value.totalPayItem = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            await (totalPayItem.value = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
             }, 0));
-            await (dataIW.value.totalPayItemTax = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            await (totalPayItemTax.value = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 if (object.taxfreePayItemCode) {
                     accumulator += object.amount
                 }
                 return accumulator;
             }, 0));
-            await (dataIW.value.totalPayItemTaxFree = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
+            await (totalPayItemTaxFree.value = dataConfigPayItems.value?.reduce((accumulator: any, object: any) => {
                 if (!object.taxfreePayItemCode) {
                     accumulator += object.amount
                 }
                 return accumulator;
             }, 0));
-            await (dataIW.value.totalDeduction = dataConfigDeductions.value?.reduce((accumulator: any, object: any) => {
+            await (totalDeduction.value = dataConfigDeductions.value?.reduce((accumulator: any, object: any) => {
                 return accumulator + object.amount;
             }, 0));
-            await (dataIW.value.subPayment = dataIW.value.totalPayItem - dataIW.value.totalDeduction)
+            await (subPayment.value = totalPayItem.value - totalDeduction.value)
         }
 
         // open popup deduction
         const actionDedution = () => {
             dataConfigDeductions.value?.map((item: any) => {
                 if (item.itemCode == 1001) {
-                    let total1 = calculateNationalPensionEmployee(dataIW.value.totalPayItem) ?? 0
+                    let total1 = calculateNationalPensionEmployee(totalPayItem.value) ?? 0
                     item.amountNew = total1
                 }
                 if (item.itemCode == 1002) {
-                    let total2 = calculateHealthInsuranceEmployee(dataIW.value.totalPayItem) ?? 0
+                    let total2 = calculateHealthInsuranceEmployee(totalPayItem.value) ?? 0
                     item.amountNew = total2
                 }
                 if (item.itemCode == 1003) {
-                    let total3 = calculateLongTermCareInsurance(dataIW.value.totalPayItem) ?? 0
+                    let total3 = calculateLongTermCareInsurance(totalPayItem.value) ?? 0
                     item.amountNew = total3
                 }
                 if (item.itemCode == 1004) {
-                    let total4 = calculateEmployeementInsuranceEmployee(dataIW.value.totalPayItem) ?? 0
+                    let total4 = calculateEmployeementInsuranceEmployee(totalPayItem.value) ?? 0
                     item.amountNew = total4
                 }
-                calculateVariables.totalTaxPay = dataIW.value.totalPayItemTax
+                calculateVariables.totalTaxPay = totalPayItemTax.value
                 triggerCalcIncome.value = true
             })
             modalDeductions.value = true
@@ -755,7 +799,7 @@ export default defineComponent({
             dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew
-                dataIW.value.deductionItems[index] = { amount: val.amountNew, itemCode: val.itemCode }
+                // dataIW.value.deductionItems[index] = { amount: val.amountNew, itemCode: val.itemCode }
             })
             setTimeout(() => {
                 store.state.common.statusChangeFormPrice = false;
@@ -803,6 +847,11 @@ export default defineComponent({
             updateDataDeduction,
             showErrorButton,
             submitForm, onSubmitForm,
+            totalPayItem,
+        totalPayItemTax,
+        totalPayItemTaxFree,
+        totalDeduction,
+        subPayment,
         };
     },
 });

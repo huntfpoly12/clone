@@ -10,7 +10,7 @@
             <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
               :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
               key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
-              v-model:focused-row-key="focusedRowKey" :onRowClick="selectionItem">
+              v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
               <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :show-drag-icons="true" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
@@ -32,7 +32,7 @@
               </template>
               <template #button-history>
                 <DxButton icon="plus">
-                  <HistoryOutlined style="font-size: 18px;" @click="modalHistory"/>
+                  <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
                 </DxButton>
               </template>
 
@@ -41,15 +41,16 @@
               <DxColumn caption="통장번호" data-field="bankbookNumber" />
               <DxColumn caption="통장용도" data-field="useType" />
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
-              <DxColumn caption="사업구분"  />
+              <DxColumn caption="사업구분" />
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
               <template #action="{ data }">
                 <div style="text-align: center">
-                  <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;" @click="showPopupLastScrapingStatus(data.data)" />
+                  <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
+                    @click="showPopupLastScrapingStatus(data.data)" />
                 </div>
               </template>
-              <DxColumn :width="50" cell-template="delete" css-class="cell-center"/>
+              <DxColumn :width="50" cell-template="delete" css-class="cell-center" />
               <template #delete="{ data }">
                 <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px"
                   @click="deleteBankBook(data.data)" />
@@ -94,7 +95,8 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" />
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" 
+                      :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private"/>
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -174,10 +176,10 @@
         @dataRegisterBankbook="dataRegisterBankbook" />
       <PopupDeleteBankbook :isModalDelete="isModalDelete" @closePopup="isModalDelete = false"
         @agreeDeleteBankbook="agreeDeleteBankbook" />
-      <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus" @closePopup="isModalLastScrapingStatus = false"
-        @agreeDeleteBankbook="agreeDeleteBankbook" />
+      <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus"
+        @closePopup="isModalLastScrapingStatus = false" @agreeDeleteBankbook="agreeDeleteBankbook" />
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupHistoryData"
-        title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" />
+        title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" keyExpr="bankbookId" />
     </a-row>
   </div>
 </template>
@@ -274,8 +276,13 @@ export default defineComponent({
       },
     })
     let isCreate = ref<boolean>(false)
+    const isSetTypeClassification: any = ref({
+      corporate: true,
+      private: true
+    })
     // ============ GRAPQL ===============================
 
+    // get list bankbook
     const {
       result: resBankbooks,
       // onResult: onResBankbooks,
@@ -290,7 +297,75 @@ export default defineComponent({
         enabled: triggerBankbooks.value,
         fetchPolicy: "no-cache",
       }))
-      
+
+    // get detail bankbook
+    const {
+      result: resBankbook,
+      // onResult: onResBankbooks,
+      loading: loadingGetBankbook,
+      // refetch,
+      // onError
+    } = useQuery(queries.getBankbook, paramBankbookDetail,
+      () => ({
+        enabled: triggerBankbook.value,
+        fetchPolicy: "no-cache",
+      }))
+
+    // update sort
+    const {
+      mutate: reorderBankbooks,
+      onDone: doneReorderBankbooks,
+      onError: errorReorderBankbooks,
+      loading: loadingReorderBankbooks,
+    } = useMutation(mutations.reorderBankbooks);
+
+    // create bankbook
+    const {
+      mutate: createBankbook,
+      onDone: doneCreateBankbook,
+      onError: errorCreateBankbook,
+      loading: loadingCreateBankbook,
+    } = useMutation(mutations.createBankbook);
+    doneCreateBankbook((e) => {
+      notification('success', `업데이트 완료!`)
+      isNewCreate.value = true
+      triggerBankbooks.value = true
+    })
+    errorCreateBankbook(e => {
+      notification('error', e.message)
+    })
+
+    // update bankbook
+    const {
+      mutate: updateBankbook,
+      onDone: doneUpdateBankbook,
+      onError: errorUpdateBankbook,
+      loading: loadingUpdateBankbook,
+    } = useMutation(mutations.updateBankbook);
+    doneUpdateBankbook((e) => {
+      notification('success', `업데이트 완료!`)
+      triggerBankbooks.value = true
+    })
+    errorUpdateBankbook(e => {
+      notification('error', e.message)
+    })
+
+    // delete bankbook
+    const {
+      mutate: deleteBankbook,
+      onDone: doneDeleteBankbook,
+      onError: errorDeleteBankbook,
+      loading: loadingDeleteBankbook,
+    } = useMutation(mutations.deleteBankbook);
+    doneDeleteBankbook((e) => {
+      notification('success', `업데이트 완료!`)
+      triggerBankbooks.value = true
+    })
+    errorDeleteBankbook(e => {
+      notification('error', e.message)
+    })
+
+    // -----------WATCH-------------
     watch(resBankbooks, (value) => {
       if (value.getBankbooks) {
         dataSource.value = value.getBankbooks
@@ -321,7 +396,7 @@ export default defineComponent({
             }
             isCreate.value = false
             triggerBankbook.value = true
-          }else {
+          } else {
             focusedRowKey.value = null
             resetDataDetail()
             isCreate.value = true
@@ -334,18 +409,8 @@ export default defineComponent({
       triggerBankbooks.value = false
     })
 
-    const {
-      result: resBankbook,
-      // onResult: onResBankbooks,
-      loading: loadingGetBankbook,
-      // refetch,
-      // onError
-    } = useQuery(queries.getBankbook, paramBankbookDetail,
-      () => ({
-        enabled: triggerBankbook.value,
-        fetchPolicy: "no-cache",
-      }))
     watch(resBankbook, (value) => {
+      resetDataDetail()
       const data = value.getBankbook
       dataDetailBankbook.value.facilityBusinessId = data.facilityBusinessId
       dataDetailBankbook.value.bankbookId = data.bankbookId
@@ -364,13 +429,38 @@ export default defineComponent({
       triggerBankbook.value = false
     })
 
-    
-    const {
-      mutate: reorderBankbooks,
-      onDone: doneReorderBankbooks,
-      onError: errorReorderBankbooks,
-      loading: loadingReorderBankbooks,
-    } = useMutation(mutations.reorderBankbooks);
+    watch(() => isTypeClassification.value, (value) => {
+      if (value) {
+        dataDetailBankbook.value.scrapingInfoInput.birthday = null
+      } else {
+        dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
+      }
+      countResetForm.value++
+    })
+    watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
+      if (!value) {
+        dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
+        dataDetailBankbook.value.scrapingInfoInput.webPassword = ""
+        countResetForm.value++
+      }
+    })
+
+    watch(() => dataDetailBankbook.value.bankbookInput.type, (value) => {
+      if(value){
+        const typeItem: any = bankTypeCommon.find((item: any) => item.c == value)
+        isSetTypeClassification.value.corporate = typeItem.coporateScrapable
+        isSetTypeClassification.value.private = typeItem.privateScrapable
+        if ((isSetTypeClassification.value.corporate && isSetTypeClassification.value.private) || (isSetTypeClassification.value.corporate && !isSetTypeClassification.value.private)) {
+          isTypeClassification.value = true
+        }else {
+          isTypeClassification.value = false
+        }
+      }else {
+        isSetTypeClassification.value.corporate = true
+        isSetTypeClassification.value.private = true
+      }
+    })
+    // -------METHODS-----------
 
     const onReorder = (e: any) => {
       indexRow.value = e.toIndex
@@ -404,6 +494,8 @@ export default defineComponent({
 
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
+      paramBankbookDetail.facilityBusinessId = null,
+        paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       isTypeClassification.value = true
@@ -416,7 +508,7 @@ export default defineComponent({
     const resetDataDetail = () => {
       dataDetailBankbook.value.facilityBusinessId = null
       dataDetailBankbook.value.bankbookInput.type = null
-      dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length ? dataSource.value[dataSource.value.length-1].sort + 1 : 0
+      dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length ? dataSource.value[dataSource.value.length - 1].sort + 1 : 0
       dataDetailBankbook.value.bankbookId = null
       dataDetailBankbook.value.bankbookInput.bankbookNumber = null
       dataDetailBankbook.value.bankbookInput.bankbookNickname = ''
@@ -432,53 +524,6 @@ export default defineComponent({
       dataDetailBankbook.value.scrapingInfoInput.webPassword = ''
       countResetForm.value++
     }
-
-    // create bankbook
-    const {
-      mutate: createBankbook,
-      onDone: doneCreateBankbook,
-      onError: errorCreateBankbook,
-      loading: loadingCreateBankbook,
-    } = useMutation(mutations.createBankbook);
-    doneCreateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
-      isNewCreate.value = true
-      triggerBankbooks.value = true
-    })
-    errorCreateBankbook(e => {
-      notification('error', e.message)
-    })
-
-    // update bankbook
-    const {
-      mutate: updateBankbook,
-      onDone: doneUpdateBankbook,
-      onError: errorUpdateBankbook,
-      loading: loadingUpdateBankbook,
-    } = useMutation(mutations.updateBankbook);
-    doneUpdateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
-      triggerBankbooks.value = true
-    })
-    errorUpdateBankbook(e => {
-      notification('error', e.message)
-    })
-
-    watch(() => isTypeClassification.value, (value) => {
-      if (value) {
-        dataDetailBankbook.value.scrapingInfoInput.birthday = null
-      } else {
-        dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
-      }
-      countResetForm.value++
-    })
-    watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
-      if (!value) {
-        dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
-        dataDetailBankbook.value.scrapingInfoInput.webPassword = ""
-        countResetForm.value++
-      }
-    })
 
     const submit = () => {
       const res = cm121Form.value.validate()
@@ -515,20 +560,6 @@ export default defineComponent({
       }
     }
 
-    // delete bankbook
-    const {
-      mutate: deleteBankbook,
-      onDone: doneDeleteBankbook,
-      onError: errorDeleteBankbook,
-      loading: loadingDeleteBankbook,
-    } = useMutation(mutations.deleteBankbook);
-    doneDeleteBankbook((e) => {
-      notification('success', `업데이트 완료!`)
-      triggerBankbooks.value = true
-    })
-    errorDeleteBankbook(e => {
-      notification('error', e.message)
-    })
     const deleteBankBook = (data: any) => {
       dataDelete.facilityBusinessId = data.facilityBusinessId
       dataDelete.bankbookId = data.bankbookId
@@ -541,15 +572,6 @@ export default defineComponent({
       deleteBankbook(dataDelete)
     }
 
-    const selectionItem = (event: any) => {
-      isCreate.value = false
-      if (paramBankbookDetail.bankbookId === event.data.bankbookId) return
-      indexRow.value = event.rowIndex
-      paramBankbookDetail.facilityBusinessId = event.data.facilityBusinessId
-      paramBankbookDetail.bankbookId = event.data.bankbookId
-      triggerBankbook.value = true
-    }
-
     const modalHistory = () => {
       modalHistoryStatus.value = true
     }
@@ -557,6 +579,15 @@ export default defineComponent({
     const showPopupLastScrapingStatus = (data: any) => {
       dataPopupScrapingStatus.value = data
       isModalLastScrapingStatus.value = true
+    }
+
+    const onFocusedRowChanging = (event: any) => {
+      isCreate.value = false
+      if (paramBankbookDetail.bankbookId === event.rows[event.newRowIndex].data.bankbookId) return
+      indexRow.value = event.newRowIndex
+      paramBankbookDetail.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
+      paramBankbookDetail.bankbookId = event.rows[event.newRowIndex].data.bankbookId
+      triggerBankbook.value = true
     }
 
     return {
@@ -583,7 +614,6 @@ export default defineComponent({
       loadingDeleteBankbook,
       loadingGetBankbook,
       loadingUpdateBankbook,
-      selectionItem,
       isCreate,
       countResetForm,
       modalHistoryStatus,
@@ -592,7 +622,9 @@ export default defineComponent({
       popupHistoryData,
       isModalLastScrapingStatus,
       showPopupLastScrapingStatus,
-      dataPopupScrapingStatus
+      dataPopupScrapingStatus,
+      onFocusedRowChanging,
+      isSetTypeClassification
     }
   }
 });

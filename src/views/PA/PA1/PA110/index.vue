@@ -485,21 +485,21 @@ export default defineComponent({
                     }
                 });
             }
-            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
+            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA110.imputedMonth]
             if (obj) {
                 statusDisabledBlock.value = false;
+                if (isRunOnce.value) {
+                    isRunOnce.value = false;
+                    showDetailSelected(obj)
+                } else  {
+                    activeNewMonth(dataMonthNew.value)
+                }
             } else {
                 status.value = null
                 statusDisabledBlock.value = true;
+                triggerDataTaxPayInfo.value = true;
             }
-            if (isRunOnce.value) {
-                isRunOnce.value = false;
-                if (obj) {
-                    showDetailSelected(obj)
-                }
-            } else if (obj)  {
-                activeNewMonth(dataMonthNew.value)
-            }
+            
         })
 
         // get getIncomeWages table
@@ -522,10 +522,12 @@ export default defineComponent({
                     //     store.state.common.focusedRowKey = store.state.common.incomeId
                     //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                     // } else {
-                        if (isRunOnceTaxPayInfo.value) {
-                            isRunOnceTaxPayInfo.value = false;
+                        if (!store.state.common.dataIncomeIdBackend) {
+                            // isRunOnceTaxPayInfo.value = false;
                             store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
+                            console.log(store.state.common.incomeId);
+                            
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
                         } else {
                             if (store.state.common.statusClickButtonSave) { // if click submit
@@ -533,6 +535,7 @@ export default defineComponent({
                             } else { // click save modal
                                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
                             }
+                            store.state.common.dataIncomeIdBackend = null;
                         }
                         // store.state.common.employeeId = value.getIncomeWages[0].employeeId
                     // }
@@ -548,7 +551,13 @@ export default defineComponent({
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 store.state.common.addRow++ // add row
             } else { // call api detail
-                store.state.common.loadingFormData++
+                if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
+                    store.state.common.loadingFormData++
+                } else {
+                    if (!store.state.common.statusFormAdd) {
+                        store.state.common.actionResetForm++
+                    }
+                }
             }
             store.state.common.resetArrayEmploySelect++
         })
@@ -571,6 +580,11 @@ export default defineComponent({
         watch(() => store.state.common.addRow, (newVal) => {
             gridRef.value?.instance.deselectAll()
             dataRows.value = []
+        })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-110") {
+                triggerDataTaxPayInfo.value = true; //reset data table 2
+            }
         })
         /**
          * action edit employ tax pay
@@ -606,12 +620,14 @@ export default defineComponent({
         }
         // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
-            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // isRunOnceTaxPayInfo.value = true;
             status.value = month.status
+            store.state.common.processKeyPA110.imputedYear = month.imputedYear
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
             store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
-            store.state.common.processKeyPA110.imputedYear = globalYear.value;
+            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // store.state.common.processKeyPA110.imputedYear = globalYear.value;
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
         }
@@ -737,6 +753,7 @@ export default defineComponent({
                 // checkClickYear.value = true
                 store.state.settings.globalYear = oldVal;
             } else {
+                isRunOnce.value = true;
                 store.state.common.processKeyPA110.imputedYear = newVal
                 store.state.common.processKeyPA110.paymentYear = newVal
                 originData.value.imputedYear = newVal
@@ -744,7 +761,7 @@ export default defineComponent({
                 // refetchDataProcessIncomeWages() //reset data table 1
                 trigger.value = true; //reset data table 1
                 // refetchDataTaxPayInfo() //reset data table 2
-                triggerDataTaxPayInfo.value = true; //reset data table 2
+                // triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
         return {

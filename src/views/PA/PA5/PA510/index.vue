@@ -346,6 +346,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore()
+        const tabTitle = computed(()=> store.state.common.activeTab)
         const globalYear = computed(() => store.state.settings.globalYear)
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
@@ -472,20 +473,20 @@ export default defineComponent({
                 })
             }
             const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
-            if (obj) {
+            if (obj) { // nếu có data source
                 statusDisabledBlock.value = false;
+                if (isRunOnce.value) {
+                    isRunOnce.value = false;
+                    showDetailSelected(obj)
+                } else {
+                    activeNewMonth(dataMonthNew.value)
+                }
             } else {
                 status.value = null
+                IncomeWageDailiesTrigger.value = true;
                 statusDisabledBlock.value = true;
             }
-            if (isRunOnce.value) {
-                isRunOnce.value = false;
-                if (obj) {
-                    showDetailSelected(obj)
-                }
-            } else if (obj) {
-                activeNewMonth(dataMonthNew.value)
-            }
+            
         })
         watch(resultTaxPayInfo, (value) => {
             IncomeWageDailiesTrigger.value = false;
@@ -524,6 +525,11 @@ export default defineComponent({
             IncomeWageDailiesTrigger.value = true; //reset data table 2
             // refetchDataTaxPayInfo() //reset data table 2
         })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-510") {
+                IncomeWageDailiesTrigger.value = true; //reset data table 2
+            }
+        })
         watch(() => status.value, (newVal) => {
             if (userType != 'm' && (newVal == 20 || newVal == 30 || newVal == 40)) {
                 store.state.common.statusDisabledStatus = true;
@@ -534,26 +540,31 @@ export default defineComponent({
         const checkClickYear = ref<Boolean>(false)
         const dataYearNew = ref(globalYear.value)
         watch(globalYear, (newVal, oldVal) => {
-            dataYearNew.value = newVal;
-            if (store.state.common.statusChangeFormEdit) {
-                modalChangeRow.value = true
-                // checkClickYear.value = true
-                store.state.settings.globalYear = oldVal;
-            } else {
+            // dataYearNew.value = newVal;
+            // if (store.state.common.statusChangeFormEdit) {
+            //     modalChangeRow.value = true
+            //     // checkClickYear.value = true
+            //     store.state.settings.globalYear = oldVal;
+            // } else {
+                isRunOnce.value = true;
                 store.state.common.processKeyPA510.imputedYear = newVal
                 store.state.common.processKeyPA510.paymentYear = newVal
-                IncomeWageDailiesTrigger.value = true; //reset data table 2
+                // originDataTaxPayInfo.value.processKey.imputedYear = newVal
+                // originDataTaxPayInfo.value.processKey.paymentYear = newVal
                 originData.value.imputedYear = newVal
                 trigger.value = true; //reset data table 1
+                // IncomeWageDailiesTrigger.value = true; //reset data table 2
                 // refetchData()
                 // refetchDataTaxPayInfo() //reset data table 2
-            }
+            // }
         })
         watch(() => store.state.common.addRow, (newVal) => {
             gridRef.value?.instance.deselectAll()
             dataRows.value = []
         })
         // ======================= FUNCTION ================================
+        // Calling the actionChangeIncomeProcess function with the parameters companyId, processKey,
+        // and status.
         const statusComfirm = () => {
             actionChangeIncomeProcess({
                 companyId: companyId,
@@ -568,6 +579,7 @@ export default defineComponent({
             // tạm thời bỏ
         }
 
+        // A function that is called when the selection of the grid changes.
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
@@ -579,8 +591,8 @@ export default defineComponent({
         }
         const dataMonthNew: any = ref()
         const checkClickMonth = ref<Boolean>(false)
+
         // A function that is called when a user clicks on a month.
-        
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
             if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
@@ -590,12 +602,15 @@ export default defineComponent({
                 activeNewMonth(month)
             }
         }
+
+        // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
-            IncomeWageDailiesTrigger.value = true;
             status.value = month.status
+            store.state.common.processKeyPA510.imputedYear = month.imputedYear
             store.state.common.processKeyPA510.imputedMonth = month.imputedMonth
             store.state.common.processKeyPA510.paymentYear = month.paymentYear
             store.state.common.processKeyPA510.paymentMonth = month.paymentMonth
+            IncomeWageDailiesTrigger.value = true;
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
         }

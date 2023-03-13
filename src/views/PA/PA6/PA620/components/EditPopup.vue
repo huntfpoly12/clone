@@ -53,16 +53,17 @@ export default defineComponent({
             onDone,
             onError,
         } = useMutation(mutations.changeIncomeBusinessPaymentDay);
-        onDone(() => {
+        onDone((res) => {
             notification('success', messageUpdate)
-            emit("closePopup", true)
+            emit("closePopup", res.data.changeIncomeBusinessPaymentDay.incomeId)
         })
         onError((e: any) => {
             notification('error', e.message)
         })
 
         const onSubmit = () => {
-            props.data.map((val: any) => {
+            const reversedArr = props.data.reverse();
+            reversedArr.map((val: any) => {
                 mutate({
                     companyId: companyId,
                     processKey: props.processKey,
