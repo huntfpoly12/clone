@@ -297,6 +297,7 @@ export default defineComponent({
             await (triggerDetail.value = true);
             await (statusFormUpdate.value = true);
             await (statusAddRow.value = true);
+            store.state.common.savePA710++;
             
         });
         onErrorAdd((e) => {
@@ -311,6 +312,7 @@ export default defineComponent({
             // statusFormUpdate.value = false;
             // focusedRowKey.value = null;
             // Object.assign(formState.value, initialState);
+            store.state.common.savePA710++;
         });
         onDoneUpdate(async (data) => {
             notification('success', `업데이트 완료되었습니다!`)
@@ -326,6 +328,7 @@ export default defineComponent({
                 originDataDetail.value.incomeTypeCode = dataRow.incomeTypeCode
             }
             await (triggerDetail.value = true);
+            store.state.common.savePA710++;
         });
         onErrorUpdate((e) => {
             triggerDetail.value = true;
