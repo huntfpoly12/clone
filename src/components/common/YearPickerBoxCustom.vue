@@ -1,5 +1,5 @@
 <template>
-    <div class="year-custom-1" :style="{height: $config_styles.HeightInput }">
+    <div class="year-custom-1" :style="{height: $config_styles.HeightInputl, backgroundColor: color }">
       <Datepicker
         autoApply
         yearPicker 
@@ -39,8 +39,11 @@ export default defineComponent({
         maxYear: {
           type: Number,
           default: dayjs().year() + 1,
+        },
+        color: {
+          type: String,
+          default: "black",
         }
-        
     },
     components: {
         Datepicker,
@@ -62,7 +65,6 @@ export default defineComponent({
 .year-custom-1 {
     border-radius: 5px;
     color: white;
-    background-color: black;
     width: fit-content;
     padding: 3px 16px;
 }

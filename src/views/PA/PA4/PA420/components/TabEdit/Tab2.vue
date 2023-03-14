@@ -1,6 +1,6 @@
 <template>
     <a-row :gutter="16">
-        <a-col :span="6"></a-col>
+        <a-col :span="6"></a-col>{{ dataDetail }}
         <a-col :span="12" class="custom-label">
             <div class="header-text-2 mb-10">급여/상여/수당</div>
             <a-form-item label="퇴직전 3개월 임금 총액 (세전)">

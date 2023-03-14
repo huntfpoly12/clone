@@ -121,7 +121,7 @@
                         <div class="title-body-left-2">
                             <span>소득자보관용 :</span>
                             <div>
-                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자 보관용"
+                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
                                     textUnCheck="지급자보관용" />
                             </div>
                         </div>
@@ -436,6 +436,11 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(globalYear, (value) => {
+            const subValue =  parseInt(globalYear.value + 1 + '01')
+            year1.label = globalYear.value + 1 + '년 01월',
+            year1.subValue = subValue
+            year2.label = globalYear.value + 1 + '년 02월',
+            year2.subValue = subValue
             dataApiSearch.filter.imputedYear = value
             trigger.value = true
             refetchData()

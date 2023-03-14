@@ -1,7 +1,7 @@
 <template>
     <standard-form class="modal-add">
         <a-row :gutter="16"> 
-            <a-col :span="12">
+            <a-col :span="12">{{ dataDetail }}
                 <a-form-item label="구분">
                   <a-tag :color="dataGet.retirementType == 2 ? 'green' : 'red'">{{
                         dataGet.retirementType == 2 ? '중간정산' : '퇴직소득'

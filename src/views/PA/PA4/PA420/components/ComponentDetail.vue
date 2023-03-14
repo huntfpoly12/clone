@@ -142,7 +142,7 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
-        :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
+        :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>{{ keyDetailRow }}
     <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
