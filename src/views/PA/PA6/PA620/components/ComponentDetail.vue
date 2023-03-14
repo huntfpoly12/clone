@@ -346,7 +346,6 @@ export default defineComponent({
                 if(!isClickEditDiff.value){
                   selectedRowKeys.value = [data.incomeId];
                 }
-                console.log(`output->data.incomeId`,data)
                 let rowData: any = {};
                 rowData.paymentDay = data.paymentDay
                 rowData.employeeId = data.employeeId
