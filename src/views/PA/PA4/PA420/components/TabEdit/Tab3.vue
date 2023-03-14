@@ -300,15 +300,16 @@ import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        dataDetail: Object,
         actionNextStep: Number,
     },
     setup(props, { emit }) {
+        const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
-            ...props.dataDetail
+            ...store.state.common.formStateEditPA420
         })
 
         const dataRequestCaculate: any = ref({
@@ -324,9 +325,13 @@ export default defineComponent({
             notification('error', res.message)
         })
         // ====================== WATCH =======================================
-        watch(() => dataGet, (newValue) => {
-            emit("update:dataDetail", newValue);
+        watch(() => store.state.common.formStateEditPA420, (newValue) => {
+          dataGet.value =  newValue;
         }, { deep: true })
+
+        // watch(() => dataGet, (newValue) => {
+        //     emit("update:dataDetail", newValue);
+        // }, { deep: true })
         watch(() => resultCaculate, (newValue) => {
             dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus = newValue.value.calculateIncomeRetirementTax.lastRetirementBenefitStatus
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.lastRetiredYearsOfService
@@ -392,7 +397,7 @@ export default defineComponent({
             dataGet,
             dayjs,
             loading,
-            actionCaculate,
+            actionCaculate,store
         }
     }
 })
