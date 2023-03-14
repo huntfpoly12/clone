@@ -142,27 +142,34 @@
                       <span class="style-note">이용하지 않는 경우 스크래<br />핑 중지가 되어 통장 불러<br />오기를 할 수 없습니다.</span>
                     </div>
                   </a-form-item>
+                </a-col>
+                <a-col span="12">
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)" class="form-item-bottom red">
+                    <text-number-box :required="true" :width="150" maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword"/>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col span="12">
                   <a-form-item label="사업자등록번호 (법인통장)" class="form-item-bottom red">
                     <biz-number-text-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150" :disabled="!isTypeClassification"/>
                   </a-form-item>
-                  <a-form-item label="간편조회 ID" class="form-item-bottom red">
-                    <default-text-box :required="true" :width="150"
-                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
-                  </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item label="통장 비밀번호 (숫자 4자리)" class="form-item-bottom red">
-                    <text-number-box :required="true" :width="150" maxLength="4"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword"
-                      :disabled="!dataDetailBankbook.bankbookInput.useScrap" />
-                  </a-form-item>
                   <a-form-item label="생년월일 (개인통장)" class="form-item-bottom red">
                     <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px" :required="true" :disabled="isTypeClassification"/>
                   </a-form-item>
-                  <a-form-item label="간편조회 PW" class="form-item-bottom red">
-                    <default-text-box :required="true" :width="150"
-                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword"
-                      :disabled="!dataDetailBankbook.bankbookInput.useScrap" />
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col span="12">
+                  <a-form-item v-if="isInputWebID" :label="isTypeClassification ? inputIDPWBankType.corporate.ID : inputIDPWBankType.private.ID" class="form-item-bottom red">
+                    <default-text-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
+                  </a-form-item>
+                </a-col>
+                <a-col span="12">
+                  <a-form-item v-if="isInputWebPW" :label="isTypeClassification ? inputIDPWBankType.corporate.PW : inputIDPWBankType.private.PW" class="form-item-bottom red">
+                    <default-text-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword"/>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -293,10 +300,28 @@ export default defineComponent({
 
     const objChange: any = ref({})
     let isStatusClickCreate = ref<boolean>(false)
+    const inputIDPWBankType: any = ref({
+      corporate: {
+        ID: '',
+        PW: ''
+      },
+      private: {
+        ID: '',
+        PW: ''
+      }
+    })
     // ------------COMPUTED ----------------------
 
     const isEdited = computed(() => {
       return isEqual(oldDataDetailBankbook.value, dataDetailBankbook.value)
+    })
+    const isInputWebID = computed(() => {
+      return dataDetailBankbook.value.bankbookInput.useScrap && 
+              ((inputIDPWBankType.value.corporate.ID && isTypeClassification.value) || (inputIDPWBankType.value.private.ID && !isTypeClassification.value))
+    })
+    const isInputWebPW = computed(() => {
+      return dataDetailBankbook.value.bankbookInput.useScrap && 
+              ((inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (inputIDPWBankType.value.private.PW && !isTypeClassification.value))
     })
     // ============ GRAPQL ===============================
 
@@ -460,9 +485,11 @@ export default defineComponent({
       if (!value) {
         dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
         dataDetailBankbook.value.scrapingInfoInput.webPassword = ""
+        dataDetailBankbook.value.scrapingInfoInput.webId = ""
         countResetForm.value++
       }
     })
+
 
     watch(() => dataDetailBankbook.value.bankbookInput.type, (value) => {
       if(value){
@@ -474,12 +501,27 @@ export default defineComponent({
         }else {
           isTypeClassification.value = false
         }
+        handleGetInputBankType('c', typeItem.i.coporate)
+        handleGetInputBankType('p', typeItem.i.private)
       }else {
         isSetTypeClassification.value.corporate = true
         isSetTypeClassification.value.private = true
       }
     })
     // -------METHODS-----------
+
+    const handleGetInputBankType = (type: string, listInput: string) => {
+      const listInputArr = listInput.split(",");
+      const ID = listInputArr.find((item:any) => item.includes('ID'))
+      const PW = listInputArr.find((item:any) => item.includes('PW'))
+      if(type === 'c') {
+        inputIDPWBankType.value.corporate.ID = ID || ''
+        inputIDPWBankType.value.corporate.PW = PW || ''
+      }else {
+        inputIDPWBankType.value.private.ID = ID || ''
+        inputIDPWBankType.value.private.PW = PW || ''
+      }
+    }
 
     const onReorder = (e: any) => {
       indexRow.value = e.toIndex
@@ -513,7 +555,7 @@ export default defineComponent({
 
     const showPopupRegister = () => {
       isStatusClickCreate.value = true
-      if(isEdited.value){
+      if(isEdited.value || !dataDetailBankbook.value.bankbookInput.type){
         isModalRegister.value = true
       }else {
         isModalConfirmSaveChange.value = true
@@ -523,7 +565,7 @@ export default defineComponent({
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = null,
-        paramBankbookDetail.bankbookId = null
+      paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
@@ -578,6 +620,10 @@ export default defineComponent({
       if (!dataDetailBankbook.value.bankbookInput.useScrap) {
         delete data.scrapingInfoInput.accountPassword
         delete data.scrapingInfoInput.webPassword
+        delete data.scrapingInfoInput.webId
+      }else {
+        if(!isInputWebID) delete data.scrapingInfoInput.webId
+        if(!isInputWebPW) delete data.scrapingInfoInput.webPassword
       }
       if (isCreate.value) {
         delete data.scrapingInfoInput.bankbookId
@@ -690,7 +736,10 @@ export default defineComponent({
       keyResetPopupRegisterBankbook,
       isModalConfirmSaveChange,
       handleConfirmChange,
-      Message
+      Message,
+      inputIDPWBankType,
+      isInputWebID,
+      isInputWebPW
     }
   }
 });
