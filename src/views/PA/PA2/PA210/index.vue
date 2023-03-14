@@ -389,9 +389,9 @@ export default defineComponent({
             }
         };
         const checkModify = (data: any) => {
-          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode) && value.status == 40)
+          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode))
           let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
-            if (indexMax == data.index) {
+            if (indexMax == data.index && data.status == 40) {
               return true;
             } else {
               return false;
