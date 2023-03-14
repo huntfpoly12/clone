@@ -129,7 +129,7 @@ export default defineComponent({
         month1.value = val;
         let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
         if (dateType.value == 2 && props.month) {
-          yearMonth = `${globalYear.value}${props.month + 1}`;
+          yearMonth = props.month==12?`${globalYear.value+1}1`:`${globalYear.value}${props.month + 1}`;
         }
         if (dateType.value == 1) {
           yearMonth = `${globalYear.value}${props.month}`;
@@ -160,15 +160,6 @@ export default defineComponent({
       trigger.value = true;
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
-
-    watchEffect(() => {
-      if (dateType.value == 2 && props.month) {
-        month2.value = `${globalYear.value}${props.month + 1}`;
-      }
-      if (dateType.value == 1) {
-        month2.value = `${globalYear.value}${props.month}`;
-      }
-    });
     watch(globalYear, (newVal, oldVal) => {
       findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
       findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
