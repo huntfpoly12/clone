@@ -5,18 +5,18 @@
       <div class="text-align-center mt-10">
 
         <div class="cmc121-popup-from-select-data">
-          <a-form-item>
+          <a-form-item class="mr-10">
             <select-box-common :arrSelect="facilityBizTypeCommon"
-              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="n" valueExpr="v" width="160px" />
+              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="n" valueExpr="v" width="160px" placeholder="사업유형 선택"/>
           </a-form-item>
-          <span>에</span>
-          <a-form-item class="clr" label-align="left">
+          <span class="mr-10">에</span>
+          <a-form-item class="clr mr-10" label-align="left">
             <bank-select-box v-model:valueInput="dataFrom.type" width="160px" />
           </a-form-item>
           <span>통장 등록하시겠습니까?</span>
         </div>
         <button-basic class="button-form-modal" :text="'아니요'" :width="140" :type="'default'" :mode="'outlined'" @onClick="cancel" />
-        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+        <button-basic class="button-form-modal" :text="'네.  등록합니다'" :width="140" :type="'default'" :mode="'contained'"
           :disabled="!dataFrom.facilityBiz || !dataFrom.type" @onClick="submit" />
       </div>
     </standard-form>
@@ -80,9 +80,10 @@ export default defineComponent({
 .cmc121-popup-from-select-data {
   margin: 20px 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
+  font-weight: bold;
 }
 
 .text-align-center {
@@ -91,5 +92,8 @@ export default defineComponent({
 
 .button-form-modal {
   margin: 0px 5px;
+}
+.mr-10 {
+  margin-right: 10px;
 }
 </style>
