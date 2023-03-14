@@ -111,7 +111,7 @@ export default defineComponent({
                 dataPrint.value = {
                     reportId: props.dataCall?.companyId,
                     companyId: props.dataCall?.reportId,
-                    imputedYear: props.dataCall?.reportId,
+                    imputedYear: props.dataCall?.imputedYear,
                     formInputs: [ {
                       createDate: filters.formatDateToInterger(dataForm.row1.date),
                       type: 1
