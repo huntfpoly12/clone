@@ -199,7 +199,7 @@
       {{ triggerDetail }} triggerDetail<br /> -->
       <!-- {{ initFormTab2PA120 }} initFormTab2PA120<br />
         {{ compareForm() }} compareForm()<br /> -->
-        <!-- {{ isBtnYellow }} isBtnYellow<br />
+      <!-- {{ isBtnYellow }} isBtnYellow<br />
         {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br /> -->
       <a-row style="margin-top: 20px" justify="center">
         <button-tooltip-error :statusChange="isBtnYellow" :showError="isAddFormErrorPA120" @onClick="calculateTax"
@@ -267,6 +267,8 @@ export default defineComponent({
     })
     const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport);
     const messageUpdate = Message.getMessage('COMMON', '106').message;
+    let countConfigPayItems = ref(0);
+    let countRestFirstRun = ref(0);
     // fn common
     const convertToDate = (date: number | null) => {
       if (date === null) {
@@ -276,23 +278,10 @@ export default defineComponent({
       let dateData = dateStr.slice(0, 4) + '/' + dateStr.slice(4, 6) + '/' + dateStr.slice(6, 8);
       return dayjs(dateData, 'YYYY/MM/DD');
     };
-    // change row data
-    watchEffect(async()=>{
-      if(ref(props.idRowEdit).value || yearPA120){
-        console.log(`output->thay doi year va id`)
-        countRestFirstRun.value = 0;
-        countConfigPayItems.value = 0;
-        triggerDetail.value = false;
-        // originDataDetail.value.imputedYear = yearPA120.value;
-        await refetchConfigDeduction();
-        await refetchConfigPayItems();
-        store.state.common.isCalculateEditPA120 = true;
-      }
-    })
 
     // get WithouthouldingConfigdeduction
-
-    const originDataDetail = ref({
+    const configDeductionTrigger = ref(false);
+    const configdeductionParam = ref({
       companyId: companyId,
       imputedYear: yearPA120.value,
       useOnly: true,
@@ -301,12 +290,12 @@ export default defineComponent({
       result: resConfigDeduction,
       loading: loading2,
       refetch: refetchConfigDeduction,
-    } = useQuery(queries.getWithholdingConfigDeductionItems, originDataDetail, () => ({
+    } = useQuery(queries.getWithholdingConfigDeductionItems, configdeductionParam, () => ({
+      enabled: configDeductionTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(resConfigDeduction, (value) => {
       if (value) {
-        console.log('0');
         dataConfigDeduction.value = value.getWithholdingConfigDeductionItems.filter((item: any) => {
           if (item.itemCode == 1001) {
             return { itemCode: item.itemCode, name: item.name, value: 0 };
@@ -327,11 +316,10 @@ export default defineComponent({
             return { itemCode: item.itemCode, name: item.name, value: 0 };
           }
         });
-        load();
+        configDeductionTrigger.value = false;
       }
     });
     const onChangePayItem = (emitVal: any) => {
-      console.log(`output->emitVal`,emitVal)
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
@@ -361,17 +349,22 @@ export default defineComponent({
     /**
      * get Withholding Config PayItems
      */
+    const configPayItemsParam = ref({
+      companyId: companyId,
+      imputedYear: yearPA120.value,
+      useOnly: true,
+    });
+    const configPayItemTrigger = ref(false);
     const {
       refetch: refetchConfigPayItems,
       result: resConfigPayItems,
       loading: loading1,
-      load,
-    } = useLazyQuery(queries.getWithholdingConfigPayItems, originDataDetail, () => ({
+    } = useQuery(queries.getWithholdingConfigPayItems, configPayItemsParam, () => ({
+      enabled: configPayItemTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(resConfigPayItems, async (value) => {
       if (value) {
-        console.log('1');
         dataConfigPayItems.value = value.getWithholdingConfigPayItems.map((item: any) => {
           return {
             itemCode: item.itemCode,
@@ -390,6 +383,7 @@ export default defineComponent({
           employeeId: employeeId.value,
         }
         triggerDetail.value = true;
+        configPayItemTrigger.value = false;
       }
     });
 
@@ -443,7 +437,7 @@ export default defineComponent({
         editRowData.employeementReduction = data.employeementReduction;
         editRowData.incomeTaxMagnification = data.incomeTaxMagnification;
         store.state.common.rowKeyTab2PA120 = data.employeeId;
-        store.state.common.editRowTab2PA120 = {...editRowData};
+        store.state.common.editRowTab2PA120 = { ...editRowData };
         store.state.common.initFormTab2PA120 = editRowData;
         if (data.payItems && dataConfigPayItems.value.length > 0) {
           dataConfigPayItems.value = dataConfigPayItems.value.map((item1: any) => {
@@ -472,6 +466,7 @@ export default defineComponent({
         isBtnYellow.value = false;
         triggerDetail.value = false;
         triggerCalcIncomeWageTax.value = true;
+        isWatchedYear.value = false;
       }
     });
 
@@ -528,7 +523,7 @@ export default defineComponent({
     /**
      * Calculate Pension Employee
      * */
-    
+
     const calcSum = () => {
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
@@ -599,7 +594,7 @@ export default defineComponent({
       calcSum();
       countRestFirstRun.value = 1;
       triggerCalcIncomeWageTax.value = true;
-      store.state.common.editRowTab2PA120 = {...initFormTab2PA120.value};
+      store.state.common.editRowTab2PA120 = { ...initFormTab2PA120.value };
     };
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
@@ -640,7 +635,6 @@ export default defineComponent({
     );
     //  // watch initFormTab2PA120 to check calculate button
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
-    let countConfigPayItems = ref(0);
     watch(
       () => dataConfigPayItems,
       (newVal) => {
@@ -656,7 +650,6 @@ export default defineComponent({
     );
     const isCalculateEditPA120 = computed(() => store.state.common.isCalculateEditPA120);
     const isBtnYellow = ref(false);
-    let countRestFirstRun = ref(0);
     const compareForm = () => {
       const { deductionItems, payItems, ...rest } = initFormTab2PA120.value;
       const { deductionItems: de2, payItems: pa2, ...rest2 } = editRowTab2PA120.value;
@@ -669,10 +662,10 @@ export default defineComponent({
         return;
       }
       if (initFormTab2PA120.value) {
-        if(!compareForm()){
+        if (!compareForm()) {
           store.state.common.isCalculateEditPA120 = false;
           isBtnYellow.value = true;
-        }else {
+        } else {
           isBtnYellow.value = false;
           store.state.common.isCalculateEditPA120 = true;
         }
@@ -718,6 +711,36 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
+
+    // change row data  yearPA120.value
+    const isWatchedYear = ref(false);
+    watch(() => props.idRowEdit, async () => {
+      countRestFirstRun.value = 0;
+      countConfigPayItems.value = 0;
+      triggerDetail.value = false;
+      configdeductionParam.value.imputedYear = yearPA120.value;
+      configDeductionTrigger.value = true;
+      await refetchConfigDeduction();
+      configPayItemsParam.value.imputedYear = yearPA120.value;
+      configPayItemTrigger.value = true;
+      await refetchConfigPayItems();
+      store.state.common.isCalculateEditPA120 = true;
+      isWatchedYear.value = true;
+    }, { immediate: true })
+    watch(yearPA120, async () => {
+      if (!isWatchedYear.value) {
+        countRestFirstRun.value = 0;
+        countConfigPayItems.value = 0;
+        triggerDetail.value = false;
+        configdeductionParam.value.imputedYear = yearPA120.value;
+        configDeductionTrigger.value = true;
+        await refetchConfigDeduction();
+        configPayItemsParam.value.imputedYear = yearPA120.value;
+        configPayItemTrigger.value = true;
+        await refetchConfigPayItems();
+        store.state.common.isCalculateEditPA120 = true;
+      }
+    })
 
     return {
       loading1,

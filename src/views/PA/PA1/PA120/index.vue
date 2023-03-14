@@ -39,13 +39,13 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          {{ compareForm() }} compareForm() <br />
+          <!-- {{ compareForm() }} compareForm() <br />
           {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
           {{ editRowPA120 }} editRowPA120 <br />
           {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
           {{ compareType }} compareType <br />
           {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
-          {{ isNewRowPA120 }} isNewRowPA120 <br />
+          {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -252,12 +252,11 @@ export default defineComponent({
     watch(result, (value) => {
       const data = value.getEmployeeWages;
       dataSource.value = data;
-      if(compareType.value == 3) {
+      if (compareType.value == 3) {
         addNewRow();
         return;
       }
       if (data.length > 0 && isFirstRun.value) {
-        console.log(`output->idRowEdit.value`, data[0].employeeId)
         actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
@@ -265,7 +264,6 @@ export default defineComponent({
         idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
-        console.log(`output->length 0`)
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         store.commit('common/editRowPA120', initFormStateTab1);
@@ -274,7 +272,7 @@ export default defineComponent({
     });
     //change year
     const isClickYearDiff = ref(false);
-    // const changeYearDataFake = ref();
+    const changeYearDataFake = ref();
     const yearPA120 = computed(() => store.state.common.yearPA120);
     const changeYear = (newVal: any) => {
       isFirstRun.value = true;
@@ -282,15 +280,16 @@ export default defineComponent({
       trigger.value = true;
       store.state.common.isNewRowPA120 = false;
       store.state.common.yearPA120 = newVal;
+      changeYearDataFake.value = newVal;
     }
-    watch(globalYear, (newVal, oldVal) => {
+    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
       if (compareForm()) {
         changeYear(newVal);
       } else {
         compareType.value = 2;
         rowChangeStatus.value = true;
         isClickYearDiff.value = true;
-        store.state.common.yearPA120 = oldVal;
+        changeYearDataFake.value = oldVal;
       }
     });
     // addcomponent
@@ -316,15 +315,13 @@ export default defineComponent({
       store.commit('common/editRowPA120', initFormStateTab1);
       store.state.common.isNewRowPA120 = true;
       compareType.value = 1;
-      setTimeout(()=>{
+      setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-      },0)
+      }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
     const compareForm = () => {
-      // console.log(`output->JSON.stringify(editRowPA120.value)`,JSON.stringify(editRowPA120.value))
-      // console.log(`output->JSON.stringify(initFormStateTabPA120.value)`,JSON.stringify(initFormStateTabPA120.value))
       const { stayQualification, ...obj1 } = editRowPA120.value;
       const { stayQualification: stayQualification2, ...obj2 } = initFormStateTabPA120.value;
       if (JSON.stringify(obj1) == JSON.stringify(obj2) && isCalculateEditPA120.value) {
@@ -406,7 +403,7 @@ export default defineComponent({
         trigger.value = true;
         return;
       }
-      if(isClickYearDiff.value) {
+      if (isClickYearDiff.value) {
         changeYear(globalYear.value)
         isClickYearDiff.value = false;
       }
@@ -418,9 +415,24 @@ export default defineComponent({
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
     watch(actionFormErrorPA120, () => {
+      if (isClickYearDiff.value) {
+        watchGlobalYear();
+        store.state.settings.globalYear = changeYearDataFake.value;
+        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+          if (compareForm()) {
+            changeYear(newVal)
+          } else {
+            compareType.value = 2;
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
+        isClickYearDiff.value = false;
+      }
       if (tabCurrent.value == 2) {
         store.commit('common/activeTabKeyPA120', '2');
-      }else {
+      } else {
         store.commit('common/activeTabKeyPA120', '1');
       }
       focusedRowKey.value = initFormStateTabPA120.value.employeeId;
@@ -480,9 +492,9 @@ export default defineComponent({
     };
     //focus Row
     const focusedRowKey = ref(initFormStateTabPA120.value.employeeId);
-    // watch(()=>initFormStateTabPA120.value.employeeId,(newVal: any)=>{
-    //   focusedRowKey.value = newVal;
-    // })
+    watch(() => initFormStateTabPA120.value.employeeId, (newVal: any) => {
+      focusedRowKey.value = newVal;
+    })
     const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
     const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
@@ -492,15 +504,15 @@ export default defineComponent({
     // get config
 
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
-    const { result: resultConfig} = useQuery(
-        queryCM130.getWithholdingConfig,
-        dataQuery,
-        () => ({
-          fetchPolicy: "no-cache",
-        })
+    const { result: resultConfig } = useQuery(
+      queryCM130.getWithholdingConfig,
+      dataQuery,
+      () => ({
+        fetchPolicy: "no-cache",
+      })
     );
-    watch(resultConfig,(newVal)=> {
-      if(newVal){
+    watch(resultConfig, (newVal) => {
+      if (newVal) {
         store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
       }
     })
@@ -546,7 +558,7 @@ export default defineComponent({
       tabCurrent,
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
-      isCalculateEditPA120
+      isCalculateEditPA120,
     };
   },
 });

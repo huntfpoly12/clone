@@ -1,7 +1,7 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
-      {{ originDataDetail }} originDataDetail <br />
+      <!-- {{ originDataDetail }} originDataDetail <br /> -->
       <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
@@ -129,7 +129,6 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import { radioCheckForeigner, initFormStateTab1 } from '../../utils/index';
 import { companyId } from '@/helpers/commonFunction';
-// import _ from 'lodash';
 export default defineComponent({
   components: {},
   props: {
@@ -146,7 +145,6 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    console.log(`output-1`,)
     const store = useStore();
     const yearPA120 = computed(() => store.state.common.yearPA120);
     let isForeigner = ref(false);
@@ -311,7 +309,6 @@ export default defineComponent({
     }, {immediate: true});
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
-        console.log(`output->newVal`,newVal);
       initFormStateTabPA120.value.name = newVal.toUpperCase();
     }, { deep: true })
     const changeTextCountry = (text: any) => {
