@@ -1,6 +1,6 @@
 <template>
     <a-row :gutter="16">
-        <a-col :span="6"></a-col>{{ dataDetail }}
+        <a-col :span="6"></a-col>
         <a-col :span="12" class="custom-label">
             <div class="header-text-2 mb-10">급여/상여/수당</div>
             <a-form-item label="퇴직전 3개월 임금 총액 (세전)">
@@ -78,16 +78,17 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        dataDetail: Object,
         actionNextStep: Number,
     },
 
     setup(props, { emit }) {
+        const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
-            ...props.dataDetail
+            ...store.state.common.formStateEditPA420
         })
 
         let requestCallDetail: any = ref()
@@ -115,20 +116,18 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
 
+        watch(() => store.state.common.formStateEditPA420, (newValue) => {
+          dataGet.value =  newValue;
+        }, { deep: true })
+
         watch(() => resultCalculate, (newValue) => {
             if (newValue.value)
                 dataGet.value.specification.expectedRetirementBenefits = newValue.value.calculateIncomeRetirement
         }, { deep: true })
 
-        watch(() => dataGet, (newValue) => {
-            emit("update:dataDetail", newValue);
-        }, { deep: true })
-
-
-
         return {
             dataGet,
-            calculateIncomeRetirement
+            calculateIncomeRetirement,store
         }
     }
 })

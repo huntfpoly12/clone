@@ -225,11 +225,11 @@ export default defineComponent({
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
-                    if (props.dataRows.length) {
+                    if (props.dataRows.length > 1) {
                         popupDataEmailMulti.value = props.dataRows
                         modalEmailMulti.value = true;
                     } else {
-                        notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
             }

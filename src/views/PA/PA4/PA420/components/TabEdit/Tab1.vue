@@ -1,7 +1,7 @@
 <template>
     <standard-form class="modal-add">
         <a-row :gutter="16"> 
-            <a-col :span="12">{{ dataDetail }}
+            <a-col :span="12">
                 <a-form-item label="구분">
                   <a-tag :color="dataGet.retirementType == 2 ? 'green' : 'red'">{{
                         dataGet.retirementType == 2 ? '중간정산' : '퇴직소득'
@@ -21,7 +21,7 @@
             <a-col :span="12">
                 <a-form-item label="사원" class="label-required">
                   <div class="d-flex-center">
-                    <employ-select :arrayValue="arrayEmploySelect" :valueEmploy="dataDetail?.employeeId" width="300px"
+                    <employ-select :arrayValue="arrayEmploySelect" :valueEmploy="store.state.common.formStateEditPA420?.employeeId" width="300px"
                         :required="true" disabled="true" />
                     <div class="ml-5 d-flex-center" >
                       <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -243,17 +243,18 @@
                 }}일</div>
             </a-col>
         </a-row>
-        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
+        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="btn-next-step"
             style="display: none;" />
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted, onActivated } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
 import { openTab } from '@/helpers/commonFunction';
 import  filters from '@/helpers/filters';
 import { arrayReasonResignationUtils, dataDefaultDetailUtils } from '../../utils/index'
 import { Formula } from "@bankda/jangbuda-common";
+import { useStore } from 'vuex';
 
 export default defineComponent({
     props: {
@@ -261,14 +262,14 @@ export default defineComponent({
           type: Object,
           default: {}
       },
-      dataDetail: Object,
       actionNextStep: Number,
       arrayEmploySelect: {
           type: Array,
           default: []
       },
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const store = useStore();
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
         const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
         const monthPayment =  props.processKey.paymentYear.toString()+ filters.formatMonth(props.processKey.paymentMonth.toString()) 
@@ -296,17 +297,17 @@ export default defineComponent({
         const arrayReasonResignation = reactive([...arrayReasonResignationUtils])
         // =============== WATCH ==================================
         watch(() => props.processKey, (newVal) => {
-            (document.getElementById("checkBox") as HTMLInputElement).click();
+            (document.getElementById("btn-next-step") as HTMLInputElement).click();
         });
 
-        watch(() => props.dataDetail, (value: any,oldValue : any) => {
+        watch(() => store.state.common.formStateEditPA420, (value: any) => {
             dataGet.value = value
             month1.value = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
         }, { deep: true });
 
         watch(() => props.actionNextStep, (newVal) => {
-            (document.getElementById("checkBox") as HTMLInputElement).click();
+            (document.getElementById("btn-next-step") as HTMLInputElement).click();
         });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
@@ -396,7 +397,7 @@ export default defineComponent({
             dataGet,
             dayjs,
             openTabFuc,
-            submitForm,monthInputed
+            submitForm,monthInputed,store
         }
     }
 })
