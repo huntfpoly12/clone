@@ -4,7 +4,7 @@
       <standard-form formName="tab1-pa120">
           <a-form-item label="사번(코드)" label-align="right" class="red">
             <div class="input-text">
-              <text-number-box width="200px" :required="true" v-model:valueInput="employeeId" placeholder="숫자만 입력 가능" />
+              <text-number-box width="200px" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId" placeholder="숫자만 입력 가능" />
               <span style="color: #888888; font-size:12px">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
               </span>
@@ -22,7 +22,7 @@
           </a-form-item>
 
           <a-form-item label="성명" label-align="right" class="red">
-            <default-text-box width="200px" v-model:valueInput="initFormStateTabPA120.name" :required="true"
+            <default-text-box width="200px" v-model:valueInput="initFormStateTabPA120.name" @onChange="onChange" :required="true"
               placeholder="한글,영문(대문자) 입력 가능" />
           </a-form-item>
           <a-form-item label="입사년월일" label-align="right">
@@ -241,7 +241,6 @@ export default defineComponent({
        emit('setTabsStatus', false);
        notification("success", `사원등록이 완료되었습니다! `);
        store.commit('common/actionFormDonePA120')
-       store.commit('common/keyActivePA120', employeeId.value);
        store.state.common.isCompareEditPA120 = false;
        store.state.common.isNewRowPA120 = false;
        store.state.common.isAddFormErrorPA120 = false;
@@ -277,9 +276,12 @@ export default defineComponent({
     };
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
 // convert initFormStateTabPA120.value.name to uppercase
-    watch(()=> initFormStateTabPA120.value.name,(newVal)=> {
-        initFormStateTabPA120.value.name = newVal.toUpperCase();
-    },{deep: true})
+    // watch(()=> initFormStateTabPA120.value.name,(newVal)=> {
+    //   if(newVal){
+    //     console.log(newVal);
+    //     initFormStateTabPA120.value.name = newVal.toUpperCase();
+    //   }
+    // },{deep: true})
     const changeTextCountry = (text: any) => {
         initFormStateTabPA120.value.nationality = text
     }
@@ -295,6 +297,12 @@ export default defineComponent({
     watch(()=> initFormStateTabPA120.value.president, (newValue) => {
         store.commit('common/presidentPA120', newValue);
     })
+    const onFocusOut = (emitVal: any) => {
+      initFormStateTabPA120.value.employeeId = employeeId.value;
+    }
+    const onChange = (emitVal: any) => {
+      initFormStateTabPA120.value.name = emitVal.toUpperCase();
+    }
     return {
       companyId,
       loading,
@@ -314,7 +322,9 @@ export default defineComponent({
       arrDepartments,
       arrResponsibility,
       actionFormDonePA120,
-      changeTextCountry
+      changeTextCountry,
+      onFocusOut,
+      onChange,
     };
   },
 });
