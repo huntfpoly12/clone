@@ -10,6 +10,8 @@ const statesPA420 = {
         paymentYear: dayjs().year(),
         paymentMonth: dayjs().month() + 1,
     },
+    monthSelectedPA420: dayjs().month() + 1,
+    formStateEditPA420: {}
 };
 
 export default statesPA420;

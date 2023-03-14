@@ -286,7 +286,7 @@ export default defineComponent({
         HistoryPopup, ComponentDetail, CopyMonth
     },
     setup() {
-        let statusButton = ref(10)
+        let statusButton = ref(0)
         let actionSave = ref(0)
         let dataSource: any = ref([]);
         const store = useStore();
@@ -299,8 +299,8 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const modalCopy = ref<boolean>(false);
         const dataModalCopy: any = ref()
-        
-        const monthSeleted = ref<number>(0);
+        store.state.common.monthSelectedPA420
+        const monthSeleted = computed(() => store.state.common.monthSelectedPA420);
         const valueCallApiGetEmployeeBusiness = ref({
             companyId: companyId,
             processKey: {
@@ -388,14 +388,13 @@ export default defineComponent({
                 ...dataAdd
               }
 
-              if (val.imputedMonth == (dayjs().month() + 1)) {
+              if (val.imputedMonth == monthSeleted.value) {
                 valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = val.imputedMonth
                 valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = val.imputedYear
                 valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = val.paymentMonth
                 valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = val.paymentYear
                 //If there is data, then assign the status with the status of the month in focus
                 statusButton.value = val.status
-                monthSeleted.value = val.imputedMonth
               }
 
             })
@@ -417,7 +416,7 @@ export default defineComponent({
             valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = paymentMonth
             //assign status with the status of the selected month
             statusButton.value = status
-            monthSeleted.value = imputedMonth
+            store.state.common.monthSelectedPA420 = imputedMonth
         }
         const saving = () => {
             actionSave.value++;
@@ -427,7 +426,7 @@ export default defineComponent({
             refetchData()
         }
         const addMonth = (month: number) => {
-            monthSeleted.value = month
+            store.state.common.monthSelectedPA420 = month
             dataModalCopy.value = month
             modalCopy.value = true
         }
