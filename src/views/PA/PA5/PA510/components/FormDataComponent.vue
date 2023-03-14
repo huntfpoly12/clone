@@ -124,8 +124,6 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
-                    <!-- <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" 
-                    :type="store.state.common.statusChangeFormPrice ? 'calculate' : 'default'" text="공제 재계산" /> -->
                     <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
                 </div>
             </a-tooltip>
@@ -185,9 +183,10 @@ export default defineComponent({
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref(0)
-        const triggerCalculateIncome: any = ref<boolean>(false)
-        const triggerWithholdingConfigDeductionItems: any = ref<boolean>(true)
-        const triggerIncomeWageDaily: any = ref<boolean>(false)
+        const triggerCalculateIncome = ref<boolean>(false)
+        const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
+        const triggerEmployeeWageDailies = ref<boolean>(true)
+        const triggerIncomeWageDaily = ref<boolean>(false)
         const countKey: any = ref(0)
         const employeeWageDailyTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
@@ -225,6 +224,7 @@ export default defineComponent({
             onResult: resEmployeeWage,
         } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
             fetchPolicy: "no-cache",
+            enabled: triggerEmployeeWageDailies.value
         }))
         const {
             loading: loadingIncomeWageDaily,
@@ -295,6 +295,7 @@ export default defineComponent({
         })
 
         resEmployeeWage(value => {
+            triggerEmployeeWageDailies.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
             if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
@@ -325,26 +326,35 @@ export default defineComponent({
             dataIncomeWageDaily.value = data
             store.state.common.dataRowOld = { ...data }
             
-            arrDeduction.value?.map((data: any) => {
-                data.price = 0
+            arrDeduction.value?.map((row: any) => {
+                row.price = 0
                 dataIncomeWageDaily.value.deductionItems?.map((val: any) => {
-                    if (val.itemCode == data.itemCode) {
-                        data.price = val.amount
+                    if (val.itemCode == row.itemCode) {
+                        row.price = val.amount
                     }
                 })
             })
             store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
             store.state.common.focusedRowKey = data.incomeId
-            setTimeout(() => {
-                store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormAdd = false;
-            }, 500);
+            // setTimeout(() => {
+                // store.state.common.statusChangeFormEdit = false;
+                // store.state.common.statusChangeFormAdd = false;
+            // }, 500);
         })
 
 
         // ===================WATCH==================================
         watch(() => store.state.common.loadingFormData, (value) => {
             triggerIncomeWageDaily.value = true;
+        })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-510") {
+                triggerEmployeeWageDailies.value = true; //reset selected employee
+            }
+        })
+        watch(globalYear, (newVal) => {
+            originData.value.imputedYear = newVal
+            triggerEmployeeWageDailies.value = true;
         })
         // Watching the value of the store.state.common.statusFormAdd and if it is true, it will do
         // some stuff.
@@ -371,7 +381,7 @@ export default defineComponent({
         watch(() => dataIncomeWageDaily.value, (value) => {
             // Checking if the data in the store has changed.
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
-                store.state.common.statusChangeFormPrice = true;
+                store.state.common.statusChangeFormPrice = true;               
                 store.state.common.statusChangeFormEdit = true;
             } else {
                 store.state.common.statusChangeFormEdit = false;

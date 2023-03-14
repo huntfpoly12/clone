@@ -43,7 +43,7 @@
                         <span>{{ data.data.statusUpdateUser.username }}</span>
                         <span>{{ data.data.statusUpdateUser.id }}</span>
                       </div>
-                     
+
                     </template>
                     <span v-if="data.data.status == 40" class="tag-custom-3">{{ dayjs(data.data.updatedAt).format("MM-DD") }}</span>
                   </a-tooltip>
@@ -76,7 +76,7 @@ export default defineComponent({
         const dataSource = ref()
         let dataSearch = ref()
         /*
-        * ============== API ============== 
+        * ============== API ==============
         */
         //  QUERY : getIncomProcessesInTaxWithholdingStatusReport
         let {
@@ -89,7 +89,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable(res => {
-            dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
+            dataSource.value = res.data?.getIncomProcessesInTaxWithholdingStatusReport
         })
         errorTable(res => {
             notification('error', res.message)
@@ -108,7 +108,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         /*
-         * ============== WATCHING ============== 
+         * ============== WATCHING ==============
          */
         watch(() => props.modalStatus, (newVal: any) => {
             if (newVal == true) {
@@ -123,7 +123,7 @@ export default defineComponent({
             }
         }, { deep: true })
         /*
-         * ============== FUNCTION ============== 
+         * ============== FUNCTION ==============
          */
         const changeStatusRowTable = (data: any) => {
             let dataChangeStatus = {

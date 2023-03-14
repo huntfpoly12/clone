@@ -37,9 +37,13 @@
               </template>
 
 
-              <DxColumn caption="금융기관" data-field="type" />
+              <DxColumn caption="금융기관" data-field="type">
+                <DxLookup :data-source="bankTypeCommon" value-expr="c" display-expr="n" />
+              </DxColumn>
               <DxColumn caption="통장번호" data-field="bankbookNumber" />
-              <DxColumn caption="통장용도" data-field="useType" />
+              <DxColumn caption="통장용도" data-field="useType">
+                <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
+              </DxColumn>
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
               <DxColumn caption="사업구분" />
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
@@ -95,7 +99,8 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" />
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" 
+                      :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private"/>
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -190,7 +195,7 @@ import queries from "@/graphql/queries/CM/CM121";
 import mutations from "@/graphql/mutations/CM/CM121";
 import dayjs, { Dayjs } from "dayjs";
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
@@ -203,7 +208,7 @@ import HistoryPopup from "@/components/HistoryPopup.vue";
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
-    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup
+    EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup, DxLookup
   },
   setup() {
     const store = useStore();
@@ -275,6 +280,10 @@ export default defineComponent({
       },
     })
     let isCreate = ref<boolean>(false)
+    const isSetTypeClassification: any = ref({
+      corporate: true,
+      private: true
+    })
     // ============ GRAPQL ===============================
 
     // get list bankbook
@@ -405,6 +414,7 @@ export default defineComponent({
     })
 
     watch(resBankbook, (value) => {
+      resetDataDetail()
       const data = value.getBankbook
       dataDetailBankbook.value.facilityBusinessId = data.facilityBusinessId
       dataDetailBankbook.value.bankbookId = data.bankbookId
@@ -439,6 +449,21 @@ export default defineComponent({
       }
     })
 
+    watch(() => dataDetailBankbook.value.bankbookInput.type, (value) => {
+      if(value){
+        const typeItem: any = bankTypeCommon.find((item: any) => item.c == value)
+        isSetTypeClassification.value.corporate = typeItem.coporateScrapable
+        isSetTypeClassification.value.private = typeItem.privateScrapable
+        if ((isSetTypeClassification.value.corporate && isSetTypeClassification.value.private) || (isSetTypeClassification.value.corporate && !isSetTypeClassification.value.private)) {
+          isTypeClassification.value = true
+        }else {
+          isTypeClassification.value = false
+        }
+      }else {
+        isSetTypeClassification.value.corporate = true
+        isSetTypeClassification.value.private = true
+      }
+    })
     // -------METHODS-----------
 
     const onReorder = (e: any) => {
@@ -450,6 +475,10 @@ export default defineComponent({
       newTasks.splice(fromIndex, 1);
       newTasks.splice(toIndex, 0, e.itemData);
       dataSource.value = newTasks;
+      const sortTo = dataSource.value[fromIndex].sort
+      const sortFrom = e.itemData.sort
+      dataSource.value[toIndex].sort = sortTo
+      dataSource.value[fromIndex].sort = sortFrom
       reorderBankbooks({
         companyId: companyId,
         fiscalYear: globalYear.value,
@@ -457,11 +486,11 @@ export default defineComponent({
         inputs: [
           {
             bankbookId: e.itemData.bankbookId,
-            sort: dataSource.value[fromIndex].sort
+            sort: sortTo
           },
           {
             bankbookId: dataSource.value[fromIndex].bankbookId,
-            sort: e.itemData.sort,
+            sort: sortFrom
           },
         ]
       })
@@ -602,7 +631,8 @@ export default defineComponent({
       isModalLastScrapingStatus,
       showPopupLastScrapingStatus,
       dataPopupScrapingStatus,
-      onFocusedRowChanging
+      onFocusedRowChanging,
+      isSetTypeClassification
     }
   }
 });

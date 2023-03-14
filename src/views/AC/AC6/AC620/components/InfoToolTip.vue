@@ -14,13 +14,15 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   setup () {
-    
+
 
     return {}
   }
 })
 </script>
 
-<style scoped>
-
+<style lang="scss">
+.ant-tooltip {
+  max-width: 300px !important;
+}
 </style>
