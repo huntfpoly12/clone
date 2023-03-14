@@ -8,25 +8,22 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <form action="">
-                <keep-alive>
-                    <template v-if="step === 0">
-                        <Tab1 v-model:dataDetail="dataDetailValue" @closePopup="setModalVisible"
-                            :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
-                    </template>
-                </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 1">
-                        <Tab2 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
-                <keep-alive>
-                    <template v-if="step === 2">
-                        <Tab3 v-model:dataDetail="dataDetailValue" />
-                    </template>
-                </keep-alive>
-            
-            </form>
+            <keep-alive>
+              <template v-if="step === 0">
+                  <Tab1  @closePopup="setModalVisible"
+                      :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
+              </template>
+            </keep-alive>
+            <keep-alive>
+              <template v-if="step === 1">
+                  <Tab2  />
+              </template>
+            </keep-alive>
+            <keep-alive>
+              <template v-if="step === 2">
+                  <Tab3  />
+              </template>
+            </keep-alive>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -77,7 +74,6 @@ export default defineComponent({
         const retirementIncome2 = ref(true)
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
-        const dataDetailValue = ref()
         const setModalVisible = () => {
             statusModal.value = false
             emit("closePopup", false)
@@ -113,7 +109,7 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
         resultGetDetail(newValue => {
-          if (newValue) {
+          if (newValue && newValue.data) {
             let checkBoxCallApi = true
             // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
@@ -124,18 +120,20 @@ export default defineComponent({
               checkBoxCallApi = false
               newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
             }
-            dataDetailValue.value =
-            {
+            store.state.common.formStateEditPA420 =  {
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": checkBoxCallApi,
             }
+            trigger.value = false
           }
         })
         errorGetDetail(res => {
             notification('error', res.message)
         })
         // ================WATCHING============================================ 
+ 
         watch(() => props.modalStatus, (newValue) => {
+          step.value = 0
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
             trigger.value = true
@@ -182,14 +180,14 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = dataDetailValue.value.specification
+          let dataDefault = store.state.common.formStateEditPA420.specification 
             let dataCallApiUpdate =
             {
                 "companyId": companyId,
                 "processKey": props.processKey,
                 "incomeId": props.keyRowIndex,
                 "input": {
-                    retirementType: dataDetailValue.value.retirementType,
+                    retirementType: store.state.common.formStateEditPA420.retirementType,
                     executive: dataDefault.executive,
                     retirementReason: dataDefault.retirementReason,
                 },
@@ -217,15 +215,16 @@ export default defineComponent({
             }
             // remove all row name : __typename
             const cleanData = JSON.parse(
-                JSON.stringify(dataCallApiUpdate, (name, val) => {
-                    if (
-                        name === "__typename"
-                    ) {
-                        delete val[name];
-                    } else {
-                        return val;
-                    }
-                })
+              JSON.stringify(dataCallApiUpdate, (name, val) => {
+                if (
+                  name === "__typename" || 
+                  (!store.state.common.formStateEditPA420.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
+                ) {
+                    delete val[name];
+                } else {
+                    return val;
+                }
+              })
             );
             mutate(cleanData)
         }
@@ -241,9 +240,8 @@ export default defineComponent({
             retirementIncome1,
             retirementIncome2,
             statusModal,
-            dataDetailValue,
             valueNextStep,
-            arrayEmploySelect
+            arrayEmploySelect,store
         }
     },
 })

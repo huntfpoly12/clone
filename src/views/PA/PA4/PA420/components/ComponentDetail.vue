@@ -4,14 +4,14 @@
             <div class="table-detail-left d-flex-center">
                 <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear != 0 ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
                 <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear != 0 ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="dataTableDetail.processKey.imputedYear == 0"/>
             </div>
             <div class="table-detail-right">
-                <DxButton @click="deleteItem" :disabled="checkActionValue">
+                <DxButton @click="deleteItem" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0" >
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
-                <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0" />
+                <DxButton @click="onItemClick('history')" :disabled="checkActionValue  && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -19,7 +19,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue">
+                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -28,7 +28,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue">
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0">
                     <div class="d-flex-center">
                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -143,7 +143,7 @@
         :processKey="dataTableDetail.processKey" />
     <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">

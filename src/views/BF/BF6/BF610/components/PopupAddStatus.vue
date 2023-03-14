@@ -38,12 +38,12 @@
                       <div class="d-flex items-center gap-4 text-color-black">
                         <span>{{ dayjs(data.data.updatedAt).format("YYYY-MM-DD") }}</span>
                         <a-tag :color="getColorTag(data.data.statusUpdateUser.type)" class="mr-0">
-                            {{ data.data.statusUpdateUser.type == "m" ? "매니저" : (data.data.statusUpdateUser.type == "c" ? "고객사" : (data.data.statusUpdateUser.type == "p" ? "파트너" : "영업자"))}}
+                            {{ data.data.statusUpdateUser.type == "m" ? "매" : "고"}}
                         </a-tag>
                         <span>{{ data.data.statusUpdateUser.username }}</span>
                         <span>{{ data.data.statusUpdateUser.id }}</span>
                       </div>
-                     
+
                     </template>
                     <span v-if="data.data.status == 40" class="tag-custom-3">{{ dayjs(data.data.updatedAt).format("MM-DD") }}</span>
                   </a-tooltip>
@@ -76,7 +76,7 @@ export default defineComponent({
         const dataSource = ref()
         let dataSearch = ref()
         /*
-        * ============== API ============== 
+        * ============== API ==============
         */
         //  QUERY : getIncomProcessesInTaxWithholdingStatusReport
         let {
@@ -89,7 +89,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable(res => {
-            dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
+            dataSource.value = res.data?.getIncomProcessesInTaxWithholdingStatusReport
         })
         errorTable(res => {
             notification('error', res.message)
@@ -108,7 +108,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         /*
-         * ============== WATCHING ============== 
+         * ============== WATCHING ==============
          */
         watch(() => props.modalStatus, (newVal: any) => {
             if (newVal == true) {
@@ -123,7 +123,7 @@ export default defineComponent({
             }
         }, { deep: true })
         /*
-         * ============== FUNCTION ============== 
+         * ============== FUNCTION ==============
          */
         const changeStatusRowTable = (data: any) => {
             let dataChangeStatus = {

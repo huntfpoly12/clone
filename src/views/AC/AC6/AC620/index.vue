@@ -14,9 +14,9 @@
       <div class="dflex">
         <label class="lable-item">후원자 구분 :</label>
         <select-box-common
-          :arrSelect="backerTypeArray"
+          :arrSelect="backerTypeArrayAll"
           displayeExpr="name" valueExpr="id" width="150px"
-          v-model:valueInput="dataSearch.type"
+          v-model:valueInput="type"
         />
       </div>
       <div class="dflex">
@@ -51,7 +51,7 @@
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
-<!--                <DxItem location="after" template="button-history" css-class="cell-button-add" />-->
+                <!--                <DxItem location="after" template="button-history" css-class="cell-button-add" />-->
               </DxToolbar>
 
               <template #button-template>
@@ -62,9 +62,9 @@
                   </div>
                 </a-tooltip>
               </template>
-<!--              <template #button-history>-->
-<!--                 -->
-<!--              </template>-->
+              <!--              <template #button-history>-->
+              <!--                 -->
+              <!--              </template>-->
               <DxColumn caption="후원자코드" data-field="backerCode" alignment="center"/>
               <DxColumn caption="후원자명" data-field="name" alignment="center"/>
               <DxColumn caption="후원자구분" data-field="type" :customize-text="(cellInfo: any)=> BeckerType[cellInfo.value]" alignment="center"/>
@@ -180,20 +180,20 @@
                     v-model:valueInput="formState.otherContents"
                     :disabled="formState.nonProfitCorpType !== 9"
                     :required="formState.nonProfitCorpType === 9"
-                    />
+                  />
                 </div>
               </a-radio-group>
             </a-form-item>
 
             <a-form-item label="모금(자) 기관 여부" :label-col="labelCol">
               <switch-basic v-if="isShowFundrasingInstitution" v-model:valueSwitch="formState.fundrasingInstitution" textCheck="Y" textUnCheck="N"
-                style="width: 80px" />
+                            style="width: 80px" />
               <span v-else>해당사항없음</span>
 
             </a-form-item>
             <a-form-item label="기부금 단체 여부" :label-col="labelCol">
               <switch-basic v-if="isShowDonationOrganization" v-model:valueSwitch="formState.donationOrganization" textCheck="Y" textUnCheck="N"
-              style="width: 80px" />
+                            style="width: 80px" />
               <span v-else>해당사항없음</span>
             </a-form-item>
 
@@ -203,11 +203,11 @@
                   :required="formState.type === 1"
                   :width="200"
                   v-model:valueInput="formState.residentId"
-                  :disabled="false"
+                  :disabled="formState.type !== 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" />
-                <InfoToolTip>
+                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || formState.type !== 1" />
+                <InfoToolTip >
                   <span class="">
                     주민등록번호 저장시 개인정보 처리 방침에 동의한걸로 간주합니다.<br />
                     기부금영수증 발행시 반드시 필요합니다.
@@ -219,13 +219,13 @@
             <a-form-item label="사업자(고유)등록번호" :label-col="labelCol">
               <div class="d-flex gap-6">
                 <biz-number-text-box
-                  :required="formState.type === 1"
+                  :required="formState.type !== 1"
                   v-model:valueInput="formState.bizNumber"
                   :width="200"
-                  :disabled="false"
+                  :disabled="formState.type === 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" />
+                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || formState.type === 1" />
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
@@ -237,13 +237,13 @@
             <a-form-item label="대표자명" :label-col="labelCol">
               <div class="d-flex gap-6 mb-5">
                 <default-text-box v-model:valueInput="formState.roadAddress" width="200px" :disabled="true" class="roadAddress"
-                placeholder="도로명주소" />
+                                  placeholder="도로명주소" />
                 <post-code-button @dataAddress="funcAddress" text="주소검색"/>
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
-            </div>
-            <default-text-box v-model:valueInput="formState.addressExtend" width="300px" placeholder="상세 주소 입력" />
+              </div>
+              <default-text-box v-model:valueInput="formState.addressExtend" width="300px" placeholder="상세 주소 입력" />
             </a-form-item>
 
             <a-form-item label="연락처" :label-col="labelCol">
@@ -259,8 +259,8 @@
                 <switch-basic
                   :width="50"
                   v-model:valueSwitch="formState.use"
-                  :textCheck="'X'"
-                  :textUnCheck="'O'"
+                  :textCheck="'O'"
+                  :textUnCheck="'X'"
                 />
                 <InfoToolTip>
                   <span>
@@ -303,9 +303,9 @@ import { companyId } from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import PopupMessageCustom from "@/views/PA/PA6/PA610/components/PopupMessageCustom.vue";
 import {
-EditOutlined,
-HistoryOutlined,
-SaveOutlined,
+  EditOutlined,
+  HistoryOutlined,
+  SaveOutlined,
 } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
@@ -319,17 +319,27 @@ import { initBackerCreateInput } from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import { isEqualObject } from "@/utils";
+import isBackerRegistableResidentId from "@/graphql/queries/AC/AC6/AC620/isBackerRegistableResidentId";
 
+type SearchType = {
+  page: number
+  rows: number
+  name: string | null
+  phone: string
+  type: null | number
+  includeNonUse: boolean
+};
 enum BeckerType {
-    개인 = 1,
-    영리법인 = 2,
-    비영리법인 = 3,
-    민간단체 = 4,
-    국가단체 = 5,
-    공공기관 = 6,
-    소관법인 = 7
+  개인 = 1,
+  영리법인 = 2,
+  비영리법인 = 3,
+  민간단체 = 4,
+  국가단체 = 5,
+  공공기관 = 6,
+  소관법인 = 7
 }
 const backerTypeArray: Array<{ name: string,  id: BeckerType | null}> = Object.keys(BeckerType).filter(key => isNaN(Number(key))).map(key => ({ name: key, id: BeckerType[key as keyof typeof BeckerType] }));
+const backerTypeArrayAll: Array<{ name: string,  id: BeckerType | null}> = [{ name: '전체', id: 0}, ...backerTypeArray];
 
 export default defineComponent({
   components: {
@@ -349,7 +359,7 @@ export default defineComponent({
     DxPaging,
     PopupMessageCustom,
     InfoToolTip
-},
+  },
   setup() {
     // config grid
     const store = useStore();
@@ -372,7 +382,7 @@ export default defineComponent({
     const originDataDetail: any = ref({
       companyId: companyId,
       backerCode: null,
-      }); // data detail of grid
+    }); // data detail of grid
     const trigger = ref<boolean>(true); // trigger for call api
     const modalHistoryStatus = ref<boolean>(false);
     // const focusedRowKey: any = ref(null);
@@ -382,7 +392,9 @@ export default defineComponent({
     const listBackers: any = ref([]);
 
     const actionSearch: any = ref<boolean>(true);
-    const dataSearch = ref({
+    const type = ref(0);
+
+    const dataSearch = ref<SearchType>({
       page: 1,
       rows: per_page,
       name: null,
@@ -562,26 +574,26 @@ export default defineComponent({
     }
     const handleSubmit = async () => {
       const res = formRef.value.validate();
-        isDiscard.value = false;
-        if (!res.isValid) {
-          // focusedRowKey.value = previousRowData.value.key;
-          res.brokenRules[0].validator.focus();
+      isDiscard.value = false;
+      if (!res.isValid) {
+        // focusedRowKey.value = previousRowData.value.key;
+        res.brokenRules[0].validator.focus();
+      } else {
+        if (focusedRowKey && focusedRowKey.value !== 0) {
+          await updateBacker(dataUpdate.value);
         } else {
-          if (focusedRowKey && focusedRowKey.value !== 0) {
-            await updateBacker(dataUpdate.value);
-          } else {
-            const {backerCode, ...newData} = formState.value
-            // if form disabled => action add
-            const newDataCreate = {
-              companyId: companyId,
-              input: {
-                ...newData,
-                year: globalYear.value,
-              },
-            };
-            await createBacker(newDataCreate);
-          }
+          const {backerCode, ...newData} = formState.value
+          // if form disabled => action add
+          const newDataCreate = {
+            companyId: companyId,
+            input: {
+              ...newData,
+              year: globalYear.value,
+            },
+          };
+          await createBacker(newDataCreate);
         }
+      }
     }
     // handle confirm popup
     const handleConfirm = async (e: any) => {
@@ -628,29 +640,70 @@ export default defineComponent({
           });
       }
     };
-
-    const isEnableBtnCheckResidentId = ref(true);
+    // check duplicate ResidentId
+    const variables = {
+      companyId: companyId,
+      residentId: formState.value.residentId,
+    };
+    const isDisableBtnCheckResidentId = computed(() => {
+      if (formState.value?.residentId?.length !== 13) return true;
+      if (isNewRow.value) return false;
+      return formState.value?.residentId === previousRowData.value?.residentId;
+    });
     const triggerResidentId = ref(false);
-    // check duplicate username
-    // const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerResidentId.value, fetchPolicy: "no-cache", }))
-    // const checkDuplicateUsername = () => {
-    //   isEnableBtnCheckResidentId.value = true;
-    //     if (formState.value.residentId !== '') {
-    //         triggerResidentId.value = true
-    //         refetchUserName()
-    //     } else {
-    //         notification('error', '사용자 이름을 입력헤주세요!');
-    //     }
-    // }
-    // onResultUsername(e => {
-    //   triggerResidentId.value = false
-    //     if (e.data)
-    //         if (e.data.isUserRegistableUsername == true) {
-    //             notification('success', `사용 가능한 아이디입니다!`)
-    //         } else {
-    //             notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
-    //         }
-    // })
+    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
+      queries.isBackerRegistableResidentId,
+      variables,
+      () => ({ enabled: triggerResidentId.value, fetchPolicy: "no-cache", }))
+    const checkDuplicateResidentId = () => {
+      variables.residentId = formState.value.residentId
+        if (formState.value.residentId !== '') {
+            triggerResidentId.value = true
+            refetchUserName()
+        } else {
+            notification('error', '사용자 이름을 입력헤주세요!');
+        }
+    }
+    onResultUsername(e => {
+      triggerResidentId.value = false
+        if (e.data)
+          e.data.isBackerRegistableResidentId
+            ? notification('success', `사용 가능한 아이디입니다!`)
+            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+
+    })
+    // check duplicate Biz Number
+    const variablesCheckBizNumber = {
+      companyId: companyId,
+      bizNumber: formState.value.bizNumber,
+    };
+    const isDisableBtnCheckBizNumber = computed(() => {
+      if (formState.value?.residentId?.length !== 13) return true;
+      if (isNewRow.value) return false;
+      return formState.value?.bizNumber === previousRowData.value?.bizNumber;
+    });
+    const triggerBizNumber = ref(false);
+    const { refetch: refetchCheckBizNumber, onResult: onResultCheckBizNumber } = useQuery(
+      queries.isBackerRegistableBizNumber,
+      variablesCheckBizNumber,
+      () => ({ enabled: triggerBizNumber.value, fetchPolicy: "no-cache", }))
+    const checkDuplicateBizNumber = () => {
+      variablesCheckBizNumber.bizNumber = formState.value.bizNumber
+        if (formState.value.bizNumber !== '') {
+          triggerBizNumber.value = true
+          refetchCheckBizNumber()
+        } else {
+            notification('error', '사용자 이름을 입력헤주세요!');
+        }
+    }
+    onResultCheckBizNumber(e => {
+      triggerBizNumber.value = false
+        if (e.data)
+          e.data.isBackerRegistableBizNumber
+            ? notification('success', `사용 가능한 아이디입니다!`)
+            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+
+    })
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
       return {
@@ -692,9 +745,11 @@ export default defineComponent({
     };
 
     const searching = (e: any) => {
+      dataSearch.value.type = type.value === 0 ? null : type.value;
+      // refetchData()
       trigger.value = true;
       dataSearch.value.page = listBackers.value.page;
-      actionSearch.value = false;
+      // actionSearch.value = false;
     };
 
     const funcAddress = (data: any) => {
@@ -702,8 +757,8 @@ export default defineComponent({
     };
 
 
-    const isShowFundrasingInstitution = computed(() =>  formState.value.type === 5 || formState.value.type === 6 || formState.value.type === 7);
-    const isShowDonationOrganization = computed(() => formState.value.type !== 3 && formState.value.type !== 4);
+    const isShowFundrasingInstitution = computed(() =>  formState.value.type < 5);
+    const isShowDonationOrganization = computed(() => formState.value.type === 3 || formState.value.type === 4);
 
     return {
       confirmSave,
@@ -737,7 +792,13 @@ export default defineComponent({
       BeckerType,
       isShowFundrasingInstitution,
       isShowDonationOrganization,
-      funcAddress
+      funcAddress,
+      backerTypeArrayAll,
+      type,
+      isDisableBtnCheckResidentId,
+      checkDuplicateResidentId,
+      checkDuplicateBizNumber,
+      isDisableBtnCheckBizNumber
     };
   },
 });

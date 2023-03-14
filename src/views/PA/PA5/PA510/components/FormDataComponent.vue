@@ -6,11 +6,11 @@
                     <a-form-item label="일용직사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
-                            @onChange="onChange" :activeType20="false" width="200px"/>
+                            @onChange="onChange" :activeType20="false" width="220px"/>
                     </a-form-item>
                     <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
-                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="200px"/>
+                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="220px"/>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -111,7 +111,7 @@
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false"
-                                        v-model:valueInput="item.price"/>
+                                        v-model:valueInput="item.price" :disabled="[1001, 1002, 1003].find(element => element == item.deductionItemCode)"/>
                                     <span class="pl-5">원</span>
                                 </div>
                             </div>
@@ -124,8 +124,6 @@
             <a-tooltip placement="top">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
-                    <!-- <button-basic style="margin: 0px 5px" @onClick="actionDedution" mode="contained" 
-                    :type="store.state.common.statusChangeFormPrice ? 'calculate' : 'default'" text="공제 재계산" /> -->
                     <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
                 </div>
             </a-tooltip>
@@ -328,20 +326,20 @@ export default defineComponent({
             dataIncomeWageDaily.value = data
             store.state.common.dataRowOld = { ...data }
             
-            arrDeduction.value?.map((data: any) => {
-                data.price = 0
+            arrDeduction.value?.map((row: any) => {
+                row.price = 0
                 dataIncomeWageDaily.value.deductionItems?.map((val: any) => {
-                    if (val.itemCode == data.itemCode) {
-                        data.price = val.amount
+                    if (val.itemCode == row.itemCode) {
+                        row.price = val.amount
                     }
                 })
             })
             store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
             store.state.common.focusedRowKey = data.incomeId
-            setTimeout(() => {
-                store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormAdd = false;
-            }, 500);
+            // setTimeout(() => {
+                // store.state.common.statusChangeFormEdit = false;
+                // store.state.common.statusChangeFormAdd = false;
+            // }, 500);
         })
 
 
@@ -383,7 +381,7 @@ export default defineComponent({
         watch(() => dataIncomeWageDaily.value, (value) => {
             // Checking if the data in the store has changed.
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
-                store.state.common.statusChangeFormPrice = true;
+                store.state.common.statusChangeFormPrice = true;               
                 store.state.common.statusChangeFormEdit = true;
             } else {
                 store.state.common.statusChangeFormEdit = false;
@@ -534,9 +532,9 @@ export default defineComponent({
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
                 dataIncomeWageDaily.value.monthlyWage :
                 dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays)
-            let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = calculateHealthInsuranceEmployee(totalPrices)
-            let total3 = calculateLongTermCareInsurance(totalPrices)
+            // let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
+            // let total2 = calculateHealthInsuranceEmployee(totalPrices)
+            // let total3 = calculateLongTermCareInsurance(totalPrices)
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
             let objectData = Formula.getDailyEmployeeTax(
                 parseInt(`${processKey.value.paymentYear}${processKey.value.paymentMonth}`),
@@ -546,12 +544,12 @@ export default defineComponent({
 
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
-                if (val.deductionItemCode == 1001)
-                    val.priceNew = total1
-                if (val.deductionItemCode == 1002)
-                    val.priceNew = total2
-                if (val.deductionItemCode == 1003)
-                    val.priceNew = total3
+                // if (val.deductionItemCode == 1001)
+                //     val.priceNew = total1
+                // if (val.deductionItemCode == 1002)
+                //     val.priceNew = total2
+                // if (val.deductionItemCode == 1003)
+                //     val.priceNew = total3
                 if (val.deductionItemCode == 1004)
                     val.priceNew = total4
                 if (val.deductionItemCode == 1011 && Number.isInteger(objectData.incomeAmount))

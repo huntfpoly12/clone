@@ -18,14 +18,14 @@
                 <a-form-item label="비과세퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" />
+                            v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" format="0,#,###" :min="0"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="과세대상 퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" :disabled="true"/>
+                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" :disabled="true" format="0,#,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>
@@ -39,7 +39,7 @@
                     <div class="d-flex-top">
                         <div class="d-flex-center">
                             <number-box-money width="150px"
-                                v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxCredit" />
+                                v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxCredit" format="0,#,###" :min="0"/>
                             <span class="pl-5 mr-5">원</span>
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -55,7 +55,7 @@
                 <a-form-item label="기납부(기과세이연)세액">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount" />
+                            v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount" format="0,#,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>
@@ -300,15 +300,16 @@ import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        dataDetail: Object,
         actionNextStep: Number,
     },
     setup(props, { emit }) {
+        const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
-            ...props.dataDetail
+            ...store.state.common.formStateEditPA420
         })
 
         const dataRequestCaculate: any = ref({
@@ -324,9 +325,13 @@ export default defineComponent({
             notification('error', res.message)
         })
         // ====================== WATCH =======================================
-        watch(() => dataGet, (newValue) => {
-            emit("update:dataDetail", newValue);
+        watch(() => store.state.common.formStateEditPA420, (newValue) => {
+          dataGet.value =  newValue;
         }, { deep: true })
+
+        // watch(() => dataGet, (newValue) => {
+        //     emit("update:dataDetail", newValue);
+        // }, { deep: true })
         watch(() => resultCaculate, (newValue) => {
             dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus = newValue.value.calculateIncomeRetirementTax.lastRetirementBenefitStatus
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.lastRetiredYearsOfService
@@ -337,20 +342,6 @@ export default defineComponent({
             dataGet.value.specification.specificationDetail.deductibleWithholdingTax = newValue.value.calculateIncomeRetirementTax.deductibleWithholdingTax
             dataGet.value.specification.specificationDetail.taxAmountToBeReported = newValue.value.calculateIncomeRetirementTax.taxAmountToBeReported
             dataGet.value.specification.specificationDetail.retirementIncomeTax = newValue.value.calculateIncomeRetirementTax.retirementIncomeTax
-            if (!newValue.value.calculateIncomeRetirementTax.prevRetirementBenefitStatus) {
-                dataGet.value.specification.specificationDetail.prevRetirementBenefitStatus = {
-                    "retirementBenefits": 0,
-                    "nonTaxableRetirementBenefits": 0,
-                    "taxableRetirementBenefits": 0
-                }
-                dataGet.value.specification.specificationDetail.prevRetiredYearsOfService = {
-                    "settlementStartDate": '',
-                    "settlementFinishDate": '',
-                    "paymentDate": '',
-                    "exclusionDays": 0,
-                    "additionalDays": 0,
-                }
-            }
         }, { deep: true })
         // ====================== FUNCTION =======================================
         // Click button caculate step-3
@@ -388,7 +379,7 @@ export default defineComponent({
             }
             delete dataRequestCaculate.value.input.calculationOfDeferredRetirementIncomeTax.retirementIncomeTax
             // If step 1 is not checked, delete some variables that do not need to be passed
-            if (cleanData.checkBoxCallApi == false) {
+          if (cleanData.checkBoxCallApi == false) {
                 delete dataRequestCaculate.value.input.prevRetirementBenefitStatus
                 delete dataRequestCaculate.value.input.prevRetiredYearsOfService
             }
@@ -406,7 +397,7 @@ export default defineComponent({
             dataGet,
             dayjs,
             loading,
-            actionCaculate,
+            actionCaculate,store
         }
     }
 })

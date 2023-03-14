@@ -1,9 +1,9 @@
 <template>
-    <div style="display: inline-block;" v-click-outside="onClosePopup">
+    <!-- <div style="display: inline-block;" v-click-outside="setModalVisible">
         <div class="mytooltip">
             <div class="mytext" :class="showModal ? 'show' : ''">
-                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser" v-model:valueRadioCheck="value"
-                    :layoutCustom="'horizontal'" />
+                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
+                    v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
                 <span>으로 변경하시겠습니까?</span>
                 <div class="mt-20">
                     <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
@@ -14,11 +14,31 @@
             </div>
         </div>
         <div v-for="item in arrayRadioManager" :key="item.id">
-                <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class" class="buttonModal"  
-                 @onClick="(disabled || managerGrade == 3) ? '' : clickButton()">
-                </button-basic>
+            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
+                class="buttonModal" @onClick="(disabled || managerGrade == 3) ? '' : clickButton()">
+            </button-basic>
         </div>
-    </div>
+    </div> -->
+    <a-popover trigger="click" v-model:visible="showModal">
+        <template #content>
+            <div class="mytext">
+                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
+                    v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
+                <span>으로 변경하시겠습니까?</span>
+                <div class="mt-20">
+                    <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
+                        @onClick="setModalVisible" />
+                    <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
+                        :mode="'contained'" @onClick="submit" />
+                </div>
+            </div>
+        </template>
+        <div v-for="item in arrayRadioManager" :key="item.id" style="display: inline-block;">
+            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
+                class="buttonModal" @onClick="(disabled || managerGrade == 3) ? '' : clickButton()">
+            </button-basic>
+        </div>
+    </a-popover>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -56,10 +76,10 @@ export default defineComponent({
             value.value = props.valueStatus
             showModal.value = false;
         };
-        
+
         const clickButton = () => {
             // if(props.valueStatus && props.valueStatus <= 20) {
-                showModal.value = true;
+            showModal.value = true;
             // }
         }
 
@@ -72,18 +92,17 @@ export default defineComponent({
                 'status': value.value
             });
             emit("checkConfirm", true)
-            
+
         }
-        watch(
-            () => props.valueStatus,
-            (valueNew) => {
-              value.value = valueNew
-              currentBt.value = valueNew
-            }
+        watch(() => props.valueStatus, (valueNew) => {
+            value.value = valueNew
+            currentBt.value = valueNew
+        }
         );
-        const onClosePopup = () => {
-          showModal.value = false;
+        watch(() => showModal.value, (valueNew) => {
+            value.value = props.valueStatus
         }
+        );
         return {
             value,
             currentBt,
@@ -94,7 +113,6 @@ export default defineComponent({
             showModal,
             submit,
             userType,
-            onClosePopup,
             managerGrade,
         }
     },
@@ -106,52 +124,44 @@ export default defineComponent({
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #4A7EBB;
 }
+
 .input {
     background-color: #376092 !important;
     border: 3px solid #558ED5 !important;
 }
+
 .adjusting {
     background-color: #BB3835 !important;
     box-shadow: rgba(0, 0, 0, 0.384) 0px 0px 10px 4px;
     border: 1px solid #BE4B48 !important;
 }
+
 .adjusted {
     background-color: #C00000 !important;
     border: 3px solid #953735 !important;
 }
-.mytooltip .mytext {
-    display: none;
-    width: 360px;
-    background-color: rgb(225 225 225);
-    z-index: 9999;
-    left: -130px;
-    bottom: 110%;
+
+.mytext {
+    width: 300px;
     text-align: center;
-    border-radius: 10px;
-    padding: 10px 5px;
-    position: absolute;
+    padding: 5px;
 }
 
-.mytooltip {
-    position: fixed;
-    // display: inline-block;
-}
-
-.show {
-    display: block !important;
-}
 .button-form-modal {
     margin: 0px 5px;
 }
-::v-deep .dx-widget.dx-collection {
+
+:deep .dx-widget.dx-collection {
     justify-content: center;
 }
+
 .buttonModal {
     color: white;
     border: none;
     border-radius: 6px;
 }
-::v-deep .dx-button-text {
+
+:deep .dx-button-text {
     line-height: inherit;
 }
 </style>

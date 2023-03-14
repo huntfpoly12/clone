@@ -3,13 +3,13 @@ export default gql`
 query getElectronicFilingsByIncomeWageDailyPaymentStatement($input: ElectronicFilingCompanyPaymentMonthKeyInput!) {
     getElectronicFilingsByIncomeWageDailyPaymentStatement(input: $input) {
         electronicFilingId
-        imputedYear
-        imputedMonth
-        paymentYear
-        paymentHalfYear
-        paymentMonth
-        withholdingTaxType
-        reportType
+#        imputedYear
+#        imputedMonth
+#        paymentYear
+#        paymentHalfYear
+#        paymentMonth
+#        withholdingTaxType
+#        reportType
         productionStatus
         productionRequestedAt
         productionRequestUserId
