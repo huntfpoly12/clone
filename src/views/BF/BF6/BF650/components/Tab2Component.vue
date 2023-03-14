@@ -37,7 +37,7 @@
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
-                <DxColumn caption="신고유형/주기" data-field="reportType" data-type="string" />
+                <DxColumn caption="참고사항" data-field="referenceInformation" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus"
@@ -145,7 +145,7 @@ export default defineComponent({
         }
     }
 })
-</script> 
+</script>
 <style scoped lang="scss" src="../style/style.scss"></style>
 <style lang="scss" scoped>
 :deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
@@ -170,4 +170,4 @@ export default defineComponent({
 
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
-}</style> 
+}</style>

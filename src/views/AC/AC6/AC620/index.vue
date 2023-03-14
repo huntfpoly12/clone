@@ -206,7 +206,7 @@
                   :disabled="formState.type !== 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" />
+                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || formState.type !== 1" />
                 <InfoToolTip >
                   <span class="">
                     주민등록번호 저장시 개인정보 처리 방침에 동의한걸로 간주합니다.<br />
@@ -225,7 +225,7 @@
                   :disabled="formState.type === 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" />
+                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || formState.type === 1" />
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
@@ -319,6 +319,7 @@ import { initBackerCreateInput } from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import { isEqualObject } from "@/utils";
+import isBackerRegistableResidentId from "@/graphql/queries/AC/AC6/AC620/isBackerRegistableResidentId";
 
 type SearchType = {
   page: number
@@ -639,29 +640,70 @@ export default defineComponent({
           });
       }
     };
-
-    const isEnableBtnCheckResidentId = ref(true);
+    // check duplicate ResidentId
+    const variables = {
+      companyId: companyId,
+      residentId: formState.value.residentId,
+    };
+    const isDisableBtnCheckResidentId = computed(() => {
+      if (formState.value?.residentId?.length !== 13) return true;
+      if (isNewRow.value) return false;
+      return formState.value?.residentId === previousRowData.value?.residentId;
+    });
     const triggerResidentId = ref(false);
-    // check duplicate username
-    // const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.isUserRegistableUsername, dataCallCheck, () => ({ enabled: triggerResidentId.value, fetchPolicy: "no-cache", }))
-    // const checkDuplicateUsername = () => {
-    //   isEnableBtnCheckResidentId.value = true;
-    //     if (formState.value.residentId !== '') {
-    //         triggerResidentId.value = true
-    //         refetchUserName()
-    //     } else {
-    //         notification('error', '사용자 이름을 입력헤주세요!');
-    //     }
-    // }
-    // onResultUsername(e => {
-    //   triggerResidentId.value = false
-    //     if (e.data)
-    //         if (e.data.isUserRegistableUsername == true) {
-    //             notification('success', `사용 가능한 아이디입니다!`)
-    //         } else {
-    //             notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
-    //         }
-    // })
+    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
+      queries.isBackerRegistableResidentId,
+      variables,
+      () => ({ enabled: triggerResidentId.value, fetchPolicy: "no-cache", }))
+    const checkDuplicateResidentId = () => {
+      variables.residentId = formState.value.residentId
+        if (formState.value.residentId !== '') {
+            triggerResidentId.value = true
+            refetchUserName()
+        } else {
+            notification('error', '사용자 이름을 입력헤주세요!');
+        }
+    }
+    onResultUsername(e => {
+      triggerResidentId.value = false
+        if (e.data)
+          e.data.isBackerRegistableResidentId
+            ? notification('success', `사용 가능한 아이디입니다!`)
+            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+
+    })
+    // check duplicate Biz Number
+    const variablesCheckBizNumber = {
+      companyId: companyId,
+      bizNumber: formState.value.bizNumber,
+    };
+    const isDisableBtnCheckBizNumber = computed(() => {
+      if (formState.value?.residentId?.length !== 13) return true;
+      if (isNewRow.value) return false;
+      return formState.value?.bizNumber === previousRowData.value?.bizNumber;
+    });
+    const triggerBizNumber = ref(false);
+    const { refetch: refetchCheckBizNumber, onResult: onResultCheckBizNumber } = useQuery(
+      queries.isBackerRegistableBizNumber,
+      variablesCheckBizNumber,
+      () => ({ enabled: triggerBizNumber.value, fetchPolicy: "no-cache", }))
+    const checkDuplicateBizNumber = () => {
+      variablesCheckBizNumber.bizNumber = formState.value.bizNumber
+        if (formState.value.bizNumber !== '') {
+          triggerBizNumber.value = true
+          refetchCheckBizNumber()
+        } else {
+            notification('error', '사용자 이름을 입력헤주세요!');
+        }
+    }
+    onResultCheckBizNumber(e => {
+      triggerBizNumber.value = false
+        if (e.data)
+          e.data.isBackerRegistableBizNumber
+            ? notification('success', `사용 가능한 아이디입니다!`)
+            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+
+    })
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
       return {
@@ -752,7 +794,11 @@ export default defineComponent({
       isShowDonationOrganization,
       funcAddress,
       backerTypeArrayAll,
-      type
+      type,
+      isDisableBtnCheckResidentId,
+      checkDuplicateResidentId,
+      checkDuplicateBizNumber,
+      isDisableBtnCheckBizNumber
     };
   },
 });
