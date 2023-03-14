@@ -311,7 +311,6 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
     });
     const onChangePayItem = (emitVal: any) => {
-      console.log(`output->emitVal`,emitVal)
       calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);

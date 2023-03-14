@@ -135,7 +135,6 @@ export default defineComponent({
           yearMonth = `${globalYear.value}${props.month}`;
         }
         month2.value = yearMonth;
-        console.log(`output-11111`,11111)
         trigger.value = true;
         configRefetch();
         findIncomeRefetch();
