@@ -183,7 +183,7 @@ export default defineComponent({
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref(0)
-        const triggerCalculateIncome = ref<boolean>(false)
+        // const triggerCalculateIncome = ref<boolean>(false)
         const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
         const triggerEmployeeWageDailies = ref<boolean>(true)
         const triggerIncomeWageDaily = ref<boolean>(false)
@@ -199,12 +199,12 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear.value,
         })
-        const originDataCalculateIncome = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            totalTaxPay: 10,
-            dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
-        })
+        // const originDataCalculateIncome = ref({
+        //     companyId: companyId,
+        //     imputedYear: globalYear.value,
+        //     totalTaxPay: 10,
+        //     dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
+        // })
         const originDataIncomeWageDaily = ref({
             companyId: companyId,
             incomeId: store.state.common.incomeId,
@@ -233,13 +233,13 @@ export default defineComponent({
             enabled: triggerIncomeWageDaily.value,
             fetchPolicy: "no-cache",
         }))
-        const {
-            loading: loadingCalculateIncome,
-            onResult: resCalculateIncome,
-        } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
-            enabled: triggerCalculateIncome.value,
-            fetchPolicy: "no-cache",
-        }))
+        // const {
+        //     loading: loadingCalculateIncome,
+        //     onResult: resCalculateIncome,
+        // } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
+        //     enabled: triggerCalculateIncome.value,
+        //     fetchPolicy: "no-cache",
+        // }))
         const {
             mutate: mutateAdd,
             onDone: onDoneAdd,
@@ -258,6 +258,16 @@ export default defineComponent({
         // ===================DONE GRAPQL==================================
         onDoneAdd( async (data: any) => {
             notification('success', messageAddSuccess)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
@@ -274,9 +284,29 @@ export default defineComponent({
         })
         onerrorAdd((e: any) => {
             notification('error', e.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
         onDoneUpdate( async (data: any) => {
             notification('success', messageUpdateSuccess)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
@@ -292,6 +322,16 @@ export default defineComponent({
         })
         onerrorUpdate((e: any) => {
             notification('error', e.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
 
         resEmployeeWage(value => {
@@ -584,6 +624,7 @@ export default defineComponent({
         const pa510FormRef = ref()
         const onSubmitForm = () => {
             store.state.common.statusClickButtonSave = true;
+            store.state.common.checkClickYear = false;
             submitForm()
         }
         const submitForm = () => {
