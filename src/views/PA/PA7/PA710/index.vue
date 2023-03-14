@@ -243,7 +243,7 @@ export default defineComponent({
         const optionsRadio = ref([...initialOptionsRadio]);
         let runOne = ref(true);
         const dataYearNew = ref(globalYear.value)
-        const dataOldVal = ref(globalYear.value)
+        const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
 
         // ================GRAPQL==============================================
@@ -287,6 +287,16 @@ export default defineComponent({
         );
         onDoneAdd(async (data) => {
             notification('success', `업데이트 완료되었습니다!`)
+            if (checkClickYear.value) {
+                originData.imputedYear = dataYearNew.value
+                runOne.value = true;
+                trigger.value = true;
+                store.state.settings.globalYear = dataYearNew.value
+                setTimeout(() => {
+                    checkClickYear.value = false;
+                }, 500);
+                return;
+            }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
@@ -320,6 +330,16 @@ export default defineComponent({
         });
         onDoneUpdate(async (data) => {
             notification('success', `업데이트 완료되었습니다!`)
+            if (checkClickYear.value) {
+                originData.imputedYear = dataYearNew.value
+                runOne.value = true;
+                trigger.value = true;
+                store.state.settings.globalYear = dataYearNew.value
+                setTimeout(() => {
+                    checkClickYear.value = false;
+                }, 500);
+                return;
+            }
             await (trigger.value = true);
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
                 return
@@ -343,19 +363,13 @@ export default defineComponent({
         const pa710FormRef = ref()
         const actionSave = () => {
             statusClickButtonSave.value = true;
+            checkClickYear.value = false
             submitForm()
         }
         const submitForm = () => {
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                // if (statusFormUpdate.value) {
-                //     focusedRowKey.value = formState.value.residentId
-                // } else {
-                //     focusedRowKey.value = statusAddRow.value ? null : 'PA710'
-                // }
-                // dataRow.employeeId = formState.value.employeeId
-                // dataRow.incomeTypeCode = formState.value.incomeTypeCode
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
                 let input = {
@@ -496,6 +510,16 @@ export default defineComponent({
                 statusClickButtonSave.value = false;
                 submitForm();
             } else {
+                if (checkClickYear.value) {
+                    originData.imputedYear = dataYearNew.value
+                    runOne.value = true;
+                    trigger.value = true;
+                    store.state.settings.globalYear = dataYearNew.value
+                    setTimeout(() => {
+                        checkClickYear.value = false;
+                    }, 500);
+                    return;
+                }
                 if (!statusAddRow.value) {
                     listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
                     statusAddRow.value = true
@@ -507,6 +531,7 @@ export default defineComponent({
         const statusComfirmAdd = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
+                checkClickYear.value = false;
                 submitForm();
             } else {
                 if(statusAddRow.value && statusClickButtonAdd.value) { // add row
@@ -526,30 +551,6 @@ export default defineComponent({
             resetFormNum.value++;
             focusedRowKey.value = 'PA710';
             statusFormUpdate.value = false;
-        }
-
-        const confimSaveWhenChangeRow = (status: any) => {
-            if (status == true) {
-                let residentId = formState.value.residentId.replace('-', '')
-                let dataCreate = {
-                    companyId: companyId,
-                    imputedYear: globalYear.value,
-                    input: {
-                        employeeId: parseInt(formState.value.employeeId),
-                        incomeTypeCode: formState.value.incomeTypeCode,
-                        name: formState.value.name,
-                        foreigner: formState.value.foreigner,
-                        nationality: formState.value.nationality,
-                        nationalityCode: formState.value.nationalityCode,
-                        stayQualification: formState.value.stayQualification,
-                        residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
-                        email: formState.value.email,
-                        incomeTypeName: formState.value.incomeTypeName,
-                    },
-                };
-                createEmployeeExtra(dataCreate);
-            }
-            triggerDetail.value = true;
         }
 
         // ================WATCHING============================================
@@ -600,27 +601,30 @@ export default defineComponent({
         watchEffect(() => {
             formState.value.name = formState.value.name?.toUpperCase() ?? '';
         });
+        
         watch(globalYear, (newVal, oldVal) => {
-            // dataYearNew.value = newVal;
-            // dataOldVal.value = oldVal;
-            // console.log(1111);
-            
-            // let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
-            // let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
-            // if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
-            //     // await (modalStatusAdd.value = true)
-            //     a.value = true
-            //     // await (store.state.settings.globalYear = oldVal);
-            // } else {
-            //     a.value = false
+            let statusChangeFormAdd = (JSON.stringify({ ...initialState }) !== JSON.stringify(formState.value) && statusFormUpdate.value == false)
+            let statusChangeFormEdit = (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true)
+            if (statusChangeFormEdit || statusChangeFormAdd) { // if status form add and form not null
+                if (!checkClickYear.value) {
+                    modalStatus.value = true
+                    checkClickYear.value = true
+                    store.state.settings.globalYear = oldVal;
+                    dataYearNew.value = newVal;
+                    return
+                }
+                return
+            } else {
+                originData.imputedYear = newVal
                 runOne.value = true;
                 trigger.value = true;
-            // }
+            }
         });
 
         return {
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
-            confimSaveWhenChangeRow, onFocusedRowChanging,
+            // confimSaveWhenChangeRow, 
+            onFocusedRowChanging,
             // actionToAddFromEdit, 
             textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock,

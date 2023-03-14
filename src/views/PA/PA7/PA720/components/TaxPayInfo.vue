@@ -124,7 +124,7 @@ export default defineComponent({
       default: false,
     },
     addItemClick: Boolean,
-    addNewRow: {
+    saveToNewRow: {
       type: Function,
       default: () => { },
     },
@@ -167,7 +167,7 @@ export default defineComponent({
       }
       if (!firsTimeRow.value && res) {
         if (props.compareType == 3) {
-          props.addNewRow();
+          props.saveToNewRow();
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
           store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
