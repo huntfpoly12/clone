@@ -8,7 +8,7 @@
       <a-row>
         <a-col :span="24">
           <a-form-item label="기타소득자" label-align="right" class="red">
-            <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus" :arrayValue="arrayEmploySelect"
+            <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" :arrayValue="arrayEmploySelect"
               v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
               @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
@@ -28,21 +28,21 @@
             </div>
           </a-form-item>
           <a-form-item label="지급일" class="red mt-15">
-            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus" width="150px"
+            <number-box :max="31" :min="1" :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" width="150px"
               class="mr-5" v-model:valueInput="formPA720.input.paymentDay" :required="true" :isFormat="true" />
           </a-form-item>
           <div class="input-text">
             <a-form-item label="지급액" class="red mt-10">
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-                :disabled="!isColumnData || isExpiredStatus"></number-box-money>
+                :disabled="idDisableInput"></number-box-money>
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="필요경비" class="red">
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
-                v-model:valueInput="formPA720.input.requiredExpenses" :disabled="!isColumnData || isExpiredStatus"
+                v-model:valueInput="formPA720.input.requiredExpenses" :disabled="idDisableInput"
                 class="red"></number-box-money>
               <span class="ml-3">원</span>
             </a-form-item>
@@ -50,7 +50,7 @@
           <a-form-item label="세율" class="red">
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
-               :required="true" :disabled="!isColumnData || isExpiredStatus" >
+               :required="true" :disabled="idDisableInput" >
               <template #item="{ data }">
                 <a-tooltip placement="top" zIndex="9999">
                   <template #title v-if="data?.tooltip">
@@ -106,7 +106,7 @@
       </a-row>
       <a-row justify="center" class="my-10 mt-20">
         <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSubmitForm($event)"
-          id="pa720-save-js" :disabled="!isColumnData || isExpiredStatus">
+          id="pa720-save-js" :disabled="idDisableInput">
         </button-basic>
       </a-row>
     </standard-form>
@@ -211,7 +211,16 @@ export default defineComponent({
     const pa720FormRef = ref();
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
-
+    const isNewRowPA720 = computed(()=>store.state.common.isNewRowPA720);
+    const idDisableInput = computed(()=>{
+      if(props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
+        return true;
+      }
+      if(!props.isColumnData || props.isExpiredStatus){
+        return true
+      }
+      return false;
+    })
     //-------------------------get incom extra detail ------------------------
 
     watch(
@@ -404,9 +413,10 @@ export default defineComponent({
       onSubmitForm,
       resetForm,
       triggerIncomeExtra,
+      idDisableInput
     };
   },
 });
 </script>
 
-<style lang="scss" scoped src="../style/style.scss" ></style>>
+<style lang="scss" scoped src="../style/style.scss" ></style>

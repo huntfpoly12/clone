@@ -270,6 +270,8 @@ export default defineComponent({
 
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
+                store.state.common.statusClickButtonSave = false
+                store.state.common.checkClickYear = false;
                 store.state.common.actionSubmit++
             } else { // reset form
                 if (store.state.common.statusRowAdd) {

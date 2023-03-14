@@ -198,10 +198,11 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
-    <!-- {{ compareType2() }} compareType2 <br />
+    <!-- {{ formPA720.input }} formPA720.input <br />
+    {{ dataActionUtilsPA720.input }} dataActionUtilsPA720.input <br />
+    {{ compareType2() }} compareType2 <br />
     {{ compareType1() }} compareType1 <br />
     {{ compareType }} compareType <br />
-    {{ formEditPA720.input }} formEditPA720.input <br />
     {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
     {{ editTaxParamFake }} editTaxParamFake <br /> -->
     <!-- {{ formPA720.input }} formPA720.input <br /> -->
@@ -252,11 +253,11 @@
     <a-row class="content-btm">
       <a-col :class="{ 'ele-opacity': !compareType2() }" :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :isRunOnce="isRunOnce"
-          :changeFommDone="changeFommDone" :addItemClick="addItemClick" :addNewRow="saveToNewRow"
+          :changeFommDone="changeFommDone" :addItemClick="addItemClick" :saveToNewRow="saveToNewRow"
           :compareType="compareType" />
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
-        <FormTaxPayInfo ref="formTaxRef" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
+        <FormTaxPayInfo ref="formTaxRef" :key="formKey" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
           :isColumnData="isColumnData" @onFormDone="onFormDone" @subValidate="subValidate"
           :addNewIncomeExtra="processKeyPA720.processKey" :isExpiredStatus="isExpiredStatus" />
       </a-col>
@@ -339,6 +340,7 @@ export default defineComponent({
     const messageUpdate = Message.getMessage('COMMON', '106').message;
     const titleModalConfirm = ref(messageSave);
     const pa720GridRef = ref();
+    const formKey = ref(0);
     const inputDateTax = computed(() => {
       if (isColumnData.value) {
         return processKeyPA720.value.processKey?.imputedYear + '-' + formatMonth(processKeyPA720.value.processKey?.imputedMonth);
@@ -495,6 +497,9 @@ export default defineComponent({
     };
     const onFormDone = (emit: Boolean) => {
       if (emit) {
+        if (isClickMonthDiff.value) {
+          refetchIncomeProcessExtras();
+        }
         if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
         }
@@ -504,6 +509,7 @@ export default defineComponent({
     };
     const onDelDone = () => {
       onCopyDone();
+      store.commit('common/formEditPA720', formPA720.value);
     };
     watch(changeFommDone, () => {
       // if(isClickYearDiff.value){
@@ -563,7 +569,7 @@ export default defineComponent({
     };
     //function common
     const resetForm = async () => {
-      await formTaxRef.value.pa720FormRef.resetValidate();
+      formKey.value++;
       formTaxRef.value.newDateLoading = false;
       store.commit('common/formPA720', dataActionUtilsPA720.value);
       store.commit('common/formEditPA720', dataActionUtilsPA720.value);
@@ -584,9 +590,8 @@ export default defineComponent({
       compareType.value = 1;
       formTaxRef.value.isEdit = false;
       store.commit('common/formPA720', dataActionUtilsPA720.value);
-      formTaxRef.value.pa720FormRef.resetValidate();
-      store.commit('common/formPA720', dataActionUtilsPA720.value);
       store.commit('common/formEditPA720', formPA720.value);
+      formKey.value++;
     }
     const delNewRow = () => {
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.splice(0, taxPayRef.value.dataSourceDetail?.length - 1);
@@ -912,10 +917,11 @@ export default defineComponent({
       subValidate,
       isNewRowPA720,
       compareType,
-      saveToNewRow,
       editTaxParamFake,
       formEditPA720,
-      dataActionUtilsPA720
+      dataActionUtilsPA720,
+      formKey,
+      saveToNewRow
     };
   },
 });
