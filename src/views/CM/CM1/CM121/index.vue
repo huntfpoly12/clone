@@ -175,7 +175,7 @@
               </a-row>
             </div>
             <div class="cm-121_detail-btn">
-              <button-basic text="저장" type="default" mode="contained" @onClick="submit" />
+              <button-basic text="저장" type="default" mode="contained" @onClick="submit" :disabled="!dataDetailBankbook.bankbookInput.type"/>
             </div>
           </standard-form>
         </a-spin>
@@ -420,10 +420,12 @@ export default defineComponent({
           triggerBankbook.value = true
         }
         if (isNewCreate.value) {
-          focusedRowKey.value = value.getBankbooks[value.getBankbooks.length - 1].bankbookId
+          const lengthData = value.getBankbooks.length - 1
+          focusedRowKey.value = value.getBankbooks[lengthData].bankbookId
           isCreate.value = false
-          paramBankbookDetail.facilityBusinessId = value.getBankbooks[value.getBankbooks.length - 1].facilityBusinessId
-          paramBankbookDetail.bankbookId = value.getBankbooks[value.getBankbooks.length - 1].bankbookId
+          indexRow.value = lengthData
+          paramBankbookDetail.facilityBusinessId = value.getBankbooks[lengthData].facilityBusinessId
+          paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
           triggerBankbook.value = true
         }
         if (isDelete.value) {
@@ -508,6 +510,7 @@ export default defineComponent({
         isSetTypeClassification.value.private = true
       }
     })
+    
     // -------METHODS-----------
 
     const handleGetInputBankType = (type: string, listInput: string) => {
