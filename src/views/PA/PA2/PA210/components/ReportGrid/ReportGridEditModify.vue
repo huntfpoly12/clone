@@ -71,7 +71,7 @@
       </div>
   </a-modal>
   <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
-  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew(false)" />
 </template>
 
 <script lang="ts">
@@ -172,7 +172,7 @@ export default defineComponent({
     })
     // load new data when first time open popup
     onMounted(() => {
-      loadNew()
+      loadNew(true)
     })
 
       // Get IncomesForTaxWithholdingStatusReport
@@ -203,7 +203,7 @@ export default defineComponent({
       }
     })
     // The above code is used to load the data from the database to the table.
-    const loadNew = () => {
+    const loadNew = (firstLoad :  boolean) => {
       clearAllCellValue(wrapper)
       // call api to set modified value
       originData.value = {
@@ -219,8 +219,12 @@ export default defineComponent({
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
       }
-      // trigger.value = true;
-      // refetchData()
+      if (!firstLoad) {
+        alert()
+        trigger.value = true;
+        refetchData()
+      }
+
 
       let hot = wrapper.value?.hotInstance; 
       //Put in a loop to set data into each cell
