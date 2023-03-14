@@ -1,4 +1,7 @@
 .cm-121 {
+    p {
+      margin: 0;
+    }
     &_row {
         padding: 10px;
         height: calc(100vh - 130px);
@@ -22,6 +25,8 @@
             padding: 3px 0 3px 10px;
             color: black;
             line-height: 28px;
+            font-weight: bold;
+            margin-bottom: 15px !important;
             &-top {
             }
             &-bottom {
