@@ -45,7 +45,9 @@
                 <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
               </DxColumn>
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
-              <DxColumn caption="사업구분" />
+              <DxColumn caption="사업구분" data-field="facilityBusinessId">
+                <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+              </DxColumn>
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
               <template #action="{ data }">
@@ -63,7 +65,7 @@
           </a-spin>
         </div>
       </a-col>
-      <a-col span="12" class="cm-121_detail">
+      <a-col span="12" class="cm-121_detail" :class="{'cm-121_disable': !dataDetailBankbook.bankbookInput.type}">
         <a-spin :spinning="loadingCreateBankbook || loadingGetBankbook || loadingUpdateBankbook" size="large">
           <standard-form formName="cm-121-from" ref="cm121Form" :key="countResetForm">
             <div>
@@ -231,12 +233,13 @@ export default defineComponent({
     let isModalDelete = ref<boolean>(false)
     let isModalConfirmSaveChange = ref<boolean>(false)
     let isDelete = ref<boolean>(false)
+    let isUpdate = ref<boolean>(false)
     let isModalLastScrapingStatus = ref<boolean>(false)
     let isNewCreate = ref<boolean>(false)
     const facilityBizTypeCommon = FacilityBizType.all();
     const bankTypeCommon = BankType.all();
     const focusedRowKey = ref()
-    let indexRow = ref()
+    let indexRow = ref(0)
     let firstLoad = ref(true)
     let countResetForm = ref(0)
     const modalHistoryStatus = ref<boolean>(false);
@@ -317,11 +320,11 @@ export default defineComponent({
     })
     const isInputWebID = computed(() => {
       return dataDetailBankbook.value.bankbookInput.useScrap && 
-              ((inputIDPWBankType.value.corporate.ID && isTypeClassification.value) || (inputIDPWBankType.value.private.ID && !isTypeClassification.value))
+              ((!!inputIDPWBankType.value.corporate.ID && isTypeClassification.value) || (!!inputIDPWBankType.value.private.ID && !isTypeClassification.value))
     })
     const isInputWebPW = computed(() => {
       return dataDetailBankbook.value.bankbookInput.useScrap && 
-              ((inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (inputIDPWBankType.value.private.PW && !isTypeClassification.value))
+              ((!!inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (!!inputIDPWBankType.value.private.PW && !isTypeClassification.value))
     })
     // ============ GRAPQL ===============================
 
@@ -388,6 +391,7 @@ export default defineComponent({
     } = useMutation(mutations.updateBankbook);
     doneUpdateBankbook((e) => {
       notification('success', `업데이트 완료!`)
+      isUpdate.value = true
       triggerBankbooks.value = true
     })
     errorUpdateBankbook(e => {
@@ -428,6 +432,13 @@ export default defineComponent({
           paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
           triggerBankbook.value = true
         }
+        if(isUpdate.value) {
+          indexRow.value =  objChange.value.indexRow
+          focusedRowKey.value = objChange.value.bankbookId
+          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+          paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          triggerBankbook.value = true
+        }
         if (isDelete.value) {
           if (value.getBankbooks.length !== 0) {
             if (value.getBankbooks.length - 1 < indexRow.value) {
@@ -447,6 +458,7 @@ export default defineComponent({
             isCreate.value = true
           }
         }
+        isUpdate.value = false
         isNewCreate.value = false
         firstLoad.value = false
         isDelete.value = false
@@ -618,6 +630,7 @@ export default defineComponent({
         delete data.scrapingInfoInput.birthday
       } else {
         delete data.scrapingInfoInput.bizNumber
+        data.scrapingInfoInput.birthday = parseInt(data.scrapingInfoInput.birthday)
       }
 
       if (!dataDetailBankbook.value.bankbookInput.useScrap) {
@@ -625,17 +638,20 @@ export default defineComponent({
         delete data.scrapingInfoInput.webPassword
         delete data.scrapingInfoInput.webId
       }else {
-        if(!isInputWebID) delete data.scrapingInfoInput.webId
-        if(!isInputWebPW) delete data.scrapingInfoInput.webPassword
+        if(!isInputWebID.value) delete data.scrapingInfoInput.webId
+        if(!isInputWebPW.value) delete data.scrapingInfoInput.webPassword
       }
       if (isCreate.value) {
         delete data.scrapingInfoInput.bankbookId
         createBankbook(data)
       } else {
+        delete data.bankbookInput.accountCode
+        delete data.bankbookInput.accountName
+        delete data.bankbookInput.bankbookNumber
+        delete data.bankbookInput.classification
+        delete data.bankbookInput.sort
+        delete data.bankbookInput.type
         updateBankbook(data)
-        doneUpdateBankbook(() => {
-          triggerBankbooks.value = true
-        })
       }
     }
 
@@ -671,10 +687,10 @@ export default defineComponent({
       }else {
         event.cancel = true
         isModalConfirmSaveChange.value = true
-        objChange.value.indexRow = event.newRowIndex
-        objChange.value.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
-        objChange.value.bankbookId = event.rows[event.newRowIndex].data.bankbookId
       }
+      objChange.value.indexRow = event.newRowIndex
+      objChange.value.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
+      objChange.value.bankbookId = event.rows[event.newRowIndex].data.bankbookId
     }
 
     const handleConfirmChange = (val: boolean) => {

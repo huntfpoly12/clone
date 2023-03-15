@@ -1,6 +1,11 @@
 <template>
   <a-modal :visible="isModalLastScrapingStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
-    :width="644" :title="`최종 스크래핑 현황 조회 ${data?.bankbookNickname || ''}`">
+    :width="644" >
+    <template #title>
+      <div>
+        <span>최종 스크래핑 현황 조회 </span><b>{{data?.bankbookNickname || ''}}</b>
+      </div>
+    </template>
       <div class="text-align-center">
         <div class="mc121-popup-last-scraping-status">
           <a-form-item label="스크래핑 상태" class="mc121-popup-last-scraping-status-from">
