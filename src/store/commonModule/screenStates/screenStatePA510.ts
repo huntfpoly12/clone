@@ -29,6 +29,8 @@ const statesPA510 = {
     statusClickButtonSave: true,
     statusClickButtonAdd: false,
     addRow: 1,
+    onEditItem: 1,
+    statusClickEditItem: false
 };
   
 export default statesPA510;

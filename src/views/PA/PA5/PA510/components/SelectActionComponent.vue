@@ -1,5 +1,5 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
@@ -23,7 +23,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic  :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -53,6 +53,9 @@
             </div>
         </template>
     </DxDropDownButton>
+    <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
+
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
     :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
 
@@ -129,6 +132,7 @@ export default defineComponent({
         const modalEmailSinglePayrollRegister = ref(false)
         const modalEmailMulti = ref(false)
         const modalStatusAdd = ref(false)
+        const modalChangeRow = ref(false)
 
         const originData: any = ref({
             companyId: companyId,
@@ -160,21 +164,22 @@ export default defineComponent({
                     store.state.common.addRow++ // add row
                         store.state.common.statusRowAdd = false;
                         store.state.common.statusFormAdd = true;
-                        // store.state.common.incomeId = 'PA510';
-                        // store.state.common.focusedRowKey = 'PA510';
                 } else {
                     if (store.state.common.statusChangeFormAdd) {
                         modalStatusAdd.value = true
                         store.state.common.statusClickButtonAdd = true;
                     }
-                    // notification('error', "nhập vàooooo")
                 }
             }
         }
-        const editItem = (value: any) => {
+        const editItem = () => {
             if (props.dataRows.length) {
-                modalEdit.value = true;
-                popupDataEdit.value = props.dataRows
+                if (store.state.common.statusChangeFormEdit) {
+                    modalChangeRow.value = true
+                } else {
+                    modalEdit.value = true;
+                    popupDataEdit.value = props.dataRows
+                }
             } else {
                 notification('error', messageSelectItem)
             }
@@ -278,13 +283,23 @@ export default defineComponent({
                     store.state.common.addRow++ // add row
                     store.state.common.statusRowAdd = false;
                     store.state.common.statusFormAdd = true;
-                    // store.state.common.incomeId = 'PA510';
-                    // store.state.common.focusedRowKey = 'PA510';
                 } else {
                     store.state.common.actionResetForm++;
                 }
             }
         }
+        const statusComfirmChange = async (res: any) => {
+            store.state.common.statusClickEditItem = true
+            if (res) {
+                await store.state.common.actionSubmit++
+            } else {
+                store.state.common.loadingFormData++
+            }
+        }
+        watch(() => store.state.common.onEditItem, (value) => {
+            store.state.common.statusClickEditItem = false
+            editItem()
+        })
 
         return {
             deleteItem,
@@ -313,7 +328,7 @@ export default defineComponent({
             openTab,
             // onSubmit,
             store,
-            emailAddress, Message,
+            emailAddress, Message, statusComfirmChange, modalChangeRow,
         };
     },
 });

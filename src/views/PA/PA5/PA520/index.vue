@@ -53,8 +53,8 @@
                   <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                       :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                       :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="onRowClick"
-                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting" id="gridContainer">
-                      <DxScrolling mode="virtual" show-scrollbar="always"/>
+                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting" id="gridContainer" ref="pa520Grid">
+                      <DxScrolling mode="standard" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
                       <DxExport :enabled="true"/>
                       <DxPaging :enabled="false" />
@@ -92,21 +92,7 @@
                       </template>
                       <DxColumn caption="주민등록번호" cell-template="residentId" width="150"  css-class="cell-center" />
                       <template #residentId="{ data }" >
-                          <div v-if="data.data.residentId?.length == 14">
-                              <a-tooltip placement="top"
-                                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                                  key="black">
-                                  {{ data.data.residentId }}
-                              </a-tooltip>
-                              <a-tooltip placement="top" v-else title="ERROR" color="red">
-                                  {{ data.data.residentId }}
-                              </a-tooltip>
-                          </div>
-                          <div v-else>
-                              <a-tooltip placement="top" key="black">
-                                  {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
-                              </a-tooltip>
-                          </div>
+                        <resident-id :residentId="data.data.residentId"></resident-id>
                       </template>
 
                       <DxColumn caption="비고" cell-template="grade-cell" />
@@ -220,6 +206,7 @@ export default defineComponent({
     PA520PopupEdit,
   },
   setup() {
+    const pa520Grid = ref<any>(null);
     const focusedRowKey = ref();
     const modalChangeValueEdit = ref(false);
     const actionChangeComponent = ref(1);
@@ -344,6 +331,7 @@ export default defineComponent({
       () => store.state.common.dataSourcePA520,
       (value) => {
         dataSource.value = value;
+        pa520Grid.value.instance.refresh();
       },
       { deep: true }
     );
@@ -377,6 +365,7 @@ export default defineComponent({
     };
     // Opening a modal window.
     const onAddBtClick = () => {
+      scrollBotton();
       addRowBtOnclick.value = true;
       countBtOnclick.value++;
       if (
@@ -389,6 +378,7 @@ export default defineComponent({
       // Adding a new row to the table.
       if (store.state.common.activeAddRowPA520 == false) {
         funcAddNewRow();
+        
         actionChangeComponent.value = 1;
         isAddNewStatus.value = true;
       }
@@ -400,19 +390,27 @@ export default defineComponent({
       }
     };
 
-    const funcAddNewRow = () => {
-      store.state.common.activeAddRowPA520 = true;
+    const scrollBotton = () => {
+      const scrolling = pa520Grid.value.instance.getScrollable();
+      scrolling.scrollTo({ top: 9999, left: 0 });
+      setTimeout(() => {
+        let a = document.body.querySelectorAll("[aria-rowindex]");
+        (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
+      }, 100);
+    }
+    const concatNewRow = () => {
       // Adding a new row to the grid.
       let valueAddDefault = { ...DataCreatedTable };
       store.state.common.dataSourcePA520 = JSON.parse(
         JSON.stringify(store.state.common.dataSourcePA520)
       ).concat(valueAddDefault);
+      
+    }
+    const funcAddNewRow = async () => {
+      store.state.common.activeAddRowPA520 = true;
+        await concatNewRow();
       // Setting the focusedRowKey to null.
       focusedRowKey.value = null;
-      setTimeout(() => {
-        let a = document.body.querySelectorAll("[aria-rowindex]");
-        (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-      }, 100);
       resetAddComponent.value++;
       actionChangeComponent.value = 1;
     };
@@ -557,6 +555,7 @@ export default defineComponent({
     };
 
     return {
+      pa520Grid,
       modalChangeValueAdd,
       focusedRowKey,
       modalChangeValueEdit,

@@ -300,7 +300,7 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="10" class="custom-layout" style="padding-right: 0px;">
+            <a-col :span="10" class="custom-layout" style="padding-right: 0px;" :class="{'disabledBlock': !store.state.common.dataTaxPayInfo.length}">
                 <FormDataComponent />
             </a-col>
         </a-row>
@@ -587,7 +587,7 @@ export default defineComponent({
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
-            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+            if (store.state.common.statusChangeFormEdit) {
                 modalChangeRow.value = true
                 checkClickMonth.value = true
             } else {

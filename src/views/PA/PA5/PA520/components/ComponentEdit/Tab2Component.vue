@@ -1,7 +1,7 @@
 <template>
     <div id="tab2-pa520"> 
       <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
-        <div class="header-text-1">공제</div> {{ store.state.common.idRowChangePa520 }} {{ idRowEdit }} {{ validateCalculate }}
+        <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
