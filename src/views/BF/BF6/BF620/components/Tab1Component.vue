@@ -2,6 +2,7 @@
   <div class="tab-group">
     <SearchArea :tab1="true"/>
     <!-- {{ filterBF620 }} filterBF620 <br />
+    {{ dataSource }} dataSource <br />
     {{ searchWithholdingParam }} searchWithholdingParam <br /> -->
     <a-row class="top-table">
       <a-col class="d-flex-center">
@@ -123,6 +124,10 @@ export default defineComponent({
     search: {
       type: Number,
     },
+    onSearch:{
+      type: Function,
+      default: () => {},
+    }
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -186,6 +191,9 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       filteredDataSource.value = [...result];
+      if(props.onSearch){
+        props.onSearch();
+      }
     });
     searchWithholdingError((res: any) => {
       notification('error', res.message)
@@ -203,7 +211,6 @@ export default defineComponent({
 
     // count the number of status
     let productionStatusArr = ref<any>([]);
-    const watchFirstRun = ref(true);
     const countStatus = (arr: any[], type: number, propertyCompare: string) => {
       if (Object.keys(arr).length === 0 || arr.length === 0) {
         return 0;
@@ -232,13 +239,6 @@ export default defineComponent({
       )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
     };
     // caculator sum
-    const reFreshDataGrid = () => {
-      if (watchFirstRun.value) {
-        dataSource.value = dataSource.value.concat([]);
-        dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
-        watchFirstRun.value = false;
-      }
-    };
     const productionStatusData = (emitVal: any) => {
       productionStatusArr.value = [emitVal];
       dataSource.value = dataSource.value.map((item: any) =>{
@@ -267,18 +267,18 @@ export default defineComponent({
               }
               return false;
             }
-            if(key === 'productionStatuses'){
-              return compareObj.productionStatuses.findIndex((status:any)=> status === item.productionStatus)>-1;
+            if(key === 'productionStatuses'){  //error search main reason is this.
+              return compareObj.productionStatuses.length>0 ? compareObj.productionStatuses.findIndex((status:any)=> status === item.productionStatus) > -1 : true;
             }
             if (compareObj[key]) {
-              return compareObj[key] === item[key];
+              return compareObj[key] == item[key];
             }
             return true;
           })
         })
         filteredDataSource.value = arr;
       },
-      { deep: true }
+      { immediate: true }
     );
 
     // ----------------request file withholding---------

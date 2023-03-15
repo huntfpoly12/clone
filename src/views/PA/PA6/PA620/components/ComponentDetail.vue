@@ -49,7 +49,7 @@
                     :show-borders="true" key-expr="incomeId" :allow-column-reordering="move_column"
                     :onRowClick="onRowClick" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     :focused-row-enabled="true" @selection-changed="selectionChanged" @cell-click="onCellClick"
-                    v-model:focused-row-key="focusedRowKey" v-model:selected-row-keys="selectedRowKeys" @contentReady="onContentReady">
+                    v-model:focused-row-key="focusedRowKey" v-model:selected-row-keys="selectedRowKeys">
                     <DxSelection select-all-mode="allPages" mode="multiple" />
                     <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
                     <template #tag="{ data }">
@@ -106,13 +106,14 @@
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingDetailEdit || loadingTableDetail)" size="large">
             <!-- {{ isNewRow }} isNewRow <br/>
-            {{ compareType }} compareType <br/>
-            {{ dataAction }} dataAction <br/> -->
+            {{ dataActionEdit }} dataActionEdit <br/>
+            {{ dataAction }} dataAction <br/>
+            {{ compareForm() }} compareForm() <br/> -->
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
                         v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
-                        @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || isDisabledForm || isExpiredStatus" />
+                        @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
                 </a-form-item>
                 <div class="header-text-1 mb-10">소득내역</div>
                 <div class="income-details">
@@ -129,11 +130,11 @@
                             <a-form-item label="지급일" label-align="right" class="red">
                                 <number-box :max="31" :min="1" width="150px" class="mr-5"
                                     v-model:valueInput="dataAction.input.paymentDay" :isFormat="true"
-                                    :disabled="disabledInput || isDisabledForm || isExpiredStatus" :required="true"/>
+                                    :disabled="disabledInput || idDisableNoData" :required="true"/>
                             </a-form-item>
                             <a-form-item label="지급액" label-align="right" class="red">
                                     <div class="d-flex-center">
-                                <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="isDisabledForm || isExpiredStatus"
+                                <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
                                     v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" /> 원
                                     </div>
                             </a-form-item>
@@ -179,7 +180,7 @@
                 </div>
                 <a-row justify="center" class="my-10 mt-20">
                   <button-basic text="저장" type="default" mode="contained" :width="90"
-                  @onClick="onSave($event)" id="save-js-620" size="large" class="ml-4" :disabled="isDisabledForm || isExpiredStatus">
+                  @onClick="onSave($event)" id="save-js-620" size="large" class="ml-4" :disabled="idDisableNoData">
                   </button-basic>
                 </a-row>
               </StandardForm>
@@ -285,7 +286,16 @@ export default defineComponent({
           return +statusButton.value>10 ?true:false;
         })
         const messageUpdate = Message.getMessage('COMMON', '106').message;
-
+        const idDisableNoData = computed(()=>{
+          if(!props.isDisabledForm && !disabledInput.value && !isNewRow.value) {
+            return true;
+          }
+          if(props.isDisabledForm || isExpiredStatus.value){
+            return true
+          }
+          return false;
+        })
+        const savePA610 = computed(()=>store.state.common.savePA610);
         // ================GRAPQL==============================================
         // API QUERY TABLE SMALL LEFT SIDE
         const { loading: loadingTableDetail, onError: errorGetIncomeProcessBusinessesDetail, onResult: resIncomeProcessBusinessesDetail } = useQuery(queries.getIncomeBusinesses, dataTableDetail, () => ({
@@ -329,8 +339,8 @@ export default defineComponent({
           fetchPolicy: "no-cache",
         }));
         watch(resOption, (newValue: any) => {
-          triggerDetailOption.value = false;
           arrayEmploySelect.value = newValue.getEmployeeBusinesses;
+          triggerDetailOption.value = false;
         });
         errorOption((res)=>{
           notification('error', res.message);
@@ -346,7 +356,6 @@ export default defineComponent({
                 if(!isClickEditDiff.value){
                   selectedRowKeys.value = [data.incomeId];
                 }
-                console.log(`output->data.incomeId`,data)
                 let rowData: any = {};
                 rowData.paymentDay = data.paymentDay
                 rowData.employeeId = data.employeeId
@@ -644,10 +653,11 @@ export default defineComponent({
         // -------------------------ACTION FORM--------------------------------
 
         const onChangeFormdone = () => {
+          console.log(`output->khi thay viet bang`);
           if(!isClickEditDiff.value){
             selectedRowKeys.value = [dataAction.value.input.incomeId];
-            return;
           }
+          console.log(`output->khi thay viet bang`);
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
             triggerDetail.value =  true;
             disabledInput.value = true;
@@ -808,14 +818,15 @@ export default defineComponent({
           }
           return text ? text : '';
         };
-        //
-        const onContentReady = (e: any) => {
-          // selectedRowKeys.value = [dataAction.value.input.incomeId];
-        }
+        // watch PA610 save or update success
+        watch(savePA610,()=>{
+          triggerDetailOption.value = true;
+          refetchOption();
+        })
         return {
             loadingOption, arrayEmploySelect, statusButton, dataActionUtils, dataTableDetail, dataAction, per_page, move_column, colomn_resize, loadingTableDetail, dataSourceDetail, amountFormat, loadingCreated, loadingDetailEdit, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam,companyId,
             caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,
-            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess,compareType,onContentReady
+            paymentDayPA620,rowChangeStatus,checkLen,compareForm, resetForm, dataActionEdit, dataCallApiDetailEdit, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef,isExpiredStatus, actionEditSuccess,compareType,idDisableNoData
         }
     }
 });

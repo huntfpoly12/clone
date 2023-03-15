@@ -39,14 +39,13 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          <!-- {{ compareType1() }} compareType1() <br />
-          {{ compareType2() }} compareType2() <br />
+          <!-- {{ compareForm() }} compareForm() <br />
           {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
+          {{ editRowPA120 }} editRowPA120 <br />
           {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
           {{ compareType }} compareType <br />
           {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
           {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
-          <!-- {{ focusedRowKey }} focusedRowKey <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -85,21 +84,7 @@
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
             <template #residentId="{ data }">
-              <div v-if="data.data.residentId?.length == 14">
-                <a-tooltip placement="top"
-                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                  key="black">
-                  {{ data.data.residentId }}
-                </a-tooltip>
-                <a-tooltip placement="top" v-else title="ERROR" color="red">
-                  {{ data.data.residentId }}
-                </a-tooltip>
-              </div>
-              <div v-else>
-                <a-tooltip placement="top" key="black">
-                  {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
-                </a-tooltip>
-              </div>
+              <resident-id :residentId="data.data.residentId"></resident-id>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" width="410" data-field="incomeTaxMagnification"
               :calculateCellValue="calculateIncomeTypeCodeAndName" />
@@ -253,12 +238,11 @@ export default defineComponent({
     watch(result, (value) => {
       const data = value.getEmployeeWages;
       dataSource.value = data;
-      if(compareType.value == 3) {
+      if (compareType.value == 3) {
         addNewRow();
         return;
       }
       if (data.length > 0 && isFirstRun.value) {
-        console.log(`output->idRowEdit.value`, data[0].employeeId)
         actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
         focusedRowKey.value = data[0].employeeId;
@@ -266,24 +250,26 @@ export default defineComponent({
         idRowFake.value = data[0].employeeId;
       }
       if (data.length == 0) {
-        console.log(`output->length 0`)
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
+        store.commit('common/editRowPA120', initFormStateTab1);
       }
       trigger.value = false;
     });
     //change year
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     const changeYear = (newVal: any) => {
       isFirstRun.value = true;
       originData.value.imputedYear = newVal;
       trigger.value = true;
       store.state.common.isNewRowPA120 = false;
       store.state.common.yearPA120 = newVal;
+      changeYearDataFake.value = newVal;
     }
-    watch(globalYear, (newVal, oldVal) => {
-      if (compareType2()) {
+    let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+      if (compareForm()) {
         changeYear(newVal);
       } else {
         compareType.value = 2;
@@ -312,27 +298,19 @@ export default defineComponent({
     const addNewRow = () => {
       actionChangeComponent.value = 1;
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      store.commit('common/editRowPA120', initFormStateTab1);
       store.state.common.isNewRowPA120 = true;
       compareType.value = 1;
-      setTimeout(()=>{
+      setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         focusedRowKey.value = initFormStateTabPA120.value.employeeId;
-      },0)
+      }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
-    // Comparing the values of two objects.
-    const compareType1 = () => {
-      const { stayQualification, ...obj1 } = initFormStateTab1;
+    const compareForm = () => {
+      const { stayQualification, ...obj1 } = editRowPA120.value;
       const { stayQualification: stayQualification2, ...obj2 } = initFormStateTabPA120.value;
       if (JSON.stringify(obj1) == JSON.stringify(obj2) && isCalculateEditPA120.value) {
-        return true;
-      }
-      return false;
-    };
-    const compareType2 = () => {
-      // console.log(`output->JSON.stringify(editRowPA120.value)`,JSON.stringify(editRowPA120.value))
-      // console.log(`output->JSON.stringify(initFormStateTabPA120.value)`,JSON.stringify(initFormStateTabPA120.value))
-      if (JSON.stringify(editRowPA120.value) == JSON.stringify(initFormStateTabPA120.value) && isCalculateEditPA120.value) {
         return true;
       }
       return false;
@@ -340,7 +318,7 @@ export default defineComponent({
     const openAddNewModal = async () => {
       compareType.value = 1;
       if (isNewRowPA120.value) {
-        if (!compareType1()) {
+        if (!compareForm()) {
           rowChangeStatus.value = true;
           return;
         }
@@ -350,7 +328,7 @@ export default defineComponent({
         addComponentKey.value++;
         return;
       }
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         return;
       }
@@ -382,11 +360,6 @@ export default defineComponent({
           let ele22 = document.getElementById('btn-save-add-tab2');
           ele22?.click();
         }
-        if (isAddFormErrorPA120.value) {
-
-        } else {
-
-        }
       } else {
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
@@ -416,6 +389,10 @@ export default defineComponent({
         trigger.value = true;
         return;
       }
+      if (isClickYearDiff.value) {
+        changeYear(globalYear.value)
+        isClickYearDiff.value = false;
+      }
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
       store.state.common.isNewRowPA120 = false;
@@ -424,15 +401,24 @@ export default defineComponent({
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
     watch(actionFormErrorPA120, () => {
-      // dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
-      // store.state.common.isNewRowPA120 = true;
-      // // focusedRowKey.value = tabCurrent.value == 2 ? rowKeyTab2PA120.value : initFormStateTabPA120.value.employeeId;
-      // if (compareType.value == 1) {
-      //   store.state.common.isNewRowPA120 = true;
-      // }
+      if (isClickYearDiff.value) {
+        watchGlobalYear();
+        store.state.settings.globalYear = changeYearDataFake.value;
+        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+          if (compareForm()) {
+            changeYear(newVal)
+          } else {
+            compareType.value = 2;
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
+        isClickYearDiff.value = false;
+      }
       if (tabCurrent.value == 2) {
         store.commit('common/activeTabKeyPA120', '2');
-      }else {
+      } else {
         store.commit('common/activeTabKeyPA120', '1');
       }
       focusedRowKey.value = initFormStateTabPA120.value.employeeId;
@@ -441,7 +427,7 @@ export default defineComponent({
     const actionEdit = (data: any) => {
       compareType.value = 2;
       if (isNewRowPA120.value) {
-        if (compareType1()) {
+        if (compareForm()) {
           delNewRow();
           // focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
@@ -456,7 +442,7 @@ export default defineComponent({
         return;
       }
       // isFirstWeb.value = false;
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         idRowFake.value = data.data.employeeId;
         return;
@@ -492,9 +478,9 @@ export default defineComponent({
     };
     //focus Row
     const focusedRowKey = ref(initFormStateTabPA120.value.employeeId);
-    // watch(()=>initFormStateTabPA120.value.employeeId,(newVal: any)=>{
-    //   focusedRowKey.value = newVal;
-    // })
+    watch(() => initFormStateTabPA120.value.employeeId, (newVal: any) => {
+      focusedRowKey.value = newVal;
+    })
     const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
     const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
@@ -504,15 +490,15 @@ export default defineComponent({
     // get config
 
     const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
-    const { result: resultConfig} = useQuery(
-        queryCM130.getWithholdingConfig,
-        dataQuery,
-        () => ({
-          fetchPolicy: "no-cache",
-        })
+    const { result: resultConfig } = useQuery(
+      queryCM130.getWithholdingConfig,
+      dataQuery,
+      () => ({
+        fetchPolicy: "no-cache",
+      })
     );
-    watch(resultConfig,(newVal)=> {
-      if(newVal){
+    watch(resultConfig, (newVal) => {
+      if (newVal) {
         store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
       }
     })
@@ -554,12 +540,11 @@ export default defineComponent({
       messageDel,
       // isFirstWeb,
       editRowPA120,
-      compareType1,
-      compareType2,
+      compareForm,
       tabCurrent,
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
-      isCalculateEditPA120
+      isCalculateEditPA120,
     };
   },
 });

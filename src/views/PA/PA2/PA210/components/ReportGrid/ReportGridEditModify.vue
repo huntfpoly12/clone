@@ -1,13 +1,13 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px', padding: '8px'}">
       <div class="report-grid">
         <div class="header-report">
           <div class="header-1">원천세신고서</div>
           <div class="action-right">
-            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status != 20 && dataSource[0].status != 40">
-            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status != 20 && dataSource[0].status != 40">
-            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status == 20 || dataSource[0].status == 40"></button-basic>
+            <img style="width: 29px;cursor: pointer;" src="@/assets/images/icon_delete.png" alt="" class="ml-3" @click="actionConfirmDelete" v-if="dataSource[0].status == 10">
+            <img style="width: 31px;cursor: pointer;" src="@/assets/images/save_icon.svg" alt="" class="ml-3" @click="updateTaxWithholdingModifiy" v-if="dataSource[0].status == 10">
+            <button-basic  :width="150" text="새로불러오기" class="btn-get-income" @onClick="actionConfirmLoadNew" :disabled="dataSource[0].status != 10"></button-basic>
           </div>
           <div class="table-detail">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -71,7 +71,7 @@
       </div>
   </a-modal>
   <confirm-delete v-if="confirmStatus" :modalStatus="confirmStatus" @closePopup="actionCloseConfirm" :imputedYear="dataSource[0].imputedYear" :reportId="dataSource[0].reportId"></confirm-delete>
-  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew" />
+  <confirmload-new v-if="confirmLoadNewStatus" :modalStatus="confirmLoadNewStatus" @closePopup="confirmLoadNewStatus = false" @loadNewAction="loadNew(false)" />
 </template>
 
 <script lang="ts">
@@ -124,11 +124,13 @@ export default defineComponent({
     const confirmStatus = ref<boolean>(false)
     const confirmLoadNewStatus = ref<boolean>(false)
     const hotSettings =  {
-          comments: true,
-          fillHandle: true,
-          colWidths: 100,
-          beforeKeyDown: (e: any) => {
-              var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
+      comments: true,
+      fillHandle: true,
+      colWidths: 102.5,
+      height: 740,
+      fixedRowsTop: 4,
+      beforeKeyDown: (e: any) => {
+        var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (!reg.test(e.key) && e.key != 'Backspace' && e.key != '-') {
           e.preventDefault()
         }
@@ -151,7 +153,6 @@ export default defineComponent({
       cell: [
         ...cellsSettingModified,
       ],
-      height: "auto",
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
@@ -172,7 +173,7 @@ export default defineComponent({
     })
     // load new data when first time open popup
     onMounted(() => {
-      loadNew()
+      loadNew(true)
     })
 
       // Get IncomesForTaxWithholdingStatusReport
@@ -203,7 +204,7 @@ export default defineComponent({
       }
     })
     // The above code is used to load the data from the database to the table.
-    const loadNew = () => {
+    const loadNew = (firstLoad :  boolean) => {
       clearAllCellValue(wrapper)
       // call api to set modified value
       originData.value = {
@@ -219,8 +220,11 @@ export default defineComponent({
             yearEndTaxAdjustment: dataSource.value[0].yearEndTaxAdjustment,
           },
       }
-      // trigger.value = true;
-      // refetchData()
+      if (!firstLoad) {
+        trigger.value = true;
+        refetchData()
+      }
+
 
       let hot = wrapper.value?.hotInstance; 
       //Put in a loop to set data into each cell
@@ -479,21 +483,18 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep .ant-modal-body{
-  padding-top: 30px;
-}
 :deep .cell-center {
     text-align: center !important
 }
 .report-grid{
-  padding: 20px 0px 0px 5px;
+  padding: 8px 0px 0px 5px;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
     background-color: #b3b4b3;
   }
   .action-right{
-    margin-bottom: 5px;
+    margin-bottom: 1px;
     display: flex;
     justify-content: flex-end;
   }
@@ -508,11 +509,11 @@ export default defineComponent({
       border-radius: 5px;
       height: 35px;
   }
-  .table-grid{
-    overflow-x: hidden;
-    overflow-y: scroll;
-    max-height: 700px;
-  }
+  // .table-grid{
+  //   overflow-x: hidden;
+  //   overflow-y: scroll;
+  //   max-height: 700px;
+  // }
   :deep .wtHolder {
     width: 100% !important;
    }

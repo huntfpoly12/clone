@@ -25,10 +25,8 @@
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="120" />
                 <template #process-status="{ data }">
-                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
-                                @dataRow="changeStatus" /> -->
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
-                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40" />
+                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40 || data.data.status == 30" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
@@ -137,7 +135,7 @@
                     <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
                         style="border: none; margin-top: -2px; width: 35px; height: 35px;">
                           <div v-if="!loading">
-                            <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
+                            <zoom-in-outlined v-if="data.data.status != 10" :style="{fontSize: '20px', color: 'black'}"/>
                             <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
                           </div>
                     </DxButton>
@@ -389,9 +387,9 @@ export default defineComponent({
             }
         };
         const checkModify = (data: any) => {
-          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode) && value.status == 40)
+          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode))
           let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
-            if (indexMax == data.index) {
+            if (indexMax == data.index && data.status == 40) {
               return true;
             } else {
               return false;
