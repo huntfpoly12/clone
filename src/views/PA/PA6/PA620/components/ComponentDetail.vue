@@ -406,6 +406,7 @@ export default defineComponent({
         const isClickMonthDiff = ref(false);
         const isClickYearDiff = ref(false);
         const changeYearDataFake = ref();
+        const isClickAddMonthDiff = ref(false);
         //compare Data
         const compareType = ref(2); //2 is row change. 1 is add button;
         const compareForm = () => {
@@ -492,6 +493,12 @@ export default defineComponent({
             if(isClickMonthDiff.value){
               emit('noSave', 0);
               isClickMonthDiff.value = false;
+              compareType.value = 1;
+              return;
+            }
+            if (isClickAddMonthDiff.value) {
+              emit('noSave', 2);
+              isClickAddMonthDiff.value = false;
               compareType.value = 1;
               return;
             }
@@ -653,11 +660,9 @@ export default defineComponent({
         // -------------------------ACTION FORM--------------------------------
 
         const onChangeFormdone = () => {
-          console.log(`output->khi thay viet bang`);
           if(!isClickEditDiff.value){
             selectedRowKeys.value = [dataAction.value.input.incomeId];
           }
-          console.log(`output->khi thay viet bang`);
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
             triggerDetail.value =  true;
             disabledInput.value = true;
@@ -680,6 +685,11 @@ export default defineComponent({
               isClickYearDiff.value = false;
               return;
             }
+            if (isClickAddMonthDiff.value) {
+              emit('noSave', 2);
+              isClickAddMonthDiff.value = false;
+              return;
+            }
         }
         const onChangeFormError = () => {
           if (isClickYearDiff.value) {
@@ -696,6 +706,8 @@ export default defineComponent({
                 isClickYearDiff.value = true;
                 changeYearDataFake.value = oldVal;
               }
+              isClickYearDiff.value = false;
+              compareType.value = 2;
             });
           }
           focusedRowKey.value = dataAction.value.input.incomeId;
@@ -776,6 +788,8 @@ export default defineComponent({
                   changeYearDataFake.value = oldVal;
                 }
               });
+              isClickYearDiff.value = false;
+              compareType.value = 2;
             }
           } else {
             let params = JSON.parse(JSON.stringify(dataAction.value));

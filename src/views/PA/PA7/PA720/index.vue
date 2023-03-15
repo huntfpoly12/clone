@@ -4,7 +4,7 @@
     <a-row :class="{ 'ele-opacity': !compareType2() }">
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
-          :allow-column-reordering="move_column" key-expr="globalYear" :key="globalYear"
+          :allow-column-reordering="move_column" key-expr="hasData"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" ref="pa720GridRef">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
@@ -271,7 +271,7 @@
     :data="processKeyPA720.processKey" title="업무상태 변경이력" typeHistory="pa-720-status" />
   <EditPopup :modalStatus="modalEdit" @closePopup="actionEditDaySuccess" :data="changeIncomeExtraPaymentDayParam" />
   <CopyMonth :modalStatus="modalCopy" :month="dataModalCopy" @closePopup="modalCopy = false; statusParam.status = 10;"
-    @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" />
+    @loadingTable="onCopyDone" @dataAddIncomeProcess="onAddIncomeProcess" :dateType="dateType" />
   <PopupMessage :modalStatus="rowChangeStatus" @closePopup="rowChangeStatus = false" :typeModal="'confirm'"
     :title="titleModalConfirm" :content="''" :cancelText="'아니요 '" :okText="'네 '" @checkConfirm="onRowChangeComfirm"
     :isConfirmIcon="false" />
@@ -297,6 +297,7 @@ import { DownOutlined } from '@ant-design/icons-vue';
 import DxCheckBox from 'devextreme-vue/check-box';
 import { Message } from '@/configs/enum';
 import { formatMonth } from './utils/index';
+import queriesHolding from '@/graphql/queries/CM/CM130/index';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -499,6 +500,7 @@ export default defineComponent({
       if (emit) {
         if (isClickMonthDiff.value) {
           refetchIncomeProcessExtras();
+          isClickMonthDiff.value = false;
         }
         if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
@@ -653,10 +655,12 @@ export default defineComponent({
             return;
           }
         }
+        console.log(`output-compare type 1`,)
         if (compareType.value === 1) {
           addNewRow();
           return;
         }
+        console.log(`output-compare type 2`,)
         if (compareType.value == 2) {
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
@@ -667,15 +671,10 @@ export default defineComponent({
     // enable load form when row change
     const isLoadNewForm = ref(false);
     const editTaxParamFake = ref();
-    const editTax = async(emit: any, firsTimeRow: boolean) => {
+    const editTax = async (emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
       if (!emit.incomeId) {
         resetForm();
-        // await formTaxRef.value.pa720FormRef.resetValidate();
-        // setTimeout(()=>{
-        //   // store.commit('common/formPA720', dataActionUtilsPA720.value);
-        // },100)
-        // store.commit('common/formEditPA720', dataActionUtilsPA720.value);
         formTaxRef.value.isEdit = false;
         return;
       }
@@ -726,6 +725,8 @@ export default defineComponent({
               changeYearDataFake.value = oldVal;
             }
           });
+          isClickYearDiff.value = false;
+          compareType.value = 2;
         }
       } else {
         if (compareType.value == 3) {
@@ -752,6 +753,7 @@ export default defineComponent({
         }
         if (isClickAddMonthDiff.value) {
           addMonth(changeMonthDataFake.value);
+          isClickAddMonthDiff.value = false;
           return;
         }
       }
@@ -773,6 +775,8 @@ export default defineComponent({
             changeYearDataFake.value = oldVal;
           }
         });
+        isClickYearDiff.value = false;
+        compareType.value = 2;
       }
     }
     // -------------------- Delete item in tax table --------------------
@@ -810,6 +814,9 @@ export default defineComponent({
     const addMonth = (val: number) => {
       modalCopy.value = true;
       dataModalCopy.value = val;
+      dataQuery.value.imputedYear = globalYear.value;
+      configTrigger.value = true;
+      refetchConfig();
     }
     const onAddMonth = (val: number) => {
       if (!compareType2()) {
@@ -842,6 +849,9 @@ export default defineComponent({
         statusParam.value = { ...processKeyPA720.value, status: obj.status };
         month.value = obj.imputedMonth;
         store.state.common.isNewRowPA720 = false;
+        dataQuery.value.imputedYear = globalYear.value;
+        configTrigger.value = true;
+        refetchConfig();
       }
     }
     // fnc click month
@@ -862,7 +872,26 @@ export default defineComponent({
         return true
       } return false
     })
-
+    //-----------get config to check default date type----------------
+    const configTrigger = ref(false);
+    const dateType = ref<number>(1);
+    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    const { result: resultConfig, refetch: refetchConfig, onError: onErrorConfig } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+      enabled: configTrigger.value,
+      fetchPolicy: 'no-cache',
+    }));
+    onErrorConfig(() => {
+      store.commit('common/paymentDayPA720', 1);
+      configTrigger.value = false;
+    })
+    watch(resultConfig, (newVal) => {
+      if (newVal) {
+        const data = newVal.getWithholdingConfig;
+        dateType.value = data.paymentType;
+        store.commit('common/paymentDayPA720', data.paymentDay);
+        configTrigger.value = false;
+      }
+    });
     return {
       statusParam,
       loadingIncomeProcessExtras,
@@ -922,7 +951,8 @@ export default defineComponent({
       formEditPA720,
       dataActionUtilsPA720,
       formKey,
-      saveToNewRow
+      saveToNewRow,
+      dateType,
     };
   },
 });
