@@ -154,7 +154,7 @@
               <a-row>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)" class="form-item-bottom red">
-                    <biz-number-text-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150" :disabled="!isTypeClassification"/>
+                    <biz-number-text-box :required="true" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150" :disabled="!isTypeClassification"/>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
@@ -215,7 +215,7 @@ import notification from '@/utils/notification';
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { cloneDeep, isEqual } from "lodash";
 import { Message } from "@/configs/enum"
-import { BankBookInit } from './utils/data'
+import { BankBookInit, newSampleID } from './utils/data'
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
@@ -229,7 +229,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const triggerBankbook = ref<boolean>(false);
     const triggerBankbooks = ref<boolean>(true);
-    let dataSource = ref<any>([])
+    let dataSource = ref<any[]>([])
     let isModalRegister = ref<boolean>(false)
     let isModalDelete = ref<boolean>(false)
     let isModalConfirmSaveChange = ref<boolean>(false)
@@ -255,7 +255,7 @@ export default defineComponent({
       facilityBusinessId: null,
       bankbookId: null
     })
-    const paramBankbookDetail = reactive({
+    const paramBankbookDetail: any = reactive({
       companyId: companyId,
       fiscalYear: globalYear.value,
       facilityBusinessId: null,
@@ -422,6 +422,9 @@ export default defineComponent({
           isCreate.value = false
           paramBankbookDetail.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
           paramBankbookDetail.bankbookId = value.getBankbooks[0].bankbookId
+          objChange.value.bankbookId = value.getBankbooks[0].bankbookId
+          objChange.value.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
+          objChange.value.bankbookId = value.getBankbooks[0].bankbookId
           triggerBankbook.value = true
         }
         if (isNewCreate.value) {
@@ -434,11 +437,7 @@ export default defineComponent({
           triggerBankbook.value = true
         }
         if(isUpdate.value) {
-          indexRow.value =  objChange.value.indexRow
-          focusedRowKey.value = objChange.value.bankbookId
-          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
-          paramBankbookDetail.bankbookId = objChange.value.bankbookId
-          triggerBankbook.value = true
+            triggerBankbook.value = true
         }
         if (isDelete.value) {
           if (value.getBankbooks.length !== 0) {
@@ -524,6 +523,30 @@ export default defineComponent({
       }
     })
     
+    watch(() => dataDetailBankbook.value.bankbookInput.bankbookNumber, (value) => {
+      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+        dataSource.value[indexRow.value].bankbookNumber = value
+      }
+    })
+
+    watch(() => dataDetailBankbook.value.bankbookInput.bankbookNickname, (value) => {
+      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+        dataSource.value[indexRow.value].bankbookNickname = value
+      }
+    })
+
+    watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
+      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+        dataSource.value[indexRow.value].useScrap = value
+      }
+    })
+
+    watch(() => dataDetailBankbook.value.bankbookInput.useType, (value) => {
+      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+        dataSource.value[indexRow.value].useType = value
+      }
+    })
+    
     // -------METHODS-----------
 
     const handleGetInputBankType = (type: string, listInput: string) => {
@@ -580,18 +603,20 @@ export default defineComponent({
 
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
-      paramBankbookDetail.facilityBusinessId = null,
+      paramBankbookDetail.facilityBusinessId = data.facilityBiz,
       paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
-      // dataSource.value = [...dataSource.value, {
-      //   ...BankBookInit,
-      //   type: data.type, 
-      //   facilityBusinessId: data.facilityBiz,
-      // }]
+      dataSource.value = [...dataSource.value, {
+        ...BankBookInit,
+        bankbookId: newSampleID,
+        type: data.type, 
+        facilityBusinessId: data.facilityBiz,
+      }]
+      focusedRowKey.value = newSampleID
+      indexRow.value = dataSource.value.length - 1
       isTypeClassification.value = true
-      focusedRowKey.value = null
       isCreate.value = true
       countResetForm.value++
       isModalRegister.value = false
@@ -681,16 +706,17 @@ export default defineComponent({
     }
 
     const onFocusedRowChanging = (event: any) => {
-      if(isEdited.value) {
+      isStatusClickCreate.value = false
+      if(!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID ) {
+        event.cancel = true
+        isModalConfirmSaveChange.value = true
+      }else {
         isCreate.value = false
         if (paramBankbookDetail.bankbookId === event.rows[event.newRowIndex].data.bankbookId) return
         indexRow.value = event.newRowIndex
         paramBankbookDetail.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
         paramBankbookDetail.bankbookId = event.rows[event.newRowIndex].data.bankbookId
         triggerBankbook.value = true
-      }else {
-        event.cancel = true
-        isModalConfirmSaveChange.value = true
       }
       objChange.value.indexRow = event.newRowIndex
       objChange.value.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
@@ -701,17 +727,29 @@ export default defineComponent({
       if(val){
         submit()
       }else{
+        keyResetPopupRegisterBankbook.value++
+        const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
+        if(isCheckAdding){
+            dataSource.value = dataSource.value.filter((items: any) => items.bankbookId !== newSampleID)
+          }
         if(isStatusClickCreate.value){
           resetDataDetail()
+          if(isCheckAdding){
+            const index = dataSource.value.length - 1
+            indexRow.value =  index
+            focusedRowKey.value = dataSource.value[index].bankbookId
+            paramBankbookDetail.facilityBusinessId = dataSource.value[index].facilityBusinessId
+            paramBankbookDetail.bankbookId = dataSource.value[index].bankbookId
+          }
           isModalRegister.value = true
         }else{
-          isModalConfirmSaveChange.value = false
           indexRow.value =  objChange.value.indexRow
           focusedRowKey.value = objChange.value.bankbookId
           paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
           paramBankbookDetail.bankbookId = objChange.value.bankbookId
-          triggerBankbook.value = true
         }
+        isModalConfirmSaveChange.value = false
+        triggerBankbook.value = true
       }
       isStatusClickCreate.value = false
     }
