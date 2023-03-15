@@ -3,20 +3,20 @@
   <div id="bf-620" class="px-10">
     <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
       <a-tab-pane key="1" tab="원천세">
-        <tab-1-component :search="search1"></tab-1-component>
+        <tab-1-component :search="search1" :onSearch="onSearch"></tab-1-component>
       </a-tab-pane>
       <a-tab-pane key="2" tab="지방소득세">
-        <tab-2-component :search="search2"></tab-2-component>
+        <tab-2-component :search="search2" :onSearch="onSearch"></tab-2-component>
       </a-tab-pane>
       <a-tab-pane key="3" tab="전자신고파일제작내역">
-        <tab-3-component :search="search3"></tab-3-component>
+        <tab-3-component :search="search3" :onSearch="onSearch"></tab-3-component>
       </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, onMounted } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import Tab1Component from './components/Tab1Component.vue';
 import Tab2Component from './components/Tab2Component.vue';
@@ -48,7 +48,9 @@ export default defineComponent({
         search3.value++;
       }
     };
-
+    onMounted(()=>{
+      onSearch();
+    })
     return {
       activeKey,
       onSearch,

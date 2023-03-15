@@ -1,14 +1,19 @@
 
 //  fix color gridview table
-.dx-datagrid-headers .dx-header-row {  
-  background-color: #F2F5F7;  
-}  
+.dx-datagrid-headers .dx-header-row {
+  background-color: #F2F5F7;
+}
 
-.dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {  
-  background-color: #D1E1F8!important;  
-  color: black!important;  
-  cursor: pointer;  
-} 
+.dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {
+  background-color: #D1E1F8!important;
+  color: black!important;
+  cursor: pointer;
+}
+.dx-data-row.dx-state-hover-custom:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {
+  background-color: #D1E1F8!important;
+  color: black!important;
+  cursor: pointer;
+}
 
 .dx-button-has-text .dx-button-content {
   padding: 0px 15px;
