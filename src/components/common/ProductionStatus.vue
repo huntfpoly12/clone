@@ -3,8 +3,18 @@
     <span class="tag-status-1" :style="{ padding: padding }" v-if="typeTag == 1">제작대전</span>
     <span class="tag-status-2" :style="{ padding: padding }" v-if="typeTag == 2">제작대기</span>
     <span class="tag-status-3" :style="{ padding: padding }" v-if="typeTag == 3">제작중</span>
-    <span class="tag-status-4" :style="{ padding: padding }" v-if="typeTag == 4">제작성공</span>
-    <span class="tag-status-5" :style="{ padding: padding }" v-if="typeTag == 5">제작실패</span>
+
+    <a-tooltip v-if="message != ''" color="red" :title="message">
+      <span class="tag-status-4" :style="{ padding: padding }" v-if="typeTag == 4">제작성공</span> 
+    </a-tooltip>
+    <span v-else class="tag-status-4" :style="{ padding: padding }" v-if="typeTag == 4">제작성공</span>
+
+    <a-tooltip v-if="message != ''" color="red" :title="message"> 
+      <!-- the reason why was rejected -->
+      <span class="tag-status-5" :style="{ padding: padding }" v-if="typeTag == 5">제작실패</span>
+    </a-tooltip>
+    <span v-else class="tag-status-5" :style="{ padding: padding }" v-if="typeTag == 5">제작실패</span>
+  
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -16,7 +26,11 @@ export default defineComponent({
         },
         padding: {
           type: String
-        }
+        },
+        message: {
+          type: String,
+          default: ''
+        },
     },
     components: {
         DxButton

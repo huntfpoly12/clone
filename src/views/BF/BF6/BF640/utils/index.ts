@@ -4,7 +4,7 @@ export const checkBoxSearchStep1 = [
 ]
 import dayjs from "dayjs";
 export const dataSearchUtils = {
-    "beforeProduction": true,
+    "beforeProduction": false,
     "productionStatuses": [],
     "companyCode": '',
     "companyName": '',

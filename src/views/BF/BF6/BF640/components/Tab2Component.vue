@@ -112,7 +112,7 @@
                     <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                     <DxColumn caption="제작현황" cell-template="제작현황" />
                     <template #제작현황="{ data }">
-                        <GetStatusTable  :data="data.data" />
+                        <GetStatusTable  :data="data.data"   @productionStatusData="productionStatusData"/>
                     </template>
                     <DxSummary>
                         <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -199,7 +199,7 @@ export default defineComponent({
               return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
           })
           
-          dataSource.value = Array(arrSort[0])
+          dataSource.value = arrSort[0] ? Array(arrSort[0]) : []
           trigger.value = false
         })
         errorTable((error: any) => {
@@ -277,15 +277,6 @@ export default defineComponent({
         const customTextSummary = () => {
             return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
-        // caculator sum
-        const reFreshDataGrid = () => {
-            if(watchFirstRun.value) {
-                dataSource.value = dataSource.value.concat([]);
-                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
-                watchFirstRun.value = false;
-            }
-        }
-
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
          
@@ -304,9 +295,22 @@ export default defineComponent({
           let year = newVal.toString().substring(0, 4);
           dayReport.value = `${newVal}${dayjs(`${year}-${month}-01`).daysInMonth()}`
         });
+
+        // caculator sum
+        const reFreshDataGrid = () => {
+          if(watchFirstRun.value) {
+              dataSource.value = dataSource.value.concat([]);
+              dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+              watchFirstRun.value = false;
+          }
+        }
+        const productionStatusData = (emitVal: any) => {
+            productionStatusArr.value = [emitVal];
+            reFreshDataGrid();
+        }
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave,closeConfirmMail,beforeProduction
+            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData
         }
     }
 })
