@@ -25,10 +25,8 @@
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="120" />
                 <template #process-status="{ data }">
-                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
-                                @dataRow="changeStatus" /> -->
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
-                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40" />
+                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40 || data.data.status == 30" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
