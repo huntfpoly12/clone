@@ -101,7 +101,7 @@ export default defineComponent({
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
-        const trigger = ref<boolean>(false)
+        const trigger = ref<boolean>(true)
         watch(() => props.data, (val) => {
             month.value = val
             trigger.value = true
@@ -116,15 +116,17 @@ export default defineComponent({
             })
         );
         watch(resultConfig, (value) => {
+            trigger.value = false;
             let paymentMonth = month.value
             if (value) {
                 paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                sampleDataIncomeWage.paymentDay = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month.value + 1
                 }
             }
             month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
-            trigger.value = false;
+            
         });
         const updateValue = (value: any) => {
             dataApiCopy.value = value.value

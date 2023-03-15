@@ -30,7 +30,9 @@ const statesPA510 = {
     statusClickButtonAdd: false,
     addRow: 1,
     onEditItem: 1,
-    statusClickEditItem: false
+    statusClickEditItem: false,
+    checkClickYear: false,
+    dataYearNew: null,
 };
   
 export default statesPA510;

@@ -622,8 +622,6 @@ export default defineComponent({
                     isRunOnce.value = true;
                     store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                     store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                    // originDataTaxPayInfo.value.processKey.imputedYear = store.state.common.dataYearNew
-                    // originDataTaxPayInfo.value.processKey.paymentYear = store.state.common.dataYearNew
                     originData.value.imputedYear = store.state.common.dataYearNew
                     trigger.value = true; //reset data table 1
                     store.state.settings.globalYear = store.state.common.dataYearNew
