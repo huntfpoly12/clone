@@ -13,7 +13,7 @@
             <a-col class="ml-30">
                 <a-form-item label="최종제작상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작후"
+                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작후"
                             textUnCheck="제작전" />
                         <div class="d-flex-center ml-5 ">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
@@ -24,25 +24,25 @@
                 <div class="production-check">
                     <div class="d-flex-center custom-checkbox-search" >
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="2" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="3" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="4" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
-                            :disabled="!dataSearch.beforeProduction">
+                            :disabled="dataSearch.beforeProduction">
                             <production-status :typeTag="5" />
                         </checkbox-basic>
                     </div>
@@ -161,12 +161,13 @@ export default defineComponent({
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
         let valueDefaultSwitch = ref(true)
+        let beforeProduction = ref(true)
         let dataSearch: any = ref({ ...dataSearchUtils })
         let typeCheckbox = ref<any>({
-            checkbox1: false,
-            checkbox2: false,
-            checkbox3: false,
-            checkbox4: false,
+            checkbox1: true,
+            checkbox2: true,
+            checkbox3: true,
+            checkbox4: true,
         })
         let trigger = ref(true)
         let dataSource: any = ref([])
@@ -187,15 +188,12 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
-            dayjs().isBefore(dayjs('2011-01-01'))
-            let data = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings;
-            let result = Object.values(data.reduce((acc: any, curr: any) => {
-                if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
-                    acc[curr.companyId] = curr;
-                }
-                return acc;
-            }, {}));
-            dataSource.value = [...result];
+            // sort array to get row last time update
+            let arrSort = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings.sort(function(a: any, b : any) {
+                return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
+            })
+            
+            dataSource.value = arrSort[0] ? Array(arrSort[0]) : []
             trigger.value = false
             // call api get productionStatus
             if (dataSource.value.length > 0) {
@@ -276,6 +274,9 @@ export default defineComponent({
             watchFirstRun.value = true;
         }
         // ================= WATHCH ===================
+        watch(beforeProduction, (newVal) => {
+          dataSearch.value.beforeProduction = !newVal
+        })
         watch(() => props.searchStep, (val: any) => {
             productionStatusArr.value = []
             dataSearch.value.productionStatuses = []
@@ -296,13 +297,13 @@ export default defineComponent({
 
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
-            for (const key in typeCheckbox.value) {
-                if (newVal) {
-                    typeCheckbox.value[key] = false;
-                } else {
-                    typeCheckbox.value[key] = false;
-                }
-            }
+         for (const key in typeCheckbox.value) {
+             if (!newVal) {
+                 typeCheckbox.value[key] = true;
+             } else {
+                 typeCheckbox.value[key] = false;
+             }
+         }
         }, { deep: true });
 
         /**
@@ -336,7 +337,7 @@ export default defineComponent({
           move_column,
           modalConfirmMail,
           dayReport,
-          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr
+          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr,beforeProduction
         }
     }
 })
