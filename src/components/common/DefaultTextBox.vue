@@ -65,8 +65,9 @@ export default defineComponent({
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
+    const updateValue = (e: any) => {
+      emit("update:valueInput", e);
+      emit('onChange', e);
     };
 
     watch(() => props.valueInput, (newValue) => {

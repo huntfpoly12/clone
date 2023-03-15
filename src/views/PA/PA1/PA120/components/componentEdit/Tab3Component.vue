@@ -333,6 +333,7 @@ export default defineComponent({
             ...initFormStateTab3,
         })
         const newForm = ref(0)
+        const yearPA120 = computed(() => store.state.common.yearPA120);
         const openAddDependent = () => {
             modalAddNewDependent.value = true;
             newForm.value++;
@@ -342,18 +343,23 @@ export default defineComponent({
             dependentItem.value = val;
             modalEditStatus.value = true
         }
-
-        const onSubmit = (e: any) => {
-        };
-        watch(() => props.idRowEdit, (value) => {
-            originDataDetail.value.employeeId = value
-        })
         // get employee independent
         const originDataDetail = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: yearPA120.value,
             employeeId: props.idRowEdit
         })
+        watch(() => props.idRowEdit, (value) => {
+            originDataDetail.value.employeeId = value;
+        })
+        watch(() => props.idRowEdit, async (newVal) => {
+          originDataDetail.value = {
+            companyId: companyId,
+            imputedYear: yearPA120.value,
+            employeeId: newVal
+          };
+          trigger.value = true;
+        }, { immediate: true })
         const {
             result,
             loading,
@@ -431,7 +437,7 @@ export default defineComponent({
             openAddDependent,
             actionEdit,
             hasStatus, updateData,
-            onSubmit, contentDelete,
+            contentDelete,
             per_page, move_column, colomn_resize, relationSummary,
             basicDeductionSummary0,
             basicDeductionSummary,

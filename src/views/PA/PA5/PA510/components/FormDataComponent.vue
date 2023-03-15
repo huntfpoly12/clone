@@ -6,11 +6,11 @@
                     <a-form-item label="일용직사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
-                            @onChange="onChange" :activeType20="false" width="200px"/>
+                            @onChange="onChange" :activeType20="false" width="220px"/>
                     </a-form-item>
                     <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
-                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="200px"/>
+                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="220px"/>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -111,7 +111,7 @@
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false"
-                                        v-model:valueInput="item.price"/>
+                                        v-model:valueInput="item.price" :disabled="[1001, 1002, 1003].find(element => element == item.deductionItemCode)"/>
                                     <span class="pl-5">원</span>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ export default defineComponent({
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
         const totalDeduction = ref(0)
-        const triggerCalculateIncome = ref<boolean>(false)
+        // const triggerCalculateIncome = ref<boolean>(false)
         const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
         const triggerEmployeeWageDailies = ref<boolean>(true)
         const triggerIncomeWageDaily = ref<boolean>(false)
@@ -199,12 +199,12 @@ export default defineComponent({
             companyId: companyId,
             imputedYear: globalYear.value,
         })
-        const originDataCalculateIncome = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            totalTaxPay: 10,
-            dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
-        })
+        // const originDataCalculateIncome = ref({
+        //     companyId: companyId,
+        //     imputedYear: globalYear.value,
+        //     totalTaxPay: 10,
+        //     dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
+        // })
         const originDataIncomeWageDaily = ref({
             companyId: companyId,
             incomeId: store.state.common.incomeId,
@@ -233,13 +233,13 @@ export default defineComponent({
             enabled: triggerIncomeWageDaily.value,
             fetchPolicy: "no-cache",
         }))
-        const {
-            loading: loadingCalculateIncome,
-            onResult: resCalculateIncome,
-        } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
-            enabled: triggerCalculateIncome.value,
-            fetchPolicy: "no-cache",
-        }))
+        // const {
+        //     loading: loadingCalculateIncome,
+        //     onResult: resCalculateIncome,
+        // } = useQuery(queries.calculateIncomeWageTax, originDataCalculateIncome, () => ({
+        //     enabled: triggerCalculateIncome.value,
+        //     fetchPolicy: "no-cache",
+        // }))
         const {
             mutate: mutateAdd,
             onDone: onDoneAdd,
@@ -258,6 +258,16 @@ export default defineComponent({
         // ===================DONE GRAPQL==================================
         onDoneAdd( async (data: any) => {
             notification('success', messageAddSuccess)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
@@ -274,9 +284,29 @@ export default defineComponent({
         })
         onerrorAdd((e: any) => {
             notification('error', e.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
         onDoneUpdate( async (data: any) => {
             notification('success', messageUpdateSuccess)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
@@ -292,6 +322,16 @@ export default defineComponent({
         })
         onerrorUpdate((e: any) => {
             notification('error', e.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
 
         resEmployeeWage(value => {
@@ -532,9 +572,9 @@ export default defineComponent({
             let totalPrices = parseInt(dataIncomeWageDaily.value.employee.monthlyPaycheck ?
                 dataIncomeWageDaily.value.monthlyWage :
                 dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays)
-            let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = calculateHealthInsuranceEmployee(totalPrices)
-            let total3 = calculateLongTermCareInsurance(totalPrices)
+            // let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
+            // let total2 = calculateHealthInsuranceEmployee(totalPrices)
+            // let total3 = calculateLongTermCareInsurance(totalPrices)
             let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(totalPrices, dataDefault.employeementInsuranceSupportPercent) : 0
             let objectData = Formula.getDailyEmployeeTax(
                 parseInt(`${processKey.value.paymentYear}${processKey.value.paymentMonth}`),
@@ -544,12 +584,12 @@ export default defineComponent({
 
             arrDeduction.value?.map((val: any) => {
                 val.priceNew = 0
-                if (val.deductionItemCode == 1001)
-                    val.priceNew = total1
-                if (val.deductionItemCode == 1002)
-                    val.priceNew = total2
-                if (val.deductionItemCode == 1003)
-                    val.priceNew = total3
+                // if (val.deductionItemCode == 1001)
+                //     val.priceNew = total1
+                // if (val.deductionItemCode == 1002)
+                //     val.priceNew = total2
+                // if (val.deductionItemCode == 1003)
+                //     val.priceNew = total3
                 if (val.deductionItemCode == 1004)
                     val.priceNew = total4
                 if (val.deductionItemCode == 1011 && Number.isInteger(objectData.incomeAmount))
@@ -584,6 +624,7 @@ export default defineComponent({
         const pa510FormRef = ref()
         const onSubmitForm = () => {
             store.state.common.statusClickButtonSave = true;
+            store.state.common.checkClickYear = false;
             submitForm()
         }
         const submitForm = () => {

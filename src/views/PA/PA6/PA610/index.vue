@@ -39,13 +39,12 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              height="500px"
+              height="700px"
             >
-              <DxScrolling mode="standard" show-scrollbar="always" />
+              <DxPaging :page-size="0"/>
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
               <DxExport :enabled="true" />
               <DxToolbar>
-                <DxItem location="after" template="pagination-table" />
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem
@@ -74,36 +73,17 @@
                   />
                 </DxButton>
               </template>
-              <template #pagination-table>
-                <div v-if="rowTable > originData.rows">
-                  <a-pagination
-                    v-model:current="originData.page"
-                    v-model:page-size="originData.rows"
-                    :total="rowTable"
-                    show-less-items
-                  />
-                </div>
-              </template>
               <DxColumn
                 caption="성명 (상호)"
                 cell-template="tag"
                 data-field="name"
               />
               <template #tag="{ data }" class="custom-action">
-                <div class="custom-action" v-if="data.data.__typename">
+                <div class="custom-action">
                   <employee-info
                     :idEmployee="+data.data.employeeId"
                     :name="data.data.name"
                     :idCardNumber="data.data.residentId"
-                    :status="data.data.status"
-                    :foreigner="data.data.foreigner"
-                    :checkStatus="false"
-                  />
-                </div>
-                <div class="custom-action" v-else>
-                  <employee-info
-                    :idEmployee="+data.data.employeeId"
-                    :name="data.data.name"
                     :status="data.data.status"
                     :foreigner="data.data.foreigner"
                     :checkStatus="false"
@@ -165,15 +145,6 @@
                 </div>
               </template>
             </DxDataGrid>
-            <div class="pagination-table" v-if="rowTable > originData.rows">
-              <a-pagination
-                v-model:current="originData.page"
-                v-model:page-size="originData.rows"
-                :total="rowTable"
-                show-less-items
-                style="margin-top: 10px"
-              />
-            </div>
           </a-spin>
         </a-col>
         <!-- section right -->
@@ -314,34 +285,53 @@
 <script lang="ts">
 import queries from "@/graphql/queries/PA/PA6/PA610/index";
 import notification from "@/utils/notification";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { DxColumn, DxDataGrid, DxEditing, DxExport, DxGrouping, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxSelection, DxToolbar } from "devextreme-vue/data-grid";
-import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
-import { computed, defineComponent, reactive, ref, watchEffect, watch } from "vue";
-import { useStore } from "vuex";
+import {useMutation, useQuery} from "@vue/apollo-composable";
+import {
+  DxColumn,
+  DxDataGrid,
+  DxEditing,
+  DxExport,
+  DxGrouping,
+  DxItem,
+  DxPaging,
+  DxSearchPanel,
+  DxSelection,
+  DxToolbar,
+  DxPager
+} from "devextreme-vue/data-grid";
+import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
+import {computed, defineComponent, reactive, ref, watch, watchEffect} from "vue";
+import {useStore} from "vuex";
 
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import Tooltip from "@/components/common/Tooltip.vue";
-import { Message } from "@/configs/enum";
+import {Message} from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
-import { companyId, onExportingCommon } from "@/helpers/commonFunction";
-import { isEqualObject } from "@/utils";
+import {companyId, onExportingCommon} from "@/helpers/commonFunction";
+import {isEqualObject} from "@/utils";
 import {
-DeleteOutlined, EditOutlined, HistoryOutlined, MailOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, PrinterOutlined, SaveOutlined, SearchOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  HistoryOutlined,
+  MailOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  PlusOutlined,
+  PrinterOutlined,
+  SaveOutlined,
+  SearchOutlined,
 } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import { Store } from "devextreme/data";
+import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
-import { ArrForeigner, origindata, valueDefaultAction } from "./utils";
+import {ArrForeigner, valueDefaultAction} from "./utils";
 
 export default defineComponent({
   name: 'MyForm',
   components: {
     DxDataGrid,
     DxColumn,
-    DxPaging,
-    DxScrolling,
     DxSelection,
     DxExport,
     DxSearchPanel,
@@ -364,16 +354,15 @@ export default defineComponent({
     PopupMessageCustom,
     Tooltip,
     PlusOutlined,
+    DxPaging,
+    DxPager
 },
   setup() {
     const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';
 
     const store = useStore();
-    const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const column_resize = computed(() => store.state.settings.column_resize);
-    const rowTable = ref(0);
-    const originData = reactive({ ...origindata, rows: per_page });
     const arrForeigner = ArrForeigner;
     const globalYear = computed(() => store.state.settings.globalYear);
 
@@ -450,10 +439,11 @@ export default defineComponent({
           data: data as Array<any>,
           key: "key",
         },
-        requireTotalCount: true,
+        // select: ["key", "residentId", "name", "incomeTypeCode", "employeeId"],
+        // requireTotalCount: true,
       });
-    });
 
+    });
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
     const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
     // get store data
@@ -472,7 +462,6 @@ export default defineComponent({
         // create new row
           addNewRow()
         }
-        isNewRow.value = true;
       } else {
          if (previousRowData.value && !isEqualObject(previousRowData.value, dataShow.value)) {
           selectRowKeyAction.value = 0
@@ -480,6 +469,7 @@ export default defineComponent({
           isDiscard.value = true;
         }
       }
+      isNewRow.value = true;
     };
     // TODO handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
@@ -489,6 +479,7 @@ export default defineComponent({
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
         if (isEqualObject(dataShow.value, valueDefaultAction)) {
+
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -545,9 +536,9 @@ export default defineComponent({
             focusedRowKey.value = selectRowKeyAction.value;
             dataShow.value = { ...previousRowData.value };
             dataGridRef.value?.refresh();
+            isNewRow.value = false;
             isClickAddRow.value && addNewRow()
           });
-          isNewRow.value = false;
         } else {
           // when change other row and want to add row
           storeDataSource.value.insert(valueDefaultAction).then((result) => {
@@ -663,14 +654,12 @@ export default defineComponent({
       onExportingCommon(e.component, e.cancel, "영업자관리");
     };
     const changeTextCountry = (text: any) => {
-      console.log('text', text)
       dataShow.value.nationality = text;
     };
     const changeTextTypeCode = (text: any) => {
       dataShow.value.incomeTypeName = text;
     };
     const changeRadioForeigner = (value: Boolean) => {
-      console.log(value)
       if(!value) {
         dataShow.value.nationality = '대한민국'
         dataShow.value.nationalityCode = 'KR'
@@ -724,12 +713,12 @@ export default defineComponent({
         previousRowData.value = { ...result };
         dataGridRef.value?.refresh();
         isClickAddRow.value = false;
+        isNewRow.value = true;
       });
     }
     const handleSubmit = async () => {
       const res = formRef.value.validate();
       isDiscard.value = false;
-      console.log(dataShow.value)
       if (!res.isValid) {
         // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
@@ -795,12 +784,9 @@ export default defineComponent({
       modalHistoryStatus,
       loadingCreated,
       arrForeigner,
-      rowTable,
       dataSource,
-      per_page,
       move_column,
       column_resize,
-      originData,
       loadingUpdate,
       loadingDelete,
       isDiscardDelete,

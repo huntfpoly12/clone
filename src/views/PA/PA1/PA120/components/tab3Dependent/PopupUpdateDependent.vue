@@ -106,8 +106,7 @@ import mutations from "@/graphql/mutations/PA/PA1/PA120";
 import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
 import {taxWaring} from '../../utils/index'
-import { Message } from "@/configs/enum";
-const contentDelete = Message.getMessage('PA120', '002').message
+const contentDelete = '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다. 그래도 삭제하시겠습니까?'
 export default defineComponent({
     components: {},
     props: {

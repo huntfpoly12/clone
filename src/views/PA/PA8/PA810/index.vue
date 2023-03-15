@@ -51,7 +51,7 @@
         <DxColumn caption="첨부파일다운로드" data-field="dependentsEvidenceFileStorageId" cell-template="dependentsEvidenceFileStorageId" width="80" alignment="center"/>
         <template #dependentsEvidenceFileStorageId="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
-            <DxButton v-if="data.data.dependentsEvidenceFileStorageId" type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.employeeId)">
+            <DxButton v-if="data.data.dependentsEvidenceFileStorageId" type="ghost" class="" style="cursor: pointer" @click="onGetFileStorageId(data.data.dependentsEvidenceFile.url)">
               <DownloadOutlined :size="12"/>
             </DxButton>
           </div>
@@ -178,7 +178,6 @@ export default defineComponent({
     );
     watch(fillRpResult, (newVal) => {
       if (newVal) {
-        console.log('newVal', newVal)
         window.open(newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl);
         fillRpTrigger.value = false;
       }
@@ -187,6 +186,9 @@ export default defineComponent({
       actionParam.workId = workId;
       fillRpTrigger.value = true;
       fillRpRefetch();
+    };
+    const onGetFileStorageId = (url: string) => {
+      window.open(url);
     };
     onError((e) => {
       notification('error', e.message);
@@ -249,7 +251,8 @@ export default defineComponent({
       isDelete,
       contentDelete,
       handleCreate,
-      MajorInsuranceWorkingStatus
+      MajorInsuranceWorkingStatus,
+      onGetFileStorageId
     };
   },
 });

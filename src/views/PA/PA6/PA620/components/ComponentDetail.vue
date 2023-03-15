@@ -106,8 +106,9 @@
         <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
           <a-spin :spinning="(loadingDetailEdit || loadingTableDetail)" size="large">
             <!-- {{ isNewRow }} isNewRow <br/>
-            {{ compareType }} compareType <br/>
-            {{ dataAction }} dataAction <br/> -->
+            {{ dataActionEdit }} dataActionEdit <br/>
+            {{ dataAction }} dataAction <br/>
+            {{ compareForm() }} compareForm() <br/> -->
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
@@ -346,7 +347,6 @@ export default defineComponent({
                 if(!isClickEditDiff.value){
                   selectedRowKeys.value = [data.incomeId];
                 }
-                console.log(`output->data.incomeId`,data)
                 let rowData: any = {};
                 rowData.paymentDay = data.paymentDay
                 rowData.employeeId = data.employeeId
@@ -644,10 +644,11 @@ export default defineComponent({
         // -------------------------ACTION FORM--------------------------------
 
         const onChangeFormdone = () => {
+          console.log(`output->khi thay viet bang`);
           if(!isClickEditDiff.value){
             selectedRowKeys.value = [dataAction.value.input.incomeId];
-            return;
           }
+          console.log(`output->khi thay viet bang`);
             dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
             triggerDetail.value =  true;
             disabledInput.value = true;

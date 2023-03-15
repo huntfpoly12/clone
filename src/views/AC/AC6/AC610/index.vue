@@ -43,12 +43,14 @@
               :focused-row-enabled="true"
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
+              @row-click="onRowClick"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
+              height="700px"
             >
-              <DxScrolling mode="standard" show-scrollbar="always" />
+<!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-              <DxPaging page-size="15" />
+              <DxPaging :page-size="0" />
               <DxExport :enabled="true" />
               <DxToolbar>
                 <DxItem name="searchPanel" />
@@ -235,7 +237,7 @@ import { Message } from "@/configs/enum";
 import mutations from "@/graphql/mutations/AC/AC6/AC610/index";
 import queries from "@/graphql/queries/AC/AC6/AC610/index";
 import { companyId } from "@/helpers/commonFunction";
-import { compareObject } from "@/utils";
+import { isEqualObject } from "@/utils";
 import notification from "@/utils/notification";
 import PopupMessageCustom from "@/views/PA/PA6/PA610/components/PopupMessageCustom.vue";
 import {
@@ -248,8 +250,13 @@ import DxButton from "devextreme-vue/button";
 import { DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
 import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
-import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
-import { computed, defineComponent, ref } from "vue";
+import {
+  FocusedRowChangedEvent,
+  FocusedRowChangingEvent,
+  RowClickEvent,
+  RowDblClickEvent
+} from "devextreme/ui/data_grid";
+import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
 import { initialState } from "./utils/index";
 export default defineComponent({
@@ -355,7 +362,7 @@ export default defineComponent({
           key: "clientId",
           data: listClient.value,
         },
-        requireTotalCount: true,
+        // requireTotalCount: true,
       });
     });
 
@@ -370,7 +377,9 @@ export default defineComponent({
         addNewRow()
       } else {
         isNewRow.value = false;
-        if(selectRowKeyAction.value === 0) focusedRowKey.value = res.data.createClient.clientId;
+        if(selectRowKeyAction.value === 0)
+          focusedRowKey.value = res.data.createClient.clientId;
+        else focusedRowKey.value = selectRowKeyAction.value;
         previousRowData.value = { ...formState.value };
       }
       notification("success", Message.getCommonMessage('106').message);
@@ -399,7 +408,7 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !compareObject(previousRowData.value, formState.value)) {
+        if (previousRowData.value && !isEqualObject(previousRowData.value, formState.value)) {
           isClickAddRow.value = true;
           isDiscard.value = true;
         } else {
@@ -416,7 +425,7 @@ export default defineComponent({
       } else {
         if (
           previousRowData.value &&
-          !compareObject(previousRowData.value, formState.value)
+          !isEqualObject(previousRowData.value, formState.value)
         ) {
           selectRowKeyAction.value = 0;
           isClickAddRow.value = true;
@@ -426,12 +435,13 @@ export default defineComponent({
     };
     // TODO handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
+      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
       // create new row and click row other then check data input
       if (isNewRow.value) {
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
-        if (compareObject(formState.value, initialState)) {
+        if (isEqualObject(formState.value, initialState)) {
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -446,6 +456,7 @@ export default defineComponent({
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           previousRowData.value = { ...e.rows[e.newRowIndex].data };
           isDiscard.value = true;
+          rowElement?.classList.add("dx-state-hover-custom")
           e.cancel = true;
         }
       } else {
@@ -457,10 +468,13 @@ export default defineComponent({
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
           previousRowData.value &&
-          !compareObject(formState.value, previousRowData.value)
+          !isEqualObject(formState.value, previousRowData.value)
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+          // dx-state-hover
+          // query selector get one element have attribute aria-rowindex="1"
+          rowElement?.classList.add("dx-state-hover-custom")
           e.cancel = true;
         } else {
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -473,6 +487,10 @@ export default defineComponent({
       formState.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
+    //
+    const onRowClick = (e: RowClickEvent) => {
+      e.rowElement.classList.add("abc")
+    }
     const addNewRow = () => {
       storeDataSource.value.insert(initialState).then((result) => {
         formRef.value.resetValidate();
@@ -481,6 +499,7 @@ export default defineComponent({
         formState.value = result;
         dataGridRef.value?.refresh();
         isClickAddRow.value = false;
+        isNewRow.value = true;
       });
     }
     const handleSubmit = async () => {
@@ -513,8 +532,6 @@ export default defineComponent({
     // handle confirm popup
     const handleConfirm = async (e: any) => {
       if (e) {
-        // kiểm tra xem có phải là thêm mới hay không
-        isClickAddRow.value = isNewRow.value && selectRowKeyAction.value === 0
         handleSubmit()
       }
     };
@@ -626,7 +643,8 @@ export default defineComponent({
       formRef,
       handleDiscardPopup,
       handleConfirm,
-      isDiscard
+      isDiscard,
+      onRowClick
     };
   },
 });
