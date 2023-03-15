@@ -135,7 +135,7 @@
                     <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
                         style="border: none; margin-top: -2px; width: 35px; height: 35px;">
                           <div v-if="!loading">
-                            <zoom-in-outlined v-if="data.data.status == 40 || data.data.status == 20" :style="{fontSize: '20px', color: 'black'}"/>
+                            <zoom-in-outlined v-if="data.data.status != 10" :style="{fontSize: '20px', color: 'black'}"/>
                             <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
                           </div>
                     </DxButton>
