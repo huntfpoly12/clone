@@ -97,7 +97,7 @@
                 width="150"
               />
               <template #resident-id="{ data }" class="custom-action">
-                <id-checker :residentId="data.data.residentId"></id-checker>
+                <resident-id :residentId="data.data.residentId"></resident-id>
               </template>
               <DxColumn
                 caption="소득구분"

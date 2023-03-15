@@ -84,7 +84,7 @@
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
             <template #residentId="{ data }">
-              <id-checker :residentId="data.data.residentId"></id-checker>
+              <resident-id :residentId="data.data.residentId"></resident-id>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" width="410" data-field="incomeTaxMagnification"
               :calculateCellValue="calculateIncomeTypeCodeAndName" />
@@ -147,7 +147,6 @@ import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
-import IDChecker from '@/components/IDChecker.vue';
 
 export default defineComponent({
   components: {
@@ -165,8 +164,7 @@ export default defineComponent({
     DxScrolling,
     DxTooltip,
     DxSearchPanel,
-    DxExport,
-    IDChecker
+    DxExport
   },
   setup() {
     const actionChangeComponent = ref(2);

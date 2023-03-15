@@ -60,7 +60,7 @@
                             </template>
                             <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"/>
                             <template #residentId="{ data }">
-                              <id-checker :residentId="data.data.residentId"></id-checker>
+                              <resident-id :residentId="data.data.residentId"></resident-id>
                             </template>
                             <DxColumn caption="소득구분" cell-template="grade-cell" data-field="incomeTypeName"/>
                             <template #grade-cell="{ data }">
