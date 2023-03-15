@@ -631,6 +631,7 @@ export default defineComponent({
             var res = pa510FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {

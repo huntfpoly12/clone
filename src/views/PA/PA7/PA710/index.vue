@@ -24,6 +24,7 @@
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                            <DxPaging :enabled="false" />
                             <DxExport :enabled="true"/>
                             <DxToolbar>
                                 <DxItem name="searchPanel" />
@@ -83,11 +84,8 @@
                             </template>
                             <DxColumn :width="50" cell-template="pupop" css-class="cell-center"/>
                             <template #pupop="{ data }">
-                                <!-- <div style=""> -->
                                     <DeleteOutlined v-if="data.data.deletable" style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
                                         @click="statusAddRow ? modalStatusDelete = true : ''" />
-                                <!-- </div> -->
-                                
                             </template>
                         </DxDataGrid>
                     </a-spin>
@@ -189,7 +187,7 @@ import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vu
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import { initialState, initialOptionsRadio } from "./utils/index"
@@ -200,7 +198,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, 
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DxSearchPanel, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging
     },
     setup() {
         // const contentDelete = Message.getMessage('PA120', '002').message
@@ -370,6 +368,7 @@ export default defineComponent({
             var res = pa710FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                checkClickYear.value ? checkClickYear.value = false : '';
             } else {
                 let residentId = formState.value.residentId.replace('-', '')
                 let input = {
@@ -496,6 +495,7 @@ export default defineComponent({
             }
         }
 
+        // A function that is called when the user clicks on the delete button.
         const onSubmitDelete = () => {
             let variables = {
                 companyId: companyId,
@@ -505,6 +505,7 @@ export default defineComponent({
             };
             actionDelete(variables);
         }
+
         const statusComfirm = (val: any) => {
             if (val) {
                 statusClickButtonSave.value = false;
