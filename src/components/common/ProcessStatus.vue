@@ -1,25 +1,12 @@
 <template>
-    <!-- <div style="display: inline-block;" v-click-outside="setModalVisible">
-        <div class="mytooltip">
-            <div class="mytext" :class="showModal ? 'show' : ''">
-                <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
-                    v-model:valueRadioCheck="value" :layoutCustom="'horizontal'" />
-                <span>으로 변경하시겠습니까?</span>
-                <div class="mt-20">
-                    <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'"
-                        @onClick="setModalVisible" />
-                    <button-basic class="button-form-modal" :text="'네, 변경합니다.'" :width="140" :type="'default'"
-                        :mode="'contained'" @onClick="submit" />
-                </div>
-            </div>
-        </div>
-        <div v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-                class="buttonModal" @onClick="(disabled || managerGrade == 3) ? '' : clickButton()">
+    <span v-if="(disabled || managerGrade == 3)">
+        <span v-for="item in arrayRadioManager" :key="item.id">
+            <button-basic :disabled="true" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
+                class="buttonModal">
             </button-basic>
-        </div>
-    </div> -->
-    <a-popover trigger="click" v-model:visible="showModal">
+        </span>
+    </span>
+    <a-popover v-else trigger="click" v-model:visible="showModal" >
         <template #content>
             <div class="mytext">
                 <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
@@ -33,11 +20,11 @@
                 </div>
             </div>
         </template>
-        <div v-for="item in arrayRadioManager" :key="item.id" style="display: inline-block;">
+        <span v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-                class="buttonModal" @onClick="(disabled || managerGrade == 3) ? '' : clickButton()">
+                class="buttonModal">
             </button-basic>
-        </div>
+        </span>
     </a-popover>
 </template>
 <script lang="ts">
@@ -77,12 +64,6 @@ export default defineComponent({
             showModal.value = false;
         };
 
-        const clickButton = () => {
-            // if(props.valueStatus && props.valueStatus <= 20) {
-            showModal.value = true;
-            // }
-        }
-
         const submit = () => {
             showModal.value = false;
             currentBt.value = value.value
@@ -109,7 +90,6 @@ export default defineComponent({
             arrayRadioUser,
             arrayRadioManager,
             setModalVisible,
-            clickButton,
             showModal,
             submit,
             userType,

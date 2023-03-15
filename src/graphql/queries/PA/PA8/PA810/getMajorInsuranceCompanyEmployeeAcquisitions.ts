@@ -34,6 +34,9 @@ export default gql`
       includeDependents
       dependentsEvidenceFileStorageId
       residentId
+      dependentsEvidenceFile {
+        url
+      }
     }
   }
 `;
