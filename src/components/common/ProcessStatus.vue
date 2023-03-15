@@ -1,8 +1,8 @@
 <template>
     <span v-if="(disabled || managerGrade == 3)">
         <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic :disabled="true" v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
-                class="buttonModal">
+            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
+                class="buttonModal disabled">
             </button-basic>
         </span>
     </span>
@@ -139,6 +139,9 @@ export default defineComponent({
     color: white;
     border: none;
     border-radius: 6px;
+}
+.disabled {
+    cursor: no-drop;
 }
 
 :deep .dx-button-text {
