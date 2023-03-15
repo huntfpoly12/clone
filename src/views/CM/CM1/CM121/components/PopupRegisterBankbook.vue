@@ -59,7 +59,7 @@ export default defineComponent({
     const submit = () => {
       const bankTypeSelected:any = bankTypeCommon.value.find((item: any) => item.c == dataFrom.type)
       if(!bankTypeSelected.coporateScrapable && !bankTypeSelected.privateScrapable) {
-        notification('error', `${bankTypeSelected.n} 은 등록 불가능한 은행입니다. 다른 은행을 선택하세요`)
+        notification('error', `${bankTypeSelected.n}은 등록 불가능한 은행입니다. 다른 은행을 선택하세요`)
       }else {
         emit('dataRegisterBankbook', dataFrom);
       }
@@ -83,7 +83,6 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   width: 100%;
-  font-weight: bold;
 }
 
 .text-align-center {

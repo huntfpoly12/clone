@@ -591,6 +591,7 @@ export default defineComponent({
       }
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
+      store.state.common.savePA610++;
     });
     updateError((res) => {
       if (isDiscard.value) {
@@ -623,7 +624,7 @@ export default defineComponent({
         isNewRow.value = false;
       }
       notification("success", Message.getCommonMessage('106').message);
-
+      store.state.common.savePA610++;
     });
     createdErr((res) => {
       notification("error", res.message);

@@ -5,7 +5,7 @@
         <div class="search-date" style="margin-left: 181px;">
           <a-form-item label="신고주기" label-align="left" class="mb-0" v-if="tab1">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
-            <checkbox-basic size="14" label="정기" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
+            <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
           
@@ -16,7 +16,7 @@
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
           <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
-            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.reportType"
+            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="afterDeadLineIndex"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
           <a-form-item label="신고구분" label-align="left" class="ml-10" v-else>
@@ -40,10 +40,11 @@
       </a-col>
       <a-col class="search-company">
         <a-form-item label="사업자코드">
-          <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" />
+          <!-- <biz-number-text-box width="150px" v-model:valueInput="filterBF620.code" /> -->
+          <default-text-box v-model:valueInput="filterBF620.code" width="150px" @onChange="onChange"></default-text-box>
         </a-form-item>
         <a-form-item label="상호">
-          <default-text-box width="150px" v-model:valueInput="filterBF620.companyName"></default-text-box>
+          <default-text-box width="150px" v-model:valueInput="filterBF620.name"></default-text-box>
         </a-form-item>
         <a-row>
           <a-form-item label="매니저리스트">
@@ -68,6 +69,7 @@ import { useStore } from 'vuex';
 import dayjs from 'dayjs';
 import { reportTypeCheckbox, productionStatusesCheckbox, reportTypeTab2 } from '../utils/index';
 import CheckboxGroup from './CheckboxGroup.vue';
+import { filter } from 'lodash';
 export default defineComponent({
   components: { DxButton, CheckboxGroup },
   props: {
@@ -125,7 +127,6 @@ export default defineComponent({
     //watch date
     watch(month2, (newVal: any) => {
       if (newVal) {
-        console.log(`output-month2`,)
         filterBF620.value.paymentYear = +month2.value.toString().slice(0, 4);
         filterBF620.value.paymentMonth = +month2.value.toString().slice(4, 6);
       }
@@ -154,6 +155,10 @@ export default defineComponent({
         filterBF620.value.afterDeadline = true;
       }
     })
+    // ----------------convert code to upper case------------
+    const onChange = () => {
+      filterBF620.value.code = filterBF620.value.code.toUpperCase();
+    }
     return {
       radioCheckForeigner,
       foreigner,
@@ -165,7 +170,8 @@ export default defineComponent({
       checkbox1: '',
       checkbox2,
       afterDeadLineIndex,
-      reportTypeTab2
+      reportTypeTab2,
+      onChange
     };
   },
 });

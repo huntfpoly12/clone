@@ -670,7 +670,7 @@ export default defineComponent({
     const editTax = async(emit: any, firsTimeRow: boolean) => {
       compareType.value = 2;
       if (!emit.incomeId) {
-        // resetForm();
+        resetForm();
         // await formTaxRef.value.pa720FormRef.resetValidate();
         // setTimeout(()=>{
         //   // store.commit('common/formPA720', dataActionUtilsPA720.value);
@@ -747,6 +747,7 @@ export default defineComponent({
         }
         if (isClickEditDiff.value) {
           onEditItem();
+          isClickEditDiff.value = false;
           return;
         }
         if (isClickAddMonthDiff.value) {
