@@ -153,12 +153,12 @@
               </a-row>
               <a-row>
                 <a-col span="12">
-                  <a-form-item label="사업자등록번호 (법인통장)" class="form-item-bottom red">
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)" class="form-item-bottom red">
                     <biz-number-text-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150" :disabled="!isTypeClassification"/>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item label="생년월일 (개인통장)" class="form-item-bottom red">
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)" class="form-item-bottom red">
                     <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px" :required="true" :disabled="isTypeClassification"/>
                   </a-form-item>
                 </a-col>
@@ -215,6 +215,7 @@ import notification from '@/utils/notification';
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { cloneDeep, isEqual } from "lodash";
 import { Message } from "@/configs/enum"
+import { BankBookInit } from './utils/data'
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
@@ -228,7 +229,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear)
     const triggerBankbook = ref<boolean>(false);
     const triggerBankbooks = ref<boolean>(true);
-    const dataSource = ref<any>([])
+    let dataSource = ref<any>([])
     let isModalRegister = ref<boolean>(false)
     let isModalDelete = ref<boolean>(false)
     let isModalConfirmSaveChange = ref<boolean>(false)
@@ -584,6 +585,11 @@ export default defineComponent({
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
+      // dataSource.value = [...dataSource.value, {
+      //   ...BankBookInit,
+      //   type: data.type, 
+      //   facilityBusinessId: data.facilityBiz,
+      // }]
       isTypeClassification.value = true
       focusedRowKey.value = null
       isCreate.value = true
@@ -634,15 +640,13 @@ export default defineComponent({
       }
 
       if (!dataDetailBankbook.value.bankbookInput.useScrap) {
-        delete data.scrapingInfoInput.accountPassword
-        delete data.scrapingInfoInput.webPassword
-        delete data.scrapingInfoInput.webId
+        delete data.scrapingInfoInput
       }else {
         if(!isInputWebID.value) delete data.scrapingInfoInput.webId
         if(!isInputWebPW.value) delete data.scrapingInfoInput.webPassword
       }
       if (isCreate.value) {
-        delete data.scrapingInfoInput.bankbookId
+        delete data.bankbookId
         createBankbook(data)
       } else {
         delete data.bankbookInput.accountCode

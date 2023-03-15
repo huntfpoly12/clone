@@ -1,3 +1,25 @@
-export const test = [{
-  ID: 1,
-}]
+export const BankBookInit = {
+    facilityBusinessId: null,
+    bankbookId: null,
+    sort: null,
+    type: null,
+    bankbookNumber: null,
+    bankbookNickname: '',
+    classification: 'C',
+    useType: 1,
+    owner: '',
+    accountCode: '',
+    accountName: '',
+    useScrap: true,
+    createdAt: null,
+    createdBy: '',
+    updatedAt: null,
+    updatedBy: '',
+    ip: '',
+    active: true,
+    lastScrapingStatus: {
+        lastScrapingDate: null,
+        scrapingStatus: null,
+        errorMessage: null,
+    },
+}
