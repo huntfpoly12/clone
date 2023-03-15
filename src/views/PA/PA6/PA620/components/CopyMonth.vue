@@ -1,7 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
-        <a-spin :spinning="loading">
           <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
               <DxButton :text="'귀 ' + processKeyPA620.imputedYear + '-' + $filters.formatMonth(month1)"
@@ -21,7 +20,6 @@
             <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
                 @onClick="openModalCopy" />
           </div>
-        </a-spin>
     </a-modal>
 
     <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
@@ -73,7 +71,6 @@ import { useStore } from 'vuex'
 import dayjs from "dayjs";
 import { Message } from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
-import queriesHolding from "@/graphql/queries/CM/CM130/index";
 
 export default defineComponent({
     props: {
@@ -83,10 +80,10 @@ export default defineComponent({
         monthVal: {
             type: Number,
         },
-        // dateType: {
-        //     type: Number,
-        //     default: 1,
-        // },
+        dateType: {
+            type: Number,
+            default: 1,
+        },
     },
     components: {
         DxSelectBox,
@@ -108,38 +105,16 @@ export default defineComponent({
             store.commit('common/paymentDayPA620', value);
           },
         });
-        // -----------------get config to check default date type--------------
-        const dateType = ref<number>(1);
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-        const { result: resultConfig, refetch: refetchHolding, loading } = useQuery(
-          queriesHolding.getWithholdingConfig,
-          dataQuery,
-          () => ({
-            fetchPolicy: "no-cache",
-          })
-        );
-        watch(()=> props.modalStatus,(newVal: any) =>{
-          if(newVal){
-            refetchHolding();
-          }
-        })
-        watch(resultConfig, (newVal) => {
-          if(newVal){
-            const data = newVal.getWithholdingConfig;
-            dateType.value = data.paymentType;
-            store.state.common.paymentDayPA620 = data.paymentDay;
-          }
-        });
         // ----------set month source default because dependent on the set up before--------------
         let month2: any = ref();
         watch(() => [props.monthVal, processKeyPA620.value.paymentYear], ([val]) => {
             month1.value = val;
             let yearMonth = `${processKeyPA620.value.paymentYear}${processKeyPA620.value.imputedMonth }`;
-            if(dateType.value == 2 && props.monthVal) {
-                yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal + 1}`;
+            if(props.dateType == 2 && val) {
+                yearMonth = val==12?`${globalYear.value+1}1`:`${globalYear.value}${val + 1}`;
             }
-            if(dateType.value == 1) {
-                yearMonth = `${processKeyPA620.value.paymentYear}${props.monthVal}`;
+            if(props.dateType == 1) {
+                yearMonth = `${globalYear.value}${val}`;
             }
             month2.value = yearMonth;
         });
@@ -242,7 +217,6 @@ export default defineComponent({
             updateValue,
             actionCopy,
             processKeyPA620,
-            loading
         }
     },
 })

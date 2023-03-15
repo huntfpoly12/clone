@@ -1,7 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="500">
-    <a-spin :spinning="loading">
       <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
         <div class="d-flex-center">
           <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
@@ -22,7 +21,6 @@
         <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
           @onClick="openModalCopy" />
       </div>
-    </a-spin>
   </a-modal>
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
@@ -83,6 +81,10 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    dateType: {
+      type: Number,
+      default: 1,
+    },
   },
   components: {
     DxSelectBox,
@@ -105,40 +107,44 @@ export default defineComponent({
     });
     const trigger = ref(false);
     //-----------get config to check default date type----------------
-
-    const dateType = ref<number>(1);
-    const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
-      // enabled: trigger.value,
-      fetchPolicy: 'no-cache',
-    }));
-    watch(resultConfig, (newVal) => {
-      if (newVal) {
-        const data = newVal.getWithholdingConfig;
-        dateType.value = data.paymentType;
-        store.commit('common/paymentDayPA720', data.paymentDay);
-      }
-    });
-
+    // const configTrigger = ref(false);
+    // const dateType = ref<number>(1);
+    // const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    // const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+    //   enabled: configTrigger.value,
+    //   fetchPolicy: 'no-cache',
+    // }));
+    // watch(resultConfig, (newVal) => {
+    //   if (newVal) {
+    //     const data = newVal.getWithholdingConfig;
+    //     dateType.value = data.paymentType;
+    //     store.commit('common/paymentDayPA720', data.paymentDay);
+    //     configTrigger.value = false;
+    //   }
+    // });
+    // watch(() => props.month, () => {
+    //   dataQuery.value.imputedYear = globalYear.value;
+    //   configTrigger.value = true;
+    //   configRefetch();
+    // })
     // ----------set month source default because dependent on the set up before--------------
 
     const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
     watch(
-      () => props.month,
-      (val) => {
+      () => [props.month, processKeyPA720.value.processKey.paymentYear],
+      ([val], [newYear, oldYear]) => {
         month1.value = val;
         let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
-        if (dateType.value == 2 && props.month) {
-          yearMonth = props.month==12?`${globalYear.value+1}1`:`${globalYear.value}${props.month + 1}`;
+        if (props.dateType == 2 && val) {
+          yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
         }
-        if (dateType.value == 1) {
-          yearMonth = `${globalYear.value}${props.month}`;
+        if (props.dateType == 1) {
+          yearMonth = `${globalYear.value}${val}`;
         }
         month2.value = yearMonth;
         trigger.value = true;
-        configRefetch();
         findIncomeRefetch();
-      },{deep: true}
+      }, { deep: true }
     );
 
     //-------------------------get date source copy--------------------------------
@@ -160,10 +166,12 @@ export default defineComponent({
       trigger.value = true;
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
-    watch(globalYear, (newVal, oldVal) => {
-      findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
-      findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
-      trigger.value = true;
+    watch(modalCopy, (newVal, oldVal) => {
+      if (newVal) {
+        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
+        findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
+        trigger.value = true;
+      }
     });
 
     //-------------------------action copy data--------------------------------
@@ -256,7 +264,6 @@ export default defineComponent({
       month1,
       globalYear,
       paymentDayPA720,
-      loading
     };
   },
 });
