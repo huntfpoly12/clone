@@ -50,12 +50,12 @@
                     <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                         :hiddenOptionKR="dataCreated.foreigner"
                         @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
-                        width="180px" />
+                        width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, 'pl-10': true }">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification"
-                        width="180px" :disabled="disabledSelectBox" />
+                        width="180px" :disabled="disabledSelectBox"  :required="!disabledSelectBox"/>
                 </a-form-item>
             </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
@@ -200,7 +200,8 @@ export default defineComponent({
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataCreated.stayQualification = 'C-4'
+                dataCreated.stayQualification = null
+                dataCreated.nationalityCode = null
             } else {
                 activeLabel.value = false
                 labelResident.value = '주민등록번호'
