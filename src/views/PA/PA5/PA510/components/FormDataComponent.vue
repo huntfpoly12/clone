@@ -376,10 +376,13 @@ export default defineComponent({
             })
             store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
             store.state.common.focusedRowKey = data.incomeId
-            // setTimeout(() => {
-                // store.state.common.statusChangeFormEdit = false;
-                // store.state.common.statusChangeFormAdd = false;
-            // }, 500);
+
+            // Incrementing the value of onEditItem by 1.
+            if (store.state.common.statusClickEditItem) {
+                store.state.common.onEditItem++
+            }
+            
+            
         })
 
 
@@ -430,7 +433,6 @@ export default defineComponent({
 
             // Checking if the data in the form is different from the data in the database.
             if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
-                // store.state.common.statusChangeFormPrice = true;
                 store.state.common.statusChangeFormAdd = true
                 if (!store.state.common.statusRowAdd) {
                     store.state.common.statusChangeFormEdit = true
@@ -439,7 +441,6 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            // store.state.common.focusedRowKey = dataIncomeWageDaily.value?.employee.employeeId
         }, { deep: true })
 
         watch(() => store.state.common.statusChangeFormPrice, (value) => {
@@ -448,9 +449,10 @@ export default defineComponent({
             }
         })
 
-        // Watching the value of incomeId in the store. If the value is not null, it will set the value
-        // of incomeId in originDataIncomeWageDaily.value.incomeId to the value of incomeId in the
-        // store. Then it will set triggerIncomeWageDaily.value to true.
+
+        // Watching the store.state.common.incomeId and if it is not equal to 'PA510' then it will set
+        // the originDataIncomeWageDaily.value.incomeId to the value of store.state.common.incomeId and
+        // then triggerIncomeWageDaily.value to true.
         watch(() => store.state.common.incomeId, async (value) => {
             if (value && value != 'PA510') {
                 originDataIncomeWageDaily.value.incomeId = value
@@ -458,13 +460,6 @@ export default defineComponent({
             } else {
                 if (!store.state.common.statusFormAdd) {
                     onResetForm()
-                    // arrDeduction.value?.map((data: any) => {
-                    //     data.price = 0
-                    // })
-                    // // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
-                    // await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
-                    // await (store.state.common.statusChangeFormEdit = false);
-                    // await (store.state.common.statusChangeFormAdd = false);
                 }
             }
         })
@@ -479,14 +474,6 @@ export default defineComponent({
         // reset form data
         watch(() => store.state.common.actionResetForm, async (value) => {
             onResetForm()
-            // countKey.value++;
-            // await Object.assign(dataIncomeWageDaily.value, JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })));
-            // // dataIncomeWageDaily.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily }))
-            // arrDeduction.value?.map((data: any) => {
-            //     data.price = 0
-            // })
-            // await (store.state.common.statusChangeFormEdit = false);
-            // await (store.state.common.statusChangeFormAdd = false);
         })
 
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
@@ -508,7 +495,6 @@ export default defineComponent({
                 await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
                 await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
                 await (dataIncomeWageDaily.value.workingDays = data.workingDays)
-                // await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
                 await (totalDeduction.value = data.totalDeduction)
                 await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
                 await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
@@ -534,12 +520,6 @@ export default defineComponent({
             store.state.common.focusedRowKey = 'PA510'
             onResetForm()
         })
-
-        // watch(() => store.state.common.actionCopy, (newVal) => {
-        //     setTimeout(() => {
-        //         dataIncomeWageDaily.value.paymentDay = store.state.common.paymentDayCopy
-        //     }, 1000)
-        // })
 
         // Watching the store.state.common.resetArrayEmploySelect and when it changes it will reset the
         // arrayEmploySelect.value to [] and then it will do some other stuff.
@@ -632,10 +612,10 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
+                store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
-                    // store.state.common.focusedRowKey = dataIncomeWageDaily.value?.incomeId
                     store.state.common.dataRowOnActive = dataIncomeWageDaily.value
                     showErrorButton.value = true;
                 } else {

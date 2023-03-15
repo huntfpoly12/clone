@@ -289,13 +289,17 @@ export default defineComponent({
             }
         }
         const statusComfirmChange = async (res: any) => {
+            store.state.common.statusClickEditItem = true
             if (res) {
                 await store.state.common.actionSubmit++
             } else {
                 store.state.common.loadingFormData++
             }
-            
         }
+        watch(() => store.state.common.onEditItem, (value) => {
+            store.state.common.statusClickEditItem = false
+            editItem()
+        })
 
         return {
             deleteItem,
