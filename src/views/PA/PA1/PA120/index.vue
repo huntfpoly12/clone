@@ -84,21 +84,7 @@
             </template>
             <DxColumn caption="주민등록번호" cell-template="residentId" width="110" data-field="residentId" />
             <template #residentId="{ data }">
-              <div v-if="data.data.residentId?.length == 14">
-                <a-tooltip placement="top"
-                  v-if="parseInt(data.data.residentId.split('-')[0].slice(2, 4)) < 13 && parseInt(data.data.residentId.split('-')[0].slice(4, 6)) < 32"
-                  key="black">
-                  {{ data.data.residentId }}
-                </a-tooltip>
-                <a-tooltip placement="top" v-else title="ERROR" color="red">
-                  {{ data.data.residentId }}
-                </a-tooltip>
-              </div>
-              <div v-else>
-                <a-tooltip placement="top" key="black">
-                  {{ data.data.residentId.slice(0, 6) + '-' + data.data.residentId.slice(6, 13) }}
-                </a-tooltip>
-              </div>
+              <id-checker :residentId="data.data.residentId"></id-checker>
             </template>
             <DxColumn caption="비고" cell-template="grade-cell" width="410" data-field="incomeTaxMagnification"
               :calculateCellValue="calculateIncomeTypeCodeAndName" />
@@ -161,6 +147,7 @@ import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1, initFormStateTab2 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
+import IDChecker from '@/components/IDChecker.vue';
 
 export default defineComponent({
   components: {
@@ -178,7 +165,8 @@ export default defineComponent({
     DxScrolling,
     DxTooltip,
     DxSearchPanel,
-    DxExport
+    DxExport,
+    IDChecker
   },
   setup() {
     const actionChangeComponent = ref(2);

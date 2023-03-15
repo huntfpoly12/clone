@@ -5,7 +5,7 @@
                 :style="{ color: 'white', backgroundColor: 'gray' , height: $config_styles.HeightInput}" class="btn-date"  />
             <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
                 :style="{ color: 'white', backgroundColor: 'black' , height: $config_styles.HeightInput}" class="btn-date"/>
-            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40||!compareForm()||idDisableNoData"/>
+            <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" v-if="!isDisabledForm" :disabled="statusButton==30||statusButton==40||!compareForm()"/>
         </div>
         <div class="d-flex">
             <DxButton class="ml-3" icon="plus" @click="openAddNewModal" :disabled="isDisabledForm || isExpiredStatus" />
