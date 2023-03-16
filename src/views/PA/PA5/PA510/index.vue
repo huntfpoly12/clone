@@ -478,7 +478,11 @@ export default defineComponent({
                     isRunOnce.value = false;
                     showDetailSelected(obj)
                 } else {
-                    activeNewMonth(dataMonthNew.value)
+                    if (checkClickMonth.value) {
+                        activeNewMonth(dataMonthNew.value)
+                    } else {
+                        activeNewMonth(obj)
+                    }
                 }
             } else {
                 status.value = null
@@ -516,10 +520,10 @@ export default defineComponent({
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
             trigger.value = true; //reset data table 1
-            IncomeWageDailiesTrigger.value = true; //reset data table 2
+            // IncomeWageDailiesTrigger.value = true; //reset data table 2
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-510") {
+            if (newVal.id == "pa-510" && !store.state.common.statusFormAdd) {
                 IncomeWageDailiesTrigger.value = true; //reset data table 2
             }
         })
