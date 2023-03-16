@@ -576,25 +576,31 @@ export default defineComponent({
       const newTasks = [...dataSource.value];
       newTasks.splice(fromIndex, 1);
       newTasks.splice(toIndex, 0, e.itemData);
-      dataSource.value = newTasks;
-      const sortTo = dataSource.value[fromIndex].sort
-      const sortFrom = e.itemData.sort
-      dataSource.value[toIndex].sort = sortTo
-      dataSource.value[fromIndex].sort = sortFrom
+      let sortCount = 0
+      let indexStart = 0
+      let payloadSort:any[] = []
+      if(toIndex > fromIndex) {
+        indexStart = fromIndex
+        sortCount = dataSource.value[fromIndex].sort
+      }else {
+        indexStart = toIndex
+        sortCount = dataSource.value[toIndex].sort
+      }
+      dataSource.value = newTasks.map((items, index) => {
+        if(index >= indexStart) {
+          items.sort = sortCount++
+          payloadSort.push({
+            facilityBusinessId: items.facilityBusinessId,
+            bankbookId: items.bankbookId,
+            sort: items.sort
+          })
+        }
+        return items
+      });
       reorderBankbooks({
         companyId: companyId,
         fiscalYear: globalYear.value,
-        facilityBusinessId: e.itemData.facilityBusinessId,
-        inputs: [
-          {
-            bankbookId: e.itemData.bankbookId,
-            sort: sortTo
-          },
-          {
-            bankbookId: dataSource.value[fromIndex].bankbookId,
-            sort: sortFrom
-          },
-        ]
+        inputs: payloadSort
       })
     }
 
