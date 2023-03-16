@@ -8,8 +8,11 @@ const screenMutatePA120 = {
   keyActivePA120(state: any, data: Number) {
     state.keyActivePA120 = data;
   },
-  activeTabKeyPA120(state: any, payload: any) {
-    state.activeTabKeyPA120 = payload;
+  activeTabEditKeyPA120(state: any, payload: any) {
+    state.activeTabEditKeyPA120 = payload;
+  },
+  activeTabAddKeyPA120(state: any, payload: any) {
+    state.activeTabAddKeyPA120 = payload;
   },
   presidentPA120(state: any, payload: any) {
     state.presidentPA120 = payload;
