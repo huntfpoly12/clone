@@ -259,13 +259,13 @@ export default defineComponent({
                 formState.value.residentId = data.residentId
                 formState.value.email = data.email
                 formState.value.employeeId = data.employeeId
-                formState.value.residentIdHide = data.residentId // forcus row key
+                formState.value.residentIdHide = data.residentId + '' + data.incomeTypeCode
                 formState.value.incomeTypeCode = data.incomeTypeCode
                 formState.value.incomeTypeName = data.incomeTypeName
                 formState.value.deletable = data.deletable
                 dataRowOld = { ...formState.value }
                 dataRow = { ...formState.value }
-                focusedRowKey.value = data.residentId
+                focusedRowKey.value = data.residentId + '' + data.incomeTypeCode
             }
             triggerDetail.value = false;
         })
@@ -446,16 +446,16 @@ export default defineComponent({
             // }
         }
         const onFocusedRowChanging = (e: any) => {
+            statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
             const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
-            if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
+            if (dataRow.residentId && (dataRow.residentId +''+ dataRow.incomeTypeCode != formState.value.residentId+''+formState.value.incomeTypeCode)) {
                 originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
                 originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
                     rowElement?.classList.add("dx-state-hover-custom")
                     e.cancel = true;
-                    
                 } else {
                     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
                         modalStatus.value = true;
@@ -563,7 +563,7 @@ export default defineComponent({
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
                         ...value,
-                        residentIdHide: value.residentId
+                        residentIdHide: value.residentId + '' + value.incomeTypeCode
                     }
                 })
                 if (runOne.value) {

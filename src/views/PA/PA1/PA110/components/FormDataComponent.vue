@@ -364,10 +364,6 @@ export default defineComponent({
                 value.data.getWithholdingConfigDeductionItems.map((item: any) => {
                     if ([1001, 1002, 1003, 1004, 1011, 1012].includes(item.itemCode)) {
                         let amount = 0
-                        // dataIW.value.deductionItems.map((e: any) => {
-                        //     if (e.itemCode == item.itemCode)
-                        //         amount = e.amount
-                        // })
                         dataConfigDeductions.value.push({
                             itemCode: item.itemCode,
                             name: item.name,
@@ -385,8 +381,8 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
                 store.state.settings.globalYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
                 setTimeout(() => {
                     store.state.common.checkClickYear = false;
                 }, 500);
@@ -399,30 +395,14 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
                 store.state.settings.globalYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
                 setTimeout(() => {
                     store.state.common.checkClickYear = false;
                 }, 500);
                 return;
             }
             await store.state.common.loadingTableInfo++
-            
-            // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
-            //     return
-            // }
-            // if (store.state.common.focusedRowKey != store.state.common.dataRowOnActive?.incomeId) { // if click save modal
-            //     store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-            // } else { // if click submit
-            //     store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
-            // }
-            // if (store.state.common.statusClickButtonSave) { // if click submit
-            //     store.state.common.incomeId = res.data.updateIncomeWage?.incomeId
-            // } else { // click save modal
-            //     store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
-            // }
-            
-            // await (triggerDetail.value = true);
             
         })
         doneCreated(async res => {
@@ -431,24 +411,14 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
                 store.state.settings.globalYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
                 setTimeout(() => {
                     store.state.common.checkClickYear = false;
                 }, 500);
                 return;
             }
             await store.state.common.loadingTableInfo++
-            // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
-            //     return
-            // }
-            // if (store.state.common.statusClickButtonSave) { // if click submit
-            //     store.state.common.incomeId = res.data.createIncomeWage?.incomeId
-            // } else { // click save modal
-            //     store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
-            // }
-            // await (store.state.common.statusRowAdd = true);
-            // await (store.state.common.statusFormAdd = false);
             
             
         })
@@ -458,8 +428,8 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
                 store.state.settings.globalYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
                 setTimeout(() => {
                     store.state.common.checkClickYear = false;
                 }, 500);
@@ -496,18 +466,7 @@ export default defineComponent({
                 triggerEmployeeWages.value = true; //reset data table 2
             }
         })
-
-        // watch(() => store.state.common.incomeId, async (value) => {
-        //     if (value && value != 'PA110') {
-        //         incomeWageParams.incomeId = value
-        //         debugger
-        //         triggerDetail.value = true;
-        //     } else {
-        //         if (!store.state.common.statusFormAdd) {
-        //             onResetForm()
-        //         }
-        //     }
-        // })
+        
         // reset form data
         watch(() => store.state.common.actionResetForm, (value) => {
             onResetForm()
@@ -647,70 +606,32 @@ export default defineComponent({
                 await (dataIW.value.employee.employeementInsuranceSupportPercent = newVal.getEmployeeWage.employeementInsuranceSupportPercent);
                 await (dataIW.value.employee.employeementReductionRatePercent = newVal.getEmployeeWage.employeementReductionRatePercent);
                 await (dataIW.value.employee.incomeTaxMagnification = newVal.getEmployeeWage.incomeTaxMagnification);
-
-                // if (newVal.getEmployeeWage.payItems) {
-                    // dataConfigPayItems.value.map((data: any) => {
-                    //     data.amount = 0
-                    // })
-                    // newVal.getEmployeeWage.payItems.map((item: any) => {
-                    //     dataConfigPayItems.value.find((Obj: any) => {
-                    //         if (item.itemCode == Obj.itemCode) {
-                    //             Obj.amount = item.amount;
-                    //         }
-                    //     });
-                    // })
-                    dataConfigPayItems.value?.map((row: any) => {
-                        row.amount = 0
-                        newVal.getEmployeeWage.payItems?.map((item: any) => {
-                            if (row.itemCode == item.itemCode) {
-                                row.amount = item.amount;
-                            }
-                        })
-                    });
-                // }
-                
-
-                
-                // if (newVal.getEmployeeWage.deductionItems) {
-                    // dataConfigDeductions.value.map((data: any) => {
-                    //     data.amount = 0
-                    // })
-                    // newVal.getEmployeeWage.deductionItems.map((item: any) => {
-                    //     dataConfigDeductions.value.find((Obj: any) => {
-                    //         if (item.itemCode == Obj.itemCode) {
-                    //             Obj.amount = item.amount;
-                    //         }
-                    //     });
-                    // })
-                    dataConfigDeductions.value?.map((row: any) => {
-                        row.amount = 0
-                        newVal.getEmployeeWage.deductionItems?.map((item: any) => {
-                            if (row.itemCode == item.itemCode) {
-                                row.amount = item.amount;
-                            }
-                        })
-                    });
-                // }
-                calculateTax();
+                dataConfigPayItems.value?.map((row: any) => {
+                    row.amount = 0
+                    newVal.getEmployeeWage.payItems?.map((item: any) => {
+                        if (row.itemCode == item.itemCode) {
+                            row.amount = item.amount;
+                        }
+                    })
+                });
+                dataConfigDeductions.value?.map((row: any) => {
+                    row.amount = 0
+                    newVal.getEmployeeWage.deductionItems?.map((item: any) => {
+                        if (row.itemCode == item.itemCode) {
+                            row.amount = item.amount;
+                        }
+                    })
+                });
+                await calculateTax();
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
-
+            await (store.state.common.statusChangeFormPrice = false)
         })
-        // watch(() => store.state.common.actionCopy, (newVal) => {
-        //     setTimeout(() => {
-        //             dataIW.value.paymentDay = store.state.common.paymentDayCopy
-        //     }, 1000)
-        // })
-
         watch(() => store.state.common.statusChangeFormPrice, (value) => {
             if (!value) {
                 showErrorButton.value = false
             }
         })
-        
-        // watch(() => totalPayItem.value, (value) => {
-        //     store.state.common.statusChangeFormPrice = true;
-        // })
 
         watch(globalYear, (newVal) => {
             originData.imputedYear = newVal
@@ -825,7 +746,6 @@ export default defineComponent({
             dataConfigDeductions.value.forEach((val: any, index: number) => {
                 if ([1001, 1002, 1003, 1004, 1011, 1012].includes(val.itemCode))
                     val.amount = val.amountNew
-                // dataIW.value.deductionItems[index] = { amount: val.amountNew, itemCode: val.itemCode }
             })
             setTimeout(() => {
                 store.state.common.statusChangeFormPrice = false;
