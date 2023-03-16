@@ -6,7 +6,7 @@ const statesPA520 = {
   checkChangeValueEditTab1PA520: false,
   checkChangeValueEditTab2PA520: false,
   checkChangeValueAddPA520: false,
-  dataSourcePA520: {},
+  dataDetailAddTab1PA520: {},
   activeAddRowPA520: false,
   addRowBtOnclick: false,
   countBtOnclick: 0,

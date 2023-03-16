@@ -20,8 +20,9 @@
         </a-col>
         <a-col :span="6">
           modalChangeValueEdit : {{  modalChangeValueEdit }}  <br>
-          modalChangeValueEdit :  {{ focusedRowKey }}<br>
-          idRowEdit : {{ idRowEdit }}
+          focusedRowKey :  {{ focusedRowKey }}<br>
+          idRowEdit : {{ idRowEdit }}<br>
+          idRowCurrentClick: {{ idRowCurrentClick }}
         </a-col>
   </a-row>
 
@@ -64,11 +65,24 @@
       <a-row>
           <a-col :span="13" class="custom-layout">
               <a-spin :spinning="loading" size="large">
-                <div class="grid-table">{{focusedRowKey}}
-                  <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :selected-row-keys="[2]"
-                      :show-borders="true"  :allow-column-reordering="move_column"
-                      :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :onRowClick="onRowClick"
-                      v-model:focused-row-key="focusedRowKey" @exporting="onExporting" id="gridContainer" ref="pa520Grid">
+                <div class="grid-table">
+                  <DxDataGrid 
+                  :show-row-lines="true" 
+                  :hoverStateEnabled="true" 
+                  :data-source="dataSource" 
+                  :focusedRowIndex="0"
+                  :show-borders="true"  
+                  :allow-column-reordering="move_column"
+                  :focused-row-enabled="true"
+                  :allow-column-resizing="colomn_resize" 
+                 
+                  v-model:focused-row-key="focusedRowKey" 
+                  @exporting="onExporting" 
+                  id="gridContainer" 
+                  ref="pa520Grid"
+                  @focused-row-changing="onFocusedRowChanging"
+                  @focused-row-changed="onFocusedRowChanged"
+                  >
                       <DxScrolling mode="standard" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
                       <DxExport :enabled="true"/>
@@ -221,35 +235,40 @@ export default defineComponent({
   },
   setup() {
     const pa520Grid = ref<any>(null);
-    const focusedRowKey = ref(null);
+    const focusedRowKey =  ref<any>(null);
     const modalChangeValueEdit = ref(false);
     const actionChangeComponent = ref(1);
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
-    const dataSource = ref<any>([]);
+    const dataSource = ref<any>(new DataSource({
+          store: {
+              type: "array",
+              key: 'employeeId',
+              data: [],
+          }
+    }));
     const store = useStore();
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
+    const idRowCurrentClick = ref(0);
     const globalYear = computed(() => store.state.settings.globalYear);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520);
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclick);// determine when clcik add new button
     const countBtOnclick = computed(() => store.state.common.countBtOnclick);// count the number of times the add button clicks
-    const idRowCurrentClick = computed(() => store.state.common.idRowChangePa520);
+   
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear.value,
     });
     const idAction = ref();
-    const trigger = ref<boolean>(false);
+    const trigger = ref<boolean>(true);
     const isAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
     const modalDeleteStatus = ref<boolean>(false);
     const modalChangeValueAdd = ref(false);
     const idRowEdit = ref();
-    let isMounted = false; // determine first page load
-    let isChangeYear = false; // determine when click change year
     let isClickRow = false; // determine when action click row
     const isDelete = ref<boolean>(false); // determine when action click icon delete
     const resetAddComponent = ref<number>(1);
@@ -265,12 +284,7 @@ export default defineComponent({
       enabled: trigger.value,
       fetchPolicy: "no-cache",
     }));
-    //hook on mounted to change page load state
-    onMounted(() => {
 
-      isMounted = true;
-      trigger.value = true
-    });
     const {
       mutate: actionDelete,
       onError: errorDelete,
@@ -283,9 +297,61 @@ export default defineComponent({
       notification("success", `업데이트 완료!`);
       trigger.value = true;
       refetchData();
-      focusedRowKey.value = store.state.common.dataSourcePA520[0].employeeId;
     });
     // ======================= WATCH ==================================
+
+
+    watch(result,() => {
+      if (result && result.value) {
+        console.log(result.value.getEmployeeWageDailies);
+        
+        const data = result.value.getEmployeeWageDailies.map((i: any) => ({
+          ...i,
+          key: i.employeeId
+        })) ;
+        dataSource.value = new DataSource({
+          store: {
+              type: "array",
+              key: 'key',
+              data: result.value ? data : [],
+          }
+        })
+
+        
+        // Total number of employees who have quit
+        totalUserOnl.value = result.value.getEmployeeWageDailies.filter(
+          (val: any) => val.status != 0
+        ).length;
+        totalUserOff.value = result.value.getEmployeeWageDailies.filter(
+          (val: any) => val.status == 0
+        ).length;
+
+        // this is case after save done
+        if (store.state.common.rowIdSaveDonePa520 != 0) {
+          // Get index row change
+          let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value;
+          // active row change
+          // used to catch the case being created, click the add button and agree to save the old data
+          if (countBtOnclick.value > 1) {
+            store.state.common.addRowBtOnclick = false;
+            resetAddComponent.value++; // increment one unit to reset the newly created form
+            onAddBtClick();
+            store.state.common.countBtOnclick = 1;
+          } else {
+              idRowEdit.value = idRowNextForcus;
+              focusedRowKey.value = idRowNextForcus;
+          }
+          isClickRow = false;
+          isDelete.value = false;
+        }
+        trigger.value = false;
+      }
+    });
+
+    watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
+      dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
+    },{ deep: true })
+
     //check if the year is changed, then confirm first if you are adding or editing data
     watch(() => globalYear.value, (newYear, oldYear) => {
       if (
@@ -297,9 +363,7 @@ export default defineComponent({
         trigger.value = true;
         originData.value.imputedYear = newYear;
         refetchData();
-        isChangeYear = true;
       }
-
     
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true ||
@@ -314,64 +378,7 @@ export default defineComponent({
         return;
       } 
     })
-    watchEffect( () => {
-      if (result && result.value.getEmployeeWageDailies) {
-    
-        
-        dataSource.value = new DataSource({
-          store: {
-              type: "array",
-              key: 'employeeId',
-              data: result.value ? result.value.getEmployeeWageDailies : [],
-          }
-        })
-        const gridInstance = pa520Grid.value.instance
-        console.log(gridInstance);
-        
-        gridInstance.selectRows([2]);
-        gridInstance.focus()
-        // If it's the first time the page loads, focus on the first row
-        // if ((isMounted || isChangeYear) && value.getEmployeeWageDailies.length > 0) {
-        //   console.log(value.getEmployeeWageDailies[0]);
-        //   onRowClick({ data: value.getEmployeeWageDailies[0] });
-        //   isMounted = false;
-        //   isChangeYear = false;
-        //   isClickRow = false;
-        // }
-        
-        // store.state.common.dataSourcePA520 = value.getEmployeeWageDailies;
-        // // Total number of employees who have quit
-        // totalUserOnl.value = value.getEmployeeWageDailies.filter(
-        //   (val: any) => val.status != 0
-        // ).length;
-        // totalUserOff.value = value.getEmployeeWageDailies.filter(
-        //   (val: any) => val.status == 0
-        // ).length;
 
-        // // this is case after save done
-        // if (store.state.common.rowIdSaveDonePa520 != 0) {
-        //   // Get index row change
-        //   let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value;
-        //   // If there is a click event on the row, it will assign the employee id to focus
-        //   let dataRowChange = store.state.common.dataSourcePA520.filter(
-        //     (val: any) => val.employeeId == idRowNextForcus
-        //   );
-        //   // active row change
-        //   // used to catch the case being created, click the add button and agree to save the old data
-        //   if (countBtOnclick.value > 1) {
-        //     store.state.common.addRowBtOnclick = false;
-        //     resetAddComponent.value++; // increment one unit to reset the newly created form
-        //     onAddBtClick();
-        //     store.state.common.countBtOnclick = 1;
-        //   } else {
-        //     onRowClick({ data: dataRowChange[0] });
-        //   }
-        //   isClickRow = false;
-        //   isDelete.value = false;
-        // }
-        trigger.value = false;
-      }
-    });
     watch(
       () => isAddNewStatus.value,
       (value) => {
@@ -381,15 +388,6 @@ export default defineComponent({
         }
       }
     );
-    // get datasource from store to client
-    // watch(
-    //   () => store.state.common.dataSourcePA520,
-    //   (value) => {
-    //     dataSource.value = value;
-    //     pa520Grid.value.instance.refresh();
-    //   },
-    //   { deep: true }
-    // );
 
     watch(
       () => store.state.common.rowIdSaveDonePa520,
@@ -419,44 +417,25 @@ export default defineComponent({
       e.cancel = true;
     };
 
-    const scrollBotton = () => {
-      const scrolling = pa520Grid.value.instance.getScrollable();
-      scrolling.scrollTo({ top: 9999, left: 0 });
-    }
-    const concatNewRow = () => {
-      // Adding a new row to the grid.
-      let valueAddDefault = { ...DataCreatedTable };
-      store.state.common.dataSourcePA520 = JSON.parse(
-        JSON.stringify(store.state.common.dataSourcePA520)
-      ).concat(valueAddDefault);
-      
-    }
     const funcAddNewRow = async () => {
       store.state.common.activeAddRowPA520 = true;
-      await concatNewRow();
-        
-      // Setting the focusedRowKey to null.
-      focusedRowKey.value = null;
-      setTimeout(() => {
-        let a = document.body.querySelectorAll("[aria-rowindex]");
-        (a[a.length - 1] as HTMLInputElement).classList.add("dx-row-focused");
-      }, 100);
+      dataSource.value.store().insert(DataCreatedTable).then(() => dataSource.value.reload());
+      focusedRowKey.value = 0
       resetAddComponent.value++;
       actionChangeComponent.value = 1;
     }
     // Opening a modal window.
     const onAddBtClick = () => {
-      scrollBotton();
       store.state.common.addRowBtOnclick = true;
       store.state.common.countBtOnclick++;
       if (
-        store.state.common.checkChangeValueEditTab1PA520 == true
-        || store.state.common.checkChangeValueEditTab2PA520 == true 
+        store.state.common.checkChangeValueEditTab1PA520 == true || 
+        store.state.common.checkChangeValueEditTab2PA520 == true 
       ) {
         modalChangeValueEdit.value = true;
         return;
       }
-      // Adding a new row to the table.
+      // // Adding a new row to the table.
       if (store.state.common.activeAddRowPA520 == false) {
         funcAddNewRow();     
         actionChangeComponent.value = 1;
@@ -469,44 +448,38 @@ export default defineComponent({
         modalChangeValueAdd.value = true;
       }
     };
+
     // The above code is a function that is called when the user clicks on the edit button.
-    const onRowClick = (val: any) => {
-      store.state.common.countBtOnclick = 0
-      // if click delete icon do nothing
-      if (isDelete.value) {
-        return;
-      }
-      isClickRow = true;
-      store.state.common.idRowChangePa520 = val.data.employeeId;
-      // for case Edit  but click other row
+    const onFocusedRowChanging = (event: any)=>{
+      let newRowIndex = event.newRowIndex
+      idRowCurrentClick.value = event.rows[newRowIndex].data.employeeId
+      // alert('onFocusedRowChanging' )
+      //  // for case Edit  but click other row
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
       ) {
         modalChangeValueEdit.value = true;
-        return;
+        event.cancel = true
       }
       // for case Add  but click other row
       if (store.state.common.checkChangeValueAddPA520 == true) {
+        store.state.common.addRowBtOnclick = false
         modalChangeValueAdd.value = true;
-        store.state.common.addRowBtOnclick = false;
-        return;
-      } else {
-        idRowEdit.value = val.data.employeeId;
+        event.cancel = true
+      } 
+    }
+    const onFocusedRowChanged = (event : any)=>{
+      if(store.state.common.activeAddRowPA520 && store.state.common.addRowBtOnclick){
+        actionChangeComponent.value = 1;
+      }else{
+        actionChangeComponent.value = 2;
+        store.state.common.idRowChangePa520 = focusedRowKey.value;
+        console.log('onFocusedRowChanged',event);
+        idRowEdit.value = event.row.data.employeeId;
       }
+    }
 
-      actionChangeComponent.value = 2;
-      focusedRowKey.value = val.data.employeeId;
-      //The case is creating but not entering data but clicking to another row
-      if (store.state.common.activeAddRowPA520 == true) {
-        store.state.common.dataSourcePA520 =
-          store.state.common.dataSourcePA520.splice(
-            0,
-            store.state.common.dataSourcePA520.length - 1
-          );
-        store.state.common.activeAddRowPA520 = false;
-      }
-    };
     const modalHistory = () => {
       modalHistoryStatus.value = companyId;
     };
@@ -551,7 +524,8 @@ export default defineComponent({
           funcAddNewRow();
           store.state.common.checkChangeValueEditTab2PA520 = false;
         } else {
-          idRowEdit.value = focusedRowKey.value;
+          idRowEdit.value = idRowCurrentClick.value;
+          focusedRowKey.value = idRowCurrentClick.value;
           // for case edit tab2 and click other row
           // store.state.common.idRowChangePa520 = focusedRowKey.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
@@ -560,24 +534,37 @@ export default defineComponent({
         if (addRowBtOnclick.value) {
           funcAddNewRow();
         } else {
-          idRowEdit.value = focusedRowKey.value;
+          focusedRowKey.value = idRowCurrentClick.value;
+          idRowEdit.value = idRowCurrentClick.value;
           // for case edit tab2 and click other row
-          store.state.common.idRowChangePa520 = focusedRowKey.value
+          store.state.common.idRowChangePa520 = idRowCurrentClick.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
       }
       store.state.common.checkChangeValueEditTab1PA520 = false;
     };
     const confirmAndSaveAdd = (res: any) => {
-      
-      if (res == true) {
-        focusedRowKey.value = store.state.common.dataSourcePA520.slice(-1).pop().employeeId;
+   
+      if (res == true && addRowBtOnclick.value) {
         actionSave();
+         // Setting the value of the addRowOnclick variable to false.
         store.state.common.addRowBtOnclick = false;
+        resetAddComponent.value++; // increment one unit to reset the newly created form
+        store.state.common.addRowBtOnclick = false;
+        store.state.common.activeAddRowPA520 = false;
+        store.state.common.checkChangeValueAddPA520 = false;
+      }else if (res == true &&  !addRowBtOnclick.value) {
+
+        actionSave();
+        idRowEdit.value = idRowCurrentClick.value;
+        focusedRowKey.value = idRowCurrentClick.value;
+        store.state.common.countBtOnclick = 0
+        //Not save
+        store.state.common.activeAddRowPA520 = false;
+        store.state.common.checkChangeValueAddPA520 = false;
+
       } else if (!res && addRowBtOnclick.value) {
         store.state.common.countBtOnclick = 0
-        // Delete new row
-        store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0,store.state.common.dataSourcePA520.length - 1);
         // Change status switch in store
         store.state.common.activeAddRowPA520 = false;
         store.state.common.checkChangeValueAddPA520 = false;
@@ -585,23 +572,15 @@ export default defineComponent({
         store.state.common.addRowBtOnclick = false;
         resetAddComponent.value++; // increment one unit to reset the newly created form
         onAddBtClick();
+
       } else {
+        idRowEdit.value = idRowCurrentClick.value;
+        focusedRowKey.value = idRowCurrentClick.value;
         store.state.common.countBtOnclick = 0
         //Not save
-        // Delete new row
-        store.state.common.dataSourcePA520 = store.state.common.dataSourcePA520.splice(0,store.state.common.dataSourcePA520.length - 1);
-        // Change status switch in store
         store.state.common.activeAddRowPA520 = false;
         store.state.common.checkChangeValueAddPA520 = false;
         // Get index row change
-        let indexChange = store.state.common.dataSourcePA520.findIndex(
-          (val: any) => val.employeeId == store.state.common.idRowChangePa520
-        );
-        // active row change
-        setTimeout(() => {
-          let a = document.body.querySelectorAll("[aria-rowindex]");
-          (a[indexChange] as HTMLInputElement).click();
-        }, 100);
       }
     };
 
@@ -634,12 +613,14 @@ export default defineComponent({
       onDeleteRow,
       modalHistory,
       onAddBtClick,
-      onRowClick,
       onConfirmDelete,
       Message,
       addRowBtOnclick,
       countBtOnclick,
-      trigger
+      trigger,
+      onFocusedRowChanged,
+      onFocusedRowChanging,
+      idRowCurrentClick
     };
   },
 });

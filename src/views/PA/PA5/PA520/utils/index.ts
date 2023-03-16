@@ -80,7 +80,8 @@ export const originDataInputUpdate = {
 }
 
 export const DataCreatedTable = {
-    "employeeId": null,
+    "key": 0,
+    "employeeId": 0,
     "name": "",
     "foreigner": false,
     "status": null,
