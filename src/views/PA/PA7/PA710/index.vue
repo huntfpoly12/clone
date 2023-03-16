@@ -21,6 +21,7 @@
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                             :column-auto-width="true" :onRowClick="onSelectionClick"
                             @focused-row-changing="onFocusedRowChanging"
+                            ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -213,6 +214,8 @@ export default defineComponent({
         const statusAddRow = ref(true);
         const statusClickButtonSave = ref<boolean>(true);
         const statusClickButtonAdd = ref<boolean>(false);
+        const gridRef = ref(); // ref of grid
+        const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
         const originData = {
             companyId: companyId,
             imputedYear: globalYear,
@@ -266,9 +269,13 @@ export default defineComponent({
             }
             triggerDetail.value = false;
         })
-        const { mutate: actionDelete, onDone: onDoneDelete } = useMutation(
+        const { mutate: actionDelete, onDone: onDoneDelete, onError: onErrorDelete } = useMutation(
             mutations.deleteEmployeeExtra
         );
+        onErrorDelete((error) => {
+            modalStatusDelete.value = false;
+            notification('error', error.message)
+        });
         onDoneAdd(async (data) => {
             notification('success', `업데이트 완료되었습니다!`)
             if (checkClickYear.value) {
@@ -301,6 +308,7 @@ export default defineComponent({
         onErrorAdd((e) => {
             focusedRowKey.value = 'PA710'
             notification('error', e.message)
+            checkClickYear.value ? checkClickYear.value = false : '';
         });
         onDoneDelete(() => {
             modalStatusDelete.value = false;
@@ -339,6 +347,7 @@ export default defineComponent({
             store.state.common.savePA710++;
         });
         onErrorUpdate((e) => {
+            checkClickYear.value ? checkClickYear.value = false : '';
             triggerDetail.value = true;
             notification('error', e.message)
         });
@@ -438,15 +447,19 @@ export default defineComponent({
         }
         const onFocusedRowChanging = (e: any) => {
             dataRow = e.rows[e.newRowIndex]?.data
+            const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
             if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
                 originDataDetail.value.employeeId = e.rows[e.newRowIndex]?.data.employeeId
                 originDataDetail.value.incomeTypeCode = e.rows[e.newRowIndex]?.data.incomeTypeCode
                 if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
                     modalStatus.value = true;
+                    rowElement?.classList.add("dx-state-hover-custom")
                     e.cancel = true;
+                    
                 } else {
                     if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
                         modalStatus.value = true;
+                        rowElement?.classList.add("dx-state-hover-custom")
                         e.cancel = true;
                     } else {
                         if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
@@ -514,6 +527,7 @@ export default defineComponent({
                 statusFormUpdate.value = true
                 triggerDetail.value = true;
             }
+            dataGridRef.value?.refresh();
         }
         const statusComfirmAdd = (val: any) => {
             if (val) {
@@ -528,6 +542,7 @@ export default defineComponent({
                     Object.assign(formState.value, initialState);
                 }
             }
+            dataGridRef.value?.refresh();
         }
         const addRow = () => {
             disabledBlock.value = false;
@@ -614,7 +629,7 @@ export default defineComponent({
             onFocusedRowChanging,
             // actionToAddFromEdit, 
             textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
-            contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock,
+            contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock, gridRef,
         };
     },
 });

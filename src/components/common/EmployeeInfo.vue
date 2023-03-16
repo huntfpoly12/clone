@@ -14,7 +14,7 @@
                 </div>
             </a-tooltip>
             <div  v-else @mouseover="onMouseover" @mouseout="onMouseOut" style="padding-top: 4px; height: 25px;">{{ name }}</div>
-            <span class="tag-status" v-if="status === 0">퇴</span>
+            <span class="tag-status" v-if="status == 0">퇴</span>
             <span class="tag-foreigner" v-if="foreigner">외</span>
             <span class="tag-forDailyUse" v-if="forDailyUse">일용</span>
 

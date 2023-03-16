@@ -1,5 +1,5 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus" />
@@ -24,7 +24,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -48,10 +48,12 @@
                     style="width: 25px; height: 25px;" /></div>
         </template>
     </DxDropDownButton>
-
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
         :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes"
         :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
+    <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+        @checkConfirm="statusComfirmChange" />
 
     <DeletePopupIncomeWages :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -128,6 +130,7 @@ export default defineComponent({
         const modalEmailSingle = ref(false)
         const modalEmailSinglePayrollRegister = ref(false)
         const modalEmailMulti = ref(false)
+        let modalChangeRow = ref<boolean>(false)
 
         const modalStatusAdd = ref(false)
 
@@ -162,23 +165,23 @@ export default defineComponent({
                     store.state.common.addRow++ // add row
                     store.state.common.statusRowAdd = false;
                     store.state.common.statusFormAdd = true;
-                    // store.state.common.incomeId = 'PA110';
-                    // store.state.common.focusedRowKey = 'PA110';
                 }
                 else {
                     if (store.state.common.statusChangeFormAdd) {
                         modalStatusAdd.value = true
                         store.state.common.statusClickButtonAdd = true;
                     }
-                    // notification('error', "nhập vàooooo")
                 }
             }
         }
-        const editItem = (value: any) => {
+        const editItem = () => {
             if (props.dataRows.length) {
-                modalEdit.value = true;
-                popupDataEdit.value = props.dataRows
-
+                if (store.state.common.statusChangeFormEdit) {
+                    modalChangeRow.value = true
+                } else {
+                    modalEdit.value = true;
+                    popupDataEdit.value = props.dataRows
+                }
             } else {
                 notification('error', messages.getCommonMessage('404').message)
             }
@@ -245,9 +248,6 @@ export default defineComponent({
                 window.open(value.getIncomeWageSalaryStatementViewUrl)
             }
         })
-        // const loadingTableInfo = () => {
-        //     emit("loadingTableInfo", true)
-        // }
 
         const showHistory = () => {
             modalHistory.value = true;
@@ -261,28 +261,33 @@ export default defineComponent({
         const onSubmit = (e: any) => {
             store.state.common.actionSubmit++
         }
-        /**
-         *  Update value 
-         */
-        // const updateData = (e: any) => {
-        //     store.state.common.actionSubmit++
-        //     // emit('actionUpdate',actionUpdateItem.value++)
-        // }
+
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
+                store.state.common.checkClickYear = false;
                 store.state.common.actionSubmit++
             } else { 
                 if (store.state.common.statusRowAdd) { // add row
                     store.state.common.addRow++ // add row
                     store.state.common.statusRowAdd = false;
                     store.state.common.statusFormAdd = true;
-                    // store.state.common.incomeId = 'PA110';
-                    // store.state.common.focusedRowKey = 'PA110';
                 } else { // reset form
                     store.state.common.actionResetForm++;
                 }
             }
         }
+        const statusComfirmChange = (res: any) => {
+            store.state.common.statusClickEditItem = true
+            if (res) {
+                store.state.common.actionSubmit++
+            } else {
+                store.state.common.loadingFormData++
+            }
+        }
+        watch(() => store.state.common.onEditItem, (value) => {
+            store.state.common.statusClickEditItem = false
+            editItem()
+        })
         return {
             deleteItem,
             editItem,
@@ -314,6 +319,8 @@ export default defineComponent({
             modalStatusAdd,
             statusComfirmAdd,
             Message,
+            statusComfirmChange,
+            modalChangeRow,
         };
     },
 });
