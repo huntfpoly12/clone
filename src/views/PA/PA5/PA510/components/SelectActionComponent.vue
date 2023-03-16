@@ -29,7 +29,7 @@
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <button class="button-open-tab"
+    <button class="button-open-tab" style="pointer-events: all; opacity: 1;"
         @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-3 action-select-1" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
@@ -244,9 +244,6 @@ export default defineComponent({
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
                     popupDataHistoryStatus.value = { ...processKey.value }
-                    break;
-                case 'open-tab-520':
-                    openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
                     break;
             }
         }
