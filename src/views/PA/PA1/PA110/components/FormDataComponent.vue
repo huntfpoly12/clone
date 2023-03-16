@@ -732,7 +732,8 @@ export default defineComponent({
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
-                    // store.state.common.focusedRowKey = dataIW.value?.incomeId
+                    store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
+                    store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                     showErrorButton.value = true;
                     store.state.common.dataRowOnActive = dataIW.value
                 } else {
@@ -764,8 +765,8 @@ export default defineComponent({
                     };
                     if (store.state.common.statusFormAdd) {
                         variables.input.employeeId = dataIW.value.employee.employeeId,
-                            variables.input.paymentDay = dataIW.value.paymentDay,
-                            actionCreated(variables)
+                        variables.input.paymentDay = dataIW.value.paymentDay,
+                        actionCreated(variables)
                     } else {
                         actionUpdate(variables)
                     }
