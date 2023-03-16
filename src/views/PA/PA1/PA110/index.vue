@@ -579,7 +579,7 @@ export default defineComponent({
             dataRows.value = []
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-110") {
+            if (newVal.id == "pa-110" && !store.state.common.statusFormAdd) {
                 triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })

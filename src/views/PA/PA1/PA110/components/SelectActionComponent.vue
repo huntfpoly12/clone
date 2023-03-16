@@ -31,7 +31,7 @@
         </div>
     </DxButton>
     <div class="custom-select-tab ml-4">
-        <button class="button-open-tab"
+        <button class="button-open-tab" style="pointer-events: all; opacity: 1;"
             @click="openTab({ name: '사원등록', url: '/dashboard/pa-120', id: 'pa-120' })">사원등록</button>
     </div>
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-3" :items="arrDropDownPayrollRegister" text="급여대장"
