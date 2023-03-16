@@ -73,14 +73,14 @@
                             :spinButtons="true" min="1" :max="31" :required="true"/>
                     </a-form-item>
                     <div style="font-weight: bold;">
-                        <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
+                        <span v-if="!dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
                             showDailyWage()
                         }}원</span>
 
                         <span v-else>일급여 {{ $filters.formatCurrency(dataIncomeWageDaily.dailyWage) }}원</span>
                         <br>
 
-                        <span v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
+                        <span v-if="!dataIncomeWageDaily.employee.monthlyPaycheck">월급여 {{
                             $filters.formatCurrency(dataIncomeWageDaily.monthlyWage)
                         }}원</span>
 
@@ -424,25 +424,32 @@ export default defineComponent({
             }
         })
         watch(() => dataIncomeWageDaily.value, (value) => {
-            // Checking if the data in the store has changed.
-            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
-                store.state.common.statusChangeFormPrice = true;               
-                store.state.common.statusChangeFormEdit = true;
-            } else {
-                store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormPrice = false;
-            }
-
-            // Checking if the data in the form is different from the data in the database.
-            if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
-                store.state.common.statusChangeFormAdd = true
-                if (!store.state.common.statusRowAdd) {
-                    store.state.common.statusChangeFormEdit = true
-                    store.state.common.statusChangeFormPrice = true;
+            
+            if (!store.state.common.statusFormAdd) {
+                if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && store.state.common.dataRowOld) {
+                    store.state.common.statusChangeFormPrice = true;               
+                    store.state.common.statusChangeFormEdit = true;
+                } else {
+                    store.state.common.statusChangeFormEdit = false;
+                    store.state.common.statusChangeFormPrice = false;
                 }
             } else {
-                store.state.common.statusChangeFormAdd = false
+                // Checking if the data in the form is different from the data in the database. [check trạng thái khi add]
+                if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
+                    store.state.common.statusChangeFormAdd = true;
+                    store.state.common.statusChangeFormPrice = true;
+                    // if (!store.state.common.statusRowAdd) {
+                    //     store.state.common.statusChangeFormEdit = true
+                    //     store.state.common.statusChangeFormPrice = true;
+                    // }
+                } else {
+                    store.state.common.statusChangeFormAdd = false;
+                    store.state.common.statusChangeFormPrice = false;
+                }
             }
+            
+
+            
         }, { deep: true })
 
         watch(() => store.state.common.statusChangeFormPrice, (value) => {
@@ -513,7 +520,8 @@ export default defineComponent({
                         }
                     })
                 }))
-             }
+            }
+            await (store.state.common.statusChangeFormPrice = false)
         }, { deep: true })
 
         // Watching the state of the store and when it changes, it is adding a new row to the table.
