@@ -189,6 +189,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
+            store.state.common.addRowBtOnclick = false
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false

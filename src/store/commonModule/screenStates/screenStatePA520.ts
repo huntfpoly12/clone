@@ -8,6 +8,8 @@ const statesPA520 = {
   checkChangeValueAddPA520: false,
   dataSourcePA520: {},
   activeAddRowPA520: false,
+  addRowBtOnclick: false,
+  countBtOnclick: 0,
   rowIdSaveDonePa520: 0,
   actionSaveAddPA520: 0,
   actionUpdateTab1PA520: 0,

@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">
+        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">{{ globalYear }}
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -123,6 +123,7 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
+import DataSource from 'devextreme/data/data_source';
 export default defineComponent({
     props: {
         idRowEdit: Number,
@@ -146,7 +147,7 @@ export default defineComponent({
         })
         const originDataDetail = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: props.idRowEdit
         })
         let dataDefault = ref({})
@@ -305,7 +306,7 @@ export default defineComponent({
 
         return {
             activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault
+            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault,globalYear
         };
     },
 });

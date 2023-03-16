@@ -40,7 +40,7 @@
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
-                        layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
+                        layoutCustom="horizontal" :disabled="true" />
                 </a-form-item>
                 <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
@@ -355,10 +355,13 @@ export default defineComponent({
           // delete item  no need in object , Just compare item watching
           let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
+          console.log('defValue',defValue);
+          console.log('originValue',originValue);
           // Compare two object if different change button color to orange
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
             isBtnYellow.value = true
           } else {
+         
             isBtnYellow.value = false
             validateCalculate.value = false
           }
@@ -370,7 +373,6 @@ export default defineComponent({
           delete object.nationalPensionSupportPercent
           delete object.employeementInsuranceSupportPercent
           delete object.monthlyPaycheck
-          delete object.workingDays
           delete object.dailyWage
           delete object.deductionItems
           return  object
@@ -385,12 +387,12 @@ export default defineComponent({
           }
 
         }
-        const callFuncCalculate = async () => {
+      const callFuncCalculate = async () => {
             let dataDefault = originDataUpdate.value.input
             let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
             let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
             let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
-            let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
+            let total4 = dataDefault.employeementInsuranceDeduction == true && insuranceSupport.value == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
             let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
             let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
             let arrCallApi: any = []
