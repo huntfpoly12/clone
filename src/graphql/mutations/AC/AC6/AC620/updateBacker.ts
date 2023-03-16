@@ -22,13 +22,14 @@ export default gql`
       addressExtend
       phone
       use
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
-      ip
-      active
+#      createdAt
+#      createdBy
+#      updatedAt
+#      updatedBy
+#      ip
+#      active
       residentId
+      __typename @skip(if: true)
     }
   }
 `;

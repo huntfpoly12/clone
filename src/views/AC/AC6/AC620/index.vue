@@ -26,7 +26,7 @@
     </div>
     <div class="page-content">
       <a-row gutter="24">
-        <a-col span="14" class="custom-layout">
+        <a-col span="16" class="custom-layout">
           <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
@@ -122,7 +122,11 @@
               <DxColumn caption="연락처" data-field="phone" alignment="center"/>
               <DxColumn caption="기부금영수증 발행 가능 여부" data-field="donationOrganization" cell-template="donationOrganization" alignment="center"/>
               <template #donationOrganization="{ data }">
-                <span>{{  data.data.donationOrganization ? 'O' : 'X' }}</span>
+                <span>{{
+                  data.data.name
+                  && (data.data.residentId || data.data.bizNumber)
+                  && (data.data.roadAddress || data.data.addressExtend)
+                    ? 'O' : 'X' }}</span>
               </template>
               <DxColumn
                 caption="이용여부"
@@ -142,7 +146,7 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <a-col span="10" class="custom-layout">
+        <a-col span="8" class="custom-layout">
           <standard-form formName="ac-610" ref="formRef">
             <a-form-item label="후원자 구분" :label-col="labelCol">
               <select-box-common
@@ -180,6 +184,7 @@
                     v-model:valueInput="formState.otherContents"
                     :disabled="formState.nonProfitCorpType !== 9"
                     :required="formState.nonProfitCorpType === 9"
+                    placeholder="기타 내용"
                   />
                 </div>
               </a-radio-group>
@@ -206,7 +211,7 @@
                   :disabled="formState.type !== 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || formState.type !== 1" />
+                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || formState.type !== 1" />
                 <InfoToolTip >
                   <span class="">
                     주민등록번호 저장시 개인정보 처리 방침에 동의한걸로 간주합니다.<br />
@@ -225,7 +230,7 @@
                   :disabled="formState.type === 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || formState.type === 1" />
+                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || formState.type === 1" />
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
@@ -238,7 +243,9 @@
               <div class="d-flex gap-6 mb-5">
                 <default-text-box v-model:valueInput="formState.roadAddress" width="200px" :disabled="true" class="roadAddress"
                                   placeholder="도로명주소" />
-                <post-code-button @dataAddress="funcAddress" text="주소검색"/>
+                <div style="margin-left: -5px">
+                  <post-code-button @dataAddress="funcAddress" text="주소검색" width="90"/>
+                </div>
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
@@ -456,9 +463,13 @@ export default defineComponent({
       if(isClickAddRow.value) {
         addNewRow()
       } else {
+        if (isNewRow.value) {
+          focusedRowKey.value = selectRowKeyAction.value;
+        } else {
+          focusedRowKey.value = res.data.createBacker.backerCode;
+          selectRowKeyAction.value = res.data.createBacker.backerCode;
+        }
         isNewRow.value = false;
-        focusedRowKey.value = res.data.createBacker.backerCode;
-        selectRowKeyAction.value = res.data.createBacker.backerCode;
         previousRowData.value = { ...formState };
       }
       notification("success", Message.getCommonMessage('106').message);
@@ -467,7 +478,8 @@ export default defineComponent({
       notification("error", e.message);
     });
     onDoneUpdate(async (res) => {
-      previousRowData.value = { ...formState };
+      formState.value = {...res.data.updateBacker};
+      previousRowData.value = {...res.data.updateBacker};
       // update when click discard
       await refetchData();
 
@@ -515,6 +527,7 @@ export default defineComponent({
     };
     // handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
+      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
       // create new row and click row other then check data input
       if (isNewRow.value) {
         focusedRowKey.value = 0;
@@ -535,6 +548,7 @@ export default defineComponent({
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           previousRowData.value = { ...e.rows[e.newRowIndex].data };
           isDiscard.value = true;
+          rowElement?.classList.add("dx-state-hover-custom")
           e.cancel = true;
         }
       } else {
@@ -550,6 +564,7 @@ export default defineComponent({
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
+          rowElement?.classList.add("dx-state-hover-custom")
           e.cancel = true;
         } else {
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -678,7 +693,7 @@ export default defineComponent({
       bizNumber: formState.value.bizNumber,
     };
     const isDisableBtnCheckBizNumber = computed(() => {
-      if (formState.value?.residentId?.length !== 13) return true;
+      if (formState.value?.bizNumber?.length !== 10) return true;
       if (isNewRow.value) return false;
       return formState.value?.bizNumber === previousRowData.value?.bizNumber;
     });
@@ -759,7 +774,6 @@ export default defineComponent({
 
     const isShowFundrasingInstitution = computed(() =>  formState.value.type < 5);
     const isShowDonationOrganization = computed(() => formState.value.type === 3 || formState.value.type === 4);
-
     return {
       confirmSave,
       move_column,
@@ -798,7 +812,7 @@ export default defineComponent({
       isDisableBtnCheckResidentId,
       checkDuplicateResidentId,
       checkDuplicateBizNumber,
-      isDisableBtnCheckBizNumber
+      isDisableBtnCheckBizNumber,
     };
   },
 });
