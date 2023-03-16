@@ -535,7 +535,7 @@ export default defineComponent({
             }
         })
         watch(globalYear, (newVal, oldVal) => {
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 if (!store.state.common.checkClickYear) {
                     modalChangeRow.value = true
                     store.state.common.checkClickYear = true
@@ -591,7 +591,7 @@ export default defineComponent({
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
                 checkClickMonth.value = true
             } else {
@@ -617,6 +617,11 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormEdit = false;
                 store.state.common.statusChangeFormAdd = false;
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.statusFormAdd = false
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
@@ -633,11 +638,6 @@ export default defineComponent({
                         store.state.common.checkClickYear = false;
                     }, 500);
                     return;
-                }
-                if (!store.state.common.statusRowAdd) {
-                    store.state.common.statusFormAdd = false
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
@@ -682,7 +682,7 @@ export default defineComponent({
             } else {
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                    if (store.state.common.statusChangeFormEdit) {
+                    if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                         // if (store.state.common.statusChangeFormPrice) {
                         //     modalChangeRowPrice.value = true;
                         // } else {
