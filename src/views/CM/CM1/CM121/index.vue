@@ -244,6 +244,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear = computed(() => store.state.settings.globalYear)
+    let globalYearSelected = ref(globalYear.value)
     const triggerBankbook = ref<boolean>(false);
     const triggerBankbooks = ref<boolean>(true);
     let dataSource = ref<any[]>([])
@@ -289,7 +290,7 @@ export default defineComponent({
     const cm121Form = ref()
     let dataDetailBankbook = ref({
       companyId: companyId,
-      fiscalYear: globalYear,
+      fiscalYear: globalYear.value,
       facilityBusinessId: null,
       bankbookId: null,
       bankbookInput: {
@@ -331,6 +332,8 @@ export default defineComponent({
         PW: ''
       }
     })
+    let isChangeGlobalYear = ref<boolean>(false)
+    let globalYearChange = ref(globalYear.value)
     // ------------COMPUTED ----------------------
 
     const isEdited = computed(() => {
@@ -434,9 +437,38 @@ export default defineComponent({
       notification('error', e.message)
     })
     // -----------WATCH-------------
+    watch(() => globalYear.value, (value) => {
+      if (globalYearSelected.value === value) return
+      if (globalYearChange.value === null) {
+        globalYearSelected.value = value
+        return
+      }
+      if (isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value })) {
+        globalYearSelected.value = value
+      } else {
+        globalYearChange.value = value
+        store.state.settings.globalYear = globalYearSelected.value
+        isChangeGlobalYear.value = true
+        isModalConfirmSaveChange.value = true
+      }
+    })
+    watch(() => globalYearSelected.value, (value) => {
+      firstLoad.value = true
+      triggerBankbooks.value = true
+    })
     watch(resBankbooks, (value) => {
       if (value.getBankbooks) {
         dataSource.value = value.getBankbooks
+        if (firstLoad.value) {
+          globalYearChange.value = globalYear.value
+          paramBankbookDetail.fiscalYear = globalYear.value
+          dataDetailBankbook.value.fiscalYear = globalYear.value
+          dataDelete.fiscalYear = globalYear.value
+        }
+        if (firstLoad.value && !value.getBankbooks.length) {
+          resetDataDetail()
+          oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
+        }
         if (firstLoad.value && value.getBankbooks.length) {
           focusedRowKey.value = value.getBankbooks[0].bankbookId
           isCreate.value = false
@@ -478,6 +510,7 @@ export default defineComponent({
           } else {
             focusedRowKey.value = null
             resetDataDetail()
+            oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
             isCreate.value = true
           }
         }
@@ -780,29 +813,35 @@ export default defineComponent({
       if (val) {
         submit()
       } else {
-        keyResetPopupRegisterBankbook.value++
-        const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
-        if (isCheckAdding) {
-          dataSource.value = dataSource.value.filter((items: any) => items.bankbookId !== newSampleID)
-        }
-        if (isStatusClickCreate.value) {
-          resetDataDetail()
-          if (isCheckAdding) {
-            const index = dataSource.value.length - 1
-            indexRow.value = index
-            focusedRowKey.value = dataSource.value[index].bankbookId
-            paramBankbookDetail.facilityBusinessId = dataSource.value[index].facilityBusinessId
-            paramBankbookDetail.bankbookId = dataSource.value[index].bankbookId
-          }
-          isModalRegister.value = true
+        if (isChangeGlobalYear.value) {
+          const yearChange = globalYearChange.value
+          globalYearChange.value = null
+          store.state.settings.globalYear = yearChange
         } else {
-          indexRow.value = objChange.value.indexRow
-          focusedRowKey.value = objChange.value.bankbookId
-          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
-          paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          keyResetPopupRegisterBankbook.value++
+          const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
+          if (isCheckAdding) {
+            dataSource.value = dataSource.value.filter((items: any) => items.bankbookId !== newSampleID)
+          }
+          if (isStatusClickCreate.value) {
+            resetDataDetail()
+            if (isCheckAdding) {
+              const index = dataSource.value.length - 1
+              indexRow.value = index
+              focusedRowKey.value = dataSource.value[index].bankbookId
+              paramBankbookDetail.facilityBusinessId = dataSource.value[index].facilityBusinessId
+              paramBankbookDetail.bankbookId = dataSource.value[index].bankbookId
+            }
+            isModalRegister.value = true
+          } else {
+            indexRow.value = objChange.value.indexRow
+            focusedRowKey.value = objChange.value.bankbookId
+            paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+            paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          }
+          isModalConfirmSaveChange.value = false
+          triggerBankbook.value = true
         }
-        isModalConfirmSaveChange.value = false
-        triggerBankbook.value = true
       }
       isStatusClickCreate.value = false
     }
