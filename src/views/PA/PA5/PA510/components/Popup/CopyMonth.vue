@@ -91,7 +91,7 @@ export default defineComponent({
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
-        const trigger = ref<boolean>(false)
+        const trigger = ref<boolean>(true)
         const triggerFindIncome = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
@@ -122,15 +122,16 @@ export default defineComponent({
             })
         );
         watch(resultConfig, (value) => {
+            trigger.value = false;
             let paymentMonth = month.value
             if (value) {
                 paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                sampleDataIncomeWageDaily.paymentDay = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month.value + 1
                 }
             }
             month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
-            trigger.value = false;
         });
         const originData: any = ref({
             companyId: companyId,

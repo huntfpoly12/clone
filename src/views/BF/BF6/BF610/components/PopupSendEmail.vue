@@ -109,8 +109,8 @@ export default defineComponent({
         watch(() => props.modalStatus, (newVal: any) => {
             if (newVal == true) {
                 dataPrint.value = {
-                    reportId: props.dataCall?.companyId,
-                    companyId: props.dataCall?.reportId,
+                    reportId: props.dataCall?.reportId,
+                    companyId: props.dataCall?.companyId,
                     imputedYear: props.dataCall?.imputedYear,
                     formInputs: [ {
                       createDate: filters.formatDateToInterger(dataForm.row1.date),

@@ -382,10 +382,30 @@ export default defineComponent({
         })
         actionUpdateErr(e => {
             notification('error', e.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
         actionUpdateDone(async res => {
             notification('success', Message.getMessage('COMMON', '106').message)
             store.state.common.dataIncomeIdBackend = res.data.updateIncomeWage?.incomeId
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             
             // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
@@ -408,6 +428,16 @@ export default defineComponent({
         doneCreated(async res => {
             notification('success', Message.getMessage('COMMON', '101').message)
             store.state.common.dataIncomeIdBackend = res.data.createIncomeWage?.incomeId
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
             await store.state.common.loadingTableInfo++
             // if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
             //     return
@@ -424,8 +454,17 @@ export default defineComponent({
         })
 
         errorCreated(res => {
-            // store.state.common.loadingTableInfo++
             notification('error', res.message)
+            if (store.state.common.checkClickYear) {
+                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                store.state.common.loadingTableInfo++
+                store.state.settings.globalYear = store.state.common.dataYearNew
+                setTimeout(() => {
+                    store.state.common.checkClickYear = false;
+                }, 500);
+                return;
+            }
         })
 
         // ===================WATCH==================================
@@ -509,9 +548,6 @@ export default defineComponent({
         watch(() => dataIW.value, (value) => {
             if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
                 store.state.common.statusChangeFormEdit = true
-                // console.log(JSON.stringify(store.state.common.dataRowOld));
-                // console.log(JSON.stringify(dataIW.value));
-                
             } else {
                 store.state.common.statusChangeFormEdit = false
             }
@@ -523,10 +559,6 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormAdd = false
             }
-            // if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo) {
-            //     store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1] = dataIW.value
-            // store.state.common.focusedRowKey = dataIW.value?.incomeId
-            // }
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
@@ -576,30 +608,20 @@ export default defineComponent({
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
                 dataIW.value.workingHoursOnHolidays = data.workingHoursOnHolidays
-
-                // dataConfigDeductions.value?.map((item: any) => {
-                //     item.amount = 0
-                // })
-                // data.deductionItems?.map((item: any) => {
-                //     // dataIW.value.deductionItems.push({ itemCode: item.itemCode, amount: item.amount })
-                //     dataConfigDeductions.value.find((Obj: any) => {
-                //         if (item.itemCode == Obj.itemCode) {
-                //             Obj.amount = item.amount;
-                //         }
-                //     });
-                // })
-                // console.log(dataIW.value);
                 
                 store.state.common.dataRowOld = { ...dataIW.value }
                 store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
                 store.state.common.focusedRowKey = data.incomeId
                 
-                // setTimeout(() => {
-                    // store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormPrice = false;
-                // }, 200);
-                
             }
+            if (store.state.common.statusClickEditItem) {
+                store.state.common.onEditItem++
+            }
+            setTimeout(() => {
+                store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormPrice = false;
+            }, 200);
+            
         })
         watch(resCalcIncomeWageTax, (value) => {
             triggerCalcIncome.value = false
@@ -698,12 +720,15 @@ export default defineComponent({
         const pa110FormRef = ref()
         const onSubmitForm = () => {
             store.state.common.statusClickButtonSave = true;
+            store.state.common.checkClickYear = false;
             submitForm()
         }
         const submitForm = () => {
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
+                store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {

@@ -6,7 +6,7 @@
             </button-basic>
         </span>
     </span>
-    <a-popover v-else trigger="click" v-model:visible="showModal" >
+    <a-popover v-else trigger="click" v-model:visible="showModal" color="#e6e6e6">
         <template #content>
             <div class="mytext">
                 <radio-group :arrayValue="userType == 'm' ? arrayRadioManager : arrayRadioUser"
@@ -122,7 +122,7 @@ export default defineComponent({
 }
 
 .mytext {
-    width: 300px;
+    min-width: 300px;
     text-align: center;
     padding: 5px;
 }
@@ -148,5 +148,4 @@ export default defineComponent({
     line-height: inherit;
 }
 </style>
-    
-    
+
