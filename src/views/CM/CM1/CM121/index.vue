@@ -11,7 +11,7 @@
               :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
               key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
-              <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :show-drag-icons="true" />
+              <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange" :show-drag-icons="true" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -51,7 +51,7 @@
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
               <template #action="{ data }">
-                <div style="text-align: center">
+                <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''">
                   <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
                     @click="showPopupLastScrapingStatus(data.data)" />
                 </div>
@@ -59,6 +59,7 @@
               <DxColumn :width="50" cell-template="delete" css-class="cell-center" />
               <template #delete="{ data }">
                 <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px"
+                :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''"
                   @click="deleteBankBook(data.data)" />
               </template>
             </DxDataGrid>
@@ -327,6 +328,9 @@ export default defineComponent({
       return dataDetailBankbook.value.bankbookInput.useScrap && 
               ((!!inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (!!inputIDPWBankType.value.private.PW && !isTypeClassification.value))
     })
+    const isCheckAdding = computed(() => {
+      return dataSource.value[indexRow.value]?.bankbookId === newSampleID
+    })
     // ============ GRAPQL ===============================
 
     // get list bankbook
@@ -424,19 +428,21 @@ export default defineComponent({
           paramBankbookDetail.bankbookId = value.getBankbooks[0].bankbookId
           objChange.value.bankbookId = value.getBankbooks[0].bankbookId
           objChange.value.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
-          objChange.value.bankbookId = value.getBankbooks[0].bankbookId
           triggerBankbook.value = true
         }
         if (isNewCreate.value) {
-          const lengthData = value.getBankbooks.length - 1
-          focusedRowKey.value = value.getBankbooks[lengthData].bankbookId
           isCreate.value = false
-          indexRow.value = lengthData
-          paramBankbookDetail.facilityBusinessId = value.getBankbooks[lengthData].facilityBusinessId
-          paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
+          indexRow.value = objChange.value.indexRow
+          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+          paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          focusedRowKey.value = objChange.value.bankbookId
           triggerBankbook.value = true
         }
         if(isUpdate.value) {
+            indexRow.value = objChange.value.indexRow
+            paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+            paramBankbookDetail.bankbookId = objChange.value.bankbookId
+            focusedRowKey.value = objChange.value.bankbookId
             triggerBankbook.value = true
         }
         if (isDelete.value) {
@@ -524,25 +530,25 @@ export default defineComponent({
     })
     
     watch(() => dataDetailBankbook.value.bankbookInput.bankbookNumber, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if(isCheckAdding.value) {
         dataSource.value[indexRow.value].bankbookNumber = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.bankbookNickname, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if(isCheckAdding.value) {
         dataSource.value[indexRow.value].bankbookNickname = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if(isCheckAdding.value) {
         dataSource.value[indexRow.value].useScrap = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.useType, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if(isCheckAdding.value) {
         dataSource.value[indexRow.value].useType = value
       }
     })
@@ -590,6 +596,12 @@ export default defineComponent({
           },
         ]
       })
+    }
+
+    const onDragChange = (e: any) => {
+      if(isCheckAdding.value) {
+        e.cancel = true
+      }
     }
 
     const showPopupRegister = () => {
@@ -685,6 +697,7 @@ export default defineComponent({
     }
 
     const deleteBankBook = (data: any) => {
+      if(data.bankbookId === newSampleID) return
       dataDelete.facilityBusinessId = data.facilityBusinessId
       dataDelete.bankbookId = data.bankbookId
       isModalDelete.value = true
@@ -700,24 +713,34 @@ export default defineComponent({
       modalHistoryStatus.value = true
     }
 
-    const showPopupLastScrapingStatus = (data: any) => {
+    const showPopupLastScrapingStatus = (data: any) => {      
+      if(data.bankbookId === newSampleID) return
       dataPopupScrapingStatus.value = data
+      if(!dataPopupScrapingStatus.value.lastScrapingStatus){
+        dataPopupScrapingStatus.value.lastScrapingStatus = {
+          scrapingStatus: null,
+          lastScrapingDate: null,
+          errorMessage: null,
+        }
+      }
       isModalLastScrapingStatus.value = true
     }
 
     const onFocusedRowChanging = (event: any) => {
       isStatusClickCreate.value = false
-      if(!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID ) {
+      if(!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID) {
         event.cancel = true
-        isModalConfirmSaveChange.value = true
+        if(event.prevRowIndex !== event.newRowIndex){
+          isModalConfirmSaveChange.value = true
+        }
       }else {
         isCreate.value = false
         if (paramBankbookDetail.bankbookId === event.rows[event.newRowIndex].data.bankbookId) return
-        indexRow.value = event.newRowIndex
-        paramBankbookDetail.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
-        paramBankbookDetail.bankbookId = event.rows[event.newRowIndex].data.bankbookId
-        triggerBankbook.value = true
-      }
+          indexRow.value = event.newRowIndex
+          paramBankbookDetail.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
+          paramBankbookDetail.bankbookId = event.rows[event.newRowIndex].data.bankbookId
+          triggerBankbook.value = true
+        }
       objChange.value.indexRow = event.newRowIndex
       objChange.value.facilityBusinessId = event.rows[event.newRowIndex].data.facilityBusinessId
       objChange.value.bankbookId = event.rows[event.newRowIndex].data.bankbookId
@@ -800,7 +823,10 @@ export default defineComponent({
       Message,
       inputIDPWBankType,
       isInputWebID,
-      isInputWebPW
+      isInputWebPW,
+      onDragChange,
+      isCheckAdding,
+      newSampleID
     }
   }
 });
