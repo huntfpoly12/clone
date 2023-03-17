@@ -228,7 +228,7 @@
                         :allow-column-resizing="colomn_resize" :column-auto-width="true" key-expr="incomeId"
                         :onRowClick="actionEditTaxPay" @selection-changed="selectionChanged"
                         @focused-row-changing="onFocusedRowChanging"
-                        ref="gridRef"
+                        ref="gridRefPA510"
                         :selection-filter="store.state.common.selectionFilter"
                         v-model:focused-row-key="store.state.common.focusedRowKey" :auto-navigate-to-focused-row="true">
                         <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
@@ -375,7 +375,8 @@ export default defineComponent({
             companyId: companyId,
             processKey: processKey.value,
         })
-        const gridRef = ref(); // ref of grid
+        const gridRefPA510 = ref(); // ref of grid
+        const dataGridRef = computed(() => gridRefPA510.value?.instance as any); // ref of grid Instance
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // ======================= GRAPQL ================================
@@ -556,7 +557,7 @@ export default defineComponent({
             }
         })
         watch(() => store.state.common.addRow, (newVal) => {
-            gridRef.value?.instance.deselectAll()
+            gridRefPA510.value?.instance.deselectAll()
             dataRows.value = []
         })
         // ======================= FUNCTION ================================
@@ -580,7 +581,7 @@ export default defineComponent({
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
                 if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
-                    gridRef.value?.instance.deselectAll()
+                    gridRefPA510.value?.instance.deselectAll()
                     dataRows.value = []
                 }
             })
@@ -590,6 +591,14 @@ export default defineComponent({
 
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
+            if (
+                store.state.common.processKeyPA510.imputedYear != month.imputedYear ||
+                store.state.common.processKeyPA510.paymentYear != month.paymentYear ||
+                store.state.common.processKeyPA510.paymentMonth != month.paymentMonth ||
+                store.state.common.processKeyPA510.imputedMonth != month.imputedMonth
+            ) {
+                store.state.common.actionCallGetMonthDetail++
+            }
             dataMonthNew.value = month
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
@@ -641,6 +650,7 @@ export default defineComponent({
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
+            dataGridRef.value?.refresh();
         }
 
         const copyMonth = (month: number) => {
@@ -680,12 +690,14 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
+                const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
                     if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                         // if (store.state.common.statusChangeFormPrice) {
                         //     modalChangeRowPrice.value = true;
                         // } else {
+                        rowElement?.classList.add("dx-state-hover-custom")
                         modalChangeRow.value = true;
                         e.cancel = true;
                         // }
@@ -722,7 +734,7 @@ export default defineComponent({
             statusComfirm,
             store,
             modalChangeRow, statusComfirmChange,
-            gridRef,
+            gridRefPA510,
             statusDisabledBlock,
             Message,
             customMonthlyWage, customTotalDeduction,  customActualPayment,

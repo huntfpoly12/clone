@@ -31,6 +31,7 @@ const statesPA110 = {
   statusClickEditItem: false,
   checkClickYear: false,
   dataYearNew: null,
+  actionCallGetMonthDetail: 1,
 };
 
 export default statesPA110;

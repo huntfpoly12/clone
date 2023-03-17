@@ -160,7 +160,7 @@
             <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
                     <div class="text-align-center" style="display: flex; justify-content: center;">
-                        <a-tooltip placement="top">
+                        <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                             <div>
                                 <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
@@ -597,7 +597,7 @@ export default defineComponent({
                 await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
 
-                // await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
+                await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
                 
                 await (dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction);
                 await (dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction);
@@ -716,6 +716,11 @@ export default defineComponent({
                 return accumulator + object.amount;
             }, 0));
             await (subPayment.value = totalPayItem.value - totalDeduction.value)
+            if (store.state.common.statusFormAdd) {
+                await (dataIW.value.totalPay = totalPayItem.value);
+                await (dataIW.value.totalDeduction = totalDeduction.value);
+                await (dataIW.value.actualPayment = subPayment.value);
+            }
         }
 
         // open popup deduction
