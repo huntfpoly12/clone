@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 interface Styles {
   Main: string;
   Sub: string;
@@ -74,20 +76,4 @@ export const styles: Styles = {
   ColorButtonCalculate: "white",
   BackgroundButtonCalculate: "orange",
   BorderButtonCalculate: "1px solid orange",
-};
-
-interface GridConfig {
-  per_page: Number;
-  sort: boolean;
-  move_column: boolean;
-  colomn_resize: boolean;
-  row_resize: boolean;
-}
-
-export const grid_config: GridConfig = {
-  per_page: 15,
-  sort: true,
-  move_column: false,
-  colomn_resize: true,
-  row_resize: true,
 };

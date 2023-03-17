@@ -704,6 +704,7 @@ export default defineComponent({
     onError((e) => {
       notification('error', e.message);
       store.state.common.isCalculateEditPA120 = false;
+      store.commit('common/actionFormErrorPA120');
     });
     onDone((res) => {
       emit('closePopup', false);
@@ -908,6 +909,7 @@ export default defineComponent({
     padding-left: 5px;
     padding-top: 5px;
     height: 100%;
+    min-height: 143px;
   }
 
   .custom-deduction {
