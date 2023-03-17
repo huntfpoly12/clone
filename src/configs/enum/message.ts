@@ -90,9 +90,10 @@ export class Message extends BaseType {
         '001': { "message" : "비밀번호 설정 이메일",}, // subject modal : Send email to my company user
         '002': { "message" : "비밀번호 설정 링크가 이메일로 발송됩니다. 계속 진행하시겠습니까?", "icon": "iconWarning"}, //Contents modal : Send email to my company user
     });
+     
       //통장관리
     public static CM121 = new Message({
-        '001': { 'message" : "통장별명 중복등록 불가합니다", "icon": "iconError"},// Bankbook Nickname can not be duplicated. 
+        '001': { "message" : "통장별명 중복등록 불가합니다", "icon": "iconError"}, // Bankbook Nickname can not be duplicated. 
     });
         //원천설정
     public static CM130 = new Message({
