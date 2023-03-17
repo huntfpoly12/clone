@@ -6,12 +6,12 @@
 				관할세무서, 지방소득세 납세지 검색
 			</h2>
 			<div style="text-align: center; margin-top: 32px">
-				<search-outlined />
+				<!-- <search-outlined /> -->
 				주소 또는 소재지 ‘읍.면.동’ 이름을 입력하세요
 			</div>
-			<div style="text-align: center; margin-top: 10px">
+			<div style="margin-top: 10px; display: flex; justify-content: center;">
 				<default-text-box
-					style="width: 350px; display: inline-block; margin-right: 10px;"
+					style="margin-right: 10px;" width="350"
 					v-model:valueInput="search">
 				</default-text-box>
 				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>

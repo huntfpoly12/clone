@@ -184,7 +184,7 @@
                                 <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
-                        <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
+                        <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
                     </div>
                 </a-col>
             </a-row>
