@@ -112,7 +112,7 @@
               <StandardForm formName="pa-620-form" ref="pa620FormRef">
                 <a-form-item label="사업소득자" label-align="right" class="red">
                     <employ-type-select :arrayValue="arrayEmploySelect"
-                        v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true"
+                        v-model:valueEmploy="dataAction.input.employeeId" width="350px" :required="true" :newLoadKey="dataAction.input.employee.key"
                         @incomeTypeCode="changeIncomeTypeCode" :disabled="disabledInput || idDisableNoData" />
                 </a-form-item>
                 <div class="header-text-1 mb-10">소득내역</div>
@@ -339,7 +339,9 @@ export default defineComponent({
           fetchPolicy: "no-cache",
         }));
         watch(resOption, (newValue: any) => {
-          arrayEmploySelect.value = newValue.getEmployeeBusinesses;
+          arrayEmploySelect.value = newValue.getEmployeeBusinesses.map((item:any)=> ({
+            ...item, key: item.incomeTypeCode.concat(item.employeeId)
+          }));
           triggerDetailOption.value = false;
         });
         errorOption((res)=>{
@@ -366,6 +368,7 @@ export default defineComponent({
                 rowData.withholdingIncomeTax = data.withholdingIncomeTax
                 rowData.withholdingLocalIncomeTax = data.withholdingLocalIncomeTax;
                 rowData.actualPayment = data.actualPayment;
+                rowData.employee = {key:data.incomeTypeCode.concat(data.employeeId)}
                 dataAction.value.input = rowData;
                 dataActionEdit.value.input = {...JSON.parse(JSON.stringify(rowData))};
                 disabledInput.value = true;
@@ -481,7 +484,6 @@ export default defineComponent({
           } else {
             if (isClickYearDiff.value) {
               emit('noSave', 1, globalYear.value);
-              isClickYearDiff.value = false;
               compareType.value = 1;
               return;
             }
@@ -551,9 +553,9 @@ export default defineComponent({
           }
         },{deep:true})
         // click row
-        const changeIncomeTypeCode = (res: string, id: any) => {
-            dataAction.value.input.incomeTypeCode = res;
-            dataAction.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
+        const changeIncomeTypeCode = (emitVal: any) => {
+            dataAction.value.input.incomeTypeCode = emitVal.incomeTypeCode;
+            dataAction.value.input.employee = emitVal;
         } 
         
         const selectedRowKeys = ref<any>([]);
@@ -663,33 +665,26 @@ export default defineComponent({
           if(!isClickEditDiff.value){
             selectedRowKeys.value = [dataAction.value.input.incomeId];
           }
-            dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
-            triggerDetail.value =  true;
-            disabledInput.value = true;
-            dataActionEdit.value.input = {...dataAction.value.input};
-            isNewRow.value = false;
-            focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
-            if (isClickYearDiff.value) {
-              emit('noSave', 1, globalYear.value);
-              isClickYearDiff.value = false;
-              compareType.value = 1;
-              return;
-            }
-            if (isClickMonthDiff.value) {
-              emit('noSave', 0);
-              isClickMonthDiff.value = false;
-              return;
-            }
-            if (isClickYearDiff.value) {
-              emit('noSave', 1);
-              isClickYearDiff.value = false;
-              return;
-            }
-            if (isClickAddMonthDiff.value) {
-              emit('noSave', 2);
-              isClickAddMonthDiff.value = false;
-              return;
-            }
+          dataCallApiDetailEdit.incomeId = compareType.value == 2 && idRowFake.value;
+          triggerDetail.value =  true;
+          disabledInput.value = true;
+          dataActionEdit.value.input = {...dataAction.value.input};
+          isNewRow.value = false;
+          focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+          if (isClickMonthDiff.value) {
+            emit('noSave', 0);
+            isClickMonthDiff.value = false;
+            return;
+          }
+          if (isClickYearDiff.value) {
+            emit('noSave', 1);
+            return;
+          }
+          if (isClickAddMonthDiff.value) {
+            emit('noSave', 2);
+            isClickAddMonthDiff.value = false;
+            return;
+          }
         }
         const onChangeFormError = () => {
           if (isClickYearDiff.value) {

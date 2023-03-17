@@ -40,14 +40,15 @@
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
           <!-- {{ compareForm() }} compareForm() <br />
-          {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ editRowPA120 }} editRowPA120 <br />
-          {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
+            {{ editRowPA120 }} editRowPA120 <br />
+            {{ activeTabEditKeyPA120 }} activeTabEditKeyPA120 <br />
+            {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
+            {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
+          <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
           {{ compareType }} compareType <br />
-          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
-          {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
+          {{ initFormStateTabPA120.employeeId }} initFormStateTabPA120.employeeId <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-            key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+            key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
             :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
@@ -191,7 +192,6 @@ export default defineComponent({
     const idRowFake = ref();
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
-    const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
 
     //--------------------delete row data-------------------
 
@@ -237,7 +237,7 @@ export default defineComponent({
     }));
     watch(result, (value) => {
       const data = value.getEmployeeWages;
-      dataSource.value = data;
+      dataSource.value = data.map((item: any) => ({ ...item, key: item.employeeId }));
       if (compareType.value == 3) {
         addNewRow();
         return;
@@ -245,7 +245,7 @@ export default defineComponent({
       if (data.length > 0 && isFirstRun.value) {
         actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
-        focusedRowKey.value = data[0].employeeId;
+        focusedRowKey.value = dataSource.value[0].key;
         isFirstRun.value = false;
         idRowFake.value = data[0].employeeId;
       }
@@ -259,7 +259,6 @@ export default defineComponent({
     //change year
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
-    const yearPA120 = computed(() => store.state.common.yearPA120);
     const changeYear = (newVal: any) => {
       isFirstRun.value = true;
       originData.value.imputedYear = newVal;
@@ -297,13 +296,14 @@ export default defineComponent({
     };
     const addNewRow = () => {
       actionChangeComponent.value = 1;
+      addComponentKey.value++;
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
       store.commit('common/editRowPA120', initFormStateTab1);
       store.state.common.isNewRowPA120 = true;
       compareType.value = 1;
       setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
-        focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+        focusedRowKey.value = initFormStateTabPA120.value.key;
       }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
@@ -392,11 +392,12 @@ export default defineComponent({
       if (isClickYearDiff.value) {
         changeYear(globalYear.value)
         isClickYearDiff.value = false;
+        return;
       }
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      store.state.common.isNewRowPA120 = false;
-      focusedRowKey.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId : idRowFake.value;
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
@@ -415,11 +416,12 @@ export default defineComponent({
           }
         });
         isClickYearDiff.value = false;
+        return;
       }
       if (tabCurrent.value == 2) {
-        store.commit('common/activeTabKeyPA120', '2');
+        store.commit('common/activeTabEditKeyPA120', '2');
       } else {
-        store.commit('common/activeTabKeyPA120', '1');
+        store.commit('common/activeTabEditKeyPA120', '1');
       }
       focusedRowKey.value = initFormStateTabPA120.value.employeeId;
     });
@@ -429,7 +431,7 @@ export default defineComponent({
       if (isNewRowPA120.value) {
         if (compareForm()) {
           delNewRow();
-          // focusedRowKey.value = data.data.employeeId;
+          focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
           if (actionChangeComponent.value == 1) {
             actionChangeComponent.value = 2;
@@ -457,7 +459,6 @@ export default defineComponent({
 
     watch(result, (value) => {
       if (value) {
-        dataSource.value = value.getEmployeeWages;
         totalUserOnl.value = 0;
         totalUserOff.value = 0;
         dataSource.value.map((val: any) => {
@@ -478,11 +479,7 @@ export default defineComponent({
     };
     //focus Row
     const focusedRowKey = ref(initFormStateTabPA120.value.employeeId);
-    watch(() => initFormStateTabPA120.value.employeeId, (newVal: any) => {
-      focusedRowKey.value = newVal;
-    })
-    const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
-    const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
+    const activeTabEditKeyPA120 = computed(() => store.state.common.activeTabEditKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
     }
@@ -527,8 +524,7 @@ export default defineComponent({
       toolTopErorr,
       isResidentIdError,
       focusedRowKey,
-      activeTabKeyPA120,
-      keyActivePA120,
+      activeTabEditKeyPA120,
       defaultVisible,
       initFormStateTabPA120,
       isNewRowPA120,

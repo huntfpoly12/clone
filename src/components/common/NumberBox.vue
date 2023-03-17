@@ -68,8 +68,8 @@ export default defineComponent({
     const maxNum = ref(props.max??0);
     const updateValue = (e: any) => {
       if (maxNum.value && e.value >= maxNum.value) {
-        e.component.option('value', maxNum.value);
-        emit("update:valueInput", maxNum.value);
+        e.component.option('value', +maxNum.value);
+        emit("update:valueInput", +maxNum.value);
         return;
       }
       emit("update:valueInput", e.value);

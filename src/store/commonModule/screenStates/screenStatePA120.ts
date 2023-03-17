@@ -4,7 +4,8 @@ const statesPA120 = {
   actionFormDonePA120: 1,
   actionFormErrorPA120: 1,
   keyActivePA120: 0,
-  activeTabKeyPA120: '1',
+  activeTabEditKeyPA120: '1',
+  activeTabAddKeyPA120: '1',
   isForeignerPA120: false,
   presidentPA120: false,
   presidentEditPA120: false,
@@ -20,7 +21,7 @@ const statesPA120 = {
     roadAddress: "",
     addressExtend: "",
     email: "",
-    employeeId: 0,
+    employeeId: '',
     president: false,
     householder: false,
     weeklyWorkingHours: 40,
@@ -28,7 +29,8 @@ const statesPA120 = {
     responsibility: "",
     joinedAt: dayjs().format("YYYYMMDD"),
     leavedAt: "",
-  },
+    key: "0"
+},
   editRowPA120: {
     name: "",
     foreigner: false,
@@ -47,6 +49,7 @@ const statesPA120 = {
     responsibility: "",
     joinedAt: dayjs().format("YYYYMMDD"),
     leavedAt: "",
+    key: "0"
   },
   initFormTab2PA120: {
     nationalPensionDeduction: false,

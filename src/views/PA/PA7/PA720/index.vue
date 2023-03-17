@@ -1,11 +1,11 @@
 <template>
   <action-header title="기타소득자료입력" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
   <div id="pa-720" class="page-content">
-    <a-row :class="{ 'ele-opacity': !compareType2() }">
+    <a-row :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
-          :allow-column-reordering="move_column" key-expr="hasData"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" ref="pa720GridRef">
+          :allow-column-reordering="move_column" key-expr="hasData" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true" ref="pa720GridRef">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn :caption="processKeyPA720.processKey.imputedYear + '귀속월'" cell-template="imputed-year" />
           <template #imputed-year>
@@ -198,22 +198,20 @@
         </DxDataGrid>
       </a-spin>
     </a-row>
-    <!-- {{ formPA720.input }} formPA720.input <br />
-    {{ dataActionUtilsPA720.input }} dataActionUtilsPA720.input <br />
-    {{ compareType2() }} compareType2 <br />
-    {{ compareType1() }} compareType1 <br />
+    <!-- {{ formPA720 }} formPA720 <br />
+    {{ formEditPA720 }} formEditPA720 <br />
+    {{ compareForm() }} compareForm <br />
     {{ compareType }} compareType <br />
-    {{ dataActionUtilsPA720 }} dataActionUtilsPA720 <br />
     {{ editTaxParamFake }} editTaxParamFake <br /> -->
     <!-- {{ formPA720.input }} formPA720.input <br /> -->
-    <a-row :class="{ 'ele-opacity': !compareType2() }"
+    <a-row :class="{ 'ele-opacity': !compareForm() }"
       style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px; justify-content: space-between">
       <a-col>
         <DxButton :text="'귀 ' + inputDateTax"
           :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
         <DxButton :text="'지 ' + paymentDateTax"
           :style="{ color: 'white', backgroundColor: 'black', height: $config_styles.HeightInput }" class="btn-date" />
-        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || !compareType2()"
+        <ProcessStatus v-model:value-status="statusParam.status" :disabled="statusParam.status > 20 || !compareForm()"
           @checkConfirm="mutateChangeIncomeProcessExtraStatus(statusParam)" />
       </a-col>
       <a-col style="display: inline-flex; align-items: center">
@@ -251,7 +249,7 @@
       </a-col>
     </a-row>
     <a-row class="content-btm">
-      <a-col :class="{ 'ele-opacity': !compareType2() }" :span="13" class="custom-layout">
+      <a-col :class="{ 'ele-opacity': !compareForm() }" :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :isRunOnce="isRunOnce"
           :changeFommDone="changeFommDone" :addItemClick="addItemClick" :saveToNewRow="saveToNewRow"
           :compareType="compareType" />
@@ -468,7 +466,7 @@ export default defineComponent({
     const isClickYearDiff = ref(false);
     const changeYearDataFake = ref();
     let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-      if (compareType2()) {
+      if (compareForm()) {
         changeYear(newVal)
       } else {
         compareType.value = 2;
@@ -500,7 +498,6 @@ export default defineComponent({
       if (emit) {
         if (isClickMonthDiff.value) {
           refetchIncomeProcessExtras();
-          isClickMonthDiff.value = false;
         }
         if (!isClickMonthDiff.value && !isClickYearDiff.value) {
           changeFommDone.value++;
@@ -544,17 +541,7 @@ export default defineComponent({
     const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
     //compare Data
     const compareType = ref(1); //0 is row change. 1 is add button;
-    const compareType1 = () => {
-      let daActionCompare = JSON.parse(JSON.stringify(formPA720.value.input));
-      delete daActionCompare.employee;
-      delete daActionCompare.actualPayment;
-      delete daActionCompare.incomePayment;
-      if (JSON.stringify(dataActionUtilsPA720.value.input) == JSON.stringify(daActionCompare)) {
-        return true;
-      }
-      return false;
-    };
-    const compareType2 = () => {
+    const compareForm = () => {
       let daActionCompare = JSON.parse(JSON.stringify(formPA720.value.input));
       delete daActionCompare?.employee;
       delete daActionCompare?.actualPayment;
@@ -606,13 +593,13 @@ export default defineComponent({
       addItemClick.value = !addItemClick.value;
       compareType.value = 1;
       if (isNewRowPA720.value) {
-        if (!compareType1()) {
+        if (!compareForm()) {
           rowChangeStatus.value = true;
           return;
         }
         return;
       }
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         return;
       }
@@ -655,12 +642,10 @@ export default defineComponent({
             return;
           }
         }
-        console.log(`output-compare type 1`,)
         if (compareType.value === 1) {
           addNewRow();
           return;
         }
-        console.log(`output-compare type 2`,)
         if (compareType.value == 2) {
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
@@ -685,7 +670,7 @@ export default defineComponent({
         return;
       }
       if (isNewRowPA720.value) {
-        if (compareType1()) {
+        if (compareForm()) {
           delNewRow();
           taxPayRef.value.focusedRowKey = emit.incomeId;
           store.commit('common/selectedRowKeysPA720', emit.incomeId);
@@ -696,7 +681,7 @@ export default defineComponent({
         rowChangeStatus.value = true;
         return;
       }
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         return;
       } else {
@@ -716,7 +701,7 @@ export default defineComponent({
           watchGlobalYear();
           store.state.settings.globalYear = changeYearDataFake.value;
           watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-            if (compareType2()) {
+            if (compareForm()) {
               changeYear(newVal)
             } else {
               compareType.value = 2;
@@ -766,7 +751,7 @@ export default defineComponent({
         watchGlobalYear();
         store.state.settings.globalYear = changeYearDataFake.value;
         watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareType2()) {
+          if (compareForm()) {
             changeYear(newVal)
           } else {
             compareType.value = 2;
@@ -802,7 +787,7 @@ export default defineComponent({
       }
     }
     const editItem = () => {
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         isClickEditDiff.value = true;
         return;
@@ -819,7 +804,7 @@ export default defineComponent({
       refetchConfig();
     }
     const onAddMonth = (val: number) => {
-      if (!compareType2()) {
+      if (!compareForm()) {
         rowChangeStatus.value = true;
         isClickAddMonthDiff.value = true;
         changeMonthDataFake.value = val;
@@ -856,7 +841,7 @@ export default defineComponent({
     }
     // fnc click month
     const showDetailSelected = (obj: any) => {
-      if (compareType2()) {
+      if (compareForm()) {
         onChangeMonth(obj);
       } else {
         compareType.value = 2;
@@ -865,7 +850,6 @@ export default defineComponent({
         isClickMonthDiff.value = true;
       }
     };
-
     //-----------------check tag > 30 40 -------------------------
     const isExpiredStatus = computed(() => {
       if (statusParam.value.status > 10) {
@@ -942,8 +926,7 @@ export default defineComponent({
       isExpiredStatus,
       pa720GridRef,
       changeYearDataFake,
-      compareType1,
-      compareType2,
+      compareForm,
       subValidate,
       isNewRowPA720,
       compareType,

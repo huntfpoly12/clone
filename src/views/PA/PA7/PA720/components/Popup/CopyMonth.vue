@@ -153,7 +153,7 @@ export default defineComponent({
     const findIncomeProcessExtraStatViewsParam: any = ref({
       companyId: companyId,
       filter: {
-        startImputedYearMonth: parseInt(`${globalYear.value}1`),
+        startImputedYearMonth: parseInt(`${globalYear.value}01`),
         finishImputedYearMonth: parseInt(`${globalYear.value}12`),
       }
     })
@@ -168,7 +168,7 @@ export default defineComponent({
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
     watch(modalCopy, (newVal, oldVal) => {
       if (newVal) {
-        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
+        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}01`);
         findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
         trigger.value = true;
       }

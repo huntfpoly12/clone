@@ -11,7 +11,8 @@
               :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
               key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
-              <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :show-drag-icons="true" />
+              <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
+                :show-drag-icons="true" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -51,7 +52,7 @@
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
               <template #action="{ data }">
-                <div style="text-align: center">
+                <div style="text-align: center" :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''">
                   <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
                     @click="showPopupLastScrapingStatus(data.data)" />
                 </div>
@@ -59,13 +60,13 @@
               <DxColumn :width="50" cell-template="delete" css-class="cell-center" />
               <template #delete="{ data }">
                 <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px"
-                  @click="deleteBankBook(data.data)" />
+                  :style="data.data.bankbookId === newSampleID ? 'opacity: .5' : ''" @click="deleteBankBook(data.data)" />
               </template>
             </DxDataGrid>
           </a-spin>
         </div>
       </a-col>
-      <a-col span="12" class="cm-121_detail" :class="{'cm-121_disable': !dataDetailBankbook.bankbookInput.type}">
+      <a-col span="12" class="cm-121_detail" :class="{ 'cm-121_disable': !dataDetailBankbook.bankbookInput.type }">
         <a-spin :spinning="loadingCreateBankbook || loadingGetBankbook || loadingUpdateBankbook" size="large">
           <standard-form formName="cm-121-from" ref="cm121Form" :key="countResetForm">
             <div>
@@ -101,8 +102,8 @@
                 <a-col span="12">
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
-                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification" 
-                      :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private"/>
+                      <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
+                        :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -146,48 +147,64 @@
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)" class="form-item-bottom red">
-                    <text-number-box :required="true" :width="150" maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword"/>
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
+                    class="form-item-bottom red">
+                    <text-number-box :required="true" :width="150" maxLength="4"
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" />
                   </a-form-item>
                 </a-col>
               </a-row>
               <a-row>
                 <a-col span="12">
-                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)" class="form-item-bottom red">
-                    <biz-number-text-box :required="true" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150" :disabled="!isTypeClassification"/>
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)"
+                    class="form-item-bottom" :class="{ 'red': isTypeClassification && isCreate }">
+                    <biz-number-text-box :required="isCreate"
+                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150"
+                      :disabled="!isTypeClassification" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)" class="form-item-bottom red">
-                    <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px" :required="true" :disabled="isTypeClassification"/>
+                  <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)"
+                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && isCreate }">
+                    <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px"
+                      :required="isCreate" :disabled="isTypeClassification" />
                   </a-form-item>
                 </a-col>
               </a-row>
               <a-row>
                 <a-col span="12">
-                  <a-form-item v-if="isInputWebID" :label="isTypeClassification ? inputIDPWBankType.corporate.ID : inputIDPWBankType.private.ID" class="form-item-bottom red">
-                    <default-text-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
+                  <a-form-item v-if="isInputWebID"
+                    :label="isTypeClassification ? inputIDPWBankType.corporate.ID : inputIDPWBankType.private.ID"
+                    class="form-item-bottom" :class="{ 'red': isCreate }">
+                    <default-text-box :required="isCreate" :width="150"
+                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
-                  <a-form-item v-if="isInputWebPW" :label="isTypeClassification ? inputIDPWBankType.corporate.PW : inputIDPWBankType.private.PW" class="form-item-bottom red">
-                    <default-text-box :required="true" :width="150" v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword"/>
+                  <a-form-item v-if="isInputWebPW"
+                    :label="isTypeClassification ? inputIDPWBankType.corporate.PW : inputIDPWBankType.private.PW"
+                    class="form-item-bottom" :class="{ 'red': isCreate }">
+                    <default-text-box :required="isCreate" :width="150"
+                      v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword" />
                   </a-form-item>
                 </a-col>
               </a-row>
             </div>
             <div class="cm-121_detail-btn">
-              <button-basic text="저장" type="default" mode="contained" @onClick="submit" :disabled="!dataDetailBankbook.bankbookInput.type"/>
+              <button-basic text="저장" type="default" mode="contained" @onClick="submit"
+                :disabled="!dataDetailBankbook.bankbookInput.type" />
             </div>
           </standard-form>
         </a-spin>
       </a-col>
       <PopupRegisterBankbook :isModalRegister="isModalRegister" @closePopup="isModalRegister = false"
-        @dataRegisterBankbook="dataRegisterBankbook" :key="keyResetPopupRegisterBankbook"/>
+        @dataRegisterBankbook="dataRegisterBankbook" :key="keyResetPopupRegisterBankbook" />
       <PopupDeleteBankbook :isModalDelete="isModalDelete" @closePopup="isModalDelete = false"
         @agreeDeleteBankbook="agreeDeleteBankbook" />
-      <PopupMessage :modalStatus="isModalConfirmSaveChange" @closePopup="isModalConfirmSaveChange = false" :typeModal="'confirm'"
-        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="handleConfirmChange" />
+      <PopupMessage :modalStatus="isModalConfirmSaveChange" @closePopup="isModalConfirmSaveChange = false"
+        :typeModal="'confirm'" :title="Message.getMessage('COMMON', '501').message" content=""
+        :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+        @checkConfirm="handleConfirmChange" />
       <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus"
         @closePopup="isModalLastScrapingStatus = false" @agreeDeleteBankbook="agreeDeleteBankbook" />
       <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupHistoryData"
@@ -227,6 +244,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear = computed(() => store.state.settings.globalYear)
+    let globalYearSelected = ref(globalYear.value)
     const triggerBankbook = ref<boolean>(false);
     const triggerBankbooks = ref<boolean>(true);
     let dataSource = ref<any[]>([])
@@ -272,7 +290,7 @@ export default defineComponent({
     const cm121Form = ref()
     let dataDetailBankbook = ref({
       companyId: companyId,
-      fiscalYear: globalYear,
+      fiscalYear: globalYear.value,
       facilityBusinessId: null,
       bankbookId: null,
       bankbookInput: {
@@ -314,18 +332,23 @@ export default defineComponent({
         PW: ''
       }
     })
+    let isChangeGlobalYear = ref<boolean>(false)
+    let globalYearChange = ref(globalYear.value)
     // ------------COMPUTED ----------------------
 
     const isEdited = computed(() => {
       return isEqual(oldDataDetailBankbook.value, dataDetailBankbook.value)
     })
     const isInputWebID = computed(() => {
-      return dataDetailBankbook.value.bankbookInput.useScrap && 
-              ((!!inputIDPWBankType.value.corporate.ID && isTypeClassification.value) || (!!inputIDPWBankType.value.private.ID && !isTypeClassification.value))
+      return dataDetailBankbook.value.bankbookInput.useScrap &&
+        ((!!inputIDPWBankType.value.corporate.ID && isTypeClassification.value) || (!!inputIDPWBankType.value.private.ID && !isTypeClassification.value))
     })
     const isInputWebPW = computed(() => {
-      return dataDetailBankbook.value.bankbookInput.useScrap && 
-              ((!!inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (!!inputIDPWBankType.value.private.PW && !isTypeClassification.value))
+      return dataDetailBankbook.value.bankbookInput.useScrap &&
+        ((!!inputIDPWBankType.value.corporate.PW && isTypeClassification.value) || (!!inputIDPWBankType.value.private.PW && !isTypeClassification.value))
+    })
+    const isCheckAdding = computed(() => {
+      return dataSource.value[indexRow.value]?.bankbookId === newSampleID
     })
     // ============ GRAPQL ===============================
 
@@ -414,9 +437,38 @@ export default defineComponent({
       notification('error', e.message)
     })
     // -----------WATCH-------------
+    watch(() => globalYear.value, (value) => {
+      if (globalYearSelected.value === value) return
+      if (globalYearChange.value === null) {
+        globalYearSelected.value = value
+        return
+      }
+      if (isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value })) {
+        globalYearSelected.value = value
+      } else {
+        globalYearChange.value = value
+        store.state.settings.globalYear = globalYearSelected.value
+        isChangeGlobalYear.value = true
+        isModalConfirmSaveChange.value = true
+      }
+    })
+    watch(() => globalYearSelected.value, (value) => {
+      firstLoad.value = true
+      triggerBankbooks.value = true
+    })
     watch(resBankbooks, (value) => {
       if (value.getBankbooks) {
         dataSource.value = value.getBankbooks
+        if (firstLoad.value) {
+          globalYearChange.value = globalYear.value
+          paramBankbookDetail.fiscalYear = globalYear.value
+          dataDetailBankbook.value.fiscalYear = globalYear.value
+          dataDelete.fiscalYear = globalYear.value
+        }
+        if (firstLoad.value && !value.getBankbooks.length) {
+          resetDataDetail()
+          oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
+        }
         if (firstLoad.value && value.getBankbooks.length) {
           focusedRowKey.value = value.getBankbooks[0].bankbookId
           isCreate.value = false
@@ -424,7 +476,6 @@ export default defineComponent({
           paramBankbookDetail.bankbookId = value.getBankbooks[0].bankbookId
           objChange.value.bankbookId = value.getBankbooks[0].bankbookId
           objChange.value.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
-          objChange.value.bankbookId = value.getBankbooks[0].bankbookId
           triggerBankbook.value = true
         }
         if (isNewCreate.value) {
@@ -436,8 +487,12 @@ export default defineComponent({
           paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
           triggerBankbook.value = true
         }
-        if(isUpdate.value) {
-            triggerBankbook.value = true
+        if (isUpdate.value) {
+          indexRow.value = objChange.value.indexRow
+          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+          paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          focusedRowKey.value = objChange.value.bankbookId
+          triggerBankbook.value = true
         }
         if (isDelete.value) {
           if (value.getBankbooks.length !== 0) {
@@ -455,6 +510,7 @@ export default defineComponent({
           } else {
             focusedRowKey.value = null
             resetDataDetail()
+            oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
             isCreate.value = true
           }
         }
@@ -506,57 +562,57 @@ export default defineComponent({
 
 
     watch(() => dataDetailBankbook.value.bankbookInput.type, (value) => {
-      if(value){
+      if (value) {
         const typeItem: any = bankTypeCommon.find((item: any) => item.c == value)
         isSetTypeClassification.value.corporate = typeItem.coporateScrapable
         isSetTypeClassification.value.private = typeItem.privateScrapable
         if ((isSetTypeClassification.value.corporate && isSetTypeClassification.value.private) || (isSetTypeClassification.value.corporate && !isSetTypeClassification.value.private)) {
           isTypeClassification.value = true
-        }else {
+        } else {
           isTypeClassification.value = false
         }
         handleGetInputBankType('c', typeItem.i.coporate)
         handleGetInputBankType('p', typeItem.i.private)
-      }else {
+      } else {
         isSetTypeClassification.value.corporate = true
         isSetTypeClassification.value.private = true
       }
     })
-    
+
     watch(() => dataDetailBankbook.value.bankbookInput.bankbookNumber, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if (isCheckAdding.value) {
         dataSource.value[indexRow.value].bankbookNumber = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.bankbookNickname, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if (isCheckAdding.value) {
         dataSource.value[indexRow.value].bankbookNickname = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if (isCheckAdding.value) {
         dataSource.value[indexRow.value].useScrap = value
       }
     })
 
     watch(() => dataDetailBankbook.value.bankbookInput.useType, (value) => {
-      if(dataSource.value[indexRow.value].bankbookId === newSampleID) {
+      if (isCheckAdding.value) {
         dataSource.value[indexRow.value].useType = value
       }
     })
-    
+
     // -------METHODS-----------
 
     const handleGetInputBankType = (type: string, listInput: string) => {
       const listInputArr = listInput.split(",");
-      const ID = listInputArr.find((item:any) => item.includes('ID'))
-      const PW = listInputArr.find((item:any) => item.includes('PW'))
-      if(type === 'c') {
+      const ID = listInputArr.find((item: any) => item.includes('ID'))
+      const PW = listInputArr.find((item: any) => item.includes('PW'))
+      if (type === 'c') {
         inputIDPWBankType.value.corporate.ID = ID || ''
         inputIDPWBankType.value.corporate.PW = PW || ''
-      }else {
+      } else {
         inputIDPWBankType.value.private.ID = ID || ''
         inputIDPWBankType.value.private.PW = PW || ''
       }
@@ -570,33 +626,45 @@ export default defineComponent({
       const newTasks = [...dataSource.value];
       newTasks.splice(fromIndex, 1);
       newTasks.splice(toIndex, 0, e.itemData);
-      dataSource.value = newTasks;
-      const sortTo = dataSource.value[fromIndex].sort
-      const sortFrom = e.itemData.sort
-      dataSource.value[toIndex].sort = sortTo
-      dataSource.value[fromIndex].sort = sortFrom
+      let sortCount = 0
+      let indexStart = 0
+      let payloadSort: any[] = []
+      if (toIndex > fromIndex) {
+        indexStart = fromIndex
+        sortCount = dataSource.value[fromIndex].sort
+      } else {
+        indexStart = toIndex
+        sortCount = dataSource.value[toIndex].sort
+      }
+      dataSource.value = newTasks.map((items, index) => {
+        if (index >= indexStart) {
+          items.sort = sortCount++
+          payloadSort.push({
+            facilityBusinessId: items.facilityBusinessId,
+            bankbookId: items.bankbookId,
+            sort: items.sort
+          })
+        }
+        return items
+      });
       reorderBankbooks({
         companyId: companyId,
         fiscalYear: globalYear.value,
-        facilityBusinessId: e.itemData.facilityBusinessId,
-        inputs: [
-          {
-            bankbookId: e.itemData.bankbookId,
-            sort: sortTo
-          },
-          {
-            bankbookId: dataSource.value[fromIndex].bankbookId,
-            sort: sortFrom
-          },
-        ]
+        inputs: payloadSort
       })
+    }
+
+    const onDragChange = (e: any) => {
+      if (isCheckAdding.value) {
+        e.cancel = true
+      }
     }
 
     const showPopupRegister = () => {
       isStatusClickCreate.value = true
-      if(isEdited.value || !dataDetailBankbook.value.bankbookInput.type){
+      if (isEdited.value || !dataDetailBankbook.value.bankbookInput.type) {
         isModalRegister.value = true
-      }else {
+      } else {
         isModalConfirmSaveChange.value = true
       }
     }
@@ -604,14 +672,14 @@ export default defineComponent({
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = data.facilityBiz,
-      paramBankbookDetail.bankbookId = null
+        paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
       dataSource.value = [...dataSource.value, {
         ...BankBookInit,
         bankbookId: newSampleID,
-        type: data.type, 
+        type: data.type,
         facilityBusinessId: data.facilityBiz,
       }]
       focusedRowKey.value = newSampleID
@@ -666,9 +734,9 @@ export default defineComponent({
 
       if (!dataDetailBankbook.value.bankbookInput.useScrap) {
         delete data.scrapingInfoInput
-      }else {
-        if(!isInputWebID.value) delete data.scrapingInfoInput.webId
-        if(!isInputWebPW.value) delete data.scrapingInfoInput.webPassword
+      } else {
+        if (!isInputWebID.value) delete data.scrapingInfoInput.webId
+        if (!isInputWebPW.value) delete data.scrapingInfoInput.webPassword
       }
       if (isCreate.value) {
         delete data.bankbookId
@@ -680,11 +748,19 @@ export default defineComponent({
         delete data.bankbookInput.classification
         delete data.bankbookInput.sort
         delete data.bankbookInput.type
+        if (dataDetailBankbook.value.bankbookInput.useScrap) {
+          if (!data.scrapingInfoInput?.accountPassword) delete data.scrapingInfoInput.accountPassword
+          if (!data.scrapingInfoInput?.bizNumber) delete data.scrapingInfoInput.bizNumber
+          if (!data.scrapingInfoInput?.birthday) delete data.scrapingInfoInput.birthday
+          if (!data.scrapingInfoInput?.webId) delete data.scrapingInfoInput.webId
+          if (!data.scrapingInfoInput?.webPassword) delete data.scrapingInfoInput.webPassword
+        }
         updateBankbook(data)
       }
     }
 
     const deleteBankBook = (data: any) => {
+      if (data.bankbookId === newSampleID) return
       dataDelete.facilityBusinessId = data.facilityBusinessId
       dataDelete.bankbookId = data.bankbookId
       isModalDelete.value = true
@@ -701,16 +777,26 @@ export default defineComponent({
     }
 
     const showPopupLastScrapingStatus = (data: any) => {
+      if (data.bankbookId === newSampleID) return
       dataPopupScrapingStatus.value = data
+      if (!dataPopupScrapingStatus.value.lastScrapingStatus) {
+        dataPopupScrapingStatus.value.lastScrapingStatus = {
+          scrapingStatus: null,
+          lastScrapingDate: null,
+          errorMessage: null,
+        }
+      }
       isModalLastScrapingStatus.value = true
     }
 
     const onFocusedRowChanging = (event: any) => {
       isStatusClickCreate.value = false
-      if(!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID ) {
+      if (!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID) {
         event.cancel = true
-        isModalConfirmSaveChange.value = true
-      }else {
+        if (event.prevRowIndex !== event.newRowIndex) {
+          isModalConfirmSaveChange.value = true
+        }
+      } else {
         isCreate.value = false
         if (paramBankbookDetail.bankbookId === event.rows[event.newRowIndex].data.bankbookId) return
         indexRow.value = event.newRowIndex
@@ -724,32 +810,38 @@ export default defineComponent({
     }
 
     const handleConfirmChange = (val: boolean) => {
-      if(val){
+      if (val) {
         submit()
-      }else{
-        keyResetPopupRegisterBankbook.value++
-        const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
-        if(isCheckAdding){
+      } else {
+        if (isChangeGlobalYear.value) {
+          const yearChange = globalYearChange.value
+          globalYearChange.value = null
+          store.state.settings.globalYear = yearChange
+        } else {
+          keyResetPopupRegisterBankbook.value++
+          const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
+          if (isCheckAdding) {
             dataSource.value = dataSource.value.filter((items: any) => items.bankbookId !== newSampleID)
           }
-        if(isStatusClickCreate.value){
-          resetDataDetail()
-          if(isCheckAdding){
-            const index = dataSource.value.length - 1
-            indexRow.value =  index
-            focusedRowKey.value = dataSource.value[index].bankbookId
-            paramBankbookDetail.facilityBusinessId = dataSource.value[index].facilityBusinessId
-            paramBankbookDetail.bankbookId = dataSource.value[index].bankbookId
+          if (isStatusClickCreate.value) {
+            resetDataDetail()
+            if (isCheckAdding) {
+              const index = dataSource.value.length - 1
+              indexRow.value = index
+              focusedRowKey.value = dataSource.value[index].bankbookId
+              paramBankbookDetail.facilityBusinessId = dataSource.value[index].facilityBusinessId
+              paramBankbookDetail.bankbookId = dataSource.value[index].bankbookId
+            }
+            isModalRegister.value = true
+          } else {
+            indexRow.value = objChange.value.indexRow
+            focusedRowKey.value = objChange.value.bankbookId
+            paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+            paramBankbookDetail.bankbookId = objChange.value.bankbookId
           }
-          isModalRegister.value = true
-        }else{
-          indexRow.value =  objChange.value.indexRow
-          focusedRowKey.value = objChange.value.bankbookId
-          paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
-          paramBankbookDetail.bankbookId = objChange.value.bankbookId
+          isModalConfirmSaveChange.value = false
+          triggerBankbook.value = true
         }
-        isModalConfirmSaveChange.value = false
-        triggerBankbook.value = true
       }
       isStatusClickCreate.value = false
     }
@@ -800,7 +892,10 @@ export default defineComponent({
       Message,
       inputIDPWBankType,
       isInputWebID,
-      isInputWebPW
+      isInputWebPW,
+      onDragChange,
+      isCheckAdding,
+      newSampleID
     }
   }
 });

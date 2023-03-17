@@ -9,10 +9,6 @@ export default {
     return Client.post(`${resource}/seal`);
   },
   majorInsurance(payload: any) {
-    return Client.post(`${resource}/major-insurance`, payload, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    return Client.post(`${resource}/major-insurance`, payload);
   },
 };
