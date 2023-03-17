@@ -4,7 +4,7 @@
         <caret-left-outlined class="arrow-plus" @click="decrementYear"/>
         <default-text-box width="90px" :disabled="true" :valueInput="currentYear.toString()"/>
         <caret-right-outlined class="arrow-plus"  @click="incrementYear"/>
-        <PopupMessageCustom
+        <PopupMessage
           :modalStatus="isPopupVisible"
           @closePopup="hidePopup"
           :typeModal="'confirm'"
@@ -23,6 +23,7 @@ import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons-vue';
 import {Message} from "@/configs/enum";
 import debounce from "lodash/debounce";
 import {ClickYearStatus, FormStatus} from "@/store/settingModule";
+import PopupMessage from "@/components/common/PopupMessage.vue";
 export default defineComponent({
     computed: {
       Message() {
@@ -31,17 +32,18 @@ export default defineComponent({
     },
     components: {
         CaretLeftOutlined,
-        CaretRightOutlined
+        CaretRightOutlined,
+        PopupMessage
     },
     setup() {
       const store = useStore();
       const currentYear = computed(() => store.getters['settings/currentYear'])
       const newYear = computed(() => store.getters['settings/newYear'])
       const isPopupVisible = computed(() => store.getters['settings/isPopupVisible'])
-      const formStatus = computed(() => store.getters['settings/formStatus'])
+
       const incrementYear = debounce(async () => {
         const nextYear = currentYear.value + 1
-        const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded', {formStatus: formStatus.value})
+        const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded')
         if (!shouldShowPopup) {
           store.commit('settings/setCurrentYear', nextYear)
         } else {
@@ -50,7 +52,7 @@ export default defineComponent({
       }, 300)
       const decrementYear = debounce(async () => {
         const nextYear = currentYear.value - 1
-        const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded', {formStatus: formStatus.value})
+        const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded')
         if (!shouldShowPopup) {
           store.commit('settings/setCurrentYear', nextYear)
         } else {

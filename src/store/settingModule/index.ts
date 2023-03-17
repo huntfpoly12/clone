@@ -19,7 +19,6 @@ export interface GridConfig {
   isPopupVisible: boolean
   formStatus: FormStatus
   clickYearStatus: ClickYearStatus
-  currentYear: number,
   newYear: number,
   globalYear: number
 }
@@ -32,11 +31,10 @@ const settingModule: Module<GridConfig, any>  = {
     move_column: false,
     colomn_resize: true,
     row_resize: true,
-    globalYear:dayjs().year(),
+    globalYear: dayjs().year(),
     // year config
     isPopupVisible: false,
     formStatus: FormStatus.none,
-    currentYear: new Date().getFullYear(),
     clickYearStatus: ClickYearStatus.none,
     newYear: 0
   },
@@ -49,7 +47,6 @@ const settingModule: Module<GridConfig, any>  = {
     },
     setCurrentYear(state, year?: number) {
       state.globalYear = year ? year : state.newYear
-      state.currentYear = year ? year : state.newYear
       state.clickYearStatus = ClickYearStatus.none
       state.formStatus = FormStatus.none
     },
@@ -61,13 +58,10 @@ const settingModule: Module<GridConfig, any>  = {
     }
   },
   actions: {
-    showPopupIfNeeded(context: ActionContext<GridConfig, any>, {
-      formStatus
-    }: { formStatus: FormStatus }): boolean {
+    showPopupIfNeeded(context: ActionContext<GridConfig, any>): boolean {
       if (context.state.formStatus !== 'none') {
         // Khi trạng thái form khác none thì sẽ hiển thị popup
         // và set trạng thái form
-        context.commit('setFormStatus', formStatus)
         context.commit('setPopupVisible', true)
         return true
       } else {
@@ -83,7 +77,7 @@ const settingModule: Module<GridConfig, any>  = {
       return state.formStatus
     },
     currentYear(state: GridConfig): number {
-      return state.currentYear
+      return state.globalYear
     },
     newYear(state: GridConfig): number {
       return state.newYear
