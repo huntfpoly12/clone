@@ -164,7 +164,7 @@ export default defineComponent({
         const originData: any = ref({
           companyId: companyId,
           filter: {
-              startImputedYearMonth: parseInt(`${globalYear.value}1`),
+              startImputedYearMonth: parseInt(`${globalYear.value}01`),
               finishImputedYearMonth: parseInt(`${globalYear.value}12`),
           }
         })
@@ -178,7 +178,7 @@ export default defineComponent({
           arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
         })
         watch(globalYear, (newVal, oldVal) => {
-          originData.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
+          originData.value.filter.startImputedYearMonth = parseInt(`${newVal}01`);
           originData.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
           refetch()
         });

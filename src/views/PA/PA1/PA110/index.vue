@@ -491,12 +491,15 @@ export default defineComponent({
                 if (isRunOnce.value) {
                     showDetailSelected(obj)
                 } else  {
-                    activeNewMonth(dataMonthNew.value)
+                    if (checkClickMonth.value)
+                        activeNewMonth(dataMonthNew.value)
+                    else
+                        activeNewMonth(obj)
                 }
             } else {
                 status.value = null
                 statusDisabledBlock.value = true;
-                triggerDataTaxPayInfo.value = true;
+                triggerDataTaxPayInfo.value = true; //reset data table 2
             }
             
         })
@@ -546,6 +549,7 @@ export default defineComponent({
             }
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 store.state.common.addRow++ // add row
+                store.state.common.statusRowAdd = false
             } else { // call api detail
                 if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
                     store.state.common.loadingFormData++
@@ -563,7 +567,7 @@ export default defineComponent({
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
-            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // triggerDataTaxPayInfo.value = true; //reset data table 2
             // refetchDataTaxPayInfo() 
         })
 
@@ -688,6 +692,11 @@ export default defineComponent({
             } else { //  no save form
                 store.state.common.statusChangeFormEdit = false;
                 store.state.common.statusChangeFormAdd = false;
+                if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
+                    store.state.common.statusFormAdd = false
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
@@ -704,11 +713,6 @@ export default defineComponent({
                         store.state.common.checkClickYear = false;
                     }, 500);
                     return;
-                }
-                if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
-                    store.state.common.statusFormAdd = false
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
                 store.state.common.loadingFormData++

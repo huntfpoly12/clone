@@ -346,7 +346,7 @@ enum BeckerType {
   소관법인 = 7
 }
 const backerTypeArray: Array<{ name: string,  id: BeckerType | null}> = Object.keys(BeckerType).filter(key => isNaN(Number(key))).map(key => ({ name: key, id: BeckerType[key as keyof typeof BeckerType] }));
-const backerTypeArrayAll: Array<{ name: string,  id: BeckerType | null}> = [{ name: '전체', id: 0}, ...backerTypeArray];
+const backerTypeArrayAll: Array<{ name: string,  id: BeckerType | 0 | null}> = [{ name: '전체', id: 0}, ...backerTypeArray];
 
 export default defineComponent({
   components: {

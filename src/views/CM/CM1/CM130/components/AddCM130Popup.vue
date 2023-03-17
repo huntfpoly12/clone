@@ -93,6 +93,7 @@ export default defineComponent({
         });
         onDoneAdd((res) => {
             notification('success', `원천항목 새로 추가되었습니다!`)
+            emit('onDoneAdd', true)
             emit('closePopup', false)
         });
 

@@ -36,7 +36,7 @@ export const initFormStateTab1 = {
   roadAddress: "",
   addressExtend: "",
   email: "",
-  employeeId: '0',
+  employeeId: '',
   president: false,
   householder: false,
   weeklyWorkingHours: 40,
@@ -44,6 +44,7 @@ export const initFormStateTab1 = {
   responsibility: "",
   joinedAt: dayjs().format("YYYYMMDD"),
   leavedAt: "",
+  key: "0"
 };
 export const initFormStateTab2 = {
   nationalPensionDeduction: false,

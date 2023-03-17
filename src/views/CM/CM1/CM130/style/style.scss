@@ -10,8 +10,40 @@
 .button-form-modal {
     margin: 0px 5px;
 }
-::v-deep .red {
+:deep .red {
     label {
         color: red;
     }
+}
+.btn-action>button {
+    margin-left: 5px;
+}
+
+:deep .ant-tag-red {
+    border: none;
+}
+
+:deep .cell-center {
+    text-align: center !important;
+}
+
+:deep .ant-modal-body {
+    padding: 0;
+}
+
+.container {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.title-h2 {
+    margin-left: 1%;
+}
+
+.validate-message {
+    margin-left: 2%;
+    color: #c3baba;
 }

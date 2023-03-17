@@ -280,7 +280,8 @@ export default defineComponent({
         store.commit('common/actionFormErrorPA120');
       } else {
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
-        delete editData.employeeId
+        delete editData.employeeId;
+        delete editData.key;
         let dataCallCreat = {
           ...originDataDetail.value,
           input: {
