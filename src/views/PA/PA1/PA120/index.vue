@@ -40,12 +40,14 @@
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
           <!-- {{ compareForm() }} compareForm() <br />
-          {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ editRowPA120 }} editRowPA120 <br />
-          {{ activeTabKeyPA120 }} activeTabKeyPA120 <br />
+            {{ editRowPA120 }} editRowPA120 <br />
+            {{ activeTabEditKeyPA120 }} activeTabEditKeyPA120 <br />
+            {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
+            {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
+            <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
           {{ compareType }} compareType <br />
-          {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
-          {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
+          {{ focusedRowKey }} focusedRowKey <br />
+          {{ initFormStateTabPA120.employeeId }} initFormStateTabPA120.employeeId <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -191,7 +193,6 @@ export default defineComponent({
     const idRowFake = ref();
     const messageSave = Message.getMessage('COMMON', '501').message;
     const messageDel = Message.getMessage('COMMON', '401').message;
-    const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
 
     //--------------------delete row data-------------------
 
@@ -245,7 +246,8 @@ export default defineComponent({
       if (data.length > 0 && isFirstRun.value) {
         actionChangeComponent.value = 2;
         idRowEdit.value = data[0].employeeId;
-        focusedRowKey.value = data[0].employeeId;
+        console.log('focusrowKey',data[0].employeeId);
+        // focusedRowKey.value = data[0].employeeId;
         isFirstRun.value = false;
         idRowFake.value = data[0].employeeId;
       }
@@ -254,7 +256,9 @@ export default defineComponent({
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         store.commit('common/editRowPA120', initFormStateTab1);
       }
+      // focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       trigger.value = false;
+      console.log('focusrowKey',focusedRowKey.value);
     });
     //change year
     const isClickYearDiff = ref(false);
@@ -297,13 +301,14 @@ export default defineComponent({
     };
     const addNewRow = () => {
       actionChangeComponent.value = 1;
+      addComponentKey.value++;
       store.commit('common/initFormStateTabPA120', initFormStateTab1);
       store.commit('common/editRowPA120', initFormStateTab1);
       store.state.common.isNewRowPA120 = true;
       compareType.value = 1;
       setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
-        focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+        // focusedRowKey.value = initFormStateTabPA120.value.employeeId;
       }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
@@ -344,6 +349,7 @@ export default defineComponent({
     })
     const rowKeyTab2PA120 = computed(() => store.state.common.rowKeyTab2PA120)
     const onRowChangeComfirm = async (ok: boolean) => {
+      // console.log('focusrowKey',focusedRowKey.value);
       if (ok) {
         if (compareType.value == 1) {
           compareType.value = 3;
@@ -377,7 +383,7 @@ export default defineComponent({
           idRowEdit.value = idRowFake.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
-          focusedRowKey.value = idRowEdit.value;
+          // focusedRowKey.value = idRowEdit.value;
         }
         compareType.value = 2;
       }
@@ -385,6 +391,7 @@ export default defineComponent({
     // when submit form done
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
     watch(actionFormDonePA120, () => {
+      // console.log('focusrowKey',focusedRowKey.value);
       if (compareType.value == 3) {
         trigger.value = true;
         return;
@@ -392,11 +399,11 @@ export default defineComponent({
       if (isClickYearDiff.value) {
         changeYear(globalYear.value)
         isClickYearDiff.value = false;
+        return;
       }
+      store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      store.state.common.isNewRowPA120 = false;
-      focusedRowKey.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId : idRowFake.value;
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
@@ -417,14 +424,16 @@ export default defineComponent({
         isClickYearDiff.value = false;
       }
       if (tabCurrent.value == 2) {
-        store.commit('common/activeTabKeyPA120', '2');
+        store.commit('common/activeTabEditKeyPA120', '2');
       } else {
-        store.commit('common/activeTabKeyPA120', '1');
+        store.commit('common/activeTabEditKeyPA120', '1');
       }
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      // focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      // console.log('focusrowKey',focusedRowKey.value);
     });
     //edit row
     const actionEdit = (data: any) => {
+      // console.log('focusrowKey',focusedRowKey.value);
       compareType.value = 2;
       if (isNewRowPA120.value) {
         if (compareForm()) {
@@ -453,6 +462,7 @@ export default defineComponent({
           actionChangeComponent.value = 2;
         }
       }
+      // console.log('focusrowKey',focusedRowKey.value);
     };
 
     watch(result, (value) => {
@@ -477,12 +487,12 @@ export default defineComponent({
       isResidentIdError[val.id] = val.isError;
     };
     //focus Row
-    const focusedRowKey = ref(initFormStateTabPA120.value.employeeId);
+    const focusedRowKey = ref(100);
     watch(() => initFormStateTabPA120.value.employeeId, (newVal: any) => {
+      console.log(`output->value`,newVal)
       focusedRowKey.value = newVal;
-    })
-    const keyActivePA120 = computed(() => store.getters['common/keyActivePA120']);
-    const activeTabKeyPA120 = computed(() => store.state.common.activeTabKeyPA120);
+    },{deep:true})
+    const activeTabEditKeyPA120 = computed(() => store.state.common.activeTabEditKeyPA120);
     function calculateIncomeTypeCodeAndName(rowData: any) {
       return `${rowData.nationalPensionDeduction + rowData.healthInsuranceDeduction + rowData.employeementInsuranceDeduction + rowData.nationalPensionSupportPercent + rowData.employeementInsuranceSupportPercent + rowData.employeementReductionRatePercent + rowData.incomeTaxMagnification}`;
     }
@@ -502,6 +512,7 @@ export default defineComponent({
         store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
       }
     })
+    // console.log('focusrowKey',focusedRowKey.value);
     return {
       loading,
       idRowEdit,
@@ -527,8 +538,7 @@ export default defineComponent({
       toolTopErorr,
       isResidentIdError,
       focusedRowKey,
-      activeTabKeyPA120,
-      keyActivePA120,
+      activeTabEditKeyPA120,
       defaultVisible,
       initFormStateTabPA120,
       isNewRowPA120,

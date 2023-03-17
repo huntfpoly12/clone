@@ -9,7 +9,7 @@
         <a-col :span="24">
           <a-form-item label="기타소득자" label-align="right" class="red">
             <employ-type-select :disabled="isEdit || !isColumnData || isExpiredStatus || idDisableInput" :arrayValue="arrayEmploySelect"
-              v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true"
+              v-model:valueEmploy="formPA720.input.employeeId" width="350px" :required="true" :newLoadKey="formPA720.input.employee.key"
               @incomeTypeCode="changeIncomeTypeCode" />
           </a-form-item>
         </a-col>
@@ -260,6 +260,9 @@ export default defineComponent({
         withholdingIncomeTax: data.withholdingIncomeTax,
         withholdingLocalIncomeTax: data.withholdingLocalIncomeTax,
         incomeId: data.incomeId,
+        employee: {
+          key: data.incomeTypeCode.concat(data.employeeId)
+        }
       };
       store.commit('common/formPA720', editRowData)
       store.commit('common/formEditPA720', editRowData);
@@ -281,7 +284,9 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
-      arrayEmploySelect.value = newValue.getEmployeeExtras;
+      arrayEmploySelect.value = newValue.getEmployeeExtras.map((item:any)=> ({
+        ...item, key: item.incomeTypeCode.concat(item.employeeId)
+      }));
     });
     
     watch(savePA710, ()=> {
@@ -375,9 +380,9 @@ export default defineComponent({
       }
       return text;
     };
-    const changeIncomeTypeCode = (res: string, id: any) => {
-      formPA720.value.input.incomeTypeCode = res;
-      formPA720.value.input.employee = arrayEmploySelect.value.filter((val: any) => val.employeeId == id)[0];
+    const changeIncomeTypeCode = (emitVal: any) => {
+      formPA720.value.input.incomeTypeCode = emitVal.incomeTypeCode;
+      formPA720.value.input.employee = emitVal;
     };
     const resetForm = (e: any) => {
       e.validationGroup.reset();

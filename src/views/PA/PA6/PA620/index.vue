@@ -275,7 +275,6 @@ export default defineComponent({
         const valueCallApiGetIncomeProcessBusinesses = reactive({
             companyId: companyId,
             imputedYear: globalYear.value,
-            // imputedMonth: dayjs().month(),
         })
         let dataCustomRes: any = ref([])
         const isRunOnce = ref<boolean>(true);
@@ -420,7 +419,11 @@ export default defineComponent({
           }
         }
         const createdDone = () => {
-            refetchData()
+            if(!formRef.value.isClickYearDiff){
+              refetchData();
+            }else{
+              formRef.value.isClickYearDiff = false;
+            }
         }
         const statusDone = (emitVal: any)=> {
             refetchData();
@@ -459,8 +462,8 @@ export default defineComponent({
         //change year
         const changeYear = (newVal: any) => {
             formRef.value.resetForm();
-            isRunOnce.value = true;
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
+            isRunOnce.value = true;
         };
         const isCompareForm = computed(()=>formRef.value?.compareForm());
         // -----------------get config to check default date type--------------
@@ -490,7 +493,7 @@ export default defineComponent({
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, isDisabledForm,
             setUnderline, createdDone, onAddMonth, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            isCompareForm, valueCallApiGetIncomeProcessBusinesses,statusDone,dateType
+            isCompareForm,statusDone,dateType
         };
     },
 });

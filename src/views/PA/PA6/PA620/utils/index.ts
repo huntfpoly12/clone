@@ -44,6 +44,9 @@ export const dataActionUtils = {
     withholdingLocalIncomeTax: 0,
     paymentDay: 0,
     incomeId: "99axbzkk",
+    employee:{
+      key:0
+    }
   },
 };
 export const dataGetDetailEdit = {
