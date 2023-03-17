@@ -6,7 +6,7 @@ import commonModule from "./commonModule/index";
 const store : any= createStore({
   modules: {
     auth: { ...authModule, namespaced: true },
-    settings: { ...settingModule, namespaced: true },
+    settings: settingModule,
     common: { ...commonModule, namespaced: true}
   },
 });

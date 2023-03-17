@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 interface Styles {
   Main: string;
   Sub: string;
@@ -76,18 +78,16 @@ export const styles: Styles = {
   BorderButtonCalculate: "1px solid orange",
 };
 
-interface GridConfig {
+export interface GridConfig {
   per_page: Number;
   sort: boolean;
   move_column: boolean;
   colomn_resize: boolean;
   row_resize: boolean;
+  isPopupVisible: boolean
+  formStatus: FormStatus
+  clickYearStatus: ClickYearStatus
+  currentYear: number,
+  newYear: number,
+  globalYear: number
 }
-
-export const grid_config: GridConfig = {
-  per_page: 15,
-  sort: true,
-  move_column: false,
-  colomn_resize: true,
-  row_resize: true,
-};
