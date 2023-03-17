@@ -30,7 +30,6 @@
           <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
-              v-model:focused-row-key="focusedRowKey"
               :show-row-lines="true"
               :hoverStateEnabled="true"
               :dataSource="dataSource"
@@ -38,19 +37,23 @@
               key-expr="backerCode"
               :allow-column-reordering="move_column"
               :focused-row-enabled="true"
-              :allow-column-resizing="column_resize"
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
+              v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
+              height="700px"
             >
-              <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-              <DxPaging page-size="10" />
+              <DxPaging :page-size="0" />
               <DxExport :enabled="true" />
               <DxToolbar>
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
-                <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                <DxItem
+                  location="after"
+                  template="button-template"
+                  css-class="cell-button-add"
+                />
                 <!--                <DxItem location="after" template="button-history" css-class="cell-button-add" />-->
               </DxToolbar>
 
@@ -139,7 +142,7 @@
               </template>
               <DxColumn cell-template="historyBacker" width="70px" alignment="center"/>
               <template #historyBacker="{ data }">
-                <div class="custom-action" style="text-align: center" @click="handleClickShowHistory(data.data.backerCode)">
+                <div @click="handleClickShowHistory(data.data.backerCode)">
                   <HistoryOutlined  style="font-size: 18px" class="" />
                 </div>
               </template>
@@ -434,7 +437,7 @@ export default defineComponent({
     } = useQuery(
       queries.searchBackers,{
         companyId: companyId,
-        filter: dataSearch.value,
+        filter: {...dataSearch.value},
       },() => ({
         fetchPolicy: "no-cache",
         enabled: trigger.value,
@@ -634,20 +637,13 @@ export default defineComponent({
           isNewRow.value = false;
         } else {
           // when change other row and want to add row
-          storeDataSource.value.insert(initBackerCreateInput).then((result) => {
-            formRef.value.resetValidate();
-            selectRowKeyAction.value = 0;
-            focusedRowKey.value = 0;
-            formState.value = result;
-            dataGridRef.value?.refresh();
-          });
+          addNewRow()
         }
       } else {
         storeDataSource.value
           .update(previousRowData.value.backerCode, previousRowData.value)
           .then((value) => {
             focusedRowKey.value = selectRowKeyAction.value || 0;
-
             storeDataSource.value.byKey(selectRowKeyAction.value).then((value) => {
               Object.assign(formState, value);
             });
@@ -761,10 +757,11 @@ export default defineComponent({
 
     const searching = (e: any) => {
       dataSearch.value.type = type.value === 0 ? null : type.value;
-      // refetchData()
-      trigger.value = true;
       dataSearch.value.page = listBackers.value.page;
-      // actionSearch.value = false;
+      refetchData({
+        companyId: companyId,
+        filter: {...dataSearch.value},
+      })
     };
 
     const funcAddress = (data: any) => {
