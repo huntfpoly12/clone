@@ -243,8 +243,8 @@
           </div>
         </DxButton>
         <div class="custom-select-tab ml-4">
-          <button class="button-open-tab"
-            @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })">기타소득자등록</button>
+          <DxButton class="button-open-tab"
+            @click="openTab({ name: '기타소득자등록', url: '/dashboard/pa-710', id: 'pa-710' })" :disabled="!isColumnData">기타소득자등록</DxButton>
         </div>
       </a-col>
     </a-row>
