@@ -554,6 +554,7 @@ export default defineComponent({
     const createDeduction = () => {
       if (isBtnYellow.value) {
         store.state.common.isAddFormErrorPA120 = true;
+        store.commit('common/actionFormErrorPA120');
         return;
       }
       stopTrack();
@@ -576,6 +577,7 @@ export default defineComponent({
     onError((e) => {
       notification('error', e.message);
       store.state.common.isCalculateEditPA120 = false;
+      store.commit('common/actionFormErrorPA120');
     });
 
     onDone((res) => {
@@ -612,7 +614,6 @@ export default defineComponent({
     );
     watch(resultConfig, (newVal) => {
       if (newVal) {
-        // console.log(`output->newVal.getWithholdingConfig.insuranceSupport`,newVal.getWithholdingConfig.insuranceSupport)
         store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
         withholdingTrigger.value = false;
       }
@@ -758,6 +759,7 @@ export default defineComponent({
   border: 1px solid #ddd;
   padding-left: 5px;
   padding-top: 5px;
+  min-height: 143px;
 }
 
 .custom-deduction {

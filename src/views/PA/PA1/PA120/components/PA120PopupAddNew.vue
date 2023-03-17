@@ -39,7 +39,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const tabStatus = ref(true);
-        const activeTabAddKeyPA120 = computed(()=>store.state.common.activeTabAddKeyPA120);
+        const activeTabAddKeyPA120 = ref('1');
         const employeeId = ref();
         const setModalVisible = () => {
             emit('closePopup', false);
@@ -51,7 +51,7 @@ export default defineComponent({
             tabStatus.value = data;
         }
         const onChangeTab = (e:any) => {
-            store.commit('common/activeTabAddKeyPA120', e)
+            // store.commit('common/activeTabAddKeyPA120', e)
         }
         return {
             setModalVisible,

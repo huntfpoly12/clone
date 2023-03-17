@@ -642,12 +642,10 @@ export default defineComponent({
             return;
           }
         }
-        console.log(`output-compare type 1`,)
         if (compareType.value === 1) {
           addNewRow();
           return;
         }
-        console.log(`output-compare type 2`,)
         if (compareType.value == 2) {
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
@@ -716,7 +714,6 @@ export default defineComponent({
           compareType.value = 2;
         }
       } else {
-        console.log(`output->isClickMonthDiff.value`, isClickMonthDiff.value)
         if (compareType.value == 3) {
           return;
         }
@@ -725,7 +722,6 @@ export default defineComponent({
         store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
         store.state.common.isNewRowPA720 = false;
         if (isClickMonthDiff.value) {
-          console.log(`output->isClickMonthDiff.value`, isClickMonthDiff.value)
           onChangeMonth(changeMonthDataFake.value);
           isClickMonthDiff.value = false;
           return;
