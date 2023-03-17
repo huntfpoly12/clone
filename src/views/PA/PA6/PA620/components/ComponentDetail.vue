@@ -35,7 +35,7 @@
                 </div>
             </DxButton>
             <div class="custom-select-tab ml-4">
-                <button class="button-open-tab" @click="onItemClick('openTab')">사업소득자등록</button>
+                <DxButton class="button-open-tab" @click="onItemClick('openTab')" :disabled="isDisabledForm">사업소득자등록</DxButton>
             </div>
         </div>
     </div>
