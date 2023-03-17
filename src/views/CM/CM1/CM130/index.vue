@@ -1,6 +1,6 @@
 <template>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
-        <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction">
+        <!-- <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction"> -->
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <template #rightExtra>
                     <div class="list-action">
@@ -45,6 +45,7 @@
                     </div>
                 </template>
                 <a-tab-pane key="1" tab="기본">
+                    <a-spin tip="Loading..." :spinning="loading">
                     <a-row>
                         <a-col :span="24">
                             <div class="container">
@@ -215,15 +216,14 @@
                                 </standard-form>
                             </div>
                         </a-col>
-                        <button-basic style="margin-left: 350px;
-    margin-top: 20px;" :text="'저장'" type="default"
-                            @onClick="onSubmitConfig()"
-                        />
+                        <button-basic style="margin-left: 350px; margin-top: 20px;" :text="'저장'" type="default" @onClick="onSubmitConfig()"/>
                     </a-row>
                     <SettingPopup :modalStatus="modalSettingStatus" @closePopup="modalSettingStatus = false"
                         @dataEmit="changeValueAddress" title="원천설정" />
+                    </a-spin>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="급여항목">
+                    <a-spin tip="Loading..." :spinning="loadingWithholdingConfig">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -272,17 +272,22 @@
                         </template>
                     </DxDataGrid>
                     <AddCM130Popup :modalStatus="modalAddNewStatus" :itemCodeMax="itemCodeMax" :key="resetFormNum"
-                        @closePopup="onCloseAddNewModal" title="원천설정" />
+                        @closePopup="modalAddNewStatus = false" @onDoneAdd="onDoneAdd" title="원천설정" />
                     <EditCM130Popup :modalStatus="modalEditStatus" @closePopup="onCloseEditModal" :data="popupData"
                         title="원천설정" :idRowEdit="idRowEdit" />
                     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-130" />
+                    </a-spin>
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="공제항목">
+                    <a-spin tip="Loading..." :spinning="loadingDeduction">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDeduction"
                         :show-borders="true" key-expr="itemCode" :allow-column-reordering="move_column"
                         :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        :onRowClick="editData">
+                        v-model:focused-row-key="focusedRowKey"
+                        ref="gridRefCM110Key3"
+                        @focused-row-changing="onFocusedRowChanging"
+                         :auto-navigate-to-focused-row="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                         <DxExport :enabled="true" />
@@ -314,7 +319,8 @@
                             </div>
                         </template>
                     </DxDataGrid>
-                    <standard-form formName="add-deduction-310"
+                    </a-spin>
+                    <standard-form formName="add-deduction-310" v-if="dataSourceDeduction.length"
                         style="border: 1px solid #ddd; margin-top: 20px; padding: 10px;">
                         <h2 style="font-weight: 600; color: gray" class="title_modal">
                             급여상세항목
@@ -322,7 +328,7 @@
                         <a-row :gutter="24">
                             <a-col :span="5">
                                 <a-form-item label="코드" :label-col="labelCol">
-                                    <number-box :width="150" :min="0" :max="30"
+                                    <number-box :width="150" :min="0"
                                         v-model:valueInput="formStateDeduction.itemCode" :spinButtons="true"
                                         :disabled="true">
                                     </number-box>
@@ -351,12 +357,15 @@
                                 </a-form-item>
                             </a-col>
                         </a-row>
+                        <button-basic style="margin-left: 250px" :text="'저장'" type="default" @onClick="onSubmitConfigDeduction"/>
                     </standard-form>
                     <HistoryPopup :modalStatus="modalHistoryStatusDeduction" @closePopup="modalHistoryStatusDeduction = false"
                         :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-deduction-130" />
                 </a-tab-pane>
             </a-tabs>
-        </a-spin>
+            <PopupMessage :modalStatus="modalStatus" @closePopup="modalStatus = false" :typeModal="'confirm'"
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirm" />
+        <!-- </a-spin> -->
     </div>
 </template>
 <script lang="ts">
@@ -396,6 +405,7 @@ import AddCM130Popup from "./components/AddCM130Popup.vue";
 import { optionsRadioReportType, optionsRadioPaymentType } from "./utils/data";
 import { TaxPayItem, TaxFreePayItem } from "@bankda/jangbuda-common";
 import { initialFormState, initialFormStateDeduction } from "./utils/data";
+import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         DxNumberBox,
@@ -443,7 +453,21 @@ export default defineComponent({
         const dataSourceDeduction = ref([]);
         let itemCodeMax = ref(0);
         const resetFormNum = ref(1);
-        const dataQueryWithholding = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const focusedRowKey = ref<number>();
+        const dataOldFormStateDeduction = reactive({ ...initialFormStateDeduction });
+        // const dataQueryWithholding = ref({ companyId: companyId, imputedYear: globalYear });
+        
+        const modalStatus = ref<boolean>(false)
+        const statusClickSaveModal = ref<boolean>(false)
+        const gridRefCM110Key3 = ref(); // ref of grid
+        const dataGridRef = computed(() => gridRefCM110Key3.value?.instance as any); // ref of grid Instance
+        // get config
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+        const trigger = ref(false)
+        const triggerWithholdingConfig = ref<boolean>(true)
+        const triggerWithholdingConfigPayItems = ref<boolean>(true)
+        const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
+        let runOne = ref<boolean>(true);
         //================================================= FUNCTION============================================
         const showModal = () => {
             isShow.value = true;
@@ -453,17 +477,17 @@ export default defineComponent({
             formState.localIncomeTaxArea = dataPublicInstitution.value.localIncomeTaxArea
             isShow.value = false;
         };
-        const trigger = ref(false)
-        // get config
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        
         const { result: resultConfig, loading, refetch: refetchConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
             () => ({
+                enabled: triggerWithholdingConfig.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultConfig, (value) => {
+            triggerWithholdingConfig.value = false
             if (value) {
                 formState.reportType = value.getWithholdingConfig.reportType;
                 formState.paymentType = value.getWithholdingConfig.paymentType;
@@ -475,27 +499,58 @@ export default defineComponent({
                 formState.collectivePayment = value.getWithholdingConfig.collectivePayment;
                 formState.taxForEachBusiness = value.getWithholdingConfig.taxForEachBusiness;
                 formState.undeclaredIncomeStatus = value.getWithholdingConfig.undeclaredIncomeStatus;
-
-                trigger.value = true;
                 dataQueryInstitution.value = {
                     bcode: value.getWithholdingConfig.companyAddressInfo.bcode
                 }
                 if (dataQueryInstitution.value) {
-                    refetchConfigInstitution()
+                    // refetchConfigInstitution()
+                    trigger.value = true;
                 }
             }
         });
 
-        const dataQueryDeduction = ref({ companyId: companyId, imputedYear: globalYear.value });
+        
+        // const dataQueryDeduction = ref({ companyId: companyId, imputedYear: globalYear });
         const { result: resultConfigDeduction, loading: loadingDeduction, refetch: refetchConfigDeduction } = useQuery(
             queries.getWithholdingConfigDeductionItems,
-            dataQueryDeduction,
+            // dataQueryDeduction,
+            dataQuery,
             () => ({
+                enabled: triggerWithholdingConfigDeductionItems.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultConfigDeduction, (value) => {
-            dataSourceDeduction.value = value.getWithholdingConfigDeductionItems
+            triggerWithholdingConfigDeductionItems.value = false
+            if (value.getWithholdingConfigDeductionItems.length) {
+                dataSourceDeduction.value = value.getWithholdingConfigDeductionItems
+                if (runOne.value) {
+                    runOne.value = false;
+                    let data = value.getWithholdingConfigDeductionItems[0]
+                    focusedRowKey.value = data.itemCode
+                    formStateDeduction.itemCode = data.itemCode;
+                    formStateDeduction.taxPayCode = data.taxfreePayItemCode != null ? ['비과세', data.taxfreePayItemCode] : ['과세', data.taxPayItemCode];
+                    formStateDeduction.name = data.name;
+                    formStateDeduction.use = data.use;
+                    formStateDeduction.formula = data.formula;
+                    Object.assign(dataOldFormStateDeduction, formStateDeduction);
+                } else {
+                    if (statusClickSaveModal.value) {
+                        statusClickSaveModal.value = false
+                        focusedRowKey.value = dataOldFormStateDeduction.itemCode
+                        let dataNew = dataSourceDeduction.value.find((value: any) => value.itemCode == dataOldFormStateDeduction.itemCode)
+                        Object.assign(formStateDeduction, dataNew);
+                        Object.assign(dataOldFormStateDeduction, dataNew);
+                    } else {
+                        Object.assign(dataOldFormStateDeduction, formStateDeduction);
+                    }
+                }
+            } else {
+                dataSourceDeduction.value = []
+                // clear data
+                Object.assign(dataOldFormStateDeduction, JSON.parse(JSON.stringify({...initialFormStateDeduction})));
+                Object.assign(formStateDeduction, JSON.parse(JSON.stringify({...initialFormStateDeduction})));
+            }
         });
 
         const { result: resultConfigInstitution, refetch: refetchConfigInstitution } = useQuery(
@@ -519,7 +574,8 @@ export default defineComponent({
         })
         onDoneUpdated(() => {
             notification('success', `업데이트 성공되었습니다!`)
-            refetchConfig();
+            // refetchConfig();
+            triggerWithholdingConfig.value = true;
             store.state.common.isDisableInsuranceSupport = formState.insuranceSupport;
         });
         const onSubmitConfig = () => {
@@ -543,11 +599,20 @@ export default defineComponent({
             mutations.updateWithholdingConfigDeductionItem
         );
         errorEditConfigDeduction((error) => {
+            checkClickYear.value ? checkClickYear.value = false : '';
             notification('error', error.message)
         })
         onDoneUpdatedDeduction(() => {
             notification('success', `업데이트 성공되었습니다!`)
-            refetchConfigDeduction();
+            // refetchConfigDeduction();
+            if (checkClickYear.value) {
+                runOne.value = true;
+                store.state.settings.globalYear = dataYearNew.value
+                setTimeout(() => {
+                    checkClickYear.value = false;
+                }, 500);
+            }
+            triggerWithholdingConfigDeductionItems.value = true;
         });
         const onSubmitConfigDeduction = () => {
             let variables = {
@@ -560,23 +625,43 @@ export default defineComponent({
             };
             updateWithholdingConfigDeductionItem(variables)
         };
-        const editData = (e: any) => {
-            formStateDeduction.itemCode = e.data.itemCode;
-            formStateDeduction.taxPayCode = e.data.taxfreePayItemCode != null ? ['비과세', e.data.taxfreePayItemCode] : ['과세', e.data.taxPayItemCode];
-            formStateDeduction.name = e.data.name;
-            formStateDeduction.use = e.data.use;
-            formStateDeduction.formula = e.data.formula;
-
+        const onFocusedRowChanging = (e: any) => {
+            const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
+            let data = e.rows[e.newRowIndex]?.data
+            if (JSON.stringify(dataOldFormStateDeduction) !== JSON.stringify(formStateDeduction)) {
+                if (data) {
+                    dataOldFormStateDeduction.itemCode = data.itemCode;
+                    dataOldFormStateDeduction.taxPayCode = data.taxfreePayItemCode != null ? ['비과세', data.taxfreePayItemCode] : ['과세', data.taxPayItemCode];
+                    dataOldFormStateDeduction.name = data.name;
+                    dataOldFormStateDeduction.use = data.use;
+                    dataOldFormStateDeduction.formula = data.formula;
+                }
+                modalStatus.value = true;
+                rowElement?.classList.add("dx-state-hover-custom")
+                e.cancel = true;
+            } else {
+                if (data) {
+                    dataOldFormStateDeduction.itemCode = data.itemCode;
+                    dataOldFormStateDeduction.taxPayCode = data.taxfreePayItemCode != null ? ['비과세', data.taxfreePayItemCode] : ['과세', data.taxPayItemCode];
+                    dataOldFormStateDeduction.name = data.name;
+                    dataOldFormStateDeduction.use = data.use;
+                    dataOldFormStateDeduction.formula = data.formula;
+                }
+                Object.assign(formStateDeduction, dataOldFormStateDeduction);
+            }
         }
         // get withholding config pay items  
         const { result: resultWithholdingConfig, refetch: refetchWithholdingConfig, loading: loadingWithholdingConfig } = useQuery(
             queries.getWithholdingConfigPayItems,
-            dataQueryWithholding,
+            // dataQueryWithholding,
+            dataQuery,
             () => ({
+                enabled: triggerWithholdingConfigPayItems.value,
                 fetchPolicy: "no-cache",
             })
         );
         watch(resultWithholdingConfig, (value) => {
+            triggerWithholdingConfigPayItems.value = false;
             dataSource.value = value.getWithholdingConfigPayItems;
             dataSource.value.map((e: any) => {
                 if (e.itemCode > itemCodeMax.value) {
@@ -610,7 +695,8 @@ export default defineComponent({
         );
         onDoneDelete(() => {
             notification('success', `업데이트 성공되었습니다!`)
-            refetchWithholdingConfig()
+            // refetchWithholdingConfig()
+            triggerWithholdingConfigPayItems.value = true;
         });
         const deleteConfig = (data: any) => {
             Modal.confirm({
@@ -657,9 +743,8 @@ export default defineComponent({
                 notification('error', `이용 가능한 급여항목은 최대 20개입니다. 기존항목을 이용중지한 후 새로 추가하세요`)
             }
         }
-        const onCloseAddNewModal = () => {
-            modalAddNewStatus.value = false;
-            refetchWithholdingConfig();
+        const onDoneAdd = () => {
+            triggerWithholdingConfigPayItems.value = true;
         };
         const setModalEditVisible = (data: any) => {
             idRowEdit.value = data.data.itemCode;
@@ -668,7 +753,8 @@ export default defineComponent({
         };
         const onCloseEditModal = () => {
             modalEditStatus.value = false;
-            refetchWithholdingConfig();
+            triggerWithholdingConfigPayItems.value = true;
+            // refetchWithholdingConfig();
         };
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.itemCode;
@@ -701,11 +787,13 @@ export default defineComponent({
                 arrLabel[index] = TaxFreePayItem.all()[index].name
             }
         });
+
         const taxFreePayItem = Object.keys(TaxFreePayItem.all()).map((k, index) => ({
             value: TaxFreePayItem.all()[index].enumKey,
             label: arrLabel[index],
             submission: JSON.parse(JSON.stringify(TaxFreePayItem.all()[index])).props.submission,
         }));
+
         const changeColorRow = (e: any) => {
             if (e.data?.use) {
                 if (e.data.tax) {
@@ -717,6 +805,47 @@ export default defineComponent({
                 e.rowElement.style.backgroundColor = '#ECECEC';
             }
         }
+        const dataYearNew = ref(globalYear.value)
+        const checkClickYear = ref<Boolean>(false)
+        const statusComfirm = (val: any) => {
+            if (val) {
+                statusClickSaveModal.value = true
+                onSubmitConfigDeduction();
+            } else {
+                if (checkClickYear.value) {
+                    store.state.settings.globalYear = dataYearNew.value
+                    runOne.value = true;
+                    triggerWithholdingConfig.value = true
+                    triggerWithholdingConfigPayItems.value = true
+                    triggerWithholdingConfigDeductionItems.value = true
+                    setTimeout(() => {
+                        checkClickYear.value = false;
+                    }, 500);
+                    return;
+                }
+                Object.assign(formStateDeduction, dataOldFormStateDeduction);
+                focusedRowKey.value = formStateDeduction.itemCode
+            }
+            dataGridRef.value?.refresh();
+        }
+        watch(globalYear, (newVal, oldVal) => {
+            if (JSON.stringify(dataOldFormStateDeduction) !== JSON.stringify(formStateDeduction)) {
+                if (!checkClickYear.value) {
+                    modalStatus.value = true
+                    checkClickYear.value = true
+                    store.state.settings.globalYear = oldVal;
+                    dataYearNew.value = newVal;
+                    return
+                }
+                return
+            } else {
+                runOne.value = true;
+                triggerWithholdingConfig.value = true
+                triggerWithholdingConfigPayItems.value = true
+                triggerWithholdingConfigDeductionItems.value = true
+            }
+            
+        })
         return {
             changeValueAddress,
             idRowEdit,
@@ -729,7 +858,7 @@ export default defineComponent({
             formStateDeduction,
             activeKey: ref("1"),
             onSubmitConfig,
-            editData,
+            onFocusedRowChanging,
             changeColorRow,
             isShow,
             setModalVisible,
@@ -750,7 +879,7 @@ export default defineComponent({
             onSubmitConfigDeduction,
             modalSetting,
             openAddNewModal,
-            onCloseAddNewModal,
+            onDoneAdd,
             setModalEditVisible,
             onCloseEditModal,
             modalHistory,
@@ -759,41 +888,13 @@ export default defineComponent({
             dataPublicInstitution,
             itemCodeMax,
             resetFormNum,
+            focusedRowKey,
+            modalStatus, Message, statusComfirm,
+            gridRefCM110Key3,
         };
     },
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss">
-.btn-action>button {
-    margin-left: 5px;
-}
 
-::v-deep .ant-tag-red {
-    border: none;
-}
-
-::v-deep .cell-center {
-    text-align: center !important;
-}
-
-::v-deep .ant-modal-body {
-    padding: 0;
-}
-
-.container {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    padding-right: 10px;
-    padding-left: 10px;
-}
-
-.title-h2 {
-    margin-left: 1%;
-}
-
-.validate-message {
-    margin-left: 2%;
-    color: #c3baba;
-}
 </style>
