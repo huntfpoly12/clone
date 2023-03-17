@@ -1,0 +1,78 @@
+.ac-110 {
+  padding: 30px;
+  &__top {
+    &-grid {
+      display: grid;
+      grid-template-columns: auto auto auto auto auto auto;
+      &-items {
+        border: 1px solid rgba(99, 94, 94, 0.8);
+        border-left: none;
+        padding: 5px;
+        text-align: center;
+        &-text {
+          margin-right: 10px;
+        }
+      }
+      &:first-child {
+        border-left: 1px solid rgba(99, 94, 94, 0.8);
+      }
+    }
+    &-flex {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      &-action {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  &__main {
+    margin-top: 30px;
+    &-main {
+      &-slipRegistration {
+        display: flex;
+        align-items: center;
+        &-stt {
+          margin-right: 10px;
+        }
+      }
+    }
+    &-detail {
+      margin-top: 15px;
+      &-detail1 {
+      }
+      &-detail2 {
+        padding-left: 15px;
+        &-upload {
+          border: 1px solid #ddd;
+          height: 100%;
+          padding: 15px;
+          .ant-btn-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            &-text {
+              font-size: 11px;
+            }
+            &-image {
+              width: 25px;
+              margin: 5px 0;
+            }
+            &-button {
+              font-size: 11px;
+              background-color: #4472C4;
+              border: none;
+              outline: none;
+              color: #fff;
+              border-radius: 5px;
+              padding: 0 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
