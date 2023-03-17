@@ -1,7 +1,6 @@
 <template>
     <div id="tab2-pa520"> 
       <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
-        {{ JSON.stringify(newVal)  }} {{  JSON.stringify(valueConvert) }}
         <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
