@@ -1,6 +1,7 @@
 <template>
     <div id="tab2-pa520"> 
       <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
+        {{ JSON.stringify(newVal)  }} {{  JSON.stringify(valueConvert) }}
         <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
@@ -289,11 +290,10 @@ export default defineComponent({
         watch(() => originDataUpdate.value, (newVal) => {
           let valueConvert = JSON.parse(dataDefaultGet.value)
             
-          if (valueConvert.input.nationalPensionSupportPercent == null)
-            valueConvert.input.nationalPensionSupportPercent = 0
-          if (valueConvert.input.employeementInsuranceSupportPercent == null)
-            valueConvert.input.employeementInsuranceSupportPercent = 0
-
+          // if (valueConvert.input.nationalPensionSupportPercent == null)
+          //   valueConvert.input.nationalPensionSupportPercent = 0
+          // if (valueConvert.input.employeementInsuranceSupportPercent == null)
+          //   valueConvert.input.employeementInsuranceSupportPercent = 0
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkChangeValueEditTab2PA520 = false
           } else {   
@@ -301,16 +301,16 @@ export default defineComponent({
           }
         }, { deep: true })
 
-        // Event change value default
-        watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
-            if (newVal == false) {
-                originDataUpdate.value.input.nationalPensionSupportPercent = null
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = null
-            } else {
-                originDataUpdate.value.input.nationalPensionSupportPercent = 0
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = 0
-            }
-        }, { deep: true })
+      //   // Event change value default
+      // watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
+      //       if (newVal == false) {
+      //           originDataUpdate.value.input.nationalPensionSupportPercent = null
+      //           originDataUpdate.value.input.employeementInsuranceSupportPercent = null
+      //       } else {
+      //           originDataUpdate.value.input.nationalPensionSupportPercent = 0
+      //           originDataUpdate.value.input.employeementInsuranceSupportPercent = 0
+      //       }
+      //   }, { deep: true })
         // call api on tab 2 for the first time
         if (store.state.common.idRowChangePa520 != 0) { 
             originDataDetail.value.employeeId = store.state.common.idRowChangePa520
@@ -355,8 +355,6 @@ export default defineComponent({
           // delete item  no need in object , Just compare item watching
           let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
-          console.log('defValue',defValue);
-          console.log('originValue',originValue);
           // Compare two object if different change button color to orange
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
             isBtnYellow.value = true

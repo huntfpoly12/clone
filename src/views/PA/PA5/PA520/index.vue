@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >
           checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
           checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
@@ -21,10 +21,11 @@
         <a-col :span="6">
           modalChangeValueEdit : {{  modalChangeValueEdit }}  <br>
           focusedRowKey :  {{ focusedRowKey }}<br>
+          idRowSaveDone :  {{ idRowSaveDone }}<br>
           idRowEdit : {{ idRowEdit }}<br>
           idRowCurrentClick: {{ idRowCurrentClick }}
         </a-col>
-  </a-row>
+  </a-row> -->
 
   <div id="pa-520" class="page-content">
       <a-row>
@@ -155,15 +156,15 @@
       </a-row>
   </div>
   <PopupMessage :modalStatus="modalComfirmDelete" @closePopup="modalComfirmDelete = false" typeModal="confirm"
-      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요6666" @checkConfirm="onConfirmDelete" />
+      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요(modalComfirmDelete)" @checkConfirm="onConfirmDelete" />
   <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
       :idRowEdit="idRowEdit" typeHistory="pa-520" />
   <!-- confirm for case edit   -->
   <PopupMessage :modalStatus="modalChangeValueEdit" @closePopup="modalChangeValueEdit = false" typeModal="confirm"
-      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오xxx" @checkConfirm="comfirmAndSaveEdit" />
+      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오(modalChangeValueEdit)" @checkConfirm="comfirmAndSaveEdit" />
   <!-- confirm for case add -->
   <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오kkkk" @checkConfirm="confirmAndSaveAdd" />
+      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오(modalChangeValueAdd)" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted, reactive, watchEffect } from "vue";
@@ -251,6 +252,7 @@ export default defineComponent({
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
     const idRowCurrentClick = ref(0);
+    const oldGlobalYear = ref(0)
     const globalYear = computed(() => store.state.settings.globalYear);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -267,11 +269,12 @@ export default defineComponent({
     const isAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
     const modalDeleteStatus = ref<boolean>(false);
-    const modalChangeValueAdd = ref(false);
+    const modalChangeValueAdd = ref<boolean>(false);
     const idRowEdit = ref();
     let isClickRow = false; // determine when action click row
     const isDelete = ref<boolean>(false); // determine when action click icon delete
     const resetAddComponent = ref<number>(1);
+    const isChangeYear = ref<boolean>(false);
     // use to catch case click add button and change something after that click add button  again
     // to check is click button add row or not
    
@@ -299,72 +302,23 @@ export default defineComponent({
       refetchData();
     });
     // ======================= WATCH ==================================
-
-
-    watch(result,() => {
-      if (result && result.value) {
-        console.log(result.value.getEmployeeWageDailies);
-        
-        const data = result.value.getEmployeeWageDailies.map((i: any) => ({
-          ...i,
-          key: i.employeeId
-        })) ;
-        dataSource.value = new DataSource({
-          store: {
-              type: "array",
-              key: 'key',
-              data: result.value ? data : [],
-          }
-        })
-
-        
-        // Total number of employees who have quit
-        totalUserOnl.value = result.value.getEmployeeWageDailies.filter(
-          (val: any) => val.status != 0
-        ).length;
-        totalUserOff.value = result.value.getEmployeeWageDailies.filter(
-          (val: any) => val.status == 0
-        ).length;
-
-        // this is case after save done
-        if (store.state.common.rowIdSaveDonePa520 != 0) {
-          // Get index row change
-          let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value;
-          // active row change
-          // used to catch the case being created, click the add button and agree to save the old data
-          if (countBtOnclick.value > 1) {
-            store.state.common.addRowBtOnclick = false;
-            resetAddComponent.value++; // increment one unit to reset the newly created form
-            onAddBtClick();
-            store.state.common.countBtOnclick = 1;
-          } else {
-              idRowEdit.value = idRowNextForcus;
-              focusedRowKey.value = idRowNextForcus;
-          }
-          isClickRow = false;
-          isDelete.value = false;
-        }
-        trigger.value = false;
-      }
-    });
-
-    watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
-      dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
-    },{ deep: true })
-
     //check if the year is changed, then confirm first if you are adding or editing data
     watch(() => globalYear.value, (newYear, oldYear) => {
+      isChangeYear.value = true
+      oldGlobalYear.value = oldYear
       if (
         !store.state.common.checkChangeValueEditTab1PA520 &&
         !store.state.common.checkChangeValueEditTab2PA520 &&
         !store.state.common.checkChangeValueAddPA520 
       )
       {
+        
         trigger.value = true;
         originData.value.imputedYear = newYear;
         refetchData();
+        resetAllCheckerStatus()
       }
-    
+     
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
@@ -377,7 +331,65 @@ export default defineComponent({
         modalChangeValueAdd.value = true;
         return;
       } 
+
     })
+
+    watch(result,() => {
+      if (result && result.value) {
+        const data = result.value.getEmployeeWageDailies.map((i: any) => ({
+          ...i,
+          key: i.employeeId
+        })) ;
+        dataSource.value = new DataSource({
+          store: {
+              type: "array",
+              key: 'key',
+              data: result.value ? data : [],
+          }
+        })
+
+        // Total number of employees who have quit
+        totalUserOnl.value = result.value.getEmployeeWageDailies.filter(
+          (val: any) => val.status != 0
+        ).length;
+        totalUserOff.value = result.value.getEmployeeWageDailies.filter(
+          (val: any) => val.status == 0
+        ).length;
+
+        // this is case after save done
+        if (store.state.common.rowIdSaveDonePa520 != 0) {
+          // Get index row change
+          let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value;
+          idRowEdit.value = parseInt(idRowNextForcus);
+          focusedRowKey.value = parseInt(idRowNextForcus);
+          store.state.common.countBtOnclick = 0;
+
+          isClickRow = false;
+          isDelete.value = false;
+          store.state.common.rowIdSaveDonePa520 = 0
+        }
+
+        // for the case of changing the year and having to focus on the first row
+        if (isChangeYear.value) {
+          isChangeYear.value = false
+          dataSource.value.load()
+          let items = dataSource.value.items()
+          if (items.length > 0) { // If there is data, focus on the first row
+            idRowEdit.value = dataSource.value.items()[0].employeeId;
+            focusedRowKey.value = dataSource.value.items()[0].employeeId;
+          } else {// If there is no data, add an input box
+            onAddBtClick()
+          }
+        }
+        trigger.value = false;
+      }
+    });
+
+    watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
+      dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
+    },{ deep: true })
+
+
 
     watch(
       () => isAddNewStatus.value,
@@ -398,6 +410,15 @@ export default defineComponent({
       { deep: true }
     );
     // ======================= FUNCTION ================================
+
+    const resetAllCheckerStatus = () => {
+      store.state.common.checkChangeValueEditTab1PA520 = false
+      store.state.common.checkChangeValueEditTab2PA520 = false
+      store.state.common.checkChangeValueAddPA520 = false
+      store.state.common.activeAddRowPA520 = false
+      store.state.common.addRowBtOnclick = false
+      store.state.common.countBtOnclick  = 0
+    }
     const onExporting = (e: { component: any; cancel: boolean }) => {
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("Employees");
@@ -419,7 +440,9 @@ export default defineComponent({
 
     const funcAddNewRow = async () => {
       store.state.common.activeAddRowPA520 = true;
-      dataSource.value.store().insert(DataCreatedTable).then(() => dataSource.value.reload());
+      dataSource.value.store().remove(0).then(() => {
+        dataSource.value.store().insert(DataCreatedTable).then(() => dataSource.value.reload());
+      })
       focusedRowKey.value = 0
       resetAddComponent.value++;
       actionChangeComponent.value = 1;
@@ -437,6 +460,7 @@ export default defineComponent({
       }
       // // Adding a new row to the table.
       if (store.state.common.activeAddRowPA520 == false) {
+      
         funcAddNewRow();     
         actionChangeComponent.value = 1;
         isAddNewStatus.value = true;
@@ -453,8 +477,7 @@ export default defineComponent({
     const onFocusedRowChanging = (event: any)=>{
       let newRowIndex = event.newRowIndex
       idRowCurrentClick.value = event.rows[newRowIndex].data.employeeId
-      // alert('onFocusedRowChanging' )
-      //  // for case Edit  but click other row
+      // for case Edit  but click other row
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
@@ -475,7 +498,6 @@ export default defineComponent({
       }else{
         actionChangeComponent.value = 2;
         store.state.common.idRowChangePa520 = focusedRowKey.value;
-        console.log('onFocusedRowChanged',event);
         idRowEdit.value = event.row.data.employeeId;
       }
     }
@@ -524,11 +546,7 @@ export default defineComponent({
           funcAddNewRow();
           store.state.common.checkChangeValueEditTab2PA520 = false;
         } else {
-          idRowEdit.value = idRowCurrentClick.value;
-          focusedRowKey.value = idRowCurrentClick.value;
-          // for case edit tab2 and click other row
-          // store.state.common.idRowChangePa520 = focusedRowKey.value
-          store.state.common.checkChangeValueEditTab2PA520 = false;
+          isClickRow = true
         }
       } else {
         if (addRowBtOnclick.value) {
@@ -547,14 +565,7 @@ export default defineComponent({
    
       if (res == true && addRowBtOnclick.value) {
         actionSave();
-         // Setting the value of the addRowOnclick variable to false.
-        store.state.common.addRowBtOnclick = false;
-        resetAddComponent.value++; // increment one unit to reset the newly created form
-        store.state.common.addRowBtOnclick = false;
-        store.state.common.activeAddRowPA520 = false;
-        store.state.common.checkChangeValueAddPA520 = false;
       }else if (res == true &&  !addRowBtOnclick.value) {
-
         actionSave();
         idRowEdit.value = idRowCurrentClick.value;
         focusedRowKey.value = idRowCurrentClick.value;
@@ -620,7 +631,8 @@ export default defineComponent({
       trigger,
       onFocusedRowChanged,
       onFocusedRowChanging,
-      idRowCurrentClick
+      idRowCurrentClick,
+      idRowSaveDone
     };
   },
 });

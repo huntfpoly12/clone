@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">{{ globalYear }}
+        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -123,7 +123,6 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
-import DataSource from 'devextreme/data/data_source';
 export default defineComponent({
     props: {
         idRowEdit: Number,
@@ -229,6 +228,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
+          store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId 
           store.state.common.checkChangeValueEditTab1PA520 = false
           dataDefault.value = JSON.stringify(dataEdited)
           emit('closePopup', false)
@@ -253,11 +253,13 @@ export default defineComponent({
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = 'C-4'
             }
         })
  
-        watch(dataEdited, (newvl,oldvl) => {
+        watch(dataEdited, (newvl, oldvl) => {
+          // if (disabledSelectBox) {
+          //   dataEdited.stayQualification = null
+          // }
           // If the corrected data is different from the default data, change the check change status
           if (dataDefault.value !== JSON.stringify(dataEdited)) {
             store.state.common.checkChangeValueEditTab1PA520 = true
@@ -278,7 +280,8 @@ export default defineComponent({
         const actionUpdated = () => {
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
+              res.brokenRules[0].validator.focus();
+              store.state.common.checkChangeValueEditTab1PA520 = true
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
@@ -297,6 +300,7 @@ export default defineComponent({
                 mutate(dataCallCreat)
             }
         }
+
         watch(() => store.state.common.actionUpdateTab1PA520, () => {
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
