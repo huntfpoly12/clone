@@ -1,4 +1,3 @@
-import { GridConfig} from "@/configs/styles";
 import dayjs from "dayjs";
 import {ActionContext, Module} from "vuex";
 export enum ClickYearStatus {
@@ -11,6 +10,20 @@ export enum FormStatus {
   adding = 'adding',
   editing = 'editing'
 }
+export interface GridConfig {
+  per_page: Number;
+  sort: boolean;
+  move_column: boolean;
+  colomn_resize: boolean;
+  row_resize: boolean;
+  isPopupVisible: boolean
+  formStatus: FormStatus
+  clickYearStatus: ClickYearStatus
+  currentYear: number,
+  newYear: number,
+  globalYear: number
+}
+
 const settingModule: Module<GridConfig, any>  = {
   namespaced: true,
   state: {

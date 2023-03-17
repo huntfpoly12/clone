@@ -77,17 +77,3 @@ export const styles: Styles = {
   BackgroundButtonCalculate: "orange",
   BorderButtonCalculate: "1px solid orange",
 };
-
-export interface GridConfig {
-  per_page: Number;
-  sort: boolean;
-  move_column: boolean;
-  colomn_resize: boolean;
-  row_resize: boolean;
-  isPopupVisible: boolean
-  formStatus: FormStatus
-  clickYearStatus: ClickYearStatus
-  currentYear: number,
-  newYear: number,
-  globalYear: number
-}
