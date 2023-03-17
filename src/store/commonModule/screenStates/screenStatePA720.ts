@@ -18,6 +18,9 @@ let statesPA720 = {
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
+      employee:{
+        key:0
+      }
     },
   },
   formEditPA720: {
@@ -31,6 +34,9 @@ let statesPA720 = {
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
+      employee:{
+        key:0
+      }
     },
   },
   paymentDayPA720:1,
@@ -45,6 +51,9 @@ let statesPA720 = {
         withholdingIncomeTax: null,
         withholdingLocalIncomeTax: null,
         incomeId: "99axbzkk",
+        employee:{
+          key:0
+        }
     }
   },
   processKeyPA720: {

@@ -300,7 +300,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+                <a-col :span="12" class="custom-layout" style="padding-right: 0px;" :class="{'disabledBlock': !store.state.common.dataTaxPayInfo.length}">
                     <FormDataComponent />
                 </a-col>
                 <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
@@ -489,15 +489,17 @@ export default defineComponent({
             if (obj) {
                 statusDisabledBlock.value = false;
                 if (isRunOnce.value) {
-                    isRunOnce.value = false;
                     showDetailSelected(obj)
                 } else  {
-                    activeNewMonth(dataMonthNew.value)
+                    if (checkClickMonth.value)
+                        activeNewMonth(dataMonthNew.value)
+                    else
+                        activeNewMonth(obj)
                 }
             } else {
                 status.value = null
                 statusDisabledBlock.value = true;
-                triggerDataTaxPayInfo.value = true;
+                triggerDataTaxPayInfo.value = true; //reset data table 2
             }
             
         })
@@ -514,6 +516,7 @@ export default defineComponent({
         watch(resultTaxPayInfo, (value) => {
             triggerDataTaxPayInfo.value = false;
             if (value) {
+                // debugger
                 store.state.common.dataTaxPayInfo = value.getIncomeWages;
                 // debugger
                 // if (value.getIncomeWages[0] && !store.state.common.statusFormAdd) { // if have data
@@ -526,8 +529,6 @@ export default defineComponent({
                             // isRunOnceTaxPayInfo.value = false;
                             store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
-                            console.log(store.state.common.incomeId);
-                            
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
                         } else {
                             if (store.state.common.statusClickButtonSave) { // if click submit
@@ -537,22 +538,22 @@ export default defineComponent({
                             }
                             store.state.common.dataIncomeIdBackend = null;
                         }
-                        // store.state.common.employeeId = value.getIncomeWages[0].employeeId
                     // }
                     store.state.common.statusFormAdd = false
                 } else {
                     store.state.common.statusFormAdd = true
                     store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
-                    // store.state.common.employeeId = null;
                     store.state.common.actionResetForm++;
                 }
             }
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 store.state.common.addRow++ // add row
+                store.state.common.statusRowAdd = false
             } else { // call api detail
                 if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
                     store.state.common.loadingFormData++
+                    
                 } else {
                     if (!store.state.common.statusFormAdd) {
                         store.state.common.actionResetForm++
@@ -566,7 +567,7 @@ export default defineComponent({
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
-            triggerDataTaxPayInfo.value = true; //reset data table 2
+            // triggerDataTaxPayInfo.value = true; //reset data table 2
             // refetchDataTaxPayInfo() 
         })
 
@@ -582,7 +583,7 @@ export default defineComponent({
             dataRows.value = []
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-110") {
+            if (newVal.id == "pa-110" && !store.state.common.statusFormAdd) {
                 triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
@@ -611,25 +612,25 @@ export default defineComponent({
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
-            if (store.state.common.statusChangeFormEdit || store.state.common.statusChangeFormEdit) {
+            if (store.state.common.statusChangeFormEdit && !isRunOnce.value) {
                 modalChangeRow.value = true
                 checkClickMonth.value = true
             } else {
+                isRunOnce.value = false
                 activeNewMonth(month)
             }
         }
         // A function that is called when a user clicks on a button.
         const activeNewMonth = (month: any) => {
-            // isRunOnceTaxPayInfo.value = true;
             status.value = month.status
             store.state.common.processKeyPA110.imputedYear = month.imputedYear
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
             store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
             triggerDataTaxPayInfo.value = true; //reset data table 2
-            // store.state.common.processKeyPA110.imputedYear = globalYear.value;
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
+            // debugger
         }
         /**
          * copy data from other month
@@ -687,33 +688,31 @@ export default defineComponent({
         }
         const statusComfirmChange = (res: any) => {
             if (res) { // action save form
-                // (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
                 store.state.common.actionSubmit++
             } else { //  no save form
                 store.state.common.statusChangeFormEdit = false;
                 store.state.common.statusChangeFormAdd = false;
+                if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
+                    store.state.common.statusFormAdd = false
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
                     return;
                 }
-                if (dataYearNew.value != globalYear.value) {
-                    store.state.settings.globalYear = dataYearNew.value
-                    store.state.common.processKeyPA110.imputedYear = dataYearNew.value
-                    store.state.common.processKeyPA110.paymentYear = dataYearNew.value
-                    originData.value.imputedYear = dataYearNew.value
-                    originDataTaxPayInfo.value.processKey.imputedYear = dataYearNew.value
-                    // refetchDataProcessIncomeWages() //reset data table 1
+                if (store.state.common.checkClickYear) {
+                    isRunOnce.value = true;
+                    store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                    store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                    originData.value.imputedYear = store.state.common.dataYearNew
                     trigger.value = true; //reset data table 1
-                    triggerDataTaxPayInfo.value = true; //reset data table 2
-                    // refetchDataTaxPayInfo() //reset data table 2
-                    // checkClickYear.value = false;
+                    store.state.settings.globalYear = store.state.common.dataYearNew
+                    setTimeout(() => {
+                        store.state.common.checkClickYear = false;
+                    }, 500);
                     return;
-                }
-                if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
-                    store.state.common.statusFormAdd = false
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
                 store.state.common.loadingFormData++
@@ -731,7 +730,6 @@ export default defineComponent({
                             e.cancel = true;
                     } else { // cho chọn raw mới
                         if (store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
-                            
                             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                             store.state.common.statusRowAdd = true
                         }
@@ -744,24 +742,23 @@ export default defineComponent({
                 }
             }
         };
-        // const checkClickYear = ref<Boolean>(false)
-        const dataYearNew = ref(globalYear.value)
         watch(globalYear, (newVal, oldVal) => {
-            dataYearNew.value = newVal;
             if (store.state.common.statusChangeFormEdit) {
-                modalChangeRow.value = true
-                // checkClickYear.value = true
-                store.state.settings.globalYear = oldVal;
+                if (!store.state.common.checkClickYear) {
+                    modalChangeRow.value = true
+                    store.state.common.checkClickYear = true
+                    store.state.settings.globalYear = oldVal;
+                    store.state.common.dataYearNew = newVal;
+                    return
+                }
+                return
             } else {
                 isRunOnce.value = true;
                 store.state.common.processKeyPA110.imputedYear = newVal
                 store.state.common.processKeyPA110.paymentYear = newVal
                 originData.value.imputedYear = newVal
                 originDataTaxPayInfo.value.processKey.imputedYear = newVal
-                // refetchDataProcessIncomeWages() //reset data table 1
                 trigger.value = true; //reset data table 1
-                // refetchDataTaxPayInfo() //reset data table 2
-                // triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
         return {

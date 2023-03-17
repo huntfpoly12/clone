@@ -27,6 +27,10 @@ const statesPA110 = {
   statusClickButtonSave: true,
   addRow: 1,
   dataIncomeIdBackend: null,
+  onEditItem: 1,
+  statusClickEditItem: false,
+  checkClickYear: false,
+  dataYearNew: null,
 };
 
 export default statesPA110;

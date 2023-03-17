@@ -246,7 +246,6 @@ export default defineComponent({
        store.state.common.isAddFormErrorPA120 = false;
        store.commit('common/editRowPA120', initFormStateTabPA120.value);
        store.state.common.rowKeyTab2PA120 = initFormStateTabPA120.value.employeeId;
-    //    store.state.common.isNewRowPA120
     });
 
     onError((error) => {
@@ -266,22 +265,23 @@ export default defineComponent({
           imputedYear: globalYear.value,
           input: {
             ...initFormStateTabPA120.value,
-            employeeId: +employeeId.value,
+            employeeId: +initFormStateTabPA120.value.employeeId,
             joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
             leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
           },
         };
-        createEmployeeWage(dataNew);
+        emit('setTabsStatus', false);
+        notification("success", `사원등록이 완료되었습니다! `);
+        store.commit('common/actionFormDonePA120')
+        store.state.common.isCompareEditPA120 = false;
+        store.state.common.isNewRowPA120 = false;
+        store.state.common.isAddFormErrorPA120 = false;
+        store.commit('common/editRowPA120', initFormStateTabPA120.value);
+        store.state.common.rowKeyTab2PA120 = initFormStateTabPA120.value.employeeId;
+        // createEmployeeWage(dataNew);
       }
     };
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
-// convert initFormStateTabPA120.value.name to uppercase
-    // watch(()=> initFormStateTabPA120.value.name,(newVal)=> {
-    //   if(newVal){
-    //     console.log(newVal);
-    //     initFormStateTabPA120.value.name = newVal.toUpperCase();
-    //   }
-    // },{deep: true})
     const changeTextCountry = (text: any) => {
         initFormStateTabPA120.value.nationality = text
     }

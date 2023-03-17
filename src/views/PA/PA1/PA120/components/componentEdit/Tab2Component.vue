@@ -499,19 +499,20 @@ export default defineComponent({
     watch(resCalcIncomeWageTax, (value) => {
       if (value) {
         let itemValue11 = value.calculateIncomeWageTax * initFormTab2PA120.value.incomeTaxMagnification / 100;
+        let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
         dataConfigDeduction.value?.map((item: any) => {
           if (item.itemCode == 1011) {
             item.value = itemValue11;
             initFormTab2PA120.value.deductionItems[4] = {
               itemCode: 1011,
-              amount: value.calculateIncomeWageTax,
+              amount: itemValue11,
             };
           }
           if (item.itemCode == 1012) {
             item.value = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
             initFormTab2PA120.value.deductionItems[5] = {
               itemCode: 1012,
-              amount: value.calculateIncomeWageTax,
+              amount: itemValue12,
             };
           }
         });

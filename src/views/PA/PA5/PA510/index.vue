@@ -478,7 +478,11 @@ export default defineComponent({
                     isRunOnce.value = false;
                     showDetailSelected(obj)
                 } else {
-                    activeNewMonth(dataMonthNew.value)
+                    if (checkClickMonth.value) {
+                        activeNewMonth(dataMonthNew.value)
+                    } else {
+                        activeNewMonth(obj)
+                    }
                 }
             } else {
                 status.value = null
@@ -516,10 +520,10 @@ export default defineComponent({
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
             trigger.value = true; //reset data table 1
-            IncomeWageDailiesTrigger.value = true; //reset data table 2
+            // IncomeWageDailiesTrigger.value = true; //reset data table 2
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-510") {
+            if (newVal.id == "pa-510" && !store.state.common.statusFormAdd) {
                 IncomeWageDailiesTrigger.value = true; //reset data table 2
             }
         })
@@ -531,7 +535,7 @@ export default defineComponent({
             }
         })
         watch(globalYear, (newVal, oldVal) => {
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 if (!store.state.common.checkClickYear) {
                     modalChangeRow.value = true
                     store.state.common.checkClickYear = true
@@ -587,7 +591,7 @@ export default defineComponent({
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             dataMonthNew.value = month
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
                 checkClickMonth.value = true
             } else {
@@ -613,6 +617,11 @@ export default defineComponent({
             } else {
                 store.state.common.statusChangeFormEdit = false;
                 store.state.common.statusChangeFormAdd = false;
+                if (!store.state.common.statusRowAdd) {
+                    store.state.common.statusFormAdd = false
+                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                    store.state.common.statusRowAdd = true
+                }
                 if (checkClickMonth.value) {
                     activeNewMonth(dataMonthNew.value)
                     checkClickMonth.value = false;
@@ -622,8 +631,6 @@ export default defineComponent({
                     isRunOnce.value = true;
                     store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                     store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                    // originDataTaxPayInfo.value.processKey.imputedYear = store.state.common.dataYearNew
-                    // originDataTaxPayInfo.value.processKey.paymentYear = store.state.common.dataYearNew
                     originData.value.imputedYear = store.state.common.dataYearNew
                     trigger.value = true; //reset data table 1
                     store.state.settings.globalYear = store.state.common.dataYearNew
@@ -631,11 +638,6 @@ export default defineComponent({
                         store.state.common.checkClickYear = false;
                     }, 500);
                     return;
-                }
-                if (!store.state.common.statusRowAdd) {
-                    store.state.common.statusFormAdd = false
-                    store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                    store.state.common.statusRowAdd = true
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
@@ -680,7 +682,7 @@ export default defineComponent({
             } else {
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                    if (store.state.common.statusChangeFormEdit) {
+                    if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                         // if (store.state.common.statusChangeFormPrice) {
                         //     modalChangeRowPrice.value = true;
                         // } else {

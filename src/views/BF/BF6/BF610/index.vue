@@ -87,7 +87,7 @@
                 :show-borders="true" key-expr="createdAt" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                   <DxScrolling mode="standard" show-scrollbar="always" />
-                  <DxSelection mode="multiple" :fixed="true" />
+<!--                  <DxSelection mode="multiple" :fixed="true" />-->
                   <DxColumn caption="출력 메일" cell-template="action" />
                   <template #action="{ data }">
                     <a-tooltip>
@@ -99,7 +99,10 @@
                       <img src="@/assets/images/email.svg" alt="" style="width: 25px;"
                           @click="actionSendEmail(data.data)" />
                   </template>
-                  <DxColumn caption="사업자코드" data-field="company.code" />
+                  <DxColumn caption="사업자코드" cell-template="company-code" data-field="company.code" />
+                  <template #company-code="{ data }">
+                    {{ `${data.data.company.code} ${data.data.active ? '' : '[해지]'}` }}
+                  </template>
                   <DxColumn caption="상호 주소" cell-template="company" width="100" />
                   <template #company="{ data }">
                       <a-tooltip color="black" placement="topLeft">
@@ -224,7 +227,7 @@ import notification from "@/utils/notification";
 import { PlusOutlined, } from "@ant-design/icons-vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import { DxColumn, DxDataGrid, DxItem, DxScrolling, DxSelection, DxToolbar, DxSummary, DxTotalItem, DxPaging, DxPager } from "devextreme-vue/data-grid";
+import { DxColumn, DxDataGrid, DxItem, DxScrolling, DxToolbar, DxSummary, DxTotalItem, DxPaging, DxPager } from "devextreme-vue/data-grid";
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useStore } from 'vuex';
 import PopupAddStatus from "./components/PopupAddStatus.vue";
@@ -232,7 +235,7 @@ import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 export default defineComponent({
   components: {
-      DxDataGrid, DxToolbar, DxSelection, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
+      DxDataGrid, DxToolbar, DxButton, DxColumn, DxItem, DxScrolling, PlusOutlined
       , PopupAddStatus, PopupPrint, PopupSendEmail, DxSummary, DxTotalItem,DxPaging, DxPager
   },
   computed: {
@@ -362,7 +365,7 @@ export default defineComponent({
       }));
       // get data from api set to dataSource and dataOrigin
       resTable(res => {
-          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth?.filter((item: any) => item.active)
+          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth?.filter((item: any) => filter.active ? item.active : true)
           dataOrigin.value = res.data.searchTaxWithholdingStatusReportsByYearMonth
           trigger.value = false
       })

@@ -19,6 +19,7 @@ import { defineComponent } from 'vue';
 import notification from '@/utils/notification';
 import { useMutation } from '@vue/apollo-composable';
 import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -32,13 +33,14 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
+    const messageDel = Message.getMessage('COMMON', '404').message;
     const setModalVisible = () => {
       emit('closePopup', false);
     };
     const { mutate: onDelIncomeExtras, onDone: onDoneDeleteIncomeExtras, onError: onErorDeleteIncomeExtras } = useMutation(mutations.deleteIncomeExtras);
     onDoneDeleteIncomeExtras((e) => {
       setModalVisible();
-      notification('success', ` 완료!`);
+      notification('success', messageDel);
       emit('delDone')
     });
 
