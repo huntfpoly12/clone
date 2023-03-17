@@ -121,7 +121,7 @@
             </a-row>
         </StandardForm></a-spin>
         <div class="text-align-center mt-50" style="display: flex; justify-content: center;">
-            <a-tooltip placement="top">
+            <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
                     <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
@@ -689,13 +689,13 @@ export default defineComponent({
         // A function that is being called in the Vue HTML.
         const showDailyWage = () => {
             let price = Math.round(dataIncomeWageDaily.value.monthlyWage /  dataIncomeWageDaily.value.workingDays)
-            dataIncomeWageDaily.value.dailyWage = price ? price : dataIncomeWageDaily.value.dailyWage
+            dataIncomeWageDaily.value.dailyWage = isFinite(price) ? price : dataIncomeWageDaily.value.dailyWage
             return filters.formatCurrency(dataIncomeWageDaily.value.dailyWage)
         }
         // A function that is being called in the HTML.
         const showMonthlyWage = () => {
             let price = dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays
-            dataIncomeWageDaily.value.monthlyWage = price ? price : dataIncomeWageDaily.value.monthlyWage
+            dataIncomeWageDaily.value.monthlyWage = isFinite(price) ? price : dataIncomeWageDaily.value.monthlyWage
             return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
         }
         return {
