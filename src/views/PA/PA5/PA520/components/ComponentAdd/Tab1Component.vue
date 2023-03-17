@@ -189,6 +189,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
+            store.state.common.addRowBtOnclick = false
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false
@@ -212,20 +213,22 @@ export default defineComponent({
             }
         })
         watch(() => dataCreated, (value) => {
-            if (store.state.common.activeAddRowPA520 == true) {
-                let dataTable = store.state.common.dataSourcePA520[store.state.common.dataSourcePA520.length - 1]
-                dataTable.employeeId = value.employeeId
-                dataTable.name = value.name
-                dataTable.foreigner = value.foreigner
-                dataTable.status = dataCreated.leavedAt ? false : true
-                dataTable.residentId = value.residentId
+            
+            // if (store.state.common.activeAddRowPA520 == true) {
+            let dataTable = {
+                employeeId : value.employeeId,
+                name : value.name,
+                foreigner  : value.foreigner,
+                status  :  dataCreated.leavedAt ? false : true,
+                residentId  :  value.residentId,
             }
-            if (JSON.stringify(DataCreated) !== JSON.stringify(value))
+
+            store.state.common.dataSourcePA520 = dataTable
+            if (JSON.stringify(DataCreated) !== JSON.stringify(value)){
                 store.state.common.checkChangeValueAddPA520 = true
-            else
+            }else{
                 store.state.common.checkChangeValueAddPA520 = false
-
-
+            }
         }, { deep: true })
         watch(() => store.state.common.actionSaveAddPA520, (value) => {
           actionCreated()

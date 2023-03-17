@@ -146,7 +146,7 @@ export default defineComponent({
         })
         const originDataDetail = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: props.idRowEdit
         })
         let dataDefault = ref({})
@@ -228,6 +228,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(() => {
+          store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId 
           store.state.common.checkChangeValueEditTab1PA520 = false
           dataDefault.value = JSON.stringify(dataEdited)
           emit('closePopup', false)
@@ -252,11 +253,13 @@ export default defineComponent({
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = 'C-4'
             }
         })
  
-        watch(dataEdited, (newvl,oldvl) => {
+        watch(dataEdited, (newvl, oldvl) => {
+          // if (disabledSelectBox) {
+          //   dataEdited.stayQualification = null
+          // }
           // If the corrected data is different from the default data, change the check change status
           if (dataDefault.value !== JSON.stringify(dataEdited)) {
             store.state.common.checkChangeValueEditTab1PA520 = true
@@ -277,7 +280,8 @@ export default defineComponent({
         const actionUpdated = () => {
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
+              res.brokenRules[0].validator.focus();
+              store.state.common.checkChangeValueEditTab1PA520 = true
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
@@ -296,6 +300,7 @@ export default defineComponent({
                 mutate(dataCallCreat)
             }
         }
+
         watch(() => store.state.common.actionUpdateTab1PA520, () => {
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
@@ -305,7 +310,7 @@ export default defineComponent({
 
         return {
             activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault
+            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault,globalYear
         };
     },
 });
