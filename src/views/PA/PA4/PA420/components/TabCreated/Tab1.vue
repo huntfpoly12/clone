@@ -249,7 +249,7 @@
                 }}일</div>
             </a-col>
         </a-row>
-        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="checkBox"
+        <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="submitForm" id="btn-next-step"
             style="display: none;" />
     </standard-form>
 </template>
@@ -373,7 +373,7 @@ export default defineComponent({
         })
 
         watch(() => props.actionNextStep, () => {
-            (document.getElementById("checkBox") as HTMLInputElement).click();
+            (document.getElementById("btn-next-step") as HTMLInputElement).click();
         });
 
 

@@ -18,14 +18,19 @@
                 <a-form-item label="비과세퇴직급여(확정)">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits" format="0,#,###" :min="0"/>
+                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits" format="0,###" :min="0"/>
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="과세대상 퇴직급여(확정)">
                     <div class="d-flex-center">
-                        <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true" format="0,#,###" :min="0"/>
+                        <div :class="validateRetiTaxBenefits ? 'validate-caculate':''">
+                          <number-box-money :required="false" width="150px"
+                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true" format="0,###" :min="0"/>
+                            <div v-if="validateRetiTaxBenefits" class="message-error">
+                              <span>{{ Message.getMessage('PA420', '001').message }}</span>
+                            </div>
+                        </div>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top">
                             <template #title>= 퇴직급여(확정) - 비과세퇴직급여(확정)</template>
@@ -39,7 +44,7 @@
                     <div class="d-flex-top">
                         <div class="d-flex-center">
                             <number-box-money :required="false" width="150px"
-                                v-model:valueInput="dataForm.taxCalculationInput.taxCredit" format="0,#,###" :min="0"/>
+                                v-model:valueInput="dataForm.taxCalculationInput.taxCredit" format="0,###" :min="0"/>
                             <span class="pl-5 mr-5">원</span>
                             <a-tooltip placement="top">
                                 <template #title>거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
@@ -56,7 +61,7 @@
                 <a-form-item label="기납부(기과세이연)세액">
                     <div class="d-flex-center">
                         <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.prePaidDelayedTaxPaymentTaxAmount" format="0,#,###" :min="0"/>
+                            v-model:valueInput="dataForm.taxCalculationInput.prePaidDelayedTaxPaymentTaxAmount" format="0,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top">
                             <template #title>직전 중간정산시 소득세를 입력합니다.</template>
@@ -112,7 +117,7 @@
                 </div>
             </a-col>
             <div class="mb-10 wf-100 text-center">
-                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="calculateIncomeRetirementTax" />
+                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="calculateIncomeRetirementTax" :disabled="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits == 0"/>
             </div>
 
             <a-col :span="12">
@@ -212,7 +217,7 @@
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <div>연금계좌입금명세 (${{
+                <div>연금계좌입금명세 ({{
                     dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount ?
                         $filters.formatCurrency(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount)
                         :
@@ -326,6 +331,8 @@ import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 import { initialIncomeRetirementTax } from "../../utils/index"
+import { Message } from '@/configs/enum';
+import { validate } from 'json-schema';
 export default defineComponent({
     props: {
         dataForm: {
@@ -337,7 +344,7 @@ export default defineComponent({
         const trigger = ref<boolean>(false)
         const variables: any = ref({})
         const dataIncomeRetirementTax: any = ref({ ...initialIncomeRetirementTax })
-        
+        const validateRetiTaxBenefits = ref<boolean>(false)
         const {
             result,
             loading,
@@ -376,16 +383,25 @@ export default defineComponent({
         }
 
         // if there is any change in the two inputs retirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = retirementBenefits - nonTaxableRetirementBenefits)
-        watch(() => [props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits,
-                    props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits], () => {
+        watch(() => [
+          props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits,
+          props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits
+        ], () => {
+            validateRetiTaxBenefits.value =  false
             props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits =
             props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits -
             props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits
+
+            if (props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits <= 0) {
+              validateRetiTaxBenefits.value =  true
+            }  
         }) 
         return {
             loading,
             calculateIncomeRetirementTax,
             dataIncomeRetirementTax,
+            validateRetiTaxBenefits,
+            Message
         }
     }
 })

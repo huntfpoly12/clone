@@ -17,15 +17,22 @@
                 </a-form-item>
                 <a-form-item label="비과세퇴직급여(확정)">
                     <div class="d-flex-center">
+                     
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" format="0,#,###" :min="0"/>
+                            v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" format="0,###" :min="0"/>
+                            
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="과세대상 퇴직급여(확정)">
                     <div class="d-flex-center">
+                      <div :class="validateRetiTaxBenefits ? 'validate-caculate':''">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" :disabled="true" format="0,#,###" :min="0"/>
+                            v-model:valueInput="dataGet.specification.taxableRetirementBenefits" :disabled="true" format="0,###" :min="0"/>
+                            <div v-if="validateRetiTaxBenefits" class="message-error">
+                              <span>{{ Message.getMessage('PA420', '001').message }}</span>
+                            </div>
+                        </div>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>
@@ -39,7 +46,7 @@
                     <div class="d-flex-top">
                         <div class="d-flex-center">
                             <number-box-money width="150px"
-                                v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxCredit" format="0,#,###" :min="0"/>
+                                v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.taxCredit" format="0,###" :min="0"/>
                             <span class="pl-5 mr-5">원</span>
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -55,7 +62,7 @@
                 <a-form-item label="기납부(기과세이연)세액">
                     <div class="d-flex-center">
                         <number-box-money width="150px"
-                            v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount" format="0,#,###" :min="0"/>
+                            v-model:valueInput="dataGet.specification.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount" format="0,###" :min="0"/>
                         <span class="pl-5 mr-5">원</span>
                         <a-tooltip placement="top" class="custom-tooltip">
                             <template #title>
@@ -93,7 +100,7 @@
                 </template>
             </a-col>
             <div class="mb-10 wf-100 text-center">
-                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="actionCaculate" />
+                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="actionCaculate"  :disabled="dataGet.specification.taxableRetirementBenefits == 0"/>
             </div>
             <a-col :span="12">
                 <div class="header-text-2 mb-10">과세표준계산</div>
@@ -198,7 +205,7 @@
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
-                <div>연금계좌입금명세 ($
+                <div>연금계좌입금명세 (
                     {{
                         $filters.formatCurrency(
                             dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
@@ -301,6 +308,7 @@ import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     props: {
         actionNextStep: Number,
@@ -311,7 +319,7 @@ export default defineComponent({
         const dataGet: any = ref({
             ...store.state.common.formStateEditPA420
         })
-
+        const validateRetiTaxBenefits = ref<boolean>(false)
         const dataRequestCaculate: any = ref({
             companyId: companyId,
             input: {}
@@ -388,16 +396,22 @@ export default defineComponent({
                 refetchCaculate()
         }
         // if there is any change in the two inputs definedRetirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = definedRetirementBenefits - nonTaxableRetirementBenefits)
-        watch(() => [dataGet.value.specification.definedRetirementBenefits,
-                      dataGet.value.specification.nonTaxableRetirementBenefits], () => {
-                        dataGet.value.specification.taxableRetirementBenefits =
-                        dataGet.value.specification.definedRetirementBenefits - dataGet.value.specification.nonTaxableRetirementBenefits
+        watch(() => [
+          dataGet.value.specification.definedRetirementBenefits,
+          dataGet.value.specification.nonTaxableRetirementBenefits
+        ], () => {
+            validateRetiTaxBenefits.value =  false
+            dataGet.value.specification.taxableRetirementBenefits =
+            dataGet.value.specification.definedRetirementBenefits - dataGet.value.specification.nonTaxableRetirementBenefits
+            if (dataGet.value.specification.taxableRetirementBenefits <= 0) {
+              validateRetiTaxBenefits.value =  true
+            }  
         }) 
         return {
             dataGet,
             dayjs,
             loading,
-            actionCaculate,store
+            actionCaculate,store,Message,validateRetiTaxBenefits
         }
     }
 })
