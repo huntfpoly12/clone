@@ -32,8 +32,8 @@
         <a-col :span="2" style="padding-right: 10px">
           <div class="total-user">
             <div>
-              <span>{{ dataSource.length }}</span>
-              <span>전체</span>
+              <span>{{ totalUser }}</span>
+              <span> 전체</span>
             </div>
             <div>
               <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
@@ -44,7 +44,7 @@
           <div class="current-user">
             <div>
               <span>{{ totalUserOnl }}</span>
-              <span>재직</span>
+              <span> 재직</span>
             </div>
             <div>
               <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
@@ -55,7 +55,7 @@
           <div class="leave-user">
             <div>
               <span>{{ totalUserOff }}</span>
-              <span>퇴사</span>
+              <span> 퇴사</span>
             </div>
             <div>
               <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
@@ -156,15 +156,15 @@
       </a-row>
   </div>
   <PopupMessage :modalStatus="modalComfirmDelete" @closePopup="modalComfirmDelete = false" typeModal="confirm"
-      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요(modalComfirmDelete)" @checkConfirm="onConfirmDelete" />
+      :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmDelete" />
   <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
       :idRowEdit="idRowEdit" typeHistory="pa-520" />
   <!-- confirm for case edit   -->
   <PopupMessage :modalStatus="modalChangeValueEdit" @closePopup="modalChangeValueEdit = false" typeModal="confirm"
-      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오(modalChangeValueEdit)" @checkConfirm="comfirmAndSaveEdit" />
+      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
   <!-- confirm for case add -->
   <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
-      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오(modalChangeValueAdd)" @checkConfirm="confirmAndSaveAdd" />
+      :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="confirmAndSaveAdd" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, onMounted, reactive, watchEffect } from "vue";
@@ -251,6 +251,7 @@ export default defineComponent({
     const store = useStore();
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
+    const totalUser = ref(0);
     const idRowCurrentClick = ref(0);
     const oldGlobalYear = ref(0)
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -355,7 +356,7 @@ export default defineComponent({
         totalUserOff.value = result.value.getEmployeeWageDailies.filter(
           (val: any) => val.status == 0
         ).length;
-
+        totalUser.value = result.value.getEmployeeWageDailies.length;
         // this is case after save done
         if (store.state.common.rowIdSaveDonePa520 != 0) {
           // Get index row change
@@ -606,6 +607,7 @@ export default defineComponent({
       idRowEdit,
       totalUserOff,
       totalUserOnl,
+      totalUser,
       modalComfirmDelete,
       loading,
       modalDeleteStatus,

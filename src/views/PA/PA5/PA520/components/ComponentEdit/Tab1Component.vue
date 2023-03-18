@@ -1,6 +1,9 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <standard-form  formName="update-page-PA520" ref="formRefPa520Update">
+        <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
+          {{dataDefault}} 
+          <br>
+          {{ dataEdited }}
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -132,6 +135,7 @@ export default defineComponent({
         const formRefPa520Update = ref()
         const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
+        const isForeigner = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
@@ -149,7 +153,7 @@ export default defineComponent({
             imputedYear: globalYear,
             employeeId: props.idRowEdit
         })
-        let dataDefault = ref({})
+        let dataDefault = ref()
         const trigger = ref(true)
         // ============ GRAPQL ===============================
         const {
@@ -215,7 +219,7 @@ export default defineComponent({
                 dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
                 dataEdited.department = res.data.getEmployeeWageDaily.department
                 dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
-                dataDefault.value = JSON.stringify(dataEdited)
+                dataDefault.value = { ...dataEdited }
                 trigger.value = false
             }
         })
@@ -230,7 +234,7 @@ export default defineComponent({
         onDone(() => {
           store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId 
           store.state.common.checkChangeValueEditTab1PA520 = false
-          dataDefault.value = JSON.stringify(dataEdited)
+          dataDefault.value = dataEdited
           emit('closePopup', false)
           notification('success', '업데이트 완료!')
         })
@@ -245,23 +249,21 @@ export default defineComponent({
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataEdited.nationalityCode = 'KR'
-                // dataEdited.stayQualification = null
+                dataEdited.nationalityCode = null
+                dataEdited.stayQualification = null
             } else {
                 labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
+                dataEdited.stayQualification = dataDefault.value.stayQualification
             }
         })
  
         watch(dataEdited, (newvl, oldvl) => {
-          // if (disabledSelectBox) {
-          //   dataEdited.stayQualification = null
-          // }
           // If the corrected data is different from the default data, change the check change status
-          if (dataDefault.value !== JSON.stringify(dataEdited)) {
+          if (JSON.stringify(dataDefault.value) !== JSON.stringify(dataEdited)) {
             store.state.common.checkChangeValueEditTab1PA520 = true
           } else {
             store.state.common.checkChangeValueEditTab1PA520 = false

@@ -113,14 +113,14 @@
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
                             <span>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" subName="과세" width="100px" />
+                                    :name="item.name" :type="1" subName="과세" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" />
+                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                     :name="item.name" :type="3"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" />
+                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" subName="공제" width="100px" />
+                                    :name="item.name" :type="4" subName="공제" width="100px" :showTooltip="false"/>
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"

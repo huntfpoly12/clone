@@ -14,7 +14,6 @@
               </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
-              
                 <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                     placeholder="한글,영문(대문자) 입력 가능" />
             </a-form-item>
