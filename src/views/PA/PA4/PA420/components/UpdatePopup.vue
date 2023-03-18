@@ -43,7 +43,6 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { useStore } from 'vuex';
-import { dataDefaultDetailUtils } from '../utils';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -114,11 +113,21 @@ export default defineComponent({
             // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService == null) {
               checkBoxCallApi = false
-              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService = dataDefaultDetailUtils.specification.specificationDetail.prevRetiredYearsOfService
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetiredYearsOfService = {
+                settlementStartDate: null,
+                settlementFinishDate: null,
+                paymentDate: null,
+                exclusionDays:0,
+                additionalDays:0,
+              }
             }
             if (newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus == null) {
               checkBoxCallApi = false
-              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = dataDefaultDetailUtils.specification.specificationDetail.prevRetirementBenefitStatus
+              newValue.data.getIncomeRetirement.specification.specificationDetail.prevRetirementBenefitStatus = {
+                retirementBenefits: 0,
+                nonTaxableRetirementBenefits: 0,
+                taxableRetirementBenefits: 0
+              }
             }
             store.state.common.formStateEditPA420 =  {
                 ...newValue.data.getIncomeRetirement,
