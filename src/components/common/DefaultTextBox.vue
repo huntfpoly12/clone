@@ -49,6 +49,10 @@ export default defineComponent({
       default: '',
     },
     textBoxValue: String,
+    textUppercase: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     DxTextBox,
@@ -71,9 +75,8 @@ export default defineComponent({
     };
 
     watch(() => props.valueInput, (newValue) => {
-      value.value = newValue;
-    }
-    );
+      value.value = props.textUppercase ? newValue?.toUpperCase(): newValue;
+    });
 
     const valueChanged = () => {
       if (props.replaceRegex) {

@@ -531,6 +531,7 @@ export default defineComponent({
             isClickAddRow.value && addNewRow()
           });
         } else {
+          storeDataSource.value.update(previousRowData.value.key, previousRowData.value)
           // when change other row and want to add row
           addNewRow()
         }
@@ -699,8 +700,6 @@ export default defineComponent({
       };
     });
     const addNewRow = () => {
-      storeDataSource.value
-        .update(previousRowData.value.key, previousRowData.value)
       storeDataSource.value.insert(valueDefaultAction).then((result) => {
         formRef.value.resetValidate()
         selectRowKeyAction.value = 0;
