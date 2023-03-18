@@ -620,7 +620,7 @@ export default defineComponent({
             store.state.common.statusRowAdd = true;
         }
 
-        const statusComfirmChange = (res: any) => {
+        const statusComfirmChange = async (res: any) => {
             if (res) {
                 store.state.common.actionSubmit++
             } else {
@@ -642,10 +642,8 @@ export default defineComponent({
                     store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
                     originData.value.imputedYear = store.state.common.dataYearNew
                     trigger.value = true; //reset data table 1
-                    store.state.settings.globalYear = store.state.common.dataYearNew
-                    setTimeout(() => {
-                        store.state.common.checkClickYear = false;
-                    }, 500);
+                    await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                    await (store.state.common.checkClickYear = false);
                     return;
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId

@@ -2,36 +2,36 @@
     <standard-form action="" name="add-page-210" class="formPA510" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
         <a-spin :spinning="loading || loadingIncomeWageDaily" ><StandardForm formName="pa-510-form" ref="pa510FormRef">
             <a-row :key="countKey">
-                <a-col :span="12">
+                <a-col :span="14">
                     <a-form-item label="일용직사원" class="red">
                         <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
-                            @onChange="onChange" :activeType20="false" width="220px"/>
+                            @onChange="onChange" :activeType20="false" width="270px"/>
                     </a-form-item>
                     <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
-                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="220px"/>
+                            :spinButtons="true" :disabled="!store.state.common.statusFormAdd" :isFormat="true" width="270px"/>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="10">
                     <div class="top-content">
                         <a-typography-title :level="5" style="margin-bottom: 0;">요약</a-typography-title>
                     </div>
                     <a-form-item label="근무일수">
-                        <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="200px"
+                        <number-box :disabled="true" v-model:valueInput="dataIncomeWageDaily.workingDays" width="180px"
                             :required="true" min="1" :max="31" />
                     </a-form-item>
                     <a-form-item label="월급여">
                         <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.monthlyWage"
-                            width="200px" :required="true" />
+                            width="180px" :required="true" />
                     </a-form-item>
                     <a-form-item label="공제합계">
                         <number-box-money :disabled="true" v-model:valueInput="totalDeduction"
-                            width="200px" :required="true" />
+                            width="180px" :required="true" />
                     </a-form-item>
                     <a-form-item label="차인지급액">
                         <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.actualPayment"
-                            width="200px" :required="true" />
+                            width="180px" :required="true" />
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                         <span class="style-note">
                             급여합계 - 공제합계
@@ -110,7 +110,7 @@
                                         :name="item.name" :width="'130px'" :type="4" subName="공제" />
                                 </span>
                                 <div>
-                                    <number-box-money min="0" width="130px" :spinButtons="false"
+                                    <number-box-money min="0" width="130px" :spinButtons="false" @changeInput="onChangeInputDeduction"
                                         v-model:valueInput="item.price" :disabled="[1001, 1002, 1003].find(element => element == item.deductionItemCode)"/>
                                     <span class="pl-5">원</span>
                                 </div>
@@ -269,10 +269,8 @@ export default defineComponent({
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                store.state.settings.globalYear = store.state.common.dataYearNew
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
             await store.state.common.loadingTableInfo++
@@ -289,16 +287,14 @@ export default defineComponent({
             
             
         })
-        onerrorAdd((e: any) => {
+        onerrorAdd(async (e: any) => {
             notification('error', e.message)
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                store.state.settings.globalYear = store.state.common.dataYearNew
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
         })
@@ -307,11 +303,9 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.settings.globalYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return
             }
             await store.state.common.loadingTableInfo++
@@ -327,16 +321,14 @@ export default defineComponent({
             await (triggerIncomeWageDaily.value = true);
             
         })
-        onerrorUpdate((e: any) => {
+        onerrorUpdate(async (e: any) => {
             notification('error', e.message)
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                store.state.settings.globalYear = store.state.common.dataYearNew
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
         })
@@ -624,6 +616,13 @@ export default defineComponent({
                 employeeWageDailyTrigger.value = true;
             }
         }
+        const onChangeInputDeduction = () => {
+            if (store.state.common.statusFormAdd) {
+                store.state.common.statusChangeFormAdd = true
+            } else {
+                store.state.common.statusChangeFormEdit = true
+            }
+        }
         const pa510FormRef = ref()
         const onSubmitForm = () => {
             store.state.common.statusClickButtonSave = true;
@@ -723,7 +722,7 @@ export default defineComponent({
             countKey,
             submitForm, onSubmitForm,
             showErrorButton,
-            showDailyWage, showMonthlyWage
+            showDailyWage, showMonthlyWage, onChangeInputDeduction
         };
     },
 });
