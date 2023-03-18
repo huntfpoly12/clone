@@ -252,24 +252,29 @@ export default defineComponent({
         const countKey: any = ref(0)
         const originDataEmployeeWage = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: null,
         }
         const calculateVariables = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             totalTaxPay: 0,
             dependentCount: 1
         }
-        const originData = reactive({
+        const originData = {
             companyId: companyId,
-            imputedYear: globalYear.value,
-        })
-        const incomeWageParams = reactive({
+            imputedYear: globalYear,
+        }
+        const originDataConfig = {
+            companyId: companyId,
+            imputedYear: globalYear,
+            useOnly: true,
+        }
+        const incomeWageParams = {
             companyId: companyId,
             processKey: { ...processKey.value },
             incomeId: 0
-        })
+        }
 
         const totalPayItem = ref<number>(0)
         const totalPayItemTax = ref<number>(0)
@@ -283,7 +288,7 @@ export default defineComponent({
             enabled: triggerEmployeeWages.value,
             fetchPolicy: "no-cache",
         }))
-        const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
+        const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originDataConfig, () => ({
             enabled: triggerConfigPayItems.value,
             fetchPolicy: "no-cache",
         }))
@@ -291,7 +296,7 @@ export default defineComponent({
             onResult: resConfigDeductions,
             loading: loadingConfigDeductions,
             refetch: refetchConfigDeduction,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
             enabled: triggerConfigDeductions.value,
             fetchPolicy: "no-cache",
         }))
@@ -636,6 +641,8 @@ export default defineComponent({
         watch(globalYear, (newVal) => {
             originData.imputedYear = newVal
             triggerEmployeeWages.value = true;
+            triggerConfigPayItems.value = true;
+            triggerConfigDeductions.value = true;
         })
         // ======================= FUNCTION ================================
         const pa110FormRef = ref()
