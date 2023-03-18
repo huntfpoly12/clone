@@ -6,7 +6,7 @@
                 <div class="month-custom-1 d-flex-center">
                     귀 {{ store.state.settings.globalYear }}-{{ $filters.formatMonth(month1) }}
                 </div>
-                <month-picker-box-custom v-model:valueDate="month2"/>
+                <month-picker-box-custom v-model:valueDate="month2" text="지"/>
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right" class="label-required">

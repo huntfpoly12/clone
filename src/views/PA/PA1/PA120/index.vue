@@ -51,6 +51,7 @@
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
             :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
+            <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
               :search-visible-columns="['TypeCodeAndName']" />
             <DxExport :enabled="true" />
@@ -133,7 +134,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxExport } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxExport, } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';

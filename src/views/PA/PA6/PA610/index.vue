@@ -289,7 +289,7 @@ import Tooltip from "@/components/common/Tooltip.vue";
 import {Message} from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import {companyId, onExportingCommon} from "@/helpers/commonFunction";
-import {isEqualObject} from "@/utils";
+import {compareObject, isEqualObject} from "@/utils";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -307,6 +307,7 @@ import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import {ArrForeigner, valueDefaultAction} from "./utils";
+import {ClickYearStatus, FormStatus} from "@/store/settingModule";
 
 export default defineComponent({
   name: 'MyForm',
@@ -340,13 +341,17 @@ export default defineComponent({
 },
   setup() {
     const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';
+    const arrForeigner = ArrForeigner;
 
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const column_resize = computed(() => store.state.settings.column_resize);
-    const arrForeigner = ArrForeigner;
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = computed(() => store.getters['settings/currentYear'])
+    const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
+    const formStatus = computed(() => store.getters['settings/formStatus']);
+    const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
+    const isFormChange = computed(() => !compareObject(dataShow.value, previousRowData.value));
     // Ref
     const formWrapper = ref(null)
     const isDiscard = ref(false); // verify popup discard
@@ -374,24 +379,28 @@ export default defineComponent({
     const isDiscardDelete = ref(false);
     const textResidentId = ref("주민등록번호");
 
-    const dataGridRef = computed(function () {
-      return gridRef.value?.instance as any;
-    }); // ref of grid Instance
 
     // Watch listen dataShow change and change dataShow.name to uppercase
 
     watchEffect(() => {
       dataShow.value.name = dataShow.value.name?.toUpperCase() ?? '';
     });
-    watch(globalYear, () => {
-      selectRowKeyAction.value = 0;
-      previousRowData.value = {...valueDefaultAction};
-      focusedRowKey.value = 0;
-      // dataGridRef.value?.refresh();
-      formRef.value.resetValidate()
-      isNewRow.value = false
-      dataShow.value = valueDefaultAction;
-    });
+
+    // watch isFormChange change and change status of form
+    watch(isFormChange, (newVal) => {
+      if (newVal) {
+        store.commit('settings/setFormStatus', FormStatus.editing);
+      } else {
+        store.commit('settings/setFormStatus', FormStatus.none);
+      }
+    }, {deep: true});
+
+    // Watch listen clickYearStatus
+    watch(clickYearStatus, async (newVal : ClickYearStatus) => {
+      if (newVal !== ClickYearStatus.none) {
+        await handleSubmit();
+      }
+    }, {deep: true});
 
     // ================GRAPHQL==============================================
     const valueCallApiGetEmployeeBusinesses = reactive({
@@ -420,10 +429,14 @@ export default defineComponent({
           data: data as Array<any>,
           key: "key",
         },
-        // select: ["key", "residentId", "name", "incomeTypeCode", "employeeId"],
-        // requireTotalCount: true,
       });
-
+      if(data.length === 0) {
+        formRef.value.resetValidate();
+        previousRowData.value = {...valueDefaultAction};
+        dataShow.value = valueDefaultAction;
+      }
+      // focusedRowKey.value = 0;
+      isNewRow.value = false
     });
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
     const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
@@ -452,7 +465,7 @@ export default defineComponent({
       }
       isNewRow.value = true;
     };
-    // TODO handle onFocusedRowChanging to row
+    // handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
       // create new row and click row other then check data input
       if (isNewRow.value) {
@@ -503,9 +516,6 @@ export default defineComponent({
       previousRowData.value = { ...e.row?.data };
     };
 
-    // // handle onClick to row
-    // const onRowClick = (e: RowClickEvent) => {
-    // };
     // handle cancel popup
     const handleDiscardPopup = (e: boolean) => {
       isDiscard.value = e;
@@ -522,13 +532,7 @@ export default defineComponent({
           });
         } else {
           // when change other row and want to add row
-          storeDataSource.value.insert(valueDefaultAction).then((result) => {
-            formRef.value.resetValidate()
-            selectRowKeyAction.value = 0;
-            focusedRowKey.value = 0;
-            dataShow.value = result;
-            dataGridRef.value?.refresh();
-          });
+          addNewRow()
         }
       } else {
         storeDataSource.value
@@ -573,6 +577,11 @@ export default defineComponent({
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
       store.state.common.savePA610++;
+      // when update success then check click year
+      // if user click button change year then update year
+      if (clickYearStatus.value !== ClickYearStatus.none) {
+        store.commit('settings/setCurrentYear')
+      }
     });
     updateError((res) => {
       if (isDiscard.value) {
@@ -606,6 +615,9 @@ export default defineComponent({
       }
       notification("success", Message.getCommonMessage('106').message);
       store.state.common.savePA610++;
+      if (clickYearStatus.value !== ClickYearStatus.none) {
+        store.commit('settings/setCurrentYear')
+      }
     });
     createdErr((res) => {
       notification("error", res.message);
@@ -687,6 +699,8 @@ export default defineComponent({
       };
     });
     const addNewRow = () => {
+      storeDataSource.value
+        .update(previousRowData.value.key, previousRowData.value)
       storeDataSource.value.insert(valueDefaultAction).then((result) => {
         formRef.value.resetValidate()
         selectRowKeyAction.value = 0;
@@ -702,8 +716,11 @@ export default defineComponent({
       const res = formRef.value.validate();
       isDiscard.value = false;
       if (!res.isValid) {
-        // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
+
+        // if valid fail then set state default
+        store.commit('settings/setFormStatus', FormStatus.none)
+        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {

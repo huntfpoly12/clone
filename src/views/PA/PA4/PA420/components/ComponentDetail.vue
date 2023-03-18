@@ -80,8 +80,8 @@
                     format="#,###" alignment="right"/>
                 <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" alignment="right"/>
                 <template #total-deduction="{ data }">
-                  <a-tooltip placement="left">
-                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방<br>소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
+                  <a-tooltip placement="top">
+                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방 소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
                       <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                   </a-tooltip>
                 </template>

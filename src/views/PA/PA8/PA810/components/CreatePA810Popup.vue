@@ -307,7 +307,7 @@
         </a-row>
       </div>
       <div class="fileuploader-container mt-20">
-        <UploadFile @response-fileId="getFileId" />
+        <UploadFile @response-fileId="getFileId" :isFileList="isFileList"/>
       </div>
       <div class="mt-20 table-container">
         <div class="grid grid-cols-13 items-center">
@@ -414,24 +414,24 @@ import StandardForm from "@/components/common/StandardForm.vue";
 import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import getCompany from "@/graphql/queries/common/getCompany";
-import { companyId } from '@/helpers/commonFunction';
-import { Company } from "./../utils";
-import { DeleteOutlined, HistoryOutlined, SearchOutlined } from '@ant-design/icons-vue';
-import { DependantsRelation, enum2Entries } from '@bankda/jangbuda-common';
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import {companyId} from '@/helpers/commonFunction';
+import INITIAL_DATA, {Company} from "./../utils";
+import {DeleteOutlined, HistoryOutlined, SearchOutlined} from '@ant-design/icons-vue';
+import {DependantsRelation, enum2Entries} from '@bankda/jangbuda-common';
+import {useMutation, useQuery} from '@vue/apollo-composable';
 import dayjs from 'dayjs';
 import DxButton from 'devextreme-vue/button';
-import { DxColumn, DxDataGrid, DxScrolling } from 'devextreme-vue/data-grid';
-import { DxFileUploader } from 'devextreme-vue/file-uploader';
-import { computed, defineComponent, reactive, ref, toRefs, watch } from 'vue';
-import { useStore } from 'vuex';
+import {DxColumn, DxDataGrid, DxScrolling} from 'devextreme-vue/data-grid';
+import {DxFileUploader} from 'devextreme-vue/file-uploader';
+import {computed, defineComponent, reactive, ref, watch, watchEffect} from 'vue';
+import {useStore} from 'vuex';
 import URL_CONST from './../const';
 import SearchCodeButton from './SearchCodeButton.vue';
 import TableEmployeeWage from './TableEmployeeWage.vue';
 import notification from "@/utils/notification";
-import INITIAL_DATA from './../utils'
 import DxField from "./DxField.vue";
 import filters from "@/helpers/filters";
+
 let dpRelation =  enum2Entries(DependantsRelation)
 const getCodeOrLabel = (id: number) => {
   return {
@@ -477,7 +477,7 @@ export default defineComponent({
       default: false
     }
   },
-  setup({ isOpenModalCreate }, { emit}) {
+  setup(props, { emit}) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const {per_page, move_column, colomn_resize} = store.state.settings;
@@ -486,6 +486,7 @@ export default defineComponent({
     const employeeWages = ref();
     const employeeWageSelected = ref();
     const formRef = ref();
+    const isFileList = ref(false);
     const formData = ref({...INITIAL_DATA.InitialFormCreate});
     const infoCompany = reactive({
       name: '',
@@ -558,12 +559,32 @@ export default defineComponent({
 
       }
     }, {deep: true});
-
+    const resetForm = () => {
+      formData.value = {...INITIAL_DATA.InitialFormCreate};
+      employeeWage.value  = {...INITIAL_DATA.initialEmployeeWage};
+      employeeWageSelected.value = null;
+    }
+    watchEffect(() => {
+      if (props.isOpenModalCreate) {
+        resetForm()
+        isFileList.value = true;
+      } else {
+        isFileList.value = false;
+      }
+    } )
     // Mutation
     const { mutate, onDone: onDoneCreateMajor, loading: loadingCreateMajor, onError: errorCreateMajor } = useMutation(mutations.createMajorInsuranceCompanyEmployeeAcquisition, () => ({
       fetchPolicy: 'no-cache',
     }));
-
+    onDoneCreateMajor(() => {
+      notification('success', '저장되었습니다.');
+      resetForm()
+      emit('handleCreate')
+    })
+    errorCreateMajor((error) => {
+      console.log('error', error)
+      notification('error',  error.message);
+    })
     /// Submit form
     const onSubmit = async (e: any) => {
       const res = e.validationGroup.validate()
@@ -572,6 +593,7 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
       } else {
         const { adding, joinedAt, name, president, presidentName, residentId, totalPay, bizNumber,   ...newFormData} = formData.value;
+
         const dependents = employeeWage.value?.dependents ? employeeWage.value.dependents.map((item: any) => {
           return {
             name: employeeWage.value.name,
@@ -595,18 +617,8 @@ export default defineComponent({
         mutate({
           ...variables,
           input: input
-        }).then((res) => {
-          notification('success', '저장되었습니다.');
-          formData.value = {...INITIAL_DATA.InitialFormCreate};
-          employeeWage.value  = {...INITIAL_DATA.initialEmployeeWage};
-          employeeWageSelected.value = null;
-          emit('handleCreate')
-        }).catch((err) => {
-          console.log('err', err)
-          notification('error',  err.message);
         })
       }
-
     };
     const getFileId = (fileId: {id: Number}) => {
       formData.value.dependentsEvidenceFileStorageId = fileId.id;
@@ -644,7 +656,8 @@ export default defineComponent({
         item: 9,
         space: 3
       },
-      formRef
+      formRef,
+      isFileList
     };
   }
 });

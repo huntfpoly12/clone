@@ -80,7 +80,8 @@ export const originDataInputUpdate = {
 }
 
 export const DataCreatedTable = {
-    "employeeId": null,
+    "key": 0,
+    "employeeId": 0,
     "name": "",
     "foreigner": false,
     "status": null,
@@ -88,7 +89,7 @@ export const DataCreatedTable = {
     "deletable": false,
     "nationalPensionDeduction": false,
     "healthInsuranceDeduction": false,
-    "employeementInsuranceDeduction": true,
+    "employeementInsuranceDeduction": false,
     "nationalPensionSupportPercent": 0,
     "employeementInsuranceSupportPercent": 0,
 }

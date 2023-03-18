@@ -210,7 +210,7 @@ export default defineComponent({
       onError: onDoneAcquisitionError,
     } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
     onDoneAcquisitionDone(() => {
-      notification('success', 'delete success');
+      notification('success', Message.getMessage('COMMON', '402').message);
       refetch();
     });
   const actionDelete = (workId: number) => {

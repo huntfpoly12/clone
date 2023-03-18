@@ -4,7 +4,7 @@
         <caret-left-outlined class="arrow-plus" @click="decrementYear"/>
         <default-text-box width="90px" :disabled="true" :valueInput="currentYear.toString()"/>
         <caret-right-outlined class="arrow-plus"  @click="incrementYear"/>
-        <PopupMessage
+        <PopupMessageCustom
           :modalStatus="isPopupVisible"
           @closePopup="hidePopup"
           :typeModal="'confirm'"
@@ -23,7 +23,7 @@ import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons-vue';
 import {Message} from "@/configs/enum";
 import debounce from "lodash/debounce";
 import {ClickYearStatus, FormStatus} from "@/store/settingModule";
-import PopupMessage from "@/components/common/PopupMessage.vue";
+import PopupMessageCustom from "@/components/common/PopupMessageCustom.vue";
 export default defineComponent({
     computed: {
       Message() {
@@ -31,9 +31,9 @@ export default defineComponent({
       }
     },
     components: {
+        PopupMessageCustom,
         CaretLeftOutlined,
         CaretRightOutlined,
-        PopupMessage
     },
     setup() {
       const store = useStore();

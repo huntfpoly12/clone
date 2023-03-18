@@ -47,7 +47,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dx-field {
   .dx-field-label {
-    width: 100px ;
+    width: 150px ;
   }
   .dx-field-value {
     width: calc(100% - 100px) !important;
