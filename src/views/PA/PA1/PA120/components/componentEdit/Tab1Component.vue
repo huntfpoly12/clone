@@ -15,8 +15,8 @@
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X" @onChange="onChangePresident"
-              style="width: 80px"></switch-basic>
+            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+              @onChange="onChangePresident" style="width: 80px"></switch-basic>
             <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
               대표자인 경우 고용보험 제외됩니다. </span>
           </div>
@@ -41,20 +41,17 @@
           </radio-group>
         </a-form-item>
 
-        <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
-          <country-code-select-box v-if="initFormStateTabPA120.foreigner" style="width: 200px"
-            v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-            :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner"
-            :hiddenOptionKR="true" />
-          <country-code-select-box v-else style="width: 200px"
-            v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-            :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner" />
-        </a-form-item>
-
-        <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
-          <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
-            :disabled="foreigner == 0" />
-        </a-form-item>
+        <a-row>
+          <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
+            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
+              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
+          </a-form-item>
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
+            <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
+              :disabled="foreigner == 0" :required="initFormStateTabPA120.foreigner" />
+          </a-form-item>
+        </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
           <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px">
@@ -304,10 +301,10 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
     });
-    watch(() => props.idRowEdit,(value: any) => {
+    watch(() => props.idRowEdit, (value: any) => {
       originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
       getEmployeeWageTrigger.value = true;
-    }, {immediate: true});
+    }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
       initFormStateTabPA120.value.name = newVal.toUpperCase();
@@ -336,7 +333,7 @@ export default defineComponent({
 
     const presidentWaring = "대표자는 고용보험에서 제외됩니다. ( 기존에 선택되어있는 경우 강제로 해지됩니다";
     const presidenStatus = ref(false);
-    const onChangePresident = (emit: any)=> {
+    const onChangePresident = (emit: any) => {
       if (emit) {
         presidenStatus.value = true;
       }
