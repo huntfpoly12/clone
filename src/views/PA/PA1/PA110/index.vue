@@ -233,7 +233,7 @@
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
                             @focused-row-changing="onFocusedRowChanging"
-                            ref="gridRef"
+                            ref="gridRefPA110"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
@@ -383,7 +383,8 @@ export default defineComponent({
         const trigger = ref<boolean>(true)
         const triggerDataTaxPayInfo = ref<boolean>(true)
         let status = ref();
-        const gridRef = ref(); // ref of grid
+        const gridRefPA110 = ref(); // ref of grid
+        const dataGridRef = computed(() => gridRefPA110.value?.instance as any); // ref of grid Instance
         const originData = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
@@ -525,8 +526,9 @@ export default defineComponent({
                     //     store.state.common.focusedRowKey = store.state.common.incomeId
                     //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                     // } else {
-                        if (!store.state.common.dataIncomeIdBackend) {
+                        if (!store.state.common.dataIncomeIdBackend || checkClickMonth.value) {
                             // isRunOnceTaxPayInfo.value = false;
+                            checkClickMonth.value = false
                             store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
@@ -579,7 +581,7 @@ export default defineComponent({
             }
         })
         watch(() => store.state.common.addRow, (newVal) => {
-            gridRef.value?.instance.deselectAll()
+            gridRefPA110.value?.instance.deselectAll()
             dataRows.value = []
         })
         watch(() => store.state.common.activeTab, (newVal) => {
@@ -598,7 +600,7 @@ export default defineComponent({
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
                 if (rowData.find((element: any) => element.incomeId == "PA110" ?? null)) {
-                    gridRef.value?.instance.deselectAll()
+                    gridRefPA110.value?.instance.deselectAll()
                     dataRows.value = []
                 }
                 // if ( rowData.length > 1 ) {
@@ -611,6 +613,15 @@ export default defineComponent({
         const checkClickMonth = ref<Boolean>(false)
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
+            if (
+                store.state.common.processKeyPA110.imputedYear != month.imputedYear ||
+                store.state.common.processKeyPA110.paymentYear != month.paymentYear ||
+                store.state.common.processKeyPA110.paymentMonth != month.paymentMonth ||
+                store.state.common.processKeyPA110.imputedMonth != month.imputedMonth
+            ) {
+                store.state.common.actionCallGetMonthDetail++
+            }
+            
             dataMonthNew.value = month
             if (store.state.common.statusChangeFormEdit && !isRunOnce.value) {
                 modalChangeRow.value = true
@@ -717,15 +728,18 @@ export default defineComponent({
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
                 store.state.common.loadingFormData++
             }
+            dataGridRef.value?.refresh();
         }
         // Preventing the user from selecting a row by clicking on the select button.
         const onFocusedRowChanging = (e: any) => {
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
+                const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
                     if (store.state.common.statusChangeFormEdit) { // if change form data
+                            rowElement?.classList.add("dx-state-hover-custom")
                             modalChangeRow.value = true;
                             e.cancel = true;
                     } else { // cho chọn raw mới
@@ -788,7 +802,7 @@ export default defineComponent({
             setUnderline,
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
-            Message, gridRef,
+            Message, gridRefPA110,
             statusDisabledBlock, onFocusedRowChanging,
         }
 

@@ -101,7 +101,7 @@ export default defineComponent({
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
         const dataApiCopy: any = ref({})
-        const trigger = ref<boolean>(true)
+        const trigger = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
             trigger.value = true
@@ -115,6 +115,9 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        watch(() => store.state.common.actionCallGetMonthDetail, (newVal) => {
+            trigger.value = true;
+        })
         watch(resultConfig, (value) => {
             trigger.value = false;
             let paymentMonth = month.value

@@ -121,7 +121,7 @@
             </a-row>
         </StandardForm></a-spin>
         <div class="text-align-center mt-50" style="display: flex; justify-content: center;">
-            <a-tooltip placement="top">
+            <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
                     <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
@@ -190,15 +190,20 @@ export default defineComponent({
         const countKey: any = ref(0)
         const employeeWageDailyTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
-        let employeeWageDailyParam = ref({
+        let employeeWageDailyParam = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: null,
-        });
-        const originData = ref({
+        };
+        const originData = {
             companyId: companyId,
-            imputedYear: globalYear.value,
-        })
+            imputedYear: globalYear,
+        }
+        const originDataConfig = {
+            companyId: companyId,
+            imputedYear: globalYear,
+            useOnly: true,
+        }
         const employeementInsuranceDeduction = ref<boolean>(false)
         const employeementInsuranceSupportPercent = ref<number>(0)
         // const originDataCalculateIncome = ref({
@@ -207,17 +212,17 @@ export default defineComponent({
         //     totalTaxPay: 10,
         //     dependentCount: dataIncomeWageDaily.value.employee.dependentCount,
         // })
-        const originDataIncomeWageDaily = ref({
+        const originDataIncomeWageDaily = {
             companyId: companyId,
             incomeId: store.state.common.incomeId,
             processKey: store.state.common.processKeyPA510
-        })
+        }
 
         // ============ GRAPQL ===============================
         const {
             loading: loadingDeductionItem,
             onResult: resWithholdingConfigPayItems,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
             enabled: triggerWithholdingConfigDeductionItems.value,
             fetchPolicy: "no-cache",
         }))
@@ -252,7 +257,7 @@ export default defineComponent({
             onDone: onDoneUpdate,
             onError: onerrorUpdate,
         } = useMutation(mutations.updateIncomeWageDaily);
-        const { result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading } = useQuery(query520.getEmployeeWageDaily, employeeWageDailyParam.value, () => ({
+        const { result: resultEmployeeWageDaily, refetch: refetchEmployeeWageDaily, loading } = useQuery(query520.getEmployeeWageDaily, employeeWageDailyParam, () => ({
             enabled: employeeWageDailyTrigger.value,
             fetchPolicy: 'no-cache'
         }))
@@ -398,15 +403,16 @@ export default defineComponent({
             }
         })
         watch(globalYear, (newVal) => {
-            originData.value.imputedYear = newVal
+            // originData.value.imputedYear = newVal
             triggerEmployeeWageDailies.value = true;
+            triggerWithholdingConfigDeductionItems.value = true;
         })
         // Watching the value of the store.state.common.statusFormAdd and if it is true, it will do
         // some stuff.
         watch(() => store.state.common.statusFormAdd, (value) => {
             if (value) {
                 countKey.value++;
-                employeeWageDailyParam.value.employeeId = null
+                employeeWageDailyParam.employeeId = null
                 arrDeduction.value?.map((data: any) => {
                     data.price = 0
                 })
@@ -464,7 +470,7 @@ export default defineComponent({
         // then triggerIncomeWageDaily.value to true.
         watch(() => store.state.common.incomeId, async (value) => {
             if (value && value != 'PA510') {
-                originDataIncomeWageDaily.value.incomeId = value
+                originDataIncomeWageDaily.incomeId = value
                 triggerIncomeWageDaily.value = true;
             } else {
                 if (!store.state.common.statusFormAdd) {
@@ -613,8 +619,8 @@ export default defineComponent({
         }
         // A function that is called when the employeeId is changed.
         const onChange = () => {
-            if (employeeWageDailyParam.value.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
-                employeeWageDailyParam.value.employeeId = dataIncomeWageDaily.value.employee.employeeId;
+            if (employeeWageDailyParam.employeeId != dataIncomeWageDaily.value.employee.employeeId) {
+                employeeWageDailyParam.employeeId = dataIncomeWageDaily.value.employee.employeeId;
                 employeeWageDailyTrigger.value = true;
             }
         }
@@ -689,13 +695,13 @@ export default defineComponent({
         // A function that is being called in the Vue HTML.
         const showDailyWage = () => {
             let price = Math.round(dataIncomeWageDaily.value.monthlyWage /  dataIncomeWageDaily.value.workingDays)
-            dataIncomeWageDaily.value.dailyWage = price ? price : dataIncomeWageDaily.value.dailyWage
+            dataIncomeWageDaily.value.dailyWage = isFinite(price) ? price : dataIncomeWageDaily.value.dailyWage
             return filters.formatCurrency(dataIncomeWageDaily.value.dailyWage)
         }
         // A function that is being called in the HTML.
         const showMonthlyWage = () => {
             let price = dataIncomeWageDaily.value.dailyWage * dataIncomeWageDaily.value.workingDays
-            dataIncomeWageDaily.value.monthlyWage = price ? price : dataIncomeWageDaily.value.monthlyWage
+            dataIncomeWageDaily.value.monthlyWage = isFinite(price) ? price : dataIncomeWageDaily.value.monthlyWage
             return filters.formatCurrency(dataIncomeWageDaily.value.monthlyWage)
         }
         return {
