@@ -49,12 +49,8 @@
               <DxToolbar>
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
-                <DxItem
-                  location="after"
-                  template="button-template"
-                  css-class="cell-button-add"
-                />
-                <!--                <DxItem location="after" template="button-history" css-class="cell-button-add" />-->
+                <DxItem location="after" template="button-template" css-class="cell-button-add"/>
+
               </DxToolbar>
 
               <template #button-template>
@@ -65,16 +61,11 @@
                   </div>
                 </a-tooltip>
               </template>
-              <!--              <template #button-history>-->
-              <!--                 -->
-              <!--              </template>-->
               <DxColumn caption="후원자코드" data-field="backerCode" alignment="center"/>
               <DxColumn caption="후원자명" data-field="name" alignment="center"/>
-              <DxColumn caption="후원자구분" data-field="type" :customize-text="(cellInfo: any)=> BeckerType[cellInfo.value]" alignment="center"/>
-              <DxColumn
-                caption="주민등록번호"
-                cell-template="residentId"
-                data-field="residentId"
+              <DxColumn caption="후원자구분" cell-template="type" data-field="type" alignment="center"/>
+              <template #type="{ data }">{{ BeckerType[data.data.type] }}</template>
+              <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"
               />
               <template #residentId="{ data }">
                 <div v-if="data.data.residentId?.length == 14">
@@ -152,12 +143,17 @@
         <a-col span="8" class="custom-layout">
           <standard-form formName="ac-610" ref="formRef">
             <a-form-item label="후원자 구분" :label-col="labelCol">
-              <select-box-common
-                :arrSelect="backerTypeArray"
-                displayeExpr="name" valueExpr="id" width="150px"
-                v-model:valueInput="formState.type"
+              <DxSelectBox
+                :search-enabled="true"
+                :data-source="backerTypeArray"
+                v-model:value="formState.type"
+                display-expr="name"
+                value-expr="id"
+                name="type"
+                width="150px"
                 :disabled="formState.backerCode !== 0"
-              />
+              >
+              </DxSelectBox>
             </a-form-item>
             <a-form-item label="후원자코드" :label-col="labelCol" class="red">
               <default-text-box
@@ -175,17 +171,21 @@
             </a-form-item>
 
             <a-form-item v-if="formState.type === 3" label="비영리법인구분" :label-col="labelCol">
-              <a-radio-group v-model:value="formState.nonProfitCorpType" class="d-flex flex-col items-center gap-2">
+              <a-radio-group
+                v-model:value="formState.nonProfitCorpType"
+                class="d-flex flex-col items-center gap-2"
+                :disabled="formState.backerCode !== 0"
+              >
                 <a-radio :value="1" >종교법인</a-radio>
                 <a-radio :value="2" >확교법인</a-radio>
                 <a-radio :value="3" >의료법인</a-radio>
                 <a-radio :value="4" >사회복지법인</a-radio>
-                <div class="d-flex">
+                <div class="d-flex-center">
                   <a-radio :value="9">기타</a-radio>
                   <default-text-box
                     :width="150"
                     v-model:valueInput="formState.otherContents"
-                    :disabled="formState.nonProfitCorpType !== 9"
+                    :disabled="formState.nonProfitCorpType !== 9 || formState.backerCode !== 0"
                     :required="formState.nonProfitCorpType === 9"
                     placeholder="기타 내용"
                   />
@@ -214,7 +214,7 @@
                   :disabled="formState.type !== 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || formState.type !== 1" />
+                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateResidentId" :disabled="isDisableBtnCheckResidentId || isCheckedResidentId || formState.type !== 1" />
                 <InfoToolTip >
                   <span class="">
                     주민등록번호 저장시 개인정보 처리 방침에 동의한걸로 간주합니다.<br />
@@ -233,7 +233,7 @@
                   :disabled="formState.type === 1"
                 />
                 <!--  @onClick="checkDuplicateUsername" :disabled="disabledBtn" -->
-                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || formState.type === 1" />
+                <button-basic width="90" text="중복체크" :type="'default'" :mode="'contained'" @onClick="checkDuplicateBizNumber" :disabled="isDisableBtnCheckBizNumber || isCheckedBizNumber || formState.type === 1" />
                 <InfoToolTip>
                   기부금영수증 발행시 반드시 필요합니다.
                 </InfoToolTip>
@@ -320,6 +320,7 @@ import {
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
 import { DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
+import DxSelectBox from "devextreme-vue/select-box";
 import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
@@ -329,7 +330,6 @@ import { initBackerCreateInput } from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import { isEqualObject } from "@/utils";
-import isBackerRegistableResidentId from "@/graphql/queries/AC/AC6/AC620/isBackerRegistableResidentId";
 
 type SearchType = {
   page: number
@@ -368,7 +368,8 @@ export default defineComponent({
     DxScrolling,
     DxPaging,
     PopupMessageCustom,
-    InfoToolTip
+    InfoToolTip,
+    DxSelectBox
   },
   setup() {
     // config grid
@@ -466,14 +467,8 @@ export default defineComponent({
       if(isClickAddRow.value) {
         addNewRow()
       } else {
-        if (isNewRow.value) {
-          focusedRowKey.value = selectRowKeyAction.value;
-        } else {
-          focusedRowKey.value = res.data.createBacker.backerCode;
-          selectRowKeyAction.value = res.data.createBacker.backerCode;
-        }
+        focusedRowKey.value = res.data.createBacker.backerCode;
         isNewRow.value = false;
-        previousRowData.value = { ...formState };
       }
       notification("success", Message.getCommonMessage('106').message);
     });
@@ -500,6 +495,8 @@ export default defineComponent({
           isClickAddRow.value && addNewRow()
         });
       }
+      isCheckedBizNumber.value = false;
+      isCheckedResidentId.value = false;
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
     });
@@ -598,10 +595,20 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
       } else {
         if (focusedRowKey && focusedRowKey.value !== 0) {
-          await updateBacker(dataUpdate.value);
+          // If bizNumber changed
+          if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
+            if (isCheckedBizNumber.value || isCheckedResidentId.value) {
+              await updateBacker(dataUpdate.value);
+            } else {
+              const messageType = formState.value.type === 1 ? '001' : '002';
+              notification('error', Message.getMessage('AC620', messageType).message)
+            }
+          } else {
+            await updateBacker(dataUpdate.value);
+          }
         } else {
           const {backerCode, ...newData} = formState.value
-          // if form disabled => action add
+          // if form disabled => action add isCheckedBizNumber
           const newDataCreate = {
             companyId: companyId,
             input: {
@@ -636,6 +643,7 @@ export default defineComponent({
           });
           isNewRow.value = false;
         } else {
+          storeDataSource.value.update(previousRowData.value.backerCode, previousRowData.value)
           // when change other row and want to add row
           addNewRow()
         }
@@ -661,8 +669,9 @@ export default defineComponent({
       if (isNewRow.value) return false;
       return formState.value?.residentId === previousRowData.value?.residentId;
     });
+    const isCheckedResidentId = ref(false);
     const triggerResidentId = ref(false);
-    const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(
+    const { refetch: refetchCheckResidentId, onResult: onResultCheckResidentId } = useQuery(
       queries.isBackerRegistableResidentId,
       variables,
       () => ({ enabled: triggerResidentId.value, fetchPolicy: "no-cache", }))
@@ -670,18 +679,20 @@ export default defineComponent({
       variables.residentId = formState.value.residentId
         if (formState.value.residentId !== '') {
             triggerResidentId.value = true
-            refetchUserName()
+            refetchCheckResidentId()
         } else {
             notification('error', '사용자 이름을 입력헤주세요!');
         }
     }
-    onResultUsername(e => {
+    onResultCheckResidentId(e => {
       triggerResidentId.value = false
-        if (e.data)
-          e.data.isBackerRegistableResidentId
-            ? notification('success', `사용 가능한 아이디입니다!`)
-            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
-
+      if (e.data?.isBackerRegistableResidentId) {
+        isCheckedResidentId.value = true
+        notification('success', `사용 가능한 아이디입니다!`)
+      } else {
+        isCheckedResidentId.value = false
+        notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+      }
     })
     // check duplicate Biz Number
     const variablesCheckBizNumber = {
@@ -693,6 +704,7 @@ export default defineComponent({
       if (isNewRow.value) return false;
       return formState.value?.bizNumber === previousRowData.value?.bizNumber;
     });
+    const isCheckedBizNumber = ref(false);
     const triggerBizNumber = ref(false);
     const { refetch: refetchCheckBizNumber, onResult: onResultCheckBizNumber } = useQuery(
       queries.isBackerRegistableBizNumber,
@@ -702,18 +714,20 @@ export default defineComponent({
       variablesCheckBizNumber.bizNumber = formState.value.bizNumber
         if (formState.value.bizNumber !== '') {
           triggerBizNumber.value = true
-          refetchCheckBizNumber()
+          // refetchCheckBizNumber()
         } else {
             notification('error', '사용자 이름을 입력헤주세요!');
         }
     }
     onResultCheckBizNumber(e => {
       triggerBizNumber.value = false
-        if (e.data)
-          e.data.isBackerRegistableBizNumber
-            ? notification('success', `사용 가능한 아이디입니다!`)
-            : notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
-
+        if (e.data?.isBackerRegistableBizNumber) {
+          notification('success', `사용 가능한 아이디입니다!`)
+          isCheckedBizNumber.value = true
+        } else {
+          notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+          isCheckedBizNumber.value = false
+        }
     })
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
@@ -810,6 +824,8 @@ export default defineComponent({
       checkDuplicateResidentId,
       checkDuplicateBizNumber,
       isDisableBtnCheckBizNumber,
+      isCheckedBizNumber,
+      isCheckedResidentId
     };
   },
 });
