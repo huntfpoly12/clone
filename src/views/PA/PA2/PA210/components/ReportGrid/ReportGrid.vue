@@ -220,6 +220,7 @@ export default defineComponent({
           calculateWithholdingStatusReport(wrapper)
         }
       },
+   
       hotRef: null,
       data: [...dataInit],
       mergeCells: mergeCells,
