@@ -204,21 +204,21 @@
                 <div class="header-text-2 mb-10">중간지급 퇴직급여</div>
                 <a-form-item label="중간지급 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
+                        <number-box-money :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.retirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 비과세퇴직급여">
                     <div class="d-flex-center">
-                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
+                        <number-box-money :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.nonTaxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
                 <a-form-item label="중간지급 과세대상 퇴직급여">
                     <div class="d-flex-center">
-                        <number-box :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
+                        <number-box-money :required="false" width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueInput="dataGet.specification.specificationDetail.prevRetirementBenefitStatus.taxableRetirementBenefits" />
                         <span class="pl-5">원</span>
                     </div>
