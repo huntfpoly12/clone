@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="loading" size="large">
+    <a-spin :spinning="loading" size="large">{{globalYear}} {{idRowEdit}}
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
           {{dataDefault}} 
           <br>
@@ -135,7 +135,6 @@ export default defineComponent({
         const formRefPa520Update = ref()
         const labelResident = ref('주민등록번호')
         const activeLabel = ref(false)
-        const isForeigner = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref()
         const selectBoxData2 = ref()
@@ -249,15 +248,15 @@ export default defineComponent({
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataEdited.nationalityCode = null
-                dataEdited.stayQualification = null
+                dataEdited.nationalityCode = dataEdited.nationalityCode ? dataEdited.nationalityCode : null
+                dataEdited.stayQualification = dataEdited.stayQualification ? dataEdited.stayQualification : null
             } else {
                 labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = dataDefault.value.stayQualification
+                dataEdited.stayQualification =  null
             }
         })
  
