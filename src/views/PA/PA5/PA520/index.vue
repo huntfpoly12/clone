@@ -376,6 +376,7 @@ export default defineComponent({
           if (items.length > 0) { // If there is data, focus on the first row
             idRowEdit.value = dataSource.value.items()[0].employeeId;
             focusedRowKey.value = dataSource.value.items()[0].employeeId;
+            store.state.common.idRowChangePa520 = dataSource.value.items()[0].employeeId;
             actionChangeComponent.value = 2;
           } else {// If there is no data, add an input box
             onAddBtClick()
@@ -452,6 +453,7 @@ export default defineComponent({
       if (rowElement) {
         rowElement.addClass('dx-state-hover-new');
       }
+
       idRowCurrentClick.value = event.rows[newRowIndex].data.employeeId
       // for case Edit  but click other row
       if (
