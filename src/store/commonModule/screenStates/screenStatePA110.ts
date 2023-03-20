@@ -34,6 +34,7 @@ const statesPA110 = {
   actionCallGetMonthDetail: 1,
   checkClickCopyMonth: false,
   openModalCopyMonth: 1,
+  checkClickMonth: false,
 };
 
 export default statesPA110;

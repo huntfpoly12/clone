@@ -650,6 +650,7 @@ export default defineComponent({
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                 store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
@@ -657,6 +658,7 @@ export default defineComponent({
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                     store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                    store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                     showErrorButton.value = true;
                 } else {
                     let arrDeductionItems: any = []

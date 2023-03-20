@@ -24,6 +24,10 @@
                             <span class="w-120">소득수당합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
                             <span class="pl-5">원</span>
+                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
+                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                                수당 합계 = 수당 과세 + 수당 비과세
+                            </span>
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-110">수당 과세합계</span>
@@ -100,11 +104,11 @@
             <div class="header-text-3">급여 / 공제</div>
             <a-row :gutter="16">
                 <a-col :span="13">
-                    <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = {{
+                    <div class="header-text-2">급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 {{
                         $filters.formatCurrency(totalPayItemTaxFree)
-                    }} 과 + {{
+                    }} + 비과세 {{
     $filters.formatCurrency(totalPayItemTax)
-}} 비 </div>
+}}</div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -677,12 +681,14 @@ export default defineComponent({
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                     store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                    store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                     showErrorButton.value = true;
                     store.state.common.dataRowOnActive = dataIW.value
                 } else {

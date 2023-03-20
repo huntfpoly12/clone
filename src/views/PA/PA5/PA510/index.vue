@@ -479,7 +479,7 @@ export default defineComponent({
                     isRunOnce.value = false;
                     showDetailSelected(obj)
                 } else {
-                    if (checkClickMonth.value) {
+                    if (store.state.common.checkClickMonth) {
                         activeNewMonth(dataMonthNew.value)
                     } else {
                         activeNewMonth(obj)
@@ -591,7 +591,7 @@ export default defineComponent({
             })
         }
         const dataMonthNew: any = ref()
-        const checkClickMonth = ref<Boolean>(false)
+        // const checkClickMonth = ref<Boolean>(false)
 
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
@@ -606,7 +606,7 @@ export default defineComponent({
             dataMonthNew.value = month
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
-                checkClickMonth.value = true
+                store.state.common.checkClickMonth = true
             } else {
                 activeNewMonth(month)
             }
@@ -635,9 +635,9 @@ export default defineComponent({
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
-                if (checkClickMonth.value) {
+                if (store.state.common.checkClickMonth) {
                     activeNewMonth(dataMonthNew.value)
-                    checkClickMonth.value = false;
+                    store.state.common.checkClickMonth = false;
                     return;
                 }
                 if (store.state.common.checkClickCopyMonth) {

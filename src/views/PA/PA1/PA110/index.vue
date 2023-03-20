@@ -492,7 +492,7 @@ export default defineComponent({
                 if (isRunOnce.value) {
                     showDetailSelected(obj)
                 } else  {
-                    if (checkClickMonth.value)
+                    if (store.state.common.checkClickMonth)
                         activeNewMonth(dataMonthNew.value)
                     else
                         activeNewMonth(obj)
@@ -526,9 +526,9 @@ export default defineComponent({
                     //     store.state.common.focusedRowKey = store.state.common.incomeId
                     //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                     // } else {
-                        if (!store.state.common.dataIncomeIdBackend || checkClickMonth.value) {
+                        if (!store.state.common.dataIncomeIdBackend || store.state.common.checkClickMonth) {
                             // isRunOnceTaxPayInfo.value = false;
-                            checkClickMonth.value = false
+                            store.state.common.checkClickMonth = false
                             store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
@@ -614,7 +614,7 @@ export default defineComponent({
             })
         }
         const dataMonthNew: any = ref()
-        const checkClickMonth = ref<Boolean>(false)
+        // const checkClickMonth = ref<Boolean>(false)
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             if (
@@ -629,7 +629,7 @@ export default defineComponent({
             dataMonthNew.value = month
             if (store.state.common.statusChangeFormEdit && !isRunOnce.value) {
                 modalChangeRow.value = true
-                checkClickMonth.value = true
+                store.state.common.checkClickMonth = true
             } else {
                 isRunOnce.value = false
                 activeNewMonth(month)
@@ -719,9 +719,9 @@ export default defineComponent({
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
-                if (checkClickMonth.value) {
+                if (store.state.common.checkClickMonth) {
                     activeNewMonth(dataMonthNew.value)
-                    checkClickMonth.value = false;
+                    store.state.common.checkClickMonth = false;
                     return;
                 }
                 if (store.state.common.checkClickCopyMonth) {
