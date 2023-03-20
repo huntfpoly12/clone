@@ -589,6 +589,10 @@ export default defineComponent({
                 triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
+        watch(() => store.state.common.openModalCopyMonth, (value) => {
+            dataModalCopy.value = monthCopy.value
+            modalCopy.value = true
+        })
         /**
          * action edit employ tax pay
          */
@@ -643,13 +647,20 @@ export default defineComponent({
             store.state.common.statusRowAdd = true;
             // debugger
         }
+        const monthCopy = ref<number>()
         /**
          * copy data from other month
          * @param month 
          */
         const copyMonth = (month: number) => {
-            dataModalCopy.value = month;
-            modalCopy.value = true;
+            monthCopy.value = month
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
+                modalChangeRow.value = true
+                store.state.common.checkClickCopyMonth = true
+            } else {
+                dataModalCopy.value = monthCopy.value;
+                modalCopy.value = true;
+            }
         }
 
         /**
@@ -713,6 +724,13 @@ export default defineComponent({
                     checkClickMonth.value = false;
                     return;
                 }
+                if (store.state.common.checkClickCopyMonth) {
+                    store.state.common.checkClickCopyMonth = false;
+                    dataModalCopy.value = monthCopy.value
+                    modalCopy.value = true
+                    // store.state.common.loadingFormData++
+                    // return;
+                }
                 if (store.state.common.checkClickYear) {
                     isRunOnce.value = true;
                     store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
@@ -733,10 +751,10 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
-                const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
+                const rowElement = e.rowElement[0]
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                    if (store.state.common.statusChangeFormEdit) { // if change form data
+                    if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) { // if change form data
                             rowElement?.classList.add("dx-state-hover-custom")
                             modalChangeRow.value = true;
                             e.cancel = true;
@@ -755,7 +773,7 @@ export default defineComponent({
             }
         };
         watch(globalYear, (newVal, oldVal) => {
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 if (!store.state.common.checkClickYear) {
                     modalChangeRow.value = true
                     store.state.common.checkClickYear = true

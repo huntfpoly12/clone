@@ -403,6 +403,11 @@ export default defineComponent({
                 await (store.state.common.checkClickYear = false);
                 return;
             }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
+            }
             await store.state.common.loadingTableInfo++
             
         })
@@ -416,6 +421,11 @@ export default defineComponent({
                 await (store.state.settings.globalYear = store.state.common.dataYearNew)
                 await (store.state.common.checkClickYear = false);
                 return;
+            }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
             }
             await store.state.common.loadingTableInfo++
             
@@ -666,11 +676,13 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                    store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
                     showErrorButton.value = true;
                     store.state.common.dataRowOnActive = dataIW.value
                 } else {

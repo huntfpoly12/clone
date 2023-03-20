@@ -560,6 +560,10 @@ export default defineComponent({
             gridRefPA510.value?.instance.deselectAll()
             dataRows.value = []
         })
+        watch(() => store.state.common.openModalCopyMonth, (value) => {
+            dataModalCopy.value = monthCopy.value
+            modalCopy.value = true
+        })
         // ======================= FUNCTION ================================
         // Calling the actionChangeIncomeProcess function with the parameters companyId, processKey,
         // and status.
@@ -636,6 +640,13 @@ export default defineComponent({
                     checkClickMonth.value = false;
                     return;
                 }
+                if (store.state.common.checkClickCopyMonth) {
+                    store.state.common.checkClickCopyMonth = false;
+                    dataModalCopy.value = monthCopy.value
+                    modalCopy.value = true
+                    // store.state.common.loadingFormData++
+                    // return;
+                }
                 if (store.state.common.checkClickYear) {
                     isRunOnce.value = true;
                     store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
@@ -651,9 +662,17 @@ export default defineComponent({
             dataGridRef.value?.refresh();
         }
 
+        const monthCopy = ref<number>()
+        // const checkClickCopyMonth = ref<boolean>(false)
         const copyMonth = (month: number) => {
-            dataModalCopy.value = month
-            modalCopy.value = true
+            monthCopy.value = month
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
+                modalChangeRow.value = true
+                store.state.common.checkClickCopyMonth = true
+            } else {
+                dataModalCopy.value = monthCopy.value
+                modalCopy.value = true
+            }
         }
         const dataAddIncomeProcess = (data: any) => {
             dataSource.value[0]['month' + data.imputedMonth] = data
@@ -688,7 +707,7 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
-                const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
+                const rowElement = e.rowElement[0]
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
                     if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {

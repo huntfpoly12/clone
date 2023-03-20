@@ -34,6 +34,8 @@ const statesPA510 = {
     checkClickYear: false,
     dataYearNew: null,
     actionCallGetMonthDetail: 1,
+    checkClickCopyMonth: false,
+    openModalCopyMonth: 1,
 };
   
 export default statesPA510;
