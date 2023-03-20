@@ -1,9 +1,7 @@
 <template>
     <a-spin :spinning="loading" size="large">{{globalYear}} {{idRowEdit}}
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
-          {{dataDefault}} 
-          <br>
-          {{ dataEdited }}
+    
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -132,112 +130,129 @@ export default defineComponent({
         openPopup: Number,
     },
   setup(props, { emit }) {
-        const formRefPa520Update = ref()
-        const labelResident = ref('주민등록번호')
-        const activeLabel = ref(false)
-        const disabledSelectBox = ref(true)
-        const selectBoxData1 = ref()
-        const selectBoxData2 = ref()
-        let dataEdited: any = reactive({
-            ...DataEdit
+    const formRefPa520Update = ref()
+    const labelResident = ref('주민등록번호')
+    const activeLabel = ref(false)
+    const disabledSelectBox = ref(true)
+    const selectBoxData1 = ref()
+    const selectBoxData2 = ref()
+    let dataEdited: any = reactive({
+      ...DataEdit
+    })
+    const store = useStore();
+    const globalYear: any = computed(() => store.state.settings.globalYear);
+    const newGlobalYear = ref(0)
+    const originData = ref({
+      companyId: companyId,
+    })
+    const originDataDetail = ref({
+      companyId: companyId,
+      imputedYear: globalYear,
+      employeeId: props.idRowEdit
+    })
+    let dataDefault = ref()
+    const trigger = ref(true)
+    // ============ GRAPQL ===============================
+    const {
+      onResult: resGetDepartments,
+    } = useQuery(queries.getDepartments, originData, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    resGetDepartments(res => {
+      let valArr: any = []
+      res.data.getDepartments.map((v: any) => {
+        // filter empty value
+        if (v.department != '') {
+          valArr.push({
+            id: v.department,
+            value: v.department
+          })
+        }
+      })
+      selectBoxData1.value = valArr
+    })
+    const {
+      onResult: resGetResponsibilities,
+    } = useQuery(queries.getResponsibilities, originData, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    resGetResponsibilities(res => {
+      let valArr: any = []
+      res.data.getResponsibilities.map((v: any) => {
+        // filter empty value
+        if (v.responsibility != '') {
+          valArr.push({
+            id: v.responsibility,
+            value: v.responsibility
+          })
+        }
+      })
+      selectBoxData2.value = valArr
+    })
+    const {
+      refetch: refetchValueDetail,
+      onResult: getValueDefault,
+      loading
+    } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
+    }))
+    getValueDefault(res => {
+      if (res.data) {
+        dataEdited.name = res.data.getEmployeeWageDaily.name
+        dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
+        dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
+        dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
+        dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
+        dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
+        dataEdited.zipcode = ''
+        dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
+        dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
+        dataEdited.email = res.data.getEmployeeWageDaily.email
+        dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
+        dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
+        dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
+        dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
+        dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
+        dataEdited.department = res.data.getEmployeeWageDaily.department
+        dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
+        dataDefault.value = { ...dataEdited }
+        trigger.value = false
+      }
+    })
+    const {
+      mutate,
+      onError,
+      onDone,
+    } = useMutation(mutations.updateEmployeeWageDaily);
+    onError(e => {
+      notification('error', e.message)
+    })
+    onDone(() => {
+      console.log(newGlobalYear.value,'gểtrtretretertertert')
+        store.state.settings.globalYear = newGlobalYear.value
+        store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId
+        store.state.common.checkChangeValueEditTab1PA520 = false
+        dataDefault.value = dataEdited
+        emit('closePopup', false)
+        notification('success', '업데이트 완료!')
+    
+    
+      
+    })
+        // ============ WATCH ================================
+
+        //check if the year is changed, then confirm first if you are adding or editing data
+        watch(() => globalYear.value, (newYear, oldYear) => {
+          newGlobalYear.value = newYear
+          if (store.state.common.isChangeYearPA520 &&  store.state.common.checkChangeValueEditTab1PA520) {
+            store.state.settings.globalYear = oldYear
+            return
+          } else {
+            store.state.settings.globalYear = newYear
+          }
         })
-        const store = useStore();
-        const globalYear: any = computed(() => store.state.settings.globalYear);
-        
-        const originData = ref({
-            companyId: companyId,
-        })
-        const originDataDetail = ref({
-            companyId: companyId,
-            imputedYear: globalYear,
-            employeeId: props.idRowEdit
-        })
-        let dataDefault = ref()
-        const trigger = ref(true)
-        // ============ GRAPQL ===============================
-        const {
-            onResult: resGetDepartments,
-        } = useQuery(queries.getDepartments, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        resGetDepartments(res => {
-            let valArr: any = []
-          res.data.getDepartments.map((v: any) => {
-            // filter empty value
-            if (v.department != '') {
-                valArr.push({
-                    id: v.department,
-                    value: v.department
-                })
-              }
-            })
-            selectBoxData1.value = valArr
-        })
-        const {
-            onResult: resGetResponsibilities,
-        } = useQuery(queries.getResponsibilities, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        resGetResponsibilities(res => {
-            let valArr: any = []
-            res.data.getResponsibilities.map((v: any) => {
-            // filter empty value
-              if (v.responsibility != '') {
-                valArr.push({
-                  id: v.responsibility,
-                  value: v.responsibility
-                })
-              }
-            })
-            selectBoxData2.value = valArr
-        })
-        const {
-            refetch: refetchValueDetail,
-            onResult: getValueDefault,
-            loading
-        } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
-        }))
-        getValueDefault(res => {
-          if (res.data) {
-                dataEdited.name = res.data.getEmployeeWageDaily.name
-                dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
-                dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
-                dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
-                dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
-                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
-                dataEdited.zipcode = ''
-                dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
-                dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
-                dataEdited.email = res.data.getEmployeeWageDaily.email
-                dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
-                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
-                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
-                dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
-                dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
-                dataEdited.department = res.data.getEmployeeWageDaily.department
-                dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
-                dataDefault.value = { ...dataEdited }
-                trigger.value = false
-            }
-        })
-        const {
-            mutate,
-            onError,
-            onDone,
-        } = useMutation(mutations.updateEmployeeWageDaily);
-        onError(e => {
-            notification('error', e.message)
-        })
-        onDone(() => {
-          store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId 
-          store.state.common.checkChangeValueEditTab1PA520 = false
-          dataDefault.value = dataEdited
-          emit('closePopup', false)
-          notification('success', '업데이트 완료!')
-        })
-        // ============ WATCH ================================ 
+         
         watch(() => props.idRowEdit, (newVal) => {
             originDataDetail.value.employeeId = newVal
             trigger.value = true
@@ -279,6 +294,7 @@ export default defineComponent({
             dataEdited.roadAddress = data.roadAddress;
         }
         const actionUpdated = () => {
+     
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
               res.brokenRules[0].validator.focus();

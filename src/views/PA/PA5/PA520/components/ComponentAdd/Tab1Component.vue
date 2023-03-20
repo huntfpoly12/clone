@@ -195,6 +195,15 @@ export default defineComponent({
             notification('success', '업데이트 완료!');
         })
         //============ WATCH =================================
+
+        //check if the year is changed, then confirm first if you are adding or editing data
+        watch(() => globalYear.value, (newYear, oldYear) => {
+        
+          if (store.state.common.isChangeYearPA520 &&  store.state.common.checkChangeValueAddPA520) {
+            store.state.settings.globalYear = oldYear
+          }
+         })
+
         watch(() => dataCreated.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false

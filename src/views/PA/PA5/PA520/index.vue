@@ -1,7 +1,7 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
   <a-row>
-        <a-col :span="6" >
+        <a-col :span="6" >{{ globalYear }}
           checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
           checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
           checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
@@ -16,7 +16,7 @@
           actionChangeComponent: {{ actionChangeComponent }}<br>
           addRowBtOnclick: {{ addRowBtOnclick  }}<br>
           countBtOnclick: {{ countBtOnclick  }}<br>
-         
+          isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
         </a-col>
         <a-col :span="6">
           modalChangeValueEdit : {{  modalChangeValueEdit }}  <br>
@@ -314,13 +314,12 @@ export default defineComponent({
         !store.state.common.checkChangeValueAddPA520 
       )
       {
-        
         trigger.value = true;
         originData.value.imputedYear = newYear;
         refetchData();
         resetAllCheckerStatus()
       }
-     
+
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
@@ -374,7 +373,6 @@ export default defineComponent({
         // for the case of changing the year and having to focus on the first row
         if (isChangeYear.value) {
           store.state.common.isChangeYearPA520 = false
-         
           dataSource.value.load()
           let items = dataSource.value.items()
           if (items.length > 0) { // If there is data, focus on the first row
@@ -450,8 +448,12 @@ export default defineComponent({
     };
 
     // The above code is a function that is called when the user clicks on the edit button.
-    const onFocusedRowChanging = (event: any)=>{
+    const onFocusedRowChanging = (event: any) => {
       let newRowIndex = event.newRowIndex
+      var rowElement = event.rowElement;
+      if (rowElement) {
+        rowElement.addClass('dx-state-hover-new');
+      }
       idRowCurrentClick.value = event.rows[newRowIndex].data.employeeId
       // for case Edit  but click other row
       if (
@@ -650,7 +652,8 @@ export default defineComponent({
       onFocusedRowChanged,
       onFocusedRowChanging,
       idRowCurrentClick,
-      idRowSaveDone
+      idRowSaveDone,
+      globalYear
     };
   },
 });

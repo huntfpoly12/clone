@@ -2,15 +2,15 @@
     <div id="step2">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="지급연월" label-align="left">
+                <a-form-item label="지급연월" label-align="left">{{ datePayment }}
                     <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
                 </a-form-item>
             </a-col>
             <a-col class="ml-30">
-                <a-form-item label="최종제작상태" label-align="left">
+                <a-form-item label="제작요청상태" label-align="left">
                     <div class="custom-note d-flex-center">
                         <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작후"
-                            textUnCheck="제작전"/>
+                            textUnCheck="제작요청전"/>
                         <div class="d-flex-center ml-5">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -46,7 +46,7 @@
             </a-col>
             <a-col class="ml-30 search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
+                    <biz-number-text-box v-model:valueInput="dataSearch.bizNumber" />
                 </a-form-item>
                 <a-form-item label="상호" label-align="left" class="fix-width-label">
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
@@ -92,7 +92,10 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
                     <DxSelection mode="multiple" :fixed="true" />
-                    <DxColumn caption="사업자코드" data-field="company.code" />
+                    <DxColumn caption="사업자코드" data-field="company.code" cell-template="company-code"/>
+                    <template #company-code="{ data }">
+                        {{ data.data.company.code }}  {{ !data.data.companyServiceContract.active ? '[해지]': ''}}
+                    </template>
                     <DxColumn caption="상호 주소" cell-template="상호" />
                     <template #상호="{ data }">
                         {{ data.data.company.name }} - {{ data.data.company.address }}
@@ -176,6 +179,7 @@ export default defineComponent({
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear: any = computed(() => store.state.settings.globalYear);
         const datePayment = ref(parseInt(dayjs().format('YYYYMM')))
         const dayReport = ref(`${dayjs().format('YYYYMM')}${dayjs().daysInMonth()}`);
         let trigger = ref(true)
@@ -183,19 +187,19 @@ export default defineComponent({
         let dataModalSave = ref()
         const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
-        //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings
+        //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
         let {
             refetch: refetchTable,
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth, {  paymentYear: dataSearch.value.paymentYear,  paymentMonth: dataSearch.value.paymentMonth}, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
         resTable((val: any) => {
           // sort array to get row last time update
-          let arrSort = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilings.sort(function(a: any, b : any) {
+          let arrSort = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth.sort(function(a: any, b : any) {
               return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
           })
           
@@ -275,7 +279,7 @@ export default defineComponent({
         }
         // custom summary
         const customTextSummary = () => {
-            return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
+            return `제작요청 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
