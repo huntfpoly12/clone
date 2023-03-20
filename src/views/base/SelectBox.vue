@@ -632,9 +632,9 @@
             <tr>
                 <td>
                     <div class="dx-field">
-                        <div class="dx-field-label">account code list common</div>
+                        <div class="dx-field-label">account code select common</div>
                         <div class="dx-field-value">
-                            <account-code-list v-model:valueInput="valueSelectBox" />
+                            <account-code-select v-model:valueInput="valueSelectBox" />
                         </div>
                     </div>
                 </td>
@@ -652,16 +652,16 @@
                 </td>
                 <td>
                     <pre class="mycode">
-                &lt;account-code-list v-model:valueInput="valueSelectBox" /&gt;
+                &lt;account-code-select v-model:valueInput="valueSelectBox" /&gt;
         </pre>
                 </td>
             </tr>
             <tr>
                 <td>
                     <div class="dx-field">
-                        <div class="dx-field-label">Funding Source list common</div>
+                        <div class="dx-field-label">Funding Source Select common</div>
                         <div class="dx-field-value">
-                            <FundingSourceList v-model:valueInput="valueSelectBox" />
+                            <FundingSourceSelect v-model:valueInput="valueSelectBox" />
                         </div>
                     </div>
                 </td>
@@ -679,7 +679,34 @@
                 </td>
                 <td>
                     <pre class="mycode">
-                &lt;FundingSourceList v-model:valueInput="valueSelectBox" /&gt;
+                &lt;FundingSourceSelect v-model:valueInput="valueSelectBox" /&gt;
+        </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dx-field">
+                        <div class="dx-field-label">Customer Select common</div>
+                        <div class="dx-field-value">
+                            <customer-select v-model:valueInput="valueSelectBox" />
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <ul>
+                        <li>
+                            <strong>required:</strong> {type: Boolean,default: false,}
+                            (option)
+                        </li>
+                        <li><strong>width:</strong> String (option)</li>
+                        <li><strong>disabled:</strong> Boolean (option)</li>
+                        <li><strong>required:</strong> Boolean (option)</li>
+                        <li><strong>valueInput:</strong> [Number, String]</li>
+                    </ul>
+                </td>
+                <td>
+                    <pre class="mycode">
+                &lt;customer-select v-model:valueInput="valueSelectBox" /&gt;
         </pre>
                 </td>
             </tr>
@@ -688,13 +715,11 @@
 </template>
 
 <script>
-import AccountCodeList from "@/components/common/AccountCodeList.vue";
 import { defineComponent, ref } from "vue";
 import BasicDeductionSelectBox from "../../components/BasicDeductionSelectBox.vue";
 export default defineComponent({
     components: {
         BasicDeductionSelectBox,
-        AccountCodeList
     },
     data() {
         return {
