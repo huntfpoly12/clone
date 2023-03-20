@@ -178,9 +178,8 @@ export default defineComponent({
           arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
         })
         watch(globalYear, (newVal, oldVal) => {
-          originData.value.filter.startImputedYearMonth = parseInt(`${newVal}01`);
-          originData.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
-          refetch()
+          originData.value.filter = {startImputedYearMonth:parseInt(`${newVal}01`), finishImputedYearMonth: parseInt(`${newVal}12`)};
+          // refetch();
         });
         // ---------------------fn modal --------------------
         const setModalVisible = () => {

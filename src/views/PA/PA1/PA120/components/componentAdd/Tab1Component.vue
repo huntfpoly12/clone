@@ -290,7 +290,6 @@ export default defineComponent({
             leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
           },
         };
-        console.log(dataNew);
         if (!isEdit.value) {
           createEmployeeWage(dataNew);
         } else {
