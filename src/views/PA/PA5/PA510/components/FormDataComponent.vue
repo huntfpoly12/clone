@@ -57,9 +57,9 @@
                         <label>일급/월급:</label>
                         <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textUnCheck="'월급'"
                             :textCheck="'일급'" />
-                        <number-box-money v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
+                        <number-box-money  @changeInput="onChangePrice" v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
                             placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.dailyWage" />
-                        <number-box-money v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
+                        <number-box-money  @changeInput="onChangePrice" v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                     </div>
                     <div style="margin-bottom: 10px;">
@@ -69,8 +69,8 @@
                         <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
                     </div>
                     <a-form-item label="근무일수" class="red">
-                        <number-box width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
-                            :spinButtons="true" min="1" :max="31" :required="true"/>
+                        <number-box @changeInput="onChangePrice" width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                             min="1" :max="31" :required="true"/>
                     </a-form-item>
                     <div style="font-weight: bold;">
                         <span v-if="!dataIncomeWageDaily.employee.monthlyPaycheck">일급여 {{
@@ -277,6 +277,11 @@ export default defineComponent({
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
             }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
+            }
             if (store.state.common.statusClickButtonSave) { // if click submit
                 store.state.common.incomeId = data.data.createIncomeWageDaily?.incomeId
             } else { // if click save modal
@@ -311,6 +316,11 @@ export default defineComponent({
             await store.state.common.loadingTableInfo++
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 return
+            }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
             }
             if (store.state.common.statusClickButtonSave) { // if click submit
                 store.state.common.incomeId = data.data.updateIncomeWageDaily?.incomeId
@@ -425,7 +435,7 @@ export default defineComponent({
             
             if (!store.state.common.statusFormAdd) {
                 if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && store.state.common.dataRowOld) {
-                    store.state.common.statusChangeFormPrice = true;               
+                    // store.state.common.statusChangeFormPrice = true;               
                     store.state.common.statusChangeFormEdit = true;
                 } else {
                     store.state.common.statusChangeFormEdit = false;
@@ -435,7 +445,7 @@ export default defineComponent({
                 // Checking if the data in the form is different from the data in the database. [check trạng thái khi add]
                 if (JSON.stringify({ ...sampleDataIncomeWageDaily }) !== JSON.stringify(dataIncomeWageDaily.value)) {
                     store.state.common.statusChangeFormAdd = true;
-                    store.state.common.statusChangeFormPrice = true;
+                    // store.state.common.statusChangeFormPrice = true;
                     // if (!store.state.common.statusRowAdd) {
                     //     store.state.common.statusChangeFormEdit = true
                     //     store.state.common.statusChangeFormPrice = true;
@@ -616,12 +626,16 @@ export default defineComponent({
                 employeeWageDailyTrigger.value = true;
             }
         }
+        // A Vue HTML code.
         const onChangeInputDeduction = () => {
             if (store.state.common.statusFormAdd) {
                 store.state.common.statusChangeFormAdd = true
             } else {
                 store.state.common.statusChangeFormEdit = true
             }
+        }
+        const onChangePrice = () => {
+            store.state.common.statusChangeFormPrice = true;
         }
         const pa510FormRef = ref()
         const onSubmitForm = () => {
@@ -635,12 +649,16 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                 store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
                     store.state.common.dataRowOnActive = dataIncomeWageDaily.value
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                    store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                    store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                     showErrorButton.value = true;
                 } else {
                     let arrDeductionItems: any = []
@@ -722,7 +740,7 @@ export default defineComponent({
             countKey,
             submitForm, onSubmitForm,
             showErrorButton,
-            showDailyWage, showMonthlyWage, onChangeInputDeduction
+            showDailyWage, showMonthlyWage, onChangeInputDeduction, onChangePrice
         };
     },
 });
