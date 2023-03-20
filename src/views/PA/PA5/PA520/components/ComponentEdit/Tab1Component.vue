@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="loading" size="large">{{globalYear}} {{idRowEdit}}
+    <a-spin :spinning="loading" size="large">
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
     
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
@@ -229,30 +229,13 @@ export default defineComponent({
       notification('error', e.message)
     })
     onDone(() => {
-      console.log(newGlobalYear.value,'gểtrtretretertertert')
-        store.state.settings.globalYear = newGlobalYear.value
         store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId
         store.state.common.checkChangeValueEditTab1PA520 = false
         dataDefault.value = dataEdited
         emit('closePopup', false)
         notification('success', '업데이트 완료!')
-    
-    
-      
     })
-        // ============ WATCH ================================
-
-        //check if the year is changed, then confirm first if you are adding or editing data
-        watch(() => globalYear.value, (newYear, oldYear) => {
-          newGlobalYear.value = newYear
-          if (store.state.common.isChangeYearPA520 &&  store.state.common.checkChangeValueEditTab1PA520) {
-            store.state.settings.globalYear = oldYear
-            return
-          } else {
-            store.state.settings.globalYear = newYear
-          }
-        })
-         
+        // ============ WATCH ================================   
         watch(() => props.idRowEdit, (newVal) => {
             originDataDetail.value.employeeId = newVal
             trigger.value = true
@@ -294,7 +277,8 @@ export default defineComponent({
             dataEdited.roadAddress = data.roadAddress;
         }
         const actionUpdated = () => {
-     
+            //  If the year changes and there is an edit event, save the previous year
+            let year = store.state.common.checkChangeValueEditTab1PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
               res.brokenRules[0].validator.focus();
@@ -310,7 +294,7 @@ export default defineComponent({
                 delete newValDataEdit.zipcode;
                 let dataCallCreat = {
                     companyId: companyId,
-                    imputedYear: globalYear.value,
+                    imputedYear: year,
                     employeeId: dataEdited.employeeId,
                     input: newValDataEdit
                 };

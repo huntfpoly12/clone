@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{ globalYear }}
           checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
           checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
@@ -25,7 +25,7 @@
           idRowEdit : {{ idRowEdit }}<br>
           idRowCurrentClick: {{ idRowCurrentClick }}
         </a-col>
-  </a-row>
+  </a-row> -->
 
   <div id="pa-520" class="page-content">
       <a-row>
@@ -253,7 +253,6 @@ export default defineComponent({
     const totalUserOff = ref(0);
     const totalUser = ref(0);
     const idRowCurrentClick = ref(0);
-    const oldGlobalYear = ref(0)
     const globalYear = computed(() => store.state.settings.globalYear);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -264,7 +263,7 @@ export default defineComponent({
 
     const originData = ref({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: globalYear,
     });
     const idAction = ref();
     const trigger = ref<boolean>(true);
@@ -307,7 +306,7 @@ export default defineComponent({
     //check if the year is changed, then confirm first if you are adding or editing data
     watch(() => globalYear.value, (newYear, oldYear) => {
       store.state.common.isChangeYearPA520 = true
-      oldGlobalYear.value = oldYear
+      store.state.common.oldGlobalYearPA520 = oldYear
       if (
         !store.state.common.checkChangeValueEditTab1PA520 &&
         !store.state.common.checkChangeValueEditTab2PA520 &&
@@ -315,8 +314,6 @@ export default defineComponent({
       )
       {
         trigger.value = true;
-        originData.value.imputedYear = newYear;
-        refetchData();
         resetAllCheckerStatus()
       }
 
@@ -324,6 +321,7 @@ export default defineComponent({
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
       ) {
+    
         modalChangeValueEdit.value = true;
         return;
       }
@@ -421,7 +419,7 @@ export default defineComponent({
     // ======================= FUNCTION ================================
 
     const resetAllCheckerStatus = () => {
-      store.state.common.checkChangeValueEditTab1PA520 = false
+      //store.state.common.checkChangeValueEditTab1PA520 = false
       store.state.common.checkChangeValueEditTab2PA520 = false
       store.state.common.checkChangeValueAddPA520 = false
       store.state.common.activeAddRowPA520 = false
@@ -591,7 +589,7 @@ export default defineComponent({
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
       }
-      store.state.common.checkChangeValueEditTab1PA520 = false;
+      //store.state.common.checkChangeValueEditTab1PA520 = false;
     };
     const modalHistory = () => {
       modalHistoryStatus.value = companyId;
