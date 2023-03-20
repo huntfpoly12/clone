@@ -2,7 +2,7 @@
 <template>
     <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-        :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled"
+        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled"
         :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
         <DxValidator v-if="required" :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
