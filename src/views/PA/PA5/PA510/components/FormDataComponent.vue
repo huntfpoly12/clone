@@ -388,6 +388,9 @@ export default defineComponent({
             store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
             store.state.common.focusedRowKey = data.incomeId
 
+            store.state.common.statusChangeFormAdd = false;
+            store.state.common.statusChangeFormEdit = false;
+            store.state.common.statusChangeFormPrice = false;
             // Incrementing the value of onEditItem by 1.
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
