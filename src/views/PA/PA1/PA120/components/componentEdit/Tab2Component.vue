@@ -195,9 +195,9 @@
       </a-row>
       <!-- {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br />
       {{ isCalculateEditPA120 }} isCalculateEditPA120<br />
-      {{ employeeWageParam }} employeeWageParam<br />
       {{ triggerDetail }} triggerDetail<br /> -->
       <!-- {{ initFormTab2PA120 }} initFormTab2PA120<br />
+        {{ employeeWageParam }} employeeWageParam<br />
         {{ compareForm() }} compareForm()<br /> -->
       <!-- {{ isBtnYellow }} isBtnYellow<br />
         {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br /> -->
@@ -591,7 +591,6 @@ export default defineComponent({
       }
     }
     const calculateTax = () => {
-      // c onsole.log(`output- chay vao calculateTax`,)
       calcSum();
       countRestFirstRun.value = 1;
       triggerCalcIncomeWageTax.value = true;
@@ -673,8 +672,6 @@ export default defineComponent({
       }
     }
     );
-
-
     /**
      *  Save form
      */
@@ -713,13 +710,11 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
-
     // change row data  yearPA120.value
     const isWatchedYear = ref(false);
     watch(() => props.idRowEdit, async () => {
       countRestFirstRun.value = 0;
       countConfigPayItems.value = 0;
-      triggerDetail.value = false;
       configdeductionParam.value.imputedYear = yearPA120.value;
       configDeductionTrigger.value = true;
       await refetchConfigDeduction();
@@ -733,7 +728,6 @@ export default defineComponent({
       if (!isWatchedYear.value) {
         countRestFirstRun.value = 0;
         countConfigPayItems.value = 0;
-        triggerDetail.value = false;
         configdeductionParam.value.imputedYear = yearPA120.value;
         configDeductionTrigger.value = true;
         await refetchConfigDeduction();
@@ -743,7 +737,6 @@ export default defineComponent({
         store.state.common.isCalculateEditPA120 = true;
       }
     })
-
     return {
       loading1,
       loading2,
