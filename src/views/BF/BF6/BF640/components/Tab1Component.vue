@@ -193,23 +193,31 @@ export default defineComponent({
         }));
         resTable((val: any) => {
           if (val && val.data) {
-          //   const allData = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
-          //   dataSearch
-          //   let newArrayData = allData.filter((item: any) => {
-          //     return item.company.bizNumber == dataSearch.bizNumber &&
-          //       item.company.name === dataSearch.companyName &&
-          //       item.companyServiceContract.manageUserId == dataSearch.manageUserId &&
-          //       item.companyServiceContract.salesRepresentativeId == dataSearch.salesRepresentativeId &&
-          //       item.companyServiceContract.active == dataSearch.excludeCancel &&
-          //       item.paymentYear == dataSearch.paymentYear &&
-          //       item.paymentHalfYear == dataSearch.paymentHalfYear
-          //   })
+            const allData = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+            let newArrayData = allData.filter((item: any) => {
+              return item.company.bizNumber == dataSearch.bizNumber &&
+                item.company.name === dataSearch.companyName &&
+                item.companyServiceContract.manageUserId == dataSearch.manageUserId &&
+                item.companyServiceContract.salesRepresentativeId == dataSearch.salesRepresentativeId &&
+                item.companyServiceContract.active == dataSearch.excludeCancel &&
+                item.paymentYear == dataSearch.paymentYear &&
+                item.paymentHalfYear == dataSearch.paymentHalfYear
+            })
 
-          //   if (newArrayData.length > 0) {
-          //     newArrayData.map(() => {
-                
-          //     })
-          //   }
+            if (newArrayData.length > 0) {
+              newArrayData.map((item: any) => {
+                refetchProdStatus({
+                    input: {
+                        companyId: item.companyId,
+                        paymentYear: item.paymentYear,
+                        paymentHalfYear: item.paymentHalfYear,
+                    }
+                })
+                if (loading) {
+                  item['status'] = arrayProdStatus.value
+                }
+              })
+            }
           // // sort array to get row last time update
           // // let arrSort = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear.sort(function(a: any, b : any) {
           // //   return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
