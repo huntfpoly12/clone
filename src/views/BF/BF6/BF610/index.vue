@@ -52,7 +52,7 @@
               </a-col>
               <a-col>
                   <a-form-item label="사업자코드" label-align="left" class="mb-0 label-select">
-                      <default-text-box width="150px" v-model:valueInput="filter.companyCode" />
+                      <default-text-box width="150px" v-model:valueInput="filter.companyCode" text-uppercase />
                   </a-form-item>
                   <a-form-item label="상호" label-align="left" class="mb-0 label-select">
                       <default-text-box width="150px" v-model:valueInput="filter.companyName" />
@@ -260,7 +260,7 @@ export default defineComponent({
         manageCompactUserId: null, // 10
         compactSalesRepresentativeId: null, // 11
         active: true, // 12
-        reportType: [0], // 3
+        reportType: [1, 6], // 3
         routine: true, // 4
         correction: true, // 5
         afterTheDueDate: true // 6
@@ -365,9 +365,10 @@ export default defineComponent({
       }));
       // get data from api set to dataSource and dataOrigin
       resTable(res => {
-          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth?.filter((item: any) => filter.active ? item.active : true)
+          dataSource.value = res.data.searchTaxWithholdingStatusReportsByYearMonth?.filter((item: any) => item.active)
           dataOrigin.value = res.data.searchTaxWithholdingStatusReportsByYearMonth
           trigger.value = false
+          searching()
       })
       errorTable(res => {
           notification('error', res.message)
@@ -416,6 +417,7 @@ export default defineComponent({
           if(checkAllSameValue(reportType)){
             filter.reportType = [1, 6]
           } else {
+            filter.reportType = []
             if(reportType.oneMonth) filter.reportType.push(1)
             if(reportType.sixMonth) filter.reportType.push(6)
           }

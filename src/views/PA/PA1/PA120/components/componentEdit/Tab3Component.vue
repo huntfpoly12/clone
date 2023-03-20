@@ -84,7 +84,7 @@
                             <BtnCheck :value="cellData.value" />
                         </template>
                         <template #age-header>
-                          <a-tooltip placement="top" class="custom-tooltip">
+                          <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>
                               주민등록번호로 해당 원천년도 기준 나이 자동 계산
                             </template>
@@ -94,7 +94,7 @@
                           </a-tooltip>
                         </template>
                         <template #basicDeduction-header>
-                          <a-tooltip placement="top" class="custom-tooltip">
+                          <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>
                               주민등록번호로 해당 원천년도 기준 나이 자동 계산 <br/>
                               다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함

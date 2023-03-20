@@ -349,7 +349,6 @@ export default defineComponent({
     const globalYear = computed(() => store.getters['settings/currentYear'])
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
-    const formStatus = computed(() => store.getters['settings/formStatus']);
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const isFormChange = computed(() => !compareObject(dataShow.value, previousRowData.value));
     // Ref
@@ -435,7 +434,7 @@ export default defineComponent({
         previousRowData.value = {...valueDefaultAction};
         dataShow.value = valueDefaultAction;
       }
-      // focusedRowKey.value = 0;
+      focusedRowKey.value = 0;
       isNewRow.value = false
     });
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
@@ -531,6 +530,7 @@ export default defineComponent({
             isClickAddRow.value && addNewRow()
           });
         } else {
+          storeDataSource.value.update(previousRowData.value.key, previousRowData.value)
           // when change other row and want to add row
           addNewRow()
         }
@@ -699,8 +699,6 @@ export default defineComponent({
       };
     });
     const addNewRow = () => {
-      storeDataSource.value
-        .update(previousRowData.value.key, previousRowData.value)
       storeDataSource.value.insert(valueDefaultAction).then((result) => {
         formRef.value.resetValidate()
         selectRowKeyAction.value = 0;
@@ -717,10 +715,9 @@ export default defineComponent({
       isDiscard.value = false;
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-
         // if valid fail then set state default
-        store.commit('settings/setFormStatus', FormStatus.none)
         store.commit('settings/setClickYearStatus', ClickYearStatus.none)
+
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {

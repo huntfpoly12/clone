@@ -43,7 +43,6 @@
               :focused-row-enabled="true"
               @focused-row-changing="onFocusedRowChanging"
               @focused-row-changed="onFocusedRowChanged"
-              @row-click="onRowClick"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
               height="700px"
@@ -487,10 +486,6 @@ export default defineComponent({
       formState.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
-    //
-    const onRowClick = (e: RowClickEvent) => {
-      e.rowElement.classList.add("abc")
-    }
     const addNewRow = () => {
       storeDataSource.value.insert(initialState).then((result) => {
         formRef.value.resetValidate();
@@ -644,7 +639,6 @@ export default defineComponent({
       handleDiscardPopup,
       handleConfirm,
       isDiscard,
-      onRowClick
     };
   },
 });

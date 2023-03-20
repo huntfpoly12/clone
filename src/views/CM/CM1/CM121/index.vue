@@ -7,7 +7,7 @@
           <a-spin
             :spinning="loadingGetBankbooks || loadingCreateBankbook || loadingUpdateBankbook || loadingDeleteBankbook"
             size="large">
-            <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+            <DxDataGrid id="gridContainer" ref="cm121DxDataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
               :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
               key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
@@ -93,7 +93,7 @@
                   <a-form-item label="통장별명" class="form-item-top red">
                     <div class="custom-note d-flex-center">
                       <default-text-box :required="true" :width="150" placeholder="영어,한글,숫자만 가능"
-                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname" />
+                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname" :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가"/>
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">중복 등록 불가</span>
                     </div>
@@ -103,7 +103,7 @@
                   <a-form-item label="통장구분" class="form-item-top">
                     <div class="custom-note d-flex-center form-item-top-switch">
                       <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
-                        :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private" />
+                        :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private || !isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">최초 저장된 이후 수정 불가</span>
                     </div>
@@ -218,7 +218,6 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/CM/CM121";
 import mutations from "@/graphql/mutations/CM/CM121";
-import dayjs, { Dayjs } from "dayjs";
 import { companyId } from "@/helpers/commonFunction"
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
@@ -334,8 +333,12 @@ export default defineComponent({
     })
     let isChangeGlobalYear = ref<boolean>(false)
     let globalYearChange = ref(globalYear.value)
+    let isChangeFocusSubmit = ref<boolean>(false)
+    const cm121DxDataGrid = ref<any>()
+    let isDuplicaseName = ref<boolean>(true)
     // ------------COMPUTED ----------------------
-
+    const dataGridRef = computed(() => cm121DxDataGrid.value?.instance as any); // ref of grid Instance
+    
     const isEdited = computed(() => {
       return isEqual(oldDataDetailBankbook.value, dataDetailBankbook.value)
     })
@@ -443,13 +446,13 @@ export default defineComponent({
         globalYearSelected.value = value
         return
       }
-      if (isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value })) {
-        globalYearSelected.value = value
-      } else {
+      if (!isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value }) || isCreate.value) {
         globalYearChange.value = value
         store.state.settings.globalYear = globalYearSelected.value
         isChangeGlobalYear.value = true
         isModalConfirmSaveChange.value = true
+      } else {
+        globalYearSelected.value = value
       }
     })
     watch(() => globalYearSelected.value, (value) => {
@@ -479,15 +482,41 @@ export default defineComponent({
           triggerBankbook.value = true
         }
         if (isNewCreate.value) {
-          const lengthData = value.getBankbooks.length - 1
-          focusedRowKey.value = value.getBankbooks[lengthData].bankbookId
+          if (isChangeGlobalYear.value) {
+            const yearChange = globalYearChange.value
+            globalYearChange.value = null
+            store.state.settings.globalYear = yearChange
+            isChangeGlobalYear.value = false
+            resetStatus()
+            return
+          } 
+          if(isChangeFocusSubmit.value && !isStatusClickCreate.value) {
+            indexRow.value = objChange.value.indexRow
+            focusedRowKey.value = objChange.value.bankbookId
+            paramBankbookDetail.bankbookId = objChange.value.bankbookId
+            paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
+          }else{
+            const lengthData = value.getBankbooks.length - 1
+            indexRow.value = lengthData
+            focusedRowKey.value = value.getBankbooks[lengthData].bankbookId
+            paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
+            paramBankbookDetail.facilityBusinessId = value.getBankbooks[lengthData].facilityBusinessId
+          }
+          if(isChangeFocusSubmit.value && isStatusClickCreate.value) {
+            isModalRegister.value = true
+          }
           isCreate.value = false
-          indexRow.value = lengthData
-          paramBankbookDetail.facilityBusinessId = value.getBankbooks[lengthData].facilityBusinessId
-          paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
           triggerBankbook.value = true
         }
         if (isUpdate.value) {
+          if (isChangeGlobalYear.value) {
+            const yearChange = globalYearChange.value
+            globalYearChange.value = null
+            store.state.settings.globalYear = yearChange
+            isChangeGlobalYear.value = false
+            resetStatus()
+            return
+          } 
           indexRow.value = objChange.value.indexRow
           paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
           paramBankbookDetail.bankbookId = objChange.value.bankbookId
@@ -514,6 +543,8 @@ export default defineComponent({
             isCreate.value = true
           }
         }
+        isStatusClickCreate.value = false
+        isChangeFocusSubmit.value = false
         isUpdate.value = false
         isNewCreate.value = false
         firstLoad.value = false
@@ -603,8 +634,19 @@ export default defineComponent({
       }
     })
 
-    // -------METHODS-----------
+    watch(() => dataDetailBankbook.value.bankbookInput.bankbookNickname, (value) => {
+      isDuplicaseName.value = !dataSource.value.some((items, index) => index !== indexRow.value && items.bankbookNickname === value)
+    })
 
+    // -------METHODS-----------
+    const resetStatus = () => {
+      isStatusClickCreate.value = false
+      isChangeFocusSubmit.value = false
+      isUpdate.value = false
+      isNewCreate.value = false
+      firstLoad.value = false
+      isDelete.value = false
+    }
     const handleGetInputBankType = (type: string, listInput: string) => {
       const listInputArr = listInput.split(",");
       const ID = listInputArr.find((item: any) => item.includes('ID'))
@@ -672,7 +714,7 @@ export default defineComponent({
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = data.facilityBiz,
-        paramBankbookDetail.bankbookId = null
+      paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
@@ -794,6 +836,8 @@ export default defineComponent({
       if (!isEdited.value || event.rows[event.prevRowIndex].data.bankbookId === newSampleID) {
         event.cancel = true
         if (event.prevRowIndex !== event.newRowIndex) {
+          const rowElement = document.querySelector(`[aria-rowindex="${event.newRowIndex + 1}"]`)
+          rowElement?.classList.add("dx-state-hover-custom")
           isModalConfirmSaveChange.value = true
         }
       } else {
@@ -811,6 +855,7 @@ export default defineComponent({
 
     const handleConfirmChange = (val: boolean) => {
       if (val) {
+        isChangeFocusSubmit.value = true
         submit()
       } else {
         if (isChangeGlobalYear.value) {
@@ -818,7 +863,6 @@ export default defineComponent({
           globalYearChange.value = null
           store.state.settings.globalYear = yearChange
         } else {
-          keyResetPopupRegisterBankbook.value++
           const isCheckAdding = dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID
           if (isCheckAdding) {
             dataSource.value = dataSource.value.filter((items: any) => items.bankbookId !== newSampleID)
@@ -841,9 +885,11 @@ export default defineComponent({
           }
           isModalConfirmSaveChange.value = false
           triggerBankbook.value = true
+          isStatusClickCreate.value = false
         }
       }
-      isStatusClickCreate.value = false
+      keyResetPopupRegisterBankbook.value++
+      dataGridRef.value?.refresh();
     }
 
     const setAccountSubject = (accountName: string, accountCode: string) => {
@@ -895,7 +941,9 @@ export default defineComponent({
       isInputWebPW,
       onDragChange,
       isCheckAdding,
-      newSampleID
+      newSampleID,
+      cm121DxDataGrid,
+      isDuplicaseName
     }
   }
 });

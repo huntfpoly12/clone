@@ -5,13 +5,14 @@
     <DxValidator :name="nameInput" :value="textBoxValue">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
+      <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import { DxValidator, DxRequiredRule, DxStringLengthRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxStringLengthRule, DxCustomRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -49,12 +50,25 @@ export default defineComponent({
       default: '',
     },
     textBoxValue: String,
+    ruleCustom: {
+      type: Function,
+      default: () => true,
+    },
+    messageRuleCustom: {
+      type: String,
+      default: "",
+    },
+    textUppercase: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
-    DxStringLengthRule
+    DxStringLengthRule,
+    DxCustomRule
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -71,9 +85,8 @@ export default defineComponent({
     };
 
     watch(() => props.valueInput, (newValue) => {
-      value.value = newValue;
-    }
-    );
+      value.value = props.textUppercase ? newValue?.toUpperCase(): newValue;
+    });
 
     const valueChanged = () => {
       if (props.replaceRegex) {
