@@ -586,6 +586,9 @@ export default defineComponent({
                 store.state.common.focusedRowKey = data.incomeId
                 
             }
+            store.state.common.statusChangeFormAdd = false;
+            store.state.common.statusChangeFormEdit = false;
+            store.state.common.statusChangeFormPrice = false;
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
             }
