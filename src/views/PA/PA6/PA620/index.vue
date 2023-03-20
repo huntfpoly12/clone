@@ -374,7 +374,7 @@ export default defineComponent({
                   }
                   isRunOnce.value = false;
                 }
-
+                trigger.value = false;
             }
         })
         errorGetIncomeProcessBusinesses(res => {
@@ -420,12 +420,14 @@ export default defineComponent({
         }
         const createdDone = () => {
             if(!formRef.value.isClickYearDiff){
+              trigger.value = true;
               refetchData();
             }else{
               formRef.value.isClickYearDiff = false;
             }
         }
         const statusDone = (emitVal: any)=> {
+            trigger.value = true;
             refetchData();
             statusButton.value = emitVal;
         }
@@ -447,6 +449,7 @@ export default defineComponent({
         }
         const loadingTable = () => {
             isRunOnce.value = true;
+            trigger.value = true;
             refetchData();
         }
         const dataAddIncomeProcess = (data: any) => {
@@ -464,6 +467,7 @@ export default defineComponent({
             formRef.value.resetForm();
             valueCallApiGetIncomeProcessBusinesses.imputedYear = newVal;
             isRunOnce.value = true;
+            trigger.value = true;
         };
         const isCompareForm = computed(()=>formRef.value?.compareForm());
         // -----------------get config to check default date type--------------

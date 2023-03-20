@@ -40,17 +40,18 @@
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
           <!-- {{ compareForm() }} compareForm() <br />
-            {{ editRowPA120 }} editRowPA120 <br />
-            {{ activeTabEditKeyPA120 }} activeTabEditKeyPA120 <br />
-            {{ isCalculateEditPA120 }} isCalculateEditPA120 <br />
-            {{ isNewRowPA120 }} isNewRowPA120 <br /> -->
-          <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ compareType }} compareType <br />
-          {{ initFormStateTabPA120.employeeId }} initFormStateTabPA120.employeeId <br /> -->
+          {{ rowChangeStatus }} rowChangeStatus <br />
+          {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
+          {{ JSON.stringify(focusedRowKey) }} focusedRowKey <br />
+          {{ typeof focusedRowKey }} focusedRowKey <br />
+          {{ dataSource[dataSource.length - 1]?.key }} dataSource <br />
+          {{ actionChangeComponent }} actionChangeComponent <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
-            :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey">
+            :auto-navigate-to-focused-row="true" v-model:focused-row-key="focusedRowKey" ref="gridRef"
+            @focused-row-changing="onFocusedRowChanging">
+            <DxPaging :page-size="0" />
             <DxSearchPanel :visible="true" :highlight-case-sensitive="true"
               :search-visible-columns="['TypeCodeAndName']" />
             <DxExport :enabled="true" />
@@ -115,6 +116,7 @@
             <DxScrolling column-rendering-mode="virtual" />
           </DxDataGrid>
         </a-spin>
+        <!-- <input v-model="focusedRowKey"/> -->
       </a-col>
       <a-col :span="13" class="custom-layout">
         <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
@@ -133,7 +135,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, computed, reactive } from 'vue';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxExport } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxExport, } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
@@ -237,7 +239,7 @@ export default defineComponent({
     }));
     watch(result, (value) => {
       const data = value.getEmployeeWages;
-      dataSource.value = data.map((item: any) => ({ ...item, key: item.employeeId }));
+      dataSource.value = data.map((item: any) => ({ ...item, key: item.employeeId.toString() }));
       if (compareType.value == 3) {
         addNewRow();
         return;
@@ -304,12 +306,17 @@ export default defineComponent({
       setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         focusedRowKey.value = initFormStateTabPA120.value.key;
+        console.log(focusedRowKey.value);
       }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
     const compareForm = () => {
       const { stayQualification, ...obj1 } = editRowPA120.value;
       const { stayQualification: stayQualification2, ...obj2 } = initFormStateTabPA120.value;
+      if (!initFormStateTabPA120.value.foreigner) {
+        delete obj1.nationality;
+        delete obj2.nationality;
+      }
       if (JSON.stringify(obj1) == JSON.stringify(obj2) && isCalculateEditPA120.value) {
         return true;
       }
@@ -361,6 +368,11 @@ export default defineComponent({
           ele22?.click();
         }
       } else {
+        removeHoverRowKey();
+        if (compareType.value == 3) {
+          compareType.value = 1;
+          return;
+        }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
           isClickYearDiff.value = false;
@@ -377,7 +389,9 @@ export default defineComponent({
           idRowEdit.value = idRowFake.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
-          focusedRowKey.value = idRowEdit.value;
+          console.log(idRowEdit.value);
+          focusedRowKey.value = idRowFake.value.toString();
+          console.log(focusedRowKey.value);
         }
         compareType.value = 2;
       }
@@ -394,10 +408,11 @@ export default defineComponent({
         isClickYearDiff.value = false;
         return;
       }
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      focusedRowKey.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId.toString() : idRowFake.value.toString();
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
+      actionChangeComponent.value = 2;
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
@@ -423,7 +438,8 @@ export default defineComponent({
       } else {
         store.commit('common/activeTabEditKeyPA120', '1');
       }
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId;
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
+      console.log(focusedRowKey.value);
     });
     //edit row
     const actionEdit = (data: any) => {
@@ -431,7 +447,7 @@ export default defineComponent({
       if (isNewRowPA120.value) {
         if (compareForm()) {
           delNewRow();
-          focusedRowKey.value = data.data.employeeId;
+          // focusedRowKey.value = data.data.employeeId;
           idRowEdit.value = data.data.employeeId;
           if (actionChangeComponent.value == 1) {
             actionChangeComponent.value = 2;
@@ -499,6 +515,25 @@ export default defineComponent({
         store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
       }
     })
+    //-----------------------hover when click diff row----------------
+    const gridRef = ref(); // ref of grid
+    const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
+    const onFocusedRowChanging = (e: any) => {
+      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`);
+      if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
+        e.cancel = true;
+        return;
+      }
+      if (!compareForm()) {
+        rowElement?.classList.add("dx-state-hover-custom")
+        e.cancel = true;
+      }
+    }
+    const removeHoverRowKey = () => {
+      const element = document.querySelector(".dx-state-hover-custom");
+      if (element)
+        dataGridRef.value?.refresh();
+    }
     return {
       loading,
       idRowEdit,
@@ -534,13 +569,14 @@ export default defineComponent({
       compareType,
       messageSave,
       messageDel,
-      // isFirstWeb,
+      gridRef,
       editRowPA120,
       compareForm,
       tabCurrent,
       rowKeyTab2PA120,
       calculateIncomeTypeCodeAndName,
       isCalculateEditPA120,
+      onFocusedRowChanging,
     };
   },
 });

@@ -90,8 +90,9 @@
                   <button-basic text="저장" type="default" mode="contained" :width="90"
                       @onClick="actionUpdated($event)" />
                 </a-row>
+              
                 <PopupMessage :modalStatus="modalStatusDelete" @closePopup="modalStatusDelete = false"
-                    typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요"
+                    typeModal="confirm" :content="() => vnode" okText="네. 삭제합니다" cancelText="아니요"
                     @checkConfirm="statusComfirm" />
             <!-- </a-spin> -->
         </a-modal>
@@ -105,8 +106,10 @@ import { useStore } from "vuex";
 import mutations from "@/graphql/mutations/PA/PA1/PA120";
 import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
-import {taxWaring} from '../../utils/index'
-const contentDelete = '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다. 그래도 삭제하시겠습니까?'
+import {taxWaring} from '../../utils/index';
+import { h } from 'vue';
+const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다'),h('div','그래도 삭제하시겠습니까?')])
+const contentDelete = '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다.<br/> '
 export default defineComponent({
     components: {},
     props: {
@@ -294,7 +297,7 @@ export default defineComponent({
             ageCount,
             disabledButton,convertAge,
             setModalVisible, actionUpdated, statusComfirm, contentDelete,
-            labelResidebId, actionDeleteFuc, modalStatusDelete,isDisabledSenior,itemSelected,consignDisabled,
+            labelResidebId, actionDeleteFuc, modalStatusDelete,isDisabledSenior,itemSelected,consignDisabled,vnode
         };
     },
 });

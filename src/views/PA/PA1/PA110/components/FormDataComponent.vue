@@ -121,7 +121,7 @@
                                         :name="item.name" :type="4" subName="공제" :showTooltip="false" :width="'130px'" />
                                 </span>
                                 <div>
-                                    <number-box-money width="130px" :spinButtons="false" :rtlEnabled="false"
+                                    <number-box-money width="130px" @changeInput="onChangeInputPayItem" :spinButtons="false" :rtlEnabled="false"
                                         v-model:valueInput="item.amount" :min="0">
                                     </number-box-money>
                                     <span class="pl-5">원</span>
@@ -147,7 +147,7 @@
                                         :name="item.name" :width="'130px'" :type="4" :showTooltip="false" subName="공제" />
                                 </span>
                                 <div>
-                                    <number-box-money width="130px" :spinButtons="false" :rtlEnabled="true"
+                                    <number-box-money width="130px" @changeInput="onChangeInputDeduction" :spinButtons="false" :rtlEnabled="true"
                                         v-model:valueInput="item.amount" :min="0">
                                     </number-box-money>
                                     <span class="pl-5">원</span>
@@ -160,7 +160,7 @@
             <a-row class="mt-20 mb-10">
                 <a-col :offset="4" style="text-align: center;">
                     <div class="text-align-center" style="display: flex; justify-content: center;">
-                        <a-tooltip placement="top">
+                        <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                             <div>
                                 <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
@@ -184,7 +184,7 @@
                                 <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
-                        <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" :disabled="store.state.common.statusDisabledStatus" mode="contained" type="default" text="저장" />
+                        <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
                     </div>
                 </a-col>
             </a-row>
@@ -252,24 +252,29 @@ export default defineComponent({
         const countKey: any = ref(0)
         const originDataEmployeeWage = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: null,
         }
         const calculateVariables = {
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             totalTaxPay: 0,
             dependentCount: 1
         }
-        const originData = reactive({
+        const originData = {
             companyId: companyId,
-            imputedYear: globalYear.value,
-        })
-        const incomeWageParams = reactive({
+            imputedYear: globalYear,
+        }
+        const originDataConfig = {
+            companyId: companyId,
+            imputedYear: globalYear,
+            useOnly: true,
+        }
+        const incomeWageParams = {
             companyId: companyId,
             processKey: { ...processKey.value },
             incomeId: 0
-        })
+        }
 
         const totalPayItem = ref<number>(0)
         const totalPayItemTax = ref<number>(0)
@@ -283,7 +288,7 @@ export default defineComponent({
             enabled: triggerEmployeeWages.value,
             fetchPolicy: "no-cache",
         }))
-        const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originData, () => ({
+        const { refetch: refetchConfigPayItems, onResult: resConfigPayItems, loading: loadingConfigPayItems } = useQuery(queries.getWithholdingConfigPayItems, originDataConfig, () => ({
             enabled: triggerConfigPayItems.value,
             fetchPolicy: "no-cache",
         }))
@@ -291,7 +296,7 @@ export default defineComponent({
             onResult: resConfigDeductions,
             loading: loadingConfigDeductions,
             refetch: refetchConfigDeduction,
-        } = useQuery(queries.getWithholdingConfigDeductionItems, originData, () => ({
+        } = useQuery(queries.getWithholdingConfigDeductionItems, originDataConfig, () => ({
             enabled: triggerConfigDeductions.value,
             fetchPolicy: "no-cache",
         }))
@@ -376,16 +381,14 @@ export default defineComponent({
         onIncomeWageTaxError(e => {
             notification('error', e.message)
         })
-        actionUpdateErr(e => {
+        actionUpdateErr(async e => {
             notification('error', e.message)
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.settings.globalYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
         })
@@ -395,11 +398,9 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.settings.globalYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
             await store.state.common.loadingTableInfo++
@@ -411,11 +412,9 @@ export default defineComponent({
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.settings.globalYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
             await store.state.common.loadingTableInfo++
@@ -423,16 +422,14 @@ export default defineComponent({
             
         })
 
-        errorCreated(res => {
+        errorCreated(async res => {
             notification('error', res.message)
             if (store.state.common.checkClickYear) {
                 store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
                 store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.settings.globalYear = store.state.common.dataYearNew
                 store.state.common.loadingTableInfo++
-                setTimeout(() => {
-                    store.state.common.checkClickYear = false;
-                }, 500);
+                await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                await (store.state.common.checkClickYear = false);
                 return;
             }
         })
@@ -451,13 +448,13 @@ export default defineComponent({
         })
 
         watch(() => dataConfigDeductions.value, (value) => {
-            store.state.common.statusChangeFormEdit = true;
+            // store.state.common.statusChangeFormEdit = true;
             calculateTax();
         }, { deep: true })
 
         watch(() => dataConfigPayItems.value, (value) => {
-            store.state.common.statusChangeFormEdit = true;
-            store.state.common.statusChangeFormPrice = true;
+            // store.state.common.statusChangeFormEdit = true;
+            // store.state.common.statusChangeFormPrice = true;
             calculateTax();
         }, { deep: true })
 
@@ -504,19 +501,22 @@ export default defineComponent({
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
         })
-        watch(() => dataIW.value, (value) => {
-            if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && !store.state.common.statusFormAdd && store.state.common.dataRowOld) {
-                store.state.common.statusChangeFormEdit = true
-            } else {
-                store.state.common.statusChangeFormEdit = false
-            }
-            if (JSON.stringify({ ...sampleDataIncomeWage }) !== JSON.stringify(dataIW.value)) {
-                store.state.common.statusChangeFormAdd = true
-                if (!store.state.common.statusRowAdd) {
-                    store.state.common.statusChangeFormEdit = true
+        watch(() => dataIW.value, (value, oldVal) => {
+            if (store.state.common.statusFormAdd) {
+                if (JSON.stringify({ ...sampleDataIncomeWage }) !== JSON.stringify(dataIW.value)) {
+                    store.state.common.statusChangeFormAdd = true
+                    // if (!store.state.common.statusRowAdd) {
+                    //     store.state.common.statusChangeFormEdit = true
+                    // }
+                } else {
+                    store.state.common.statusChangeFormAdd = false
                 }
             } else {
-                store.state.common.statusChangeFormAdd = false
+                if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && store.state.common.dataRowOld) {
+                    store.state.common.statusChangeFormEdit = true
+                } else {
+                    store.state.common.statusChangeFormEdit = false
+                }
             }
         }, { deep: true })
         watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
@@ -567,7 +567,6 @@ export default defineComponent({
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
                 dataIW.value.workingHoursOnHolidays = data.workingHoursOnHolidays
-                
                 store.state.common.dataRowOld = { ...dataIW.value }
                 store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
                 store.state.common.focusedRowKey = data.incomeId
@@ -576,10 +575,10 @@ export default defineComponent({
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
             }
-            setTimeout(() => {
-                store.state.common.statusChangeFormEdit = false;
-                store.state.common.statusChangeFormPrice = false;
-            }, 200);
+            // setTimeout(() => {
+            //     store.state.common.statusChangeFormEdit = false;
+            //     store.state.common.statusChangeFormPrice = false;
+            // }, 200);
             
         })
         watch(resCalcIncomeWageTax, (value) => {
@@ -597,7 +596,7 @@ export default defineComponent({
                 await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
 
-                // await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
+                await (dataIW.value.totalPay = newVal.getEmployeeWage.totalPay);
                 
                 await (dataIW.value.employee.nationalPensionDeduction = newVal.getEmployeeWage.nationalPensionDeduction);
                 await (dataIW.value.employee.healthInsuranceDeduction = newVal.getEmployeeWage.healthInsuranceDeduction);
@@ -636,8 +635,25 @@ export default defineComponent({
         watch(globalYear, (newVal) => {
             originData.imputedYear = newVal
             triggerEmployeeWages.value = true;
+            triggerConfigPayItems.value = true;
+            triggerConfigDeductions.value = true;
         })
         // ======================= FUNCTION ================================
+        const onChangeInputDeduction = () => {
+            if (store.state.common.statusFormAdd) {
+                store.state.common.statusChangeFormAdd = true
+            } else {
+                store.state.common.statusChangeFormEdit = true
+            }
+        }
+        const onChangeInputPayItem = () => {
+            store.state.common.statusChangeFormPrice = true
+            if (store.state.common.statusFormAdd) {
+                store.state.common.statusChangeFormAdd = true
+            } else {
+                store.state.common.statusChangeFormEdit = true
+            }
+        }
         const pa110FormRef = ref()
         const onSubmitForm = () => {
             store.state.common.statusClickButtonSave = true;
@@ -716,6 +732,11 @@ export default defineComponent({
                 return accumulator + object.amount;
             }, 0));
             await (subPayment.value = totalPayItem.value - totalDeduction.value)
+            if (store.state.common.statusFormAdd) {
+                await (dataIW.value.totalPay = totalPayItem.value);
+                await (dataIW.value.totalDeduction = totalDeduction.value);
+                await (dataIW.value.actualPayment = subPayment.value);
+            }
         }
 
         // open popup deduction
@@ -794,10 +815,11 @@ export default defineComponent({
             showErrorButton,
             submitForm, onSubmitForm,
             totalPayItem,
-        totalPayItemTax,
-        totalPayItemTaxFree,
-        totalDeduction,
-        subPayment,
+            totalPayItemTax,
+            totalPayItemTaxFree,
+            totalDeduction,
+            subPayment,
+            onChangeInputDeduction, onChangeInputPayItem,
         };
     },
 });

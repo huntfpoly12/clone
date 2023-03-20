@@ -42,7 +42,7 @@ export default [
 
   { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130" },
 
-  { name: "통장내역", url: "#", id: "ac-110" },
+  { name: "통장내역", url: "/dashboard/ac-110", id: "ac-110" },
   { name: "전표", url: "#", id: "ac-120" },
   { name: "마감", url: "#", id: "ac-130" },
 

@@ -5,7 +5,7 @@
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
             <text-number-box width="200px" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
-              placeholder="숫자만 입력 가능" />
+              placeholder="숫자만 입력 가능" :disabled="isEdit" />
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
             </span>
@@ -46,18 +46,13 @@
         </a-form-item>
         <a-row>
           <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
-            <country-code-select-box v-if="initFormStateTabPA120.foreigner" style="width: 200px"
-              v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-              :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner"
-              :hiddenOptionKR="true" />
-            <country-code-select-box v-else style="width: 200px"
-              v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-              :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner" />
+            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
+              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
           </a-form-item>
-
           <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
             <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
-              :disabled="foreigner == 0" />
+              :disabled="foreigner == 0" :required="initFormStateTabPA120.foreigner" />
           </a-form-item>
         </a-row>
 
@@ -153,6 +148,7 @@ export default defineComponent({
     const arrResponsibility = ref([]);
     const labelResidebId = ref("주민(외국인)번호 ");
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
+    const yearPA120 = computed(() => store.state.common.yearPA120);
 
     const postCode = ref();
     const funcAddress = (data: any) => {
@@ -269,7 +265,10 @@ export default defineComponent({
       notification("error", error.message);
       store.commit('common/actionFormErrorPA120');
     });
-
+    const formParam = reactive({
+      companyId: companyId,
+      imputedYear: yearPA120,
+    })
     const createNewEmployeeWage = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
@@ -283,21 +282,22 @@ export default defineComponent({
         if (isEdit.value) {
           delete formData.employeeId;
         }
-        let dataNew = {
-          companyId: companyId,
-          imputedYear: globalYear.value,
+        let dataNew: any = {
+          ...formParam,
           input: {
             ...formData,
             joinedAt: +dayjs(initFormStateTabPA120.value.joinedAt).format("YYYYMMDD"),
             leavedAt: +dayjs(initFormStateTabPA120.value.leavedAt).format("YYYYMMDD"),
           },
         };
+        console.log(dataNew);
         if (!isEdit.value) {
           createEmployeeWage(dataNew);
-        }else{
+        } else {
+          dataNew.employeeId = +initFormStateTabPA120.value.employeeId;
           mutateEdit(dataNew);
         }
-        
+
       }
     };
     const actionFormDonePA120 = computed(() => store.getters['common/actionFormDonePA120']);
@@ -344,6 +344,7 @@ export default defineComponent({
       changeTextCountry,
       onFocusOut,
       onChange,
+      isEdit,yearPA120,
     };
   },
 });
@@ -375,4 +376,5 @@ export default defineComponent({
     align-items: center;
     margin-bottom: 5px;
   }
-}</style>
+}
+</style>

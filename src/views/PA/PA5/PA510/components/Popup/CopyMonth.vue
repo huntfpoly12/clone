@@ -91,7 +91,7 @@ export default defineComponent({
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
-        const trigger = ref<boolean>(true)
+        const trigger = ref<boolean>(false)
         const triggerFindIncome = ref<boolean>(false)
         watch(() => props.data, (val) => {
             month.value = val
@@ -121,6 +121,9 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        watch(() => store.state.common.actionCallGetMonthDetail, (newVal) => {
+            trigger.value = true;
+        })
         watch(resultConfig, (value) => {
             trigger.value = false;
             let paymentMonth = month.value
