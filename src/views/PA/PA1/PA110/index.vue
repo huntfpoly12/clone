@@ -627,9 +627,9 @@ export default defineComponent({
             }
             
             dataMonthNew.value = month
+            store.state.common.checkClickMonth = true
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd) && !isRunOnce.value) {
                 modalChangeRow.value = true
-                store.state.common.checkClickMonth = true
             } else {
                 isRunOnce.value = false
                 activeNewMonth(month)
