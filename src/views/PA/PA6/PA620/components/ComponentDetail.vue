@@ -380,7 +380,6 @@ export default defineComponent({
       statusButton.value = newValue
     })
     watch(processKeyPA620, (newVal: any, oldV) => {
-      console.log('processKeyPA620 thay doi')
       isFirstChange.value = true;
       isNewRow.value = false;
       paramIncomeBusinesses.processKey = processKeyPA620.value;
@@ -830,6 +829,7 @@ export default defineComponent({
       // }
       if (!compareForm()) {
         rowElement?.classList.add("dx-state-hover-custom")
+
         e.cancel = true;
       }
     }

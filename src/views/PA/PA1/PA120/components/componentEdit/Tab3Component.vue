@@ -39,15 +39,13 @@
                         <DxColumnFixing :enabled="true"/>
                         <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center"/>
                         <template #pupop="{ data }">
-                            <div class="custom-action">
-                                <a-space :size="10">
-                                    <a-tooltip  color="black" placement="top">
-                                        <template #title>편집</template>
-                                        <EditOutlined @click="actionEdit(data.data)" />
-                                    </a-tooltip>
-
-                                </a-space>
-                            </div>
+                            <DxButton class="custom-action"  @click="actionEdit(data.data)"
+                                style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                                  <div v-if="!loading">
+                                    <zoom-in-outlined v-if="data.data.relation == 0" :style="{fontSize: '20px', color: 'black'}"/>
+                                    <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
+                                  </div>
+                            </DxButton>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
                             <div v-if="cellData.value" class="tag-foreigner">외</div>
@@ -266,7 +264,7 @@
 </template>
 <script lang="ts">
 import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue"
+import { EditOutlined, DeleteOutlined, ZoomInOutlined } from "@ant-design/icons-vue"
 
 import { DxDataGrid, DxColumn, DxToolbar, DxItem,DxScrolling, DxColumnFixing } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
@@ -294,7 +292,8 @@ export default defineComponent({
         DxToolbar,
         DxItem, BtnCheck,
         DxButton, EditOutlined, DeleteOutlined,
-        DxColumnFixing
+        DxColumnFixing,
+        ZoomInOutlined,
     },
     props: {
         popupStatus: {

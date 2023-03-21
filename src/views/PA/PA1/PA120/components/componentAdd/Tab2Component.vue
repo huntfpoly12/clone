@@ -149,7 +149,7 @@
       </a-col>
       <a-col class="col-2">
         <div class="header-text-2">
-          수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 =
+          급여 {{ $filters.formatCurrency(totalPayItem) }} 원 =
           과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
           {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
         </div>
@@ -176,7 +176,7 @@
         </a-spin>
       </a-col>
       <a-col class="col-3">
-        <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(totalDeduction) }}원</div>
+        <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }}원</div>
         <a-spin :spinning="loading1 || loading3" size="large">
           <div class="deduction-main">
             <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
@@ -649,193 +649,7 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss" scoped >
-#tab2-pa120 {
-  ::v-deep .ant-form-item-label>label {
-    width: 130px;
-    padding-left: 10px;
-  }
+<style lang="scss" scoped>
+@import '../../style/style.scss';
+</style>
 
-  .input-text {
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-left: 10px;
-    }
-  }
-
-  .header-text-1 {
-    background-color: #558ed5;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-
-  .header-text-2 {
-    background-color: #c6d9f1;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-
-  .header-text-3 {
-    background-color: #558ed5;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-
-    span {
-      display: flex;
-      align-items: center;
-      float: right;
-      font-size: 11px;
-      color: black;
-
-      p {
-        margin: 5px 0px 3px 10px;
-      }
-    }
-  }
-
-  .ins-dedu {
-    display: flex;
-
-    .check-box-tab1 {
-      display: inline;
-      margin-left: 10px;
-    }
-  }
-
-  .durunuri-insurance {
-    ::v-deep .ant-form-item-label>label {
-      width: 200px;
-      padding-left: 10px;
-    }
-
-
-  }
-
-  .switch-insurance {
-    width: 100px;
-    float: right;
-  }
-
-  :deep .col-2 {
-    flex: 1 1 30%;
-
-    .dx-numberbox {
-      width: 111px !important;
-    }
-
-    .deducation-name {
-      width: 50px !important;
-    }
-  }
-
-  :deep .col-3 {
-    flex: 1 1 35%;
-  }
-}
-
-.pension {
-  ::v-deep .dx-radiobutton {
-    margin: 0px 0px 0px 76px;
-  }
-}
-
-.income-tax-app-rate {
-  ::v-deep .dx-radiobutton {
-    margin-right: 12%;
-  }
-}
-
-.deduction-main {
-  // max-height: 200px;
-  // overflow: scroll;
-  border: 1px solid #ddd;
-  padding-left: 5px;
-  padding-top: 5px;
-  min-height: 143px;
-}
-
-.custom-deduction {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 97%;
-
-  >span {
-    margin-right: 10px;
-    min-width: 100px;
-  }
-
-  >div {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-}
-
-.salary-item {
-  .sal-item {
-    display: flex;
-    align-items: center;
-
-    p {
-      margin: 0px;
-    }
-  }
-
-  ::v-deep .ant-form-item-label>label {
-    width: 100px;
-    padding-left: 10px;
-  }
-}
-
-.summary {
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 4px;
-  justify-content: space-between;
-
-  :deep .ant-col {
-    padding: 0 !important;
-  }
-
-  div {
-    margin-bottom: 5px;
-  }
-
-  .text5 {
-    span {
-      display: flex;
-
-      p {
-        margin-left: 3px;
-        font-size: 12px;
-      }
-    }
-  }
-}
-
-.text-note {
-  font-size: 11px;
-  display: inline;
-  // margin-left: 5px;
-  // margin-bottom: 0px;
-}
-
-.header-text-4 {
-  background-color: #c6d9f1;
-  padding: 5px;
-  font-size: 14px;
-  margin-bottom: 10px;
-
-  .switch-bg {
-    background-color: white;
-  }
-}</style>

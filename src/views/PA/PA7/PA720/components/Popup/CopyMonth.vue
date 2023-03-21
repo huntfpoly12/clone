@@ -1,7 +1,7 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="500">
-      <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
+      <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
         <div class="d-flex-center">
           <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
             :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
@@ -15,7 +15,7 @@
         <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true" />
       </a-form-item>
 
-      <div class="text-align-center mt-30">
+      <div class="text-align-center mt-20">
         <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
           @onClick="onSubmit" />
         <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
@@ -25,8 +25,8 @@
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
     :width="600">
-    <div class="mt-30 d-flex-center">
-      <span>과거내역</span>
+    <div class="mt-45 d-flex-center">
+      <span class="mr-5">과거내역</span>
       <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
         field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
@@ -45,7 +45,7 @@
             formatMonth(data.paymentMonth) }}</span>
         </template>
       </DxSelectBox>
-      <span>로 부터 복사하여 새로 입력합니다.</span>
+      <span class="mr-5">로 부터 복사하여 새로 입력합니다.</span>
     </div>
 
     <div class="text-align-center mt-30">

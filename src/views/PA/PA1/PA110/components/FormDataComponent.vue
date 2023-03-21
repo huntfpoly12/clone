@@ -24,6 +24,10 @@
                             <span class="w-120">소득수당합계</span>
                             <number-box-money :disabled="true" width="100px" v-model:valueInput="totalPayItem" />
                             <span class="pl-5">원</span>
+                            <span class="fz-10 ml-10" style="color: gray; font-weight: 300;">
+                                <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                                수당 합계 = 수당 과세 + 수당 비과세
+                            </span>
                         </div>
                         <div class="text1 d-flex-center">
                             <span class="w-110">수당 과세합계</span>
@@ -61,35 +65,35 @@
                     </div>
                     <a-form-item label="근무일수" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingDays" :required="true"/>
                             <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="총근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="야간근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="휴일근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
@@ -100,11 +104,11 @@
             <div class="header-text-3">급여 / 공제</div>
             <a-row :gutter="16">
                 <a-col :span="13">
-                    <div class="header-text-2">수당 항목 {{ $filters.formatCurrency(totalPayItem) }} 원 = {{
+                    <div class="header-text-2">급여 {{ $filters.formatCurrency(totalPayItem) }} 원 = 과세 {{
                         $filters.formatCurrency(totalPayItemTaxFree)
-                    }} 과 + {{
+                    }} + 비과세 {{
     $filters.formatCurrency(totalPayItemTax)
-}} 비 </div>
+}}</div>
                     <a-spin :spinning="loadingConfigPayItems" size="large">
                         <div class="deduction-main">
                             <div v-for="(item) in dataConfigPayItems" :key="item.name" class="custom-deduction">
@@ -131,7 +135,7 @@
                     </a-spin>
                 </a-col>
                 <a-col :span="11">
-                    <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
+                    <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
                     <a-spin :spinning="loadingConfigDeductions" size="large">
                         <div class="deduction-main">
                             <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
@@ -175,13 +179,13 @@
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
+                                <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
                             </div>
                         </a-tooltip>
                         <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
@@ -403,6 +407,11 @@ export default defineComponent({
                 await (store.state.common.checkClickYear = false);
                 return;
             }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
+            }
             await store.state.common.loadingTableInfo++
             
         })
@@ -416,6 +425,11 @@ export default defineComponent({
                 await (store.state.settings.globalYear = store.state.common.dataYearNew)
                 await (store.state.common.checkClickYear = false);
                 return;
+            }
+            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.checkClickCopyMonth = false;
+                store.state.common.openModalCopyMonth++
+                // return
             }
             await store.state.common.loadingTableInfo++
             
@@ -572,6 +586,9 @@ export default defineComponent({
                 store.state.common.focusedRowKey = data.incomeId
                 
             }
+            store.state.common.statusChangeFormAdd = false;
+            store.state.common.statusChangeFormEdit = false;
+            store.state.common.statusChangeFormPrice = false;
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
             }
@@ -666,24 +683,28 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
+                    store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
+                    store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
                     showErrorButton.value = true;
                     store.state.common.dataRowOnActive = dataIW.value
                 } else {
                     let payItems = dataConfigPayItems.value?.map((item: any) => {
                         return {
                             itemCode: item.itemCode,
-                            amount: item.amount
+                            amount: item.amount ? item.amount : 0
                         }
                     })
                     let deductionItems = dataConfigDeductions.value?.map((item: any) => {
                         return {
                             itemCode: item.itemCode,
-                            amount: item.amount
+                            amount: item.amount ? item.amount : 0
                         }
                     })
                     const variables: any = {

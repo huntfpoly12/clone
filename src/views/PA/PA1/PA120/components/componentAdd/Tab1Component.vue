@@ -4,7 +4,7 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
-            <text-number-box width="200px" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
+            <number-box width="200px" :min="1" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
               placeholder="숫자만 입력 가능" :disabled="isEdit" />
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.

@@ -492,7 +492,7 @@ export default defineComponent({
                 if (isRunOnce.value) {
                     showDetailSelected(obj)
                 } else  {
-                    if (checkClickMonth.value)
+                    if (store.state.common.checkClickMonth)
                         activeNewMonth(dataMonthNew.value)
                     else
                         activeNewMonth(obj)
@@ -526,9 +526,9 @@ export default defineComponent({
                     //     store.state.common.focusedRowKey = store.state.common.incomeId
                     //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                     // } else {
-                        if (!store.state.common.dataIncomeIdBackend || checkClickMonth.value) {
+                        if (!store.state.common.dataIncomeIdBackend || store.state.common.checkClickMonth) {
                             // isRunOnceTaxPayInfo.value = false;
-                            checkClickMonth.value = false
+                            store.state.common.checkClickMonth = false
                             store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
@@ -589,6 +589,10 @@ export default defineComponent({
                 triggerDataTaxPayInfo.value = true; //reset data table 2
             }
         })
+        watch(() => store.state.common.openModalCopyMonth, (value) => {
+            dataModalCopy.value = monthCopy.value
+            modalCopy.value = true
+        })
         /**
          * action edit employ tax pay
          */
@@ -610,7 +614,7 @@ export default defineComponent({
             })
         }
         const dataMonthNew: any = ref()
-        const checkClickMonth = ref<Boolean>(false)
+        // const checkClickMonth = ref<Boolean>(false)
         // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
             if (
@@ -623,9 +627,9 @@ export default defineComponent({
             }
             
             dataMonthNew.value = month
-            if (store.state.common.statusChangeFormEdit && !isRunOnce.value) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd) && !isRunOnce.value) {
                 modalChangeRow.value = true
-                checkClickMonth.value = true
+                store.state.common.checkClickMonth = true
             } else {
                 isRunOnce.value = false
                 activeNewMonth(month)
@@ -643,13 +647,20 @@ export default defineComponent({
             store.state.common.statusRowAdd = true;
             // debugger
         }
+        const monthCopy = ref<number>()
         /**
          * copy data from other month
          * @param month 
          */
         const copyMonth = (month: number) => {
-            dataModalCopy.value = month;
-            modalCopy.value = true;
+            monthCopy.value = month
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
+                modalChangeRow.value = true
+                store.state.common.checkClickCopyMonth = true
+            } else {
+                dataModalCopy.value = monthCopy.value;
+                modalCopy.value = true;
+            }
         }
 
         /**
@@ -708,10 +719,17 @@ export default defineComponent({
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
                 }
-                if (checkClickMonth.value) {
+                if (store.state.common.checkClickMonth) {
                     activeNewMonth(dataMonthNew.value)
-                    checkClickMonth.value = false;
+                    store.state.common.checkClickMonth = false;
                     return;
+                }
+                if (store.state.common.checkClickCopyMonth) {
+                    store.state.common.checkClickCopyMonth = false;
+                    dataModalCopy.value = monthCopy.value
+                    modalCopy.value = true
+                    // store.state.common.loadingFormData++
+                    // return;
                 }
                 if (store.state.common.checkClickYear) {
                     isRunOnce.value = true;
@@ -733,10 +751,10 @@ export default defineComponent({
             if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
                 e.cancel = true;
             } else {
-                const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
+                const rowElement = e.rowElement[0]
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                    if (store.state.common.statusChangeFormEdit) { // if change form data
+                    if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) { // if change form data
                             rowElement?.classList.add("dx-state-hover-custom")
                             modalChangeRow.value = true;
                             e.cancel = true;
@@ -755,7 +773,7 @@ export default defineComponent({
             }
         };
         watch(globalYear, (newVal, oldVal) => {
-            if (store.state.common.statusChangeFormEdit) {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 if (!store.state.common.checkClickYear) {
                     modalChangeRow.value = true
                     store.state.common.checkClickYear = true

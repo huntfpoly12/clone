@@ -5,11 +5,12 @@
             <div class="text-align-center">
                 <h3>공제 재계산 결과</h3>
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="data"
+                        allow-column-resizing="false"
                         :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
-                        <DxScrolling mode="standard" show-scrollbar="always"/>
-                        <DxColumn caption="항목" data-field="name" />
-                        <DxColumn caption="계산후" data-field="priceNew" format="fixedPoint"/>
-                        <DxColumn caption="원본" data-field="price" format="fixedPoint"/>
+                        <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->
+                        <DxColumn caption="항목" data-field="name" width="200"/>
+                        <DxColumn caption="계산후" data-field="priceNew" width="180" format="fixedPoint"/>
+                        <DxColumn caption="원본" data-field="price" width="180" format="fixedPoint"/>
                     </DxDataGrid>
             </div>
         </div>
@@ -71,7 +72,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .custom-modal {
     display: flex;
-    width: 100%;
+    // width: 100%;
     justify-content: center;
     margin-top: 20px;
     .title {

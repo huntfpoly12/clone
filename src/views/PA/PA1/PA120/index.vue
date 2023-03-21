@@ -147,7 +147,7 @@ import PA120PopupAddNewVue from './components/PA120PopupAddNew.vue';
 import PA120PopupEdit from './components/PA120PopupEdit.vue';
 import { Message } from '@/configs/enum';
 import { DxTooltip } from 'devextreme-vue/tooltip';
-import { initFormStateTab1, initFormStateTab2 } from './utils/index';
+import { initFormStateTab1 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
 
@@ -193,7 +193,7 @@ export default defineComponent({
     const rowChangeStatus = ref<Boolean>(false);
     const idRowFake = ref();
     const messageSave = Message.getMessage('COMMON', '501').message;
-    const messageDel = Message.getMessage('COMMON', '401').message;
+    const messageDel = Message.getMessage('COMMON', '402').message;
 
     //--------------------delete row data-------------------
 
@@ -213,7 +213,7 @@ export default defineComponent({
       }
     };
     successDelete((e) => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageDel);
       isFirstRun.value = true;
       actionChangeComponent.value = 2;
       trigger.value = true;
@@ -276,7 +276,7 @@ export default defineComponent({
         compareType.value = 2;
         rowChangeStatus.value = true;
         isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
+        store.state.common.yearPA120 = oldVal;
       }
     });
     // addcomponent
