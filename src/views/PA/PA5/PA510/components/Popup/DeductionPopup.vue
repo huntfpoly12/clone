@@ -8,9 +8,9 @@
                         allow-column-resizing="false"
                         :show-borders="true" :column-auto-width="true" :onRowPrepared="changeColorRow">
                         <!-- <DxScrolling mode="standard" show-scrollbar="always"/> -->
-                        <DxColumn caption="항목" data-field="name" />
-                        <DxColumn caption="계산후" data-field="priceNew" format="fixedPoint"/>
-                        <DxColumn caption="원본" data-field="price" format="fixedPoint"/>
+                        <DxColumn caption="항목" data-field="name" width="200"/>
+                        <DxColumn caption="계산후" data-field="priceNew" width="180" format="fixedPoint"/>
+                        <DxColumn caption="원본" data-field="price" width="180" format="fixedPoint"/>
                     </DxDataGrid>
             </div>
         </div>
