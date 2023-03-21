@@ -33,7 +33,7 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
-    const messageDel = Message.getMessage('COMMON', '402').message;
+    const messageDel = Message.getMessage('COMMON', '404').message;
     const setModalVisible = () => {
       emit('closePopup', false);
     };
