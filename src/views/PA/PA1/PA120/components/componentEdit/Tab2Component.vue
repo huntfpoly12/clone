@@ -99,7 +99,7 @@
         </span>
       </div>
       <a-row :gutter="16">
-        <a-col style="flex: 0 0 28%">
+        <a-col style="flex: 1 1 28%">
           <div class="header-text-2">요약</div>
           <div class="summary">
             <a-col :span="13">소득수당 합계
@@ -140,7 +140,7 @@
         </a-col>
         <a-col class="col-2" style="display: flex; flex-direction: column">
           <div class="header-text-2">
-            수당 항목 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
+            급여 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
             과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
             {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
@@ -168,7 +168,7 @@
         </a-col>
         <a-col class="col-3">
           <div class="header-text-2">
-            공제 항목 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span>
+            공제 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span>
           </div>
           <a-spin :spinning="loading1 || loading3" size="large">
             <div class="deduction-main">
@@ -195,9 +195,9 @@
       </a-row>
       <!-- {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br />
       {{ isCalculateEditPA120 }} isCalculateEditPA120<br />
-      {{ employeeWageParam }} employeeWageParam<br />
       {{ triggerDetail }} triggerDetail<br /> -->
       <!-- {{ initFormTab2PA120 }} initFormTab2PA120<br />
+        {{ employeeWageParam }} employeeWageParam<br />
         {{ compareForm() }} compareForm()<br /> -->
       <!-- {{ isBtnYellow }} isBtnYellow<br />
         {{ isAddFormErrorPA120 }} isAddFormErrorPA120<br /> -->
@@ -591,7 +591,6 @@ export default defineComponent({
       }
     }
     const calculateTax = () => {
-      // c onsole.log(`output- chay vao calculateTax`,)
       calcSum();
       countRestFirstRun.value = 1;
       triggerCalcIncomeWageTax.value = true;
@@ -673,8 +672,6 @@ export default defineComponent({
       }
     }
     );
-
-
     /**
      *  Save form
      */
@@ -713,13 +710,11 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
-
     // change row data  yearPA120.value
     const isWatchedYear = ref(false);
     watch(() => props.idRowEdit, async () => {
       countRestFirstRun.value = 0;
       countConfigPayItems.value = 0;
-      triggerDetail.value = false;
       configdeductionParam.value.imputedYear = yearPA120.value;
       configDeductionTrigger.value = true;
       await refetchConfigDeduction();
@@ -733,7 +728,6 @@ export default defineComponent({
       if (!isWatchedYear.value) {
         countRestFirstRun.value = 0;
         countConfigPayItems.value = 0;
-        triggerDetail.value = false;
         configdeductionParam.value.imputedYear = yearPA120.value;
         configDeductionTrigger.value = true;
         await refetchConfigDeduction();
@@ -743,7 +737,6 @@ export default defineComponent({
         store.state.common.isCalculateEditPA120 = true;
       }
     })
-
     return {
       loading1,
       loading2,
@@ -784,222 +777,5 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped >
-#tab2-pa120 {
-  ::v-deep .ant-form-item-label>label {
-    width: 130px;
-    padding-left: 10px;
-  }
-
-  .input-text {
-    display: flex;
-    align-items: center;
-
-    span {
-      margin-left: 10px;
-    }
-  }
-
-  .header-text-1 {
-    background-color: #558ed5;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-
-  .header-text-2 {
-    background-color: #c6d9f1;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 10px;
-    flex-wrap: nowrap;
-  }
-
-  .header-text-4 {
-    background-color: #c6d9f1;
-    padding: 5px;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-
-  .switch-bg {
-    background-color: white;
-  }
-
-  .header-text-3 {
-    background-color: #558ed5;
-    padding: 5px;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-
-    span {
-      display: flex;
-      align-items: center;
-      float: right;
-      font-size: 11px;
-      color: black;
-
-
-      p {
-        margin: 5px 0px 3px 10px;
-      }
-    }
-  }
-
-  .ins-dedu {
-    display: flex;
-
-    .check-box-tab1 {
-      display: inline;
-      margin-left: 10px;
-    }
-  }
-
-  .durunuri-insurance {
-    ::v-deep .ant-form-item-label>label {
-      width: 200px;
-      padding-left: 10px;
-    }
-  }
-
-  .switch-insurance {
-    width: 100px;
-    float: right;
-  }
-
-  .empl-ins {
-    span {
-      display: flex;
-      align-items: center;
-
-      p {
-        font-size: 11px;
-        margin-left: 5px;
-        margin-bottom: 0px;
-      }
-    }
-  }
-
-  .pension {
-    ::v-deep .dx-radiobutton {
-      margin: 0px 0px 0px 76px;
-    }
-  }
-
-  .income-tax-app-rate {
-    ::v-deep .dx-radiobutton {
-      margin-right: 12%;
-    }
-  }
-
-  :deep .ant-spin-nested-loading {
-    flex: 1 1 100%;
-
-    .ant-spin-container {
-      height: 100%;
-    }
-  }
-
-  .deduction-main {
-    // max-height: 209px;
-    // overflow: scroll;
-    border: 1px solid #ddd;
-    padding-left: 5px;
-    padding-top: 5px;
-    height: 100%;
-    min-height: 143px;
-  }
-
-  .custom-deduction {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 97%;
-
-    >span {
-      margin-right: 10px;
-      min-width: 100px;
-    }
-
-    >div {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-  }
-
-  .salary-item {
-    .sal-item {
-      display: flex;
-      align-items: center;
-
-      p {
-        margin: 0px;
-      }
-    }
-
-    ::v-deep .ant-form-item-label>label {
-      width: 100px;
-      padding-left: 10px;
-    }
-  }
-
-  .summary {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 4px;
-    justify-content: space-between;
-
-    :deep .ant-col {
-      padding: 0 !important;
-    }
-
-    div {
-      margin-bottom: 5px;
-
-    }
-
-    .text5 {
-      span {
-        display: flex;
-
-        p {
-          margin-left: 3px;
-          font-size: 12px;
-        }
-      }
-    }
-  }
-
-  .text-note {
-    font-size: 11px;
-    display: inline;
-
-    &p {
-      margin-bottom: 0;
-      margin-top: 7px;
-    }
-
-    // margin-left: 5px;
-    // margin-bottom: 0px;
-  }
-
-  :deep .col-2 {
-    flex: 1 1 30%;
-
-    .dx-numberbox {
-      width: 111px !important;
-    }
-
-    .deducation-name {
-      width: 50px !important;
-    }
-  }
-
-  :deep .col-3 {
-    flex: 1 1 35%;
-  }
-}
+@import '../../style/style.scss';
 </style>

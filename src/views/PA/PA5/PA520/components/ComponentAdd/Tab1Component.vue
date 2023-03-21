@@ -14,7 +14,6 @@
               </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
-              
                 <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                     placeholder="한글,영문(대문자) 입력 가능" />
             </a-form-item>
@@ -189,13 +188,22 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
-            store.state.common.addRowBtOnclick = false
+            store.state.common.addRowBtOnclickPA520 = false
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false
             notification('success', '업데이트 완료!');
         })
         //============ WATCH =================================
+
+        //check if the year is changed, then confirm first if you are adding or editing data
+        watch(() => globalYear.value, (newYear, oldYear) => {
+        
+          if (store.state.common.isChangeYearPA520 &&  store.state.common.checkChangeValueAddPA520) {
+            store.state.settings.globalYear = oldYear
+          }
+         })
+
         watch(() => dataCreated.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
