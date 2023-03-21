@@ -593,6 +593,7 @@ export default defineComponent({
       if (!res.isValid) {
         // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
+        dataGridRef.value?.refresh();
       } else {
         if (focusedRowKey && focusedRowKey.value !== 0) {
           // If bizNumber changed
@@ -650,9 +651,9 @@ export default defineComponent({
       } else {
         storeDataSource.value
           .update(previousRowData.value.backerCode, previousRowData.value)
-          .then((value) => {
+          .then(() => {
             focusedRowKey.value = selectRowKeyAction.value || 0;
-            storeDataSource.value.byKey(selectRowKeyAction.value).then((value) => {
+            storeDataSource.value.byKey(selectRowKeyAction.value).then((value: any) => {
               Object.assign(formState, value);
             });
             dataGridRef.value?.refresh();

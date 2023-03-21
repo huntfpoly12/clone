@@ -503,6 +503,7 @@ export default defineComponent({
         if (!res.isValid) {
           // focusedRowKey.value = previousRowData.value.key;
           res.brokenRules[0].validator.focus();
+          dataGridRef.value?.refresh();
         } else {
           if (focusedRowKey && focusedRowKey.value !== 0) {
             updateClient(dataUpdate.value);
