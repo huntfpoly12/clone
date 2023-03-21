@@ -284,7 +284,6 @@ export default defineComponent({
       //   return;
       // }
       if (!props.compareForm()) {
-        console.log('compareForm loi', rowElement);
         e.cancel = true;
         rowElement?.classList.add("dx-state-hover-custom");
       }
