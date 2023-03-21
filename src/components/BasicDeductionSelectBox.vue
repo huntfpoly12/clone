@@ -13,6 +13,7 @@
         @value-changed="updateValue(value)"
         :height="$config_styles.HeightInput"
         :name="nameInput"
+        :disabled="disabled"
       >
         <DxValidator :name="nameInput">
           <DxRequiredRule v-if="required" :message="messageRequired" />

@@ -37,17 +37,17 @@
             <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center" />
 
             <template #pupop="{ data }">
-              <div class="custom-action">
-                <a-space :size="10">
-                  <a-tooltip color="black" placement="top">
-                    <template #title>편집</template>
-                    <EditOutlined @click="actionEdit(data.data)" />
-                  </a-tooltip>
-                </a-space>
-              </div>
+              <DxButton class="custom-action"  @click="actionEdit(data.data)"
+                  style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                    <div v-if="!loading">
+                      <zoom-in-outlined v-if="data.data.relation == 0" :style="{fontSize: '20px', color: 'black'}"/>
+                      <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
+                    </div>
+              </DxButton>
             </template>
             <template #foreignerChange="{ data: cellData }">
-              <div v-if="!cellData.value" class="tag-foreigner">내</div>
+              <div v-if="cellData.value" class="tag-foreigner">외</div>
+              <div v-else class="tag-foreigner">내</div>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
@@ -244,7 +244,7 @@ import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import PopupAddNewDependent from '../tab3Dependent/PopupAddNewDependent.vue';
 import PopupUpdateDependent from '../tab3Dependent/PopupUpdateDependent.vue';
-import { EditOutlined } from '@ant-design/icons-vue';
+import { EditOutlined, ZoomInOutlined, } from '@ant-design/icons-vue';
 
 import { useQuery } from '@vue/apollo-composable';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
@@ -264,6 +264,7 @@ export default defineComponent({
     DxButton,
     BtnCheck,
     DxColumnFixing,
+    ZoomInOutlined
   },
   props: {
     employeeId: {

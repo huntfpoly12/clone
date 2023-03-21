@@ -4,7 +4,8 @@
         :max-range="maxRange"
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
         :placeholder="placeholder" :range="true"
-        :multi-calendars="multiCalendars">
+        :multi-calendars="multiCalendars"
+        :teleport="teleport">
     </Datepicker>
 </template>
 <script lang="ts">
@@ -40,6 +41,10 @@ export default defineComponent({
             type: [Number,String],
             default: null,
         },
+        teleport: {
+          default: false,
+          type: [Boolean,String]
+        }
     },
     components: {
         Datepicker,
