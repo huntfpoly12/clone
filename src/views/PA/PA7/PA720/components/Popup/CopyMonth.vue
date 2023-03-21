@@ -105,28 +105,6 @@ export default defineComponent({
         store.commit('common/paymentDayPA720', value);
       },
     });
-    const trigger = ref(false);
-    //-----------get config to check default date type----------------
-    // const configTrigger = ref(false);
-    // const dateType = ref<number>(1);
-    // const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    // const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
-    //   enabled: configTrigger.value,
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(resultConfig, (newVal) => {
-    //   if (newVal) {
-    //     const data = newVal.getWithholdingConfig;
-    //     dateType.value = data.paymentType;
-    //     store.commit('common/paymentDayPA720', data.paymentDay);
-    //     configTrigger.value = false;
-    //   }
-    // });
-    // watch(() => props.month, () => {
-    //   dataQuery.value.imputedYear = globalYear.value;
-    //   configTrigger.value = true;
-    //   configRefetch();
-    // })
     // ----------set month source default because dependent on the set up before--------------
 
     const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
@@ -142,7 +120,6 @@ export default defineComponent({
           yearMonth = `${globalYear.value}${val}`;
         }
         month2.value = yearMonth;
-        trigger.value = true;
         findIncomeRefetch();
       }, { deep: true }
     );
@@ -158,19 +135,16 @@ export default defineComponent({
       }
     })
     const { result: resultFindIncomeProcessExtraStatViews, refetch: findIncomeRefetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
-      enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(resultFindIncomeProcessExtraStatViews, (value) => {
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
-      trigger.value = true;
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
     watch(modalCopy, (newVal, oldVal) => {
       if (newVal) {
         findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}01`);
         findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
-        trigger.value = true;
       }
     });
 

@@ -226,8 +226,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <!-- {{ processKeyPA620 }} processKeyPA620 <br/>
-                {{ statusButton }} statusButton <br/> -->
+                <!-- {{ statusButton }} statusButton <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
                     @createdDone="createdDone" ref="formRef" @noSave="changeNoSave" @statusDone="statusDone"/>
                 <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
@@ -440,6 +439,7 @@ export default defineComponent({
         }
         const onAddMonth = (month: number) => {
           if (!formRef.value.compareForm()) {
+            formRef.value.compareType = 2;
             formRef.value.rowChangeStatus = true;
             formRef.value.isClickAddMonthDiff = true;
             changeMonthDataFake.value = month;
@@ -497,7 +497,7 @@ export default defineComponent({
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, isDisabledForm,
             setUnderline, createdDone, onAddMonth, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            isCompareForm,statusDone,dateType
+            isCompareForm,statusDone,dateType,changeMonthDataFake
         };
     },
 });

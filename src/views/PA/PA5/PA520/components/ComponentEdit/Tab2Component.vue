@@ -113,14 +113,14 @@
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
                             <span>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" subName="과세" width="100px" />
+                                    :name="item.name" :type="1" subName="과세" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" />
+                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                     :name="item.name" :type="3"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" />
+                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" subName="공제" width="100px" />
+                                    :name="item.name" :type="4" subName="공제" width="100px" :showTooltip="false"/>
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
@@ -175,7 +175,7 @@ export default defineComponent({
         })
         const originDataDetail = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
             employeeId: props.idRowEdit
         })
         let originDataUpdate: any = ref({
@@ -288,11 +288,6 @@ export default defineComponent({
         // ================== WATCH ====================================
         watch(() => originDataUpdate.value, (newVal) => {
           let valueConvert = JSON.parse(dataDefaultGet.value)
-            
-          // if (valueConvert.input.nationalPensionSupportPercent == null)
-          //   valueConvert.input.nationalPensionSupportPercent = 0
-          // if (valueConvert.input.employeementInsuranceSupportPercent == null)
-          //   valueConvert.input.employeementInsuranceSupportPercent = 0
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkChangeValueEditTab2PA520 = false
           } else {   
@@ -300,16 +295,6 @@ export default defineComponent({
           }
         }, { deep: true })
 
-      //   // Event change value default
-      // watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
-      //       if (newVal == false) {
-      //           originDataUpdate.value.input.nationalPensionSupportPercent = null
-      //           originDataUpdate.value.input.employeementInsuranceSupportPercent = null
-      //       } else {
-      //           originDataUpdate.value.input.nationalPensionSupportPercent = 0
-      //           originDataUpdate.value.input.employeementInsuranceSupportPercent = 0
-      //       }
-      //   }, { deep: true })
         // call api on tab 2 for the first time
         if (store.state.common.idRowChangePa520 != 0) { 
             originDataDetail.value.employeeId = store.state.common.idRowChangePa520
@@ -379,6 +364,7 @@ export default defineComponent({
           if (isBtnYellow.value) {
             validateCalculate.value = true
           } else {
+            originDataUpdate.value.imputedYear = store.state.common.checkChangeValueEditTab2PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value
             mutate(originDataUpdate.value)
             store.state.common.checkChangeValueEditTab2PA520 = false
           }
@@ -458,7 +444,7 @@ export default defineComponent({
         }
         return {dataDefaultGet,
             store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear
         };
     },
 });

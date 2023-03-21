@@ -21,6 +21,7 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import { Message } from '@/configs/enum';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -39,6 +40,7 @@ export default defineComponent({
     components: {
     },
     setup(props, { emit }) { 
+        const messageDel = Message.getMessage('COMMON', '402').message;
         const setModalVisible = () => {
             emit("closePopup", false)
         }; 
@@ -52,7 +54,7 @@ export default defineComponent({
         })
         successDelete(e => {
             setModalVisible();
-            notification('success', ` 완료!`);
+            notification('success', messageDel);
             emit("closePopup", true)
         })
         const onSubmit = (e: any) => {

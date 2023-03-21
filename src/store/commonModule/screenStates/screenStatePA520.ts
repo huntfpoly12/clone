@@ -8,11 +8,13 @@ const statesPA520 = {
   checkChangeValueAddPA520: false,
   dataDetailAddTab1PA520: {},
   activeAddRowPA520: false,
-  addRowBtOnclick: false,
-  countBtOnclick: 0,
+  addRowBtOnclickPA520: false,
+  countBtOnclickPA520: 0,
   rowIdSaveDonePa520: 0,
   actionSaveAddPA520: 0,
   actionUpdateTab1PA520: 0,
   actionUpdateTab2PA520: 0,
+  isChangeYearPA520: false,
+  oldGlobalYearPA520:0
 };
 export default statesPA520;

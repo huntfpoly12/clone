@@ -252,7 +252,7 @@
       <a-col :class="{ 'ele-opacity': !compareForm() }" :span="13" class="custom-layout">
         <TaxPayInfo ref="taxPayRef" :dataCallTableDetail="processKeyPA720" @editTax="editTax" :isRunOnce="isRunOnce"
           :changeFommDone="changeFommDone" :addItemClick="addItemClick" :saveToNewRow="saveToNewRow"
-          :compareType="compareType" />
+          :compareType="compareType" :compareForm="compareForm" :editTaxParamFake="editTaxParamFake"/>
       </a-col>
       <a-col :span="11" class="custom-layout" style="padding-right: 0px">
         <FormTaxPayInfo ref="formTaxRef" :key="formKey" :editTax="editTaxParam" :isLoadNewForm="isLoadNewForm"
@@ -475,9 +475,7 @@ export default defineComponent({
         changeYearDataFake.value = oldVal;
       }
     });
-
     // -----------------change income process extra status------------------------
-
     const { mutate: mutateChangeIncomeProcessExtraStatus, onDone: onDoneChangeIncomeProcessExtraStatusDone, onError: onErrorChangeStatus } = useMutation(mutations.changeIncomeProcessExtraStatus);
     onDoneChangeIncomeProcessExtraStatusDone(() => {
       notification('success', messageUpdate);
@@ -486,9 +484,7 @@ export default defineComponent({
     onErrorChangeStatus((res: any) => {
       notification('error', res.message);
     })
-
     // ======================= after change data ==================================
-
     const onCopyDone = () => {
       refetchIncomeProcessExtras();
       isRunOnce.value = true;
@@ -511,9 +507,7 @@ export default defineComponent({
       store.commit('common/formEditPA720', formPA720.value);
     };
     watch(changeFommDone, () => {
-      // if(isClickYearDiff.value){
       refetchIncomeProcessExtras();
-      // }
     });
     const actionEditDaySuccess = (emit: String) => {
       if (emit) {
@@ -533,9 +527,7 @@ export default defineComponent({
       statusParam.value = { ...processKeyPA720.value, status: 10 };
       formTaxRef.value.isEdit = false;
     };
-
     // ======================= track change of form ================================
-
     const formPA720 = computed(() => store.getters['common/formPA720']);
     const formEditPA720 = computed(() => store.getters['common/formEditPA720']);
     const isNewRowPA720 = computed(() => store.state.common.isNewRowPA720);
@@ -564,8 +556,6 @@ export default defineComponent({
       store.commit('common/formEditPA720', dataActionUtilsPA720.value);
     };
     const addNewRow = async () => {
-      // store.commit('common/formPA720', dataActionUtilsPA720.value);
-      // store.commit('common/formEditPA720', dataActionUtilsPA720.value);
       await resetForm();
       store.state.common.isNewRowPA720 = true;
       compareType.value = 1;
@@ -615,6 +605,7 @@ export default defineComponent({
         let ele = document.getElementById('pa720-save-js') as HTMLInputElement;
         ele.click();
       } else {
+        taxPayRef.value.removeHoverRowKey();
         if (isClickMonthDiff.value) {
           onChangeMonth(changeMonthDataFake.value);
           isClickMonthDiff.value = false;
@@ -667,6 +658,7 @@ export default defineComponent({
       if (firsTimeRow) {
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
+        store.commit('common/selectedRowKeysPA720', emit.incomeId);
         return;
       }
       if (isNewRowPA720.value) {
@@ -678,15 +670,19 @@ export default defineComponent({
           formTaxRef.value.isEdit = true;
           return;
         }
+        store.commit('common/selectedRowKeysPA720', emit.incomeId);
         rowChangeStatus.value = true;
         return;
       }
       if (!compareForm()) {
+        // store.commit('common/selectedRowKeysPA720', emit.incomeId);
+        console.log(store.state.common.selectedRowKeysPA720);
         rowChangeStatus.value = true;
         return;
       } else {
         formTaxRef.value.isEdit = true;
         editTaxParam.value = emit;
+        store.commit('common/selectedRowKeysPA720', emit.incomeId);
       }
     };
     //-----------------------submit-------------------------------------
@@ -714,9 +710,7 @@ export default defineComponent({
           compareType.value = 2;
         }
       } else {
-        if (compareType.value == 3) {
-          return;
-        }
+        if (compareType.value == 3) return;
         editTaxParam.value = compareType.value == 2 && editTaxParamFake.value;
         taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
         store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
@@ -805,23 +799,20 @@ export default defineComponent({
     }
     const onAddMonth = (val: number) => {
       if (!compareForm()) {
+        compareType.value = 2;
         rowChangeStatus.value = true;
         isClickAddMonthDiff.value = true;
         changeMonthDataFake.value = val;
         return;
       }
       addMonth(val);
-      // month.value = val;
     };
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
     const changeMonthDataFake = ref();
     const isClickMonthDiff = ref(false);
-    // fnc click month fake
-    const onChangeMonth = (obj: any) => {
-      if (!isRunOnce.value) {
-        isColumnData.value = true;
-      }
+    const onChangeMonth = (obj: any) => {// fnc click month fake
+      if (!isRunOnce.value) isColumnData.value = true;
       if (obj) {
         taxPayRef.value.firsTimeRow = true;
         let datObj = {
@@ -851,11 +842,7 @@ export default defineComponent({
       }
     };
     //-----------------check tag > 30 40 -------------------------
-    const isExpiredStatus = computed(() => {
-      if (statusParam.value.status > 10) {
-        return true
-      } return false
-    })
+    const isExpiredStatus = computed(() => statusParam.value.status > 10);
     //-----------get config to check default date type----------------
     const configTrigger = ref(false);
     const dateType = ref<number>(1);
