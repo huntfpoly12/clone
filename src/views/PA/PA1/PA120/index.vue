@@ -172,7 +172,7 @@ export default defineComponent({
   setup() {
     const actionChangeComponent = ref(2);
     const addNew = ref();
-    const contentDelete = Message.getMessage('COMMON', '402').message;
+    const contentDelete = Message.getMessage('PA120', '002').message;
     const delStatus = ref(false);
     const dataSource = ref<any[]>([]);
     const store = useStore();
@@ -276,7 +276,7 @@ export default defineComponent({
         compareType.value = 2;
         rowChangeStatus.value = true;
         isClickYearDiff.value = true;
-        store.state.common.yearPA120 = oldVal;
+        changeYearDataFake.value = oldVal;
       }
     });
     // addcomponent
@@ -412,7 +412,7 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      // actionChangeComponent.value = 2;
+      actionChangeComponent.value = 2;
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
@@ -438,9 +438,7 @@ export default defineComponent({
       } else {
         store.commit('common/activeTabEditKeyPA120', '1');
       }
-      if (dataSource.value[dataSource.value.length - 1].key != 0) {
-        focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
-      }
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
       console.log(focusedRowKey.value);
     });
     //edit row
