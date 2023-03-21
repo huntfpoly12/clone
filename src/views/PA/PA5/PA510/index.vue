@@ -11,7 +11,7 @@
                     <template #imputed-year="{}">
                         <span>지급연월</span>
                     </template>
-                    <DxColumn width="100px" caption="01" cell-template="imputed-month1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="01" cell-template="imputed-month1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 ? 'column-focus' : '' + (hoverColClick == 1 ? 'column-hover' : '')"/>
                     <template #imputed-month1="{ data }">
                         <div v-if="data.data.month1">
                             <colorful-badge class="hover-underlined" :value="data.data.month1.status"
@@ -21,7 +21,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="02" cell-template="imputed-month2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="02" cell-template="imputed-month2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 ? 'column-focus' : '' + (hoverColClick == 2 ? 'column-hover' : '')"/>
                     <template #imputed-month2="{ data }">
                         <div v-if="data.data.month2">
                             <colorful-badge class="hover-underlined" :value="data.data.month2.status"
@@ -31,7 +31,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="03" cell-template="imputed-month3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="03" cell-template="imputed-month3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 ? 'column-focus' : '' + (hoverColClick == 3 ? 'column-hover' : '')"/>
                     <template #imputed-month3="{ data }">
                         <div v-if="data.data.month3">
                             <colorful-badge class="hover-underlined" :value="data.data.month3.status"
@@ -41,7 +41,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="04" cell-template="imputed-month4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="04" cell-template="imputed-month4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 ? 'column-focus' : '' + (hoverColClick == 4 ? 'column-hover' : '')"/>
                     <template #imputed-month4="{ data }">
                         <div v-if="data.data.month4">
                             <colorful-badge class="hover-underlined" :value="data.data.month4.status"
@@ -51,7 +51,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="05" cell-template="imputed-month5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="05" cell-template="imputed-month5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 ? 'column-focus' : '' + (hoverColClick == 5 ? 'column-hover' : '')"/>
                     <template #imputed-month5="{ data }">
                         <div v-if="data.data.month5">
                             <colorful-badge class="hover-underlined" :value="data.data.month5.status"
@@ -61,7 +61,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="06" cell-template="imputed-month6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="06" cell-template="imputed-month6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 ? 'column-focus' : '' + (hoverColClick == 6 ? 'column-hover' : '')"/>
                     <template #imputed-month6="{ data }">
                         <div v-if="data.data.month6">
                             <colorful-badge class="hover-underlined" :value="data.data.month6.status"
@@ -71,7 +71,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="07" cell-template="imputed-month7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="07" cell-template="imputed-month7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 ? 'column-focus' : '' + (hoverColClick == 7 ? 'column-hover' : '')"/>
                     <template #imputed-month7="{ data }">
                         <div v-if="data.data.month7">
                             <colorful-badge class="hover-underlined" :value="data.data.month7.status"
@@ -81,7 +81,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="08" cell-template="imputed-month8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="08" cell-template="imputed-month8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 ? 'column-focus' : '' + (hoverColClick == 8 ? 'column-hover' : '')"/>
                     <template #imputed-month8="{ data }">
                         <div v-if="data.data.month8">
                             <colorful-badge class="hover-underlined" :value="data.data.month8.status"
@@ -91,7 +91,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="09" cell-template="imputed-month9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="09" cell-template="imputed-month9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 ? 'column-focus' : '' + (hoverColClick == 9 ? 'column-hover' : '')"/>
                     <template #imputed-month9="{ data }">
                         <div v-if="data.data.month9">
                             <colorful-badge class="hover-underlined" :value="data.data.month9.status"
@@ -101,7 +101,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="10" cell-template="imputed-month10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="10" cell-template="imputed-month10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 ? 'column-focus' : '' + (hoverColClick == 10 ? 'column-hover' : '')"/>
                     <template #imputed-month10="{ data }">
                         <div v-if="data.data.month10">
                             <colorful-badge class="hover-underlined" :value="data.data.month10.status"
@@ -111,7 +111,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="11" cell-template="imputed-month11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="11" cell-template="imputed-month11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 ? 'column-focus' : '' + (hoverColClick == 11 ? 'column-hover' : '')"/>
                     <template #imputed-month11="{ data }">
                         <div v-if="data.data.month11">
                             <colorful-badge class="hover-underlined" :value="data.data.month11.status"
@@ -121,7 +121,7 @@
                         </div>
                         <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                     </template>
-                    <DxColumn width="100px" caption="12" cell-template="imputed-month12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 &&'column-focus'"/>
+                    <DxColumn width="100px" caption="12" cell-template="imputed-month12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 ? 'column-focus' : '' + (hoverColClick == 12 ? 'column-hover' : '')"/>
                     <template #imputed-month12="{ data }">
                         <div v-if="data.data.month12">
                             <colorful-badge class="hover-underlined" :value="data.data.month12.status"
@@ -140,52 +140,52 @@
                             <template #col-first="{ data }">
                                 <b>{{ data.data.name }}</b><br>
                             </template>
-                            <DxColumn width="100px" cell-template="month-1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-1" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 1 ? 'column-focus' : '' + (hoverColClick == 1 ? 'column-hover' : '')"/>
                             <template #month-1="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month1)">{{ data.data.month1.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-2" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 2 ? 'column-focus' : '' + (hoverColClick == 2 ? 'column-hover' : '')"/>
                             <template #month-2="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month2)">{{ data.data.month2.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-3" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 3 ? 'column-focus' : '' + (hoverColClick == 3 ? 'column-hover' : '')"/>
                             <template #month-3="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month3)">{{ data.data.month3.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-4" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 4 ? 'column-focus' : '' + (hoverColClick == 4 ? 'column-hover' : '')"/>
                             <template #month-4="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month4)">{{ data.data.month4.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-5" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 5 ? 'column-focus' : '' + (hoverColClick == 5 ? 'column-hover' : '')"/>
                             <template #month-5="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month5)">{{ data.data.month5.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-6" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 6 ? 'column-focus' : '' + (hoverColClick == 6 ? 'column-hover' : '')"/>
                             <template #month-6="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month6)">{{ data.data.month6.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-7" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 7 ? 'column-focus' : '' + (hoverColClick == 7 ? 'column-hover' : '')"/>
                             <template #month-7="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month7)">{{ data.data.month7.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-8" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 8 ? 'column-focus' : '' + (hoverColClick == 8 ? 'column-hover' : '')"/>
                             <template #month-8="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month8)">{{ data.data.month8.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-9" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 9 ? 'column-focus' : '' + (hoverColClick == 9 ? 'column-hover' : '')"/>
                             <template #month-9="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month9)">{{ data.data.month9.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-10" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 10 ? 'column-focus' : '' + (hoverColClick == 10 ? 'column-hover' : '')"/>
                             <template #month-10="{ data }">
                                 <div class="custom-detail" v-if="data.data.month10">{{ data.data.month10.value }}</div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-11" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 11 ? 'column-focus' : '' + (hoverColClick == 11 ? 'column-hover' : '')"/>
                             <template #month-11="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month11)">{{ data.data.month11.value }}
                                 </div>
                             </template>
-                            <DxColumn width="100px" cell-template="month-12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 &&'column-focus'"/>
+                            <DxColumn width="100px" cell-template="month-12" :cssClass=" store.state.common.processKeyPA510.imputedMonth == 12 ? 'column-focus' : '' + (hoverColClick == 12 ? 'column-hover' : '')"/>
                             <template #month-12="{ data }">
                                 <div class="custom-detail" v-if="(data.data.month12)">{{ data.data.month12.value }}
                                 </div>
@@ -379,6 +379,7 @@ export default defineComponent({
         const dataGridRef = computed(() => gridRefPA510.value?.instance as any); // ref of grid Instance
         const isRunOnce = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
+        const hoverColClick = ref<number>(0)
         // ======================= GRAPQL ================================
         const {
             refetch: refetchData,
@@ -606,6 +607,7 @@ export default defineComponent({
             dataMonthNew.value = month
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
+                hoverColClick.value = month.imputedMonth
                 store.state.common.checkClickMonth = true
             } else {
                 activeNewMonth(month)
@@ -625,6 +627,7 @@ export default defineComponent({
         }
 
         const statusComfirmChange = async (res: any) => {
+            hoverColClick.value = 0
             if (res) {
                 store.state.common.actionSubmit++
             } else {
@@ -756,6 +759,7 @@ export default defineComponent({
             Message,
             customMonthlyWage, customTotalDeduction,  customActualPayment,
             onFocusedRowChanging,
+            hoverColClick,
         }
 
     },
