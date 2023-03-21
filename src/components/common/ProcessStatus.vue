@@ -21,7 +21,7 @@
             </div>
         </template>
         <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="100" :text="item.text" :class="item.class"
+            <button-basic v-if="(currentBt == item.id)" :width="90" :text="item.text" :class="item.class"
                 class="buttonModal">
             </button-basic>
         </span>

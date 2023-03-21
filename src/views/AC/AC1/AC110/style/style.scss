@@ -1,14 +1,16 @@
 .ac-110 {
-  padding: 30px;
+  padding: 10px;
   &__top {
     &-grid {
-      display: grid;
-      grid-template-columns: auto auto auto auto auto auto;
+      display: flex;
+      justify-content: space-between;
       &-items {
         border: 1px solid rgba(99, 94, 94, 0.8);
         border-left: none;
-        padding: 5px;
         text-align: center;
+        max-width: calc(100%/12);
+        min-width: calc(100%/12);
+        padding: 10px 0;
         &-text {
           margin-right: 10px;
         }

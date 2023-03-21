@@ -16,9 +16,37 @@
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          ~
+          <span class="ac-110__top-grid-items-text">04</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
-        <div class="ac-110__top-grid-items"></div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">05</span>
+          <ProcessStatus :valueStatus="statusAdjusted" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">06</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">07</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">08</span>
+          <ProcessStatus :valueStatus="statusAdjusted" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">09</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">10</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">11</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
+        </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">12</span>
           <ProcessStatus :valueStatus="statusAdjusted" />
