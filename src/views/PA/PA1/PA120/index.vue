@@ -260,8 +260,7 @@ export default defineComponent({
     });
     //change year
     const isClickYearDiff = ref(false);
-    // const changeYearDataFake = ref();
-    const yearPA120 = computed(() => store.state.common.yearPA120);
+    const changeYearDataFake = ref();
     const changeYear = (newVal: any) => {
       isFirstRun.value = true;
       originData.value.imputedYear = newVal;
@@ -433,7 +432,8 @@ export default defineComponent({
         });
         isClickYearDiff.value = false;
         return;
-Current.value == 2) {
+      }
+      if (tabCurrent.value == 2) {
         store.commit('common/activeTabEditKeyPA120', '2');
       } else {
         store.commit('common/activeTabEditKeyPA120', '1');
