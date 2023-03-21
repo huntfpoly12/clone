@@ -13,6 +13,7 @@
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
               <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
                 :show-drag-icons="true" />
+              <DxPaging :enabled="false" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -87,7 +88,7 @@
                       <text-number-box :required="true" :width="150"
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber" :disabled="!isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">최초 저장된 이후 수정 불가</span>
+                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장별명" class="form-item-top red">
@@ -96,7 +97,7 @@
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname"
                         :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">중복 등록 불가</span>
+                      <span class="style-note style-note-cm121">중복 등록 불가</span>
                     </div>
                   </a-form-item>
                 </a-col>
@@ -106,7 +107,7 @@
                       <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
                         :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private || !isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">최초 저장된 이후 수정 불가</span>
+                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장용도" class="form-item-top">
@@ -115,7 +116,7 @@
                         :data-source="bankbookUseType" v-model:value="dataDetailBankbook.bankbookInput.useType"
                         placeholder="통장용도" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">관련 계정과목 적용 또는 <br />관련 서식에 기재됩니다.</span>
+                      <span class="style-note style-note-cm121">관련 계정과목 적용 또는 관련 서식에 기재됩니다.</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="예금주" class="form-item-top red">
@@ -133,7 +134,7 @@
                 <span>스크래핑 (통장내역 자동 조회) 정보</span>
                 <div class="pl-5">
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                  <span class="style-note">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다</span>
+                  <span class="style-note style-note-cm121">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다</span>
                 </div>
               </div>
               <a-row>
@@ -143,7 +144,7 @@
                       <switch-basic :textCheck="'O'" :textUnCheck="'X'"
                         v-model:valueSwitch="dataDetailBankbook.bankbookInput.useScrap" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">이용하지 않는 경우 스크래<br />핑 중지가 되어 통장 불러<br />오기를 할 수 없습니다.</span>
+                      <span class="style-note style-note-cm121">이용하지 않는 경우 스크래핑 중지가 되어 통장 불러오기를 할 수 없습니다.</span>
                     </div>
                   </a-form-item>
                 </a-col>
@@ -221,7 +222,7 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/CM/CM121";
 import mutations from "@/graphql/mutations/CM/CM121";
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup, DxPaging } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
@@ -238,7 +239,7 @@ export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
     EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup,
-    DxLookup
+    DxLookup, DxPaging
   },
   setup() {
     const store = useStore();
@@ -412,7 +413,7 @@ export default defineComponent({
       loading: loadingCreateBankbook,
     } = useMutation(mutations.createBankbook);
     doneCreateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '101').message)
       isNewCreate.value = true
       triggerBankbooks.value = true
       keyResetPopupRegisterBankbook.value++
@@ -429,7 +430,7 @@ export default defineComponent({
       loading: loadingUpdateBankbook,
     } = useMutation(mutations.updateBankbook);
     doneUpdateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '106').message)
       isUpdate.value = true
       triggerBankbooks.value = true
     })
@@ -445,7 +446,7 @@ export default defineComponent({
       loading: loadingDeleteBankbook,
     } = useMutation(mutations.deleteBankbook);
     doneDeleteBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '402').message)
       triggerBankbooks.value = true
     })
     errorDeleteBankbook(e => {
