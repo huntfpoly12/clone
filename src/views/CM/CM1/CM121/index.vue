@@ -5,11 +5,11 @@
       <a-col span="12" class="cm-121_main">
         <div class="cm-121_main-content">
           <a-spin
-            :spinning="loadingGetBankbooks || loadingCreateBankbook || loadingUpdateBankbook || loadingDeleteBankbook"
+            :spinning="loadingGetBankbooks || loadingCreateBankbook || loadingUpdateBankbook || loadingDeleteBankbook || loadingReorderBankbooks"
             size="large">
-            <DxDataGrid id="gridContainer" ref="cm121DxDataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-              :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :show-borders="true"
-              key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
+            <DxDataGrid id="gridContainer" ref="cm121DxDataGrid" :show-row-lines="true" :hoverStateEnabled="true"
+              :data-source="dataSource" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+              :show-borders="true" key-expr="bankbookId" :column-auto-width="true" :focused-row-enabled="true"
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
               <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
                 :show-drag-icons="true" />
@@ -93,7 +93,8 @@
                   <a-form-item label="통장별명" class="form-item-top red">
                     <div class="custom-note d-flex-center">
                       <default-text-box :required="true" :width="150" placeholder="영어,한글,숫자만 가능"
-                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname" :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가"/>
+                        v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname"
+                        :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
                       <span class="style-note">중복 등록 불가</span>
                     </div>
@@ -148,8 +149,8 @@
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
-                    class="form-item-bottom red">
-                    <text-number-box :required="true" :width="150" maxLength="4"
+                    class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword }">
+                    <text-number-box :required="isRequiredAccountPassword" :width="150" maxLength="4"
                       v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" />
                   </a-form-item>
                 </a-col>
@@ -338,7 +339,7 @@ export default defineComponent({
     let isDuplicaseName = ref<boolean>(true)
     // ------------COMPUTED ----------------------
     const dataGridRef = computed(() => cm121DxDataGrid.value?.instance as any); // ref of grid Instance
-    
+
     const isEdited = computed(() => {
       return isEqual(oldDataDetailBankbook.value, dataDetailBankbook.value)
     })
@@ -353,6 +354,15 @@ export default defineComponent({
     const isCheckAdding = computed(() => {
       return dataSource.value[indexRow.value]?.bankbookId === newSampleID
     })
+
+    const isRequiredAccountPassword = computed(() => {
+      return ((!!dataDetailBankbook.value.scrapingInfoInput.bizNumber
+        || !!dataDetailBankbook.value.scrapingInfoInput.birthday
+        || !!dataDetailBankbook.value.scrapingInfoInput.webId
+        || !!dataDetailBankbook.value.scrapingInfoInput.webPassword)
+        && !isCreate.value) || isCreate.value
+    })
+
     // ============ GRAPQL ===============================
 
     // get list bankbook
@@ -446,7 +456,8 @@ export default defineComponent({
         globalYearSelected.value = value
         return
       }
-      if (!isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value }) || isCreate.value) {
+      if (!isEqual(oldDataDetailBankbook.value, { ...dataDetailBankbook.value, fiscalYear: globalYearSelected.value })
+        || (isCreate.value && !!dataDetailBankbook.value.facilityBusinessId)) {
         globalYearChange.value = value
         store.state.settings.globalYear = globalYearSelected.value
         isChangeGlobalYear.value = true
@@ -474,7 +485,6 @@ export default defineComponent({
         }
         if (firstLoad.value && value.getBankbooks.length) {
           focusedRowKey.value = value.getBankbooks[0].bankbookId
-          isCreate.value = false
           paramBankbookDetail.facilityBusinessId = value.getBankbooks[0].facilityBusinessId
           paramBankbookDetail.bankbookId = value.getBankbooks[0].bankbookId
           objChange.value.bankbookId = value.getBankbooks[0].bankbookId
@@ -489,23 +499,22 @@ export default defineComponent({
             isChangeGlobalYear.value = false
             resetStatus()
             return
-          } 
-          if(isChangeFocusSubmit.value && !isStatusClickCreate.value) {
+          }
+          if (isChangeFocusSubmit.value && !isStatusClickCreate.value) {
             indexRow.value = objChange.value.indexRow
             focusedRowKey.value = objChange.value.bankbookId
             paramBankbookDetail.bankbookId = objChange.value.bankbookId
             paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
-          }else{
+          } else {
             const lengthData = value.getBankbooks.length - 1
             indexRow.value = lengthData
             focusedRowKey.value = value.getBankbooks[lengthData].bankbookId
             paramBankbookDetail.bankbookId = value.getBankbooks[lengthData].bankbookId
             paramBankbookDetail.facilityBusinessId = value.getBankbooks[lengthData].facilityBusinessId
           }
-          if(isChangeFocusSubmit.value && isStatusClickCreate.value) {
+          if (isChangeFocusSubmit.value && isStatusClickCreate.value) {
             isModalRegister.value = true
           }
-          isCreate.value = false
           triggerBankbook.value = true
         }
         if (isUpdate.value) {
@@ -516,7 +525,10 @@ export default defineComponent({
             isChangeGlobalYear.value = false
             resetStatus()
             return
-          } 
+          }
+          if (isChangeFocusSubmit.value && isStatusClickCreate.value) {
+            isModalRegister.value = true
+          }
           indexRow.value = objChange.value.indexRow
           paramBankbookDetail.facilityBusinessId = objChange.value.facilityBusinessId
           paramBankbookDetail.bankbookId = objChange.value.bankbookId
@@ -534,7 +546,6 @@ export default defineComponent({
               paramBankbookDetail.facilityBusinessId = value.getBankbooks[indexRow.value].facilityBusinessId
               paramBankbookDetail.bankbookId = value.getBankbooks[indexRow.value].bankbookId
             }
-            isCreate.value = false
             triggerBankbook.value = true
           } else {
             focusedRowKey.value = null
@@ -571,6 +582,7 @@ export default defineComponent({
       setAccountSubject(dataDetailBankbook.value.bankbookInput.accountName, dataDetailBankbook.value.bankbookInput.accountCode)
       isTypeClassification.value = data.classification === 'C' ? true : false
       countResetForm.value++
+      isCreate.value = false
       triggerBankbook.value = false
     })
 
@@ -714,7 +726,7 @@ export default defineComponent({
     const dataRegisterBankbook = (data: any) => {
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = data.facilityBiz,
-      paramBankbookDetail.bankbookId = null
+        paramBankbookDetail.bankbookId = null
       dataDetailBankbook.value.facilityBusinessId = data.facilityBiz
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
@@ -796,6 +808,9 @@ export default defineComponent({
           if (!data.scrapingInfoInput?.birthday) delete data.scrapingInfoInput.birthday
           if (!data.scrapingInfoInput?.webId) delete data.scrapingInfoInput.webId
           if (!data.scrapingInfoInput?.webPassword) delete data.scrapingInfoInput.webPassword
+        }
+        if (!isRequiredAccountPassword.value) {
+          delete data.scrapingInfoInput
         }
         updateBankbook(data)
       }
@@ -920,6 +935,7 @@ export default defineComponent({
       loadingDeleteBankbook,
       loadingGetBankbook,
       loadingUpdateBankbook,
+      loadingReorderBankbooks,
       isCreate,
       countResetForm,
       modalHistoryStatus,
@@ -943,7 +959,8 @@ export default defineComponent({
       isCheckAdding,
       newSampleID,
       cm121DxDataGrid,
-      isDuplicaseName
+      isDuplicaseName,
+      isRequiredAccountPassword
     }
   }
 });

@@ -18,9 +18,8 @@
           </a-form-item>
         </div>
         <div class="mt-20 mc121-popup-action">
-          <button-basic class="button-form-modal" :text="'정상'" :width="140" :type="'success'" :mode="'contained'" />
-          <span class="mc121-popup-slash">/</span>
-          <a-tooltip>
+          <button-basic v-if="!!data.lastScrapingStatus.scrapingStatus" class="button-form-modal" :text="'정상'" :width="140" :type="'success'" :mode="'contained'" />
+          <a-tooltip v-else>
             <template #title>{{ data.lastScrapingStatus.errorMessage }}</template>
             <span>
               <DxButton text="에러" width="140" type="danger" styling-mode="contained" :height="$config_styles.HeightInput"/>
