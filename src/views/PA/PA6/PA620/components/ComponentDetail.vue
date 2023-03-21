@@ -828,6 +828,8 @@ export default defineComponent({
       //   return;
       // }
       if (!compareForm()) {
+        rowElement?.classList.add("dx-state-hover-custom")
+
         e.cancel = true;
       }
     }

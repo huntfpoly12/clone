@@ -202,6 +202,8 @@ export default defineComponent({
       imputedYear: filterForm.imputedYear
     }
     let isFirstSearch = ref(false)
+    let selectedRowKeys = ref<any>([])
+
     // ============ GRAPQL ===============================
     const {
       result: resIncomeWagePayment,
@@ -229,10 +231,10 @@ export default defineComponent({
         enabled: triggerElecFilings.value,
         fetchPolicy: "no-cache",
       }))
-    let selectedRowKeys = ref<any>([])
     // ===================DONE GRAPQL==================================
     // watch result  api searchIncomeWagePaymentStatementElectronicFilingsByYear
     watch(resIncomeWagePayment, (value: any) => {
+      productionStatusArr.value = []
       if (value) {
         let data = value.searchIncomeWagePaymentStatementElectronicFilingsByYear;
         let result = Object.values(data.reduce((acc: any, curr: any) => {
@@ -324,7 +326,15 @@ export default defineComponent({
     watch(() => props.activeSearch, (value) => {
       searchByFilter()
     })
-
+    watch(() => filterForm.afterProduction, (value) => {
+      checkbox1.value = value
+      checkbox2.value = value
+      checkbox3.value = value
+      checkbox4.value = value
+    },
+      {
+        immediate: true
+      })
     // ----------------request file---------
 
     const selectionChanged = (event: any) => {
@@ -404,15 +414,6 @@ export default defineComponent({
       }
     };
 
-    watch(() => filterForm.afterProduction, (value) => {
-      checkbox1.value = value
-      checkbox2.value = value
-      checkbox3.value = value
-      checkbox4.value = value
-    },
-      {
-        immediate: true
-      })
     const searchByFilter = async () => {
       dataSource.value = dataSourceOrigin.value.filter((items: any) => {
         return checkProductionStatuses(items.afterProduction, Number.isInteger(items.productionStatus) ? items.productionStatus : null)
@@ -484,4 +485,5 @@ export default defineComponent({
 :deep(.ant-form-item-label>label) {
   width: 110px;
   padding-left: 10px;
-}</style>
+}
+</style>

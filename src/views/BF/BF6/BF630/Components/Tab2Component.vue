@@ -201,6 +201,7 @@ export default defineComponent({
       imputedYear: filterForm.imputedYear
     }
     let isFirstSearch = ref(false)
+    let selectedRowKeys = ref<any>([])
     // ============ GRAPQL ===============================
     const {
       result: resIncomeRetirementPayment,
@@ -230,10 +231,10 @@ export default defineComponent({
         fetchPolicy: "no-cache",
       }))
 
-    let selectedRowKeys = ref<any>([])
     // ===================DONE GRAPQL==================================
     // watch result  api searchIncomeRetirementPaymentStatementElectronicFilingsByYear
     watch(resIncomeRetirementPayment, (value) => {
+      productionStatusArr.value = []
       if (value) {
         let data = value.searchIncomeRetirementPaymentStatementElectronicFilingsByYear;
         let result = Object.values(data.reduce((acc: any, curr: any) => {
@@ -326,6 +327,15 @@ export default defineComponent({
       trigger.value = true
     })
 
+    watch(() => filterForm.afterProduction, (value) => {
+      checkbox1.value = value
+      checkbox2.value = value
+      checkbox3.value = value
+      checkbox4.value = value
+    },
+      {
+        immediate: true
+      })
     // ----------------request file---------
 
     const selectionChanged = (event: any) => {
@@ -404,16 +414,6 @@ export default defineComponent({
         }
       }
     };
-
-    watch(() => filterForm.afterProduction, (value) => {
-      checkbox1.value = value
-      checkbox2.value = value
-      checkbox3.value = value
-      checkbox4.value = value
-    },
-      {
-        immediate: true
-      })
 
     const searchByFilter = async () => {
       dataSource.value = dataSourceOrigin.value.filter((items: any) => {
