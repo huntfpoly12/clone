@@ -126,7 +126,6 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import { radioCheckForeigner, initFormStateTab1 } from '../../utils/index';
 import { companyId } from '@/helpers/commonFunction';
-import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
   props: {
@@ -162,7 +161,7 @@ export default defineComponent({
       postCode.value = data.zonecode;
       initFormStateTabPA120.value.roadAddress = data.roadAddress;
     };
-    const messageUpdate = Message.getMessage('COMMON', '106').message;
+
     watch(() => props.popupStatus, (newValue: any) => {
       if (!newValue) {
         employeeId.value = null;
@@ -297,7 +296,7 @@ export default defineComponent({
     });
     onDone((res) => {
       store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
-      notification('success', messageUpdate);
+      notification('success', '업데이트 완료!');
       store.commit('common/actionFormDonePA120');
       store.state.common.isNewRowPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
@@ -308,7 +307,6 @@ export default defineComponent({
     }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
-        console.log(`output->newVal`,newVal);
       initFormStateTabPA120.value.name = newVal.toUpperCase();
     }, { deep: true })
     const changeTextCountry = (text: any) => {

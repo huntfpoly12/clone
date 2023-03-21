@@ -108,7 +108,6 @@ import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
 import {taxWaring} from '../../utils/index';
 import { h } from 'vue';
-import { Message } from '@/configs/enum';
 const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다'),h('div','그래도 삭제하시겠습니까?')])
 const contentDelete = '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다.<br/> '
 export default defineComponent({
@@ -133,11 +132,10 @@ export default defineComponent({
         const idAction = ref()
         let disabledButton = ref<boolean>(false);
         const labelResidebId = ref("주민등록번호");
-        let formState = reactive<any>({ ...props.dependentItem, residentId: props.dependentItem?.residentId.replace('-', '')});
+        let formState = reactive<any>({ ...props.dependentItem, foreigner: isForeignerPA120.value, residentId: props.dependentItem?.residentId.replace('-', '')});
         const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
         const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
         const itemSelected = ref<any>([...props.relationAll]);
-        const messageUpdate = Message.getMessage('COMMON', '106').message;
         const setModalVisible = () => {
             emit('closePopup', false);
         };
@@ -177,7 +175,6 @@ export default defineComponent({
         },{deep:true});
         // get employer dependent
         watch(()=>props.dependentItem,(newVal:any)=>{
-            console.log(newVal)
             itemSelected.value=itemSelected.value.filter((item:any)=>item.value !== newVal.relation);
             formState.relation = newVal.relation
             formState.foreigner = newVal.foreigner
@@ -214,7 +211,7 @@ export default defineComponent({
         })
         onDone(() => {
             emit('closePopup', false)
-            notification('success', messageUpdate)
+            notification('success', '업데이트 완료!')
             emit('upDateData');
         })
         const actionUpdated = (e: any) => {
@@ -277,9 +274,9 @@ export default defineComponent({
                 })
 
         }
-        // watch(isForeignerPA120,(newVal: any)=>{
-        //     formState.foreigner = !newVal;
-        // })
+        watch(isForeignerPA120,(newVal: any)=>{
+            formState.foreigner = !newVal;
+        })
         // check consignment
         const consignDisabled = ref(true);
         watchEffect(()=>{

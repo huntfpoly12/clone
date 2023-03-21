@@ -139,6 +139,7 @@
     .button-open-tab {
         height: 100%;
         // padding-bottom: 7px;
+        width: 100px;
     }
     
     .custom-select-tab {
@@ -183,7 +184,8 @@
         border-radius: 5px;
         margin-left: 3px;
         cursor: pointer;
-        height: 92%;
+        height: 100%;
+        width: 100px;
     }
     
     .custom-button-delete {
