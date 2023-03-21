@@ -45,9 +45,9 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
-          @selection-changed="selectionChanged" @cell-click="onCellClick" v-model:focused-row-key="focusedRowKey"
+          @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
           v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging">
-          <DxSelection select-all-mode="allPages" mode="multiple" />
+          <DxSelection select-all-mode="allPages" mode="multiple"/>
           <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">
             <div>
@@ -101,8 +101,8 @@
     </a-col>
     <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
-        <!-- {{ selectedRowKeys }} selectedRowKeys <br/>
-            {{ focusedRowKey }} focusedRowKey <br/> -->
+        {{ selectedRowKeys }} selectedRowKeys <br />
+        {{ focusedRowKey }} focusedRowKey <br />
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
@@ -475,7 +475,7 @@ export default defineComponent({
         removeHoverRowKey();
         if (isClickYearDiff.value) {
           emit('noSave', 1, globalYear.value);
-          compareType.value = 1;
+          compareType.value = 2;
           return;
         }
         if (isClickEditDiff.value) {
@@ -486,13 +486,13 @@ export default defineComponent({
         if (isClickMonthDiff.value) {
           emit('noSave', 0);
           isClickMonthDiff.value = false;
-          compareType.value = 1;
+          compareType.value = 2;
           return;
         }
         if (isClickAddMonthDiff.value) {
           emit('noSave', 2);
           isClickAddMonthDiff.value = false;
-          compareType.value = 1;
+          compareType.value = 2;
           return;
         }
         if (isNewRow.value) {
@@ -552,12 +552,6 @@ export default defineComponent({
     }
 
     const selectedRowKeys = ref<any>([]);
-    const onCellClick = (e: any) => {
-      if (e.columnIndex === 0 && e.column.type == 'selection') {
-        focusedRowKey.value = dataAction.value.input?.incomeId;
-        return;
-      }
-    }
     const selectionChanged = (event: any) => {
       popupDataDelete.value = event.selectedRowKeys;
       editParam.value = event.selectedRowsData.map((item: any) => item.incomeId);
@@ -655,6 +649,7 @@ export default defineComponent({
     // -------------------------ACTION FORM--------------------------------
 
     const onChangeFormdone = () => {
+      console.log(isClickAddMonthDiff.value);
       if (!isClickEditDiff.value) {
         selectedRowKeys.value = [dataAction.value.input.incomeId];
       }
@@ -674,6 +669,7 @@ export default defineComponent({
       if (isClickAddMonthDiff.value) {
         emit('noSave', 2);
         isClickAddMonthDiff.value = false;
+        compareType.value = 2;
         return;
       }
       emit('createdDone', true)
@@ -710,6 +706,7 @@ export default defineComponent({
 
     doneCreated(res => {
       notification('success', `업데이트 완료!`)
+      console.log(compareType.value);
       if (compareType.value == 3) {
         dataActionEdit.value.input = { ...dataAction.value.input };
         triggerIncomeBusinesses.value = true;
@@ -733,6 +730,7 @@ export default defineComponent({
     } = useMutation(mutations.updateIncomeBusiness);
     doneEdit((res) => {
       notification('success', messageUpdate)
+      console.log(compareType.value);
       if (compareType.value == 3) {
         dataActionEdit.value.input = { ...dataAction.value.input };
         triggerIncomeBusinesses.value = true;
@@ -822,27 +820,31 @@ export default defineComponent({
     const gridRef = ref(); // ref of grid
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
-      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`);
+      if(e.event.target.classList.value == "dx-checkbox-icon"){
+        e.cancel = true;
+      }
+      const rowElement = e.rowElement[0];
       // if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
       //   e.cancel = true;
       //   return;
       // }
       if (!compareForm()) {
-        rowElement?.classList.add("dx-state-hover-custom")
-
         e.cancel = true;
+        rowElement?.classList.add("dx-state-hover-custom");
+      } else {
+        removeHoverRowKey();
       }
     }
     const removeHoverRowKey = () => {
       const element = document.querySelector(".dx-state-hover-custom");
       if (element)
         dataGridRef.value?.refresh();
-        focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+      focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
     }
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam, companyId,
-      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,onFocusedRowChanging,removeHoverRowKey,gridRef,
-      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData
+      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef,
+      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff
     }
   }
 });
