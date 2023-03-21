@@ -139,11 +139,28 @@
                     <process-status v-model:valueStatus="status" style="margin-left: 150px;" />
                 </td>
                 <td>
+                    <b>- disabled:</b> Boolean (option)<br/>
                     <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
                     <b>- Return :</b> checkConfirm: true <br />
                 </td>
                 <td>
                     <pre class="mycode"> &lt;process-status v-model:valueStatus="status"/&gt;
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p><b>Accounting Process Status Edit</b></p>
+                    {{ status }}
+                    <accounting-process-status-edit v-model:valueStatus="status" style="margin-left: 150px;" />
+                </td>
+                <td>
+                    <b>- disabled:</b> Boolean (option)<br/>
+                    <b>- value (Number):</b> value: 10, 20, 30, 40 <br />
+                    <b>- Return :</b> checkConfirm: true <br />
+                </td>
+                <td>
+                    <pre class="mycode"> &lt;accounting-process-status-edit v-model:valueStatus="status"/&gt;
                     </pre>
                 </td>
             </tr>
