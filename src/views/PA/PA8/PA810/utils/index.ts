@@ -54,8 +54,33 @@ const InitialFormCreate: InitialFormCreateType = {
   // insuranceReductionCode: "", // 27
   // insuranceReductionReasonCode: "", // 28
 };
-
-const initialEmployeeWage = {
+export type DependentsType = {
+  disabledCode: string,
+  disabledRegisteredDate: number,
+  name: string,
+  nationalityNumber: string,
+  relationCode: string,
+  relationName: string,
+  relation: number,
+  residentId: string,
+  stayPeriodFrom: string,
+  stayPeriodTo: string,
+  stayQualification: string,
+  contractExpiredDate: [number],
+}
+export type InitialEmployeeWageType = {
+  name: string
+  residentId: string
+  joinedAt: string
+  totalPay: string
+  president: string
+  nationalityNumber: string
+  nationalityCode: string
+  stayQualification: string
+  foreigner: boolean
+  dependents: [DependentsType] | []
+}
+const initialEmployeeWage: InitialEmployeeWageType = {
   name: "",
   residentId: "",
   joinedAt: "",
@@ -65,27 +90,26 @@ const initialEmployeeWage = {
   nationalityCode: "",
   stayQualification: "",
   foreigner: false,
-  dependents: [
-    {
-      disabledCode: "",
-      disabledRegisteredDate: 0,
-      name: "",
-      nationalityNumber: "",
-      relationCode: "",
-      relationName: "",
-      relation: -1,
-      residentId: "",
-      stayPeriodFrom: "",
-      stayPeriodTo: "",
-      stayQualification: "",
-      contractExpiredDate: [
-        filters.formatDateToInterger(new Date().getTime()),
-        filters.formatDateToInterger(
-          new Date().setDate(new Date().getDate() + 7)
-        ),
-      ],
-    },
-  ],
+  dependents: []
+  // {
+    //   disabledCode: "",
+    //   disabledRegisteredDate: 0,
+    //   name: "",
+    //   nationalityNumber: "",
+    //   relationCode: "",
+    //   relationName: "",
+    //   relation: -1,
+    //   residentId: "",
+    //   stayPeriodFrom: "",
+    //   stayPeriodTo: "",
+    //   stayQualification: "",
+    //   contractExpiredDate: [
+    //     filters.formatDateToInterger(new Date().getTime()),
+    //     filters.formatDateToInterger(
+    //       new Date().setDate(new Date().getDate() + 7)
+    //     ),
+    //   ],
+    // },
 };
 
 export type Maybe<T> = T | null;

@@ -117,7 +117,7 @@
                               :dataRow="data.data" @dataRow="changeStatus" /> -->
                           <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
                               @checkConfirmRowTable="changeStatusRowTable" />
-                          <div class="pl-5 pr-5">
+                          <div class="pl-5 pr-5" v-if="data.data.active">
                               <a-tooltip color="black" placement="topLeft">
                                   <template #title>소득별 마감현황</template>
                                   <plus-outlined @click="openModalStatus(data.data)" />

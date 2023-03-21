@@ -101,7 +101,7 @@
     </a-col>
     <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
-        <!-- {{ isClickAddMonthDiff }} isClickAddMonthDiff <br/>
+        <!-- {{ selectedRowKeys }} selectedRowKeys <br/>
             {{ focusedRowKey }} focusedRowKey <br/> -->
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
@@ -261,7 +261,6 @@ export default defineComponent({
       return '';
     })
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
-    const messageUpdate = Message.getMessage('COMMON', '106').message;
     const editParam = ref([])
     const pa620FormRef = ref();
     const isExpiredStatus = computed(() => {
@@ -270,6 +269,7 @@ export default defineComponent({
       }
       return +statusButton.value > 10 ? true : false;
     })
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
     const idDisableNoData = computed(() => {
       if (!props.isDisabledForm && !disabledInput.value && !isNewRow.value) {
         return true;
@@ -822,14 +822,15 @@ export default defineComponent({
     const gridRef = ref(); // ref of grid
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
-      const rowElement = e.rowElement[0];
+      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`);
       // if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
       //   e.cancel = true;
       //   return;
       // }
       if (!compareForm()) {
+        rowElement?.classList.add("dx-state-hover-custom")
+
         e.cancel = true;
-        rowElement?.classList.add("dx-state-hover-custom");
       }
     }
     const removeHoverRowKey = () => {
@@ -841,7 +842,7 @@ export default defineComponent({
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam, companyId,
       caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm,onFocusedRowChanging,removeHoverRowKey,gridRef,
-      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff
+      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, onCellClick, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData
     }
   }
 });

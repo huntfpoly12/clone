@@ -18,7 +18,7 @@
           </div>
       </a-col>
         <a-col :span="21"></a-col>
-        <a-col :span="15" class="custom-layout">
+        <a-col :span="16" class="custom-layout">
           <a-spin
             :spinning="
               loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
@@ -39,7 +39,7 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              height="700px"
+              style="max-height: 800px;"
             >
               <DxPaging :page-size="0"/>
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
@@ -129,7 +129,7 @@
           </a-spin>
         </a-col>
         <!-- section right -->
-        <a-col :span="9" class="custom-layout">
+        <a-col :span="8" class="custom-layout">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
@@ -467,6 +467,7 @@ export default defineComponent({
     // handle onFocusedRowChanging to row
     const onFocusedRowChanging = (e: FocusedRowChangingEvent) => {
       // create new row and click row other then check data input
+      const rowElement = document.querySelector(`[aria-rowindex="${e.newRowIndex + 1}"]`)
       if (isNewRow.value) {
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
@@ -487,6 +488,7 @@ export default defineComponent({
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           previousRowData.value = { ...e.rows[e.newRowIndex].data };
           isDiscard.value = true;
+          rowElement?.classList.add("dx-state-hover-custom")
           e.cancel = true;
         }
       } else {
@@ -500,6 +502,7 @@ export default defineComponent({
           previousRowData.value &&
           !isEqualObject(dataShow.value, previousRowData.value)
         ) {
+          rowElement?.classList.add("dx-state-hover-custom")
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
           e.cancel = true;
@@ -717,7 +720,7 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         // if valid fail then set state default
         store.commit('settings/setClickYearStatus', ClickYearStatus.none)
-
+        dataGridRef.value?.refresh();
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {

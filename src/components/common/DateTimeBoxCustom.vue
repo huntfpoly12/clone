@@ -2,7 +2,8 @@
     <!-- Check start date and finishDate -->
     <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
-        :max-date="finishDate" :min-date="startDate" :placeholder="placeholder">
+        :max-date="finishDate" :min-date="startDate" :placeholder="placeholder"
+        :teleport="teleport">
     </Datepicker>
 </template>
 <script lang="ts">
@@ -35,6 +36,10 @@ export default defineComponent({
         },
         startDate: Date,
         finishDate: Date,
+        teleport: {
+          default: false,
+          type: [Boolean,String]
+        }
     },
     components: {
         Datepicker,
