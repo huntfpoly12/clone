@@ -267,6 +267,26 @@ export default defineComponent({
         return;
       }
     }
+    //-----------------------hover when click diff row----------------
+    const taxPayDataRef = ref(); // ref of grid
+    const dataGridRef = computed(() => taxPayDataRef.value?.instance as any); // ref of grid Instance
+    // const onFocusedRowChanging = (e: any) => {
+    //   const rowElement = e.rowElement[0];
+    //   // if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
+    //   //   e.cancel = true;
+    //   //   return;
+    //   // }
+    //   if (!props.compareForm()) {
+    //     e.cancel = true;
+    //     rowElement?.classList.add("dx-state-hover-custom");
+    //   }
+    // }
+    // const removeHoverRowKey = () => {
+    //   const element = document.querySelector(".dx-state-hover-custom");
+    //   if (element)
+    //     dataGridRef.value?.refresh();
+    //     // focusedRowKey.value = props.compareType == 1 ? formPA720.value.input.incomeId : props.editTaxParamFake.inComeId;
+    // }
     return {
       rowTable,
       per_page,

@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-query searchIncomeBusinessPaymentStatementElectronicFilings($filter: ElectronicFilingIncomeBusinessPaymentStatementSearchFilter!) { 
-  searchIncomeBusinessPaymentStatementElectronicFilings(filter: $filter) {
+query searchIncomeRetirementPaymentStatementElectronicFilingsByYear($imputedYear: Int!) { 
+  searchIncomeRetirementPaymentStatementElectronicFilingsByYear(imputedYear: $imputedYear) {
       companyId
       imputedYear
       lastProductionRequestedAt
@@ -82,6 +82,12 @@ query searchIncomeBusinessPaymentStatementElectronicFilings($filter: ElectronicF
         }
         canceledAt
         unpaidMonths
+      }
+      companyServiceContract {
+        id
+        active
+        manageUserId
+        salesRepresentativeId
       }
     }
   }
