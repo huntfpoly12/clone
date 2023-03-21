@@ -1,9 +1,9 @@
 <template>
     <a-spin :spinning="loadingTab1|| loadingTab2 || loadingTab3 || loadingTab4">
-        <production-statuses :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
-        <production-statuses :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
-        <production-statuses :typeTag="4" v-if="checkStatus(2)" padding="1px 10px" />
-        <production-statuses :typeTag="5" v-if="checkStatus(-1)" padding="1px 10px" />
+        <production-status :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
+        <production-status :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
+        <production-status :typeTag="4" v-if="checkStatus(2)" padding="1px 10px" />
+        <production-status :typeTag="5" v-if="checkStatus(-1)" padding="1px 10px" />
     </a-spin>
 </template>
 <script lang="ts">
@@ -29,10 +29,10 @@ export default defineComponent({
       const triggerTab3 = ref<boolean>(false);
       const triggerTab4 = ref<boolean>(false);
       let dataSearch = reactive({
-            input: {
-                companyId: props.data?.companyId,
-                imputedYear: props.data?.imputedYear
-            }
+          input:{
+            companyId: props.data?.companyId,
+            imputedYear: props.data?.imputedYear
+          }
       })
       
       watch(dataSearch, (newVal) => {
@@ -100,8 +100,10 @@ export default defineComponent({
           if (res.data) {
             arrStatus.value = res.data.getElectronicFilingsByIncomeWagePaymentStatement
             emit('productionStatusData', arrStatus.value[0]);
-            triggerTab1.value = false
+          }else {
+            emit('productionStatusData', null);
           }
+          triggerTab1.value = false
         })
       }
       if (props.tabName == 'tab2') {
@@ -111,8 +113,10 @@ export default defineComponent({
           if (res.data) {
             arrStatus.value = res.data.getElectronicFilingsByIncomeRetirementPaymentStatement
             emit('productionStatusData', arrStatus.value[0]);
-            triggerTab2.value = false
+          }else {
+            emit('productionStatusData', null);
           }
+          triggerTab2.value = false
         })
       }
       if (props.tabName == 'tab3') {
@@ -122,8 +126,10 @@ export default defineComponent({
           if (res.data) {
             arrStatus.value = res.data.getElectronicFilingsByIncomeBusinessPaymentStatement
             emit('productionStatusData', arrStatus.value[0]);
-            triggerTab3.value = false
+          }else {
+            emit('productionStatusData', null);
           }
+          triggerTab3.value = false
         })
       }
       if (props.tabName == 'tab4') {
@@ -133,14 +139,16 @@ export default defineComponent({
           if (res.data) {
             arrStatus.value = res.data.getElectronicFilingsByIncomeExtraPaymentStatement
             emit('productionStatusData', arrStatus.value[0]);
-            triggerTab4.value = false
+          }else {
+            emit('productionStatusData', null);
           }
+          triggerTab4.value = false
         })
       }
 
 
       const checkStatus = (status: any) => {
-            if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0)
+            if (arrStatus.value.filter((val: any) => val.productionStatus === status).length !== 0)
                 return true
             else
                 return false
