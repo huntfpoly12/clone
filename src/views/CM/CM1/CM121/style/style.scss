@@ -43,6 +43,9 @@
       pointer-events: none;
       opacity: 0.8;
     }
+    #gridContainer {
+      max-height: calc(100vh - 170px);
+    }
 }
 :deep .form-item-top {
   label {
