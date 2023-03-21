@@ -13,7 +13,7 @@
                             <template #col-first="{}">
                                 <b>지급연월</b>
                             </template>
-                            <DxColumn caption="01" width="100px" cell-template="month-1" :cssClass="monthClicked==1 &&'column-focus'"/>
+                            <DxColumn caption="01" width="100px" cell-template="month-1" :cssClass="(monthClicked==1||changeMonthDataFake.imputedMonth==1) &&'column-focus'"/>
                             <template #month-1="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month1"
                                     :class="setUnderline(data.data.month1.imputedMonth) ? 'current-underlined' : ''"
@@ -24,7 +24,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(1)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="02" width="100px" cell-template="month-2" :cssClass="monthClicked==2 &&'column-focus'" />
+                            <DxColumn caption="02" width="100px" cell-template="month-2" :cssClass="(monthClicked==2||changeMonthDataFake.imputedMonth==2) &&'column-focus'" />
                             <template #month-2="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month2"
                                     :class="setUnderline(data.data.month2.imputedMonth) ? 'current-underlined' : ''"
@@ -35,7 +35,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(2)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="03" width="100px" cell-template="month-3" :cssClass="monthClicked==3 &&'column-focus'" />
+                            <DxColumn caption="03" width="100px" cell-template="month-3" :cssClass="(monthClicked==3||changeMonthDataFake.imputedMonth==3) &&'column-focus'" />
                             <template #month-3="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month3"
                                     :class="setUnderline(data.data.month3.imputedMonth) ? 'current-underlined' : ''"
@@ -46,7 +46,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(3)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="04" width="100px" cell-template="month-4" :cssClass="monthClicked==4 &&'column-focus'" />
+                            <DxColumn caption="04" width="100px" cell-template="month-4" :cssClass="(monthClicked==4||changeMonthDataFake.imputedMonth==4) &&'column-focus'" />
                             <template #month-4="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month4"
                                     :class="setUnderline(data.data.month4.imputedMonth) ? 'current-underlined' : ''"
@@ -57,7 +57,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(4)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="05" width="100px" cell-template="month-5" :cssClass="monthClicked==5 &&'column-focus'" />
+                            <DxColumn caption="05" width="100px" cell-template="month-5" :cssClass="(monthClicked==5||changeMonthDataFake.imputedMonth==5) &&'column-focus'" />
                             <template #month-5="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month5"
                                     :class="setUnderline(data.data.month5.imputedMonth) ? 'current-underlined' : ''"
@@ -68,7 +68,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(5)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="06" width="100px" cell-template="month-6" :cssClass="monthClicked==6 &&'column-focus'" />
+                            <DxColumn caption="06" width="100px" cell-template="month-6" :cssClass="(monthClicked==6||changeMonthDataFake.imputedMonth==6) &&'column-focus'" />
                             <template #month-6="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month6"
                                     :class="setUnderline(data.data.month6.imputedMonth) ? 'current-underlined' : ''"
@@ -79,7 +79,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(6)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="07" width="100px" cell-template="month-7" :cssClass="monthClicked==7 &&'column-focus'" />
+                            <DxColumn caption="07" width="100px" cell-template="month-7" :cssClass="(monthClicked==7||changeMonthDataFake.imputedMonth==7) &&'column-focus'" />
                             <template #month-7="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month7"
                                     :class="setUnderline(data.data.month7.imputedMonth) ? 'current-underlined' : ''"
@@ -90,7 +90,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(7)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="08" width="100px" cell-template="month-8" :cssClass="monthClicked==8 &&'column-focus'" />
+                            <DxColumn caption="08" width="100px" cell-template="month-8" :cssClass="(monthClicked==8||changeMonthDataFake.imputedMonth==8) &&'column-focus'" />
                             <template #month-8="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month8"
                                     :class="setUnderline(data.data.month8.imputedMonth) ? 'current-underlined' : ''"
@@ -101,7 +101,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(8)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="09" width="100px" cell-template="month-9" :cssClass="monthClicked==9 &&'column-focus'" />
+                            <DxColumn caption="09" width="100px" cell-template="month-9" :cssClass="(monthClicked==9||changeMonthDataFake.imputedMonth==9) &&'column-focus'" />
                             <template #month-9="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month9"
                                     :class="setUnderline(data.data.month9.imputedMonth) ? 'current-underlined' : ''"
@@ -112,7 +112,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(9)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="10" width="100px" cell-template="month-10" :cssClass="monthClicked==10 &&'column-focus'" />
+                            <DxColumn caption="10" width="100px" cell-template="month-10" :cssClass="(monthClicked==10||changeMonthDataFake.imputedMonth==10) &&'column-focus'" />
                             <template #month-10="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month10"
                                     :class="setUnderline(data.data.month10.imputedMonth) ? 'current-underlined' : ''"
@@ -123,7 +123,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(10)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="11" width="100px" cell-template="month-11" :cssClass="monthClicked==11 &&'column-focus'" />
+                            <DxColumn caption="11" width="100px" cell-template="month-11" :cssClass="(monthClicked==11||changeMonthDataFake.imputedMonth==11) &&'column-focus'" />
                             <template #month-11="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month11"
                                     :class="setUnderline(data.data.month11.imputedMonth) ? 'current-underlined' : ''"
@@ -134,7 +134,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(11)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="12" width="100px" cell-template="month-12" :cssClass="monthClicked==12 &&'column-focus'" />
+                            <DxColumn caption="12" width="100px" cell-template="month-12" :cssClass="(monthClicked==12||changeMonthDataFake.imputedMonth==12) &&'column-focus'" />
                             <template #month-12="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month12"
                                     :class="setUnderline(data.data.month12.imputedMonth) ? 'current-underlined' : ''"
@@ -155,66 +155,66 @@
                                     <template #col-first="{ data }">
                                         <b>{{ data.data.name }}</b><br>
                                     </template>
-                                    <DxColumn caption="1" width="100px" cell-template="month-1"  alignment="right" :cssClass="monthClicked==1 &&'column-focus'"/>
+                                    <DxColumn caption="1" width="100px" cell-template="month-1"  alignment="right" :cssClass="(monthClicked==1 || changeMonthDataFake.imputedMonth==1) &&'column-focus'"/>
                                     <template #month-1="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month1)"
                                             v-if="data.data.month1"> {{ data.data.month1.value }}</div>
                                     </template>
-                                    <DxColumn caption="2" width="100px" cell-template="month-2"  alignment="right" :cssClass="monthClicked==2 &&'column-focus'"/>
+                                    <DxColumn caption="2" width="100px" cell-template="month-2"  alignment="right" :cssClass="(monthClicked==2 || changeMonthDataFake.imputedMonth==2) &&'column-focus'"/>
                                     <template #month-2="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month2)"
                                             v-if="(data.data.month2)"> {{ data.data.month2.value }}</div>
                                     </template>
-                                    <DxColumn caption="3" width="100px" cell-template="month-3" alignment="right" :cssClass="monthClicked==3 &&'column-focus'" />
+                                    <DxColumn caption="3" width="100px" cell-template="month-3" alignment="right" :cssClass="(monthClicked==3 || changeMonthDataFake.imputedMonth==3) &&'column-focus'" />
                                     <template #month-3="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month3)"
                                             v-if="(data.data.month3)"> {{ data.data.month3.value }}</div>
                                     </template>
-                                    <DxColumn caption="4" width="100px" cell-template="month-4" alignment="right" :cssClass="monthClicked==4 &&'column-focus'" />
+                                    <DxColumn caption="4" width="100px" cell-template="month-4" alignment="right" :cssClass="(monthClicked==4 || changeMonthDataFake.imputedMonth==4) &&'column-focus'" />
                                     <template #month-4="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month4)"
                                             v-if="(data.data.month4)"> {{ data.data.month4.value }}</div>
                                     </template>
-                                    <DxColumn caption="5" width="100px" cell-template="month-5" alignment="right" :cssClass="monthClicked==5 &&'column-focus'" />
+                                    <DxColumn caption="5" width="100px" cell-template="month-5" alignment="right" :cssClass="(monthClicked==5 || changeMonthDataFake.imputedMonth==5) &&'column-focus'" />
                                     <template #month-5="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month5)"
                                             v-if="(data.data.month5)"> {{ data.data.month5.value }}</div>
                                     </template>
-                                    <DxColumn caption="6" width="100px" cell-template="month-6"  alignment="right" :cssClass="monthClicked==6 &&'column-focus'"/>
+                                    <DxColumn caption="6" width="100px" cell-template="month-6"  alignment="right" :cssClass="(monthClicked==6 || changeMonthDataFake.imputedMonth==6) &&'column-focus'"/>
                                     <template #month-6="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month6)"
                                             v-if="(data.data.month6)"> {{ data.data.month6.value }}</div>
                                     </template>
-                                    <DxColumn caption="7" width="100px" cell-template="month-7"  alignment="right" :cssClass="monthClicked==7 &&'column-focus'"/>
+                                    <DxColumn caption="7" width="100px" cell-template="month-7"  alignment="right" :cssClass="(monthClicked==7 || changeMonthDataFake.imputedMonth==7) &&'column-focus'"/>
                                     <template #month-7="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month7)"
                                             v-if="(data.data.month7)"> {{ data.data.month7.value }}</div>
                                     </template>
-                                    <DxColumn caption="8" width="100px" cell-template="month-8"  alignment="right" :cssClass="monthClicked==8 &&'column-focus'"/>
+                                    <DxColumn caption="8" width="100px" cell-template="month-8"  alignment="right" :cssClass="(monthClicked==8 || changeMonthDataFake.imputedMonth==8) &&'column-focus'"/>
                                     <template #month-8="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month8)"
                                             v-if="(data.data.month8)"> {{ data.data.month8.value }}</div>
                                     </template>
-                                    <DxColumn caption="9" width="100px" cell-template="month-9"  alignment="right" :cssClass="monthClicked==9 &&'column-focus'"/>
+                                    <DxColumn caption="9" width="100px" cell-template="month-9"  alignment="right" :cssClass="(monthClicked==9 || changeMonthDataFake.imputedMonth==9) &&'column-focus'"/>
                                     <template #month-9="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month9)"
                                             v-if="(data.data.month9)"> {{ data.data.month9.value }}</div>
                                     </template>
-                                    <DxColumn caption="10" width="100px" cell-template="month-10" alignment="right" :cssClass="monthClicked==10 &&'column-focus'" />
+                                    <DxColumn caption="10" width="100px" cell-template="month-10" alignment="right" :cssClass="(monthClicked==10 || changeMonthDataFake.imputedMonth==10) &&'column-focus'" />
                                     <template #month-10="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month10)"
                                             v-if="data.data.month10">
                                             {{ data.data.month10.value }}
                                         </div>
                                     </template>
-                                    <DxColumn caption="11" width="100px" cell-template="month-11" alignment="right" :cssClass="monthClicked==11 &&'column-focus'" />
+                                    <DxColumn caption="11" width="100px" cell-template="month-11" alignment="right" :cssClass="(monthClicked==11 || changeMonthDataFake.imputedMonth==11) &&'column-focus'" />
                                     <template #month-11="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month11)"
                                             v-if="(data.data.month11)">
                                             {{ data.data.month11.value }}
                                         </div>
                                     </template>
-                                    <DxColumn caption="12" width="100px" cell-template="month-12" alignment="right" :cssClass="monthClicked==12 &&'column-focus'" />
+                                    <DxColumn caption="12" width="100px" cell-template="month-12" alignment="right" :cssClass="(monthClicked==12 || changeMonthDataFake.imputedMonth==12) &&'column-focus'" />
                                     <template #month-12="{ data }">
                                         <div class="hover-underlined" @click="showDetailSelected(data.data.month12)"
                                             v-if="(data.data.month12)">
@@ -226,11 +226,10 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <!-- {{ processKeyPA620 }} processKeyPA620 <br/>
-                {{ statusButton }} statusButton <br/> -->
                 <ComponentDetail v-model:statusBt="statusButton" :isDisabledForm="isDisabledForm"
                     @createdDone="createdDone" ref="formRef" @noSave="changeNoSave" @statusDone="statusDone"/>
-                <CopyMonth :modalStatus="modalCopy" @closePopup="modalCopy = false; statusButton = 10" :monthVal="dataModalCopy"
+          
+                <CopyMonth :modalStatus="modalCopy" @closePopup="onCloseCopy" :monthVal="dataModalCopy"
                     @loadingTable="loadingTable" @dataAddIncomeProcess="dataAddIncomeProcess" :dateType="dateType"/>
             </a-row>
         </div>
@@ -382,7 +381,7 @@ export default defineComponent({
         })
         // ================FUNCTION============================================ 
         // fnc click month fake
-        const changeMonthDataFake = ref();
+        const changeMonthDataFake = ref({imputedMonth: 0});
         const onChangeMonth=( data: any )=>{
             store.commit("common/processKeyPA620", { imputedMonth: data.imputedMonth });
             statusButton.value = data.status
@@ -393,6 +392,7 @@ export default defineComponent({
             dataQuery.value.imputedYear = globalYear.value;
             configTrigger.value = true;
             refetchHolding();
+            changeMonthDataFake.value = {imputedMonth:0};
         }  
         const showDetailSelected = (data: any) => {
           if(!isRunOnce.value){
@@ -431,21 +431,22 @@ export default defineComponent({
             refetchData();
             statusButton.value = emitVal;
         }
-        const addMonth = (val: number) => {
+        const addMonth = (val: any) => {
           modalCopy.value = true;
-          dataModalCopy.value = val;
+          dataModalCopy.value = val.imputedMonth;
           dataQuery.value.imputedYear = globalYear.value;
           configTrigger.value = true;
           refetchHolding();
         }
         const onAddMonth = (month: number) => {
           if (!formRef.value.compareForm()) {
+            formRef.value.compareType = 2;
             formRef.value.rowChangeStatus = true;
             formRef.value.isClickAddMonthDiff = true;
-            changeMonthDataFake.value = month;
+            changeMonthDataFake.value = {imputedMonth:month};
             return;
           }
-          addMonth(month);
+          addMonth({imputedMonth:month});
         }
         const loadingTable = () => {
             isRunOnce.value = true;
@@ -457,9 +458,16 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             isDisabledForm.value = false;
             setUnderline(data);
+            changeMonthDataFake.value = {imputedMonth:0};
+            statusButton.value = 10;
         }
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
+        }
+        const onCloseCopy = () => {
+          modalCopy.value = false;
+          statusButton.value = 10;
+          changeMonthDataFake.value = {imputedMonth:0};
         }
         // ======================================== WATCH =========================================
         //change year
@@ -497,7 +505,7 @@ export default defineComponent({
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, isDisabledForm,
             setUnderline, createdDone, onAddMonth, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            isCompareForm,statusDone,dateType
+            isCompareForm,statusDone,dateType,changeMonthDataFake, onCloseCopy,
         };
     },
 });
