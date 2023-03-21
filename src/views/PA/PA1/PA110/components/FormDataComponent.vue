@@ -65,35 +65,35 @@
                     </div>
                     <a-form-item label="근무일수" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingDays" :required="true"/>
                             <span style="padding-left: 5px;">일</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="총근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.totalWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="연장근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.overtimeWorkingHours" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="야간근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursAtNight" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
                     </a-form-item>
                     <a-form-item label="휴일근로시간" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="70px"
+                            <number-box :spinButtons="true" :min="0" width="100px"
                                 v-model:valueInput="dataIW.workingHoursOnHolidays" :required="true"/>
                             <span style="padding-left: 5px;">시간</span>
                         </div>
@@ -135,7 +135,7 @@
                     </a-spin>
                 </a-col>
                 <a-col :span="11">
-                    <div class="header-text-2">공제 항목 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
+                    <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }} 원 </div>
                     <a-spin :spinning="loadingConfigDeductions" size="large">
                         <div class="deduction-main">
                             <div v-for="(item, index) in dataConfigDeductions" :key="index" class="custom-deduction">
@@ -179,13 +179,13 @@
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 삭제" />
+                                <button-basic style="margin: 0px 5px" @onClick="modalDeteleTaxpay = true" mode="contained" type="default" text="중도정산 반영" />
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 반영" />
+                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
                             </div>
                         </a-tooltip>
                         <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
@@ -698,13 +698,13 @@ export default defineComponent({
                     let payItems = dataConfigPayItems.value?.map((item: any) => {
                         return {
                             itemCode: item.itemCode,
-                            amount: item.amount
+                            amount: item.amount ? item.amount : 0
                         }
                     })
                     let deductionItems = dataConfigDeductions.value?.map((item: any) => {
                         return {
                             itemCode: item.itemCode,
-                            amount: item.amount
+                            amount: item.amount ? item.amount : 0
                         }
                     })
                     const variables: any = {

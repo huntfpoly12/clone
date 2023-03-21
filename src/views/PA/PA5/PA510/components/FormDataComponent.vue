@@ -100,14 +100,14 @@
                             <div v-for="(item, index) in arrDeduction" :key="index" class="custom-deduction">
                                 <span>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                            :name="item.name" :type="1" subName="과세" />
+                                            :name="item.name" :type="1" subName="과세" :showTooltip="false"/>
                                     <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                        :name="item.name" :type="2" subName="상여(과세)" />
+                                        :name="item.name" :type="2" subName="상여(과세)" :showTooltip="false"/>
                                     <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                         :name="item.name" :type="3"
-                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" />
+                                        :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" :showTooltip="false"/>
                                     <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                        :name="item.name" :width="'130px'" :type="4" subName="공제" />
+                                        :name="item.name" :width="'130px'" :type="4" subName="공제" :showTooltip="false"/>
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false" @changeInput="onChangeInputDeduction"
@@ -668,7 +668,7 @@ export default defineComponent({
                     arrDeduction.value.forEach((value: any) => {
                         arrDeductionItems.push({
                             itemCode: value.itemCode,
-                            amount: value.price,
+                            amount: value.price ? value.price : 0,
                         })
                     })
                     let input = {
