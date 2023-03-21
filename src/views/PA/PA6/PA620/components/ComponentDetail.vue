@@ -380,7 +380,6 @@ export default defineComponent({
       statusButton.value = newValue
     })
     watch(processKeyPA620, (newVal: any, oldV) => {
-      console.log('processKeyPA620 thay doi')
       isFirstChange.value = true;
       isNewRow.value = false;
       paramIncomeBusinesses.processKey = processKeyPA620.value;
@@ -475,32 +474,27 @@ export default defineComponent({
       } else {
         removeHoverRowKey();
         if (isClickYearDiff.value) {
-          console.log('chay vao day isClickYearDiff' );
           emit('noSave', 1, globalYear.value);
           compareType.value = 1;
           return;
         }
         if (isClickEditDiff.value) {
-          console.log('chay vao day isClickEditDiff' );
           onEditItem();
           isClickEditDiff.value = false;
           return;
         }
         if (isClickMonthDiff.value) {
           emit('noSave', 0);
-          console.log('chay vao day isClickMonthDiff' );
           isClickMonthDiff.value = false;
           compareType.value = 1;
           return;
         }
         if (isClickAddMonthDiff.value) {
           emit('noSave', 2);
-          console.log('chay vao day isClickAddMonthDiff' );
           isClickAddMonthDiff.value = false;
           compareType.value = 1;
           return;
         }
-          console.log('chay vao day isClickAddMonthDiff', isClickAddMonthDiff.value );
         if (isNewRow.value) {
           dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
           if (compareType.value == 1) {
@@ -834,7 +828,6 @@ export default defineComponent({
       //   return;
       // }
       if (!compareForm()) {
-        console.log('compareForm loi', rowElement);
         e.cancel = true;
         rowElement?.classList.add("dx-state-hover-custom");
       }
