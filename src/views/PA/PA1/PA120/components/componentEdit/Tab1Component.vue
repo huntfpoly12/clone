@@ -307,6 +307,7 @@ export default defineComponent({
     }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
+        console.log(`output->newVal`,newVal);
       initFormStateTabPA120.value.name = newVal.toUpperCase();
     }, { deep: true })
     const changeTextCountry = (text: any) => {

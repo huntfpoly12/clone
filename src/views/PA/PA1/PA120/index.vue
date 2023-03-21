@@ -276,7 +276,7 @@ export default defineComponent({
         compareType.value = 2;
         rowChangeStatus.value = true;
         isClickYearDiff.value = true;
-        changeYearDataFake.value = oldVal;
+        store.state.common.yearPA120 = oldVal;
       }
     });
     // addcomponent

@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-query getElectronicFilingsByIncomeWagePaymentStatement($input: ElectronicFilingCompanyImputedYearKeyInput !) { 
+query getElectronicFilingsByIncomeWagePaymentStatement($input: ElectronicFilingCompanyImputedYearKeyInput!) { 
   getElectronicFilingsByIncomeWagePaymentStatement(input: $input) {
     electronicFilingId
     imputedYear
