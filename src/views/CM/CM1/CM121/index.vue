@@ -151,7 +151,8 @@
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
                     class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword }">
                     <text-number-box :required="isRequiredAccountPassword" :width="150" maxLength="4"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" />
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" 
+                      :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -337,6 +338,7 @@ export default defineComponent({
     let isChangeFocusSubmit = ref<boolean>(false)
     const cm121DxDataGrid = ref<any>()
     let isDuplicaseName = ref<boolean>(true)
+    let isLength4 = ref<boolean>(false)
     // ------------COMPUTED ----------------------
     const dataGridRef = computed(() => cm121DxDataGrid.value?.instance as any); // ref of grid Instance
 
@@ -650,6 +652,10 @@ export default defineComponent({
       isDuplicaseName.value = !dataSource.value.some((items, index) => index !== indexRow.value && items.bankbookNickname === value)
     })
 
+    watch(() => dataDetailBankbook.value.scrapingInfoInput.accountPassword, (value:any) => {
+      isLength4.value = !!value && value.length < 4 ? false : true
+    })
+
     // -------METHODS-----------
     const resetStatus = () => {
       isStatusClickCreate.value = false
@@ -960,7 +966,8 @@ export default defineComponent({
       newSampleID,
       cm121DxDataGrid,
       isDuplicaseName,
-      isRequiredAccountPassword
+      isRequiredAccountPassword,
+      isLength4
     }
   }
 });
