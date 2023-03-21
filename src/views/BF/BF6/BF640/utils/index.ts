@@ -5,7 +5,7 @@ export const checkBoxSearchStep1 = [
 import dayjs from "dayjs";
 export const dataSearchUtils = {
     "beforeProduction": false,
-    "productionStatuses": [],
+    "productionStatuses": [0, 1, 2, -1],
     "bizNumber": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
@@ -15,7 +15,7 @@ export const dataSearchUtils = {
 }
 export const dataSearchStep2Utils = {
     "beforeProduction": false,
-    "productionStatuses": [],
+    "productionStatuses": [0, 1, 2, -1],
     "bizNumber": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
