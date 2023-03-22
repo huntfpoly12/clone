@@ -132,7 +132,7 @@
               <a-tooltip placement="top">
                 <template #title>신규</template>
                 <div>
-                  <DxButton icon="plus"  />
+                  <DxButton icon="plus" />
                 </div>
               </a-tooltip>
             </template>
@@ -140,26 +140,26 @@
             <DxColumn caption="수입액" data-field="fill2"></DxColumn>
             <DxColumn caption="지출액" data-field="fill3"></DxColumn>
             <DxColumn caption="적요" data-field="fill4"></DxColumn>
-            <DxColumn caption="계정과목" cell-template="accountSubject" width="100"/>
+            <DxColumn caption="계정과목" cell-template="accountSubject" width="100" />
             <template #accountSubject="{ data }">
               <account-code-select v-model:valueInput="valueAccountSubjectClassification" />
             </template>
-            <DxColumn caption="상대계정" cell-template="relativeAccount" width="100"/>
+            <DxColumn caption="상대계정" cell-template="relativeAccount" width="100" />
             <template #relativeAccount="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
             </template>
-            <DxColumn caption="자금원천" cell-template="sourceOfFunding" width="100"/>
+            <DxColumn caption="자금원천" cell-template="sourceOfFunding" width="100" />
             <template #sourceOfFunding="{ data }">
               <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
             <DxColumn caption="거래처" data-field="fill8"></DxColumn>
-            <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100"/>
+            <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
             <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
             </template>
             <DxColumn caption="원인/용도" cell-template="causeUse" alignment="center" />
             <template #causeUse="{ data }">
-              <EditOutlined style="font-size: 12px" @click="openPopupItemDetail" />
+              <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail" />
             </template>
             <DxColumn caption="물품내역" cell-template="itemDetails" alignment="center" />
             <template #itemDetails="{ data }">
@@ -167,7 +167,7 @@
             </template>
             <DxColumn caption="메모" cell-template="memo" alignment="center" />
             <template #memo="{ data }">
-              <EditOutlined style="font-size: 12px" @click="openPopupItemDetail" />
+              <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail" />
             </template>
 
             <DxSummary>
@@ -180,7 +180,8 @@
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
             <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :multiple="true"
-              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile" :before-upload="beforeUpload">
+              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile"
+              :before-upload="beforeUpload">
               <div v-if="fileList.length < MAX_UP_LOAD">
                 <div class="ant-btn-upload">
                   <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
@@ -208,6 +209,8 @@
       @closePopup="isModalSlipRegistrationSelected = false" @submit="isModalSlipRegistrationSelected = false" />
     <PopupItemDetails :isModalItemDetail="isModalItemDetail" @closePopup="isModalItemDetail = false"
       @submit="isModalItemDetail = false" />
+    <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" @closePopup="isModalNoteItemDetail = false"
+      @submit="isModalNoteItemDetail = false" />
   </div>
 </template>
 <script lang="ts">
@@ -223,6 +226,7 @@ import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupSlipRegistrationSelected from "./components/PopupSlipRegistrationSelected.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
+import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import notification from '@/utils/notification';
 interface FileItem {
   uid: string;
@@ -259,7 +263,8 @@ export default defineComponent({
     PopupItemDetails,
     DxButton,
     DxToolbar,
-    DxExport
+    DxExport,
+    PopupNoteItemDetail
   },
   setup() {
     const store = useStore();
@@ -280,6 +285,7 @@ export default defineComponent({
     let isModalSlipRegistrantion = ref(false);
     let isModalSlipRegistrationSelected = ref(false);
     let isModalItemDetail = ref(false);
+    let isModalNoteItemDetail = ref(false);
     let arraySelectBox = reactive([
       {
         value: 1,
@@ -308,9 +314,9 @@ export default defineComponent({
     const getBase64 = (file: File) => {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
       });
     }
     const handlePreview = async (file: FileItem) => {
@@ -412,6 +418,10 @@ export default defineComponent({
       isModalItemDetail.value = true
     }
 
+    const openPopupNoteItemDetail = () => {
+      isModalNoteItemDetail.value = true
+    }
+
     return {
       statusEntering,
       statusInput,
@@ -450,6 +460,8 @@ export default defineComponent({
       sumOfExpenses,
       arraySelectBox,
       openPopupItemDetail,
+      openPopupNoteItemDetail,
+      isModalNoteItemDetail,
       valueAccountSubjectClassification,
       valueFundingSource,
     };
@@ -474,5 +486,6 @@ export default defineComponent({
     border-radius: 15px;
     margin: 0;
   }
-}</style>
+}
+</style>
 <style lang="scss" scoped src="./style/style.scss"></style>
