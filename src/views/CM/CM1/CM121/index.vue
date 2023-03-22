@@ -150,8 +150,8 @@
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
-                    class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword }">
-                    <text-number-box :required="isRequiredAccountPassword" :width="150" maxLength="4"
+                    class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword || !isCreateduseScrap }">
+                    <text-number-box :required="isRequiredAccountPassword || !isCreateduseScrap" :width="150" maxLength="4"
                       v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" 
                       :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
@@ -160,17 +160,17 @@
               <a-row>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)"
-                    class="form-item-bottom" :class="{ 'red': isTypeClassification && isCreate }">
-                    <biz-number-text-box :required="isCreate"
+                    class="form-item-bottom" :class="{ 'red': isTypeClassification && (isCreate || !isCreateduseScrap) }">
+                    <biz-number-text-box :required="isCreate || !isCreateduseScrap"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150"
                       :disabled="!isTypeClassification" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)"
-                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && isCreate }">
+                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && (isCreate || !isCreateduseScrap) }">
                     <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px"
-                      :required="isCreate" :disabled="isTypeClassification" />
+                      :required="isCreate || !isCreateduseScrap" :disabled="isTypeClassification" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -178,16 +178,16 @@
                 <a-col span="12">
                   <a-form-item v-if="isInputWebID"
                     :label="isTypeClassification ? inputIDPWBankType.corporate.ID : inputIDPWBankType.private.ID"
-                    class="form-item-bottom" :class="{ 'red': isCreate }">
-                    <default-text-box :required="isCreate" :width="150"
+                    class="form-item-bottom" :class="{ 'red': isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="isInputWebPW"
                     :label="isTypeClassification ? inputIDPWBankType.corporate.PW : inputIDPWBankType.private.PW"
-                    class="form-item-bottom" :class="{ 'red': isCreate }">
-                    <default-text-box :required="isCreate" :width="150"
+                    class="form-item-bottom" :class="{ 'red': isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword" />
                   </a-form-item>
                 </a-col>
@@ -339,7 +339,8 @@ export default defineComponent({
     let isChangeFocusSubmit = ref<boolean>(false)
     const cm121DxDataGrid = ref<any>()
     let isDuplicaseName = ref<boolean>(true)
-    let isLength4 = ref<boolean>(false)
+    let isLength4 = ref<boolean>(true)
+    let isCreateduseScrap = ref<boolean>(true)
     // ------------COMPUTED ----------------------
     const dataGridRef = computed(() => cm121DxDataGrid.value?.instance as any); // ref of grid Instance
 
@@ -357,7 +358,6 @@ export default defineComponent({
     const isCheckAdding = computed(() => {
       return dataSource.value[indexRow.value]?.bankbookId === newSampleID
     })
-
     const isRequiredAccountPassword = computed(() => {
       return ((!!dataDetailBankbook.value.scrapingInfoInput.bizNumber
         || !!dataDetailBankbook.value.scrapingInfoInput.birthday
@@ -584,6 +584,7 @@ export default defineComponent({
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
       setAccountSubject(dataDetailBankbook.value.bankbookInput.accountName, dataDetailBankbook.value.bankbookInput.accountCode)
       isTypeClassification.value = data.classification === 'C' ? true : false
+      isCreateduseScrap.value = cloneDeep(dataDetailBankbook.value.bankbookInput.useScrap)
       countResetForm.value++
       isCreate.value = false
       triggerBankbook.value = false
@@ -654,7 +655,8 @@ export default defineComponent({
     })
 
     watch(() => dataDetailBankbook.value.scrapingInfoInput.accountPassword, (value:any) => {
-      isLength4.value = !!value && value.length < 4 ? false : true
+      const valueCheck = !!value ? value.replaceAll(/\D/g, '') : ''
+      isLength4.value = !!valueCheck && valueCheck.length < 4 ? false : true
     })
 
     // -------METHODS-----------
@@ -968,7 +970,8 @@ export default defineComponent({
       cm121DxDataGrid,
       isDuplicaseName,
       isRequiredAccountPassword,
-      isLength4
+      isLength4,
+      isCreateduseScrap
     }
   }
 });
