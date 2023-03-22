@@ -8,22 +8,18 @@
             <a-step :status="checkStepThree" title="퇴직소득세" @click="changeStep(2)" />
         </a-steps>
         <div class="step-content pt-20">
-            <keep-alive>
               <template v-if="step === 0">
                   <Tab1  @closePopup="setModalVisible"
                       :actionNextStep="valueNextStep" @nextPage="step++" :processKey="processKey" :arrayEmploySelect="arrayEmploySelect"/>
               </template>
-            </keep-alive>
-            <keep-alive>
+
               <template v-if="step === 1">
                   <Tab2  />
               </template>
-            </keep-alive>
-            <keep-alive>
+          
               <template v-if="step === 2">
                   <Tab3  />
               </template>
-            </keep-alive>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
             <button-basic text="이전" type="default" mode="outlined" class="mr-5" @onClick="prevStep" v-if="step != 0" />
@@ -33,7 +29,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted, onUpdated, onUnmounted } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -64,9 +60,23 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
   setup(props, { emit }) {
+    onMounted(() => {
+      console.log('Component mountedc');
+    });
+
+    // Hook được gọi sau khi component đã được mount lần đầu tiên
+    // và sau mỗi lần cập nhật
+    onUpdated(() => {
+      console.log('Component updated');
+    });
+
+    // Hook được gọi trước khi component được unmount
+    onUnmounted(() => {
+      console.log('Component unmounted');
+    });
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
-        const step = ref(0)
+        const step = ref(9)
         const valueNextStep = ref(0)
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
@@ -103,7 +113,7 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        const { refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
+        const { loading,refetch: refetchGetDetail, onError: errorGetDetail, onResult: resultGetDetail } = useQuery(queries.getIncomeRetirement, requestCallDetail, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
@@ -133,7 +143,9 @@ export default defineComponent({
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": checkBoxCallApi,
             }
+
             trigger.value = false
+            step.value = 0
           }
         })
         errorGetDetail(res => {
@@ -142,11 +154,12 @@ export default defineComponent({
         // ================WATCHING============================================ 
  
         watch(() => props.modalStatus, (newValue) => {
-          step.value = 0
+          // alert()
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
             trigger.value = true
-            refetchGetDetail()
+          refetchGetDetail()
+         
         }, { deep: true })
         // =========================  FUNCTION =============================================== 
         const checkStepTwo = computed(() => {
@@ -250,7 +263,7 @@ export default defineComponent({
             retirementIncome2,
             statusModal,
             valueNextStep,
-            arrayEmploySelect,store
+            arrayEmploySelect,store,loading
         }
     },
 })
