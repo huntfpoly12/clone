@@ -390,7 +390,7 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작전 ${totalBeforeProduction} 
+      return `제작요청전 ${totalBeforeProduction} 
               제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 
               제작중 ${countStatus(productionStatusArr.value, 1, 'productionStatus')} 
               제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 

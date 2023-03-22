@@ -11,8 +11,8 @@
           </a-col>
           <a-col :span="16">
             <div class="custom-note">
-              <a-form-item label="최종제작상태">
-                <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작후'" :textUnCheck="'제작전'" />
+              <a-form-item label="제작요청상태">
+                <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작후'" :textUnCheck="'제작요청전'" />
               </a-form-item>
               <span class="style-note">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 제작전은 제작요청되지 않은 상태입니다.
@@ -383,7 +383,7 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작전 ${totalBeforeProduction} 
+      return `제작요청전 ${totalBeforeProduction} 
               제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 
               제작중 ${countStatus(productionStatusArr.value, 1, 'productionStatus')} 
               제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 
