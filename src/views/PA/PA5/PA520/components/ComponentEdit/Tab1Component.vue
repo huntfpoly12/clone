@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
-    
+    {{ dataEdited }}
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -246,7 +246,7 @@ export default defineComponent({
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataEdited.nationalityCode = dataEdited.nationalityCode ? dataEdited.nationalityCode : null
+                dataEdited.nationalityCode = dataEdited.nationalityCode != 'KR' ? dataEdited.nationalityCode : null
                 dataEdited.stayQualification = dataEdited.stayQualification ? dataEdited.stayQualification : null
             } else {
                 labelResident.value = '주민등록번호'

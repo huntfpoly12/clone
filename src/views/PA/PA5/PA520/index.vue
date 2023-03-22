@@ -448,6 +448,8 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks on the edit button.
     const onFocusedRowChanging = (event: any) => {
+      console.log(pa520Grid.value);
+      
       let newRowIndex = event.newRowIndex
       var rowElement = event.rowElement;
       if (rowElement) {

@@ -5,7 +5,7 @@
 
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
       <div>
-        <VueDaumPostcode @complete="onComplete" />
+        <VueDaumPostcode v-if="isOpen" @complete="onComplete" />
       </div>
     </a-modal>
   </div>
