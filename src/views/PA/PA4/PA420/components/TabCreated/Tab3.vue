@@ -28,7 +28,7 @@
                           <number-box-money :required="false" width="150px"
                             v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true" format="0,###" :min="0"/>
                             <div v-if="validateRetiTaxBenefits" class="message-error">
-                              <span>{{ Message.getMessage('PA420', '001').message }}</span>
+                              <span style="word-wrap: break-word;hyphens: auto;">{{ Message.getMessage('PA420', '001').message }}</span>
                             </div>
                         </div>
                         <span class="pl-5 mr-5">원</span>
