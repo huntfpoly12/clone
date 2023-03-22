@@ -1,5 +1,5 @@
 <template>
-    <div id="step1">{{ dataSearch }}
+    <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
                 <a-form-item label="지급연도" label-align="left">
@@ -50,7 +50,7 @@
             </a-col>
             <a-col class="search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <biz-number-text-box v-model:valueInput="dataSearch.bizNumber" />
+                    <default-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
                 <a-form-item label="상호" label-align="left" class="fix-width-label">
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
@@ -90,7 +90,7 @@
             </a-form-item>
         </div>
         <div class="form-table">
-            <a-spin :spinning="loadingTable">{{ dataSource }}
+            <a-spin :spinning="loadingTable">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -173,12 +173,12 @@ export default defineComponent({
             checkbox4: true,
         })
         let trigger = ref(true)
-        let triggerProdStatus = ref(true)
         let dataSource: any = ref([])
+        let defaultDataSource: any = ref([])
         let modalConfirmMail = ref(false)
         let dataModalSave = ref()
         let keySelect = ref([]);
-        let arrayProdStatus = ref([]);
+        
         const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
@@ -186,63 +186,24 @@ export default defineComponent({
             refetch: refetchTable,
             loading: loadingTable,
             onError: errorTable,
-            onResult: resTable
+            onResult: resTable,
+            result
         } = useQuery(queries.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear, { paymentYear: globalYear,  paymentHalfYear: dataSearch.value.paymentHalfYear}, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
-        resTable((val: any) => {
-          if (val && val.data) {
-            const allData = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
-            let newArrayData = allData.filter((item: any) => {
-              return item.company.bizNumber == dataSearch.bizNumber &&
-                item.company.name === dataSearch.companyName &&
-                item.companyServiceContract.manageUserId == dataSearch.manageUserId &&
-                item.companyServiceContract.salesRepresentativeId == dataSearch.salesRepresentativeId &&
-                item.companyServiceContract.active == dataSearch.excludeCancel &&
-                item.paymentYear == dataSearch.paymentYear &&
-                item.paymentHalfYear == dataSearch.paymentHalfYear
-            })
 
-            if (newArrayData.length > 0) {
-              newArrayData.map((item: any) => {
-                refetchProdStatus({
-                    input: {
-                        companyId: item.companyId,
-                        paymentYear: item.paymentYear,
-                        paymentHalfYear: item.paymentHalfYear,
-                    }
-                })
-                if (loading) {
-                  item['status'] = arrayProdStatus.value
-                }
-              })
-            }
-          // // sort array to get row last time update
-          // // let arrSort = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear.sort(function(a: any, b : any) {
-          // //   return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
-          // // })
-          // // dataSource.value = arrSort[0] ? Array(arrSort[0]) : []
-          dataSource.value = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+        resTable(queryResult => {
+        if (queryResult && queryResult.data) {
+          defaultDataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+          dataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
           trigger.value = false
+         
         }
-
         })
+        
         errorTable((error: any) => {
             notification('error', error.message)
-        })
-
-
-        let {
-            onResult, loading, refetch: refetchProdStatus,
-        } = useQuery(queries.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement, {}, () => ({
-            enabled: triggerProdStatus.value,
-            fetchPolicy: "no-cache"
-        }));
-        onResult((res: any) => {
-          if (res && res.data) {
-            arrayProdStatus.value = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement;
-          }
         })
         // ================== FUNCTION ================== 
         const selectionChanged = (event: any) => {
@@ -258,20 +219,20 @@ export default defineComponent({
                 companyIds: keySelect.value
             }
             if (keySelect.value.length > 0) {
-                modalConfirmMail.value = true;
+              modalConfirmMail.value = true;
             }else {
                 notification('warning',messageDelNoItem)
             }
         }
 
-        const closeConfirmMail = () => {
+        const closeConfirmMail = async () => {
           modalConfirmMail.value = false;
           trigger.value = true
           refetchTable()
+          watchFirstRun.value = true;
         }
         //SUM
         // count the number of status
-        
         let productionStatusArr = ref<any>([]);
         const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
@@ -294,12 +255,26 @@ export default defineComponent({
         // caculator sum
         const reFreshDataGrid = () => {
             if(watchFirstRun.value) {
-                dataSource.value = dataSource.value.concat([]);
-                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                searchTab1()
                 watchFirstRun.value = false;
             }
         }
 
+      const searchTab1 = () => {
+            dataSource.value =  defaultDataSource.value
+            dataSource.value =  dataSource.value.filter((item:any)=>{
+                return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
+            })
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
+            dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == dataSearch.value.excludeCancel)
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
+            if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
+            if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
+            if(dataSearch.value.salesRepresentativeId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.salesRepresentativeId == dataSearch.value.salesRepresentativeId) 
+            dataSource.value = dataSource.value.concat([]);
+            dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+            productionStatusArr.value = dataSource.value.length > 0  ? [dataSource.value[0].productStatus] : [];
+        }
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
@@ -321,11 +296,7 @@ export default defineComponent({
                 dataSearch.value.productionStatuses.push(2)
             if (typeCheckbox.value.checkbox4 == true)
                 dataSearch.value.productionStatuses.push(-1)
-            if (dataSearch.value) {
-                trigger.value = true;
-                refetchTable();
-                watchFirstRun.value = true;
-            }
+            searchTab1()
         }, { deep: true })
 
         // watch beforeProduction
@@ -352,7 +323,11 @@ export default defineComponent({
         }, { deep: true });
         
         const productionStatusData = (emitVal: any) => {
-            productionStatusArr.value = [emitVal];
+            defaultDataSource.value.map((item : any)=>{
+                if(item.companyId == emitVal.companyId){
+                    item['productStatus'] = emitVal.productStatus
+                }
+            })
             reFreshDataGrid();
         }
         return {

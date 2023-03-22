@@ -4,13 +4,14 @@
     :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
+      <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -40,12 +41,21 @@ export default defineComponent({
     maxLength: {
       type: Number,
       default: null,
-    }
+    },
+    ruleCustom: {
+      type: Function,
+      default: () => true,
+    },
+    messageRuleCustom: {
+      type: String,
+      default: "",
+    },
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxCustomRule
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance();

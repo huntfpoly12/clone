@@ -13,6 +13,7 @@
               v-model:focused-row-key="focusedRowKey" @focused-row-changing="onFocusedRowChanging">
               <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
                 :show-drag-icons="true" />
+              <DxPaging :enabled="false" />
               <DxSorting mode="none" />
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -87,7 +88,7 @@
                       <text-number-box :required="true" :width="150"
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNumber" :disabled="!isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">최초 저장된 이후 수정 불가</span>
+                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장별명" class="form-item-top red">
@@ -96,7 +97,7 @@
                         v-model:valueInput="dataDetailBankbook.bankbookInput.bankbookNickname"
                         :ruleCustom="() => isDuplicaseName" messageRuleCustom="중복 등록 불가" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">중복 등록 불가</span>
+                      <span class="style-note style-note-cm121">중복 등록 불가</span>
                     </div>
                   </a-form-item>
                 </a-col>
@@ -106,7 +107,7 @@
                       <switch-basic :textCheck="'법인'" :textUnCheck="'개인'" v-model:valueSwitch="isTypeClassification"
                         :disabled="!isSetTypeClassification.corporate || !isSetTypeClassification.private || !isCreate" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">최초 저장된 이후 수정 불가</span>
+                      <span class="style-note style-note-cm121">최초 저장된 이후 수정 불가</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="통장용도" class="form-item-top">
@@ -115,7 +116,7 @@
                         :data-source="bankbookUseType" v-model:value="dataDetailBankbook.bankbookInput.useType"
                         placeholder="통장용도" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">관련 계정과목 적용 또는 <br />관련 서식에 기재됩니다.</span>
+                      <span class="style-note style-note-cm121">관련 계정과목 적용 또는 관련 서식에 기재됩니다.</span>
                     </div>
                   </a-form-item>
                   <a-form-item label="예금주" class="form-item-top red">
@@ -133,7 +134,7 @@
                 <span>스크래핑 (통장내역 자동 조회) 정보</span>
                 <div class="pl-5">
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                  <span class="style-note">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다</span>
+                  <span class="style-note style-note-cm121">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다.</span>
                 </div>
               </div>
               <a-row>
@@ -143,32 +144,33 @@
                       <switch-basic :textCheck="'O'" :textUnCheck="'X'"
                         v-model:valueSwitch="dataDetailBankbook.bankbookInput.useScrap" />
                       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                      <span class="style-note">이용하지 않는 경우 스크래<br />핑 중지가 되어 통장 불러<br />오기를 할 수 없습니다.</span>
+                      <span class="style-note style-note-cm121">이용하지 않는 경우 스크래핑 중지가 되어 통장 불러오기를 할 수 없습니다.</span>
                     </div>
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
-                    class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword }">
-                    <text-number-box :required="isRequiredAccountPassword" :width="150" maxLength="4"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" />
+                    class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword || !isCreateduseScrap }">
+                    <text-number-box :required="isRequiredAccountPassword || !isCreateduseScrap" :width="150" maxLength="4"
+                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" 
+                      :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
                 </a-col>
               </a-row>
               <a-row>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="사업자등록번호 (법인통장)"
-                    class="form-item-bottom" :class="{ 'red': isTypeClassification && isCreate }">
-                    <biz-number-text-box :required="isCreate"
+                    class="form-item-bottom" :class="{ 'red': isTypeClassification && (isCreate || !isCreateduseScrap) }">
+                    <biz-number-text-box :required="isCreate || !isCreateduseScrap"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.bizNumber" :width="150"
                       :disabled="!isTypeClassification" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)"
-                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && isCreate }">
+                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && (isCreate || !isCreateduseScrap) }">
                     <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px"
-                      :required="isCreate" :disabled="isTypeClassification" />
+                      :required="isCreate || !isCreateduseScrap" :disabled="isTypeClassification" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -176,16 +178,16 @@
                 <a-col span="12">
                   <a-form-item v-if="isInputWebID"
                     :label="isTypeClassification ? inputIDPWBankType.corporate.ID : inputIDPWBankType.private.ID"
-                    class="form-item-bottom" :class="{ 'red': isCreate }">
-                    <default-text-box :required="isCreate" :width="150"
+                    class="form-item-bottom" :class="{ 'red': isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webId" />
                   </a-form-item>
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="isInputWebPW"
                     :label="isTypeClassification ? inputIDPWBankType.corporate.PW : inputIDPWBankType.private.PW"
-                    class="form-item-bottom" :class="{ 'red': isCreate }">
-                    <default-text-box :required="isCreate" :width="150"
+                    class="form-item-bottom" :class="{ 'red': isCreate || !isCreateduseScrap }">
+                    <default-text-box :required="isCreate || !isCreateduseScrap" :width="150"
                       v-model:valueInput="dataDetailBankbook.scrapingInfoInput.webPassword" />
                   </a-form-item>
                 </a-col>
@@ -220,7 +222,7 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/CM/CM121";
 import mutations from "@/graphql/mutations/CM/CM121";
 import { companyId } from "@/helpers/commonFunction"
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxRowDragging, DxSorting, DxLookup, DxPaging } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
@@ -237,7 +239,7 @@ export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
     EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined, PopupRegisterBankbook, PopupDeleteBankbook, PopupLastScrapingStatus, HistoryPopup,
-    DxLookup
+    DxLookup, DxPaging
   },
   setup() {
     const store = useStore();
@@ -337,6 +339,8 @@ export default defineComponent({
     let isChangeFocusSubmit = ref<boolean>(false)
     const cm121DxDataGrid = ref<any>()
     let isDuplicaseName = ref<boolean>(true)
+    let isLength4 = ref<boolean>(true)
+    let isCreateduseScrap = ref<boolean>(true)
     // ------------COMPUTED ----------------------
     const dataGridRef = computed(() => cm121DxDataGrid.value?.instance as any); // ref of grid Instance
 
@@ -354,7 +358,6 @@ export default defineComponent({
     const isCheckAdding = computed(() => {
       return dataSource.value[indexRow.value]?.bankbookId === newSampleID
     })
-
     const isRequiredAccountPassword = computed(() => {
       return ((!!dataDetailBankbook.value.scrapingInfoInput.bizNumber
         || !!dataDetailBankbook.value.scrapingInfoInput.birthday
@@ -410,7 +413,7 @@ export default defineComponent({
       loading: loadingCreateBankbook,
     } = useMutation(mutations.createBankbook);
     doneCreateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '101').message)
       isNewCreate.value = true
       triggerBankbooks.value = true
       keyResetPopupRegisterBankbook.value++
@@ -427,7 +430,7 @@ export default defineComponent({
       loading: loadingUpdateBankbook,
     } = useMutation(mutations.updateBankbook);
     doneUpdateBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '106').message)
       isUpdate.value = true
       triggerBankbooks.value = true
     })
@@ -443,7 +446,7 @@ export default defineComponent({
       loading: loadingDeleteBankbook,
     } = useMutation(mutations.deleteBankbook);
     doneDeleteBankbook((e) => {
-      notification('success', `업데이트 완료!`)
+      notification('success', Message.getMessage('COMMON', '402').message)
       triggerBankbooks.value = true
     })
     errorDeleteBankbook(e => {
@@ -581,6 +584,7 @@ export default defineComponent({
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
       setAccountSubject(dataDetailBankbook.value.bankbookInput.accountName, dataDetailBankbook.value.bankbookInput.accountCode)
       isTypeClassification.value = data.classification === 'C' ? true : false
+      isCreateduseScrap.value = cloneDeep(dataDetailBankbook.value.bankbookInput.useScrap)
       countResetForm.value++
       isCreate.value = false
       triggerBankbook.value = false
@@ -648,6 +652,11 @@ export default defineComponent({
 
     watch(() => dataDetailBankbook.value.bankbookInput.bankbookNickname, (value) => {
       isDuplicaseName.value = !dataSource.value.some((items, index) => index !== indexRow.value && items.bankbookNickname === value)
+    })
+
+    watch(() => dataDetailBankbook.value.scrapingInfoInput.accountPassword, (value:any) => {
+      const valueCheck = !!value ? value.replaceAll(/\D/g, '') : ''
+      isLength4.value = !!valueCheck && valueCheck.length < 4 ? false : true
     })
 
     // -------METHODS-----------
@@ -724,6 +733,9 @@ export default defineComponent({
     }
 
     const dataRegisterBankbook = (data: any) => {
+      if(dataSource.value.length && dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID){
+        dataSource.value.splice(dataSource.value.length - 1, 1)
+      }
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = data.facilityBiz,
         paramBankbookDetail.bankbookId = null
@@ -960,7 +972,9 @@ export default defineComponent({
       newSampleID,
       cm121DxDataGrid,
       isDuplicaseName,
-      isRequiredAccountPassword
+      isRequiredAccountPassword,
+      isLength4,
+      isCreateduseScrap
     }
   }
 });

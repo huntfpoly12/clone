@@ -2,7 +2,7 @@
     <div id="step2">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="지급연월" label-align="left">{{ datePayment }}
+                <a-form-item label="지급연월" label-align="left">
                     <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
                 </a-form-item>
             </a-col>
@@ -46,7 +46,7 @@
             </a-col>
             <a-col class="ml-30 search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <biz-number-text-box v-model:valueInput="dataSearch.bizNumber" />
+                    <default-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
                 <a-form-item label="상호" label-align="left" class="fix-width-label">
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
@@ -175,11 +175,11 @@ export default defineComponent({
             checkbox4: true,
         })
         let dataSource: any = ref([])
+        let defaultDataSource: any = ref([])
         const store = useStore()
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear: any = computed(() => store.state.settings.globalYear);
         const datePayment = ref(parseInt(dayjs().format('YYYYMM')))
         const dayReport = ref(`${dayjs().format('YYYYMM')}${dayjs().daysInMonth()}`);
         let trigger = ref(true)
@@ -197,15 +197,14 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
-        resTable((val: any) => {
-          // sort array to get row last time update
-          let arrSort = val.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth.sort(function(a: any, b : any) {
-              return a.lastProductionRequestedAt - b.lastProductionRequestedAt;
-          })
-          
-          dataSource.value = arrSort[0] ? Array(arrSort[0]) : []
+        resTable(queryResult => {
+        if (queryResult && queryResult.data) {
+          defaultDataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
+          dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
           trigger.value = false
+        }
         })
+
         errorTable((error: any) => {
             notification('error', error.message)
         })
@@ -226,10 +225,7 @@ export default defineComponent({
                 dataSearch.value.productionStatuses.push(-1)
             dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
             dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
-            if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
-            }
+            searchTab2()
         }, { deep: true })
         // ================== FUNCTION ================== 
         const openModalSave = () => {
@@ -254,6 +250,7 @@ export default defineComponent({
           modalConfirmMail.value = false;
           trigger.value = true
           refetchTable()
+          watchFirstRun.value = false;
         }
 
         const selectionChanged = (res: any) => {
@@ -283,7 +280,6 @@ export default defineComponent({
         }
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
-         
             for (const key in typeCheckbox.value) {
                 if (!newVal) {
                     typeCheckbox.value[key] = true;
@@ -303,15 +299,35 @@ export default defineComponent({
         // caculator sum
         const reFreshDataGrid = () => {
           if(watchFirstRun.value) {
-              dataSource.value = dataSource.value.concat([]);
-              dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+              searchTab2();
               watchFirstRun.value = false;
           }
         }
+        const searchTab2 = ()=>{
+            dataSource.value =  defaultDataSource.value
+            dataSource.value =  dataSource.value.filter((item:any)=>{
+                return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
+            })
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
+            dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == dataSearch.value.excludeCancel)
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
+            if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
+            if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
+            if(dataSearch.value.salesRepresentativeId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.salesRepresentativeId == dataSearch.value.salesRepresentativeId) 
+            dataSource.value = dataSource.value.concat([]);
+            dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+            productionStatusArr.value = dataSource.value.length > 0  ? [dataSource.value[0].productStatus] : [];
+        }
         const productionStatusData = (emitVal: any) => {
-            productionStatusArr.value = [emitVal];
+            defaultDataSource.value.map((item : any)=>{
+                if(item.companyId == emitVal.companyId){
+                    item['productStatus'] = emitVal.productStatus
+                }
+            })
             reFreshDataGrid();
         }
+
+
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
             selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData

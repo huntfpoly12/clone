@@ -415,6 +415,7 @@ export default defineComponent({
             changeYear(globalYear.value);
           }
           if(val == 2) {
+            console.log('chay vao add month')
             addMonth(changeMonthDataFake.value);
           }
         }
@@ -459,6 +460,7 @@ export default defineComponent({
             setUnderline(data);
             changeMonthDataFake.value = {imputedMonth:0};
             statusButton.value = 10;
+            // monthClicked.value = 0;
         }
         const setUnderline = (monthInputed: any) => {
             return monthClicked.value == monthInputed
