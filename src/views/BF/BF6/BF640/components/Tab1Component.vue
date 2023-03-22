@@ -50,7 +50,7 @@
             </a-col>
             <a-col class="search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <biz-number-text-box v-model:valueInput="dataSearch.bizNumber" />
+                    <default-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
                 <a-form-item label="상호" label-align="left" class="fix-width-label">
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
@@ -178,6 +178,7 @@ export default defineComponent({
         let modalConfirmMail = ref(false)
         let dataModalSave = ref()
         let keySelect = ref([]);
+        
         const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
         //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
@@ -197,6 +198,7 @@ export default defineComponent({
           defaultDataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
           dataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
           trigger.value = false
+         
         }
         })
         
@@ -217,16 +219,17 @@ export default defineComponent({
                 companyIds: keySelect.value
             }
             if (keySelect.value.length > 0) {
-                modalConfirmMail.value = true;
+              modalConfirmMail.value = true;
             }else {
                 notification('warning',messageDelNoItem)
             }
         }
 
-        const closeConfirmMail = () => {
+        const closeConfirmMail = async () => {
           modalConfirmMail.value = false;
           trigger.value = true
           refetchTable()
+          watchFirstRun.value = true;
         }
         //SUM
         // count the number of status
@@ -257,7 +260,7 @@ export default defineComponent({
             }
         }
 
-        const searchTab1 = ()=>{
+      const searchTab1 = () => {
             dataSource.value =  defaultDataSource.value
             dataSource.value =  dataSource.value.filter((item:any)=>{
                 return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
@@ -265,7 +268,7 @@ export default defineComponent({
             dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
             dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == dataSearch.value.excludeCancel)
             dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
-            if(dataSearch.value.bizNumber != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.bizNumber == dataSearch.value.bizNumber)
+            if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
             if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
             if(dataSearch.value.salesRepresentativeId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.salesRepresentativeId == dataSearch.value.salesRepresentativeId) 
             dataSource.value = dataSource.value.concat([]);
@@ -325,7 +328,6 @@ export default defineComponent({
                     item['productStatus'] = emitVal.productStatus
                 }
             })
-
             reFreshDataGrid();
         }
         return {
