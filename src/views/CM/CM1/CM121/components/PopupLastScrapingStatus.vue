@@ -13,7 +13,7 @@
           </a-form-item>
           <a-form-item label="최종 스크래핑 일시" label-align="right"  class="mc121-popup-last-scraping-status-from">
               <div style="width: 200px">
-                  <date-time-box v-model:valueDate="data.lastScrapingStatus.lastScrapingDate" :disabled="true"/>
+                <default-text-box :width="200" v-model:valueInput="data.lastScrapingStatus.lastScrapingDate" :disabled="true"/>
               </div>
           </a-form-item>
         </div>

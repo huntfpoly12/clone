@@ -134,7 +134,7 @@
                 <span>스크래핑 (통장내역 자동 조회) 정보</span>
                 <div class="pl-5">
                   <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
-                  <span class="style-note style-note-cm121">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다</span>
+                  <span class="style-note style-note-cm121">(주의) 아래 데이터는 암호화되어 조회가 불가능합니다. 단, 업데이트는 가능합니다.</span>
                 </div>
               </div>
               <a-row>
@@ -733,6 +733,9 @@ export default defineComponent({
     }
 
     const dataRegisterBankbook = (data: any) => {
+      if(dataSource.value.length && dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID){
+        dataSource.value.splice(dataSource.value.length - 1, 1)
+      }
       resetDataDetail()
       paramBankbookDetail.facilityBusinessId = data.facilityBiz,
         paramBankbookDetail.bankbookId = null
