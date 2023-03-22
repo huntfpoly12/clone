@@ -139,7 +139,7 @@
         title="변경이력" typeHistory="pa-420" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
+    <EditPopup  :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
     <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
@@ -365,7 +365,7 @@ export default defineComponent({
             refetchTableDetail,
             resetFormNum,
             listEmployeeId,
-            closeChangePaymentDay
+            closeChangePaymentDay,store
         }
     }
 });
