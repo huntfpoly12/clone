@@ -313,7 +313,8 @@ export default defineComponent({
     props: {
         actionNextStep: Number,
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+      
         const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
