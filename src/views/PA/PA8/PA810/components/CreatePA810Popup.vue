@@ -4,7 +4,7 @@
     width="60%"
     :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate"
-    title="취득신고 신규 등록"
+    title="변경이력"
     centered
     @cancel="$emit('closeModal')"
     :footer="null"
@@ -421,13 +421,13 @@
       <div class="fileuploader-container mt-20">
         <UploadFile @response-fileId="getFileId" :isFileList="isFileList"/>
       </div>
-      <div class="mt-20 table-container">
+      <div class="mt-20 table-container" >
         <div class="d-flex-center">
           <div class="header">피부양자</div>
           <table>
             <thead>
             <tr>
-              <th rowspan="2">성명</th>
+              <th rowspan="2" style="min-width: 100px">성명</th>
               <th rowspan="2" style="min-width: 110px">주민등록증</th>
               <th colspan="2">장애인, 극가유공자 부호</th>
               <th colspan="3">외국인</th>
@@ -442,8 +442,8 @@
                   />
                 </div>
               </th>
-              <th colspan="1" class="bg-gray" style="width: 140px">등록일</th>
-              <th colspan="1" class="bg-gray" style="width: 100px">
+              <th colspan="1" class="bg-gray" style="min-width: 140px">등록일</th>
+              <th colspan="1" class="bg-gray" style="min-width: 75px">
                 <div class="bg-gray flex">
                   <span>국적</span>
                   <SearchCodeButton
@@ -452,7 +452,7 @@
                   />
                 </div>
               </th>
-              <th colspan="1" class="bg-gray" style="width: 100px">
+              <th colspan="1" class="bg-gray" style="min-width: 100px">
                 <div class="bg-gray flex">
                   <span>체류자격</span>
                   <SearchCodeButton
@@ -461,9 +461,9 @@
                   />
                 </div>
               </th>
-              <th colspan="1" class="bg-gray" style="width: 235px">체류기간</th>
-              <th colspan="1" class="bg-gray" style="width: 70px">관계 코드</th>
-              <th colspan="1" class="bg-gray" style="width: 50px">내용</th>
+              <th colspan="1" class="bg-gray" style="min-width: 235px">체류기간</th>
+              <th colspan="1" class="bg-gray" style="min-width: 70px">관계 코드</th>
+              <th colspan="1" class="bg-gray" style="min-width: 100px">내용</th>
             </tr>
             </thead>
             <tbody>
@@ -477,7 +477,7 @@
 
                   <!-- Add more dependent properties as needed -->
 
-                  <td>{{ dependent.name }}</td>
+                  <td>{{ dependent.name }} 보험료부과구분부호 및 사유:</td>
                   <td>
                     {{ dependent.residentId }}
                   </td>
@@ -517,6 +517,7 @@
                       width="100%"
                       v-model:valueDate="dependent.contractExpiredDate"
                       :maxRange="365"
+                      :teleport="true"
                     />
                   </td>
                   <td>
@@ -524,9 +525,9 @@
                       <div class="px-2">{{ getCodeOrLabel(dependent.relation).number }}</div>
                     </template>
                   </td>
-                  <td>
+                  <td style="white-space: break-spaces;">
                     <template v-if="dependent.relation >= 0">
-                      <div class="px-2">{{ getCodeOrLabel(dependent.relation).label }}</div>
+                      {{ getCodeOrLabel(dependent.relation).label }}보험료부과구분부호 및 사유:
                     </template>
                   </td>
                 </tr>
@@ -744,9 +745,9 @@ export default defineComponent({
       employeeWageSelected,
       (value) => {
         if (value) {
-          const emp = employeeWages.value.find(
-            (item: any) => item.employeeId === value
-          )
+          const emp = employeeWages.value.find((item: any) => item.employeeId === value)
+          if (emp && emp?.dependents) emp.dependents.sort((a: any, b: any) => a.relation - b.relation);
+
           employeeWage.value = cloneDeep(emp);
         }
       },
@@ -902,19 +903,18 @@ export default defineComponent({
 }
 
 .table-container {
-  width: 100%;
 
   .d-flex-center {
-    min-width: 900px;
+    //min-width: fit-content;
+    width: 100%;
+    min-width: 1000px;
     background-color: #5b80b9;
-
     .header {
-      width: 70px;
+      min-width: 70px;
       text-align: center;
     }
-
     table {
-      width: 100%;
+      width: calc(100% - 70px);
       border-collapse: collapse;
       border-bottom: none;
       border-left: none;
@@ -936,6 +936,7 @@ export default defineComponent({
       td, th {
         border: 0.5px solid #ddd;
         height: 100%;
+        white-space: normal;
       }
 
       tbody {

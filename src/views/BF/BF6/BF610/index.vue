@@ -414,32 +414,32 @@ export default defineComponent({
         return false;
       }
       const searching = () => {
-          if(checkAllSameValue(reportType)){
-            filter.reportType = [1, 6]
-          } else {
+          // if(checkAllSameValue(reportType)){
+          //   filter.reportType = [1, 6]
+          // } else {
             filter.reportType = []
             if(reportType.oneMonth) filter.reportType.push(1)
             if(reportType.sixMonth) filter.reportType.push(6)
-          }
+          // }
 
-          if(checkAllSameValue(statuses)){
-            filter.statuses = [10, 20, 30, 40]
-          } else {
+          // if(checkAllSameValue(statuses)){
+          //   filter.statuses = [10, 20, 30, 40]
+          // } else {
             filter.statuses = []
             if (statuses.checkbox1) filter.statuses.push(10)
             if (statuses.checkbox2) filter.statuses.push(20)
             if (statuses.checkbox3) filter.statuses.push(30)
             if (statuses.checkbox4) filter.statuses.push(40)
-          }
-          if(checkAllSameValue(classificationOfReport)) {
-            filter.routine = true
-            filter.correction = true
-            filter.afterTheDueDate = true
-          } else {
+          // }
+          // if(checkAllSameValue(classificationOfReport)) {
+          //   filter.routine = true
+          //   filter.correction = true
+          //   filter.afterTheDueDate = true
+          // } else {
             filter.routine = classificationOfReport.routine
             filter.correction  = classificationOfReport.correction
             filter.afterTheDueDate = classificationOfReport.afterTheDueDate
-          }
+          // }
           // trigger.value = true
           dataSource.value = dataOrigin.value.filter((item: any) => {
             return filter.statuses.includes(item.status)
