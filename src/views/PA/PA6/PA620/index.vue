@@ -444,6 +444,7 @@ export default defineComponent({
             formRef.value.rowChangeStatus = true;
             formRef.value.isClickAddMonthDiff = true;
             changeMonthDataFake.value = {imputedMonth:month};
+            formRef.value.compareType = 2;
             return;
           }
           addMonth({imputedMonth:month});

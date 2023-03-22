@@ -101,8 +101,8 @@
     </a-col>
     <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
-        {{ selectedRowKeys }} selectedRowKeys <br />
-        {{ focusedRowKey }} focusedRowKey <br />
+        <!-- {{ selectedRowKeys }} selectedRowKeys <br />
+        {{ focusedRowKey }} focusedRowKey <br /> -->
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
@@ -246,8 +246,9 @@ export default defineComponent({
     const dataActionEdit = ref({ ...dataActionUtils });
     const focusedRowKey = ref();
     const popupAddStatus = ref<boolean>(false);
-    const messageSave = Message.getMessage('COMMON', '501').message;
-    const titleModalConfirm = ref(messageSave);
+    const messageConfirm = Message.getMessage('COMMON', '501').message;
+    const messageCreate = Message.getMessage('COMMON', '101').message;
+    const titleModalConfirm = ref(messageConfirm);
     const inputDateTax = computed(() => {
       if (!props.isDisabledForm) {
         return processKeyPA620.value.imputedYear + '-' + formatMonth(processKeyPA620.value.imputedMonth)
@@ -635,7 +636,7 @@ export default defineComponent({
     successChangeIncomeProcessBusinessStatus(e => {
       focusedRowKey.value = dataAction.value.input.incomeId;
       selectedRowKeys.value = [dataAction.value.input.incomeId];
-      notification('success', `업데이트 완료!`);
+      notification('success', messageCreate);
       emit('statusDone', e.data.changeIncomeProcessBusinessStatus.status);
     })
     const statusComfirm = () => {

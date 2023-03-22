@@ -412,7 +412,9 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      // actionChangeComponent.value = 2;
+      if(compareType.value == 2) {
+        actionChangeComponent.value = 2;
+      }
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);

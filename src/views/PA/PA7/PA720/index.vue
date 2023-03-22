@@ -3,6 +3,7 @@
   <div id="pa-720" class="page-content">
     <a-row :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="loadingIncomeProcessExtras || isRunOnce" size="large">
+        {{ month }} month <br/>
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="columnData" :show-borders="true"
           :allow-column-reordering="move_column" key-expr="hasData" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" ref="pa720GridRef">
@@ -637,12 +638,17 @@ export default defineComponent({
           }
         }
         if (compareType.value === 1) {
+          console.log('compareType == 1')
           addNewRow();
           return;
         }
         if (compareType.value == 2) {
+          taxPayRef.value.focusedRowKey = editTaxParamFake.value.incomeId;
+          store.commit('common/selectedRowKeysPA720', editTaxParamFake.value.incomeId);
+          console.log('compareType == 2')
           editTaxParam.value = editTaxParamFake.value;
           store.state.common.isNewRowPA720 = false;
+        
         }
         compareType.value = 2;
       }

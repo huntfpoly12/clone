@@ -208,6 +208,7 @@ export default defineComponent({
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
     const messageUpdate = messages.getCommonMessage('106').message;
+    const messageCreate = messages.getCommonMessage('101').message;
     const pa720FormRef = ref();
     //store
     const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
@@ -330,7 +331,7 @@ export default defineComponent({
     };
     // AFTER ACTION FORM
     createIncomeExtraDone((res) => {
-      notification('success', `업데이트 완료!`);
+      notification('success', messageCreate);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
       formPA720.value.input.incomeId = res.data.createIncomeExtra.incomeId;
