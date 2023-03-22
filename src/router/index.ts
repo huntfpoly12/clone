@@ -203,6 +203,10 @@ const routes = [
         component: () => import('../views/AC/AC1/AC110/index.vue'),
       },
       {
+        path: "ac-120",
+        component: () => import('../views/AC/AC1/AC120/index.vue'),
+      },
+      {
         path: "ac-610",
         component: () => import('../views/AC/AC6/AC610/index.vue'),
       },

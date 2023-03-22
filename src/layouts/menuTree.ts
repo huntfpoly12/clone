@@ -78,7 +78,7 @@ export default [
         id: "ac-100",
         subMenus: [
           { title: "통장내역", url: "/dashboard/ac-110", id: "ac-110" },
-          { title: "전표입력", url: "#", id: "ac-120" },
+          { title: "전표입력", url: "/dashboard/ac-120", id: "ac-120" },
           { title: "마감", url: "#", id: "ac-130" },
         ],
       },
