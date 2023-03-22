@@ -73,7 +73,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
@@ -84,7 +84,21 @@ export default defineComponent({
         actionNextStep: Number,
     },
 
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+    onMounted(() => {
+      console.log('Component mounted 2');
+    });
+
+    // Hook được gọi sau khi component đã được mount lần đầu tiên
+    // và sau mỗi lần cập nhật
+    onUpdated(() => {
+      console.log('Component updated 2');
+    });
+
+    // Hook được gọi trước khi component được unmount
+    onUnmounted(() => {
+      console.log('Component unmounted 2');
+    });
         const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({

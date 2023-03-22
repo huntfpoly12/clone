@@ -248,7 +248,7 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted, onBeforeMount, onBeforeUnmount } from 'vue'
 import dayjs from "dayjs";
 import { openTab } from '@/helpers/commonFunction';
 import  filters from '@/helpers/filters';
@@ -300,11 +300,11 @@ export default defineComponent({
             (document.getElementById("btn-next-step") as HTMLInputElement).click();
         });
 
-        watch(() => store.state.common.formStateEditPA420, (value: any) => {
+        watch(() => store.state.common.formStateEditPA420, (value: any,oldValue) => {
             dataGet.value = value
             month1.value = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
             month2.value = dayjs(value.paymentYear + '-' + value.paymentMonth).format("YYYYMM")
-        }, { deep: true });
+        }, { deep: true , immediate: true});
 
         watch(() => props.actionNextStep, (newVal) => {
             (document.getElementById("btn-next-step") as HTMLInputElement).click();
@@ -315,7 +315,7 @@ export default defineComponent({
         });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {
-          if (newVal) {
+          if (newVal && dataGet.value.checkBoxCallApi) {
             let val1: any = newVal.settlementStartDate?.toString()
             let val2: any = newVal.settlementFinishDate?.toString()
             let objectData = Formula.getDateOfService(
@@ -328,7 +328,7 @@ export default defineComponent({
             yearsOfService1.month = objectData.monthsOfService
             yearsOfService1.year = objectData.yearsOfService
           }
-        }, { deep: true });
+        }, { deep: true, immediate: true });
 
         watch(() => dataGet.value.specification.specificationDetail.lastRetiredYearsOfService, (newVal) => {
             let val1: any = newVal.settlementStartDate?.toString()
@@ -342,7 +342,7 @@ export default defineComponent({
             yearsOfService2.day = objectData.daysOfService
             yearsOfService2.month = objectData.monthsOfService
             yearsOfService2.year = objectData.yearsOfService
-        }, { deep: true });
+        }, { deep: true , immediate: true});
 
         watch(() => dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService, (newVal) => {
             let val1: any = newVal.settlementStartDate?.toString()
@@ -357,7 +357,7 @@ export default defineComponent({
             yearsOfService3.day = objectData.daysOfService
             yearsOfService3.month = objectData.monthsOfService
             yearsOfService3.year = objectData.yearsOfService
-        }, { deep: true });
+        }, { deep: true, immediate: true });
 
 
         let indexChange = ref(0)
