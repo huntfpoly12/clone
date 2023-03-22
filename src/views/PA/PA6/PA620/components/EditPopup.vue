@@ -63,7 +63,8 @@ export default defineComponent({
 
         const onSubmit = () => {
             const reversedArr = props.data.reverse();
-            reversedArr.map((val: any) => {
+            reversedArr.forEach((val: any) => {
+              console.log(val);
                 mutate({
                     companyId: companyId,
                     processKey: props.processKey,

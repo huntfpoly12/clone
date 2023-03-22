@@ -33,7 +33,7 @@ export default defineComponent({
           let data = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement;
           arrStatus.value = Array(data.slice(-1).pop());
           if(data) {
-              emit('productionStatusData',data.slice(-1).pop())
+              emit('productionStatusData',{ companyId : props.data?.companyId , productStatus : data.slice(-1).pop()})
           }
         }
       })
