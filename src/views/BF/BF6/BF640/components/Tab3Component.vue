@@ -136,10 +136,6 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [newVal]
         })
         watch(() => props.searchStep, (val: any) => {
-            if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [2, -1]
-            else
-                dataSearch.value.productionStatuses = [val]
             dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
             dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
             if (dataSearch.value) {

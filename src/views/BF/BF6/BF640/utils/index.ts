@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 export const dataSearchUtils = {
     "beforeProduction": false,
     "productionStatuses": [0, 1, 2, -1],
-    "bizNumber": '',
+    "companyCode": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
     "excludeCancel": true,
@@ -16,7 +16,7 @@ export const dataSearchUtils = {
 export const dataSearchStep2Utils = {
     "beforeProduction": false,
     "productionStatuses": [0, 1, 2, -1],
-    "bizNumber": '',
+    "companyCode": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
     "excludeCancel": true,
