@@ -4,9 +4,9 @@
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
-            <number-box width="100px" :min="1" :max="31" :isFormat="true" :spinButtons="true" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
+            <number-box width="200px" :min="1" :max="9999999999" :isFormat="true" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
               :disabled="isEdit"/>
-            <number-box width="100px" :min="1" :max="31" :isFormat="true" :spinButtons="true" :required="true" />
+            <!-- <number-box width="100px" :min="1" :max="31" :isFormat="true" :spinButtons="true" :required="true" /> -->
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
             </span>

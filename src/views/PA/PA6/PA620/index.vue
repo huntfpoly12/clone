@@ -6,6 +6,7 @@
             <a-row>
                 <a-col :span="24" class="mt-10" :class="{'ele-opacity':!isCompareForm}">
                     <a-spin :spinning="loadingGetIncomeProcessBusinesses" size="large">
+                      <!-- {{ trigger }} trigger -->
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                             :show-borders="true" key-expr="companyId" :allow-column-reordering="move_column"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"> 
@@ -24,7 +25,7 @@
                                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(1)"> [+]
                                 </div>
                             </template>
-                            <DxColumn caption="02" width="100px" cell-template="month-2" :cssClass="(monthClicked==2||changeMonthDataFake.imputedMonth==2) &&'column-focus'" />
+                            <DxColumn caption="02" width="100px" cell-template="month-2" :class="(monthClicked==2||changeMonthDataFake.imputedMonth==2) &&'column-focus'" />
                             <template #month-2="{ data }">
                                 <div class="hover-underlined" v-if="data.data.month2"
                                     :class="setUnderline(data.data.month2.imputedMonth) ? 'current-underlined' : ''"
@@ -264,6 +265,7 @@ export default defineComponent({
         const store = useStore();
         const { per_page, move_column, colomn_resize } = store.state.settings;
         const monthClicked = computed(() => store.state.common.processKeyPA620.imputedMonth);
+        const monthHover = ref(0);
         const rowTable = ref(0);
         const dataModalCopy: any = ref()
         const originData = reactive({ ...origindata, rows: per_page });
@@ -279,6 +281,9 @@ export default defineComponent({
         const isRunOnce = ref<boolean>(true);
         const isDisabledForm = ref<boolean>(false);
         const formRef = ref();
+        const customColumnClass = (month: any)=> {
+          return month == monthClicked.value ? 'dx-state-hover-custom' : '';
+        };
         // ================GRAPQL==============================================
         // API QUERY TABLE BIG
         const { refetch: refetchData, loading: loadingGetIncomeProcessBusinesses, onError: errorGetIncomeProcessBusinesses, onResult: resIncomeProcessBusinesses } = useQuery(queries.getIncomeProcessBusinesses, valueCallApiGetIncomeProcessBusinesses, () => ({
@@ -420,11 +425,10 @@ export default defineComponent({
           }
         }
         const createdDone = () => {
+            console.log('chay vao createdDone', formRef.value.isClickYearDiff)
             if(!formRef.value.isClickYearDiff){
               trigger.value = true;
               refetchData();
-            }else{
-              formRef.value.isClickYearDiff = false;
             }
         }
         const statusDone = (emitVal: any)=> {
@@ -507,7 +511,7 @@ export default defineComponent({
         return {
             modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, isDisabledForm,
             setUnderline, createdDone, onAddMonth, showDetailSelected, loadingTable, dataAddIncomeProcess,processKeyPA620,formRef,changeNoSave,monthClicked,
-            isCompareForm,statusDone,dateType,changeMonthDataFake, onCloseCopy,
+            isCompareForm,statusDone,dateType,changeMonthDataFake, onCloseCopy,trigger
         };
     },
 });
