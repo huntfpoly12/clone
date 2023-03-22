@@ -570,6 +570,7 @@ export default defineComponent({
             originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
             // refetchDataProcessIncomeWages() //reset data table 1
             trigger.value = true; //reset data table 1
+            dataGridRef.value?.refresh();
             // triggerDataTaxPayInfo.value = true; //reset data table 2
             // refetchDataTaxPayInfo() 
         })
@@ -768,9 +769,9 @@ export default defineComponent({
                         }
                         store.state.common.incomeId = e.rows[e.newRowIndex]?.data?.incomeId
                         store.state.common.loadingFormData++
-                    }
-                    if (store.state.common.statusRowAdd) {
-                        store.state.common.statusFormAdd = false
+                        if (store.state.common.statusRowAdd) {
+                            store.state.common.statusFormAdd = false
+                        }
                     }
                 }
             }
