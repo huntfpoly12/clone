@@ -276,7 +276,7 @@ export default defineComponent({
         }
         // custom summary
         const customTextSummary = () => {
-            return `제작요청 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
+            return `제작요청전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
@@ -309,7 +309,7 @@ export default defineComponent({
                 return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
             })
             dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
-            dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == dataSearch.value.excludeCancel)
+            if(dataSearch.value.excludeCancel) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == true)
             dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
             if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
             if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
