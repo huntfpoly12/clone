@@ -126,8 +126,8 @@
                         <resident-id :residentId="data.data.residentId"></resident-id>
                       </template>
 
-                      <DxColumn caption="비고" cell-template="grade-cell" />
-                      <template #grade-cell="{ data }">
+                      <DxColumn caption="비고" cell-template="node-cell" />
+                      <template #node-cell="{ data }">
                           <div class="custom-grade-cell">
                               <four-major-insurance v-if="data.data.healthInsuranceDeduction == true" :typeTag="2"
                                   :typeValue="1" />
@@ -429,13 +429,33 @@ export default defineComponent({
       store.state.common.countBtOnclickPA520  = 0
     }
     const onExporting = (e: { component: any; cancel: boolean }) => {
+      
+      
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("Employees");
 
       exportDataGrid({
         component: e.component,
         worksheet,
-        autoFilterEnabled: true,
+        customizeCell: function({ gridCell, excelCell }) {
+          if (gridCell?.rowType == 'data') {
+            if (gridCell?.column?.cellTemplate == "company-name") {
+              let cellValue = `${gridCell.data.employeeId} - ${gridCell.data.name} ${gridCell.data.status==0?'- 퇴':''} ${gridCell.data.foreigner?'- 외':''}`
+              excelCell.value = cellValue;
+            }
+            if (gridCell?.column?.cellTemplate == "residentId") {
+              excelCell.value = gridCell.data.residentId;
+            }
+            if (gridCell?.column?.cellTemplate == "node-cell") {
+              let cellValue = ''
+              gridCell.data.healthInsuranceDeduction ? cellValue += '- 건' : ''
+              gridCell.data.employeementInsuranceDeduction ? cellValue += ' - 고' : ''
+              gridCell.data.nationalPensionSupportPercent ? cellValue += ` - 두 ${ gridCell.data.nationalPensionSupportPercent }%}` : ''
+              gridCell.data.employeementInsuranceSupportPercent ? cellValue += ` - 두(고)${ gridCell.data.employeementInsuranceSupportPercent }%}` : ''
+              excelCell.value = cellValue;
+            }
+          }
+        }
       }).then(() => {
         workbook.xlsx.writeBuffer().then((buffer) => {
           saveAs(
