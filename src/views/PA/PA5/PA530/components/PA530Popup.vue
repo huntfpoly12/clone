@@ -45,6 +45,7 @@ import { defineComponent, ref, watch } from "vue";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA530/index"; 
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -100,7 +101,7 @@ export default defineComponent({
             setModalVisible();
         })
         onDone(e => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             setModalVisible();
         })
         const sendEmail = (e: any) => {

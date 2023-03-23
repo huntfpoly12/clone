@@ -110,6 +110,8 @@
                         <div class="title-body-left-1">
                             <div>
                                 서식 설정 :
+                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
+                                    textUnCheck="지급자보관용" />
                             </div>
                             <div>
                                 <img src="@/assets/images/iconInfo.png" alt="">
@@ -117,13 +119,6 @@
                             <span>
                                 본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
                             </span>
-                        </div>
-                        <div class="title-body-left-2">
-                            <span>소득자보관용 :</span>
-                            <div>
-                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
-                                    textUnCheck="지급자보관용" />
-                            </div>
                         </div>
                     </a-col>
                     <a-col :span="12">
