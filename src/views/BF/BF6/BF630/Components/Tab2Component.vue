@@ -121,7 +121,7 @@
           <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd hh:mm" />
-          <DxColumn caption="제작현황" cell-template="imputed" />
+          <DxColumn caption="제작현황" cell-template="imputed" width="430"/>
           <template #imputed="{ data }">
             <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab2"
               @productionStatusData="(value) => productionStatusData(value, data.rowIndex)" />
@@ -419,7 +419,7 @@ export default defineComponent({
           && checkKeyFilter(filterForm.companyName, items.company.name, 'includes')
           && checkKeyFilter(filterForm.manageUserId, items.companyServiceContract.manageUserId, 'equal')
           && checkKeyFilter(filterForm.salesRepresentativeId, items.companyServiceContract.salesRepresentativeId, 'equal')
-          && filterForm.excludeCancel === items.companyServiceContract.active
+          && (!filterForm.excludeCancel || filterForm.excludeCancel === items.companyServiceContract.active)
       })
       productionStatusArr.value = []
       dataSource.value.forEach((item: any) => {
