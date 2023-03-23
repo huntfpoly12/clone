@@ -322,20 +322,7 @@
                 </a-col>
                 <a-col span="7" class="ac-120__main-detail-detail2">
                     <div class="ac-120__main-detail-detail2-upload">
-                        <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card"
-                            v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile">
-                            <div v-if="fileList.length < MAX_UP_LOAD">
-                                <div class="ant-btn-upload">
-                                    <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
-                                    <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
-                                    <p class="ant-btn-upload-text">또는</p>
-                                    <button class="ant-btn-upload-button">파일 선택</button>
-                                </div>
-                            </div>
-                        </a-upload>
-                        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-                            <img alt="example" style="width: 100%" :src="previewImage" />
-                        </a-modal>
+                      <UploadPreviewImage v-model:list-image-file="fileList"/>
                     </div>
                 </a-col>
             </a-row>
@@ -370,21 +357,7 @@ import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupCopyData from "./components/PopupCopyData.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
-interface FileItem {
-    uid: string;
-    name?: string;
-    status?: string;
-    response?: string;
-    percent?: number;
-    url?: string;
-    preview?: string;
-    originFileObj?: any;
-}
-
-interface FileInfo {
-    file: FileItem;
-    fileList: FileItem[];
-}
+import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
 
 export default defineComponent({
     components: {
@@ -405,6 +378,7 @@ export default defineComponent({
         PopupItemDetails,
         DxButton,
         DxRowDragging,
+        UploadPreviewImage
     },
     setup() {
         const store = useStore();
@@ -418,8 +392,6 @@ export default defineComponent({
         let focusedRowKey = ref()
         let dataSource = ref<any[]>([])
         let fileList = ref<any[]>([])
-        const previewImage = ref<string | undefined>('');
-        const previewVisible = ref<boolean>(false);
         let isModalRetrieveStatements = ref(false);
         let statusModalSlipCancellation = ref(false);
         let statusModalSlipRegistrantion = ref(false);
@@ -455,32 +427,6 @@ export default defineComponent({
         // METHODS
 
         const selectionChanged = () => { }
-        const getBase64 = (file: File) => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-        const handlePreview = async (file: FileItem) => {
-            if (!file.url && !file.preview) {
-                file.preview = (await getBase64(file.originFileObj)) as string;
-            }
-            previewImage.value = file.url || file.preview;
-            previewVisible.value = true;
-        };
-        const handleChange = ({ fileList: newFileList }: FileInfo) => {
-            fileList.value = newFileList;
-        };
-
-        const handleCancel = () => {
-            previewVisible.value = false;
-        };
-
-        const changeFile = ({ fileList: newFileList }: FileInfo) => {
-            console.log('change', fileList);
-        }
 
         const totalDeposits = () => {
             let total = 0;
@@ -567,14 +513,7 @@ export default defineComponent({
             focusedRowKey,
             selectionChanged,
             dataDemoMain,
-            handlePreview,
-            handleChange,
-            previewVisible,
             fileList,
-            handleCancel,
-            previewImage,
-            MAX_UP_LOAD,
-            changeFile,
             totalDeposits,
             totalWithdrawal,
             countSlipRegistration,
@@ -602,29 +541,4 @@ export default defineComponent({
     },
 });
 </script>
-<style lang="scss">
-.ac-120__main-detail-detail2-upload {
-    .ant-upload-list-picture-card-container {
-        width: 120px;
-        height: 120px;
-        margin: 0 9px 8px 0;
-    }
-
-    .ant-upload-list-item {
-        border-radius: 15px;
-    }
-
-    .ant-upload.ant-upload-select-picture-card {
-        width: 120px;
-        height: 120px;
-        border-radius: 15px;
-        margin: 0;
-    }
-}
-
-.input_info {
-    display: flex;
-    align-items: center;
-}
-</style>
 <style lang="scss" scoped src="./style/style.scss"></style>
