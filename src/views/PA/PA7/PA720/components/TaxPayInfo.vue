@@ -232,7 +232,6 @@ export default defineComponent({
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
       if(!props.compareForm()){
-        console.log(e)
       store.commit('common/selectedRowKeysPA720', e.currentDeselectedRowKeys[0]);
       }
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
@@ -251,7 +250,6 @@ export default defineComponent({
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
       // store.commit('common/selectedRowKeysPA720', data.incomeId);
-      console.log(e.loadIndex, loadIndexInit.value)
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,
@@ -280,14 +278,10 @@ export default defineComponent({
     const dataGridRef = computed(() => taxPayDataRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
       const rowElement = e.rowElement[0];
-        console.log(e.event.target);
-        console.log(e.event.target.classList);
       if(e.event.target.classList.value == "dx-checkbox-icon" || e.event.target.classList.contains('dx-command-select')){
-        console.log(e.event.target.classList.value);
         e.cancel = true;
       }
       if (!props.compareForm()) {
-        console.log('compareForm loi', rowElement);
         e.cancel = true;
         rowElement?.classList.add("dx-state-hover-custom");
       }
@@ -297,8 +291,6 @@ export default defineComponent({
       if (element)
         dataGridRef.value?.refresh();
         focusedRowKey.value = props.compareType == 2 ? 681 : formPA720.value.input.incomeId;
-        console.log( props.compareType,formPA720.value.input?.incomeId)
-        console.log(props.editTaxParamFake.incomeId)
     }
     return {
       rowTable,
