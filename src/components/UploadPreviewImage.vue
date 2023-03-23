@@ -1,6 +1,6 @@
 <template>
   <div class="upload-pewview-image">
-    <a-upload list-type="picture-card" :multiple="true" v-model:file-list="fileList" @preview="handlePreview"
+    <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
       headers="dsadasdsad" @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload"
       accept="image/png, image/jpeg, image/jpg image/gif">
       <div v-if="fileList.length < limit">
@@ -36,14 +36,18 @@ interface FileInfo {
   fileList: FileItem[];
 }
 export default defineComponent({
-  props: { 
+  props: {
     limit: {
       type: Number,
       default: 8
     },
-    listImageFile : {
+    listImageFile: {
       type: Array,
       default: []
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -79,8 +83,8 @@ export default defineComponent({
     }
 
     const beforeUpload = (file: any) => {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-      if (!isJpgOrPng) {
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
+      if (!isImage) {
         notification('error', 'You can only upload png, jpg, jpeg, gif file!')
       }
       const isLt10M = file.size / 1024 / 1024 <= 10;
@@ -91,7 +95,7 @@ export default defineComponent({
       if (isDuplicaseName) {
         notification('error', 'Duplicate image are not allowed!')
       }
-      isFailUpload.value = isJpgOrPng && isLt10M && !isDuplicaseName
+      isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
 
     const customRequest = (e: any) => {
@@ -130,27 +134,33 @@ export default defineComponent({
     height: 120px;
     margin: 0 9px 8px 0;
   }
+
   .ant-upload-list-item {
     border-radius: 15px;
   }
+
   .ant-upload.ant-upload-select-picture-card {
     width: 120px;
     height: 120px;
     border-radius: 15px;
     margin: 0;
   }
+
   .ant-btn-upload {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+
     &-text {
       font-size: 11px;
     }
+
     &-image {
       width: 25px;
       margin: 5px 0;
     }
+
     &-button {
       font-size: 11px;
       background-color: #4472C4;
