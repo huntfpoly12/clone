@@ -3,7 +3,7 @@
     <div id="pa-710">
         <div class="page-content">
             <a-row>
-                <a-col span="2" class="total-user">
+                <!-- <a-col span="2" class="total-user">
                     <div>
                         <span>{{ listEmployeeExtra.length }}</span>
                         <br>
@@ -13,8 +13,8 @@
                         <img src="@/assets/images/user.svg" style="width: 39px;" />
                     </div>
                 </a-col>
-                <a-col span="22"></a-col>
-                <a-col span="16" class="custom-layout">
+                <a-col span="22"></a-col> -->
+                <a-col span="16" class="data-table">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
@@ -28,11 +28,19 @@
                             <DxPaging :enabled="false" />
                             <DxExport :enabled="true"/>
                             <DxToolbar>
+                                <DxItem template="total-user" location="before"/>
                                 <DxItem name="searchPanel" />
                                 <DxItem name="exportButton" css-class="cell-button-export"/>
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-template" css-class="cell-button-add" />
                             </DxToolbar>
+                            <template #total-user>
+                                <div class="total-user">
+                                    <span>{{ listEmployeeExtra.length }}</span>
+                                    <span>전체</span>
+                                    <img src="@/assets/images/user.svg"/>
+                                </div>
+                            </template>
                             <template #button-history>
                                 <DxButton icon="plus">
                                     <HistoryOutlined style="font-size: 18px;" @click="modalHistory" />
