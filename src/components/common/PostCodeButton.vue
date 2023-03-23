@@ -2,7 +2,6 @@
   <div style="margin-left: 5px">
     <DxButton icon="search" :width="width" :text="text" type="default" styling-mode="outlined" @click="isOpen = true"
       :height="$config_styles.HeightInput" class="post-code"/>
-
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
       <div v-if="isOpen">
         <VueDaumPostcode @complete="onComplete" />
