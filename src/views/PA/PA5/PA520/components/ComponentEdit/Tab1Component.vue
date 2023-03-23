@@ -1,7 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
-    {{ dataEdited }}
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
