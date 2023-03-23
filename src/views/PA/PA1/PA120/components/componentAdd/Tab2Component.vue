@@ -79,7 +79,7 @@
             감면기간:
           </a-col>
           <a-col span="15">
-            <date-time-box width="250px" :range="true" :multi-calendars="true"
+            <date-time-box width="250px" :range="true" :multi-calendars="true" v-model:valueDate="rangeDate"
               :disabled="!formStateTab2.employeementReduction"> </date-time-box>
           </a-col>
           <a-col span="7">
@@ -239,7 +239,7 @@ export default defineComponent({
     const totalDeduction = ref(0);
     const subPayment = computed(() => totalPayItem.value - totalDeduction.value);
 
-    const rangeDate = ref<RangeValue>();
+    const rangeDate = ref<RangeValue>([null, null]);
     const store = useStore();
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
@@ -501,7 +501,7 @@ export default defineComponent({
         delete formStateTab2.employeementReductionInput;
         delete formStateTab2.employeementReductionStartDate;
         delete formStateTab2.employeementReductionFinishDate;
-        rangeDate.value = undefined;
+        rangeDate.value = [null, null];
       }
     }, { deep: true })
 

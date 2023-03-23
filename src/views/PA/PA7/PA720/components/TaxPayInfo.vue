@@ -1,12 +1,12 @@
 <template>
   <a-spin :spinning="loadingIncomeExtras || isRunOnce" size="large">
-    <!-- {{ firsTimeRow }} firsTimeRow <br />
-    {{ focusedRowKey }} focusedRowKey <br /> -->
+    {{ selectedRowKeys }} selectedRowKeys <br />
+    {{ focusedRowKey }} focusedRowKey <br />
     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
-      :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-      focused-row-enabled="true" key-expr="incomeId" :auto-navigate-to-focused-row="true" @cell-click="onCellClick"
-      v-model:focused-row-key="focusedRowKey" @selection-changed="selectionChanged" @row-click="onRowClick"
-      v-model:selected-row-keys="selectedRowKeys">
+          key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
+          @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
+          v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <!-- <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" /> -->
       <DxSelection select-all-mode="allPages" mode="multiple" />
@@ -129,6 +129,14 @@ export default defineComponent({
       default: () => { },
     },
     compareType: Number,
+    compareForm: {
+      type: Function,
+      default: () => { },
+    },
+    editTaxParamFake: {
+      type: Object,
+      default:{incomeId:0},
+    }
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -170,7 +178,7 @@ export default defineComponent({
           props.saveToNewRow();
           dataSourceDetail.value = dataSourceDetail.value.concat(formPA720.value.input);
           focusedRowKey.value = formPA720.value.input.incomeId;
-          store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+          // store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
         }
       }
       if (res.getIncomeExtras.length == 0) {
@@ -223,6 +231,9 @@ export default defineComponent({
     };
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
+      if(!props.compareForm()){
+      store.commit('common/selectedRowKeysPA720', e.currentDeselectedRowKeys[0]);
+      }
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
         return item.incomeId;
       });
@@ -238,7 +249,7 @@ export default defineComponent({
     }, { deep: true })
     const onRowClick = (e: any) => {
       const data = e.data && e.data;
-      store.commit('common/selectedRowKeysPA720', data.incomeId);
+      // store.commit('common/selectedRowKeysPA720', data.incomeId);
       if (e.loadIndex != loadIndexInit.value) {
         updateParam = {
           companyId: companyId,
@@ -261,32 +272,26 @@ export default defineComponent({
         loadIndexInit.value = e.loadIndex;
       }
     };
-    const onCellClick = (e: any) => {
-      if (e.columnIndex === 0 && e.column.type == 'selection') {
-        focusedRowKey.value = formPA720.value.input?.incomeId;
-        return;
-      }
-    }
+ 
     //-----------------------hover when click diff row----------------
     const taxPayDataRef = ref(); // ref of grid
     const dataGridRef = computed(() => taxPayDataRef.value?.instance as any); // ref of grid Instance
-    // const onFocusedRowChanging = (e: any) => {
-    //   const rowElement = e.rowElement[0];
-    //   // if (focusedRowKey.value == e.rows[e.newRowIndex].key) {
-    //   //   e.cancel = true;
-    //   //   return;
-    //   // }
-    //   if (!props.compareForm()) {
-    //     e.cancel = true;
-    //     rowElement?.classList.add("dx-state-hover-custom");
-    //   }
-    // }
-    // const removeHoverRowKey = () => {
-    //   const element = document.querySelector(".dx-state-hover-custom");
-    //   if (element)
-    //     dataGridRef.value?.refresh();
-    //     // focusedRowKey.value = props.compareType == 1 ? formPA720.value.input.incomeId : props.editTaxParamFake.inComeId;
-    // }
+    const onFocusedRowChanging = (e: any) => {
+      const rowElement = e.rowElement[0];
+      if(e.event.target.classList.value == "dx-checkbox-icon" || e.event.target.classList.contains('dx-command-select')){
+        e.cancel = true;
+      }
+      if (!props.compareForm()) {
+        e.cancel = true;
+        rowElement?.classList.add("dx-state-hover-custom");
+      }
+    }
+    const removeHoverRowKey = () => {
+      const element = document.querySelector(".dx-state-hover-custom");
+      if (element)
+        dataGridRef.value?.refresh();
+        focusedRowKey.value = props.compareType == 2 ? 681 : formPA720.value.input.incomeId;
+    }
     return {
       rowTable,
       per_page,
@@ -307,8 +312,11 @@ export default defineComponent({
       onRowClick,
       firsTimeRow,
       formatMonth,
-      onCellClick,
       selectedRowKeys,
+      onFocusedRowChanging,
+      taxPayDataRef,
+      removeHoverRowKey,
+      store,
     };
   },
 });
