@@ -111,7 +111,7 @@
                               <HistoryOutlined @click="modalHistory" class="fz-18" />
                           </DxButton>
                       </template>
-                      <DxColumn caption="성명" cell-template="company-name" width="250" />
+                      <DxColumn caption="성명" cell-template="company-name" width="250" data-field="name"/>
                       <template #company-name="{ data }">
                           <employee-info :idEmployee="data.data.employeeId" :name="data.data.name"
                               :idCardNumber="data.data.residentId" :status="data.data.status"
@@ -121,7 +121,7 @@
                               :status="data.data.status" :foreigner="data.data.foreigner" :checkStatus="false"
                                />
                       </template>
-                      <DxColumn caption="주민등록번호" cell-template="residentId" width="150"  css-class="cell-center" />
+                      <DxColumn caption="주민등록번호" cell-template="residentId" width="150"  css-class="cell-center" data-field="residentId"/>
                       <template #residentId="{ data }" >
                         <resident-id :residentId="data.data.residentId"></resident-id>
                       </template>

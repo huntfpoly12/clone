@@ -176,7 +176,7 @@ export default defineComponent({
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear,
-            employeeId: props.idRowEdit
+            employeeId: props.idRowEdit,
         })
         let originDataUpdate: any = ref({
             companyId: companyId,
@@ -305,7 +305,7 @@ export default defineComponent({
         }
         // call api on tab 2 next time
         watch([()=> props.idRowEdit,() => store.state.common.idRowChangePa520], (res) => {
-          if (!store.state.common.checkChangeValueEditTab2PA520 && !isBtnYellow.value) {
+          if (!store.state.common.checkChangeValueEditTab2PA520 && !isBtnYellow.value && props.idRowEdit) {
               originDataDetail.value.employeeId = store.state.common.idRowChangePa520
               trigger.value = true
               refectchDetail()
