@@ -15,6 +15,8 @@ const statesPA520 = {
   actionUpdateTab1PA520: 0,
   actionUpdateTab2PA520: 0,
   isChangeYearPA520: false,
-  oldGlobalYearPA520:0
+  isTab2ValidatePA520: false,
+  oldGlobalYearPA520: 0,
+  setTabActivePA520: 1
 };
 export default statesPA520;

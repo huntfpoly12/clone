@@ -57,7 +57,7 @@ export default defineComponent({
             let data = res.data.getElectronicFilingsByIncomeWageDailyPaymentStatement
             if (data.length) {
                 arrStatus.value = data
-                emit('productionStatusData', data[0]);
+                // emit('productionStatusData', data[0]);
             }
         })
         onError((res: any)=> {notification('error', res.message)})

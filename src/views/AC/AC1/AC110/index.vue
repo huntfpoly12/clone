@@ -5,51 +5,51 @@
       <div class="ac-110__top-grid">
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">01</span>
-          <ProcessStatus :valueStatus="statusEntering" />
+          <ProcessStatus :disabled="true" :valueStatus="statusEntering" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">02</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">03</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">04</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">05</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">06</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">07</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">08</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">09</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">10</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">11</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">12</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
       </div>
       <div class="ac-110__top-flex">
@@ -179,9 +179,9 @@
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :multiple="true"
-              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile"
-              :before-upload="beforeUpload">
+            <a-upload list-type="picture-card" :multiple="true" v-model:file-list="fileList" @preview="handlePreview"
+              headers="dsadasdsad" @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload"
+              accept="image/png, image/jpeg,, image/jpg image/gif">
               <div v-if="fileList.length < MAX_UP_LOAD">
                 <div class="ant-btn-upload">
                   <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
@@ -341,14 +341,21 @@ export default defineComponent({
     const beforeUpload = (file: any) => {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        notification('error', 'You can only upload JPG file!')
+        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
       }
-      const isLt2M = file.size / 1024 / 1024 <= 10;
-      if (!isLt2M) {
+      const isLt10M = file.size / 1024 / 1024 <= 10;
+      if (!isLt10M) {
         notification('error', 'Image must smaller than 10MB!')
       }
-      return isJpgOrPng && isLt2M;
+      return isJpgOrPng && isLt10M;
     };
+
+
+    const customRequest = (e: any) => {
+      setTimeout(() => {
+        e.onSuccess("ok");
+      }, 500);
+    }
 
     const totalDeposits = () => {
       let total = 0;
@@ -464,6 +471,7 @@ export default defineComponent({
       isModalNoteItemDetail,
       valueAccountSubjectClassification,
       valueFundingSource,
+      customRequest
     };
   },
 });
