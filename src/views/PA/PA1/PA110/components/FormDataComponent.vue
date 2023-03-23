@@ -587,6 +587,7 @@ export default defineComponent({
                 dataIW.value.employee.healthInsuranceDeduction = data.employee.healthInsuranceDeduction
                 dataIW.value.employee.employeementInsuranceDeduction = data.employee.employeementInsuranceDeduction
                 dataIW.value.employee.nationalPensionSupportPercent = data.employee.nationalPensionSupportPercent
+                dataIW.value.employee.employeementInsuranceSupportPercent = data.employee.employeementInsuranceSupportPercent
 
                 store.state.common.dataRowOld = { ...dataIW.value }
                 store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
@@ -783,7 +784,7 @@ export default defineComponent({
                     item.amountNew = total3
                 }
                 if (item.itemCode == 1004) {
-                    let total4 = dataIW.value.employee.employeementInsuranceDeduction ? calculateEmployeementInsuranceEmployee(totalPayItem.value, dataIW.value.employee.nationalPensionSupportPercent) : 0
+                    let total4 = dataIW.value.employee.employeementInsuranceDeduction ? calculateEmployeementInsuranceEmployee(totalPayItem.value, dataIW.value.employee.employeementInsuranceSupportPercent) : 0
                     item.amountNew = total4
                 }
                 calculateVariables.totalTaxPay = totalPayItemTax.value
