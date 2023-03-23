@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex-center mt-10 title-action" :class="{ 'ele-opacity': !compareForm() }">
-    <div>
+    <div>{{ savePA610 }}
       <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
         :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
       <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
@@ -88,7 +88,7 @@
           </template>
           <DxColumn caption="차인지급액" width="120px" data-field="actualPayment" data-type="string" :format="amountFormat"
             alignment="right" />
-          <DxSummary>
+          <DxSummary v-if="dataSourceDetail?.length > 0">
             <DxTotalItem column="기타소득자 [소득구분]" summary-type="count" display-format="사업소득자[소득구분]수:{0}" />
             <DxTotalItem class="custom-sumary" column="지급액" summary-type="sum" display-format="지급액합계: {0}"
               value-format="#,###" />
@@ -340,6 +340,7 @@ export default defineComponent({
     })
 
     watch(savePA610, () => { // watch PA610 save or update success
+      triggerOption.value = true;
       refetchOption();
     })
     // API QUERY getIncomeBusiness
@@ -720,7 +721,7 @@ export default defineComponent({
     } = useMutation(mutations.createIncomeBusiness);
 
     doneCreated(res => {
-      notification('success', `업데이트 완료!`)
+      notification('success', messageCreate)
       if (compareType.value == 3) {
         dataActionEdit.value.input = { ...dataAction.value.input };
         triggerIncomeBusinesses.value = true;
@@ -858,7 +859,7 @@ export default defineComponent({
     }
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam, companyId,
-      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef,changeDayData,
+      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef,changeDayData,savePA610,
       paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff
     }
   }

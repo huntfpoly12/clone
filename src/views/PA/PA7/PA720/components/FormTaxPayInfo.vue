@@ -1,9 +1,5 @@
 <template>
   <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
-    <!-- {{ formPA720.input}} formPA720 <br/>
-    {{ formEditPA720.input }} formEditPA720 <br/> -->
-    <!-- {{ getEmployeeExtrasParams }} getEmployeeExtrasParams <br/>
-    {{ incomeExtraParam }} incomeExtraParam <br/> -->
     <standard-form formName="pa-720-form" ref="pa720FormRef">
       <a-row>
         <a-col :span="24">
@@ -211,7 +207,6 @@ export default defineComponent({
     const messageCreate = messages.getCommonMessage('101').message;
     const pa720FormRef = ref();
     //store
-    const actionSavePA720 = computed(() => store.getters['common/actionSavePA720']);
     const isNewRowPA720 = computed(()=>store.state.common.isNewRowPA720);
     const idDisableInput = computed(()=>{
       if(props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
@@ -246,7 +241,7 @@ export default defineComponent({
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
       if(data){
-        // store.commit('common/selectedRowKeysPA720',data.incomeId);
+        store.commit('common/selectedRowKeysPA720',data.incomeId);
       }
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
@@ -293,10 +288,6 @@ export default defineComponent({
     watch(savePA710, ()=> {
       refetchEmployeeExtras();
     })
-    //change year
-    // watch(globalYear, (newVal, oldY) => {
-    //   getEmployeeExtrasParams.imputedYear = newVal;
-    // });
 
     //-------------------------- mutation create and edit income SUBMIT FORM ------------------------
 
@@ -343,6 +334,8 @@ export default defineComponent({
       notification('success', messageUpdate);
       store.state.common.isNewRowPA720 = false;
       store.state.common.isErrorFormPA720 = false;
+      formPA720.value.input.incomeId = res.data.updateIncomeExtra.incomeId;
+      formEditPA720.value.input.incomeId = res.data.updateIncomeExtra.incomeId;
       store.commit('common/formEditPA720', formPA720.value);
       emit('onFormDone', true);
     });
@@ -407,7 +400,6 @@ export default defineComponent({
       localIncomeTax,
       resultIncomeExtra,
       onChangeInput,
-      actionSavePA720,
       messageRequired,
       inputDateTax,
       paymentDateTax,
