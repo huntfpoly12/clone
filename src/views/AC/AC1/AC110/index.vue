@@ -76,15 +76,15 @@
               <div>{{ data.data.fill1 }}</div>
             </a-tooltip>
           </template>
-          <DxColumn caption="통장용도" data-field="fill2"></DxColumn>
-          <DxColumn caption="일자" data-field="fill3"></DxColumn>
-          <DxColumn caption="통장적요" data-field="fill4"></DxColumn>
-          <DxColumn caption="내용|비고" data-field="fill5"></DxColumn>
-          <DxColumn caption="입금액" data-field="fill6"></DxColumn>
-          <DxColumn caption="출금액" data-field="fill7"></DxColumn>
-          <DxColumn caption="통장잔액" data-field="fill8"></DxColumn>
-          <DxColumn caption="증빙" data-field="fill9"></DxColumn>
-          <DxColumn caption="거래내역" data-field="fill10"></DxColumn>
+          <DxColumn caption="통장용도" data-field="fill2" />
+          <DxColumn caption="일자" data-field="fill3" />
+          <DxColumn caption="통장적요" data-field="fill4" />
+          <DxColumn caption="내용|비고" data-field="fill5" />
+          <DxColumn caption="입금액" data-field="fill6" format="fixedPoint" />
+          <DxColumn caption="출금액" data-field="fill7" format="fixedPoint" />
+          <DxColumn caption="통장잔액" data-field="fill8" format="fixedPoint" />
+          <DxColumn caption="증빙" data-field="fill9" />
+          <DxColumn caption="거래내역" data-field="fill10" />
           <DxColumn caption="정상여부" cell-template="normality" width="80" />
           <template #normality="{ data }">
             <button-basic :text="data.data.normality ? 'O' : 'X'" :type="data.data.normality ? 'success' : 'danger'"
@@ -136,10 +136,10 @@
                 </div>
               </a-tooltip>
             </template>
-            <DxColumn caption="결의구분" data-field="fill1"></DxColumn>
-            <DxColumn caption="수입액" data-field="fill2"></DxColumn>
-            <DxColumn caption="지출액" data-field="fill3"></DxColumn>
-            <DxColumn caption="적요" data-field="fill4"></DxColumn>
+            <DxColumn caption="결의구분" data-field="fill1" />
+            <DxColumn caption="수입액" data-field="fill2" />
+            <DxColumn caption="지출액" data-field="fill3" />
+            <DxColumn caption="적요" data-field="fill4" />
             <DxColumn caption="계정과목" cell-template="accountSubject" width="100" />
             <template #accountSubject="{ data }">
               <account-code-select v-model:valueInput="valueAccountSubjectClassification" />
@@ -152,7 +152,7 @@
             <template #sourceOfFunding="{ data }">
               <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
-            <DxColumn caption="거래처" data-field="fill8"></DxColumn>
+            <DxColumn caption="거래처" data-field="fill8" format="fixedPoint" />
             <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
             <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
