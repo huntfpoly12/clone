@@ -66,7 +66,7 @@ export default defineComponent({
     },
     newLoadKey: {
       type: [String, Number],
-      default: 0,
+      default: null,
     }
   },
   components: {
@@ -76,7 +76,7 @@ export default defineComponent({
     DxRequiredRule,
   },
   setup(props, { emit }) {
-    let valueEmployRes: any = ref(props.newLoadKey);
+    let valueEmployRes: any = ref(+props.newLoadKey > 0 && props.newLoadKey);
     const updateValue = (value: any) => {
       props.arrayValue.forEach((val: any) => {
         if (val.key == value.value) {
@@ -90,7 +90,7 @@ export default defineComponent({
     watch(
       () => props.newLoadKey,
       () => {
-        valueEmployRes.value = props.newLoadKey;
+        valueEmployRes.value = +props.newLoadKey > 0 && props.newLoadKey;
       }, { deep: true }
     );
     const app: any = getCurrentInstance();
