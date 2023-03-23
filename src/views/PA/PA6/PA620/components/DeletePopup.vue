@@ -22,7 +22,7 @@ import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
 import { Message } from '@/configs/enum';
-const messageDel = Message.getMessage('COMMON', '404').message;
+const messageDel = Message.getMessage('COMMON', '402').message;
 export default defineComponent({
     props: {
         modalStatus: {
