@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 export const dataSearchUtils = {
   beforeProduction: true,
-  productionStatuses: [0, 1, 2, -1],
+  productionStatuses: [0, 1, 2, -1] as number[],
   companyCode: "",
   companyName: "",
-  manageUserId: null,
-  salesRepresentativeId: null,
-  excludeCancel: true,
+  companyServiceContractManageUserId: null,
+  companyServiceContractSalesRepresentativeId: null,
+  companyServiceContractActive: true,
   paymentYear: parseInt(dayjs().format("YYYY")),
   paymentMonth: parseInt(dayjs().format("MM")),
 };
