@@ -448,8 +448,13 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks on the edit button.
     const onFocusedRowChanging = (event: any) => {
-      console.log(pa520Grid.value);
-      
+      const gridTable = pa520Grid.value.instance.getVisibleRows();
+      gridTable.forEach((row:any) => {
+        const rowElement = pa520Grid.value.instance.getRowElement(row.rowIndex);
+        if (rowElement[0].classList.contains('dx-state-hover-new')) { 
+          rowElement[0].classList.remove('dx-state-hover-new');
+        }
+      });
       let newRowIndex = event.newRowIndex
       var rowElement = event.rowElement;
       if (rowElement) {
