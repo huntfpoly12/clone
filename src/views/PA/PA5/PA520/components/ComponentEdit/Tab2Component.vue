@@ -279,7 +279,9 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(() => {
+        onDone((result) => {
+            store.state.common.rowIdSaveDonePa520 = result.data.employeeId
+            store.state.common.checkChangeValueEditTab2PA520 = false
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
@@ -319,11 +321,17 @@ export default defineComponent({
         }, { deep: true })
         watch(() => store.state.common.actionUpdateTab2PA520, () => {
           if (!isBtnYellow.value) {
+            store.state.common.isTab2ValidatePA520 = false
             actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
             trigger.value = true
             refectchDetail()
           } else {
+            // If you are filling out the form and haven't calculated it, 
+            // but click on the add button, 
+            // then reset the state of clicking on the add button with false
+            if (store.state.common.addRowBtOnclickPA520) store.state.common.addRowBtOnclickPA520 = false
+            store.state.common.isTab2ValidatePA520 = true
             validateCalculate.value = true
           }
         })
@@ -343,7 +351,6 @@ export default defineComponent({
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
             isBtnYellow.value = true
           } else {
-         
             isBtnYellow.value = false
             validateCalculate.value = false
           }
@@ -370,37 +377,41 @@ export default defineComponent({
           }
 
         }
-      const callFuncCalculate = async () => {
-            let dataDefault = originDataUpdate.value.input
-            let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
-            let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
-            let total4 = dataDefault.employeementInsuranceDeduction == true && insuranceSupport.value == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
-            let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
-            let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
-            let arrCallApi: any = []
-            arrDeduction.value?.map((val: any) => {
-                delete val.__typename
-                if (val.deductionItemCode == 1001)
-                    val.price = total1
-                if (val.deductionItemCode == 1002)
-                    val.price = total2
-                if (val.deductionItemCode == 1003)
-                    val.price = total3
-                if (val.deductionItemCode == 1004)
-                    val.price = total4
-                if (val.deductionItemCode == 1011)
-                    val.price = total5
-                if (val.deductionItemCode == 1012)
-                    val.price = total6
-                arrCallApi.push({
-                    itemCode: val.deductionItemCode,
-                    amount: val.price
-                })
-            })
-            originDataUpdate.value.input.deductionItems = arrCallApi
-            isBtnYellow.value = false
-            validateCalculate.value = false
+        const callFuncCalculate = async () => {
+          let dataDefault = originDataUpdate.value.input
+          if (dataDefault.workingDays) {
+              let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
+              let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
+              let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
+              let total4 = dataDefault.employeementInsuranceDeduction == true && insuranceSupport.value == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
+              let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
+              let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
+              let arrCallApi: any = []
+              arrDeduction.value?.map((val: any) => {
+                  delete val.__typename
+                  if (val.deductionItemCode == 1001)
+                      val.price = total1
+                  if (val.deductionItemCode == 1002)
+                      val.price = total2
+                  if (val.deductionItemCode == 1003)
+                      val.price = total3
+                  if (val.deductionItemCode == 1004)
+                      val.price = total4
+                  if (val.deductionItemCode == 1011)
+                      val.price = total5
+                  if (val.deductionItemCode == 1012)
+                      val.price = total6
+                  arrCallApi.push({
+                      itemCode: val.deductionItemCode,
+                      amount: val.price
+                  })
+              })
+              originDataUpdate.value.input.deductionItems = arrCallApi
+              isBtnYellow.value = false
+              validateCalculate.value = false
+              store.state.common.isTab2ValidatePA520 = false
+                            
+          }
         }
         const funcCheckPrice = (id: any) => {
             let price = 0
