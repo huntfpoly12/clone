@@ -28,45 +28,12 @@
   </a-row> -->
 
   <div id="pa-520" class="page-content">
-      <a-row>
-        <a-col :span="2" style="padding-right: 10px">
-          <div class="total-user">
-            <div>
-              <span>{{ totalUser }}</span>
-              <span> 전체</span>
-            </div>
-            <div>
-              <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-            </div>
-          </div>
-        </a-col>
-        <a-col :span="2" style="padding-right: 10px">
-          <div class="current-user">
-            <div>
-              <span>{{ totalUserOnl }}</span>
-              <span> 재직</span>
-            </div>
-            <div>
-              <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-            </div>
-          </div>
-        </a-col>
-        <a-col :span="2" style="padding-right: 10px">
-          <div class="leave-user">
-            <div>
-              <span>{{ totalUserOff }}</span>
-              <span> 퇴사</span>
-            </div>
-            <div>
-              <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-            </div>
-          </div>
-        </a-col>
-      </a-row>
+  
       <a-row>
           <a-col :span="13" class="custom-layout">
               <a-spin :spinning="loading" size="large">
                 <div class="grid-table">
+   
                   <DxDataGrid 
                   :show-row-lines="true" 
                   :hoverStateEnabled="true" 
@@ -89,6 +56,40 @@
                       <DxExport :enabled="true"/>
                       <DxPaging :enabled="false" />
                       <DxToolbar>
+                          <DxItem location="before">
+                              <div class="total-user">
+                                <div>
+                                  <span>{{ totalUser }}</span>
+                                  <span> 전체</span>
+                                </div>
+                                <div>
+                                  <img src="@/assets/images/user.svg" alt="" style="width: 31px" />
+                                </div>
+                              </div>
+                            </DxItem>
+                            <DxItem location="before">
+                              <div class="current-user">
+                                <div>
+                                  <span>{{ totalUserOnl }}</span>
+                                  <span> 재직</span>
+                                </div>
+                                <div>
+                                  <img src="@/assets/images/user.svg" alt="" style="width: 31px" />
+                                </div>
+                              </div>
+                            </DxItem>
+                            <DxItem location="before">
+                              <div class="leave-user">
+                                <div>
+                                  <span>{{ totalUserOff }}</span>
+                                  <span> 퇴사</span>
+                                </div>
+                                <div>
+                                  <img src="@/assets/images/user.svg" alt="" style="width: 31px" />
+                                </div>
+                              </div>
+                           
+                          </DxItem>
                           <DxItem name="searchPanel" />
                           <DxItem location="after" name="exportButton" css-class="cell-button-export"/>
                           <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -448,6 +449,13 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks on the edit button.
     const onFocusedRowChanging = (event: any) => {
+      const gridTable = pa520Grid.value.instance.getVisibleRows();
+      gridTable.forEach((row:any) => {
+        const rowElement = pa520Grid.value.instance.getRowElement(row.rowIndex);
+        if (rowElement[0].classList.contains('dx-state-hover-new')) { 
+          rowElement[0].classList.remove('dx-state-hover-new');
+        }
+      });
       let newRowIndex = event.newRowIndex
       var rowElement = event.rowElement;
       if (rowElement) {
@@ -569,15 +577,18 @@ export default defineComponent({
     };
 
     // A function that is called when the user clicks on the save button.
-    const comfirmAndSaveEdit = (res: any) => {
+    const comfirmAndSaveEdit = async (res: any) => {
       if (res == true) {
           store.state.common.checkChangeValueEditTab1PA520
-          ? actionUpdate(1)
-          : actionUpdate(2);
+          ? await actionUpdate(1)
+          : await actionUpdate(2);
         // In case you are editing and then click on another and agree to save the information,
         if (addRowBtOnclick.value) {
           funcAddNewRow();
+          store.state.common.isTab2ValidatePA520 = false
         } else {
+          // In case current tab is 2 and validate
+          store.state.common.setTabActivePA520 = '2'
           isClickRow = true
         }
       } else {

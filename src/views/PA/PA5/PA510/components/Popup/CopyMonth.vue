@@ -112,7 +112,7 @@ export default defineComponent({
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
         const { result: resultConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,

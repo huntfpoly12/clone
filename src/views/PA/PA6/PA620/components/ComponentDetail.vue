@@ -42,10 +42,6 @@
   <a-row>
     <a-col :span="14" class="custom-layout" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
-        <!-- {{ isClickYearDiff }} isClickYearDiff <br />
-        {{ selectedRowKeys }} selectedRowKeys <br />
-        {{ compareType }} compareType <br />
-        {{ dataAction }} dataAction <br /> -->
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
@@ -313,7 +309,7 @@ export default defineComponent({
         resetForm();
       }
       if (compareType.value == 3) {
-        addNewRow();
+        setTimeout(()=>{ addNewRow()},10);
       }
       triggerIncomeBusinesses.value = false
       isFirstChange.value = false;
@@ -516,7 +512,7 @@ export default defineComponent({
             return;
           }
         }
-        if (compareType.value === 1) {
+        if (compareType.value === 1 || compareType.value == 3) {
           addNewRow();
           return;
         }
@@ -567,7 +563,6 @@ export default defineComponent({
 
     const selectedRowKeys = ref<any>([]);
     const selectionChanged = (event: any) => {
-      console.log(event);
       changeDayData.value = {
         prevPaymentDay: event.selectedRowsData[0]?.paymentDay,
         employeeId: event.selectedRowsData[0]?.employeeId,
@@ -678,7 +673,6 @@ export default defineComponent({
       focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
       selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
       dataActionEdit.value.input = { ...dataAction.value.input };
-      console.log(isClickYearDiff.value, isClickMonthDiff.value)
       if (isClickYearDiff.value) {
         emit('noSave', 1);
         return;
@@ -699,9 +693,7 @@ export default defineComponent({
     }
     const onChangeFormError = () => {
       removeHoverRowKey();
-      if (isClickEditDiff.value) {
-        isClickEditDiff.value = false;
-      }
+      emit('subValidate');
       if (isClickYearDiff.value) {
         watchGlobalYear();
         store.state.settings.globalYear = changeYearDataFake.value;
@@ -737,7 +729,6 @@ export default defineComponent({
         triggerIncomeBusinesses.value = true;
         return;
       }
-      console.log('createdDone', compareType.value);
       dataAction.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
       dataActionEdit.value.input.incomeId = res.data.createIncomeBusiness.incomeId;
       onChangeFormdone();
@@ -755,7 +746,6 @@ export default defineComponent({
     } = useMutation(mutations.updateIncomeBusiness);
     doneEdit((res) => {
       notification('success', messageUpdate)
-      console.log(compareType.value);
       if (compareType.value == 3) {
         dataActionEdit.value.input = { ...dataAction.value.input };
         triggerIncomeBusinesses.value = true;
@@ -764,7 +754,6 @@ export default defineComponent({
         triggerIncomeBusinesses.value = true;
         return;
       }
-      console.log('createdDone', compareType.value);
       onChangeFormdone();
       if (isClickEditDiff.value) {
         onEditItem();
@@ -800,6 +789,7 @@ export default defineComponent({
           isClickYearDiff.value = false;
           compareType.value = 2;
         }
+        emit('subValidate');
       } else {
         let params = JSON.parse(JSON.stringify(dataAction.value));
         delete params.input.incomeId;
@@ -846,7 +836,6 @@ export default defineComponent({
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     const onFocusedRowChanging = (e: any) => {
       if (e.event.target.classList.value == "dx-checkbox-icon" || e.event.target.classList.contains('dx-command-select')) {
-        console.log(e.event.target.classList.value);
         e.cancel = true;
       }
       const rowElement = e.rowElement[0];

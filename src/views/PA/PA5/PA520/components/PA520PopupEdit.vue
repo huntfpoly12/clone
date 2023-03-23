@@ -34,6 +34,9 @@ export default defineComponent({
             emit('closePopup', false)
         }
         const activeKey = ref('1')
+        watch(() => store.state.common.setTabActivePA520, (newVal) => {
+          activeKey.value = newVal
+        })
         return {
             setModalVisible,
             store, activeKey
