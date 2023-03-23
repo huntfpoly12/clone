@@ -477,7 +477,7 @@
 
                   <!-- Add more dependent properties as needed -->
 
-                  <td>{{ dependent.name }} 보험료부과구분부호 및 사유:</td>
+                  <td>{{ dependent.name }}</td>
                   <td>
                     {{ dependent.residentId }}
                   </td>
@@ -527,7 +527,7 @@
                   </td>
                   <td style="white-space: break-spaces;">
                     <template v-if="dependent.relation >= 0">
-                      {{ getCodeOrLabel(dependent.relation).label }}보험료부과구분부호 및 사유:
+                      {{ getCodeOrLabel(dependent.relation).label }}
                     </template>
                   </td>
                 </tr>
@@ -709,7 +709,6 @@ export default defineComponent({
         infoCompany.adding = value.getCompany.address;
       }
     });
-
     // get and refetch data when employeeWageType change
     const variables = reactive({
       companyId: companyId,
@@ -758,15 +757,17 @@ export default defineComponent({
       employeeWage.value = cloneDeep(INITIAL_DATA.initialEmployeeWage)
       employeeWageSelected.value = null;
       employeeWageType.value = EmployeeWageType.WAGE;
+      stateSelectQuery.selectedRadioValue = EmployeeWageType.WAGE;
+
     };
-    watchEffect(() => {
-      if (props.isOpenModalCreate) {
-        isFileList.value = true;
+    watch(() => props.isOpenModalCreate, (newVal) => {
+      if (newVal) {
+        stateSelectQuery.selectedRadioValue = EmployeeWageType.WAGE;
       } else {
         isFileList.value = false;
         resetForm();
       }
-    });
+    }, { deep: true});
     // Mutation
     const {
       mutate,

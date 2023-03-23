@@ -71,7 +71,6 @@ import mutations from '@/graphql/mutations/PA/PA7/PA720/index';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import { Message } from '@/configs/enum';
 import DxButton from "devextreme-vue/button";
-import queriesHolding from '@/graphql/queries/CM/CM130/index';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -168,8 +167,8 @@ export default defineComponent({
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
     watch(modalCopy, (newVal, oldVal) => {
       if (newVal) {
-        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}01`);
-        findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
+        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${globalYear.value}01`);
+        findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${globalYear.value}12`);
         trigger.value = true;
       }
     });

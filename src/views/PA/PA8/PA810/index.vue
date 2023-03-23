@@ -11,7 +11,9 @@
         key-expr="companyId"
         :allow-column-resizing="colomn_resize"
         :column-auto-width="true"
+        style="max-height: 770px"
       >
+        <DxPaging :page-size="0" />
         <DxScrolling mode="standard" show-scrollbar="always"/>
         <DxToolbar>
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
@@ -73,7 +75,7 @@
         <DxScrolling column-rendering-mode="virtual"/>
       </DxDataGrid>
     </a-spin>
-    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="취득신고등록"
+    <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
                   typeHistory="pa-810"/>
     <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
     <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
@@ -92,7 +94,7 @@ import { DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined } fro
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import dayjs from "dayjs";
 import DxButton from 'devextreme-vue/button';
-import { DxColumn, DxDataGrid, DxScrolling, DxToolbar } from 'devextreme-vue/data-grid';
+import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxPaging } from 'devextreme-vue/data-grid';
 import { DxItem } from 'devextreme-vue/select-box';
 import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import { useStore } from 'vuex';
@@ -122,7 +124,8 @@ export default defineComponent({
     DxItem,
     DownloadOutlined,
     ZoomInOutlined,
-    imgUpload
+    imgUpload,
+    DxPaging
   },
   setup() {
     const contentDelete = Message.getCommonMessage('401').message as string
