@@ -178,9 +178,11 @@ export default defineComponent({
     onResult((value: any) => {
       arrDataPoint.value = value.data.findIncomeProcessBusinessStatViews
     })
-    watch(globalYear, (newVal, oldVal) => {
-      originData.value.filter = { startImputedYearMonth: parseInt(`${newVal}01`), finishImputedYearMonth: parseInt(`${newVal}12`) };
-      // refetch();
+    watch(modalCopy, (newVal, oldVal) => {
+      if (newVal) {
+        originData.value.filter = { startImputedYearMonth: parseInt(`${globalYear.value}01`), finishImputedYearMonth: parseInt(`${globalYear.value}12`) };
+        refetch();
+      }
     });
     // ---------------------fn modal --------------------
     const setModalVisible = () => {
@@ -283,4 +285,5 @@ export default defineComponent({
   div.dx-button-content {
     padding: 0px 10px 0px;
   }
-}</style>
+}
+</style>

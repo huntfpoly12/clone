@@ -48,7 +48,8 @@
                             </DxButton>
                         </template>
                         <template #foreignerChange="{ data: cellData }">
-                          <div v-if="!cellData.value" class="tag-foreigner">내</div>
+                          <div v-if="!cellData.value">내</div>
+                          <div v-else class="tag-foreigner">외 </div>
                         </template>
                         <template #womenChange="{ data: cellData }">
                             <BtnCheck :value="cellData.value" />

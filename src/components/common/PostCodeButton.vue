@@ -4,7 +4,7 @@
       :height="$config_styles.HeightInput" class="post-code"/>
 
     <a-modal v-model:visible="isOpen" footer="" :mask-closable="false">
-      <div>
+      <div v-if="isOpen">
         <VueDaumPostcode @complete="onComplete" />
       </div>
     </a-modal>
