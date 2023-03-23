@@ -1,17 +1,18 @@
 <template>
     <a-modal :visible="modalStatus" footer="" :mask-closable="false" title="" okText="네. 발송합니다" cancelText="아니요"
-        width="650px" @cancel="setModalVisible">
+        width="500px" @cancel="setModalVisible">
         <standard-form>
-            <div class="mt-25">
-                <div class="d-flex-center">
-                    <span class="mr-10">
-                        선택된 내역들의 전자신고파일 제작요청하고, 결과를
-                    </span>
-                    <mail-text-box width="250" v-model:valueInput="mailAction" required="true" />
-                </div>
-                <span>
-                    로 메일을 발송하시겠습니까?
+            <div class="mt-25">  
+                <span class="mr-10">
+                    선택된 내역들의 전자신고파일 제작요청하고, 결과를
                 </span>
+                <div class="d-flex-center">
+                  <span>
+                    로 메일을 발송하시겠습니까?
+                  </span>
+                  <mail-text-box width="250" v-model:valueInput="mailAction" required="true"  class="ml-10"/>
+                </div>
+
             </div>
             <div class="d-flex-center mt-10" style="justify-content: center;">
                 <button-basic :text="'아니요'" :type="'default'" :mode="'outlined'" @onClick="setModalVisible()" />
