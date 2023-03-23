@@ -26,7 +26,7 @@
     </div>
     <div class="page-content">
       <a-row gutter="24">
-        <a-col span="16" class="custom-layout">
+        <a-col span="16" style="height: 700px">
           <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
@@ -41,7 +41,7 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              height="700px"
+              style="max-height: 700px"
             >
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
               <DxPaging :page-size="0" />
@@ -140,8 +140,8 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <a-col span="8" class="custom-layout">
-          <standard-form formName="ac-610" ref="formRef">
+        <a-col span="8" class="relative form-custom" :style="!isDataRow && 'pointer-events: none;'">
+          <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
             <a-form-item label="후원자 구분" :label-col="labelCol">
               <DxSelectBox
                 :search-enabled="true"
@@ -242,7 +242,7 @@
 
 
 
-            <a-form-item label="대표자명" :label-col="labelCol">
+            <a-form-item label="주소" :label-col="labelCol">
               <div class="d-flex gap-6 mb-5">
                 <default-text-box v-model:valueInput="formState.roadAddress" width="200px" :disabled="true" class="roadAddress"
                                   placeholder="도로명주소" />
@@ -286,6 +286,7 @@
                 :text="'저장'"
                 type="default"
                 @onClick="actionSave($event)"
+                :disabled="!isDataRow"
               />
             </div>
             <button-basic
@@ -467,7 +468,12 @@ export default defineComponent({
       if(isClickAddRow.value) {
         addNewRow()
       } else {
-        focusedRowKey.value = res.data.createBacker.backerCode;
+        if(selectRowKeyAction.value !==0) {
+          focusedRowKey.value = selectRowKeyAction.value
+        } else {
+          focusedRowKey.value = res.data.createBacker.backerCode;
+          selectRowKeyAction.value = res.data.createBacker.backerCode;
+        }
         isNewRow.value = false;
       }
       notification("success", Message.getCommonMessage('106').message);
@@ -573,7 +579,6 @@ export default defineComponent({
     };
     // handle onFocusedRowChanged to row, function run then auto set focusedRowKey
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
-      // Object.assign(formState, e.row?.data);
       formState.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
@@ -593,12 +598,13 @@ export default defineComponent({
       if (!res.isValid) {
         // focusedRowKey.value = previousRowData.value.key;
         res.brokenRules[0].validator.focus();
+        dataGridRef.value?.refresh();
       } else {
         if (focusedRowKey && focusedRowKey.value !== 0) {
           // If bizNumber changed
           if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
             if (isCheckedBizNumber.value || isCheckedResidentId.value) {
-              await updateBacker(dataUpdate.value);
+              // await updateBacker(dataUpdate.value);
             } else {
               const messageType = formState.value.type === 1 ? '001' : '002';
               notification('error', Message.getMessage('AC620', messageType).message)
@@ -616,7 +622,16 @@ export default defineComponent({
               year: globalYear.value,
             },
           };
-          await createBacker(newDataCreate);
+          if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
+            if (isCheckedBizNumber.value || isCheckedResidentId.value) {
+              await createBacker(newDataCreate);
+            } else {
+              const messageType = formState.value.type === 1 ? '001' : '002';
+              notification('error', Message.getMessage('AC620', messageType).message)
+            }
+          } else {
+            await createBacker(newDataCreate);
+          }
         }
       }
     }
@@ -650,9 +665,9 @@ export default defineComponent({
       } else {
         storeDataSource.value
           .update(previousRowData.value.backerCode, previousRowData.value)
-          .then((value) => {
+          .then(() => {
             focusedRowKey.value = selectRowKeyAction.value || 0;
-            storeDataSource.value.byKey(selectRowKeyAction.value).then((value) => {
+            storeDataSource.value.byKey(selectRowKeyAction.value).then((value: any) => {
               Object.assign(formState, value);
             });
             dataGridRef.value?.refresh();
@@ -665,7 +680,10 @@ export default defineComponent({
       residentId: formState.value.residentId,
     };
     const isDisableBtnCheckResidentId = computed(() => {
-      if (formState.value?.residentId?.length !== 13) return true;
+      if (formState.value?.residentId?.length !== 13) {
+        isCheckedResidentId.value = false;
+        return true
+      };
       if (isNewRow.value) return false;
       return formState.value?.residentId === previousRowData.value?.residentId;
     });
@@ -701,7 +719,10 @@ export default defineComponent({
     };
     const isDisableBtnCheckBizNumber = computed(() => {
       if (formState.value?.bizNumber?.length !== 10) return true;
-      if (isNewRow.value) return false;
+      if (isNewRow.value) {
+        isCheckedBizNumber.value = false;
+        return false
+      };
       return formState.value?.bizNumber === previousRowData.value?.bizNumber;
     });
     const isCheckedBizNumber = ref(false);
@@ -785,6 +806,7 @@ export default defineComponent({
 
     const isShowFundrasingInstitution = computed(() =>  formState.value.type < 5);
     const isShowDonationOrganization = computed(() => formState.value.type === 3 || formState.value.type === 4);
+    const isDataRow = computed(() => dataSource.value?.totalCount() && dataSource.value?.totalCount() > 0)
     return {
       confirmSave,
       move_column,
@@ -825,9 +847,12 @@ export default defineComponent({
       checkDuplicateBizNumber,
       isDisableBtnCheckBizNumber,
       isCheckedBizNumber,
-      isCheckedResidentId
+      isCheckedResidentId,
+      isDataRow
     };
   },
 });
 </script>
-<style lang="scss" scoped src="./style/style.scss"></style>
+<style lang="scss" scoped src="./style/style.scss">
+
+</style>

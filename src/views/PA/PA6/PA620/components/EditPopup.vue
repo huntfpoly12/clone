@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
@@ -39,6 +39,10 @@ export default defineComponent({
         processKey: {
             type: Object,
         },
+        dataUpdate:{
+          type: Object,
+          required: true,
+        }
     },
     components: {
     },
@@ -47,24 +51,34 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", false)
         };
+        const dataUpdateLen = ref(props?.data?.length);
         const messageUpdate = Message.getMessage('COMMON', '106').message;
         const {
-            mutate,
-            onDone,
-            onError,
+          mutate,
+          onDone,
+          onError,
         } = useMutation(mutations.changeIncomeBusinessPaymentDay);
-        onDone((res) => {
-            notification('success', messageUpdate)
-            emit("closePopup", res.data.changeIncomeBusinessPaymentDay.incomeId)
+        onDone((res: any) => {
+            let resData = res.data.changeIncomeBusinessPaymentDay;
+            notification('success', messageUpdate);
+            let data = {
+              prevPaymentDay: resData.prevPaymentDay,
+              employeeId: resData.employeeId,
+              incomeTypeCode: resData.incomeTypeCode,
+            }
+            if(JSON.stringify(data) == JSON.stringify(props.dataUpdate)) {
+              emit("closePopup", resData.incomeId)
+            }
         })
         onError((e: any) => {
-            notification('error', e.message)
+            dataUpdateLen.value--;
+            notification('error', e.message);
         })
-
+          
         const onSubmit = () => {
             const reversedArr = props.data.reverse();
-            reversedArr.map((val: any) => {
-                mutate({
+            reversedArr.forEach(async(val: any) => {
+                await mutate({
                     companyId: companyId,
                     processKey: props.processKey,
                     incomeId: val,
@@ -72,11 +86,17 @@ export default defineComponent({
                 })
             })
         };
+        watch(()=>props.modalStatus,(newVal: any)=>{
+          if(newVal){
+            dataUpdateLen.value = props?.data.length;
+          }
+        },{deep: true})
 
         return {
             setModalVisible,
             onSubmit,
             dayValue,
+            dataUpdateLen
         }
     },
 })

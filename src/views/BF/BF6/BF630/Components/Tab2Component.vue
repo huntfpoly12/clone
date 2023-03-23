@@ -128,8 +128,7 @@
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary"
-              :key="keyRefetch" />
+            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
           </DxSummary>
         </DxDataGrid>
       </a-spin>
@@ -194,13 +193,12 @@ export default defineComponent({
     )
     const dataSource = ref<any>([])
     const dataSourceOrigin = ref<any>([])
-    let keyRefetch = ref(0)
     let productionStatusArr = ref<any>([]);
     let countListData = ref(0)
     let payloadIncomeBusinessPayment = {
       imputedYear: filterForm.imputedYear
     }
-    let isFirstSearch = ref(false)
+    let isFirstSearchByfilter = ref(false)
     let selectedRowKeys = ref<any>([])
     // ============ GRAPQL ===============================
     const {
@@ -259,8 +257,8 @@ export default defineComponent({
           }
           return items
         })
-        isFirstSearch.value = result.some((item: any) => !!item.lastProductionRequestedAt)
-        if (!isFirstSearch.value) {
+        isFirstSearchByfilter.value = result.some((item: any) => !!item.lastProductionRequestedAt)
+        if (!isFirstSearchByfilter.value) {
           searchByFilter()
         }
         countListData.value = 0
@@ -390,7 +388,7 @@ export default defineComponent({
           totalBeforeProduction++
         }
       });
-      return `제작전 ${totalBeforeProduction} 
+      return `제작요청전 ${totalBeforeProduction} 
               제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 
               제작중 ${countStatus(productionStatusArr.value, 1, 'productionStatus')} 
               제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 
@@ -407,10 +405,9 @@ export default defineComponent({
         dataSourceOrigin.value[index].afterProduction = true
       }
       if (countListData.value == dataSource.value.length) {
-        keyRefetch.value++
-        if (isFirstSearch.value) {
+        if (isFirstSearchByfilter.value) {
+          isFirstSearchByfilter.value = false
           searchByFilter()
-          isFirstSearch.value = false
         }
       }
     };
@@ -418,20 +415,38 @@ export default defineComponent({
     const searchByFilter = async () => {
       dataSource.value = dataSourceOrigin.value.filter((items: any) => {
         return checkProductionStatuses(items.afterProduction, Number.isInteger(items.productionStatus) ? items.productionStatus : null)
-          && checkKeyFilter(filterForm.companyCode, items.company.code)
-          && checkKeyFilter(filterForm.companyName, items.company.name)
-          && checkKeyFilter(filterForm.manageUserId, items.companyServiceContract.manageUserId)
-          && checkKeyFilter(filterForm.salesRepresentativeId, items.companyServiceContract.salesRepresentativeId)
+          && checkKeyFilter(filterForm.companyCode, items.company.code, 'includes')
+          && checkKeyFilter(filterForm.companyName, items.company.name, 'includes')
+          && checkKeyFilter(filterForm.manageUserId, items.companyServiceContract.manageUserId, 'equal')
+          && checkKeyFilter(filterForm.salesRepresentativeId, items.companyServiceContract.salesRepresentativeId, 'equal')
           && filterForm.excludeCancel === items.companyServiceContract.active
       })
+      productionStatusArr.value = []
+      dataSource.value.forEach((item: any) => {
+        if (Number.isInteger(item?.productionStatus)) {
+          productionStatusArr.value.push({ productionStatus: item.productionStatus })
+        }
+      })
     }
-    const checkKeyFilter = (valueFilter: any, valueItems: any) => {
-      if (!valueFilter) {
-        return true
-      } else if (valueFilter === valueItems) {
+    const checkKeyFilter = (valueFilters: any, valueItems: any, type: string) => {
+      if (!valueFilters) {
         return true
       } else {
-        return false
+        if (type === 'includes') {
+          const valueItem = valueItems.toString().toLowerCase()
+          const valueFilter = valueFilters.toString().toLowerCase().trim()
+          if (valueItem.includes(valueFilter)) {
+            return true
+          } else {
+            return false
+          }
+        } else {
+          if (valueFilters === valueItems) {
+            return true
+          } else {
+            return false
+          }
+        }
       }
     }
 
@@ -475,7 +490,6 @@ export default defineComponent({
       productStatusSummary,
       productionStatusData,
       selectionChanged,
-      keyRefetch,
       selectedRowKeys
     }
   }

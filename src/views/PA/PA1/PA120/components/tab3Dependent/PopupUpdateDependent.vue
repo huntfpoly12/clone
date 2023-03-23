@@ -108,6 +108,8 @@ import notification from "@/utils/notification";
 import { companyId, convertAge } from "@/helpers/commonFunction";
 import {taxWaring} from '../../utils/index';
 import { h } from 'vue';
+import { Message } from '@/configs/enum';
+const messageUpdate = Message.getMessage('COMMON', '106').message;
 const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다'),h('div','그래도 삭제하시겠습니까?')])
 export default defineComponent({
     components: {},
@@ -126,12 +128,11 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear);
-        const isForeignerPA120 = computed(() => store.state.common.isForeignerPA120)
         const modalStatusDelete = ref(false)
         const idAction = ref()
         let disabledButton = ref<boolean>(false);
         const labelResidebId = ref("주민등록번호");
-        let formState = reactive<any>({ ...props.dependentItem, foreigner: isForeignerPA120.value, residentId: props.dependentItem?.residentId.replace('-', '')});
+        let formState = reactive<any>({ ...props.dependentItem, residentId: props.dependentItem?.residentId.replace('-', '')});
         const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
         const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
         const itemSelected = ref<any>([...props.relationAll]);
@@ -254,7 +255,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         successDelete(e => {
-            notification('success', `업데이트 완료!`)
+            notification('success', messageUpdate)
             trigger.value = true
             emit('closePopup', false)
             emit('upDateData');
@@ -273,9 +274,6 @@ export default defineComponent({
                 })
 
         }
-        watch(isForeignerPA120,(newVal: any)=>{
-            formState.foreigner = !newVal;
-        })
         // check consignment
         const consignDisabled = ref(true);
         watchEffect(()=>{

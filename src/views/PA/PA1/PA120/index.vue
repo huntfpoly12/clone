@@ -412,11 +412,14 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      actionChangeComponent.value = 2;
+      if(compareType.value == 2) {
+        actionChangeComponent.value = 2;
+      }
     });
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
     watch(actionFormErrorPA120, () => {
+      removeHoverRowKey();
       if (isClickYearDiff.value) {
         watchGlobalYear();
         store.state.settings.globalYear = changeYearDataFake.value;
@@ -438,8 +441,9 @@ export default defineComponent({
       } else {
         store.commit('common/activeTabEditKeyPA120', '1');
       }
-      focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
-      console.log(focusedRowKey.value);
+      if (dataSource.value[dataSource.value.length - 1].key != 0) {
+        focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
+      }
     });
     //edit row
     const actionEdit = (data: any) => {

@@ -16,9 +16,37 @@
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          ~
+          <span class="ac-110__top-grid-items-text">04</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
-        <div class="ac-110__top-grid-items"></div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">05</span>
+          <ProcessStatus :valueStatus="statusAdjusted" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">06</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">07</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">08</span>
+          <ProcessStatus :valueStatus="statusAdjusted" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">09</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">10</span>
+          <ProcessStatus :valueStatus="statusInput" />
+        </div>
+        <div class="ac-110__top-grid-items">
+          <span class="ac-110__top-grid-items-text">11</span>
+          <ProcessStatus :valueStatus="statusAdjusting" />
+        </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">12</span>
           <ProcessStatus :valueStatus="statusAdjusted" />
@@ -27,8 +55,10 @@
       <div class="ac-110__top-flex">
         <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
         <div class="ac-110__top-flex-action">
-          <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'" @onClick="openPopupRetrieveStatements"/>
-          <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;" @onClick="openPopupSlipRegistrationSelected"/>
+          <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
+            @onClick="openPopupRetrieveStatements" />
+          <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
+            @onClick="openPopupSlipRegistrationSelected" />
           <HistoryOutlined style="font-size: 18px; margin-left: 5px;" />
         </div>
       </div>
@@ -57,13 +87,17 @@
           <DxColumn caption="거래내역" data-field="fill10"></DxColumn>
           <DxColumn caption="정상여부" cell-template="normality" width="80" />
           <template #normality="{ data }">
-            <button-basic :text="data.data.normality ? 'O' : 'X'" :type="data.data.normality ? 'success' : 'danger'" :mode="'contained'" />
+            <button-basic :text="data.data.normality ? 'O' : 'X'" :type="data.data.normality ? 'success' : 'danger'"
+              :mode="'contained'" />
           </template>
           <DxColumn caption="전표등록" cell-template="slipRegistration" width="200" />
           <template #slipRegistration="{ data }">
             <div class="ac-110__main-main-slipRegistration">
-              <button-basic :text="data.data.slipRegistration ? 'O' : 'X'" :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'" style="margin-right: 5px;" />
-              <button-basic :text="data.data.slipRegistration ?'전표취소' : '전표등록'" :type="'default'" :mode="'contained'" @onClick="openPopupRegistration(data.data.slipRegistration)"/>
+              <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
+                :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+                style="margin-right: 5px;" />
+              <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'" :mode="'contained'"
+                @onClick="openPopupRegistration(data.data.slipRegistration)" />
             </div>
           </template>
 
@@ -77,55 +111,77 @@
       </div>
       <a-row class="ac-110__main-detail">
         <a-col span="17" class="ac-110__main-detail-detail1">
+          <div class="ac-110__main-detail-detail1-title">
+            <b>거래내역-</b><span>{통장별명} Tag{통장용도}</span>
+            <b>-정상여부:</b><span>Tag{정상여부}</span>
+          </div>
           <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
             :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
             :allow-column-resizing="colomn_resize" :column-auto-width="true">
             <DxScrolling mode="standard" show-scrollbar="always" />
+            <DxExport :enabled="true" />
+            <DxToolbar>
+              <DxItem template="button-reset" css-class="cell-button-export" />
+              <DxItem name="exportButton" css-class="cell-button-export" />
+              <DxItem location="after" template="button-add" css-class="cell-button-add" />
+            </DxToolbar>
+            <template #button-reset>
+              <button-basic text="초기화" type="default" :mode="'contained'" />
+            </template>
+            <template #button-add>
+              <a-tooltip placement="top">
+                <template #title>신규</template>
+                <div>
+                  <DxButton icon="plus" />
+                </div>
+              </a-tooltip>
+            </template>
             <DxColumn caption="결의구분" data-field="fill1"></DxColumn>
             <DxColumn caption="수입액" data-field="fill2"></DxColumn>
             <DxColumn caption="지출액" data-field="fill3"></DxColumn>
             <DxColumn caption="적요" data-field="fill4"></DxColumn>
-            <DxColumn caption="계정과목" cell-template="accountSubject" />
-            <template #accountSubject="{data}">
+            <DxColumn caption="계정과목" cell-template="accountSubject" width="100" />
+            <template #accountSubject="{ data }">
+              <account-code-select v-model:valueInput="valueAccountSubjectClassification" />
+            </template>
+            <DxColumn caption="상대계정" cell-template="relativeAccount" width="100" />
+            <template #relativeAccount="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
             </template>
-            <DxColumn caption="상대계정" cell-template="relativeAccount" />
-            <template #relativeAccount="{data}">
-              <select-box-common :arrSelect="arraySelectBox" :required="true" />
-            </template>
-            <DxColumn caption="자금원천" cell-template="sourceOfFunding" />
-            <template #sourceOfFunding="{data}">
-              <select-box-common :arrSelect="arraySelectBox" :required="true" />
+            <DxColumn caption="자금원천" cell-template="sourceOfFunding" width="100" />
+            <template #sourceOfFunding="{ data }">
+              <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
             <DxColumn caption="거래처" data-field="fill8"></DxColumn>
-            <DxColumn caption="품의종류" cell-template="typeOfProduct" />
-            <template #typeOfProduct="{data}">
+            <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
+            <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
             </template>
-            <DxColumn caption="원인/용도" cell-template="causeUse" />
+            <DxColumn caption="원인/용도" cell-template="causeUse" alignment="center" />
             <template #causeUse="{ data }">
-              <EditOutlined style="font-size: 12px" @click="openPopupItemDetail"/>
+              <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail" />
             </template>
-            <DxColumn caption="물품내역" cell-template="itemDetails" />
+            <DxColumn caption="물품내역" cell-template="itemDetails" alignment="center" />
             <template #itemDetails="{ data }">
-              <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail"/>
+              <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail" />
             </template>
-            <DxColumn caption="메모" cell-template="memo" />
+            <DxColumn caption="메모" cell-template="memo" alignment="center" />
             <template #memo="{ data }">
-              <EditOutlined style="font-size: 12px" @click="openPopupItemDetail"/>
+              <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail" />
             </template>
 
             <DxSummary>
               <DxTotalItem column="결의구분" summary-type="count" display-format="통장내역수: {0}" />
               <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="sumOfIncome" />
-               <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="sumOfExpenses" />
+              <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="sumOfExpenses" />
             </DxSummary>
           </DxDataGrid>
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card"
-              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile">
+            <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :multiple="true"
+              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile"
+              :before-upload="beforeUpload">
               <div v-if="fileList.length < MAX_UP_LOAD">
                 <div class="ant-btn-upload">
                   <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
@@ -143,27 +199,35 @@
       </a-row>
     </div>
     <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
-        :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements"
-        :okText="'네. 불러옵니다'" :cancelText="'아니요'"
-        @checkConfirm="handleConfirmChange" />
-    <PopupSlipCancellation :isModalSlipCancellation="isModalSlipCancellation" @closePopup="isModalSlipCancellation = false" @submit="isModalSlipCancellation = false"/>
-    <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion" @closePopup="isModalSlipRegistrantion = false" @submit="isModalSlipRegistrantion = false"/>
-    <PopupSlipRegistrationSelected :isModalSlipRegistrationSelected="isModalSlipRegistrationSelected" @closePopup="isModalSlipRegistrationSelected = false" @submit="isModalSlipRegistrationSelected = false"/>
-    <PopupItemDetails :isModalItemDetail="isModalItemDetail" @closePopup="isModalItemDetail = false" @submit="isModalItemDetail = false"/>
+      :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
+      :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
+    <PopupSlipCancellation :isModalSlipCancellation="isModalSlipCancellation"
+      @closePopup="isModalSlipCancellation = false" @submit="isModalSlipCancellation = false" />
+    <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion"
+      @closePopup="isModalSlipRegistrantion = false" @submit="isModalSlipRegistrantion = false" />
+    <PopupSlipRegistrationSelected :isModalSlipRegistrationSelected="isModalSlipRegistrationSelected"
+      @closePopup="isModalSlipRegistrationSelected = false" @submit="isModalSlipRegistrationSelected = false" />
+    <PopupItemDetails :isModalItemDetail="isModalItemDetail" @closePopup="isModalItemDetail = false"
+      @submit="isModalItemDetail = false" />
+    <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" @closePopup="isModalNoteItemDetail = false"
+      @submit="isModalNoteItemDetail = false" />
   </div>
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { dataDemoMain, MAX_UP_LOAD, contentPopupRetrieveStatements } from "./utils/index"
 import { Message } from "@/configs/enum"
+import DxButton from "devextreme-vue/button";
 import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupSlipRegistrationSelected from "./components/PopupSlipRegistrationSelected.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
+import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
+import notification from '@/utils/notification';
 interface FileItem {
   uid: string;
   name?: string;
@@ -196,7 +260,11 @@ export default defineComponent({
     PopupSlipRegistrationSelected,
     EditOutlined,
     PlusOutlined,
-    PopupItemDetails
+    PopupItemDetails,
+    DxButton,
+    DxToolbar,
+    DxExport,
+    PopupNoteItemDetail
   },
   setup() {
     const store = useStore();
@@ -217,6 +285,7 @@ export default defineComponent({
     let isModalSlipRegistrantion = ref(false);
     let isModalSlipRegistrationSelected = ref(false);
     let isModalItemDetail = ref(false);
+    let isModalNoteItemDetail = ref(false);
     let arraySelectBox = reactive([
       {
         value: 1,
@@ -235,9 +304,10 @@ export default defineComponent({
         label: '후원듬'
       }
     ])
-
+    let valueAccountSubjectClassification = ref(null)
+    let valueFundingSource = ref(null)
     // COMPUTED
-    
+
     // METHODS
 
     const selectionChanged = () => { }
@@ -268,6 +338,18 @@ export default defineComponent({
       console.log('change', fileList);
     }
 
+    const beforeUpload = (file: any) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        notification('error', 'You can only upload JPG file!')
+      }
+      const isLt2M = file.size / 1024 / 1024 <= 10;
+      if (!isLt2M) {
+        notification('error', 'Image must smaller than 10MB!')
+      }
+      return isJpgOrPng && isLt2M;
+    };
+
     const totalDeposits = () => {
       let total = 0;
       dataDemoMain.forEach((item) => {
@@ -288,9 +370,9 @@ export default defineComponent({
       let totalRegistration = 0;
       let totalCancellation = 0;
       dataDemoMain.forEach((item) => {
-        if(item.slipRegistration) {
+        if (item.slipRegistration) {
           totalRegistration++
-        }else {
+        } else {
           totalCancellation++
         }
       });
@@ -298,9 +380,9 @@ export default defineComponent({
     };
 
     const openPopupRegistration = (value: any) => {
-      if(value){
+      if (value) {
         isModalSlipCancellation.value = true
-      }else {
+      } else {
         isModalSlipRegistrantion.value = true
       }
     }
@@ -336,6 +418,10 @@ export default defineComponent({
       isModalItemDetail.value = true
     }
 
+    const openPopupNoteItemDetail = () => {
+      isModalNoteItemDetail.value = true
+    }
+
     return {
       statusEntering,
       statusInput,
@@ -349,6 +435,7 @@ export default defineComponent({
       dataDemoMain,
       handlePreview,
       handleChange,
+      beforeUpload,
       previewVisible,
       fileList,
       handleCancel,
@@ -372,7 +459,11 @@ export default defineComponent({
       sumOfIncome,
       sumOfExpenses,
       arraySelectBox,
-      openPopupItemDetail
+      openPopupItemDetail,
+      openPopupNoteItemDetail,
+      isModalNoteItemDetail,
+      valueAccountSubjectClassification,
+      valueFundingSource,
     };
   },
 });

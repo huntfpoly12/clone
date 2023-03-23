@@ -13,14 +13,13 @@
           </a-form-item>
           <a-form-item label="최종 스크래핑 일시" label-align="right"  class="mc121-popup-last-scraping-status-from">
               <div style="width: 200px">
-                  <date-time-box v-model:valueDate="data.lastScrapingStatus.lastScrapingDate" :disabled="true"/>
+                <default-text-box :width="200" v-model:valueInput="data.lastScrapingStatus.lastScrapingDate" :disabled="true"/>
               </div>
           </a-form-item>
         </div>
         <div class="mt-20 mc121-popup-action">
-          <button-basic class="button-form-modal" :text="'정상'" :width="140" :type="'success'" :mode="'contained'" />
-          <span class="mc121-popup-slash">/</span>
-          <a-tooltip>
+          <button-basic v-if="!!data.lastScrapingStatus.scrapingStatus" class="button-form-modal" :text="'정상'" :width="140" :type="'success'" :mode="'contained'" />
+          <a-tooltip v-else>
             <template #title>{{ data.lastScrapingStatus.errorMessage }}</template>
             <span>
               <DxButton text="에러" width="140" type="danger" styling-mode="contained" :height="$config_styles.HeightInput"/>

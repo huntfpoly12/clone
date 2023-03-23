@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, computed, reactive } from 'vue'
+import { defineComponent,computed } from 'vue'
 import { useStore } from 'vuex'
-import dayjs, { Dayjs } from 'dayjs';
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import {Message} from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -65,7 +65,7 @@ export default defineComponent({
             notification('error', e.message)
         })
         successDelete(e => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '402').message)
             emit("closePopup", false)
             store.state.common.loadingTableInfo++
         })

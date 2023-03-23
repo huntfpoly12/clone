@@ -43,6 +43,13 @@
       pointer-events: none;
       opacity: 0.8;
     }
+    #gridContainer {
+      max-height: calc(100vh - 170px);
+    }
+    .style-note-cm121 {
+      width: 145px;
+      word-wrap: break-word;
+    }
 }
 :deep .form-item-top {
   label {

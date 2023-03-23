@@ -4,7 +4,7 @@
     border: 1px solid #a3a2a277;
     padding: 6px 0 3px;
 
-    :deep .ant-form-item-label>label {
+    :deep .ant-form-item-label > label {
       width: 130px;
       padding-left: 10px;
     }
@@ -16,7 +16,7 @@
       padding: 15px 0 10px;
       margin: 8px 5px;
 
-      :deep .ant-form-item-label>label {
+      :deep .ant-form-item-label > label {
         width: 122px;
       }
 
@@ -39,57 +39,60 @@
     }
   }
 }
+
 .flex {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .flex-col {
   display: flex;
   flex-direction: column;
 }
+
 .gap-1 {
   gap: 4px;
 }
-.grid {
-  display: grid;
-  gap: 2px;
-  
-  text-align: center;
-  .header {
-    height: 100%;
-    color: white;
-    font-size: 13px;
-    font-weight: bold;
-    background-color: rgb(91, 128, 185) !important;
-  }
-  div {
-    min-height: 30px;
-  }
+
+.header {
+  height: 100%;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  background-color: rgb(91, 128, 185) !important;
 }
+
+
 .bg-gray {
-  background-color:  rgb(233, 236, 243);
+  background-color: rgb(233, 236, 243);
 }
 
 .justify-items-center {
   justify-items: center;
 }
+
 .justify-content-start {
   justify-content: flex-start;
 }
+
 .items-center {
   align-items: center;
 }
+
 .items-start {
   align-items: flex-start;
 }
+
 .h-full {
   height: 100%;
 }
+
 .relative {
   position: relative;
 }
+
 .absolute {
   position: absolute;
 }
