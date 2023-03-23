@@ -1,12 +1,10 @@
 import dayjs from 'dayjs';
 let statesPA720 = {
   isErrorFormPA720: false,
-  keyActivePA720: 1,
-  actionSavePA720: 0,
-  actionSaveTypePA720: 0,
   isNewRowPA720:false,
   selectedRowKeysPA720:[],
   savePA710: 0,
+  paymentDayPA720:1,
   formPA720: {
     input: {
       paymentDay: '',
@@ -39,7 +37,6 @@ let statesPA720 = {
       }
     },
   },
-  paymentDayPA720:1,
   dataActionUtilsPA720 : {
     input: {
         paymentDay: 1,
@@ -64,6 +61,11 @@ let statesPA720 = {
         paymentYear: null,
         paymentMonth: +dayjs().format('MM') ,
     }
+  },
+  changeDayDataPA720: {
+    prevPaymentDay: '',
+    employeeId: '',
+    incomeTypeCode: '',
   }
 };
 
