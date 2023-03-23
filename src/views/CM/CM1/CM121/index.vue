@@ -659,6 +659,12 @@ export default defineComponent({
       isLength4.value = !!valueCheck && valueCheck.length < 4 ? false : true
     })
 
+    watch(()=> isModalRegister.value, (value) => {
+      if(!value) {
+        keyResetPopupRegisterBankbook.value++
+      }
+    })
+
     // -------METHODS-----------
     const resetStatus = () => {
       isStatusClickCreate.value = false
