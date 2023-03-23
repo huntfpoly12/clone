@@ -346,6 +346,7 @@ export default defineComponent({
         resEmployeeWage(value => {
             triggerEmployeeWageDailies.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWageDailies
+            arrayEmploySelect.value = []
             if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value?.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
@@ -435,10 +436,9 @@ export default defineComponent({
             }
         })
         watch(() => dataIncomeWageDaily.value, (value) => {
-            
             if (!store.state.common.statusFormAdd) {
                 if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIncomeWageDaily.value) && store.state.common.dataRowOld) {
-                    // store.state.common.statusChangeFormPrice = true;               
+                    // store.state.common.statusChangeFormPrice = true;  
                     store.state.common.statusChangeFormEdit = true;
                 } else {
                     store.state.common.statusChangeFormEdit = false;

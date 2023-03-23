@@ -31,7 +31,7 @@ export const initFormStateTab1 = {
   foreigner: false,
   nationality: "",
   nationalityCode: "KR",
-  stayQualification: "C-4",
+  stayQualification: null,
   residentId: "000000-0000000",
   roadAddress: "",
   addressExtend: "",

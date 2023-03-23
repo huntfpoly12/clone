@@ -54,7 +54,7 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.changeIncomeWageDailyPaymentDay);
         onDone(() => {
-            notification('success', Message.getMessage('COMMON', '101').message)
+            notification('success', Message.getMessage('COMMON', '106').message)
             emit("closePopup", false)
             store.state.common.loadingTableInfo++
             store.state.common.loadingFormData++

@@ -339,6 +339,7 @@ export default defineComponent({
         resEmployeeWage(value => {
             triggerEmployeeWages.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWages
+            arrayEmploySelect.value = []
             if (store.state.common.statusFormAdd) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
                     if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {

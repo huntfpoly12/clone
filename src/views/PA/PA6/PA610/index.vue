@@ -616,7 +616,7 @@ export default defineComponent({
         // Nếu không phải thêm row mới thì isNewRow = false
         isNewRow.value = false;
       }
-      notification("success", Message.getCommonMessage('106').message);
+      notification("success", Message.getCommonMessage('101').message);
       store.state.common.savePA610++;
       if (clickYearStatus.value !== ClickYearStatus.none) {
         store.commit('settings/setCurrentYear')
@@ -644,9 +644,8 @@ export default defineComponent({
       });
       formRef.value.resetValidate()
 
-      notification("success", Message.getCommonMessage('106').message);
+      notification("success", Message.getCommonMessage('402').message);
     });
-
     const onExporting = (e: any) => {
       onExportingCommon(e.component, e.cancel, "영업자관리");
     };

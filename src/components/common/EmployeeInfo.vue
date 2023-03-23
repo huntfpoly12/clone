@@ -3,7 +3,7 @@
         <div :class="[{ 'display-none': !idEmployee }, 'style-Id']">
             {{ idEmployee }}
         </div>
-        <div style="display: flex;align-items: flex-end;">
+        <div class="employee-info">
             <a-tooltip zIndex="9999" placement="top" :color="convertBirthDayKorea(idCardNumber) ? 'black' : 'red'"
                 v-if="idCardNumber && name && convertBirthDayKorea(idCardNumber)">
                 <template #title>
@@ -79,13 +79,17 @@ export default defineComponent({
 .main {
     display: flex;
     align-items: flex-end;
+  .employee-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
 }
 .tag-status {
     background-color: #C00000;
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
 }
 
 .tag-foreigner {
@@ -93,7 +97,6 @@ export default defineComponent({
     color: white;
     padding: 4px 10px;
     border-radius: 5px;
-    margin: 0 5px;
 }
 
 .tag-forDailyUse {

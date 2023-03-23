@@ -522,6 +522,7 @@ export default defineComponent({
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value
             trigger.value = true; //reset data table 1
+            dataGridRef.value?.refresh();
             // IncomeWageDailiesTrigger.value = true; //reset data table 2
         })
         watch(() => store.state.common.activeTab, (newVal) => {
@@ -727,9 +728,9 @@ export default defineComponent({
                             store.state.common.statusRowAdd = true
                         }
                         store.state.common.incomeId = e.rows[e.newRowIndex]?.data.incomeId
-                    }
-                    if (store.state.common.statusRowAdd) {
-                        store.state.common.statusFormAdd = false
+                        if (store.state.common.statusRowAdd) {
+                            store.state.common.statusFormAdd = false
+                        }
                     }
                 }
             }
