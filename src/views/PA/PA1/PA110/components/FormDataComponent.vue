@@ -582,6 +582,12 @@ export default defineComponent({
                 dataIW.value.overtimeWorkingHours = data.overtimeWorkingHours
                 dataIW.value.workingHoursAtNight = data.workingHoursAtNight
                 dataIW.value.workingHoursOnHolidays = data.workingHoursOnHolidays
+
+                dataIW.value.employee.nationalPensionDeduction = data.employee.nationalPensionDeduction
+                dataIW.value.employee.healthInsuranceDeduction = data.employee.healthInsuranceDeduction
+                dataIW.value.employee.employeementInsuranceDeduction = data.employee.employeementInsuranceDeduction
+                dataIW.value.employee.nationalPensionSupportPercent = data.employee.nationalPensionSupportPercent
+
                 store.state.common.dataRowOld = { ...dataIW.value }
                 store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
                 store.state.common.focusedRowKey = data.incomeId
@@ -765,19 +771,19 @@ export default defineComponent({
         const actionDedution = () => {
             dataConfigDeductions.value?.map((item: any) => {
                 if (item.itemCode == 1001) {
-                    let total1 = calculateNationalPensionEmployee(totalPayItem.value) ?? 0
+                    let total1 = dataIW.value.employee.nationalPensionDeduction ? calculateNationalPensionEmployee(totalPayItem.value, dataIW.value.employee.nationalPensionSupportPercent) : 0
                     item.amountNew = total1
                 }
                 if (item.itemCode == 1002) {
-                    let total2 = calculateHealthInsuranceEmployee(totalPayItem.value) ?? 0
+                    let total2 = dataIW.value.employee.healthInsuranceDeduction ? calculateHealthInsuranceEmployee(totalPayItem.value) : 0
                     item.amountNew = total2
                 }
                 if (item.itemCode == 1003) {
-                    let total3 = calculateLongTermCareInsurance(totalPayItem.value) ?? 0
+                    let total3 = dataIW.value.employee.healthInsuranceDeduction ? calculateLongTermCareInsurance(totalPayItem.value) : 0
                     item.amountNew = total3
                 }
                 if (item.itemCode == 1004) {
-                    let total4 = calculateEmployeementInsuranceEmployee(totalPayItem.value) ?? 0
+                    let total4 = dataIW.value.employee.employeementInsuranceDeduction ? calculateEmployeementInsuranceEmployee(totalPayItem.value, dataIW.value.employee.nationalPensionSupportPercent) : 0
                     item.amountNew = total4
                 }
                 calculateVariables.totalTaxPay = totalPayItemTax.value
