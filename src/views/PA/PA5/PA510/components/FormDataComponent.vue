@@ -190,6 +190,9 @@ export default defineComponent({
         const countKey: any = ref(0)
         const employeeWageDailyTrigger = ref<boolean>(false);
         const showErrorButton = ref(false)
+        const triggerWithholdingConfig = ref<boolean>(true)
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+        const insuranceSupport = ref<boolean>(false);
         let employeeWageDailyParam = {
             companyId: companyId,
             imputedYear: globalYear,
@@ -261,6 +264,15 @@ export default defineComponent({
             enabled: employeeWageDailyTrigger.value,
             fetchPolicy: 'no-cache'
         }))
+        
+        const { result: resultConfig } = useQuery(
+            queries.getWithholdingConfig,
+            dataQuery,
+            () => ({
+                enabled: triggerWithholdingConfig.value,
+                fetchPolicy: "no-cache",
+            })
+        );
 
         // ===================DONE GRAPQL==================================
         onDoneAdd( async (data: any) => {
@@ -370,12 +382,13 @@ export default defineComponent({
             })
             triggerWithholdingConfigDeductionItems.value = false
         })
-        resIncomeWageDaily((value: any) => { // get data of one row
+        resIncomeWageDaily( async (value: any) => { // get data of one row
             triggerIncomeWageDaily.value = false;
             let data = value.data.getIncomeWageDaily
             employeementInsuranceDeduction.value = data.employee.employeementInsuranceDeduction
             employeementInsuranceSupportPercent.value = data.employee.employeementInsuranceSupportPercent
-            dataIncomeWageDaily.value = data
+            
+            await(dataIncomeWageDaily.value = data) 
             store.state.common.dataRowOld = { ...data }
             
             arrDeduction.value?.map((row: any) => {
@@ -400,12 +413,19 @@ export default defineComponent({
 
 
         // ===================WATCH==================================
+        watch(resultConfig, (value) => {
+            triggerWithholdingConfig.value = false;
+            if (value) {
+                insuranceSupport.value = value.getWithholdingConfig.insuranceSupport
+            }
+        });
         watch(() => store.state.common.loadingFormData, (value) => {
             triggerIncomeWageDaily.value = true;
         })
         watch(() => store.state.common.activeTab, (newVal) => {
             if (newVal.id == "pa-510") {
                 triggerEmployeeWageDailies.value = true; //reset selected employee
+                triggerWithholdingConfig.value = true; // reset insuranceSupport cm-130
             }
         })
         watch(globalYear, (newVal) => {
@@ -581,7 +601,7 @@ export default defineComponent({
                 // let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(totalPrices, dataDefault.nationalPensionSupportPercent) : 0
                 // let total2 = calculateHealthInsuranceEmployee(totalPrices)
                 // let total3 = calculateLongTermCareInsurance(totalPrices)
-                let total4 = employeementInsuranceDeduction.value == true ? calculateEmployeementInsuranceEmployee(totalPrices, employeementInsuranceSupportPercent.value) : 0
+                let total4 = (employeementInsuranceDeduction.value == true && insuranceSupport.value) ? calculateEmployeementInsuranceEmployee(totalPrices, employeementInsuranceSupportPercent.value) : 0
                 
                 let objectData = Formula.getDailyEmployeeTax(
                     parseInt(`${processKey.value.paymentYear}${processKey.value.paymentMonth}`),
