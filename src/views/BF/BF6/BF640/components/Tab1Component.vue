@@ -129,7 +129,7 @@
                 </DxDataGrid>
             </a-spin>
         </div>
-        <PopupConfirmSaveStep1  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
+        <PopupConfirmSave  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
     </div>
 </template>
@@ -139,7 +139,7 @@ import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
@@ -149,7 +149,7 @@ import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
-        PopupConfirmSaveStep1, GetStatusTable
+        PopupConfirmSave, GetStatusTable
     },
     props: {
         searchStep: Number,
