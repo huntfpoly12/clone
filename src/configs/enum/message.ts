@@ -36,6 +36,8 @@ export class Message extends BaseType {
         '601': { "message" : "항목을 2개 이상 선택해야합니다"}, // You must select 2 or more items
       // Check ID Card 
         '701': { "message" : "주민등록번호가 유효하지 않습니다"}, // Social security number is invalid
+      // Email 
+        '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 

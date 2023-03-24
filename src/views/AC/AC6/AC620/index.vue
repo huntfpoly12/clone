@@ -325,7 +325,7 @@ import DxSelectBox from "devextreme-vue/select-box";
 import { Store } from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
-import {computed, defineComponent, ref} from "vue";
+import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
 import { initBackerCreateInput } from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
@@ -420,7 +420,7 @@ export default defineComponent({
     // add new client
     const {
       mutate: createBacker,
-      onDone: onDoneAdd,
+      onDone: onCreatedBacker,
       onError: onErrorAdd,
     } = useMutation(mutations.createBacker);
 
@@ -448,6 +448,15 @@ export default defineComponent({
 
     responseListClient((res) => {
       listBackers.value = res.data.searchBackers.datas;
+      if (listBackers.value.length > 0) {
+        focusedRowKey.value = res.data.searchBackers.datas[0]?.backerCode
+        formState.value = res.data.searchBackers.datas[0];
+        previousRowData.value = { ...res.data.searchBackers.datas[0] };
+      } else {
+        formState.value = {...initBackerCreateInput};
+        previousRowData.value = {...initBackerCreateInput};
+        formRef.value?.resetValidate()
+      }
       dataSource.value = new DataSource({
         store: {
           type: "array",
@@ -463,7 +472,7 @@ export default defineComponent({
     // const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
-    onDoneAdd(async (res: any) => {
+    onCreatedBacker(async (res: any) => {
       await refetchData();
       if(isClickAddRow.value) {
         addNewRow()
@@ -476,7 +485,7 @@ export default defineComponent({
         }
         isNewRow.value = false;
       }
-      notification("success", Message.getCommonMessage('106').message);
+      notification("success", Message.getCommonMessage('101').message);
     });
     onErrorAdd((e) => {
       notification("error", e.message);
@@ -604,8 +613,9 @@ export default defineComponent({
           // If bizNumber changed
           if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
             if (isCheckedBizNumber.value || isCheckedResidentId.value) {
-              // await updateBacker(dataUpdate.value);
+              await updateBacker(dataUpdate.value);
             } else {
+              dataGridRef.value?.refresh();
               const messageType = formState.value.type === 1 ? '001' : '002';
               notification('error', Message.getMessage('AC620', messageType).message)
             }
@@ -626,6 +636,7 @@ export default defineComponent({
             if (isCheckedBizNumber.value || isCheckedResidentId.value) {
               await createBacker(newDataCreate);
             } else {
+              dataGridRef.value?.refresh();
               const messageType = formState.value.type === 1 ? '001' : '002';
               notification('error', Message.getMessage('AC620', messageType).message)
             }
@@ -687,8 +698,8 @@ export default defineComponent({
       if (isNewRow.value) return false;
       return formState.value?.residentId === previousRowData.value?.residentId;
     });
-    const isCheckedResidentId = ref(false);
-    const triggerResidentId = ref(false);
+    const isCheckedResidentId = ref(true);
+    const triggerResidentId = ref(true);
     const { refetch: refetchCheckResidentId, onResult: onResultCheckResidentId } = useQuery(
       queries.isBackerRegistableResidentId,
       variables,
@@ -712,6 +723,18 @@ export default defineComponent({
         notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
       }
     })
+
+    // watch type and reset bizNumber or residentId, if type === 1 => bizNumber, type !== 1 => residentId
+    watch(() => formState.value.type, (newValue) => {
+        if (newValue !== 1) {
+          formState.value.residentId = null;
+          isCheckedResidentId.value = false;
+        } else {
+          formState.value.bizNumber = null;
+          isCheckedBizNumber.value = false;
+        }
+      }
+    , { deep: true });
     // check duplicate Biz Number
     const variablesCheckBizNumber = {
       companyId: companyId,
@@ -780,7 +803,7 @@ export default defineComponent({
 
     // When changing the value in the input form then moving to another row, check the valid form and display the popup
     const actionToAddFromEdit = (e: any) => {
-      var res = e.validationGroup.validate();
+      const res = e.validationGroup.validate();
       //remove active row edit
       const element = document.querySelector(".dx-row-focused");
       if (element)

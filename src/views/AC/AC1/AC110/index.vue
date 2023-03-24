@@ -5,51 +5,51 @@
       <div class="ac-110__top-grid">
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">01</span>
-          <ProcessStatus :valueStatus="statusEntering" />
+          <ProcessStatus :disabled="true" :valueStatus="statusEntering" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">02</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">03</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">04</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">05</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">06</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">07</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">08</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">09</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">10</span>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">11</span>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
           <span class="ac-110__top-grid-items-text">12</span>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
       </div>
       <div class="ac-110__top-flex">
@@ -76,15 +76,15 @@
               <div>{{ data.data.fill1 }}</div>
             </a-tooltip>
           </template>
-          <DxColumn caption="통장용도" data-field="fill2"></DxColumn>
-          <DxColumn caption="일자" data-field="fill3"></DxColumn>
-          <DxColumn caption="통장적요" data-field="fill4"></DxColumn>
-          <DxColumn caption="내용|비고" data-field="fill5"></DxColumn>
-          <DxColumn caption="입금액" data-field="fill6"></DxColumn>
-          <DxColumn caption="출금액" data-field="fill7"></DxColumn>
-          <DxColumn caption="통장잔액" data-field="fill8"></DxColumn>
-          <DxColumn caption="증빙" data-field="fill9"></DxColumn>
-          <DxColumn caption="거래내역" data-field="fill10"></DxColumn>
+          <DxColumn caption="통장용도" data-field="fill2" />
+          <DxColumn caption="일자" data-field="fill3" />
+          <DxColumn caption="통장적요" data-field="fill4" />
+          <DxColumn caption="내용|비고" data-field="fill5" />
+          <DxColumn caption="입금액" data-field="fill6" format="fixedPoint" />
+          <DxColumn caption="출금액" data-field="fill7" format="fixedPoint" />
+          <DxColumn caption="통장잔액" data-field="fill8" format="fixedPoint" />
+          <DxColumn caption="증빙" data-field="fill9" />
+          <DxColumn caption="거래내역" data-field="fill10" />
           <DxColumn caption="정상여부" cell-template="normality" width="80" />
           <template #normality="{ data }">
             <button-basic :text="data.data.normality ? 'O' : 'X'" :type="data.data.normality ? 'success' : 'danger'"
@@ -136,10 +136,10 @@
                 </div>
               </a-tooltip>
             </template>
-            <DxColumn caption="결의구분" data-field="fill1"></DxColumn>
-            <DxColumn caption="수입액" data-field="fill2"></DxColumn>
-            <DxColumn caption="지출액" data-field="fill3"></DxColumn>
-            <DxColumn caption="적요" data-field="fill4"></DxColumn>
+            <DxColumn caption="결의구분" data-field="fill1" />
+            <DxColumn caption="수입액" data-field="fill2" />
+            <DxColumn caption="지출액" data-field="fill3" />
+            <DxColumn caption="적요" data-field="fill4" />
             <DxColumn caption="계정과목" cell-template="accountSubject" width="100" />
             <template #accountSubject="{ data }">
               <account-code-select v-model:valueInput="valueAccountSubjectClassification" />
@@ -152,7 +152,7 @@
             <template #sourceOfFunding="{ data }">
               <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
-            <DxColumn caption="거래처" data-field="fill8"></DxColumn>
+            <DxColumn caption="거래처" data-field="fill8" format="fixedPoint" />
             <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
             <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
@@ -179,21 +179,7 @@
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :multiple="true"
-              v-model:file-list="fileList" @preview="handlePreview" headers="dsadasdsad" @change="changeFile"
-              :before-upload="beforeUpload">
-              <div v-if="fileList.length < MAX_UP_LOAD">
-                <div class="ant-btn-upload">
-                  <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
-                  <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
-                  <p class="ant-btn-upload-text">또는</p>
-                  <button class="ant-btn-upload-button">파일 선택</button>
-                </div>
-              </div>
-            </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
+            <UploadPreviewImage v-model:list-image-file="fileList"/>
           </div>
         </a-col>
       </a-row>
@@ -215,7 +201,7 @@
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, reactive, computed } from "vue";
+import { defineComponent, ref, reactive, computed, watch } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
@@ -227,22 +213,7 @@ import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupSlipRegistrationSelected from "./components/PopupSlipRegistrationSelected.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
-import notification from '@/utils/notification';
-interface FileItem {
-  uid: string;
-  name?: string;
-  status?: string;
-  response?: string;
-  percent?: number;
-  url?: string;
-  preview?: string;
-  originFileObj?: any;
-}
-
-interface FileInfo {
-  file: FileItem;
-  fileList: FileItem[];
-}
+import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
 
 export default defineComponent({
   components: {
@@ -264,7 +235,8 @@ export default defineComponent({
     DxButton,
     DxToolbar,
     DxExport,
-    PopupNoteItemDetail
+    PopupNoteItemDetail,
+    UploadPreviewImage
   },
   setup() {
     const store = useStore();
@@ -311,44 +283,6 @@ export default defineComponent({
     // METHODS
 
     const selectionChanged = () => { }
-    const getBase64 = (file: File) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-    }
-    const handlePreview = async (file: FileItem) => {
-      if (!file.url && !file.preview) {
-        file.preview = (await getBase64(file.originFileObj)) as string;
-      }
-      previewImage.value = file.url || file.preview;
-      previewVisible.value = true;
-    };
-    const handleChange = ({ fileList: newFileList }: FileInfo) => {
-      fileList.value = newFileList;
-    };
-
-    const handleCancel = () => {
-      previewVisible.value = false;
-    };
-
-    const changeFile = ({ fileList: newFileList }: FileInfo) => {
-      console.log('change', fileList);
-    }
-
-    const beforeUpload = (file: any) => {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-      if (!isJpgOrPng) {
-        notification('error', 'You can only upload JPG file!')
-      }
-      const isLt2M = file.size / 1024 / 1024 <= 10;
-      if (!isLt2M) {
-        notification('error', 'Image must smaller than 10MB!')
-      }
-      return isJpgOrPng && isLt2M;
-    };
 
     const totalDeposits = () => {
       let total = 0;
@@ -421,7 +355,7 @@ export default defineComponent({
     const openPopupNoteItemDetail = () => {
       isModalNoteItemDetail.value = true
     }
-
+    
     return {
       statusEntering,
       statusInput,
@@ -433,15 +367,6 @@ export default defineComponent({
       focusedRowKey,
       selectionChanged,
       dataDemoMain,
-      handlePreview,
-      handleChange,
-      beforeUpload,
-      previewVisible,
-      fileList,
-      handleCancel,
-      previewImage,
-      MAX_UP_LOAD,
-      changeFile,
       totalDeposits,
       totalWithdrawal,
       countSlipRegistration,
@@ -464,28 +389,9 @@ export default defineComponent({
       isModalNoteItemDetail,
       valueAccountSubjectClassification,
       valueFundingSource,
+      fileList,
     };
   },
 });
 </script>
-<style lang="scss">
-.ac-110__main-detail-detail2-upload {
-  .ant-upload-list-picture-card-container {
-    width: 120px;
-    height: 120px;
-    margin: 0 9px 8px 0;
-  }
-
-  .ant-upload-list-item {
-    border-radius: 15px;
-  }
-
-  .ant-upload.ant-upload-select-picture-card {
-    width: 120px;
-    height: 120px;
-    border-radius: 15px;
-    margin: 0;
-  }
-}
-</style>
 <style lang="scss" scoped src="./style/style.scss"></style>
