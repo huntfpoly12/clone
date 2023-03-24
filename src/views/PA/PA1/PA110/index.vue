@@ -288,7 +288,7 @@
                             <template #paymentDay="{ data }">
                                 <div class="text-center">{{  $filters.formatMonth(data.data.paymentDay) }}</div>
                             </template>
-                            <DxSummary>
+                            <DxSummary v-if="store.state.common.dataTaxPayInfo.length">
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
                                 <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}"
                                     value-format="#,###" />
@@ -370,7 +370,6 @@ export default defineComponent({
             paymentMonth: dayjs().month() + 1,
         }
         const processKey = computed(() => store.state.common.processKeyPA110)
-        const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
         const dataCustomRes: any = ref<any>([])
         const arrDataPoint = ref<any>([])
@@ -530,7 +529,7 @@ export default defineComponent({
                         if (!store.state.common.dataIncomeIdBackend || store.state.common.checkClickMonth) {
                             // isRunOnceTaxPayInfo.value = false;
                             store.state.common.checkClickMonth = false
-                            store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
+                            // store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
                             store.state.common.incomeId = value.getIncomeWages[0].incomeId
                             store.state.common.dataRowOnActive = value.getIncomeWages[0]
                         } else {
@@ -545,11 +544,12 @@ export default defineComponent({
                     store.state.common.statusFormAdd = false
                 } else {
                     store.state.common.statusFormAdd = true
-                    store.state.common.focusedRowKey = null;
+                    // store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
                     store.state.common.actionResetForm++;
                 }
             }
+            store.state.common.focusedRowKey = store.state.common.incomeId
             if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                 store.state.common.addRow++ // add row
                 store.state.common.statusRowAdd = false
@@ -587,13 +587,18 @@ export default defineComponent({
             dataRows.value = []
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-110" && !store.state.common.statusFormAdd) {
+            if (newVal.id == "pa-110" && !((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd))) {
                 triggerDataTaxPayInfo.value = true; //reset data table 2
+                !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
             }
         })
         watch(() => store.state.common.openModalCopyMonth, (value) => {
             dataModalCopy.value = monthCopy.value
             modalCopy.value = true
+        })
+
+        watch(() => store.state.common.refreshDataGridRef, (value) => {
+            dataGridRef.value?.refresh();
         })
         /**
          * action edit employ tax pay
@@ -648,6 +653,8 @@ export default defineComponent({
             triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
+
+            hoverColClick.value = 0
             // debugger
         }
         const monthCopy = ref<number>()
@@ -704,15 +711,8 @@ export default defineComponent({
             triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
-        /**
-         * underlined set of selected month
-         * @param monthInputed 
-         */
-        const setUnderline = (monthInputed: any) => {
-            return monthClicked.value == monthInputed;
-        }
+
         const statusComfirmChange = async (res: any) => {
-            hoverColClick.value = 0
             if (res) { // action save form
                 store.state.common.actionSubmit++
             } else { //  no save form
@@ -722,6 +722,7 @@ export default defineComponent({
                     store.state.common.statusFormAdd = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
+                    store.state.common.focusedRowKey = store.state.common.incomeId
                 }
                 if (store.state.common.checkClickMonth) {
                     activeNewMonth(dataMonthNew.value)
@@ -748,7 +749,6 @@ export default defineComponent({
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
                 store.state.common.loadingFormData++
             }
-            dataGridRef.value?.refresh();
         }
         // Preventing the user from selecting a row by clicking on the select button.
         const onFocusedRowChanging = (e: any) => {
@@ -819,7 +819,6 @@ export default defineComponent({
             arrDataPoint,
             dataAddIncomeProcess,
             status,
-            setUnderline,
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
             Message, gridRefPA110,

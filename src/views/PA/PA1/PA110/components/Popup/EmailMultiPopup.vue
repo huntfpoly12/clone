@@ -31,6 +31,7 @@ import { companyId } from '@/helpers/commonFunction';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -90,7 +91,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {
