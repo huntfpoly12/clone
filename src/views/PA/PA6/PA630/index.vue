@@ -19,14 +19,18 @@
             <div class="page-content">
                 <a-row class="header-group">
                     <a-col :span="12">
-                        <div class="format-settings">
-                            <strong>서식 설정 : </strong>
-                            <div class="format-settings-text">
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span class="style-note">본 설정으로 적용된 서식으로 출력 및
-                                    메일발송 됩니다.</span>
+                        <a-form-item label="서식 설정">
+                            <div class="dflex custom-flex">
+                                <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
+                                    :textUnCheck="'발행자 보관용'" />
+                                <div style="margin-left: 10px;">
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                                    <span>
+                                        본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </a-form-item>
                     </a-col>
                     <a-col :span="12">
                         <div class="created-date">
@@ -36,14 +40,14 @@
                         </div>
                     </a-col>
                 </a-row>
-                <a-row>
+                <!-- <a-row>
                     <a-col :span="24">
                         <label class="lable-item">소득자보관용</label>
                         <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
                             :textUnCheck="'발행자보관용'" />
                     </a-col>
-                </a-row>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                </a-row> -->
+                <DxDataGrid id="gridContainerPA630" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     ref="gridRef"
