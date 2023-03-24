@@ -3,11 +3,11 @@
         :width="644">
         <standard-form action="" name="request-file-630">
             <div>
-              <div class="eamil-input">
-                <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
-                <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
-              </div>
               <div>
+                <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
+              </div>
+              <div class="eamil-input">
+                <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
               </div>
                     
@@ -149,9 +149,9 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     span {
-        padding-right: 10px;
+        padding-left: 10px;
     }
 }
 .mt-50 {
