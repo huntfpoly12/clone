@@ -1,22 +1,3 @@
-const compareObject = (obj1: any, obj2: any) => {
-  if (obj1 && obj2) {
-    return (
-      JSON.stringify({
-        ...obj1,
-        key: 1,
-        employeeId: +obj1.employeeId,
-        nationality: obj1.nationality ? obj1.nationality : null,
-      }) ===
-      JSON.stringify({
-        ...obj2,
-        key: 1,
-        employeeId: +obj2.employeeId,
-        nationality: obj1.nationality ? obj1.nationality : null,
-      })
-    );
-  } else return false;
-};
-
 function isEqualObject(obj1: any, obj2: any) {
   const obj1Keys = obj1 && Object.getOwnPropertyNames(obj1);
   const obj2Keys = obj2 && Object.getOwnPropertyNames(obj2);
@@ -32,4 +13,4 @@ function isEqualObject(obj1: any, obj2: any) {
   return true;
 }
 
-export { compareObject, isEqualObject };
+export { isEqualObject };
