@@ -18,9 +18,9 @@ const compareObject = (obj1: any, obj2: any) => {
 };
 
 function isEqualObject(obj1: any, obj2: any) {
-  const obj1Keys = Object.getOwnPropertyNames(obj1);
-  const obj2Keys = Object.getOwnPropertyNames(obj2);
-  if (obj1Keys.length !== obj2Keys.length) {
+  const obj1Keys = obj1 && Object.getOwnPropertyNames(obj1);
+  const obj2Keys = obj2 && Object.getOwnPropertyNames(obj2);
+  if (!obj1Keys || !obj2Keys || obj1Keys.length !== obj2Keys.length) {
     return false;
   }
   // Check if the values are equal
