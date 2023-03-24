@@ -4,7 +4,7 @@
       <a-col>
         <a-form-item label="지급연월">
           <month-picker-box-custom v-model:valueDate="datePayment" :minDate="new Date('2022-1-1')"
-                                   bgColor="black"/>
+                                   bgColor="black" text="지"/>
         </a-form-item>
       </a-col>
       <a-col>

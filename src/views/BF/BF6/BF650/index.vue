@@ -2,7 +2,7 @@
     <action-header title="계약정보관리&심사" @actionSearch="searching" />
     <div id="bf-650">
         <div class="page-content">
-            <a-tabs v-model:activeKey="activeKey" type="card">
+            <a-tabs v-model:activeKey="activeKey" type="card" style="min-height: 70%">
                 <a-tab-pane key="1" tab="일용근로소득지급명세서전자신고">
                     <Tab1 :searchStep="searchStep1" />
                 </a-tab-pane>
@@ -40,7 +40,7 @@ export default defineComponent({
         }
         return {
             activeKey,
-            searchStep1, 
+            searchStep1,
             searchStep2,
             searching,
         }

@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, } from 'vue'
+import { defineComponent, ref,computed } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
 import { Message } from '@/configs/enum';
+import { useStore } from 'vuex';
 export default defineComponent({
   props: {
     modalStatus: {
@@ -42,6 +43,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const dayValue = ref(1)
     const messageUpdate = Message.getMessage('COMMON', '106').message;
+    const store = useStore();
+    const changeDayDataPA720 = computed(() => store.state.common.changeDayDataPA720);
     const setModalVisible = () => {
       emit("closePopup", '')
     };
@@ -51,15 +54,24 @@ export default defineComponent({
       onError,
     } = useMutation(mutations.changeIncomeExtraPaymentDay);
     onDone((res) => {
+      let resData = res.data.changeIncomeExtraPaymentDay;
+      notification('success', messageUpdate);
+      let data = {
+        prevPaymentDay: resData.prevPaymentDay,
+        employeeId: resData.employeeId,
+        incomeTypeCode: resData.incomeTypeCode,
+      }
+      if (JSON.stringify(data) == JSON.stringify(changeDayDataPA720.value)) {
+        emit("closePopup", resData.incomeId)
+      }
       notification('success', messageUpdate)
-      emit("closePopup", res.data.changeIncomeExtraPaymentDay.incomeId)
     })
     onError((e: any) => {
       notification('error', e.message)
     })
     const onSubmit = (e: any) => {
       const reversedArr = props.data.reverse();
-      reversedArr.map((item: any) => {
+      reversedArr.forEach((item: any) => {
         mutate({ ...item, day: dayValue.value })
       })
     };
@@ -68,6 +80,7 @@ export default defineComponent({
       setModalVisible,
       onSubmit,
       dayValue,
+      
     }
   },
 })

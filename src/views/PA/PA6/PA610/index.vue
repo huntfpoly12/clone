@@ -6,19 +6,8 @@
   />
   <div id="pa-610">
     <div class="page-content">
-      <a-row>
-        <a-col span="2" class="total-user">
-          <div>
-              <span>{{ storeDataSourceCount }}</span>
-              <br>
-              <span>전체</span>
-          </div>
-          <div>
-              <img src="@/assets/images/user.svg" style="width: 39px;" />
-          </div>
-      </a-col>
-        <a-col :span="21"></a-col>
-        <a-col :span="16" class="custom-layout">
+      <a-row :gutter="[24]">
+        <a-col :span="16" class="">
           <a-spin
             :spinning="
               loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
@@ -39,12 +28,13 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              style="max-height: 800px;"
+              style="max-height: 700px;"
             >
               <DxPaging :page-size="0"/>
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
               <DxExport :enabled="true" />
               <DxToolbar>
+                <DxItem template="total-user" location="before"/>
                 <DxItem name="searchPanel" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem
@@ -65,6 +55,13 @@
                 </DxItem>
                 <DxItem name="addRowButton" show-text="always" />
               </DxToolbar>
+              <template #total-user>
+                <div class="total-user">
+                    <span>{{ storeDataSourceCount }}</span>
+                    <span>전체</span>
+                    <img src="@/assets/images/user.svg"/>
+                </div>
+              </template>
               <template #button-history style="border-color: #ddd">
                 <DxButton icon="plus">
                   <HistoryOutlined
@@ -434,6 +431,7 @@ export default defineComponent({
         previousRowData.value = {...valueDefaultAction};
         dataShow.value = valueDefaultAction;
       }
+      // selectRowKeyAction.value = data[0]?.key ?? 0;
       focusedRowKey.value = 0;
       isNewRow.value = false
     });
@@ -514,6 +512,7 @@ export default defineComponent({
 
     // handle onFocusedRowChanged to row, function run then auto set focusedRowKey
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
+      selectRowKeyAction.value =e.row?.key ?? 0;
       dataShow.value = e.row?.data;
       previousRowData.value = { ...e.row?.data };
     };
@@ -585,6 +584,7 @@ export default defineComponent({
       if (clickYearStatus.value !== ClickYearStatus.none) {
         store.commit('settings/setCurrentYear')
       }
+      dataGridRef.value?.refresh();
     });
     updateError((res) => {
       if (isDiscard.value) {
@@ -599,6 +599,8 @@ export default defineComponent({
       onDone: createdDone,
     } = useMutation(mutations.createEmployeeBusiness);
     createdDone(async (res) => {
+      console.log('selectRowKeyAction.value', selectRowKeyAction.value)
+      console.log('id',  res.data.createEmployeeBusiness.residentId)
       // tạo mới xong và kiểm tra có phải là thêm mới hay không, nếu đúng thì thêm row mới
       await refetchData();
       if(isClickAddRow.value) {
@@ -623,6 +625,7 @@ export default defineComponent({
       }
     });
     createdErr((res) => {
+      dataGridRef.value?.refresh();
       notification("error", res.message);
     });
     const {
@@ -713,6 +716,9 @@ export default defineComponent({
       });
     }
     const handleSubmit = async () => {
+      console.log(focusedRowKey.value)
+      console.log('selectRowKeyAction', selectRowKeyAction.value)
+
       const res = formRef.value.validate();
       isDiscard.value = false;
       if (!res.isValid) {
