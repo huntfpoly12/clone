@@ -4,8 +4,7 @@
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
         :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
         :multi-calendars="multiCalendars" 
-        :teleport="teleport"
-        position="right">
+        :teleport="teleport">
     </Datepicker>
 </template>
 <script lang="ts">

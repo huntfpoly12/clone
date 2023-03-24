@@ -320,6 +320,8 @@ export default defineComponent({
             let dataEmployee: any = props.arrayEmploySelect.find((element: any) => element.employeeId == value)
             props.dataForm.input.employeeType = dataEmployee?.type
             joinedAt.value = dataEmployee?.joinedAt
+            props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate = dataEmployee?.joinedAt
+            props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementFinishDate = dataEmployee?.leavedAt
         });
 
         watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService, (value: any) => {
