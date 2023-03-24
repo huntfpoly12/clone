@@ -330,7 +330,7 @@ import { useStore } from "vuex";
 import { initBackerCreateInput } from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
-import { isEqualObject } from "@/utils";
+import {isEqual, cloneDeep} from "lodash";
 
 type SearchType = {
   page: number
@@ -386,7 +386,7 @@ export default defineComponent({
     const isNewRow = ref(false); // check if new row is adding
     const isClickAddRow = ref(false); // check if click add row
     const focusedRowKey = ref<number>(0); // focused row key
-    const previousRowData = ref(); // save previous row data when focus row change
+    const previousRowData = ref({...initBackerCreateInput}); // save previous row data when focus row change
 
     const formState = ref({...initBackerCreateInput}); // data show in form when click row or add new row
     const selectRowKeyAction = ref<number>(0); // key of row selected in gridData
@@ -449,9 +449,10 @@ export default defineComponent({
     responseListClient((res) => {
       listBackers.value = res.data.searchBackers.datas;
       if (listBackers.value.length > 0) {
+        const firstData = res.data.searchBackers.datas[0];
         focusedRowKey.value = res.data.searchBackers.datas[0]?.backerCode
-        formState.value = res.data.searchBackers.datas[0];
-        previousRowData.value = { ...res.data.searchBackers.datas[0] };
+        formState.value = firstData;
+        previousRowData.value = cloneDeep(firstData);
       } else {
         formState.value = {...initBackerCreateInput};
         previousRowData.value = {...initBackerCreateInput};
@@ -525,7 +526,7 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !isEqualObject(previousRowData.value, formState.value)) {
+        if (previousRowData.value && !isEqual(previousRowData.value, formState.value)) {
           isDiscard.value = true;
         } else {
           // create new row
@@ -533,7 +534,7 @@ export default defineComponent({
         }
         isNewRow.value = true;
       } else {
-        if (previousRowData.value &&!isEqualObject(previousRowData.value, formState.value)) {
+        if (previousRowData.value &&!isEqual(previousRowData.value, formState.value)) {
           selectRowKeyAction.value = 0;
           isClickAddRow.value = true;
           isDiscard.value = true;
@@ -547,14 +548,15 @@ export default defineComponent({
       if (isNewRow.value) {
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
+
         // when isNewRow and click row other then check data input
-        if (isEqualObject(formState.value, initBackerCreateInput)) {
+        if (isEqual(formState.value, initBackerCreateInput)) {
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
               .then((value) => {
                 // formState = value;
-                previousRowData.value = { ...formState };
+                previousRowData.value = cloneDeep(formState.value) as any;
               });
             dataGridRef.value?.refresh();
             isNewRow.value = false;
@@ -575,7 +577,7 @@ export default defineComponent({
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
           previousRowData.value &&
-          !isEqualObject(formState.value, previousRowData.value)
+          !isEqual(formState.value, previousRowData.value)
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -589,7 +591,7 @@ export default defineComponent({
     // handle onFocusedRowChanged to row, function run then auto set focusedRowKey
     const onFocusedRowChanged = (e: FocusedRowChangedEvent) => {
       formState.value = e.row?.data;
-      previousRowData.value = { ...e.row?.data };
+      previousRowData.value = cloneDeep(e.row?.data);
     };
     const addNewRow = () => {
       storeDataSource.value.insert(initBackerCreateInput).then((result) => {
@@ -691,15 +693,18 @@ export default defineComponent({
       residentId: formState.value.residentId,
     };
     const isDisableBtnCheckResidentId = computed(() => {
-      if (formState.value?.residentId?.length !== 13) {
+      if (formState.value?.residentId?.length !== 13 ) {
         isCheckedResidentId.value = false;
         return true
-      };
+      } else {
+        if (formState.value?.residentId === previousRowData.value?.residentId)
+          isCheckedResidentId.value = true;
+      }
       if (isNewRow.value) return false;
       return formState.value?.residentId === previousRowData.value?.residentId;
     });
     const isCheckedResidentId = ref(true);
-    const triggerResidentId = ref(true);
+    const triggerResidentId = ref(false);
     const { refetch: refetchCheckResidentId, onResult: onResultCheckResidentId } = useQuery(
       queries.isBackerRegistableResidentId,
       variables,
@@ -726,15 +731,16 @@ export default defineComponent({
 
     // watch type and reset bizNumber or residentId, if type === 1 => bizNumber, type !== 1 => residentId
     watch(() => formState.value.type, (newValue) => {
+      if (isNewRow.value) {
         if (newValue !== 1) {
-          formState.value.residentId = null;
+          formState.value.residentId = '';
           isCheckedResidentId.value = false;
         } else {
-          formState.value.bizNumber = null;
+          formState.value.bizNumber = '';
           isCheckedBizNumber.value = false;
         }
       }
-    , { deep: true });
+    }, { deep: true });
     // check duplicate Biz Number
     const variablesCheckBizNumber = {
       companyId: companyId,

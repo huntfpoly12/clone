@@ -1,9 +1,12 @@
 #pa-430 {
-    .custom-flex {
-        display: flex;
-        align-items: center;
-        justify-content: space-between !important;
+    #gridContainerPA430 {
+        max-height: 750px;
     }
+    // .custom-flex {
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: space-between !important;
+    // }
 
     .content-flex {
         margin: 10px;
@@ -49,28 +52,28 @@
         padding-left: 15px;
     }
 
-    ::v-deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
+    :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
         background: white;
         padding: 2px 15px;
         border-radius: 5px;
         color: black;
     }
 
-    ::v-deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
+    :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
         background: rgb(194, 56, 56);
         padding: 2px 15px;
         border-radius: 5px;
         color: white;
     }
 
-    ::v-deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
+    :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
         background: #77933C;
         padding: 2px 15px;
         border-radius: 5px;
         color: white;
     }
 
-    ::v-deep .selectRatio .dx-item-content {
+    :deep .selectRatio .dx-item-content {
         background: #77933C;
         padding: 2px 15px;
         border-radius: 5px;
@@ -102,7 +105,7 @@
         align-items: center;
     }
 
-    ::v-deep .cell-center {
+    :deep .cell-center {
         text-align: center !important
     }
 
@@ -111,5 +114,12 @@
     }
     .bt-print-group :deep(.dx-button-content){
       padding: 1px;
+    }
+
+    :deep .dx-datagrid-text-content {
+        white-space: pre-wrap;
+    }
+    :deep .dx-radiogroup-horizontal {
+        padding-top: 5px;
     }
 }

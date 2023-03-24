@@ -28,7 +28,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
         </a-row>
@@ -97,7 +97,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(7, 'day'), dayjs()]);
+        const rangeDate: any = ref([dayjs().subtract(1, 'y'), dayjs()]);
         let trigger = ref(true)
         let dataModalDetail: any = ref({})
         // ================== GRAPHQL=================

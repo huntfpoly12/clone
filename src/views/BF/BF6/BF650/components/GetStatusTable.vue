@@ -60,7 +60,9 @@ export default defineComponent({
                 // emit('productionStatusData', data[0]);
             }
         })
-        onError((res: any)=> {notification('error', res.message)})
+        onError((res: any)=> {
+          // notification('error', res.message)
+        })
         const checkStatus = (status: any) => {
             if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0)
                 return true
