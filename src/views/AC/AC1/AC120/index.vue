@@ -97,26 +97,26 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
                     <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxColumn caption="결의번호" data-field="fill2"></DxColumn>
+                    <DxColumn caption="결의번호" data-field="fill2" />
                     <DxColumn caption="통장" cell-template="fill1" />
                     <template #fill1="{ data }">
                         <a-tooltip placement="left" title="{은행명} {통장번호} ">
                             <div>{{ data.data.fill1 }}</div>
                         </a-tooltip>
                     </template>
-                    <DxColumn caption="일자" data-field="fill2"></DxColumn>
-                    <DxColumn caption="결의 구분" data-field="fill3"></DxColumn>
-                    <DxColumn caption="수입액" data-field="fill4"></DxColumn>
-                    <DxColumn caption="지출액" data-field="fill5"></DxColumn>
-                    <DxColumn caption="잔액" data-field="fill6"></DxColumn>
-                    <DxColumn caption="통장적요" data-field="fill7"></DxColumn>
-                    <DxColumn caption="적요" data-field="fill8"></DxColumn>
-                    <DxColumn caption="계정과목" data-field="fill9"></DxColumn>
-                    <DxColumn caption="상대계정" data-field="fill10"></DxColumn>
-                    <DxColumn caption="자금원천" data-field="fill10"></DxColumn>
-                    <DxColumn caption="거래처" data-field="fill10"></DxColumn>
-                    <DxColumn caption="결제수단" data-field="fill10"></DxColumn>
-                    <DxColumn caption="증빙" data-field="fill10"></DxColumn>
+                    <DxColumn caption="일자" data-field="fill2" />
+                    <DxColumn caption="결의 구분" data-field="fill3" />
+                    <DxColumn caption="수입액" data-field="fill4" />
+                    <DxColumn caption="지출액" data-field="fill5" />
+                    <DxColumn caption="잔액" data-field="fill6" format="fixedPoint" />
+                    <DxColumn caption="통장적요" data-field="fill7" format="fixedPoint" />
+                    <DxColumn caption="적요" data-field="fill8" format="fixedPoint" />
+                    <DxColumn caption="계정과목" data-field="fill9" />
+                    <DxColumn caption="상대계정" data-field="fill10" />
+                    <DxColumn caption="자금원천" data-field="fill10" />
+                    <DxColumn caption="거래처" data-field="fill10" />
+                    <DxColumn caption="결제수단" data-field="fill10" />
+                    <DxColumn caption="증빙" data-field="fill10" />
 
                     <DxColumn caption="물품 내역" cell-template="normality" />
                     <template #normality="{ data }">
