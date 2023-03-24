@@ -97,7 +97,7 @@
                     <template #sumWithholdingRuralSpecialTax="{ data }" >
                         {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax + data.data.withholdingIncomeTax) }}
                     </template>
-                    <DxSummary v-if="dataSource.length > 0">
+                    <DxSummary v-if="dataSource.length">
                         <DxTotalItem column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
                         <DxTotalItem column="지급총액" summary-type="sum" display-format="지급총액합계: {0}"
                             value-format="#,###" />

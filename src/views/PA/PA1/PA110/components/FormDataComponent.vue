@@ -65,7 +65,7 @@
                     </div>
                     <a-form-item label="근무일수" label-align="right" class="red">
                         <div style="display: flex;align-items: center;">
-                            <number-box :spinButtons="true" :min="0" width="100px"
+                            <number-box :spinButtons="true" :min="0" :max="31" width="100px"
                                 v-model:valueInput="dataIW.workingDays" :required="true"/>
                             <span style="padding-left: 5px;">일</span>
                         </div>
@@ -600,6 +600,7 @@ export default defineComponent({
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
             }
+            store.state.common.refreshDataGridRef++
             // setTimeout(() => {
             //     store.state.common.statusChangeFormEdit = false;
             //     store.state.common.statusChangeFormPrice = false;
@@ -689,6 +690,7 @@ export default defineComponent({
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.state.common.refreshDataGridRef++
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
@@ -696,6 +698,7 @@ export default defineComponent({
                 store.state.common.dataRowOnActive = dataIW.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
+                    store.state.common.refreshDataGridRef++
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                     store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
