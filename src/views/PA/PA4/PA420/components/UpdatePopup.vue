@@ -39,6 +39,7 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { useStore } from 'vuex';
+
 export default defineComponent({
     props: {
         modalStatus: {

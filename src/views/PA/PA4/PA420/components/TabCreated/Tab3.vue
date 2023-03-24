@@ -75,44 +75,40 @@
             <a-col :span="12">
                 <div class="header-text-2 mb-10">연금계좌입금명세
                     ({{
-                        $filters.formatCurrency(dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount
-                            =
-                            dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount
-                            +
-                            dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount)
+                        $filters.formatCurrency(dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount)
                     }} 원)</div>
                 <div class="d-flex">
                     <default-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].pensionAccountHolder"
+                        v-model:valueInput="statements1.pensionAccountHolder"
                         :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                     <biz-number-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].bizNumber"
+                        v-model:valueInput="statements1.bizNumber"
                         :required="false" width="20%" class="mr-5" placeholder="사업자등록번호" />
                     <default-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].bankAccountNumber"
+                        v-model:valueInput="statements1.bankAccountNumber"
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
-                        v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate"
+                        v-model:valueDate="statements1.depositDate"
                         :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
+                        v-model:valueInput="statements1.accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
                 <div class="d-flex mt-5">
                     <default-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].pensionAccountHolder"
+                        v-model:valueInput="statements2.pensionAccountHolder"
                         :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                     <biz-number-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].bizNumber"
+                        v-model:valueInput="statements2.bizNumber"
                         :required="false" width="20%" class="mr-5" placeholder="사업자등록번호" />
                     <default-text-box
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].bankAccountNumber"
+                        v-model:valueInput="statements2.bankAccountNumber"
                         :required="false" width="15%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
-                        v-model:valueDate="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate"
+                        v-model:valueDate="statements2.depositDate"
                         :required="true" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
-                        v-model:valueInput="dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
+                        v-model:valueInput="statements2.accountDepositAmount"
                         :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
             </a-col>
@@ -225,36 +221,36 @@
                 }} 원)</div>
                 <div class="d-flex">
                     <default-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].pensionAccountHolder"
+                        v-model:valueInput="statementsAfterCal1.pensionAccountHolder"
                         disabled="true" :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                     <biz-number-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].bizNumber"
+                        v-model:valueInput="statementsAfterCal1.bizNumber"
                         disabled="true" :required="false" width="15%" class="mr-5" placeholder="사업자등록번호" />
                     <default-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].bankAccountNumber"
+                        v-model:valueInput="statementsAfterCal1.bankAccountNumber"
                         disabled="true" :required="false" width="20%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
-                        v-model:valueDate="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate"
+                        v-model:valueDate="statementsAfterCal1.depositDate"
                         disabled="true" :required="false" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
+                        v-model:valueInput="statementsAfterCal1.accountDepositAmount"
                         disabled="true" :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
                 <div class="d-flex mt-5 mb-5">
                     <default-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].pensionAccountHolder"
+                        v-model:valueInput="statementsAfterCal2.pensionAccountHolder"
                         disabled="true" :required="false" width="20%" class="mr-5" placeholder="연금계좌취급자" />
                     <biz-number-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].bizNumber"
+                        v-model:valueInput="statementsAfterCal2.bizNumber"
                         disabled="true" :required="false" width="15%" class="mr-5" placeholder="사업자등록번호" />
                     <default-text-box
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].bankAccountNumber"
+                        v-model:valueInput="statementsAfterCal2.bankAccountNumber"
                         disabled="true" :required="false" width="20%" class="mr-5" placeholder="계좌번호" />
                     <date-time-box
-                        v-model:valueDate="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate"
+                        v-model:valueDate="statementsAfterCal2.depositDate"
                         disabled="true" :required="false" width="25%" class="mr-5" placeholder="입금일" />
                     <number-box-money
-                        v-model:valueInput="dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
+                        v-model:valueInput="statementsAfterCal2.accountDepositAmount"
                         disabled="true" :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
                 <a-form-item label="이연퇴직소득세">
@@ -332,7 +328,6 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 import { initialIncomeRetirementTax } from "../../utils/index"
 import { Message } from '@/configs/enum';
-import { validate } from 'json-schema';
 export default defineComponent({
     props: {
         dataForm: {
@@ -344,7 +339,12 @@ export default defineComponent({
         const trigger = ref<boolean>(false)
         const variables: any = ref({})
         const dataIncomeRetirementTax: any = ref({ ...initialIncomeRetirementTax })
+        const statements1 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
+        const statements2 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
+        const statementsAfterCal1 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
+        const statementsAfterCal2 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
         const validateRetiTaxBenefits = ref<boolean>(false)
+        
         const {
             result,
             loading,
@@ -361,8 +361,9 @@ export default defineComponent({
         watch(result, (value) => {
             if (value.calculateIncomeRetirementTax) {
                 dataIncomeRetirementTax.value = value.calculateIncomeRetirementTax;
-                dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate)
-                dataIncomeRetirementTax.value.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate)
+                statementsAfterCal1.value = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]
+              if (value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements.length > 1)
+                statementsAfterCal1.value = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1]
             }
             trigger.value = false;
         })
@@ -377,9 +378,14 @@ export default defineComponent({
                 delete variables.value.input.prevRetirementBenefitStatus
             }
             delete variables.value.input.checkBoxCallApi
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate = parseInt(variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate)
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate = parseInt(variables.value.input.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate)
-            trigger.value = true;
+          variables.value.input.calculationOfDeferredRetirementIncomeTax.statements = []
+          if (JSON.stringify(statements1.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
+            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements1.value)
+          }
+          if (JSON.stringify(statements2.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
+            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements2.value)
+          }
+          trigger.value = true;
         }
 
         // if there is any change in the two inputs retirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = retirementBenefits - nonTaxableRetirementBenefits)
@@ -396,12 +402,21 @@ export default defineComponent({
               validateRetiTaxBenefits.value =  true
             }  
         }) 
+
+        watch(() => [
+          statements1.value,
+          statements2.value
+        ], () => {
+          props.dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount = statements1.value.accountDepositAmount + statements2.value.accountDepositAmount
+        },{deep:true})
         return {
             loading,
             calculateIncomeRetirementTax,
             dataIncomeRetirementTax,
             validateRetiTaxBenefits,
-            Message
+          Message,
+          statements1, statements2,
+          statementsAfterCal1,statementsAfterCal2
         }
     }
 })
