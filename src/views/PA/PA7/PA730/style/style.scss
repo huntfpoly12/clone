@@ -1,4 +1,7 @@
 #pa-730 {
+  #gridContainerPA730 {
+    max-height: 730px;
+  }
   .dflex {
     display: flex;
   }
@@ -45,9 +48,9 @@
     margin-top: 6px;
   }
 
-  ::v-deep .custom-mail-group {
+  :deep .custom-mail-group {
     .dx-button-content {
-      padding: 3px;
+      padding: 1px;
     }
   }
 
@@ -80,12 +83,12 @@
       font-size: 14px;
     }
 
-    ::v-deep .ant-switch-checked {
+    :deep .ant-switch-checked {
       background-color: black;
     }
   }
 
-  ::v-deep .dx-datagrid-text-content {
+  :deep .dx-datagrid-text-content {
     white-space: break-spaces;
     text-align: left !important;
   }
