@@ -184,7 +184,7 @@
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                    :data="popupDataEmailMulti" />
+                    :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin"/>
             </div>
         </div>
     </a-spin>
@@ -415,6 +415,7 @@ export default defineComponent({
 
         onResultUserInf(e => {
             emailUserLogin.value = e.data.getUser.email
+            
         })
 
         watch(result, (value) => {

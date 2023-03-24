@@ -170,12 +170,15 @@
                 :class="!dataShow.foreigner ? '' : 'red'"
               >
                 <country-code-select-box
+                  v-if="dataShow.foreigner"
                   v-model:valueCountry="dataShow.nationalityCode"
                   @textCountry="changeTextCountry"
                   width="200px"
-                  :disabled="!dataShow.foreigner"
+                  :hiddenOptionKR="true"
                   :required="true"
                 />
+                <DxSelectBox v-else :data-source="[{key: 0, value: 'KR'}]" :value="0"
+                             value-expr="key" display-expr="value" :disabled="true" width="200px"/>
 
               </a-form-item>
               <a-form-item
@@ -245,11 +248,15 @@
       </a-row>
     </div>
   </div>
-  <PopupMessage :modalStatus="isDiscardDelete" @closePopup="isDiscardDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete"
+  <PopupMessage :modalStatus="isDiscardDelete" @closePopup="isDiscardDelete = false" typeModal="confirm"
+                :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete"
   />
-  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistory" title="변경이력" typeHistory="pa-610"
+  <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupDataHistory"
+                title="변경이력" typeHistory="pa-610"
   />
-  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'" :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요" @checkConfirm="handleConfirm"
+  <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'"
+                      :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요"
+                      @checkConfirm="handleConfirm"
   />
 </template>
 <script lang="ts">
@@ -263,12 +270,14 @@ import {
   DxExport,
   DxGrouping,
   DxItem,
+  DxPager,
   DxPaging,
   DxSearchPanel,
   DxSelection,
-  DxToolbar,
-  DxPager
+  DxToolbar
 } from "devextreme-vue/data-grid";
+import DxSelectBox from "devextreme-vue/select-box";
+
 import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
 import {computed, defineComponent, reactive, ref, watch, watchEffect} from "vue";
 import {useStore} from "vuex";
@@ -326,8 +335,9 @@ export default defineComponent({
     Tooltip,
     PlusOutlined,
     DxPaging,
-    DxPager
-},
+    DxPager,
+    DxSelectBox
+  },
   setup() {
     const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';
     const arrForeigner = ArrForeigner;
@@ -390,6 +400,13 @@ export default defineComponent({
       }
     }, {deep: true});
 
+    // watch listen dataSource and globalYear change then change focusedRowKey
+    watch([dataSource, globalYear], async (newVal: any) => {
+      if (newVal[0] && newVal[1] !== globalYear.value) {
+        focusedRowKey.value = newVal[0]?._items[0]?.residentId || 0
+      }
+    }, {deep: true});
+
     // ================GRAPHQL==============================================
     const valueCallApiGetEmployeeBusinesses = reactive({
       companyId: companyId,
@@ -418,17 +435,15 @@ export default defineComponent({
           key: "key",
         },
       });
-      if(data.length === 0) {
+      if (data.length === 0) {
         formRef.value.resetValidate();
         previousRowData.value = {...valueDefaultAction};
         dataShow.value = valueDefaultAction;
       }
-      // selectRowKeyAction.value = data[0]?.key ?? 0;
-      focusedRowKey.value = data[0]?.key ?? 0;
       isNewRow.value = false
     });
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
-    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
+    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount() : 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
 
@@ -654,9 +669,9 @@ export default defineComponent({
         dataShow.value.nationalityCode = 'KR'
         dataShow.value.stayQualification = null
       } else {
-        if(isNewRow.value) {
-          dataShow.value.nationality = ''
-          dataShow.value.nationalityCode = ''
+        if (isNewRow.value) {
+          dataShow.value.nationality = '대한민국'
+          dataShow.value.nationalityCode = 'KR'
           dataShow.value.stayQualification = null
         } else {
           if(previousRowData.value.foreigner) {
@@ -664,8 +679,8 @@ export default defineComponent({
             dataShow.value.nationalityCode = previousRowData.value.nationalityCode
             dataShow.value.stayQualification = previousRowData.value.stayQualification
           } else {
-            dataShow.value.nationality = ''
-            dataShow.value.nationalityCode = ''
+            dataShow.value.nationality = '대한민국'
+            dataShow.value.nationalityCode = 'KR'
             dataShow.value.stayQualification = null
           }
 
@@ -762,8 +777,8 @@ export default defineComponent({
     };
     const modalHistory = () => (modalHistoryStatus.value = true);
     function calculateIncomeTypeCodeAndName(rowData: any) {
-            return rowData.incomeTypeCode + ' ' + rowData.incomeTypeName;
-        }
+      return rowData.incomeTypeCode + ' ' + rowData.incomeTypeName;
+    }
 
     return {
       store,

@@ -6,7 +6,6 @@
       @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
       v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef">
       <DxScrolling mode="standard" show-scrollbar="always" />
-      <!-- <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" /> -->
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
       <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" width="205" />
@@ -131,10 +130,10 @@ export default defineComponent({
       type: Function,
       default: () => { },
     },
-    editTaxParamFake: {
-      type: Object,
-      default: { incomeId: 0 },
-    }
+    // editTaxParamFake: {
+    //   type: Object,
+    //   default: { incomeId: 0 },
+    // }
   },
   setup(props, { emit }) {
     let dataSourceDetail = ref([]);
@@ -230,10 +229,6 @@ export default defineComponent({
     };
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
-      if (!props.compareForm()) {
-        store.commit('common/selectedRowKeysPA720', e.currentDeselectedRowKeys[0]);
-      }
-      changeDayDataPA720.value.prevPaymentDay = e.selectedRowsData[0]?.paymentDay;
       changeDayDataPA720.value.employeeId = e.selectedRowsData[0]?.employeeId;
       changeDayDataPA720.value.incomeTypeCode = e.selectedRowsData[0]?.incomeTypeCode;
       incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
@@ -250,6 +245,9 @@ export default defineComponent({
       loadIndexInit.value = -1;
     }, { deep: true })
     const onRowClick = (e: any) => {
+      if (!props.compareForm()) {
+        e.component.selectRows(formPA720.value.input.incomeId, true);
+      }
       const data = e.data && e.data;
       // store.commit('common/selectedRowKeysPA720', data.incomeId);
       if (e.loadIndex != loadIndexInit.value) {
@@ -296,6 +294,9 @@ export default defineComponent({
         dataGridRef.value?.refresh();
       focusedRowKey.value = props.compareType == 2 ? 681 : formPA720.value.input.incomeId;
     }
+    const selectRow = (val: any) => {
+      dataGridRef.value.selectRows(val, true)
+    }
     return {
       rowTable,
       per_page,
@@ -321,7 +322,8 @@ export default defineComponent({
       taxPayDataRef,
       removeHoverRowKey,
       store,
-      changeDayDataPA720
+      changeDayDataPA720,
+      selectRow
     };
   },
 });
