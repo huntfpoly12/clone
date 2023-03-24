@@ -30,6 +30,7 @@ import { defineComponent, watch, ref } from "vue";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA730/index";
+import { Message } from "@/configs/enum";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -80,7 +81,7 @@ export default defineComponent({
       }
     };
     onDoneAdd(() => {
-      notification("success", `이메일을 발송했습니다`);
+      notification("success", Message.getMessage('COMMON', '801').message);
       emit("closePopup", false);
     });
     errorSendEmail((e: any) => {

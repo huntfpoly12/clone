@@ -33,6 +33,7 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA//PA5/PA510/index"
 import { companyId } from '@/helpers/commonFunction';
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -97,7 +98,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {
