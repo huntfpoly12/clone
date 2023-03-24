@@ -42,6 +42,11 @@
   <a-row>
     <a-col :span="14" class="custom-layout" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
+        <!-- {{ compareType }} compareType <br/>
+        {{ isClickAddMonthDiff }} isClickAddMonthDiff <br/>
+        {{ isClickEditClick }} isClickEditClick <br/>
+        {{ isClickMonthDiff }} isClickMonthDiff <br/>
+        {{ isClickYearDiff }} isClickYearDiff <br/> -->
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
@@ -439,6 +444,7 @@ export default defineComponent({
       isNewRow.value = true;
       compareType.value = 1;
       dataCallApiIncomeBusiness.incomeId = dataAction.value.input.incomeId;
+      disabledInput.value = false;
     };
     const delNewRow = async () => {
       dataSourceDetail.value = dataSourceDetail.value.splice(0, dataSourceDetail.value.length - 1);
@@ -448,7 +454,6 @@ export default defineComponent({
     let watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
       if (compareForm()) {
         emit('noSave', 1, newVal);
-        triggerOption.value = true;
       } else {
         compareType.value = 2;
         rowChangeStatus.value = true;
@@ -489,7 +494,7 @@ export default defineComponent({
         }
         if (isClickEditDiff.value) {
           onEditItem();
-          dataAction.value.input = {...dataActionEdit.value.input}
+          // dataAction.value.input = {...dataActionEdit.value.input}
           compareType.value = 1;
           return;
         }
@@ -502,7 +507,6 @@ export default defineComponent({
         if (isClickAddMonthDiff.value) {
           emit('noSave', 2);
           isClickAddMonthDiff.value = false;
-          compareType.value = 1;
           return;
         }
         if (isNewRow.value) {
@@ -589,13 +593,14 @@ export default defineComponent({
     const actionEditSuccess = (val: any) => {
       if (val.length > 0) {
         triggerIncomeBusinesses.value = true;
-        dataActionEdit.value.input = { ...dataAction.value.input };
+        // dataActionEdit.value.input = { ...dataAction.value.input };
         dataCallApiIncomeBusiness.incomeId = val[0];
         triggerIncomeBusiness.value = true;
         selectedRowKeys.value = [...val];
         focusedRowKey.value = val[0];
       }else{
         isClickEditClick.value = false;
+        isClickEditDiff.value = false;
       }
       modalEdit.value = false;
     };
@@ -690,11 +695,10 @@ export default defineComponent({
       if (isClickAddMonthDiff.value) {
         emit('noSave', 2);
         isClickAddMonthDiff.value = false;
-        compareType.value = 1;
         return;
       }
       triggerIncomeBusinesses.value = true;
-      dataCallApiIncomeBusiness.incomeId = compareType.value == 2 && idRowFake.value;
+      dataCallApiIncomeBusiness.incomeId = compareType.value == 2 ? idRowFake.value : dataAction.value.input.incomeId;
     }
     const onChangeFormError = () => {
       removeHoverRowKey();
@@ -851,9 +855,9 @@ export default defineComponent({
       selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
     }
     return {
-      loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam, companyId,
-      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610,
-      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness,isClickEditClick
+      loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax,
+      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610, popupAddStatus, titleModalConfirm, editParam, companyId,
+      paymentDayPA620, rowChangeStatus, checkLen, compareForm,triggerOption,refetchOption, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness,isClickEditClick
     }
   }
 });

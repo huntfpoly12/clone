@@ -65,7 +65,8 @@ let statesPA720 = {
   changeDayDataPA720: {
     employeeId: '',
     incomeTypeCode: '',
-  }
+  },
+  isClickEditDiffPA720: false,
 };
 
 export default statesPA720;
