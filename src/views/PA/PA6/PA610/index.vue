@@ -305,7 +305,7 @@ import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import {ArrForeigner, valueDefaultAction} from "./utils";
-import {ClickYearStatus, FormStatus} from "@/store/settingModule";
+import {ClickYearStatus, FormStatus} from "@/store/settingModule/types";
 
 export default defineComponent({
   name: 'MyForm',
