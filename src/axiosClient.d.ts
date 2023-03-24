@@ -1,6 +1,7 @@
 
 import axios from "axios";
-const baseURL = 'https://dev-jangbuda-api.bankda.com/api/';
+const baseURL = import.meta.env.VITE_RESTAPI_ENDPOINT;
+//const baseURL = 'https://dev-jangbuda-api.bankda.com/api/';
 
 const token = sessionStorage.getItem("token");
 export default axios.create({
