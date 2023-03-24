@@ -27,11 +27,11 @@ import {
     SearchOutlined,
 } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import Tab1Component from "./components/Tab1Component.vue";
-import Tab2Component from "./components/Tab2Component.vue";
-import Tab3Component from "./components/Tab3Component.vue";
-import Tab4Component from "./components/Tab4Component.vue";
-import Tab5Component from "./components/Tab5Component.vue";
+import Tab1Component from "./Components/Tab1Component.vue";
+import Tab2Component from "./Components/Tab2Component.vue";
+import Tab3Component from "./Components/Tab3Component.vue";
+import Tab4Component from "./Components/Tab4Component.vue";
+import Tab5Component from "./Components/Tab5Component.vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
