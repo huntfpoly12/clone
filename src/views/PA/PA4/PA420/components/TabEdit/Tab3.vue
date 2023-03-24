@@ -17,10 +17,8 @@
                 </a-form-item>
                 <a-form-item label="비과세퇴직급여(확정)">
                     <div class="d-flex-center">
-                     
                         <number-box-money width="150px"
                             v-model:valueInput="dataGet.specification.nonTaxableRetirementBenefits" format="0,###" :min="0"/>
-                            
                         <span class="pl-5">원</span>
                     </div>
                 </a-form-item>
@@ -76,7 +74,7 @@
             <a-col :span="12">
                 <div class="header-text-2 mb-10">연금계좌입금명세
                     {{
-                      dataGet.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount
+                      totalStatements
                     }} 원
                 </div>
                 <div class="d-flex">
@@ -222,7 +220,7 @@
                 </a-form-item>
                 <div>연금계좌입금명세 (
                     {{
-                
+                        totalStatementAffterCal
                     }}
                     원)</div>
                 <div class="d-flex">
@@ -348,8 +346,10 @@ export default defineComponent({
         const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
-            ...store.state.common.formStateEditPA420
+            //...store.state.common.formStateEditPA420
         })
+        const totalStatements = ref(0)
+        const totalStatementAffterCal = ref(0)
         const statements1 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
         const statements2 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
         const statementsAfterCal1 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
@@ -369,10 +369,10 @@ export default defineComponent({
         })
         // ====================== WATCH =======================================
         watch(() => store.state.common.formStateEditPA420, (newValue) => {
-          dataGet.value = newValue;
-          console.log(newValue,'store.state.common.formStateEditPA420');
-
+          dataGet.value = JSON.parse(JSON.stringify(newValue));
           // check and init statements form
+          totalStatements.value = newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount
+          totalStatementAffterCal.value = newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount
           statements1.value = { ...newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0] }
           statementsAfterCal1.value = { ...newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[0] }
           if (newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements.length > 1)
@@ -380,11 +380,7 @@ export default defineComponent({
             statementsAfterCal2.value = { ...newValue.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements[1] }
         }, { deep: true ,immediate:true})
 
-        // watch(() => dataGet, (newValue) => {
-        //     emit("update:dataDetail", newValue);
-        // }, { deep: true })
         watch(() => resultCaculate, (newValue) => {
-        console.log(newValue.value,'resultCaculate');
             dataGet.value.specification.specificationDetail.lastRetirementBenefitStatus = newValue.value.calculateIncomeRetirementTax.lastRetirementBenefitStatus
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.lastRetiredYearsOfService
             dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService = newValue.value.calculateIncomeRetirementTax.settlementRetiredYearsOfService
@@ -395,6 +391,17 @@ export default defineComponent({
             dataGet.value.specification.specificationDetail.taxAmountToBeReported = newValue.value.calculateIncomeRetirementTax.taxAmountToBeReported
             dataGet.value.specification.specificationDetail.retirementIncomeTax = newValue.value.calculateIncomeRetirementTax.retirementIncomeTax
 
+            // set form statements after calculate
+            if(newValue.value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements.length > 0){
+                statementsAfterCal1.value = { ...newValue.value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] }
+                if (newValue.value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements.length > 1)
+                            statementsAfterCal2.value = { ...newValue.value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1] }
+            }
+      
+            totalStatementAffterCal.value = newValue.value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount
+
+            store.state.common.formStateEditPA420.specification = dataGet.value.specification
+            trigger.value = false
         }, { deep: true })
         // ====================== FUNCTION =======================================
         // Click button caculate step-3
@@ -431,9 +438,7 @@ export default defineComponent({
                       }
                   })
               );
-            }
-            console.log(cleanData,'cleanData');
-            
+            }   
             // Setup value call api
             dataRequestCaculate.value.input = {
                 "taxCredit": cleanData.specification.specificationDetail.taxAmountCalculation.taxCredit,
@@ -480,9 +485,7 @@ export default defineComponent({
           statements1.value,
           statements2.value
         ], ([newValue1,newValue2]) => {
-          console.log();
-          
-          dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount =
+          totalStatements.value = dataGet.value.specification.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount =
             newValue1.accountDepositAmount +
             newValue2.accountDepositAmount
         },{deep:true})
@@ -492,7 +495,8 @@ export default defineComponent({
             loading,
             actionCaculate, store, Message, validateRetiTaxBenefits,
             statements1, statements2,
-            statementsAfterCal1,statementsAfterCal2
+            statementsAfterCal1,statementsAfterCal2,
+            totalStatements,totalStatementAffterCal
         }
     }
 })

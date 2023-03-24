@@ -26,7 +26,7 @@
                     <div class="d-flex-center">
                         <div :class="validateRetiTaxBenefits ? 'validate-caculate':''">
                           <number-box-money :required="false" width="150px"
-                            v-model:valueInput="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits" :disabled="true" format="0,###" :min="0"/>
+                            v-model:valueInput="taxableRetirementBenefits" :disabled="true" format="0,###" :min="0"/>
                             <div v-if="validateRetiTaxBenefits" class="message-error">
                               <span style="word-wrap: break-word;hyphens: auto;">{{ Message.getMessage('PA420', '001').message }}</span>
                             </div>
@@ -338,6 +338,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const trigger = ref<boolean>(false)
         const variables: any = ref({})
+        const taxableRetirementBenefits: any = ref(props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits)
         const dataIncomeRetirementTax: any = ref({ ...initialIncomeRetirementTax })
         const statements1 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
         const statements2 = ref({ ...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] })
@@ -359,11 +360,11 @@ export default defineComponent({
         })
 
         watch(result, (value) => {
-            if (value.calculateIncomeRetirementTax) {
+            if (value.calculateIncomeRetirementTax && value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements.length > 0) {
                 dataIncomeRetirementTax.value = value.calculateIncomeRetirementTax;
                 statementsAfterCal1.value = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]
               if (value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements.length > 1)
-                statementsAfterCal1.value = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1]
+                statementsAfterCal2.value = value.calculateIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1]
             }
             trigger.value = false;
         })
@@ -378,14 +379,14 @@ export default defineComponent({
                 delete variables.value.input.prevRetirementBenefitStatus
             }
             delete variables.value.input.checkBoxCallApi
-          variables.value.input.calculationOfDeferredRetirementIncomeTax.statements = []
-          if (JSON.stringify(statements1.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements1.value)
-          }
-          if (JSON.stringify(statements2.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
-            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements2.value)
-          }
-          trigger.value = true;
+            variables.value.input.calculationOfDeferredRetirementIncomeTax.statements = []
+            if (JSON.stringify(statements1.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
+                variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements1.value)
+            }
+            if (JSON.stringify(statements2.value) !== JSON.stringify(initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])) {
+                variables.value.input.calculationOfDeferredRetirementIncomeTax.statements.push(statements2.value)
+            }
+            trigger.value = true;
         }
 
         // if there is any change in the two inputs retirementBenefits or nonTaxableRetirementBenefits is  ( taxableRetirementBenefits = retirementBenefits - nonTaxableRetirementBenefits)
@@ -394,7 +395,8 @@ export default defineComponent({
           props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits
         ], () => {
             validateRetiTaxBenefits.value =  false
-            props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits =
+
+            taxableRetirementBenefits.value =  props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits =
             props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.retirementBenefits -
             props.dataForm.taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits
 
@@ -416,7 +418,8 @@ export default defineComponent({
             validateRetiTaxBenefits,
           Message,
           statements1, statements2,
-          statementsAfterCal1,statementsAfterCal2
+          statementsAfterCal1,statementsAfterCal2,
+          taxableRetirementBenefits
         }
     }
 })
