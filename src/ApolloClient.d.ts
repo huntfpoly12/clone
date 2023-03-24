@@ -5,9 +5,9 @@ import {
 } from "@apollo/client/core";
 import { setContext } from "apollo-link-context";
 
-
+const baseURL = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 const httpLink = createHttpLink({
-  uri: "https://dev-jangbuda-api.bankda.com/graphql/",
+  uri: baseURL,
 });
 
 const authLink = setContext((_, { headers }) => {

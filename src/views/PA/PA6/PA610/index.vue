@@ -6,8 +6,8 @@
   />
   <div id="pa-610">
     <div class="page-content">
-      <a-row :gutter="[24]">
-        <a-col :span="16" class="">
+      <a-row :gutter="[24, 0]" style="margin: 0px">
+        <a-col :span="16">
           <a-spin
             :spinning="
               loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
@@ -170,21 +170,13 @@
                 :class="!dataShow.foreigner ? '' : 'red'"
               >
                 <country-code-select-box
-                  v-if="dataShow.foreigner"
                   v-model:valueCountry="dataShow.nationalityCode"
                   @textCountry="changeTextCountry"
                   width="200px"
-                  :hiddenOptionKR="true"
+                  :disabled="!dataShow.foreigner"
                   :required="true"
                 />
-                <country-code-select-box
-                  v-else
-                  v-model:valueCountry="dataShow.nationalityCode"
-                  @textCountry="changeTextCountry"
-                  width="200px"
-                  :disabled="true"
-                  :required="true"
-                />
+
               </a-form-item>
               <a-form-item
                 label="외국인 체류자격"
@@ -286,7 +278,7 @@ import Tooltip from "@/components/common/Tooltip.vue";
 import {Message} from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import {companyId, onExportingCommon} from "@/helpers/commonFunction";
-import {compareObject, isEqualObject} from "@/utils";
+import {isEqualObject} from "@/utils";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -347,7 +339,7 @@ export default defineComponent({
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
-    const isFormChange = computed(() => !compareObject(dataShow.value, previousRowData.value));
+    const isFormChange = computed(() => !isEqualObject(dataShow.value, previousRowData.value));
     // Ref
     const formWrapper = ref(null)
     const isDiscard = ref(false); // verify popup discard
@@ -432,7 +424,7 @@ export default defineComponent({
         dataShow.value = valueDefaultAction;
       }
       // selectRowKeyAction.value = data[0]?.key ?? 0;
-      focusedRowKey.value = 0;
+      focusedRowKey.value = data[0]?.key ?? 0;
       isNewRow.value = false
     });
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
@@ -599,8 +591,6 @@ export default defineComponent({
       onDone: createdDone,
     } = useMutation(mutations.createEmployeeBusiness);
     createdDone(async (res) => {
-      console.log('selectRowKeyAction.value', selectRowKeyAction.value)
-      console.log('id',  res.data.createEmployeeBusiness.residentId)
       // tạo mới xong và kiểm tra có phải là thêm mới hay không, nếu đúng thì thêm row mới
       await refetchData();
       if(isClickAddRow.value) {
@@ -716,9 +706,6 @@ export default defineComponent({
       });
     }
     const handleSubmit = async () => {
-      console.log(focusedRowKey.value)
-      console.log('selectRowKeyAction', selectRowKeyAction.value)
-
       const res = formRef.value.validate();
       isDiscard.value = false;
       if (!res.isValid) {
@@ -817,7 +804,7 @@ export default defineComponent({
       // onRowClick,
       formWrapper,
       changeRadioForeigner,
-      calculateIncomeTypeCodeAndName
+      calculateIncomeTypeCodeAndName,
     };
   },
 });
