@@ -137,7 +137,7 @@ import {
 } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import PopupConfirmSave from "./PopupConfirmSaveStep1.vue";
+import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTableStep2.vue";
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery } from "@vue/apollo-composable";
