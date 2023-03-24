@@ -240,9 +240,10 @@ export default defineComponent({
     }));
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
-      // if(data){
-      //   store.commit('common/selectedRowKeysPA720',data.incomeId);
-      // }
+      if(store.state.common.isClickEditDiffPA720){
+        store.commit('common/selectedRowKeysPA720',data.incomeId);
+        store.state.common.isClickEditDiffPA720 = false;
+      }
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
       let editRowData: any = {};
@@ -412,7 +413,8 @@ export default defineComponent({
       resetForm,
       triggerIncomeExtra,
       idDisableInput,
-      loadingEmployeeExtras
+      loadingEmployeeExtras,
+      store
     };
   },
 });
