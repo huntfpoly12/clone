@@ -97,7 +97,7 @@ export default defineComponent({
         resPrint(res => {
             trigger.value = false
             emit("closePopup", true)
-            notification('success', Message.getCommonMessage('101').message)
+            notification('success', Message.getCommonMessage('801').message)
         })
         errorPrint(res => {
             notification('error', res.message)
