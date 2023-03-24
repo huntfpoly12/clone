@@ -12,9 +12,10 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <a-range-picker :placeholder="['Start month', 'End month']" format="YYYY-MM"
+                            <range-month-time-box v-model:valueDate="rangeDate" :minDate="minDate" :maxDate="maxDate" placeholder="시작월 > 종료월" />
+                            <!-- <a-range-picker :placeholder="['Start month', 'End month']" format="YYYY-MM"
                                 :value="rangeDate" :mode="mode2" @panelChange="handlePanelChange2"
-                                @change="handleChange" :locale="locale" />
+                                @change="handleChange" :locale="locale" /> -->
                         </div>
                     </a-col>
                     <a-col>
@@ -29,12 +30,16 @@
             <div class="page-content">
                 <a-row>
                     <a-col :span="12">
-                        <a-form-item label="서식 설정" class="red">
-                            <div class="format-settings-text">
-                                <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                                <span>
-                                    본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                                </span>
+                        <a-form-item label="서식 설정">
+                            <div class="dflex custom-flex">
+                                <radio-group :arrayValue="arrayRadioType" :layoutCustom="'horizontal'"
+                                    v-model:valueRadioCheck="dataInputReport.input.type" />
+                                <div style="margin-left: 10px;">
+                                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                                    <span>
+                                        본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                                    </span>
+                                </div>
                             </div>
                         </a-form-item>
                     </a-col>
@@ -48,15 +53,15 @@
                             </a-form-item>
                         </div>
                     </a-col>
-                    <a-col :span="12">
+                    <!-- <a-col :span="12">
                         <strong class="lable-item">소득자보관용 :</strong>
                         <switch-basic v-model:valueSwitch="valSwitch" :textCheck="'발행자보관용'" :textUnCheck="'발행자보고용'" />
-                    </a-col>
+                    </a-col> -->
                 </a-row>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                    :column-auto-width="true" @selection-changed="selectionChanged">
-                    <DxScrolling mode="standard" show-scrollbar="always"/>
+                <DxDataGrid id="gridContainerPA430" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                    :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                    @selection-changed="selectionChanged">
+                    <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="send-group-mail" />
                         <DxItem template="send-group-print" />
@@ -70,19 +75,19 @@
                     </template>
                     <template #send-group-print>
                         <div class="custom-mail-group">
-                          <DxButton @click="onPrintGroup" class="bt-print-group"> 
-                              <a-tooltip>
-                                  <template #title>
-                                    출력 / 저장
-                                  </template>
-                                  <img src="@/assets/images/printGroup.png" alt=""
-                                      style="width: 28px; margin-right: 3px; cursor: pointer" /> 
-                              </a-tooltip>
-                          </DxButton>
+                            <DxButton @click="onPrintGroup" class="bt-print-group">
+                                <a-tooltip>
+                                    <template #title>
+                                        출력 / 저장
+                                    </template>
+                                    <img src="@/assets/images/printGroup.png" alt=""
+                                        style="width: 28px; margin-right: 3px; cursor: pointer" />
+                                </a-tooltip>
+                            </DxButton>
                         </div>
                     </template>
-                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-                    <DxColumn :width="250" caption="사원" cell-template="employee-info" />
+                    <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
+                    <DxColumn :width="230" caption="사원" cell-template="employee-info" />
                     <template #employee-info="{ data }">
                         <div class="custom-action">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
@@ -91,37 +96,46 @@
                                 :forDailyUse="data.data.employeeType == 20 ? true : false" />
                         </div>
                     </template>
-                    <DxColumn data-field="retirementType" caption="구분 " cell-template="grid-cell"
+                    <DxColumn width="55" data-field="retirementType" caption="구분 " cell-template="grid-cell"
                         css-class="cell-center" />
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)?.name">{{
                             getColorTag(data.value)?.tag_name
                         }}</a-tag>
                     </template>
-                    <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate"
-                        cell-template="settlementStartDate" css-class="cell-center" :width="100" />
+                    <DxColumn caption="입사일 (정산시작일) " data-field="settlementStartDate" cell-template="settlementStartDate"
+                        css-class="cell-center" :width="140" />
                     <template #settlementStartDate="{ data }">
                         {{ $filters.formatDate(data.value) }}
                     </template>
-                    <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate"
-                        cell-template="settlementFinishDate" css-class="cell-center" :width="100" />
+                    <DxColumn caption="퇴사일 (정산종료일) " data-field="settlementFinishDate" cell-template="settlementFinishDate"
+                        css-class="cell-center" :width="140" />
                     <template #settlementFinishDate="{ data }">
                         {{ $filters.formatDate(data.value) }}
                     </template>
-                    <DxColumn caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth" />
+                    <DxColumn width="70" caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth" />
                     <template #inputedYearMonth="{ data }">
-                        {{ globalYear }}-{{ data.data.imputedMonth }}
+                        {{ globalYear }}-{{ $filters.formatMonth(data.data.imputedMonth) }}
                     </template>
-                    <DxColumn caption="지급연월" css-class="cell-center" cell-template="paymentYearMonth" />
+                    <DxColumn width="70" caption="지급연월" css-class="cell-center" cell-template="paymentYearMonth" />
                     <template #paymentYearMonth="{ data }">
-                        {{ data.data.paymentYear }}-{{ data.data.paymentMonth }}
+                        {{ data.data.paymentYear }}-{{ $filters.formatMonth(data.data.paymentMonth) }}
                     </template>
-                    <DxColumn caption="퇴직급여" data-field="retirementBenefits" css-class="cell-center" :width="130" />
-                    <DxColumn caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" css-class="cell-center" />
-                    <DxColumn caption="과세대상 퇴직급여" data-field="taxableRetirementBenefits" css-class="cell-center" />
-                    <DxColumn caption="공제" data-field="totalDeduction" css-class="cell-center" />
-                    <DxColumn caption="차인지급액" data-field="actualPayment" css-class="cell-center" />
-                    <DxColumn caption="비고" css-class="cell-center" cell-template="note" />
+                    <DxColumn caption="퇴직급여" data-field="retirementBenefits" width="100" format="#,###" alignment="right" />
+                    <DxColumn caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" width="110" format="#,###"
+                        alignment="right" />
+                    <DxColumn caption="과세대상 퇴직급여" data-field="taxableRetirementBenefits" width="123" format="#,###"
+                        alignment="right" />
+                    <DxColumn caption="공제" data-field="totalDeduction" cell-template="total-deduction" width="90" format="#,###" alignment="right" />
+                    <template #total-deduction="{ data }">
+                        <a-tooltip placement="top">
+                            <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세 {{
+                                $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>
+                            <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
+                        </a-tooltip>
+                    </template>
+                    <DxColumn caption="차인지급액" data-field="actualPayment" width="90" format="#,###" alignment="right" />
+                    <DxColumn caption="비고" cell-template="note" />
                     <template #note="{ data }">
                         <div class="custom-action">
                             <four-major-insurance v-if="data.data.employee.nationalPensionDeduction" :typeTag="1"
@@ -132,10 +146,10 @@
                                 :typeValue="1" />
                             <four-major-insurance v-if="data.data.employee.nationalPensionSupportPercent" :typeTag="6"
                                 :ratio="data.data.employee.nationalPensionSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent"
-                                :typeTag="7" :ratio="data.data.employee.employeementInsuranceSupportPercent" />
-                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent"
-                                :typeTag="8" :ratio="data.data.employee.employeementReductionRatePercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementInsuranceSupportPercent" :typeTag="7"
+                                :ratio="data.data.employee.employeementInsuranceSupportPercent" />
+                            <four-major-insurance v-if="data.data.employee.employeementReductionRatePercent" :typeTag="8"
+                                :ratio="data.data.employee.employeementReductionRatePercent" />
                             <four-major-insurance v-if="data.data.employee.incomeTaxMagnification" :typeTag="10"
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
@@ -148,25 +162,30 @@
                             <a-tooltip>
                                 <template #title>출력 / 저장</template>
                                 <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
-                                @click="actionPrint(data.data)" />
+                                    @click="actionPrint(data.data)" />
                             </a-tooltip>
-                            
+
                         </div>
                     </template>
                     <DxSummary>
-                        <DxTotalItem :customize-text="employeeType1" show-in-column="사원" alignment="left" />
-                        <DxTotalItem display-format="퇴직급여합계: {0}" column="retirementBenefits" summary-type="sum"
+                        <DxTotalItem value-format="#,###" :customize-text="employeeType1" show-in-column="사원"
                             alignment="left" />
-                        <DxTotalItem display-format="비과세퇴직급여합계: {0}" column="nonTaxableRetirementBenefits"
+                        <DxTotalItem value-format="#,###" display-format="퇴직급여합계: {0}" column="retirementBenefits"
                             summary-type="sum" alignment="left" />
-                        <DxTotalItem display-format="과세대상퇴직급여합계: {0}" column="taxableRetirementBenefits"
-                            summary-type="sum" alignment="left" />
-                        <DxTotalItem display-format="공제합계: {0}" column="totalDeduction" summary-type="sum" />
-                        <DxTotalItem display-format="차인지급액합계: {0}" column="actualPayment" summary-type="sum" />
+                        <DxTotalItem value-format="#,###" display-format="비과세퇴직급여합계: {0}"
+                            column="nonTaxableRetirementBenefits" summary-type="sum" alignment="left" />
+                        <DxTotalItem value-format="#,###" display-format="과세대상퇴직급여합계: {0}"
+                            column="taxableRetirementBenefits" summary-type="sum" alignment="left" />
+                        <DxTotalItem value-format="#,###" display-format="공제합계: {0}" column="totalDeduction"
+                            summary-type="sum" />
+                        <DxTotalItem value-format="#,###" display-format="차인지급액합계: {0}" column="actualPayment"
+                            summary-type="sum" />
                     </DxSummary>
                 </DxDataGrid>
-                <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
+                <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
+                <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
+                    :data="popupDataEmailMulti" />
             </div>
         </div>
     </a-spin>
@@ -183,9 +202,10 @@ import {
     DxPaging,
     DxSelection,
     DxSearchPanel,
-    DxToolbar,DxScrolling,
+    DxToolbar, DxScrolling,
     DxItem, DxSummary, DxTotalItem
 } from "devextreme-vue/data-grid";
+import { Message } from '@/configs/enum';
 import {
     companyId,
     userId,
@@ -199,7 +219,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
-        DxButton, DxDataGrid,DxScrolling, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
+        DxButton, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxTotalItem, EmailSinglePopup, EmailMultiPopup
     },
     setup() {
         const popupDataEmailSingle = ref({})
@@ -219,15 +239,26 @@ export default defineComponent({
         const emplRetirementType2 = ref(0)
         const totalEmployee = ref(0)
         const emailUserLogin = ref('')
-        const valSwitch = ref(false)
+        // const valSwitch = ref(false)
         const dataSource = ref([]);
         const arrayRadioCheck = ref([
             { id: null, text: "전체" },
             { id: 1, text: "퇴직소득" },
             { id: 2, text: "중간정산" },
         ]);
+        const arrayRadioType = [
+            { id: 1, text: "소득자보관용" },
+            { id: 2, text: "발행자 보관용" },
+            { id: 3, text: "발행자 보고용" },
+        ]
+        const minDate = ref(dayjs(`${globalYear.value}-01-01`).startOf('year'));
+        const maxDate = ref(dayjs(`${globalYear.value}-12-31`).endOf('year'));
         const valueRadioBox = ref(0);
-        const rangeDate = ref([dayjs().subtract(11, 'month'), dayjs()]);
+        const rangeDate = ref([
+            { "month": 0, "year": globalYear.value },
+            { "month": 11, "year": globalYear.value }
+        ]);
+
 
         const getColorTag = (data: any) => {
             if (data == 1) {
@@ -239,25 +270,32 @@ export default defineComponent({
         const originData = ref({
             companyId: companyId,
             filter: {
-                imputedYear: globalYear.value,
-                startMonth: dayjs().subtract(11, 'month').month() + 1,
-                finishMonth: dayjs().month() + 1,
+                imputedYear: globalYear,
+                startMonth: rangeDate.value[0].month + 1,
+                finishMonth: rangeDate.value[1].month + 1,
                 type: null,
             },
         });
         const dataInputReport = reactive({
             companyId: companyId,
             input: {
-                imputedYear: globalYear.value,
-                type: 3,
+                imputedYear: globalYear,
+                type: 1,
                 receiptDate: filters.formatDateToInterger(dayjs())
             },
             incomeIds: Array()
         })
-
-        watch(valSwitch, (newValue) => {
-            dataInputReport.input.type = newValue ? 2 : 3;
+        watch(globalYear, (newValue) => {
+            rangeDate.value[0].year = newValue
+            rangeDate.value[1].year = newValue
+            minDate.value = dayjs(`${newValue}-01-01`).startOf('year');
+            maxDate.value = dayjs(`${newValue}-12-31`).endOf('year');
+            searching();
         })
+
+        // watch(valSwitch, (newValue) => {
+        //     dataInputReport.input.type = newValue ? 2 : 3;
+        // })
         const {
             refetch: refetchData,
             onError,
@@ -278,7 +316,7 @@ export default defineComponent({
                 input: {
                     imputedYear: globalYear.value,
                     type: dataInputReport.input.type,
-                    receiptDate: dayjs(dataInputReport.input.receiptDate).format('YYYY-MM-DD'),
+                    receiptDate: dataInputReport.input.receiptDate,
                 },
                 employeeInputs: {
                     senderName: sessionStorage.getItem("username"),
@@ -290,39 +328,43 @@ export default defineComponent({
             }
             modalEmailSingle.value = true
         }
-        const onCloseEmailSingleModal = () => {
-            modalEmailSingle.value = false
-        }
-        const onCloseEmailMultiModal = () => {
-            modalEmailMulti.value = false
-        }
+        // const onCloseEmailSingleModal = () => {
+        //     modalEmailSingle.value = false
+        // }
+        // const onCloseEmailMultiModal = () => {
+        //     modalEmailMulti.value = false
+        // }
         /**
          * action send multi email
          */
         const actionOpenPopupEmailMulti = () => {
-            popupDataEmailMulti.value = {
-                companyId: companyId,
-                input: {
-                    imputedYear: globalYear.value,
-                    type: dataInputReport.input.type,
-                    receiptDate: dayjs(dataInputReport.input.receiptDate).format('YYYY-MM-DD'),
-                },
-                employeeInputs: dataSelect.value
+            if (dataSelect.value.length > 1) {
+                popupDataEmailMulti.value = {
+                    companyId: companyId,
+                    input: {
+                        imputedYear: globalYear.value,
+                        type: dataInputReport.input.type,
+                        receiptDate: dataInputReport.input.receiptDate,
+                    },
+                    employeeInputs: dataSelect.value
+                }
+                modalEmailMulti.value = true
+            } else {
+                notification('error', Message.getMessage('COMMON', '601').message)
             }
-            modalEmailMulti.value = true
         }
 
         /**
          * action send multi print
          */
         const onPrintGroup = () => {
-            if (incomeIds.value.length) {
+            if (incomeIds.value.length > 1) {
                 dataInputReport.incomeIds = incomeIds.value
                 triggerReport.value = true;
-                refetchReport()
+                // refetchReport()
             } else {
-                notification('error', '항목을 최소 하나 이상 선택해야합니다')
-             }
+                notification('error', Message.getMessage('COMMON', '601').message)
+            }
         };
 
         /**
@@ -341,7 +383,7 @@ export default defineComponent({
         watch(resultReport, (newValue) => {
             window.open(newValue.getIncomeRetirementWithholdingReceiptReportViewUrl);
             triggerReport.value = false;
-        }, { deep: true } );
+        }, { deep: true });
         errorReport(res => {
             triggerReport.value = false
             notification('error', res.message)
@@ -349,7 +391,7 @@ export default defineComponent({
         const actionPrint = (data: any) => {
             dataInputReport.incomeIds = [data.incomeId]
             triggerReport.value = true;
-            refetchReport()
+            // refetchReport()
         }
 
         const selectionChanged = (data: any) => {
@@ -377,37 +419,40 @@ export default defineComponent({
         })
 
         watch(result, (value) => {
+            trigger.value = false;
             if (value) {
                 value.searchIncomeRetirementWithholdingReceipts
                 dataSource.value = value.searchIncomeRetirementWithholdingReceipts;
                 totalEmployee.value = value.searchIncomeRetirementWithholdingReceipts.length
                 emplRetirementType1.value = value.searchIncomeRetirementWithholdingReceipts.filter((item: any) => item.retirementType == 1).length;
                 emplRetirementType2.value = value.searchIncomeRetirementWithholdingReceipts.filter((item: any) => item.retirementType == 2).length;
-                trigger.value = false;
+
             }
         });
 
         const searching = () => {
+            originData.value.filter.startMonth = rangeDate.value[0].month + 1;
+            originData.value.filter.finishMonth = rangeDate.value[1].month + 1
             trigger.value = true;
-            refetchData();
+            // refetchData();
         };
 
-        const sendMail = (sendType: string) => {
-            alert(sendType);
-        }
+        // const sendMail = (sendType: string) => {
+        //     alert(sendType);
+        // }
 
         const handleChange = (val: [Dayjs, Dayjs]) => {
-            rangeDate.value = val;
+            // rangeDate.value = val;
         };
 
         const handlePanelChange2 = (val: [Dayjs, Dayjs], mode: any[]) => {
-            originData.value.filter.startMonth = val[0].month() + 1;
-            originData.value.filter.finishMonth = val[1].month() + 1
-            rangeDate.value = val;
-            mode2.value = [
-                mode[0] === 'date' ? 'month' : mode[0],
-                mode[1] === 'date' ? 'month' : mode[1],
-            ];
+            // originData.value.filter.startMonth = val[0].month() + 1;
+            // originData.value.filter.finishMonth = val[1].month() + 1
+            // rangeDate.value = val;
+            // mode2.value = [
+            //     mode[0] === 'date' ? 'month' : mode[0],
+            //     mode[1] === 'date' ? 'month' : mode[1],
+            // ];
         };
 
         const employeeType1 = () => {
@@ -425,26 +470,26 @@ export default defineComponent({
             searching,
             globalYear,
             dataSource,
-            sendMail,
+            // sendMail,
             move_column,
             colomn_resize,
             modalEmailSingle,
             modalEmailMulti,
-            onCloseEmailSingleModal,
-            onCloseEmailMultiModal,
+            // onCloseEmailSingleModal,
+            // onCloseEmailMultiModal,
             selectionChanged,
             emailUserLogin,
             rangeDate,
             valueRadioBox,
             arrayRadioCheck,
+            arrayRadioType,
             getColorTag,
             originData,
-            valSwitch
+            minDate, maxDate,
+            // valSwitch
         };
     },
 });
 </script>
-<style lang="scss" scoped src="./style/style.scss" >
-
-</style>
+<style lang="scss" scoped src="./style/style.scss" ></style>
 
