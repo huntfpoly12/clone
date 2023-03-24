@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex-center mt-10 title-action" :class="{ 'ele-opacity': !compareForm() }">
-    <div>{{ savePA610 }}
+    <div>
       <DxButton :text="'귀 ' + inputDateTax" :disabled="isDisabledForm"
         :style="{ color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }" class="btn-date" />
       <DxButton :text="'지 ' + paymentDateTax" :disabled="isDisabledForm"
@@ -309,7 +309,7 @@ export default defineComponent({
         resetForm();
       }
       if (compareType.value == 3) {
-        setTimeout(()=>{ addNewRow()},10);
+        addNewRow();
       }
       triggerIncomeBusinesses.value = false
       isFirstChange.value = false;
@@ -357,11 +357,11 @@ export default defineComponent({
     watch(resIncomeBusiness, (newValue) => {
       if (newValue) {
         let data = newValue.getIncomeBusiness;
-        if (isClickEditDiff.value) {
-          isClickEditDiff.value = false;
+        if (isClickEditClick.value) {
+          isClickEditClick.value = false;
         } else {
+          selectedRowKeys.value = [data.incomeId];
         }
-        selectedRowKeys.value = [data.incomeId];
         let rowData: any = {};
         rowData.paymentDay = data.paymentDay
         rowData.employeeId = data.employeeId
@@ -459,6 +459,7 @@ export default defineComponent({
     //on add row
     const rowChangeStatus = ref<Boolean>(false);
     const openAddNewModal = async () => {
+      compareType.value = 3;
       if (isNewRow.value) {
         if (!compareForm()) {
           rowChangeStatus.value = true;
@@ -468,7 +469,6 @@ export default defineComponent({
       }
       if (!compareForm()) {
         rowChangeStatus.value = true;
-        compareType.value = 1;
         return;
       }
       disabledInput.value = false;
@@ -478,32 +478,31 @@ export default defineComponent({
     //row change confirm
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (compareType.value == 1) {
-          compareType.value = 3;
-        }
         let ele = document.getElementById('save-js-620') as HTMLInputElement;
         ele.click();
       } else {
         removeHoverRowKey();
         if (isClickYearDiff.value) {
           emit('noSave', 1, globalYear.value);
-          compareType.value = 2;
+          compareType.value = 1;
           return;
         }
         if (isClickEditDiff.value) {
           onEditItem();
+          dataAction.value.input = {...dataActionEdit.value.input}
+          compareType.value = 1;
           return;
         }
         if (isClickMonthDiff.value) {
           emit('noSave', 0);
           isClickMonthDiff.value = false;
-          compareType.value = 2;
+          compareType.value = 1;
           return;
         }
         if (isClickAddMonthDiff.value) {
           emit('noSave', 2);
           isClickAddMonthDiff.value = false;
-          compareType.value = 2;
+          compareType.value = 1;
           return;
         }
         if (isNewRow.value) {
@@ -537,16 +536,17 @@ export default defineComponent({
           dataCallApiIncomeBusiness.incomeId = item.data.incomeId;
           return;
         }
-        selectedRowKeys.value = [dataAction.value.input.incomeId];
+        item.component.selectRows(dataAction.value.input.incomeId, true);
+        // selectedRowKeys.value = [dataAction.value.input.incomeId];
         rowChangeStatus.value = true;
         return;
       }
       if (!compareForm()) {
-        selectedRowKeys.value = [dataAction.value.input.incomeId];
+        item.component.selectRows(dataAction.value.input.incomeId, true);
+        // selectedRowKeys.value = [dataAction.value.input.incomeId];
         rowChangeStatus.value = true;
         return;
       } else {
-        // selectedRowKeys.value = [item.data.incomeId];
         dataCallApiIncomeBusiness.incomeId = item.data.incomeId;
       }
     };
@@ -565,7 +565,6 @@ export default defineComponent({
     const selectedRowKeys = ref<any>([]);
     const selectionChanged = (event: any) => {
       changeDayData.value = {
-        prevPaymentDay: event.selectedRowsData[0]?.paymentDay,
         employeeId: event.selectedRowsData[0]?.employeeId,
         incomeTypeCode: event.selectedRowsData[0]?.incomeTypeCode,
       }
@@ -588,13 +587,15 @@ export default defineComponent({
       modalDelete.value = false;
     }
     const actionEditSuccess = (val: any) => {
-      if (val) {
+      if (val.length > 0) {
         triggerIncomeBusinesses.value = true;
         dataActionEdit.value.input = { ...dataAction.value.input };
-        dataCallApiIncomeBusiness.incomeId = val;
+        dataCallApiIncomeBusiness.incomeId = val[0];
         triggerIncomeBusiness.value = true;
-        selectedRowKeys.value = [val];
-        focusedRowKey.value = val;
+        selectedRowKeys.value = [...val];
+        focusedRowKey.value = val[0];
+      }else{
+        isClickEditClick.value = false;
       }
       modalEdit.value = false;
     };
@@ -615,16 +616,19 @@ export default defineComponent({
     }
     //===============change day=========================
     const isClickEditDiff = ref(false);
+    const isClickEditClick = ref(false);
     const changeDayData = ref<Object>({});
     const onEditItem = () => {
       if (popupDataDelete.value.length > 0) {
         modalEdit.value = true;
+        isClickEditClick.value = true;
       } else {
         notification('warning', messageDelNoItem);
       }
     }
     const editPaymentDate = () => {
       if (!compareForm()) {
+        compareType.value = 1;
         rowChangeStatus.value = true;
         isClickEditDiff.value = true;
         return;
@@ -686,7 +690,7 @@ export default defineComponent({
       if (isClickAddMonthDiff.value) {
         emit('noSave', 2);
         isClickAddMonthDiff.value = false;
-        compareType.value = 2;
+        compareType.value = 1;
         return;
       }
       triggerIncomeBusinesses.value = true;
@@ -695,22 +699,7 @@ export default defineComponent({
     const onChangeFormError = () => {
       removeHoverRowKey();
       emit('subValidate');
-      if (isClickYearDiff.value) {
-        watchGlobalYear();
-        store.state.settings.globalYear = changeYearDataFake.value;
-        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-          if (compareForm()) {
-            emit('noSave', 1, newVal);
-          } else {
-            compareType.value = 2;
-            rowChangeStatus.value = true;
-            isClickYearDiff.value = true;
-            changeYearDataFake.value = oldVal;
-          }
-          isClickYearDiff.value = false;
-          compareType.value = 2;
-        });
-      }
+      
       focusedRowKey.value = dataAction.value.input.incomeId;
     }
     const {
@@ -765,32 +754,37 @@ export default defineComponent({
       onChangeFormError();
     })
     //
+    const resetOnError = () => {
+      removeHoverRowKey();
+      emit('subValidate');
+      focusedRowKey.value = dataAction.value.input.incomeId;
+      selectedRowKeys.value = [dataAction.value.input.incomeId];
+      isClickEditDiff.value = false;
+      isClickMonthDiff.value = false;
+      isClickAddMonthDiff.value = false;
+      compareType.value = 1;
+      if (isClickYearDiff.value) {
+        watchGlobalYear();
+        store.state.settings.globalYear = changeYearDataFake.value;
+        watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
+          if (compareForm()) {
+            emit('noSave', 1, newVal);
+          } else {
+            compareType.value = 2;
+            rowChangeStatus.value = true;
+            isClickYearDiff.value = true;
+            changeYearDataFake.value = oldVal;
+          }
+        });
+        isClickYearDiff.value = false;
+        compareType.value = 1;
+      }
+    }
     const onSave = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
-        removeHoverRowKey();
         res.brokenRules[0].validator.focus();
-        focusedRowKey.value = dataAction.value.input.incomeId;
-        if (isClickEditDiff.value) {
-          isClickEditDiff.value = false;
-        }
-        if (isClickYearDiff.value) {
-          watchGlobalYear();
-          store.state.settings.globalYear = changeYearDataFake.value;
-          watchGlobalYear = watch(globalYear, (newVal, oldVal) => {
-            if (compareForm()) {
-              emit('noSave', 1, newVal);
-            } else {
-              compareType.value = 2;
-              rowChangeStatus.value = true;
-              isClickYearDiff.value = true;
-              changeYearDataFake.value = oldVal;
-            }
-          });
-          isClickYearDiff.value = false;
-          compareType.value = 2;
-        }
-        emit('subValidate');
+        resetOnError();
       } else {
         let params = JSON.parse(JSON.stringify(dataAction.value));
         delete params.input.incomeId;
@@ -847,8 +841,6 @@ export default defineComponent({
       if (!compareForm()) {
         e.cancel = true;
         rowElement?.classList.add("dx-state-hover-custom");
-      } else {
-        removeHoverRowKey();
       }
     }
     const removeHoverRowKey = () => {
@@ -856,11 +848,12 @@ export default defineComponent({
       if (element)
         dataGridRef.value?.refresh();
       focusedRowKey.value = compareType.value == 1 ? dataAction.value.input.incomeId : idRowFake.value;
+      selectedRowKeys.value = compareType.value == 1 ? [dataAction.value.input.incomeId] : [idRowFake.value];
     }
     return {
       loadingOption, arrayEmploySelect, statusButton, dataActionUtils, paramIncomeBusinesses, dataAction, per_page, move_column, colomn_resize, loadingIncomeBusinesses, dataSourceDetail, amountFormat, loadingCreated, loadingIncomeBusiness, loadingEdit, disabledInput, modalDelete, popupDataDelete, modalHistory, modalHistoryStatus, modalEdit, processKeyPA620, focusedRowKey, inputDateTax, paymentDateTax, popupAddStatus, titleModalConfirm, editParam, companyId,
-      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef,changeDayData,savePA610,
-      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff
+      caclInput, openAddNewModal, deleteItem, changeIncomeTypeCode, selectionChanged, actionDeleteSuccess, onItemClick, editPaymentDate, customTextSummary, statusComfirm, onSave, formatMonth, onRowClick, onRowChangeComfirm, onFocusedRowChanging, removeHoverRowKey, gridRef, changeDayData, savePA610,
+      paymentDayPA620, rowChangeStatus, checkLen, compareForm, resetForm, dataActionEdit, dataCallApiIncomeBusiness, isNewRow, isClickMonthDiff, selectedRowKeys, pa620FormRef, isExpiredStatus, actionEditSuccess, compareType, idDisableNoData, isClickAddMonthDiff, isClickEditDiff, isClickYearDiff, triggerIncomeBusiness,isClickEditClick
     }
   }
 });

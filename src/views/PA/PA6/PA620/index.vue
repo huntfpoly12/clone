@@ -412,7 +412,7 @@ export default defineComponent({
       if (formRef.value.compareForm()) {
         onChangeMonth(data)
       } else {
-        formRef.value.compareType = 2;
+        formRef.value.compareType = 1;
         formRef.value.isClickMonthDiff = true;
         formRef.value.rowChangeStatus = true;
         changeMonthDataFake.value = data;
@@ -460,7 +460,7 @@ export default defineComponent({
         formRef.value.rowChangeStatus = true;
         formRef.value.isClickAddMonthDiff = true;
         changeMonthDataFake.value = { imputedMonth: month };
-        formRef.value.compareType = 2;
+        formRef.value.compareType = 1;
         return;
       }
       addMonth({ imputedMonth: month });
@@ -488,6 +488,7 @@ export default defineComponent({
       statusButton.value = 10;
       monthHover.value = 0;
       formRef.value.isClickAddMonthDiff = false;
+      formRef.value.triggerIncomeBusiness = true;
     }
     // ======================================== WATCH =========================================
     //change year

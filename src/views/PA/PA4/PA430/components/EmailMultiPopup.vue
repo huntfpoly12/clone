@@ -13,9 +13,9 @@
                 </div>
             </div>
             <div class="text-align-center mt-50">
-                <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -27,6 +27,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -75,7 +76,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {

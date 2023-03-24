@@ -63,7 +63,6 @@ let statesPA720 = {
     }
   },
   changeDayDataPA720: {
-    prevPaymentDay: '',
     employeeId: '',
     incomeTypeCode: '',
   }

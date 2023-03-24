@@ -4,7 +4,7 @@
     width="60%"
     :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate"
-    title="변경이력"
+    title="취득신고 신규 등록"
     centered
     @cancel="$emit('closeModal')"
     :footer="null"

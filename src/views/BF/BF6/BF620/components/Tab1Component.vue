@@ -1,9 +1,9 @@
 <template>
   <div class="tab-group">
     <SearchArea :tab1="true"/>
-    <!-- {{ filterBF620 }} filterBF620 <br />
+    {{ filterBF620 }} filterBF620 <br />
     {{ dataSource }} dataSource <br />
-    {{ searchWithholdingParam }} searchWithholdingParam <br /> -->
+    {{ searchWithholdingParam }} searchWithholdingParam <br />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -226,11 +226,11 @@ export default defineComponent({
     };
     // custom summary
     const reportTypeSummary = () => {
-      return `매월 ${countStatus(dataSource.value, 1, 'reportType')} 반기 ${countStatus(dataSource.value, 6, 'reportType')}`
+      return `매월 ${countStatus(filteredDataSource.value, 1, 'reportType')} 반기 ${countStatus(filteredDataSource.value, 6, 'reportType')}`
     };
     const afterDeadlineSummary = () => {
-      return `정기 ${countStatus(dataSource.value, 0, 'afterDeadline')} 기한후 ${countStatus(dataSource.value, 0, 'afterDeadline')} 수정 ${countStatus(
-        dataSource.value, 1, 'afterDeadline')}`;
+      return `정기 ${countStatus(filteredDataSource.value, 0, 'afterDeadline')} 기한후 ${countStatus(filteredDataSource.value, 0, 'afterDeadline')} 수정 ${countStatus(
+        filteredDataSource.value, 1, 'afterDeadline')}`;
     };
     const productStatusSummary = () => {
       return `제작전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
@@ -241,7 +241,7 @@ export default defineComponent({
     // caculator sum
     const productionStatusData = (emitVal: any) => {
       productionStatusArr.value = [emitVal];
-      dataSource.value = dataSource.value.map((item: any) =>{
+      filteredDataSource.value = filteredDataSource.value.map((item: any) =>{
         if(item.companyId == emitVal.companyId) {
           return {...item, productionStatus: emitVal.productionStatus, beforeProduction: true}
         }

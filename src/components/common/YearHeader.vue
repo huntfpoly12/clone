@@ -17,13 +17,14 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent , ref, computed} from "vue";
+import { defineComponent , computed} from "vue";
 import { useStore } from 'vuex';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons-vue';
 import {Message} from "@/configs/enum";
 import debounce from "lodash/debounce";
-import {ClickYearStatus, FormStatus} from "@/store/settingModule";
+
 import PopupMessageCustom from "@/components/common/PopupMessageCustom.vue";
+import {ClickYearStatus, FormStatus} from "@/store/settingModule/types";
 export default defineComponent({
     computed: {
       Message() {
@@ -43,13 +44,17 @@ export default defineComponent({
 
       const incrementYear = debounce(async () => {
         const nextYear = currentYear.value + 1
+        // Kiểm tra xem form có được thay đổi hay không
         const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded')
+        // Nếu form không được thay đổi thì thay đổi năm
         if (!shouldShowPopup) {
           store.commit('settings/setCurrentYear', nextYear)
         } else {
+          // Nếu form được thay đổi thì hiển thị popup và lưu năm mới vào store (state: newYear)
           store.commit('settings/setNewYear', nextYear)
         }
       }, 300)
+      // Tương tự như trên
       const decrementYear = debounce(async () => {
         const nextYear = currentYear.value - 1
         const shouldShowPopup = await store.dispatch('settings/showPopupIfNeeded')
@@ -59,6 +64,9 @@ export default defineComponent({
           store.commit('settings/setNewYear', nextYear)
         }
       }, 300)
+
+      // Hàm này được gọi khi người dùng click vào nút "Hủy" trên popup
+      // và sẽ reset lại trạng thái của state
       const hidePopup = () => {
         store.commit('settings/setPopupVisible', false)
         store.commit('settings/setCurrentYear', newYear.value)
@@ -66,6 +74,7 @@ export default defineComponent({
         store.commit('settings/setFormStatus', FormStatus.none)
       }
 
+      // Hàm này được gọi khi người dùng click vào nút "Đồng ý" trên popup
       const confirmPopup = (e: boolean) => {
         if (e) {
           store.commit('settings/setPopupVisible', false)
