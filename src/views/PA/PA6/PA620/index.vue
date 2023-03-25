@@ -67,8 +67,7 @@
                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(5)"> [+]
                 </div>
               </template>
-              <DxColumn caption="06" width="100px" cell-template="month-6"
-                :cssClass="customColumnClass(6)" />
+              <DxColumn caption="06" width="100px" cell-template="month-6" :cssClass="customColumnClass(6)" />
               <template #month-6="{ data }">
                 <div class="hover-underlined" v-if="data.data.month6"
                   :class="setUnderline(data.data.month6.imputedMonth) ? 'current-underlined' : ''"
@@ -79,8 +78,7 @@
                 <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(6)"> [+]
                 </div>
               </template>
-              <DxColumn caption="07" width="100px" cell-template="month-7"
-                :cssClass="customColumnClass(7)" />
+              <DxColumn caption="07" width="100px" cell-template="month-7" :cssClass="customColumnClass(7)" />
               <template #month-7="{ data }">
                 <div class="hover-underlined" v-if="data.data.month7"
                   :class="setUnderline(data.data.month7.imputedMonth) ? 'current-underlined' : ''"
@@ -457,10 +455,10 @@ export default defineComponent({
     const onAddMonth = (month: number) => {
       monthHover.value = month;
       if (!formRef.value.compareForm()) {
+        formRef.value.compareType = 1;
         formRef.value.rowChangeStatus = true;
         formRef.value.isClickAddMonthDiff = true;
         changeMonthDataFake.value = { imputedMonth: month };
-        formRef.value.compareType = 1;
         return;
       }
       addMonth({ imputedMonth: month });
@@ -477,7 +475,7 @@ export default defineComponent({
       setUnderline(data);
       statusButton.value = 10;
       monthHover.value = 0;
-      changeMonthDataFake.value = {...processKeyPA620.value};
+      changeMonthDataFake.value = { ...processKeyPA620.value };
       formRef.value.isClickAddMonthDiff = false;
     }
     const setUnderline = (monthInputed: any) => {
@@ -487,8 +485,10 @@ export default defineComponent({
       modalCopy.value = false;
       statusButton.value = 10;
       monthHover.value = 0;
-      formRef.value.isClickAddMonthDiff = false;
-      formRef.value.triggerIncomeBusiness = true;
+      // if (!isCompareForm.value && formRef.value.compareType == 2) {
+      //   formRef.value.isClickAddMonthDiff = false;
+      //   formRef.value.triggerIncomeBusiness = true;
+      // }
     }
     // ======================================== WATCH =========================================
     //change year
@@ -498,6 +498,8 @@ export default defineComponent({
       isRunOnce.value = true;
       trigger.value = true;
       formRef.value.isClickYearDiff = false;
+      formRef.value.triggerOption = true;
+      formRef.value.refetchOption();
     };
     const isCompareForm = computed(() => formRef.value?.compareForm());
     // -----------------get config to check default date type--------------

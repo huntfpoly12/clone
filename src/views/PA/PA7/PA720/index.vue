@@ -506,6 +506,8 @@ export default defineComponent({
         // store.commit('common/selectedRowKeysPA720', emit);
         taxPayRef.value.selectRow(emit);
         taxPayRef.value.focusedRowKey = emit[0];
+      }else {
+        store.state.common.isClickEditDiffPA720 = false;
       }
       modalEdit.value = false;
     };
@@ -747,6 +749,7 @@ export default defineComponent({
       if (taxPayRef.value?.paymentData.length > 0) {
         modalEdit.value = true;
         changeIncomeExtraPaymentDayParam.value = taxPayRef.value.paymentData;
+        store.state.common.isClickEditDiffPA720 = true;
       } else {
         notification('warning', messageDelNoItem);
       }
@@ -785,7 +788,7 @@ export default defineComponent({
       statusParam.value.status = 10;
       monthHover.value = 0;
       isClickAddMonthDiff.value = false;
-      formTaxRef.value.triggerIncomeExtra = true;
+      // formTaxRef.value.triggerIncomeExtra = true;
     }
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
@@ -914,7 +917,7 @@ export default defineComponent({
       changeMonthDataFake,
       onCloseCopy,
       customColumnClass,
-      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff
+      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff,isClickYearDiff
     };
   },
 });
