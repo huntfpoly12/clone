@@ -299,6 +299,7 @@ export default defineComponent({
             } else { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
+            await (triggerIncomeWageDaily.value = true);
             await (store.state.common.statusRowAdd = true);
             await (store.state.common.statusFormAdd = false);
             
@@ -409,6 +410,7 @@ export default defineComponent({
             if (store.state.common.statusClickEditItem) {
                 store.state.common.onEditItem++
             }
+            store.state.common.refreshDataGridRef++
         })
 
 
@@ -670,6 +672,7 @@ export default defineComponent({
             var res = pa510FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.state.common.refreshDataGridRef++
                 store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                 store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
                 store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
@@ -677,6 +680,7 @@ export default defineComponent({
                 store.state.common.dataRowOnActive = dataIncomeWageDaily.value
             } else {
                 if (store.state.common.statusChangeFormPrice) {
+                    store.state.common.refreshDataGridRef++
                     store.state.common.dataRowOnActive = dataIncomeWageDaily.value
                     store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
                     store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';

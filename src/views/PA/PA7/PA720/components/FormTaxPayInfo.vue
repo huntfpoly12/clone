@@ -1,5 +1,5 @@
 <template>
-  <a-spin :spinning="newDateLoading || loadingIncomeExtra" size="large">
+  <a-spin :spinning="newDateLoading || loadingIncomeExtra || loadingEmployeeExtras" size="large">
     <standard-form formName="pa-720-form" ref="pa720FormRef">
       <a-row>
         <a-col :span="24">
@@ -208,6 +208,7 @@ export default defineComponent({
     const pa720FormRef = ref();
     //store
     const isNewRowPA720 = computed(()=>store.state.common.isNewRowPA720);
+    const isClickEditDiffPA720 = computed(()=>store.state.common.isClickEditDiffPA720);
     const idDisableInput = computed(()=>{
       if(props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
         return true;
@@ -222,7 +223,7 @@ export default defineComponent({
     watch(
       () => props.editTax,
       (newValue) => {
-        if (newValue?.incomeId) {
+        if (+newValue?.incomeId > 0) {
           incomeExtraParam.value = newValue;
           isEdit.value = true;
           triggerIncomeExtra.value = true;
@@ -240,7 +241,9 @@ export default defineComponent({
     }));
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
-      if(data){
+      if(isClickEditDiffPA720.value){
+        store.state.common.isClickEditDiffPA720 = false;
+      }else {
         store.commit('common/selectedRowKeysPA720',data.incomeId);
       }
       incomeExtraData.value = data;
@@ -276,7 +279,7 @@ export default defineComponent({
       imputedYear: globalYear.value,
     });
     const arrayEmploySelect = ref<any>([]);
-    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
+    const { result: resultEmployeeExtras, refetch: refetchEmployeeExtras, loading: loadingEmployeeExtras } = useQuery(queries.getEmployeeExtras, getEmployeeExtrasParams, () => ({
       fetchPolicy: 'no-cache',
     }));
     watch(resultEmployeeExtras, (newValue: any) => {
@@ -411,7 +414,9 @@ export default defineComponent({
       onSubmitForm,
       resetForm,
       triggerIncomeExtra,
-      idDisableInput
+      idDisableInput,
+      loadingEmployeeExtras,
+      isClickEditDiffPA720
     };
   },
 });

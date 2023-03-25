@@ -35,6 +35,7 @@ const statesPA110 = {
   checkClickCopyMonth: false,
   openModalCopyMonth: 1,
   checkClickMonth: false,
+  refreshDataGridRef: 1,
 };
 
 export default statesPA110;

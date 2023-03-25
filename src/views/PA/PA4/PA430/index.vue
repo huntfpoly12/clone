@@ -164,10 +164,9 @@
                                 <img src="@/assets/images/print.svg" alt="" style="width: 25px;"
                                     @click="actionPrint(data.data)" />
                             </a-tooltip>
-
                         </div>
                     </template>
-                    <DxSummary>
+                    <DxSummary v-if="dataSource.length">
                         <DxTotalItem value-format="#,###" :customize-text="employeeType1" show-in-column="사원"
                             alignment="left" />
                         <DxTotalItem value-format="#,###" display-format="퇴직급여합계: {0}" column="retirementBenefits"
@@ -185,7 +184,7 @@
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                    :data="popupDataEmailMulti" />
+                    :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin"/>
             </div>
         </div>
     </a-spin>
@@ -416,6 +415,7 @@ export default defineComponent({
 
         onResultUserInf(e => {
             emailUserLogin.value = e.data.getUser.email
+            
         })
 
         watch(result, (value) => {

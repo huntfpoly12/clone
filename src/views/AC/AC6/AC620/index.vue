@@ -747,11 +747,14 @@ export default defineComponent({
       bizNumber: formState.value.bizNumber,
     };
     const isDisableBtnCheckBizNumber = computed(() => {
-      if (formState.value?.bizNumber?.length !== 10) return true;
-      if (isNewRow.value) {
+      if (formState.value?.bizNumber?.length !== 10 ) {
         isCheckedBizNumber.value = false;
-        return false
-      };
+        return true
+      } else {
+        if (formState.value?.bizNumber === previousRowData.value?.bizNumber)
+          isCheckedBizNumber.value = true;
+      }
+      if (isNewRow.value) return false;
       return formState.value?.bizNumber === previousRowData.value?.bizNumber;
     });
     const isCheckedBizNumber = ref(false);

@@ -23,7 +23,7 @@
 
     <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
-        <div class="mt-30 d-flex-center">
+        <div class="mt-30 d-flex-center center modal-copy-api">
             <span>과거내역</span>
             <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
@@ -252,5 +252,11 @@ export default defineComponent({
     border-radius: 5px;
     color: white;
     height: 28px;
+}
+.modal-copy-api {
+    height: 70px;
+}
+.center {
+    justify-content: center;
 }
 </style>

@@ -291,7 +291,7 @@
                         <template #paymentDay="{ data }">
                             {{  $filters.formatMonth(data.data.paymentDay) }}
                         </template>
-                        <DxSummary>
+                        <DxSummary v-if="store.state.common.dataTaxPayInfo.length">
                             <DxTotalItem column="일용직사원" summary-type="count" display-format="사원수: {0}" />
                             <DxTotalItem column="월급여"  :customize-text="customMonthlyWage"/>
                             <DxTotalItem column="공제" :customize-text="customTotalDeduction" />
@@ -501,6 +501,8 @@ export default defineComponent({
                 if (value.getIncomeWageDailies[0]) { // if have data
                     if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
                         store.state.common.focusedRowKey = store.state.common.incomeId
+                        store.state.common.loadingFormData++
+                        
                     } else {
                         store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
                         store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
@@ -508,6 +510,7 @@ export default defineComponent({
                     }
                     store.state.common.statusFormAdd = false
                 } else {
+                    console.log(1);
                     store.state.common.statusFormAdd = true
                     store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
@@ -526,8 +529,9 @@ export default defineComponent({
             // IncomeWageDailiesTrigger.value = true; //reset data table 2
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-510" && !store.state.common.statusFormAdd) {
+            if (newVal.id == "pa-510" && !((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd))) {
                 IncomeWageDailiesTrigger.value = true; //reset data table 2
+                !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
             }
         })
         watch(() => status.value, (newVal) => {
@@ -565,6 +569,9 @@ export default defineComponent({
         watch(() => store.state.common.openModalCopyMonth, (value) => {
             dataModalCopy.value = monthCopy.value
             modalCopy.value = true
+        })
+        watch(() => store.state.common.refreshDataGridRef, (value) => {
+            dataGridRef.value?.refresh();
         })
         // ======================= FUNCTION ================================
         // Calling the actionChangeIncomeProcess function with the parameters companyId, processKey,
@@ -625,10 +632,10 @@ export default defineComponent({
             IncomeWageDailiesTrigger.value = true;
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
+            hoverColClick.value = 0
         }
 
         const statusComfirmChange = async (res: any) => {
-            hoverColClick.value = 0
             if (res) {
                 store.state.common.actionSubmit++
             } else {
@@ -663,7 +670,6 @@ export default defineComponent({
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
             }
-            dataGridRef.value?.refresh();
         }
 
         const monthCopy = ref<number>()
