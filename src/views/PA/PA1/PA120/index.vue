@@ -258,6 +258,7 @@ export default defineComponent({
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         store.commit('common/editRowPA120', initFormStateTab1);
+        store.state.common.isNewRowPA120 = false;
       }
       trigger.value = false;
     });
