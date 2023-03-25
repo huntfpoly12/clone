@@ -232,7 +232,7 @@ export default defineComponent({
         store.state.common.checkChangeValueEditTab1PA520 = false
         dataDefault.value = dataEdited
         emit('closePopup', false)
-        notification('success', '업데이트 완료!')
+        notification('success', Message.getCommonMessage('106').message)
     })
         // ============ WATCH ================================   
         watch(() => props.idRowEdit, (newVal) => {
