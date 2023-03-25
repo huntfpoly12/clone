@@ -184,6 +184,7 @@
                   field-template="field"
                   value-expr="key"
                   display-expr="value"
+                  :required="true"
                   :disabled="true"
                   width="200px"
                   item-template="item"
@@ -420,8 +421,8 @@ export default defineComponent({
     }, {deep: true});
 
     // watch listen dataSource and globalYear change then change focusedRowKey
-    watch([dataSource, globalYear], async (newVal: any) => {
-      if (newVal[0] && newVal[1] !== globalYear.value) {
+    watch([dataSource, globalYear], async (newVal: any, oldValue) => {
+      if (newVal[0] && newVal[1] !== oldValue[1]) {
         focusedRowKey.value = newVal[0]?._items[0]?.residentId || 0
       }
     }, {deep: true});
@@ -689,8 +690,8 @@ export default defineComponent({
         dataShow.value.stayQualification = null
       } else {
         if (isNewRow.value) {
-          dataShow.value.nationality = '대한민국'
-          dataShow.value.nationalityCode = 'KR'
+          dataShow.value.nationality = ''
+          dataShow.value.nationalityCode = ''
           dataShow.value.stayQualification = null
         } else {
           if(previousRowData.value.foreigner) {
@@ -698,8 +699,8 @@ export default defineComponent({
             dataShow.value.nationalityCode = previousRowData.value.nationalityCode
             dataShow.value.stayQualification = previousRowData.value.stayQualification
           } else {
-            dataShow.value.nationality = '대한민국'
-            dataShow.value.nationalityCode = 'KR'
+            dataShow.value.nationality = ''
+            dataShow.value.nationalityCode = ''
             dataShow.value.stayQualification = null
           }
 
