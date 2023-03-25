@@ -208,6 +208,7 @@ export default defineComponent({
     const pa720FormRef = ref();
     //store
     const isNewRowPA720 = computed(()=>store.state.common.isNewRowPA720);
+    const isClickEditDiffPA720 = computed(()=>store.state.common.isClickEditDiffPA720);
     const idDisableInput = computed(()=>{
       if(props.isColumnData && !isEdit.value && !isNewRowPA720.value) {
         return true;
@@ -240,9 +241,11 @@ export default defineComponent({
     }));
     watch(resultIncomeExtra, (newVal: any) => {
       let data = newVal.getIncomeExtra;
-      // if(data){
-      //   store.commit('common/selectedRowKeysPA720',data.incomeId);
-      // }
+      if(isClickEditDiffPA720.value){
+        store.state.common.isClickEditDiffPA720 = false;
+      }else {
+        store.commit('common/selectedRowKeysPA720',data.incomeId);
+      }
       incomeExtraData.value = data;
       triggerIncomeExtra.value = false;
       let editRowData: any = {};
@@ -412,7 +415,8 @@ export default defineComponent({
       resetForm,
       triggerIncomeExtra,
       idDisableInput,
-      loadingEmployeeExtras
+      loadingEmployeeExtras,
+      isClickEditDiffPA720
     };
   },
 });
