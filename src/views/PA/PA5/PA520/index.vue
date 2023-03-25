@@ -13,7 +13,7 @@
           
         </a-col>
         <a-col :span="6">
-          actionChangeComponent: {{ actionChangeComponent }}<br>
+          actionChangeComponent: {{ actionChangeComponent }} ---tab---{{ store.state.common.setTabActivePA520 }}<br> 
           addRowBtOnclick: {{ addRowBtOnclick  }}<br>
           countBtOnclick: {{ countBtOnclick  }}<br>
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
@@ -299,7 +299,7 @@ export default defineComponent({
       notification("error", e.message);
     });
     successDelete((e) => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage('102').message);
       trigger.value = true;
       refetchData();
     });
@@ -607,8 +607,15 @@ export default defineComponent({
           funcAddNewRow();
           store.state.common.isTab2ValidatePA520 = false
         } else {
-          // In case current tab is 2 and validate
-          store.state.common.setTabActivePA520 = '2'
+          // In case reset the tab when one of the two tabs is fixed and validated
+          if (store.state.common.checkChangeValueEditTab1PA520) {
+            store.state.common.setTabActivePA520 = '1'
+          }
+
+          if (store.state.common.checkChangeValueEditTab2PA520) {
+            store.state.common.setTabActivePA520 = '2'
+          }
+       
           isClickRow = true
         }
       } else {

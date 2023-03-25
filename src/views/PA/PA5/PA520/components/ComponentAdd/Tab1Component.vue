@@ -124,6 +124,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable"
 import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
+import { Message } from "@/configs/enum";
 export default defineComponent({
   setup(props, { emit }) {
         const formRefPa520Add = ref()
@@ -192,7 +193,7 @@ export default defineComponent({
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false
-            notification('success', '업데이트 완료!');
+            notification('success', Message.getCommonMessage('106').message);
         })
         //============ WATCH =================================
 
