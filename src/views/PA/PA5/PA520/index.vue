@@ -1,7 +1,12 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
   <!-- <a-row>
-        <a-col :span="6" >{{ globalYear }}
+        <a-col :span="6" >{{modalChangeValueEdit}}
+          formStatus :{{ store.state.settings.formStatus }}<br>
+          clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
+          newYear :{{ store.state.settings.newYear }}<br>
+          globalYear:{{ store.state.settings.globalYear }}<br>
+
           checkChangeValueEditTab1PA520 : {{ store.state.common.checkChangeValueEditTab1PA520 }}<br>
           checkChangeValueEditTab2PA520: {{ store.state.common.checkChangeValueEditTab2PA520 }}<br>
           checkChangeValueAddPA520: {{ store.state.common.checkChangeValueAddPA520 }}<br>
@@ -19,6 +24,7 @@
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
         </a-col>
         <a-col :span="6">
+          modalChangeValueAdd : {{  modalChangeValueAdd }}  <br>
           modalChangeValueEdit : {{  modalChangeValueEdit }}  <br>
           focusedRowKey :  {{ focusedRowKey }}<br>
           idRowSaveDone :  {{ idRowSaveDone }}<br>
@@ -161,7 +167,7 @@
   <history-popup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
       :idRowEdit="idRowEdit" typeHistory="pa-520" />
   <!-- confirm for case edit   -->
-  <PopupMessage :modalStatus="modalChangeValueEdit" @closePopup="modalChangeValueEdit = false" typeModal="confirm"
+  <PopupMessage :modalStatus="modalChangeValueEdit" @closePopup="closePopupConfirmEdit" typeModal="confirm"
       :content="Message.getCommonMessage('501').message" okText="네" cancelText="아니오" @checkConfirm="comfirmAndSaveEdit" />
   <!-- confirm for case add -->
   <PopupMessage :modalStatus="modalChangeValueAdd" @closePopup="modalChangeValueAdd = false" typeModal="confirm"
@@ -208,6 +214,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum";
 import DataSource from "devextreme/data/data_source";
+import { ClickYearStatus } from "@/store/settingModule/types";
 
 export default defineComponent({
   components: {
@@ -255,13 +262,13 @@ export default defineComponent({
     const totalUser = ref(0);
     const idRowCurrentClick = ref(0);
     const globalYear = computed(() => store.state.settings.globalYear);
+    const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520);
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
     const countBtOnclick = computed(() => store.state.common.countBtOnclickPA520);// count the number of times the add button clicks
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
-
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -317,17 +324,20 @@ export default defineComponent({
         trigger.value = true;
         resetAllCheckerStatus()
       }
+      
+    })
 
+    watch(clickYearStatus, async (newVal : ClickYearStatus) => {
       if (
-        store.state.common.checkChangeValueEditTab1PA520 == true ||
-        store.state.common.checkChangeValueEditTab2PA520 == true
+        (store.state.common.checkChangeValueEditTab1PA520 == true ||
+        store.state.common.checkChangeValueEditTab2PA520 == true) &&
+        newVal !== ClickYearStatus.none
       ) {
-    
         modalChangeValueEdit.value = true;
         return;
       }
       
-      if (store.state.common.checkChangeValueAddPA520 == true) {
+      if (store.state.common.checkChangeValueAddPA520 == true && newVal !== ClickYearStatus.none) {
         modalChangeValueAdd.value = true;
         return;
       } 
@@ -336,9 +346,9 @@ export default defineComponent({
 
     watch(result,() => {
       if (result && result.value) {
-        const data = result.value.getEmployeeWageDailies.map((i: any) => ({
-          ...i,
-          key: i.employeeId
+        const data = result.value.getEmployeeWageDailies.map((item: any) => ({
+          ...item,
+          key: item.employeeId
         })) ;
         dataSource.value = new DataSource({
           store: {
@@ -397,8 +407,6 @@ export default defineComponent({
     watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
       dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
     },{ deep: true })
-
-
 
     watch(
       () => isAddNewStatus.value,
@@ -555,8 +563,8 @@ export default defineComponent({
         modalChangeValueAdd.value = true;
       }
     };
-    const confirmAndSaveAdd = (res: any) => {
-   
+    const confirmAndSaveAdd = async (res: any) => {
+      await store.dispatch('settings/resetYearStatus')
       if (res == true && addRowBtOnclick.value) {
         actionSave();
       }else if (res == true &&  !addRowBtOnclick.value) {
@@ -589,6 +597,7 @@ export default defineComponent({
       }
     };
     const actionUpdate = (currentTab: number) => {
+      
       if (currentTab == 1) {
         store.state.common.actionUpdateTab1PA520++;
       } else {
@@ -596,8 +605,13 @@ export default defineComponent({
       }
     };
 
+
+    const closePopupConfirmEdit = ()=>{
+      modalChangeValueEdit.value = false
+    }
     // A function that is called when the user clicks on the save button.
     const comfirmAndSaveEdit = async (res: any) => {
+      await store.dispatch('settings/resetYearStatus')
       if (res == true) {
           store.state.common.checkChangeValueEditTab1PA520
           ? await actionUpdate(1)
@@ -615,8 +629,8 @@ export default defineComponent({
           if (store.state.common.checkChangeValueEditTab2PA520) {
             store.state.common.setTabActivePA520 = '2'
           }
-       
           isClickRow = true
+          
         }
       } else {
         if (addRowBtOnclick.value) {
@@ -628,6 +642,7 @@ export default defineComponent({
           store.state.common.idRowChangePa520 = idRowCurrentClick.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
+        
       }
       //store.state.common.checkChangeValueEditTab1PA520 = false;
     };
@@ -657,6 +672,7 @@ export default defineComponent({
       modalChangeValueAdd,
       focusedRowKey,
       modalChangeValueEdit,
+      closePopupConfirmEdit,
       store,
       resetAddComponent,
       actionChangeComponent,
@@ -691,7 +707,8 @@ export default defineComponent({
       onFocusedRowChanging,
       idRowCurrentClick,
       idRowSaveDone,
-      globalYear
+      globalYear,
+      clickYearStatus
     };
   },
 });

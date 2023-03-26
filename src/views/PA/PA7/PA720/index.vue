@@ -506,7 +506,7 @@ export default defineComponent({
         // store.commit('common/selectedRowKeysPA720', emit);
         taxPayRef.value.selectRow(emit);
         taxPayRef.value.focusedRowKey = emit[0];
-      }else {
+      } else {
         store.state.common.isClickEditDiffPA720 = false;
       }
       modalEdit.value = false;
@@ -551,7 +551,9 @@ export default defineComponent({
       formTaxRef.value.isEdit = false;
       taxPayRef.value.dataSourceDetail = taxPayRef.value.dataSourceDetail.concat(formPA720.value.input);
       taxPayRef.value.focusedRowKey = formPA720.value.input.incomeId;
-      store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+      setTimeout(() => {
+        store.commit('common/selectedRowKeysPA720', formPA720.value.input.incomeId);
+      }, 10)
       editTaxParam.value.incomeId = formPA720.value.input.incomeId;
     };
     const saveToNewRow = () => {
@@ -678,7 +680,9 @@ export default defineComponent({
         subValidate()
       } else {
         if (compareType.value == 3) return;
-        store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
+        if (!store.state.common.isClickEditDiffPA720) {
+          store.commit('common/selectedRowKeysPA720', compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId);
+        }
         editTaxParam.value.incomeId = compareType.value == 1 ? formPA720.value.input.incomeId : editTaxParamFake.value.incomeId;
         taxPayRef.value.focusedRowKey = compareType.value == 1 ? formPA720.value.input?.incomeId : editTaxParamFake.value.incomeId;
         store.state.common.isNewRowPA720 = false;
@@ -755,6 +759,7 @@ export default defineComponent({
       }
     }
     const editItem = () => {
+      store.state.common.isClickEditDiffPA720 = true;
       if (!compareForm()) {
         compareType.value = 1;
         rowChangeStatus.value = true;
@@ -788,7 +793,6 @@ export default defineComponent({
       statusParam.value.status = 10;
       monthHover.value = 0;
       isClickAddMonthDiff.value = false;
-      // formTaxRef.value.triggerIncomeExtra = true;
     }
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
@@ -917,7 +921,7 @@ export default defineComponent({
       changeMonthDataFake,
       onCloseCopy,
       customColumnClass,
-      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff,isClickYearDiff
+      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff, isClickYearDiff
     };
   },
 });
