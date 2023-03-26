@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{modalChangeValueEdit}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -31,7 +31,7 @@
           idRowEdit : {{ idRowEdit }}<br>
           idRowCurrentClick: {{ idRowCurrentClick }}
         </a-col>
-  </a-row>
+  </a-row> -->
 
   <div id="pa-520" class="page-content">
   
@@ -268,7 +268,7 @@ export default defineComponent({
     const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520);
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
     const countBtOnclick = computed(() => store.state.common.countBtOnclickPA520);// count the number of times the add button clicks
-
+    const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -380,7 +380,7 @@ export default defineComponent({
         }
 
         // for the case of changing the year and having to focus on the first row
-        if (clickYearStatus.value !== ClickYearStatus.none) {
+        if (isChangeYear.value) {
           store.state.common.isChangeYearPA520 = false
           dataSource.value.load()
           let items = dataSource.value.items()
