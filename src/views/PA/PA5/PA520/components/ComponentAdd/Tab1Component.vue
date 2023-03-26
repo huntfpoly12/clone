@@ -125,10 +125,12 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
   setup(props, { emit }) {
         const formRefPa520Add = ref()
         const labelResident = ref('주민등록번호')
+        const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref([])
@@ -189,11 +191,12 @@ export default defineComponent({
             notification('error', e.message)
         })
         onDone(res => {
-            store.state.common.addRowBtOnclickPA520 = false
+            //store.state.common.addRowBtOnclickPA520 = false
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false
             notification('success', Message.getCommonMessage('106').message);
+            if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
         })
         //============ WATCH =================================
 
@@ -235,8 +238,10 @@ export default defineComponent({
             store.state.common.dataSourcePA520 = dataTable
             if (JSON.stringify(DataCreated) !== JSON.stringify(value)){
                 store.state.common.checkChangeValueAddPA520 = true
+                store.commit('settings/setFormStatus',FormStatus.adding)
             }else{
                 store.state.common.checkChangeValueAddPA520 = false
+                store.commit('settings/setFormStatus',FormStatus.none)
             }
         }, { deep: true })
         watch(() => store.state.common.actionSaveAddPA520, (value) => {
@@ -258,6 +263,7 @@ export default defineComponent({
             var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.commit('settings/setFormStatus',FormStatus.adding)
             } else {
                 let newValDataCreat = {
                     ...dataCreated,

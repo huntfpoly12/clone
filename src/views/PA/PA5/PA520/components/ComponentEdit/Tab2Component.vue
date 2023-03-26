@@ -151,6 +151,7 @@ import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEm
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
+import { FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -286,14 +287,17 @@ export default defineComponent({
             refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
+            store.commit('settings/setCurrentYear')
         })
         // ================== WATCH ====================================
         watch(() => originDataUpdate.value, (newVal) => {
           let valueConvert = JSON.parse(dataDefaultGet.value)
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.state.common.checkChangeValueEditTab2PA520 = false
+              store.commit('settings/setFormStatus',FormStatus.none)
           } else {   
               store.state.common.checkChangeValueEditTab2PA520 = true
+              store.commit('settings/setFormStatus',FormStatus.editing)
           }
         }, { deep: true })
 
@@ -370,6 +374,7 @@ export default defineComponent({
       const actionUpdated = () => {
           if (isBtnYellow.value) {
             validateCalculate.value = true
+            store.commit('settings/setFormStatus',FormStatus.editing)
           } else {
             originDataUpdate.value.imputedYear = store.state.common.checkChangeValueEditTab2PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value
             mutate(originDataUpdate.value)

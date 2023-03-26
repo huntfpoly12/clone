@@ -18,7 +18,7 @@ const settingModule: Module<SettingState, any>  = {
     isPopupVisible: false, // popup hiển thị khi click năm
     formStatus: FormStatus.none, // trạng thái form
     clickYearStatus: ClickYearStatus.none, // trạng thái click button nắm
-    newYear: 0 // lưu trữ năm mới khi click năm
+    newYear: dayjs().year(), // lưu trữ năm mới khi click năm
   },
   mutations: mutations,
   actions: actions,
