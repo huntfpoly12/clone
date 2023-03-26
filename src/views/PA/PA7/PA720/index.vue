@@ -788,7 +788,7 @@ export default defineComponent({
       statusParam.value.status = 10;
       monthHover.value = 0;
       isClickAddMonthDiff.value = false;
-      formTaxRef.value.triggerIncomeExtra = true;
+      // formTaxRef.value.triggerIncomeExtra = true;
     }
     // -------------------------click month in table top--------------
     const month = ref<number>(0); //active tab
@@ -917,7 +917,7 @@ export default defineComponent({
       changeMonthDataFake,
       onCloseCopy,
       customColumnClass,
-      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff
+      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff,isClickYearDiff
     };
   },
 });

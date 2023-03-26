@@ -42,7 +42,11 @@
   <a-row>
     <a-col :span="14" class="custom-layout" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
-        {{ compareType }} compareType
+        <!-- {{ compareType }} compareType <br/>
+        {{ isClickAddMonthDiff }} isClickAddMonthDiff <br/>
+        {{ isClickEditClick }} isClickEditClick <br/>
+        {{ isClickMonthDiff }} isClickMonthDiff <br/>
+        {{ isClickYearDiff }} isClickYearDiff <br/> -->
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
@@ -490,7 +494,7 @@ export default defineComponent({
         }
         if (isClickEditDiff.value) {
           onEditItem();
-          dataAction.value.input = {...dataActionEdit.value.input}
+          // dataAction.value.input = {...dataActionEdit.value.input}
           compareType.value = 1;
           return;
         }
@@ -589,13 +593,14 @@ export default defineComponent({
     const actionEditSuccess = (val: any) => {
       if (val.length > 0) {
         triggerIncomeBusinesses.value = true;
-        dataActionEdit.value.input = { ...dataAction.value.input };
+        // dataActionEdit.value.input = { ...dataAction.value.input };
         dataCallApiIncomeBusiness.incomeId = val[0];
         triggerIncomeBusiness.value = true;
         selectedRowKeys.value = [...val];
         focusedRowKey.value = val[0];
       }else{
         isClickEditClick.value = false;
+        isClickEditDiff.value = false;
       }
       modalEdit.value = false;
     };

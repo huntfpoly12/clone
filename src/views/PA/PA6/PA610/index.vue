@@ -177,9 +177,26 @@
                   :hiddenOptionKR="true"
                   :required="true"
                 />
-                <DxSelectBox v-else :data-source="[{key: 0, value: 'KR'}]" :value="0"
-                             value-expr="key" display-expr="value" :disabled="true" width="200px"/>
-
+                <DxSelectBox
+                  v-else
+                  :data-source="[{key: 'KR', value: '대한민국'}]"
+                  :value="'KR'"
+                  field-template="field"
+                  value-expr="key"
+                  display-expr="value"
+                  :disabled="true"
+                  width="200px"
+                  item-template="item"
+                >
+                  <template #field="{ data }">
+                    <div class="d-flex-center ml-5" >
+                      <a-tag color="default">{{ data.key }}</a-tag>
+                      <div>
+                        <DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
+                      </div>
+                    </div>
+                  </template>
+                </DxSelectBox>
               </a-form-item>
               <a-form-item
                 label="외국인 체류자격"
@@ -305,7 +322,8 @@ import {Store} from "devextreme/data";
 import DataSource from "devextreme/data/data_source";
 import PopupMessageCustom from "./components/PopupMessageCustom.vue";
 import {ArrForeigner, valueDefaultAction} from "./utils";
-import {ClickYearStatus, FormStatus} from "@/store/settingModule";
+import {ClickYearStatus, FormStatus} from "@/store/settingModule/types";
+import DxTextBox from "devextreme-vue/text-box";
 
 export default defineComponent({
   name: 'MyForm',
@@ -336,7 +354,8 @@ export default defineComponent({
     PlusOutlined,
     DxPaging,
     DxPager,
-    DxSelectBox
+    DxSelectBox,
+    DxTextBox
   },
   setup() {
     const contentDelete ='선택된 소득자의 해당 원천년도에 소득 내역들이 있다면 삭제불가하며, 삭제한 후 복구불가합니다. 그래도 삭제하시겠습니까?';

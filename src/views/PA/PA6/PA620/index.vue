@@ -455,6 +455,7 @@ export default defineComponent({
     const onAddMonth = (month: number) => {
       monthHover.value = month;
       if (!formRef.value.compareForm()) {
+        formRef.value.compareType = 1;
         formRef.value.rowChangeStatus = true;
         formRef.value.isClickAddMonthDiff = true;
         changeMonthDataFake.value = { imputedMonth: month };

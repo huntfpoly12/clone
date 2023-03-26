@@ -229,14 +229,16 @@ export default defineComponent({
     };
     const selectedRowKeys = computed(() => store.state.common.selectedRowKeysPA720);
     const selectionChanged = (e: any) => {
-      changeDayDataPA720.value.employeeId = e.selectedRowsData[0]?.employeeId;
-      changeDayDataPA720.value.incomeTypeCode = e.selectedRowsData[0]?.incomeTypeCode;
-      incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
-        return item.incomeId;
-      });
-      paymentData.value = e.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
-        return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
-      });
+      if (e.selectedRowsData.length > 0) {
+        // changeDayDataPA720.value.employeeId = e.selectedRowsData[0]?.employeeId;
+        // changeDayDataPA720.value.incomeTypeCode = e.selectedRowsData[0]?.incomeTypeCode;
+        incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
+          return item.incomeId;
+        });
+        paymentData.value = e.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
+          return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
+        });
+      }
     };
     // set key again
     const focusedRowKey = ref<Number | null>(1);
@@ -245,7 +247,7 @@ export default defineComponent({
       loadIndexInit.value = -1;
     }, { deep: true })
     const onRowClick = (e: any) => {
-      if (!props.compareForm()) {
+      if (!props.compareForm() && !firsTimeRow.value) {
         e.component.selectRows(formPA720.value.input.incomeId, true);
       }
       const data = e.data && e.data;

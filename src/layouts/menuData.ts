@@ -44,7 +44,7 @@ export default [
 
   { name: "통장내역", url: "/dashboard/ac-110", id: "ac-110" },
   { name: "전표", url: "/dashboard/ac-120", id: "ac-120" },
-  { name: "마감", url: "#", id: "ac-130" },
+  { name: "마감", url: "/dashboard/ac-130", id: "ac-130" },
 
   { name: "전표/결의", url: "#", id: "ac-210" },
   { name: "예산서", url: "#", id: "ac-220" },

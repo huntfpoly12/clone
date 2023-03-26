@@ -1,6 +1,5 @@
 <template>
     <div>
-      <!-- {{ basicDeductionData }} basicDeductionData <br/> -->
       <DxSelectBox
         :width="width"
         :data-source="basicDeductionData"
@@ -99,7 +98,7 @@
       watch(()=> props.ageCount,(newVal)=> {
         if(+newVal == 0) {
           basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
-            return {value: item.value,label: item.label};
+            return item.value == 1 ? {value: item.value,label: item.label, disabled: true} : {value: item.value,label: item.label};
           })
           value.value = 0;
           return;

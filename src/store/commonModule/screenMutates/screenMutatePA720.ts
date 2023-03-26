@@ -23,7 +23,6 @@ const screenMutatePA720 = {
     }
   },
   selectedRowKeysPA720(state: any, payload: any){
-    console.log(`output->payload`,payload);
     state.selectedRowKeysPA720 = [payload]
   }
 };
