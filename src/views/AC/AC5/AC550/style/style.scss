@@ -1,0 +1,45 @@
+.ac-550 {
+  padding: 10px;
+  .mr-5 {
+    margin-right: 5px;
+  }
+  .mr-10 {
+    margin-right: 10px;
+  }
+  .mr-20 {
+    margin-right: 20px;
+  }
+  .ml-5 {
+    margin-left: 5px;
+  }
+  &-month {
+    display: flex;
+    align-items: center;
+    &-period {
+      color: red;
+      margin-right: 10px;
+    }
+  }
+  &-formatting {
+    margin-top: 20px;
+    &-title {
+      font-weight: bold;
+      font-size: 18px;
+      background-color: #C6D9F1;
+      margin: 0;
+      padding: 5px;
+    }
+    &-option{ 
+      margin-top: 5px;
+      display: flex;
+      align-items: end;
+      &-label {
+        margin-right: 5px;
+        line-height: 16px;
+      }
+    }
+  }
+  &-table {
+    margin-top: 20px;
+  }
+}

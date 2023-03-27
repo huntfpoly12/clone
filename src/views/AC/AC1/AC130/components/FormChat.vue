@@ -102,20 +102,12 @@ export default defineComponent({
         id: 1,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ',
+        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       },
       {
         id: 2,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Helloc',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 3,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello ...',
@@ -123,7 +115,7 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 4,
+        id: 3,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
         content: 'Hello Hello Hello Hello ffffffff',
@@ -131,30 +123,30 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 5,
+        id: 4,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello ',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       }, {
+        id: 5,
+        name: 'other users',
+        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
+        content: 'Hello Hello Hello Hello \n...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...',
+        createdAt: '2023-03-08  03:00:00',
+        status: '일반'
+      },
+      {
         id: 6,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...',
+        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvnmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Hello ...c',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       },
       {
         id: 7,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Hello ...c',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 8,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello :)))))))))))))))))))',
@@ -162,7 +154,7 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 9,
+        id: 8,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
         content: 'Hello Hello Hello Hello +ggggggggggggggggggggg',
@@ -170,10 +162,18 @@ export default defineComponent({
         status: '일반'
       },
       {
+        id: 9,
+        name: userName.value,
+        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
+        content: ':)))))))))))))))))))',
+        createdAt: '2023-03-08  03:00:00',
+        status: '일반'
+      },
+      {
         id: 10,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello Hello Hello Hello ',
+        content: 'Hello\nHello \nHello \nHello  ooooo',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       }
@@ -191,7 +191,7 @@ export default defineComponent({
         textChat.value = ''
         idEditComment.value = null
       }else {
-        listChat.value.push({ ...payload, id: listChat.value[listChat.value.length].id + 1, content: textChat.value })
+        listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
         textChat.value = ''
       }
       nextTick(() => {

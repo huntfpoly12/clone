@@ -69,9 +69,9 @@
               <a-collapse-panel key="1">
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
-                    <span>현금출납부 잔액 </span>
-                    <button-basic class="mr-5" text="확인필요" type="danger" :mode="'contained'" />
-                    <button-basic text="정상" type="success" :mode="'contained'" />
+                    <span>현금출납부 잔액 -></span>
+                    <button-basic v-if="true" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90"/>
+                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
                   </div>
                 </template>
                 <TableBalanceOfCashRegister />
@@ -79,9 +79,9 @@
               <a-collapse-panel key="2">
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
-                    <span>현금출납부 잔액 </span>
-                    <button-basic class="mr-5" text="확인필요" type="danger" :mode="'contained'" />
-                    <button-basic text="정상" type="success" :mode="'contained'" />
+                    <span>예산서 -></span>
+                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
+                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
                   </div>
                 </template>
                 <TableBudget />
@@ -89,9 +89,9 @@
               <a-collapse-panel key="3">
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
-                    <span>현금출납부 잔액 </span>
-                    <button-basic class="mr-5" text="확인필요" type="danger" :mode="'contained'" />
-                    <button-basic text="정상" type="success" :mode="'contained'" />
+                    <span>인건비 -></span>
+                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'"  width="90" />
+                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
                   </div>
                 </template>
                 <TablePersonnelExpenses />
