@@ -52,15 +52,15 @@ export default [
 
   { name: "예산서 자동작성", url: "#", id: "ac-380" },
 
-  { name: "장부", url: "#", id: "ac-510" },
+  { name: "장부", url: "/dashboard/ac-510", id: "ac-510" },
   { name: "예산서", url: "#", id: "ac-520" },
   { name: "정부보조금명세서", url: "/dashboard/ac-530", id: "ac-530" },
   { name: "예비비사용조서", url: "/dashboard/ac-540", id: "ac-540" },
   { name: "사업비명세서", url: "/dashboard/ac-550", id: "ac-550" },
   { name: "기타비용명세서", url: "/dashboard/ac-560", id: "ac-560" },
-  { name: "과목전용조서", url: "#", id: "ac-570" },
+  { name: "과목전용조서", url: "/dashboard/ac-570", id: "ac-570" },
   { name: "후원금수입 및 사용결과보고서", url: "#", id: "ac-580" },
-  { name: "후원금전용계좌의 입출금명세", url: "#", id: "ac-590" },
+  { name: "후원금전용계좌의 입출금명세", url: "/dashboard/ac-590", id: "ac-590" },
 
   { name: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
   { name: "후원자 관리", url: "/dashboard/ac-620", id: "ac-620" },
