@@ -11,7 +11,7 @@
           </a-col>
           <a-col :span="16">
             <div class="custom-note">
-              <a-form-item label="제작요청상태">
+              <a-form-item label="제작요청후">
                 <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작후'"
                   :textUnCheck="'제작요청전'" />
               </a-form-item>
@@ -55,7 +55,7 @@
         <a-row>
           <a-col :span="8">
             <a-form-item label="사업자코드">
-              <biz-number-text-box width="150px" v-model:valueInput="filterForm.companyCode" />
+              <default-text-box width="150px" v-model:valueInput="filterForm.companyCode" :textUppercase="true" />
             </a-form-item>
             <a-form-item label="상호">
               <default-text-box width="150px" v-model:valueInput="filterForm.companyName"></default-text-box>
