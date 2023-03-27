@@ -311,7 +311,7 @@
                     :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
                     @checkConfirm="statusComfirmChangePrice" /> -->
                 <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
-                    @closePopup="modalCopy = false" @dataAddIncomeProcess="dataAddIncomeProcess" />
+                    @closePopup="{modalCopy = false; hoverColClick = 0}" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
         </div>
     </div>
@@ -526,6 +526,12 @@ export default defineComponent({
                     //     store.state.common.focusedRowKey = store.state.common.incomeId
                     //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
                     // } else {
+                        store.state.common.statusFormAdd = false
+                        if (store.state.common.onDoneEdit) { // sửa ngày thành công
+                            store.state.common.onDoneEdit = false
+                            store.state.common.loadingFormData++
+                            return
+                        }
                         if (!store.state.common.dataIncomeIdBackend || store.state.common.checkClickMonth) {
                             // isRunOnceTaxPayInfo.value = false;
                             store.state.common.checkClickMonth = false
@@ -541,7 +547,6 @@ export default defineComponent({
                             store.state.common.dataIncomeIdBackend = null;
                         }
                     // }
-                    store.state.common.statusFormAdd = false
                 } else {
                     store.state.common.statusFormAdd = true
                     // store.state.common.focusedRowKey = null;
@@ -667,6 +672,7 @@ export default defineComponent({
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
                 store.state.common.checkClickCopyMonth = true
+                hoverColClick.value = month
             } else {
                 dataModalCopy.value = monthCopy.value;
                 modalCopy.value = true;
