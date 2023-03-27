@@ -58,15 +58,14 @@
                         <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textUnCheck="'월급'"
                             :textCheck="'일급'" />
                         <number-box-money  @changeInput="onChangePrice" v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
-                            placeholder='월급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.dailyWage" />
-                        <number-box-money  @changeInput="onChangePrice" v-else width="110px" :required="true" placeholder='일급여' :spinButtons="false"
+                            placeholder='일급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.dailyWage" />
+                        <number-box-money  @changeInput="onChangePrice" v-else width="110px" :required="true" placeholder='월급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                     </div>
                     <div style="margin-bottom: 10px;">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">월급 선택시, 일급 = 월급 /
-                            근무일수</span>
-                        <span class="style-note" v-else>일급 선택시, 월급 = 일급 x 근무일수</span>
+                        <span class="style-note" v-if="dataIncomeWageDaily.employee.monthlyPaycheck">일급 선택시, 월급 = 일급 x 근무일수</span>
+                        <span class="style-note" v-else>월급 선택시, 일급 = 월급 / 근무일수</span>
                     </div>
                     <a-form-item label="근무일수" class="red">
                         <number-box @changeInput="onChangePrice" width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
@@ -422,6 +421,7 @@ export default defineComponent({
             }
         });
         watch(() => store.state.common.loadingFormData, (value) => {
+            originDataIncomeWageDaily.incomeId = store.state.common.incomeId
             triggerIncomeWageDaily.value = true;
         })
         watch(() => store.state.common.activeTab, (newVal) => {
@@ -495,16 +495,16 @@ export default defineComponent({
         // Watching the store.state.common.incomeId and if it is not equal to 'PA510' then it will set
         // the originDataIncomeWageDaily.value.incomeId to the value of store.state.common.incomeId and
         // then triggerIncomeWageDaily.value to true.
-        watch(() => store.state.common.incomeId, async (value) => {
-            if (value && value != 'PA510') {
-                originDataIncomeWageDaily.incomeId = value
-                triggerIncomeWageDaily.value = true;
-            } else {
-                if (!store.state.common.statusFormAdd) {
-                    onResetForm()
-                }
-            }
-        })
+        // watch(() => store.state.common.incomeId, async (value) => {
+        //     if (value && value != 'PA510') {
+        //         originDataIncomeWageDaily.incomeId = value
+        //         triggerIncomeWageDaily.value = true;
+        //     } else {
+        //         if (!store.state.common.statusFormAdd) {
+        //             onResetForm()
+        //         }
+        //     }
+        // })
 
         // Watching the value of actionSubmit and if it is true, it will execute the code inside the if
         // statement.
