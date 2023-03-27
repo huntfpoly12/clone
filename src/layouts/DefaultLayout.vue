@@ -173,7 +173,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch,computed } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -232,6 +232,7 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
+import { getJwtObject } from '@bankda/jangbuda-common';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -443,6 +444,8 @@ export default defineComponent({
     },
   },
   setup() {
+   
+ 
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);
@@ -458,7 +461,9 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-
+  //     const token = sessionStorage.getItem("token");
+  // const jwtObject = getJwtObject(token);
+  //   console.log(jwtObject);
     /**
     * Check scroll tab if overflow
     */
