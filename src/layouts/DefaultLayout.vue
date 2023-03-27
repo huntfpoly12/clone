@@ -461,9 +461,9 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-      const token = sessionStorage.getItem("token");
-  const jwtObject = getJwtObject(token);
-    console.log(jwtObject);
+  //     const token = sessionStorage.getItem("token");
+  // const jwtObject = getJwtObject(token);
+  //   console.log(jwtObject);
     /**
     * Check scroll tab if overflow
     */
