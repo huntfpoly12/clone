@@ -498,6 +498,10 @@ export default defineComponent({
                 delete(value.getIncomeWageDailies.deductionItems)
                 store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
                 // if (value.getIncomeWageDailies[0] && !store.state.common.statusFormAdd) { // if have data
+                if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                    store.state.common.addRow++ // add row
+                }
+                store.state.common.resetArrayEmploySelect++
                 if (value.getIncomeWageDailies[0]) { // if have data
                     if (store.state.common.onDoneEdit) { // sửa ngày thành công
                         store.state.common.onDoneEdit = false
@@ -505,8 +509,8 @@ export default defineComponent({
                         return
                     }
                     if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                        // nếu trước đó click vào row khác
                         store.state.common.focusedRowKey = store.state.common.incomeId
-                        // store.state.common.loadingFormData++
                         
                     } else {
                         store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
@@ -522,10 +526,6 @@ export default defineComponent({
                     store.state.common.actionResetForm++;
                 }
             }
-            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
-                store.state.common.addRow++ // add row
-            }
-            store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
             originData.value.imputedYear = globalYear.value

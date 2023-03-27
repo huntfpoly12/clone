@@ -214,10 +214,13 @@ import {
   AC110,
   AC120,
   AC130,
+  AC510,
   AC530,
   AC540,
   AC550,
   AC560,
+  AC570,
+  AC590,
   AC610,
   AC620,
   Test,
@@ -283,10 +286,13 @@ export default defineComponent({
     AC110,
     AC120,
     AC130,
+    AC510,
     AC530,
     AC540,
     AC550,
     AC560,
+    AC570,
+    AC590,
     AC610,
     AC620,
     Test,
@@ -445,10 +451,13 @@ export default defineComponent({
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
+      if (this.activeTab.id === "ac-510") return 'AC510';
       if (this.activeTab.id === "ac-530") return 'AC530';
       if (this.activeTab.id === "ac-540") return 'AC540';
       if (this.activeTab.id === "ac-550") return 'AC550';
       if (this.activeTab.id === "ac-560") return 'AC560';
+      if (this.activeTab.id === "ac-570") return 'AC570';
+      if (this.activeTab.id === "ac-590") return 'AC590';
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
