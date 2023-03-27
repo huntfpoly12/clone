@@ -112,6 +112,18 @@ const AC120 = defineAsyncComponent(() =>
 const AC130 = defineAsyncComponent(() =>
     import("@/views/AC/AC1/AC130/index.vue")
 );
+const AC530 = defineAsyncComponent(() =>
+    import("@/views/AC/AC5/AC530/index.vue")
+);
+const AC540 = defineAsyncComponent(() =>
+    import("@/views/AC/AC5/AC540/index.vue")
+);
+const AC550 = defineAsyncComponent(() =>
+    import("@/views/AC/AC5/AC550/index.vue")
+);
+const AC560 = defineAsyncComponent(() =>
+    import("@/views/AC/AC5/AC560/index.vue")
+);
 const AC610 = defineAsyncComponent(() =>
     import("@/views/AC/AC6/AC610/index.vue")
 );
@@ -155,6 +167,10 @@ export {
     AC110,
     AC120,
     AC130,
+    AC530,
+    AC540,
+    AC550,
+    AC560,
     AC610,
     AC620,
     Test,

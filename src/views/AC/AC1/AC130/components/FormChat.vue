@@ -191,14 +191,12 @@ export default defineComponent({
         textChat.value = ''
         idEditComment.value = null
       }else {
-        listChat.value.push({ ...payload, id: listChat.value.length + 1, content: textChat.value })
+        listChat.value.push({ ...payload, id: listChat.value[listChat.value.length].id + 1, content: textChat.value })
         textChat.value = ''
       }
       nextTick(() => {
         formTimeline.value.scrollTop = 10000000
-        inputChat.value.style.overflowY = "hidden"
-        inputChat.value.style.height = "40px"
-        inputChat.value.focus()
+        resetInputChat()
       })
     }
     const changeInput = (event: any) => {
@@ -227,6 +225,15 @@ export default defineComponent({
     const removeText = () => {
       idEditComment.value = null
       textChat.value = ''
+      nextTick(() => {
+        resetInputChat()
+      })
+    }
+
+    const resetInputChat = () => {
+      inputChat.value.style.overflowY = "hidden"
+      inputChat.value.style.height = "40px"
+      inputChat.value.focus()
     }
     return {
       userName,

@@ -10,7 +10,7 @@
       <a-col>
         <a-form-item label="제작요청상태" label-align="left">
           <div class="custom-note d-flex-center">
-            <switch-basic v-model:valueSwitch="filter.beforeProduction" textCheck="제작후" textUnCheck="제작전"/>
+            <switch-basic v-model:valueSwitch="filter.beforeProduction" textCheck="제작요청후" textUnCheck="제작요청전"/>
             <div class="d-flex-center ml-5">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;"/>
               <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -317,7 +317,17 @@ export default defineComponent({
     const openModalSave = () => {
       modalConfirmMail.value = true
       dataModalSave.value = {
-        filter: paramSearch.value,
+        filter: {
+          beforeProduction: !filter.beforeProduction,
+          productionStatuses: filter.productionStatuses,
+          // companyCode: String
+          // companyName: String
+          // manageUserId: Int
+          // salesRepresentativeId: Int
+          excludeCancel: filter.companyServiceContractActive,
+          paymentYear: paramSearch.value.paymentYear,
+          paymentMonth: paramSearch.value.paymentMonth
+        },
         emailInput: {
           receiverName: userInfor.value.name,
           receiverAddress: userInfor.value.email
