@@ -196,9 +196,7 @@ export default defineComponent({
       }
       nextTick(() => {
         formTimeline.value.scrollTop = 10000000
-        inputChat.value.style.overflowY = "hidden"
-        inputChat.value.style.height = "40px"
-        inputChat.value.focus()
+        resetInputChat()
       })
     }
     const changeInput = (event: any) => {
@@ -227,6 +225,15 @@ export default defineComponent({
     const removeText = () => {
       idEditComment.value = null
       textChat.value = ''
+      nextTick(() => {
+        resetInputChat()
+      })
+    }
+
+    const resetInputChat = () => {
+      inputChat.value.style.overflowY = "hidden"
+      inputChat.value.style.height = "40px"
+      inputChat.value.focus()
     }
     return {
       userName,
