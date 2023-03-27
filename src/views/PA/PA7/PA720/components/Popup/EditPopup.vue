@@ -58,6 +58,7 @@ export default defineComponent({
     watch(() => props.modalStatus, (newVal: any) => {
       if (newVal) {
         dataUpdateLen.value = props?.data.length;
+        incomeIdRender.value = [];
       }
     }, { deep: true })
     onDone((res: any) => {

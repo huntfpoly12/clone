@@ -27,6 +27,7 @@ import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/BF/BF6/BF630/index"
+import { cloneDeep } from 'lodash'; 
 export default defineComponent({
     props: {
         modalStatus: {
@@ -81,18 +82,21 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+              const payload = cloneDeep(dataRequestFile.value)
+              payload.filter.beforeProduction = !payload.filter.afterProduction
+              delete payload.filter.afterProduction
               switch (props.tabName) {
                 case 'tab1':
-                  sendRequestFileTab1(dataRequestFile.value);
+                  sendRequestFileTab1(payload);
                   break;
                 case 'tab2':
-                  sendRequestFileTab2(dataRequestFile.value);
+                  sendRequestFileTab2(payload);
                   break;
                 case 'tab3':
-                  sendRequestFileTab3(dataRequestFile.value);
+                  sendRequestFileTab3(payload);
                   break;
                 case 'tab4':
-                  sendRequestFileTab4(dataRequestFile.value);
+                  sendRequestFileTab4(payload);
                   break;
                 default:
                   break;

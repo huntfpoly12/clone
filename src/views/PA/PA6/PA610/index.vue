@@ -8,122 +8,125 @@
     <div class="page-content">
       <a-row :gutter="[24, 0]" style="margin: 0px">
         <a-col :span="16">
-          <a-spin
-            :spinning="
+          <div style="height: 100%; border: 1px solid #d7d7d7">
+            <a-spin
+              :spinning="
               loadingGetEmployeeBusinesses || loadingUpdate || loadingDelete
             "
-            size="large"
-          >
-            <DxDataGrid
-              ref="gridRef"
-              :show-row-lines="true"
-              :hoverStateEnabled="true"
-              :dataSource="dataSource"
-              :show-borders="true"
-              key-expr="key"
-              :allow-column-reordering="move_column"
-              :allow-column-resizing="column_resize"
-              :focused-row-enabled="true"
-              @focused-row-changing="onFocusedRowChanging"
-              @focused-row-changed="onFocusedRowChanged"
-              v-model:focused-row-key="focusedRowKey"
-              :focusedRowIndex="0"
-              style="max-height: 700px;"
+              size="large"
             >
-              <DxPaging :page-size="0"/>
-              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
-              <DxExport :enabled="true" />
-              <DxToolbar>
-                <DxItem template="total-user" location="before"/>
-                <DxItem name="searchPanel" />
-                <DxItem name="exportButton" css-class="cell-button-export" />
-                <DxItem
-                  location="after"
-                  template="button-history"
-                  css-class="cell-button-add"
-                />
-                <DxItem
-                  location="after"
-                  css-class="cell-button-add"
-                >
-                <DxButton icon="plus" @click="addRow">
-                  <a-tooltip color="black" placement="top">
-                      <template #title>신규</template>
-                      <PlusOutlined style="font-size: 16px" />
-                  </a-tooltip>
-              </DxButton>
-                </DxItem>
-                <DxItem name="addRowButton" show-text="always" />
-              </DxToolbar>
-              <template #total-user>
-                <div class="total-user">
+              <DxDataGrid
+                ref="gridRef"
+                :show-row-lines="true"
+                :hoverStateEnabled="true"
+                :dataSource="dataSource"
+                :show-borders="true"
+                key-expr="key"
+                :allow-column-reordering="move_column"
+                :allow-column-resizing="column_resize"
+                :focused-row-enabled="true"
+                @focused-row-changing="onFocusedRowChanging"
+                @focused-row-changed="onFocusedRowChanged"
+                v-model:focused-row-key="focusedRowKey"
+                :focusedRowIndex="0"
+                style="max-height: 700px;"
+              >
+                <DxPaging :page-size="0"/>
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
+                <DxExport :enabled="true" />
+                <DxToolbar>
+                  <DxItem template="total-user" location="before"/>
+                  <DxItem name="searchPanel" />
+                  <DxItem name="exportButton" css-class="cell-button-export" />
+                  <DxItem
+                    location="after"
+                    template="button-history"
+                    css-class="cell-button-add"
+                  />
+                  <DxItem
+                    location="after"
+                    css-class="cell-button-add"
+                  >
+                    <DxButton icon="plus" @click="addRow">
+                      <a-tooltip color="black" placement="top">
+                        <template #title>신규</template>
+                        <PlusOutlined style="font-size: 16px" />
+                      </a-tooltip>
+                    </DxButton>
+                  </DxItem>
+                  <DxItem name="addRowButton" show-text="always" />
+                </DxToolbar>
+                <template #total-user>
+                  <div class="total-user">
                     <span>{{ storeDataSourceCount }}</span>
                     <span>전체</span>
                     <img src="@/assets/images/user.svg"/>
-                </div>
-              </template>
-              <template #button-history style="border-color: #ddd">
-                <DxButton icon="plus">
-                  <HistoryOutlined
-                    style="font-size: 18px"
-                    @click="modalHistory"
-                  />
-                </DxButton>
-              </template>
-              <DxColumn
-                caption="성명 (상호)"
-                cell-template="tag"
-                data-field="name"
-              />
-              <template #tag="{ data }" class="custom-action">
-                <div class="custom-action">
-                  <employee-info
-                    :idEmployee="+data.data.employeeId"
-                    :name="data.data.name"
-                    :idCardNumber="data.data.residentId"
-                    :status="data.data.status"
-                    :foreigner="data.data.foreigner"
-                    :checkStatus="false"
-                  />
-                </div>
-              </template>
-              <DxColumn
-                caption="주민등록번호"
-                data-field="residentId"
-                cell-template="resident-id"
-                width="150"
-              />
-              <template #resident-id="{ data }" class="custom-action">
-                <resident-id :residentId="data.data.residentId"></resident-id>
-              </template>
-              <DxColumn
-                caption="소득구분"
-                cell-template="grade-cell"
-                width="300"
-                data-field="TypeCodeAndName"
-                :calculateCellValue="calculateIncomeTypeCodeAndName"
-              />
-              <template #grade-cell="{ data }" class="custom-action">
-                <income-type
-                  :typeCode="data.data.incomeTypeCode"
-                  :typeName="data.data.incomeTypeName"
+                  </div>
+                </template>
+                <template #button-history style="border-color: #ddd">
+                  <DxButton icon="plus">
+                    <HistoryOutlined
+                      style="font-size: 18px"
+                      @click="modalHistory"
+                    />
+                  </DxButton>
+                </template>
+                <DxColumn
+                  caption="성명 (상호)"
+                  cell-template="tag"
+                  data-field="name"
                 />
-              </template>
-              <DxColumn :width="50" cell-template="popup" />
-              <template #popup="{ data }" class="custom-action">
-                <div class="custom-action" style="text-align: center">
-                  <a-tooltip
-                    placement="top"
-                    v-if="data.data.deletable == true"
-                    @click="actionDelete(data.data.employeeId,data.data.incomeTypeCode)"
-                    title=""
-                  >
-                    <DeleteOutlined />
-                  </a-tooltip>
-                </div>
-              </template>
-            </DxDataGrid>
-          </a-spin>
+                <template #tag="{ data }" class="custom-action">
+                  <div class="custom-action">
+                    <employee-info
+                      :idEmployee="+data.data.employeeId"
+                      :name="data.data.name"
+                      :idCardNumber="data.data.residentId"
+                      :status="data.data.status"
+                      :foreigner="data.data.foreigner"
+                      :checkStatus="false"
+                    />
+                  </div>
+                </template>
+                <DxColumn
+                  caption="주민등록번호"
+                  data-field="residentId"
+                  cell-template="resident-id"
+                  width="150"
+                />
+                <template #resident-id="{ data }" class="custom-action">
+                  <resident-id :residentId="data.data.residentId"></resident-id>
+                </template>
+                <DxColumn
+                  caption="소득구분"
+                  cell-template="grade-cell"
+                  width="300"
+                  data-field="TypeCodeAndName"
+                  :calculateCellValue="calculateIncomeTypeCodeAndName"
+                />
+                <template #grade-cell="{ data }" class="custom-action">
+                  <income-type
+                    :typeCode="data.data.incomeTypeCode"
+                    :typeName="data.data.incomeTypeName"
+                  />
+                </template>
+                <DxColumn :width="50" cell-template="popup" />
+                <template #popup="{ data }" class="custom-action">
+                  <div class="custom-action" style="text-align: center">
+                    <a-tooltip
+                      placement="top"
+                      v-if="data.data.deletable == true"
+                      @click="actionDelete(data.data.employeeId,data.data.incomeTypeCode)"
+                      title=""
+                    >
+                      <DeleteOutlined />
+                    </a-tooltip>
+                  </div>
+                </template>
+              </DxDataGrid>
+            </a-spin>
+          </div>
+
         </a-col>
         <!-- section right -->
         <a-col :span="8" class="custom-layout">
@@ -212,7 +215,7 @@
                 />
               </a-form-item>
               <a-form-item
-                :label="textResidentId"
+                :label="dataShow.foreigner ? '외국인번호' : '주민등록번호'"
                 label-align="right"
                 class="red"
               >
@@ -275,6 +278,16 @@
   <PopupMessageCustom :modalStatus="isDiscard" @closePopup="handleDiscardPopup" :typeModal="'confirm'"
                       :title="Message.getCommonMessage('501').message" content="" okText="네" cancelText="아니요"
                       @checkConfirm="handleConfirm"
+  />
+  <PopupMessageCustom
+    :modalStatus="isPopupVisible"
+    @closePopup="hidePopup"
+    :typeModal="'confirm'"
+    :title="Message.getMessage('COMMON', '501').message"
+    content=""
+    :okText="Message.getMessage('COMMON', '501').yes"
+    :cancelText="Message.getMessage('COMMON', '501').no"
+    @checkConfirm="confirmPopup"
   />
 </template>
 <script lang="ts">
@@ -370,6 +383,8 @@ export default defineComponent({
 
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const isFormChange = computed(() => !isEqualObject(dataShow.value, previousRowData.value));
+    const isPopupVisible = computed(() => store.getters['settings/isPopupVisible'])
+
     // Ref
     const formWrapper = ref(null)
     const isDiscard = ref(false); // verify popup discard
@@ -385,6 +400,7 @@ export default defineComponent({
     const popupDataHistory = ref([]); // data for history popup
     const modalHistoryStatus = ref<boolean>(false); // status of history popup
     const trigger = ref<boolean>(true); // trigger for call api
+    const storeDataSourceCount = ref(0) // count of store data source
 
     let valueCallApiGetEmployeeBusiness: any = reactive({
       companyId: companyId,
@@ -395,7 +411,6 @@ export default defineComponent({
 
     const disabledInput2 = ref(true);
     const isDiscardDelete = ref(false);
-    const textResidentId = ref("주민등록번호");
 
 
     // Watch listen dataShow change and change dataShow.name to uppercase
@@ -416,16 +431,30 @@ export default defineComponent({
     // Watch listen clickYearStatus
     watch(clickYearStatus, async (newVal : ClickYearStatus) => {
       if (newVal !== ClickYearStatus.none) {
-        await handleSubmit();
+        store.commit('settings/setPopupVisible', true)
       }
     }, {deep: true});
+    const hidePopup = (e: boolean) => {
+      if (!e) {
+        store.dispatch('settings/hidePopup')
+      }
+    }
+    const confirmPopup = (e: boolean) => {
+      if (e) {
+        handleSubmit()
+        store.dispatch('settings/confirmPopup')
+      }
+    }
 
     // watch listen dataSource and globalYear change then change focusedRowKey
-    watch([dataSource, globalYear], async (newVal: any, oldValue) => {
-      if (newVal[0] && newVal[1] !== oldValue[1]) {
-        focusedRowKey.value = newVal[0]?._items[0]?.residentId || 0
+    watch([dataSource, globalYear], async (newVal, oldValue) => {
+      if (newVal[0]?.isLoaded() && newVal[1] !== oldValue[1]) {
+        // focusedRowKey.value = newVal[0]?.items()[0]?.residentId || 0;
+        storeDataSourceCount.value = newVal[0]?.totalCount() || 0
       }
     }, {deep: true});
+    // Watch resultGetEmployeeBusinesses
+
 
     // ================GRAPHQL==============================================
     const valueCallApiGetEmployeeBusinesses = reactive({
@@ -437,11 +466,18 @@ export default defineComponent({
       loading: loadingGetEmployeeBusinesses,
       onError: errorGetEmployeeBusinesses,
       onResult: resEmployeeBusinesses,
+      result: resultGetEmployeeBusinesses,
     } = useQuery( queries.getEmployeeBusinesses, valueCallApiGetEmployeeBusinesses, () => ({
         enabled: trigger.value,
         fetchPolicy: "no-cache",
       })
     );
+    // watch listen globalYear change then focus first row
+    watch(globalYear, async (newVal, oldValue) => {
+      if (newVal !== oldValue) {
+        focusedRowKey.value = resultGetEmployeeBusinesses.value?.getEmployeeBusinesses[0]?.residentId || 0;
+      }
+    }, {deep: true});
     resEmployeeBusinesses((res) => {
       // because key is number, so i create new key from residentId
       const data = res.data.getEmployeeBusinesses?.map((i: any) => ({
@@ -455,6 +491,7 @@ export default defineComponent({
           key: "key",
         },
       });
+      storeDataSourceCount.value = data.length;
       if (data.length === 0) {
         formRef.value.resetValidate();
         previousRowData.value = {...valueDefaultAction};
@@ -462,8 +499,6 @@ export default defineComponent({
       }
       isNewRow.value = false
     });
-    // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
-    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount() : 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
 
@@ -586,7 +621,7 @@ export default defineComponent({
       loading: loadingUpdate,
       onDone: updateDone,
     } = useMutation(mutations.updateEmployeeBusiness);
-    updateDone(() => {
+    updateDone((res) => {
       valueCallApiGetEmployeeBusiness.incomeTypeCode =
       dataShow.value.incomeTypeCode;
       valueCallApiGetEmployeeBusiness.employeeId = dataShow.value.employeeId;
@@ -747,6 +782,7 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         // if valid fail then set state default
         store.commit('settings/setClickYearStatus', ClickYearStatus.none)
+        store.commit('settings/setFormStatus', FormStatus.editing)
         dataGridRef.value?.refresh();
       } else {
         // if form disabled => action edit
@@ -804,7 +840,6 @@ export default defineComponent({
       store,
       focusedRowKey,
       isDiscard,
-      textResidentId,
       disabledInput2,
       popupDataHistory,
       modalHistoryStatus,
@@ -840,6 +875,9 @@ export default defineComponent({
       formWrapper,
       changeRadioForeigner,
       calculateIncomeTypeCodeAndName,
+      isPopupVisible,
+      hidePopup,
+      confirmPopup
     };
   },
 });

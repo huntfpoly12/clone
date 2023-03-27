@@ -20,8 +20,14 @@ const actions: ActionTree<SettingState, any> = {
     commit('setFormStatus', FormStatus.none)
   },
   confirmPopup({commit,state}){
-        commit('settings/setPopupVisible', false)
-        commit('settings/setClickYearStatus', ClickYearStatus.increasing)
+    commit('setPopupVisible', false)
+    commit('setClickYearStatus', ClickYearStatus.none)
+  },
+  hidePopup({commit,state}){
+    commit('setPopupVisible', false)
+    commit('setCurrentYear', state.newYear)
+    commit('setClickYearStatus', ClickYearStatus.none)
+    commit('setFormStatus', FormStatus.none)
   }
 }
 export default actions

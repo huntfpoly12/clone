@@ -56,8 +56,9 @@ export default defineComponent({
         onDone(() => {
             notification('success', Message.getMessage('COMMON', '106').message)
             emit("closePopup", false)
+            store.state.common.onDoneEdit = true;
             store.state.common.loadingTableInfo++
-            store.state.common.loadingFormData++
+            // store.state.common.loadingFormData++
         })
         onError((e: any) => {
             notification('error', e.message)
