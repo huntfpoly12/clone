@@ -123,6 +123,7 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         idRowEdit: Number,
@@ -131,6 +132,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const formRefPa520Update = ref()
     const labelResident = ref('주민등록번호')
+    const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const activeLabel = ref(false)
     const disabledSelectBox = ref(true)
     const selectBoxData1 = ref()
@@ -140,7 +142,6 @@ export default defineComponent({
     })
     const store = useStore();
     const globalYear: any = computed(() => store.state.settings.globalYear);
-    const newGlobalYear = ref(0)
     const originData = ref({
       companyId: companyId,
     })
@@ -232,7 +233,8 @@ export default defineComponent({
         store.state.common.checkChangeValueEditTab1PA520 = false
         dataDefault.value = dataEdited
         emit('closePopup', false)
-        notification('success', '업데이트 완료!')
+        notification('success', Message.getCommonMessage('106').message)
+        if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
     })
         // ============ WATCH ================================   
         watch(() => props.idRowEdit, (newVal) => {
@@ -261,8 +263,10 @@ export default defineComponent({
           // If the corrected data is different from the default data, change the check change status
           if (JSON.stringify(dataDefault.value) !== JSON.stringify(dataEdited)) {
             store.state.common.checkChangeValueEditTab1PA520 = true
+            store.commit('settings/setFormStatus',FormStatus.editing)
           } else {
             store.state.common.checkChangeValueEditTab1PA520 = false
+            store.commit('settings/setFormStatus',FormStatus.none)
           }
         }, { deep: true })
 
@@ -282,6 +286,7 @@ export default defineComponent({
             if (!res.isValid) {
               res.brokenRules[0].validator.focus();
               store.state.common.checkChangeValueEditTab1PA520 = true
+              store.commit('settings/setFormStatus',FormStatus.editing)
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
@@ -293,7 +298,7 @@ export default defineComponent({
                 delete newValDataEdit.zipcode;
                 let dataCallCreat = {
                     companyId: companyId,
-                    imputedYear: year,
+                    imputedYear: globalYear.value,
                     employeeId: dataEdited.employeeId,
                     input: newValDataEdit
                 };

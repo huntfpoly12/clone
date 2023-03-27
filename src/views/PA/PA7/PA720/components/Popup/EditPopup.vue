@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref,computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA7/PA720/index"
@@ -53,21 +53,40 @@ export default defineComponent({
       onDone,
       onError,
     } = useMutation(mutations.changeIncomeExtraPaymentDay);
-    onDone((res) => {
+    const dataUpdateLen = ref(props?.data?.length);
+    const incomeIdRender = ref<any>([]);
+    watch(() => props.modalStatus, (newVal: any) => {
+      if (newVal) {
+        dataUpdateLen.value = props?.data.length;
+        incomeIdRender.value = [];
+      }
+    }, { deep: true })
+    onDone((res: any) => {
+      dataUpdateLen.value--;
       let resData = res.data.changeIncomeExtraPaymentDay;
       notification('success', messageUpdate);
       let data = {
-        prevPaymentDay: resData.prevPaymentDay,
         employeeId: resData.employeeId,
         incomeTypeCode: resData.incomeTypeCode,
       }
       if (JSON.stringify(data) == JSON.stringify(changeDayDataPA720.value)) {
-        emit("closePopup", resData.incomeId)
+        incomeIdRender.value.unshift(resData.incomeId);
+      } else {
+        let hasData = incomeIdRender.value.findIndex((item: any) => item == resData.incomeId);
+        if (hasData == -1) {
+          incomeIdRender.value.push(resData.incomeId);
+        }
       }
-      notification('success', messageUpdate)
+      if (dataUpdateLen.value == 0) {
+        emit("closePopup", incomeIdRender.value)
+      }
     })
     onError((e: any) => {
-      notification('error', e.message)
+      dataUpdateLen.value--;
+      notification('error', e.message);
+      if (dataUpdateLen.value == 0) {
+        emit("closePopup", incomeIdRender.value)
+      }
     })
     const onSubmit = (e: any) => {
       const reversedArr = props.data.reverse();
@@ -80,7 +99,7 @@ export default defineComponent({
       setModalVisible,
       onSubmit,
       dayValue,
-      
+
     }
   },
 })

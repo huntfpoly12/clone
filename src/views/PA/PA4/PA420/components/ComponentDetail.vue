@@ -165,6 +165,7 @@ import UpdatePopup from "./UpdatePopup.vue"
 import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
@@ -257,7 +258,9 @@ export default defineComponent({
           statusButton.value = newValue
           if (newValue != 10) {
             checkActionValue.value = true
-          } 
+          } else{
+            checkActionValue.value = false
+          }
         })
         // ================FUNCTION============================================   
         const addRow = () => {
@@ -304,6 +307,8 @@ export default defineComponent({
         const editPaymentDate = () => {
             if (popupDataDelete.value.length > 0) {
                 modalEdit.value = true
+            }else{
+                notification('warning',Message.getMessage('COMMON', '404').message)
             }
         }
         const customTextSummary = () => {

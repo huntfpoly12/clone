@@ -1,41 +1,6 @@
 <template>
   <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-120" class="page-content">
-    <a-row>
-      <a-col :span="2" style="padding-right: 10px">
-        <div class="total-user">
-          <div>
-            <span>{{ dataSource.length }}</span>
-            <span>전체</span>
-          </div>
-          <div>
-            <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-          </div>
-        </div>
-      </a-col>
-      <a-col :span="2" style="padding-right: 10px">
-        <div class="current-user">
-          <div>
-            <span>{{ totalUserOnl }}</span>
-            <span>재직</span>
-          </div>
-          <div>
-            <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-          </div>
-        </div>
-      </a-col>
-      <a-col :span="2" style="padding-right: 10px">
-        <div class="leave-user">
-          <div>
-            <span>{{ totalUserOff }}</span>
-            <span>퇴사</span>
-          </div>
-          <div>
-            <img src="@/assets/images/user.svg" alt="" style="width: 39px" />
-          </div>
-        </div>
-      </a-col>
-    </a-row>
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
@@ -57,11 +22,49 @@
             <DxExport :enabled="true" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxToolbar>
+              <DxItem template="total-user" location="before" />
               <DxItem name="searchPanel" />
               <DxItem name="exportButton" css-class="cell-button-export" />
               <DxItem location="after" template="button-history" css-class="cell-button-add" />
               <DxItem location="after" template="button-template" css-class="cell-button-add" />
             </DxToolbar>
+            <template #total-user>
+              <a-row style="width: 280px;">
+                <a-col :span="8" style="padding-right: 10px">
+                  <div class="total-user">
+                    <div>
+                      <span>{{ dataSource.length }}</span>
+                      <span>전체</span>
+                    </div>
+                    <div>
+                      <img src="@/assets/images/user.svg" alt=""/>
+                    </div>
+                  </div>
+                </a-col>
+                <a-col :span="8" style="padding-right: 10px">
+                  <div class="current-user total-user">
+                    <div>
+                      <span>{{ totalUserOnl }}</span>
+                      <span>재직</span>
+                    </div>
+                    <div>
+                      <img src="@/assets/images/user.svg" alt=""/>
+                    </div>
+                  </div>
+                </a-col>
+                <a-col :span="8" style="padding-right: 10px">
+                  <div class="leave-user total-user">
+                    <div>
+                      <span>{{ totalUserOff }}</span>
+                      <span>퇴사</span>
+                    </div>
+                    <div>
+                      <img src="@/assets/images/user.svg" alt=""/>
+                    </div>
+                  </div>
+                </a-col>
+              </a-row>
+            </template>
             <template #button-template>
               <a-tooltip placement="top" class="custom-tooltip">
                 <template #title>
@@ -255,6 +258,7 @@ export default defineComponent({
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         store.commit('common/editRowPA120', initFormStateTab1);
+        store.state.common.isNewRowPA120 = false;
       }
       trigger.value = false;
     });
@@ -306,7 +310,6 @@ export default defineComponent({
       setTimeout(() => {
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         focusedRowKey.value = initFormStateTabPA120.value.key;
-        console.log(focusedRowKey.value);
       }, 0)
     };
     const compareType = ref(2); //2 is row click. 1 is add button click;
@@ -389,9 +392,7 @@ export default defineComponent({
           idRowEdit.value = idRowFake.value;
           store.state.common.isNewRowPA120 = false;
           actionChangeComponent.value = 2;
-          console.log(idRowEdit.value);
           focusedRowKey.value = idRowFake.value.toString();
-          console.log(focusedRowKey.value);
         }
         compareType.value = 2;
       }
@@ -404,7 +405,7 @@ export default defineComponent({
         return;
       }
       if (isClickYearDiff.value) {
-        changeYear(globalYear.value)
+        changeYear(globalYear.value);
         isClickYearDiff.value = false;
         return;
       }
@@ -412,7 +413,7 @@ export default defineComponent({
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
       idRowEdit.value = idRowFake.value;
-      if(compareType.value == 2) {
+      if (compareType.value == 2) {
         actionChangeComponent.value = 2;
       }
     });

@@ -20,7 +20,7 @@
                 <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
-                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
+                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId" :isCheckId="true"></id-number-text-box>
               </a-form-item>
               <a-form-item label="나이" label-align="right">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="ageCount"></default-text-box>
@@ -59,14 +59,14 @@
               </a-form-item>
               <a-form-item label="자녀세액공제" label-align="right" class="d-flex-nowrap">
                 <div class="input-text long-text">
-                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.descendant" />
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.descendant" :disabled="consignDisabled"/>
                   <span style="color: #888888; font-size:11px">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 7세 이상 20세 이하의 자녀인 경우 공제 대상
                   </span>
                 </div>
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
-                <default-text-box placeholder="최대 20자" width="200px" :disabled="consignDisabled" :maxCharacter="20"
+                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                   v-model:valueInput="formState.consignmentRelationship"></default-text-box>
               </a-form-item>
               <!-- <a-form-item label="세대주여부" label-align="right">

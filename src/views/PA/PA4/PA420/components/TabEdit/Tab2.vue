@@ -85,20 +85,6 @@ export default defineComponent({
     },
 
   setup(props, { emit }) {
-    onMounted(() => {
-      console.log('Component mounted 2');
-    });
-
-    // Hook được gọi sau khi component đã được mount lần đầu tiên
-    // và sau mỗi lần cập nhật
-    onUpdated(() => {
-      console.log('Component updated 2');
-    });
-
-    // Hook được gọi trước khi component được unmount
-    onUnmounted(() => {
-      console.log('Component unmounted 2');
-    });
         const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({

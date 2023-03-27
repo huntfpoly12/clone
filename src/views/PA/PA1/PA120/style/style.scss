@@ -7,20 +7,19 @@
   }
 
   .total-user {
-    background-color: #17375e;
+    background-color: #17375E;
     color: white;
     display: flex;
     align-items: center;
+    padding: 3px;
+    justify-content: center;
+    >span {
+      padding-left: 5px;
+    }
 
-    >div {
-      font-size: 16px;
-      width: 50%;
-      text-align: center;
-      line-height: 16px;
-
-      .dx-icon-user {
-        font-size: 55px;
-      }
+    img {
+      width: 30px;
+      padding-left: 5px;
     }
   }
 
@@ -35,38 +34,10 @@
 
   .current-user {
     background-color: #d99694;
-    color: white;
-    display: flex;
-    align-items: center;
-
-    >div {
-      font-size: 16px;
-      width: 50%;
-      text-align: center;
-      line-height: 16px;
-
-      .dx-icon-user {
-        font-size: 55px;
-      }
-    }
   }
 
   .leave-user {
     background-color: #bfbfbf;
-    color: white;
-    display: flex;
-    align-items: center;
-
-    >div {
-      font-size: 16px;
-      width: 50%;
-      text-align: center;
-      line-height: 16px;
-
-      .dx-icon-user {
-        font-size: 55px;
-      }
-    }
   }
 
   .custom-note {
@@ -112,6 +83,7 @@
     padding: 3px 10px;
     border-radius: 5px;
     width: min-content;
+    margin: auto
   }
 
   :deep .bg_orange {
@@ -130,6 +102,7 @@
     display: inline;
   }
 }
+
 #tab2-pa120 {
   ::v-deep .ant-form-item-label>label {
     width: 130px;
@@ -222,6 +195,7 @@
 
   :deep .col-3 {
     flex: 1 1 35%;
+
     .dx-numberbox {
       width: 125px !important;
     }

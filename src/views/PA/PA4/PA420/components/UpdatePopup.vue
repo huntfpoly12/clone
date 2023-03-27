@@ -39,6 +39,7 @@ import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { useStore } from 'vuex';
+
 export default defineComponent({
     props: {
         modalStatus: {
@@ -60,20 +61,6 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
   setup(props, { emit }) {
-    onMounted(() => {
-      console.log('Component mountedc');
-    });
-
-    // Hook được gọi sau khi component đã được mount lần đầu tiên
-    // và sau mỗi lần cập nhật
-    onUpdated(() => {
-      console.log('Component updated');
-    });
-
-    // Hook được gọi trước khi component được unmount
-    onUnmounted(() => {
-      console.log('Component unmounted');
-    });
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
         const step = ref(9)
@@ -154,7 +141,6 @@ export default defineComponent({
         // ================WATCHING============================================ 
  
         watch(() => props.modalStatus, (newValue) => {
-          // alert()
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
             trigger.value = true

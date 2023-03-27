@@ -264,6 +264,7 @@ export default defineComponent({
         delete variables.taxCalculationInput.prevRetiredYearsOfService;
         delete variables.taxCalculationInput.prevRetirementBenefitStatus;
       }
+
       delete variables.checkBoxCallApi;
       mutateCreateIncomeRetirement(variables)
     };
@@ -289,6 +290,10 @@ export default defineComponent({
       if (dataForm.input.retirementType == 1) {
         arrayEmploySelect.value = arrayEmploySelect.value.filter(
           (element: any) => element.status === 0
+        );
+      } else {
+        arrayEmploySelect.value = arrayEmploySelect.value.filter(
+          (element: any) => element.status !== 0
         );
       }
       modalStatusAccept.value = true;
