@@ -4,51 +4,87 @@
     <div class="ac-110__top">
       <div class="ac-110__top-grid">
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">01</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">01</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusEntering" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">02</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">02</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">03</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">03</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">04</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">04</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">05</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">05</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">06</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">06</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">07</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">07</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">08</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">08</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">09</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">09</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">10</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">10</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">11</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">11</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-110__top-grid-items">
-          <span class="ac-110__top-grid-items-text">12</span>
+          <div class="ac-110__top-grid-items-text">
+            <span class="">12</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
         </div>
       </div>
