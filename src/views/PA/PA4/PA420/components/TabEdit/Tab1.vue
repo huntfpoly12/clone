@@ -1,6 +1,8 @@
 <template>
     <standard-form class="modal-add">
-        <a-row :gutter="16"> 
+        <a-row :gutter="16"> <pre>
+{{store.state.common.formStateEditPA420}}
+                             </pre>
             <a-col :span="12">
                 <a-form-item label="구분">
                   <a-tag :color="dataGet.retirementType == 2 ? 'green' : 'red'">{{
@@ -71,7 +73,7 @@
                     <div class="d-flex-center">
                         <date-time-box width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate"
-                            :required="true" />
+                            :required="true" ref="prevSettlementStartDate"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -143,7 +145,7 @@
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate" ref="lastSettlementStartDate"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -158,7 +160,7 @@
                     <div class="d-flex-center">
                         <date-time-box-custom width="150px"
                             :startDate="dayjs(dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate?.toString())"
-                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate" ref="lastSettlementFinishDate"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -172,7 +174,7 @@
                 <a-form-item label="지급일" >
                     <date-time-box width="150px"
                         v-model:valueDate="dataGet.specification.specificationDetail.lastRetiredYearsOfService.paymentDate"
-                        :required="true" />
+                        :required="true" ref="lastRetiredYearsOfServicePaymentDate"/>
                 </a-form-item>
                 <a-form-item label="제외일수">
                     <div class="d-flex-center">
@@ -237,13 +239,13 @@
                 <a-form-item label="정산시작(입사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate" ref="incomeCalculationInputSettlementStartDate"/>
                     </div>
                 </a-form-item>
                 <a-form-item label="정산종료(퇴사)일" class="label-required">
                     <div class="d-flex-center">
                         <date-time-box width="150px"
-                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" />
+                            v-model:valueDate="dataGet.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate" ref="incomeCalculationInputSettlementFinishDate"/>
                     </div>
                 </a-form-item>
                 <div>근속연수 / 근속월수 / 근속일수: {{ yearsOfService3.year }}년/{{ yearsOfService3.month }}개월/{{
@@ -277,6 +279,14 @@ export default defineComponent({
       },
     },
   setup(props, { emit }) {
+        const prevSettlementStartDate = ref()
+        const prevSettlementFinishDate = ref()
+        const lastSettlementStartDate = ref()
+        const lastSettlementFinishDate = ref()
+        const lastRetiredYearsOfServicePaymentDate = ref()
+        const incomeCalculationInputSettlementStartDate = ref()
+        const incomeCalculationInputSettlementFinishDate = ref()
+
         const store = useStore();
         // Checking if the month is less than 9, if it is, it is adding a 0 to the month.
         const monthInputed = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
@@ -372,13 +382,14 @@ export default defineComponent({
         watch(() => [
             dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate,
             dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate,
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate, dataGet.value.checkBoxCallApi], ([newA, newB, newC, checkBoxNew], [prevA, prevB, prevC, checkBoxOld]) => {
+            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate, 
+            dataGet.value.checkBoxCallApi
+            ], ([newA, newB, newC, checkBoxNew], [prevA, prevB, prevC, checkBoxOld]) => {
                 if (indexChange)
                     if (checkBoxNew == true) {
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newA
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     } else {
-                      alert()
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     }
@@ -391,9 +402,45 @@ export default defineComponent({
         }
 
         const submitForm = (e: any) => {
+            // validate input date time
+          let dtValidate = true
+          if (dataGet.value.checkBoxCallApi && !dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate) {
+            prevSettlementStartDate.value.validate(true)
+            dtValidate = false
+          } else {
+            prevSettlementStartDate.value.validate(false)
+          }
+          if (dataGet.value.checkBoxCallApi && !dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate) {
+            prevSettlementFinishDate.value.validate(true)
+            dtValidate = false
+          } else {
+            prevSettlementFinishDate.value.validate(false)
+          }
+          if (!dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate) {
+            lastSettlementStartDate.value.validate(true)
+            dtValidate = false
+          }
+          if (!dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementFinishDate) {
+            lastSettlementFinishDate.value.validate(true)
+            dtValidate = false
+          }
+          if (!dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.paymentDate) {
+            lastRetiredYearsOfServicePaymentDate.value.validate(true)
+            dtValidate = false
+          }
+          if (!dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate) {
+            incomeCalculationInputSettlementStartDate.value.validate(true)
+            dtValidate = false
+          }
+          if (!dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate) {
+            incomeCalculationInputSettlementFinishDate.value.validate(true)
+            dtValidate = false
+          }
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+            } else if (!dtValidate) { 
+                dtValidate = true
             } else {
                 emit('nextPage', true)
             }
@@ -406,7 +453,14 @@ export default defineComponent({
             dataGet,
             dayjs,
             openTabFuc,
-            submitForm,monthInputed,store
+            submitForm,monthInputed,store,
+            prevSettlementStartDate,
+            prevSettlementFinishDate,
+            lastSettlementStartDate,
+            lastSettlementFinishDate,
+            lastRetiredYearsOfServicePaymentDate,
+            incomeCalculationInputSettlementStartDate,
+            incomeCalculationInputSettlementFinishDate,
         }
     }
 })
