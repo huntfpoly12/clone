@@ -275,6 +275,8 @@ export default defineComponent({
         const deleteItem = () => {
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
+            }else{
+                notification('warning',Message.getMessage('COMMON', '404').message)
             }
         };
         const actionDeleteSuccess = () => {

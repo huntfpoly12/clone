@@ -268,7 +268,6 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { origindata, dataAddTableBigUtils } from "./utils";
@@ -320,23 +319,7 @@ export default defineComponent({
         })
         let dataCustomRes: any = ref([])
         // ================GRAPQL==============================================
-         // query get config from screen cm-130
-         const {
-          loading: loadingConfig,
-          result: resultConfig,
-        } = useQuery(
-              queriescm130.getWithholdingConfig,
-              originData,
-              () => ({
-                  fetchPolicy: "no-cache",
-              })
-        );
-
-        watch(resultConfig,(resConfig)=>{
-          if (resConfig) {
-            store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
-          }
-        })    
+     
         // API QUERY TABLE BIG
         const {
           refetch: refetchData,

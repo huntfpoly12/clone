@@ -14,8 +14,16 @@
                     </div>
                 </a-form-item>
                 <a-form-item label="지급일" class="label-required">
+                  <div class="d-flex-center">
                     <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="dataGet.paymentDay" />
+                        v-model:valueInput="dataGet.paymentDay" disabled="true" />
+                    <div class="ml-5 d-flex-center" >
+                      <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
+                      <span class="custom-waring" style="width: 180px;">
+                        지급일은 저장 후 수정불가
+                      </span>
+                    </div>
+                  </div>
                 </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -79,7 +87,7 @@
                         <date-time-box-custom width="150px" :disabled="!dataGet.checkBoxCallApi"
                             v-model:valueDate="dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate"
                             :required="true"
-                            :startDate="dayjs(dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate?.toString())" />
+                            :startDate="dayjs(dataGet.specification.specificationDetail.prevRetiredYearsOfService.settlementStartDate?.toString())" ref="prevSettlementFinishDate"/>
                         <div class="ml-5 d-flex-center">
                             <a-tooltip placement="top" class="custom-tooltip">
                                 <template #title>
@@ -370,6 +378,7 @@ export default defineComponent({
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newA
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     } else {
+                      alert()
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate = newC
                         dataGet.value.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate = newB
                     }
