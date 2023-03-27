@@ -191,7 +191,7 @@ export default defineComponent({
         textChat.value = ''
         idEditComment.value = null
       }else {
-        listChat.value.push({ ...payload, id: listChat.value.length + 1, content: textChat.value })
+        listChat.value.push({ ...payload, id: listChat.value[listChat.value.length].id + 1, content: textChat.value })
         textChat.value = ''
       }
       nextTick(() => {
