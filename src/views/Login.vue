@@ -77,6 +77,7 @@ export default {
     }));
     signinDone((res) => {
       const jwtObject = getJwtObject(res.data.login.accessToken);
+      console.log(jwtObject);
       if (!jwtObject.isExpired()) {
         store.commit('auth/setAuthData', res.data.login.accessToken);
       } else {
