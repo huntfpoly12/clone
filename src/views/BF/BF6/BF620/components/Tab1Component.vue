@@ -1,9 +1,8 @@
 <template>
   <div class="tab-group">
-    <SearchArea :tab1="true"/>
+    <SearchArea :tab1="true" />
     {{ filterBF620 }} filterBF620 <br />
-    {{ dataSource }} dataSource <br />
-    {{ searchWithholdingParam }} searchWithholdingParam <br />
+    {{ requestFileData }} requestFileData <br />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -87,7 +86,7 @@
         </DxDataGrid>
       </a-spin>
     </div>
-    <RequestFilePopup v-if="modalStatus" :data="requestFileData" tab-name="tab1" @cancel="modalStatus = false" />
+    <RequestFilePopup v-if="modalStatus" :requestFileData="requestFileData" tab-name="tab1" @cancel="modalStatus = false" />
   </div>
 </template>
 
@@ -124,9 +123,9 @@ export default defineComponent({
     search: {
       type: Number,
     },
-    onSearch:{
+    onSearch: {
       type: Function,
-      default: () => {},
+      default: () => { },
     }
   },
   setup(props, { emit }) {
@@ -159,7 +158,7 @@ export default defineComponent({
     );
     watch(searchWithholdingResult, (newVal) => {
       let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth.map((item: any) => {
-        let arrData={};
+        let arrData = {};
         if (item) {
           arrData = {
             code: item.company.code,
@@ -191,7 +190,7 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       filteredDataSource.value = [...result];
-      if(props.onSearch){
+      if (props.onSearch) {
         props.onSearch();
       }
     });
@@ -233,7 +232,7 @@ export default defineComponent({
         filteredDataSource.value, 1, 'afterDeadline')}`;
     };
     const productStatusSummary = () => {
-      return `제작전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
+      return `제작요청전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
         productionStatusArr.value,
         1, 'productionStatus'
       )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
@@ -241,11 +240,11 @@ export default defineComponent({
     // caculator sum
     const productionStatusData = (emitVal: any) => {
       productionStatusArr.value = [emitVal];
-      filteredDataSource.value = filteredDataSource.value.map((item: any) =>{
-        if(item.companyId == emitVal.companyId) {
-          return {...item, productionStatus: emitVal.productionStatus, beforeProduction: true}
+      filteredDataSource.value = filteredDataSource.value.map((item: any) => {
+        if (item.companyId == emitVal.companyId) {
+          return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true }
         }
-        return {...item, beforeProduction: false};
+        return { ...item, beforeProduction: false };
       })
       // reFreshDataGrid();
     };
@@ -258,17 +257,17 @@ export default defineComponent({
         let { paymentYear, paymentMonth, ...compareObj } = filterBF620.value;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(compareObj).every((key: any) => {
-            if (key == 'index' || key=='afterDeadline'){
-              if (compareObj.afterDeadline !== item.afterDeadline){
+            if (key == 'index' || key == 'afterDeadline') {
+              if (compareObj.afterDeadline !== item.afterDeadline) {
                 return false;
               }
-              if((compareObj.index && item.index)||(compareObj.index === item.index)) {
+              if ((compareObj.index && item.index) || (compareObj.index === item.index)) {
                 return true;
               }
               return false;
             }
-            if(key === 'productionStatuses'){  //error search main reason is this.
-              return compareObj.productionStatuses.length>0 ? compareObj.productionStatuses.findIndex((status:any)=> status === item.productionStatus) > -1 : true;
+            if (key === 'productionStatuses') {  //error search main reason is this.
+              return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
             }
             if (compareObj[key]) {
               return compareObj[key] == item[key];
@@ -293,9 +292,10 @@ export default defineComponent({
     });
     const selectionChanged = (event: any) => {
       if (event.selectedRowsData)
-        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.company.id, imputedYear: item.imputedYear, reportId: item.reportId };
-        });
+      requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
+        console.log(`output->item`, item)
+        return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+      });
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;

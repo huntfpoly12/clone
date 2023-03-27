@@ -13,6 +13,10 @@ let statesBF620 = {
     reportType: 0,
     index: 0,
     afterDeadline: false,
+    excludeCancel: false,
+    // imputedYear: +dayjs().format("YYYY"),
+    // imputedMonth: +dayjs().format("MM"),
+    withholdingTaxType: 0,
   },
 };
 
