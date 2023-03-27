@@ -9,8 +9,17 @@
         border-radius: 10px;
         text-align: center;
         padding: 8px;
+        display: flex;
+        align-items: center;
         &-text {
           margin-right: 8px;
+          display: flex;
+          flex-direction: column;
+          span {
+            font-size: 11px;
+            line-height: 12px;
+            color: #7F7F7F;
+          }
         }
       }
     }
