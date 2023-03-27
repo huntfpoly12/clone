@@ -8,7 +8,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="제작요청일(기간)" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :maxRange="365"
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px"
                         :multi-calendars="true" />
                 </a-form-item>
             </a-col>
@@ -97,7 +97,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(1, 'y'), dayjs()]);
+        const rangeDate: any = ref([dayjs().subtract(7, 'd'), dayjs()]);
         let trigger = ref(true)
         let dataModalDetail: any = ref({})
         // ================== GRAPHQL=================
