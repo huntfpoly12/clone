@@ -211,6 +211,22 @@ const routes = [
         component: () => import('../views/AC/AC1/AC130/index.vue'),
       },
       {
+        path: "ac-530",
+        component: () => import('../views/AC/AC5/AC530/index.vue'),
+      },
+      {
+        path: "ac-540",
+        component: () => import('../views/AC/AC5/AC540/index.vue'),
+      },
+      {
+        path: "ac-550",
+        component: () => import('../views/AC/AC5/AC550/index.vue'),
+      },
+      {
+        path: "ac-560",
+        component: () => import('../views/AC/AC5/AC560/index.vue'),
+      },
+      {
         path: "ac-610",
         component: () => import('../views/AC/AC6/AC610/index.vue'),
       },

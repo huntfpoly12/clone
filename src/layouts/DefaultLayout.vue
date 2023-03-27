@@ -173,7 +173,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch,computed } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -214,6 +214,10 @@ import {
   AC110,
   AC120,
   AC130,
+  AC530,
+  AC540,
+  AC550,
+  AC560,
   AC610,
   AC620,
   Test,
@@ -232,6 +236,7 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
+import { getJwtObject } from '@bankda/jangbuda-common';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -278,6 +283,10 @@ export default defineComponent({
     AC110,
     AC120,
     AC130,
+    AC530,
+    AC540,
+    AC550,
+    AC560,
     AC610,
     AC620,
     Test,
@@ -436,6 +445,10 @@ export default defineComponent({
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
+      if (this.activeTab.id === "ac-530") return 'AC530';
+      if (this.activeTab.id === "ac-540") return 'AC540';
+      if (this.activeTab.id === "ac-550") return 'AC550';
+      if (this.activeTab.id === "ac-560") return 'AC560';
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
@@ -443,6 +456,8 @@ export default defineComponent({
     },
   },
   setup() {
+   
+ 
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);
@@ -458,7 +473,9 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-
+  //     const token = sessionStorage.getItem("token");
+  // const jwtObject = getJwtObject(token);
+  //   console.log(jwtObject);
     /**
     * Check scroll tab if overflow
     */

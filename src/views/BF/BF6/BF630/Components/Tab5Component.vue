@@ -104,7 +104,7 @@ export default defineComponent({
     const dataPopup = ref()
     const modalCompanies = ref<boolean>(false)
     const originData = reactive({
-        type:0,
+        type:3,
         requesteStartDate: rangeDate.value[0],
         requesteFinishDate: rangeDate.value[1],
         productionStatuses: [2,-1],

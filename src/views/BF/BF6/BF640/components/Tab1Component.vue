@@ -13,7 +13,7 @@
             <a-col class="ml-30">
                 <a-form-item label="제작요청상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작후"
+                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작요청후"
                             textUnCheck="제작요청전" />
                         <div class="d-flex-center ml-5 ">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
