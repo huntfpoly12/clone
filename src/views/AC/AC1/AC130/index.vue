@@ -4,51 +4,87 @@
     <div class="ac-130__top">
       <div class="ac-130__top-grid">
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">01</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">01</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusEntering" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">02</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">02</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusInput" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">03</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">03</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">04</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">04</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">05</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">05</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">06</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">06</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusInput" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">07</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">07</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">08</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">08</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusted" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">09</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">09</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusInput" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">10</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">10</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusInput" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">11</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">11</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusting" />
         </div>
         <div class="ac-130__top-grid-items">
-          <span class="ac-130__top-grid-items-text">12</span>
+          <div class="ac-130__top-grid-items-text">
+            <span class="">12</span>
+            <span class="">월</span>
+          </div>
           <ProcessStatus :valueStatus="statusAdjusted" />
         </div>
       </div>
@@ -65,13 +101,13 @@
             <b>체크사항</b>
           </div>
           <div class="ac-130__main-content-check-checklist">
-            <a-collapse >
+            <a-collapse>
               <a-collapse-panel key="1">
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>현금출납부 잔액 -></span>
-                    <button-basic v-if="true" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90"/>
-                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
+                    <button-basic v-if="true" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
+                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
                   </div>
                 </template>
                 <TableBalanceOfCashRegister />
@@ -81,7 +117,7 @@
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>예산서 -></span>
                     <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
-                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
+                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
                   </div>
                 </template>
                 <TableBudget />
@@ -90,8 +126,8 @@
                 <template #header>
                   <div class="ac-130__main-content-check-checklist-header">
                     <span>인건비 -></span>
-                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'"  width="90" />
-                    <button-basic v-else text="정상" type="success" :mode="'contained'"  width="90" />
+                    <button-basic v-if="false" class="mr-5" text="확인필요" type="danger" :mode="'contained'" width="90" />
+                    <button-basic v-else text="정상" type="success" :mode="'contained'" width="90" />
                   </div>
                 </template>
                 <TablePersonnelExpenses />

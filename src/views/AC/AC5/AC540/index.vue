@@ -4,10 +4,10 @@
     <div class="ac-540-month">
       <span class="ac-540-month-period">기간</span>
       <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthStart" />
-      <button-basic mode="contained" type="danger" text="조정중" />
+      <ProcessStatus :valueStatus="statusAdjusting" />
       <span class="mr-5 ml-5">~</span>
       <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthEnd" />
-      <button-basic mode="contained" type="default" text="입력중" />
+      <ProcessStatus :valueStatus="statusEntering" />
       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
       <span class="style-note style-note-cm121">조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</span>
     </div>
@@ -62,6 +62,8 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    let statusAdjusting = ref(30)
+    let statusEntering = ref(10)
     let monthStart = ref(5)
     let monthEnd = ref(9)
     const dataSource: any = ref([
@@ -82,6 +84,8 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
+      statusAdjusting,
+      statusEntering,
       monthStart,
       monthEnd
     };
