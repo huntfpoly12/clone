@@ -102,7 +102,7 @@ export default [
   { name: "기타소득원천징수영수증", url: "/dashboard/bf-730", id: "pa-730" },
 
   { name: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810" },
-  { name: "상실신고", url: "#", id: "pa-820" },
+  { name: "상실신고", url: "/dashboard/pa-820", id: "pa-820" },
   { name: "급여변경신고", url: "#", id: "pa-830" },
   { name: "휴직복직신고", url: "#", id: "pa-840" },
   { name: "보수총액신고", url: "#", id: "pa-850" },

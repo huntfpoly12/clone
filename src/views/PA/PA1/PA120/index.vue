@@ -4,13 +4,6 @@
     <a-row style="flex-flow: row nowrap">
       <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
         <a-spin :spinning="loading" size="large">
-          <!-- {{ compareForm() }} compareForm() <br />
-          {{ rowChangeStatus }} rowChangeStatus <br />
-          {{ initFormStateTabPA120 }} initFormStateTabPA120 <br />
-          {{ JSON.stringify(focusedRowKey) }} focusedRowKey <br />
-          {{ typeof focusedRowKey }} focusedRowKey <br />
-          {{ dataSource[dataSource.length - 1]?.key }} dataSource <br />
-          {{ actionChangeComponent }} actionChangeComponent <br /> -->
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
             :column-auto-width="true" :onRowClick="actionEdit" :focused-row-enabled="true" id="pa-120-gridContainer"
@@ -243,6 +236,7 @@ export default defineComponent({
     watch(result, (value) => {
       const data = value.getEmployeeWages;
       dataSource.value = data.map((item: any) => ({ ...item, key: item.employeeId.toString() }));
+      store.state.common.notDatasourcePA120 = false;
       if (compareType.value == 3) {
         addNewRow();
         return;
@@ -258,7 +252,7 @@ export default defineComponent({
         actionChangeComponent.value = 1;
         store.commit('common/initFormStateTabPA120', initFormStateTab1);
         store.commit('common/editRowPA120', initFormStateTab1);
-        store.state.common.isNewRowPA120 = false;
+        store.state.common.notDatasourcePA120 = true;
       }
       trigger.value = false;
     });
@@ -420,6 +414,8 @@ export default defineComponent({
     //submit error
     const actionFormErrorPA120 = computed(() => store.state.common.actionFormErrorPA120);
     watch(actionFormErrorPA120, () => {
+      compareType.value = 1;
+      focusedRowKey.value = initFormStateTabPA120.value.employeeId.toString();
       removeHoverRowKey();
       if (isClickYearDiff.value) {
         watchGlobalYear();
