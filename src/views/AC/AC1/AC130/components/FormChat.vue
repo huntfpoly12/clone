@@ -178,7 +178,7 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 10,
+        id: 11,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: '1\n2\n3\n',
