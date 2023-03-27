@@ -563,6 +563,7 @@ export default defineComponent({
             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWageDaily })))
             dataIncomeWageDaily.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo?.length - 1]
             store.state.common.focusedRowKey = 'PA510'
+            store.state.common.statusRowAdd = false;
             onResetForm()
         })
 
