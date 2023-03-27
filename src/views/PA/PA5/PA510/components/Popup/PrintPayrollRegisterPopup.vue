@@ -51,6 +51,9 @@ export default defineComponent({
             { name: '직위순', value: '직위' },
         ])
         const valueSelect = ref('사번')
+        watch(() => props.modalStatus, (val) => {
+            valueSelect.value = '사번'
+        });
         const originData: any = ref({})
         const {
             refetch: refetchData,

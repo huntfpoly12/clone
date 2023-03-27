@@ -38,6 +38,7 @@ const statesPA510 = {
     openModalCopyMonth: 1,
     checkClickMonth: false,
     refreshDataGridRef: 1,
+    onDoneEdit: false,
 };
   
 export default statesPA510;

@@ -308,7 +308,7 @@
         :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
         <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false" typeModal="confirm"
             :title="Message.getMessage('PA110', '001').message" content="" :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no" @checkConfirm="statusComfirmChangePrice" /> -->
-        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="modalCopy = false"
+        <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" @closePopup="{modalCopy = false; hoverColClick = 0}"
             @dataAddIncomeProcess="dataAddIncomeProcess" />
     </div>
 </template>
@@ -499,18 +499,23 @@ export default defineComponent({
                 store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
                 // if (value.getIncomeWageDailies[0] && !store.state.common.statusFormAdd) { // if have data
                 if (value.getIncomeWageDailies[0]) { // if have data
+                    if (store.state.common.onDoneEdit) { // sửa ngày thành công
+                        store.state.common.onDoneEdit = false
+                        store.state.common.loadingFormData++
+                        return
+                    }
                     if (store.state.common.incomeId && value.getIncomeWageDailies.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
                         store.state.common.focusedRowKey = store.state.common.incomeId
-                        store.state.common.loadingFormData++
+                        // store.state.common.loadingFormData++
                         
                     } else {
                         store.state.common.focusedRowKey = value.getIncomeWageDailies[0].incomeId
                         store.state.common.incomeId = value.getIncomeWageDailies[0].incomeId
                         store.state.common.dataRowOnActive = value.getIncomeWageDailies[0]
                     }
+                    store.state.common.loadingFormData++
                     store.state.common.statusFormAdd = false
                 } else {
-                    console.log(1);
                     store.state.common.statusFormAdd = true
                     store.state.common.focusedRowKey = null;
                     store.state.common.incomeId = null;
@@ -669,6 +674,7 @@ export default defineComponent({
                     return;
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
+                store.state.common.loadingFormData++
             }
         }
 
@@ -679,6 +685,7 @@ export default defineComponent({
             if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                 modalChangeRow.value = true
                 store.state.common.checkClickCopyMonth = true
+                hoverColClick.value = month
             } else {
                 dataModalCopy.value = monthCopy.value
                 modalCopy.value = true
@@ -719,7 +726,7 @@ export default defineComponent({
             } else {
                 const rowElement = e.rowElement[0]
                 store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
-                if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
+                if (e.rows[e.newRowIndex]?.data.employeeId) { // if row data (not row add)
                     if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
                         // if (store.state.common.statusChangeFormPrice) {
                         //     modalChangeRowPrice.value = true;
@@ -734,6 +741,7 @@ export default defineComponent({
                             store.state.common.statusRowAdd = true
                         }
                         store.state.common.incomeId = e.rows[e.newRowIndex]?.data.incomeId
+                        store.state.common.loadingFormData++
                         if (store.state.common.statusRowAdd) {
                             store.state.common.statusFormAdd = false
                         }
