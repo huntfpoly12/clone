@@ -1,0 +1,393 @@
+<template>
+  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
+    :visible="isOpenModalCreate" title="사업장탈퇴신규신청" centered @cancel="$emit('closeModal')" :footer="null">
+    <a-spin :spinning="false">
+      <!-- {{ formState }} formState <br /> -->
+      <standard-form>
+        <div class="form-container">
+          <div class="item-wrap">
+            <span class="item-wrap-title">4대보험 탈퇴신고</span>
+            <a-row>
+              <div class="check-box-group">
+                <checkbox-basic size="14" label="국민연금" class="mr-10 mx-10"
+                  v-model:valueCheckbox="formState.nationalPensionReport" />
+                <checkbox-basic size="14" label="건강보험" class="mr-10"
+                  v-model:valueCheckbox="formState.healthInsuranceReport" />
+                <checkbox-basic size="14" label="고용보험" v-model:valueCheckbox="formState.employeementInsuranceReport" />
+                <checkbox-basic size="14" label="산재보험"
+                  v-model:valueCheckbox="formState.industrialAccidentInsuranceReport" />
+              </div>
+
+            </a-row>
+          </div>
+
+          <div>가입신고 기재항목</div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">사업장</span>
+            <a-row>
+              <a-col :span="8">
+                <a-form-item label="상호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="사업자등록번호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="전화번호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row class="mt-10">
+              <a-col :span="24">
+                <a-form-item label="주소" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row class="mt-10">
+              <a-col :span="8">
+                <a-form-item label="우편번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="법인등록번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">대표자</span>
+            <a-row>
+              <a-col :span="8">
+                <a-form-item label="성명" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="주민등록번호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="전화번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row class="mt-10">
+              <a-col :span="16" class="pr-10">
+                <a-form-item label="주소" label-align="right" class="red">
+                  <default-text-box :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="우편번호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">신고사유</span>
+            <a-row>
+              <a-col :span="16">
+                <a-form-item label="공통사항" label-align="right" class="red">
+                  <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="formState.employeeType"
+                    layoutCustom="horizontal" class="mt-1"></radio-group>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="내/외국인" label-align="right">
+                  <radio-group :arrayValue="employeeFashionArr2" v-model:valueRadioCheck="formState.employeeType"
+                    layoutCustom="horizontal" class="mt-1"></radio-group>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row class="mt-10">
+              <a-col :span="16">
+                <a-form-item label="고용산재" label-align="right" class="red">
+                  <checkbox-basic size="14" label="국민연금" v-model:valueCheckbox="formState.nationalPensionReport"
+                    class="mx-0" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="사유발생일" label-align="right">
+                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt"
+                    bgColor="white"></month-picker-box-custom>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row class="mt-10">
+              <a-col :span="16" class="pr-10">
+                <a-form-item label="탈퇴후 우편물 수령지" label-align="right" class="red">
+                  <default-text-box :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="우편번호" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">국민연금</span>
+            <a-row>
+              <a-col :span="8">
+                <a-form-item label="휴업기간" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
+            <a-row class="mt-10 ml-40">
+              <a-col :span="15">
+                <a-form-item label="명칭" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="9" class="pl-25">
+                <a-form-item label="사업장관리번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="24" class="mt-10">
+                <a-form-item label="주소" label-align="right" class="pr-10">
+                  <default-text-box :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">신고사유</span>
+            <a-row>
+              <a-col :span="8">
+                <a-form-item label="근로자수" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <div class="item-wrap">
+            <span class="item-wrap-title">고용산재</span>
+            <a-row>
+              <a-col :span="6">
+                <a-form-item label="고용보험" label-align="right">
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="근로자수" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="소멸일" label-align="right">
+                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt"
+                    bgColor="white"></month-picker-box-custom>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="6">
+                <a-form-item label="산재보험" label-align="right">
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="근로자수" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="소멸일" label-align="right">
+                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt"
+                    bgColor="white"></month-picker-box-custom>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="6">
+                <a-form-item label="보험료정산반환 계좌" label-align="right">
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="은행명" label-align="right" class="red">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="9">
+                <a-form-item label="계좌번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                    :required="true" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+
+          <a-row class="mt-15">
+            <a-col :span="8" :offset="8" style="text-align: center;">
+              <button-basic text="4대보험 요청 등록" type="default" mode="contained" :width="140" id="btn-save"
+                @onClick="onSubmit($event)" />
+            </a-col>
+          </a-row>
+        </div>
+      </standard-form>
+    </a-spin>
+  </a-modal>
+</template>
+
+<script lang="ts">
+import mutations from "@/graphql/mutations/PA/PA8/PA810/index";
+import queries from "@/graphql/queries/PA/PA8/PA810/index";
+import getCompany from "@/graphql/queries/common/getCompany";
+import { companyId } from "@/helpers/commonFunction";
+// import INITIAL_DATA, {Company, DependentsType} from "./../utils";
+import {
+  DeleteOutlined,
+  HistoryOutlined,
+  SearchOutlined,
+} from "@ant-design/icons-vue";
+import {
+  employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox,employeeFashionArr2,
+  includeDependentsSelectbox,
+} from "../utils/index";
+import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import dayjs from "dayjs";
+import DxButton from "devextreme-vue/button";
+import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
+import { DxFileUploader } from "devextreme-vue/file-uploader";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
+import { useStore } from "vuex";
+import notification from "@/utils/notification";
+import filters from "@/helpers/filters";
+import { clone, cloneDeep } from "lodash";
+export default defineComponent({
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxButton,
+    DxScrolling,
+    HistoryOutlined,
+    DeleteOutlined,
+    SearchOutlined,
+    DxFileUploader,
+  },
+  props: {
+    isOpenModalCreate: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, { emit }) {
+    const store = useStore();
+    const globalYear = computed(() => store.state.settings.globalYear);
+    const formState = reactive({
+      employeeType: 0,
+      employeeId: 1,
+      name: 'ss',
+      bizNumber: 'ss',
+      presidentName: 'ss',
+      adding: 'ADDING',
+      totalPay: 'ss',
+      residentId: '',
+      joinedAt: dayjs().format('YYYY-MM'),
+      nationalPensionReport: false,
+      healthInsuranceReport: true,
+      employeementInsuranceReport: true,
+      industrialAccidentInsuranceReport: true,
+      nationalPensionAcquisitionCode: 1,
+      acquisitionMonthPayment: false,
+      healthInsuranceAcquisitionCode: 1,
+      healthInsuranceAcquisitionCode2: 1,
+      includeDependents: true,
+      acquisitionMonthPayment2: false,
+      jobTypeCode: 1,
+      contractWorker: 'contractWorker',
+    })
+
+    // ----------------get and refetch data when employeeWageType change---------
+
+    const employeeWages = ref([]);
+    const variables = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
+    const query = ref(queries.getEmployeeWages);
+    const { result: dataEmployeeWages, refetch: refetchDataEmployeeWages } =
+      useQuery(query, variables, () => ({
+        fetchPolicy: "no-cache",
+      }));
+    watch(
+      dataEmployeeWages,
+      (value) => {
+        if (value) {
+          // if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
+          employeeWages.value = value.getEmployeeWages;
+          // } else {
+          //   employeeWages.value = value.getEmployeeWageDailies;
+          // }
+        }
+      },
+      { deep: true }
+    );
+
+    //---------------------------------DISABLED FIELD--------------------------------
+
+    const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
+    const isDisabled2 = computed(() => {
+      // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
+      let check = [23, 26, 32].some((item: any) => formState.healthInsuranceAcquisitionCode2 == item);
+      formState.includeDependents = check;
+      return check;
+    })
+
+    //-----------------------------------FORM ACTION--------------------------------
+
+    const onSubmit = (e: any) => {
+      var res = e.validationGroup.validate();
+      if (!res.isValid) {
+        res.brokenRules[0].validator.focus();
+        store.state.common.isNewRowPA120 = true;
+        store.commit('common/actionFormErrorPA120');
+      } else { }
+    }
+    return {
+      globalYear, employeeWages,
+      employeeFashionArr, employeeFashionArr2, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
+      formState, onSubmit,
+      isDisabled1, isDisabled2,
+    };
+  },
+});
+</script>
+<style lang="scss" scoped>
+@import "../styles/form.scss";
+</style>
