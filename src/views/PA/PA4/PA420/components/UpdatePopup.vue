@@ -38,7 +38,9 @@ import Tab1 from './TabEdit/Tab1.vue';
 import Tab2 from './TabEdit/Tab2.vue';
 import Tab3 from './TabEdit/Tab3.vue';
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
+import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import { useStore } from 'vuex';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 
 export default defineComponent({
     props: {
@@ -68,24 +70,41 @@ export default defineComponent({
         const dayValue = ref(1)
         const retirementIncome1 = ref(true)
         const retirementIncome2 = ref(true)
+        const isDataFormChange = ref(false)
         const trigger = ref(false)
         const statusModal = ref(props.modalStatus)
-        const setModalVisible = () => {
-            statusModal.value = false
-            emit("closePopup", false)
-        };
         const requestCallDetail: any = ref({
             companyId: companyId,
             processKey: props.processKey,
             incomeId: 0
         })
-
         store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
         })
         const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410)
         // =========================  GRAPQL =================================================
+        // query get config from screen cm-130
+        const {
+              loading: loadingConfig,
+              result: resultConfig,
+            } = useQuery(
+              queriescm130.getWithholdingConfig,
+              {
+                companyId:companyId,
+                imputedYear:globalYear
+              },
+              () => ({
+                  fetchPolicy: "no-cache",
+              })
+        );
+
+        watch(resultConfig,(resConfig)=>{
+          if (resConfig) {
+            store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
+          }
+        })  
+
         const {
             mutate,
             onDone,
@@ -139,7 +158,11 @@ export default defineComponent({
             notification('error', res.message)
         })
         // ================WATCHING============================================ 
- 
+        watch(() => store.state.common.formStateEditPA420, (newValue, oldValue) => {
+          if (Object.keys(oldValue).length !== 0) {
+            isDataFormChange.value = true
+          }
+        })
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
@@ -236,6 +259,21 @@ export default defineComponent({
             );
             mutate(cleanData)
         }
+        const setModalVisible = () => {
+          if (isDataFormChange.value)
+          {
+            comfirmClosePopup(() => {
+              emit("closePopup", false);
+              statusModal.value = false;
+              isDataFormChange.value = false;
+            })
+          }else{
+              emit("closePopup", false);
+              statusModal.value = false;
+              isDataFormChange.value = false;
+          }
+
+        };
         return {
             setModalVisible,
             changeStep,

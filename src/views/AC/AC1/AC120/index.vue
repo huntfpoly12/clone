@@ -437,7 +437,7 @@
                 </a-col>
                 <a-col class="detail2">
                     <div class="upload">
-                        <UploadPreviewImage v-model:list-image-file="fileList" />
+                        <UploadPreviewImage v-model:list-image-file="fileList" width="387"/>
                     </div>
                 </a-col>
                 <div class="columns"></div>

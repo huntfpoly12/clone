@@ -215,7 +215,7 @@
                 />
               </a-form-item>
               <a-form-item
-                :label="dataShow.foreigner ? '외국인번호' : '주민등록번호'"
+                :label="dataShow.foreigner ? '외국인번호 유효성' : '주민등록번호'"
                 label-align="right"
                 class="red"
               >
@@ -645,6 +645,7 @@ export default defineComponent({
       // if user click button change year then update year
       if (clickYearStatus.value !== ClickYearStatus.none) {
         store.commit('settings/setCurrentYear')
+        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
       }
       dataGridRef.value?.refresh();
     });
@@ -682,6 +683,7 @@ export default defineComponent({
       store.state.common.savePA610++;
       if (clickYearStatus.value !== ClickYearStatus.none) {
         store.commit('settings/setCurrentYear')
+        store.commit('settings/setClickYearStatus', ClickYearStatus.none)
       }
     });
     createdErr((res) => {
@@ -784,6 +786,7 @@ export default defineComponent({
         store.commit('settings/setClickYearStatus', ClickYearStatus.none)
         store.commit('settings/setFormStatus', FormStatus.editing)
         dataGridRef.value?.refresh();
+        selectRowKeyAction.value = focusedRowKey.value
       } else {
         // if form disabled => action edit
         if (focusedRowKey && focusedRowKey.value !== 0) {

@@ -25,25 +25,25 @@
                     <div class="d-flex-center custom-checkbox-search" >
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="2" />
+                            <production-status :typeTag="2" :disabled="dataSearch.beforeProduction" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="3" />
+                            <production-status :typeTag="3" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="4" />
+                            <production-status :typeTag="4" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="5" />
+                            <production-status :typeTag="5" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                 </div>

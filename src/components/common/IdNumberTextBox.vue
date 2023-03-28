@@ -4,7 +4,7 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator>
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxAsyncRule v-if="isCheckId" :validation-callback="checkID" :message="msgError" />
+      <DxCustomRule :validation-callback="checkID" :message="msgError" />
     </DxValidator>
   </DxTextBox>
 </template>
@@ -13,7 +13,7 @@
 import {
   DxValidator,
   DxRequiredRule,
-  DxAsyncRule,
+  DxCustomRule,
 } from "devextreme-vue/validator";
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxTextBox from "devextreme-vue/text-box";
@@ -44,16 +44,12 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    isCheckId: {
-      type: Boolean,
-      default: false,
-    }
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
-    DxAsyncRule
+    DxCustomRule
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
@@ -77,11 +73,7 @@ export default defineComponent({
       }
     );
     const checkID = (e: any) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(validResidentId(value.value));
-        }, 300);
-      });
+      return validResidentId(value.value);
     }
     return {
       updateValue,

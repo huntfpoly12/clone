@@ -13,14 +13,14 @@
                   :required="true" :itemSelected="itemSelected"></dependants-relation-select-box>
               </a-form-item>
               <a-form-item label="성명" label-align="right" class="red">
-                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
+                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true" @onChange="onChange"
                   v-model:valueInput="formState.name"></default-text-box>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
                 <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
-                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId" :isCheckId="true"></id-number-text-box>
+                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
               </a-form-item>
               <a-form-item label="나이" label-align="right">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="ageCount"></default-text-box>
@@ -268,6 +268,9 @@ export default defineComponent({
     onMounted(()=> {
       formState.relation = 1;
     })
+    const onChange = (emitVal: any) => {
+      formState.name = emitVal.toUpperCase();
+    }
     return {
       loading,
       householder,
@@ -282,6 +285,7 @@ export default defineComponent({
       isDisabledSenior,
       itemSelected,
       consignDisabled,
+      onChange
     };
   },
 });

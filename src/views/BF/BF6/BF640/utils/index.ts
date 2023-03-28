@@ -25,7 +25,7 @@ export const dataSearchStep2Utils = {
 }
 export const dataSearchStep3Utils = {
     "type": 7,
-    "requesteStartDate": parseInt(dayjs().subtract(7,'week').format('YYYYMMDD')),
+    "requesteStartDate": parseInt(dayjs().subtract(1,'week').format('YYYYMMDD')),
     "requesteFinishDate": parseInt(dayjs().format('YYYYMMDD')),
     "productionStatuses": [2, -1,],
     "manageUserId": null

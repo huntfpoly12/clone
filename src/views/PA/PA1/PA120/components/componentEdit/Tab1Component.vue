@@ -2,7 +2,7 @@
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
       <!-- {{ originDataDetail }} originDataDetail <br /> -->
-      <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
+      <!-- {{ initFormStateTabPA120.residentId }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -126,6 +126,7 @@ import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import { radioCheckForeigner, initFormStateTab1 } from '../../utils/index';
 import { companyId } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
   props: {
@@ -161,11 +162,12 @@ export default defineComponent({
       postCode.value = data.zonecode;
       initFormStateTabPA120.value.roadAddress = data.roadAddress;
     };
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
 
     watch(() => props.popupStatus, (newValue: any) => {
       if (!newValue) {
         employeeId.value = null;
-        residentId.value = '';
+        // residentId.value = '';
         foreigner.value = 0;
         Object.assign(initFormStateTabPA120.value, initFormStateTab1);
       }
@@ -182,10 +184,10 @@ export default defineComponent({
         labelResidebId.value = '주민등록번호';
       }
     });
-    const residentId = ref('');
-    watch(residentId, (newValue: any) => {
-      initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
-    });
+    // const residentId = ref('');
+    // watch(residentId, (newValue: any) => {
+    //   initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
+    // });
     const employeeId = ref(null);
     // watch(employeeId, (newValue: any) => {
     //   formStateTab1.employeeId = parseInt(newValue);
@@ -296,7 +298,7 @@ export default defineComponent({
     });
     onDone((res) => {
       store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
-      notification('success', '업데이트 완료!');
+      notification('success', messageUpdate);
       store.commit('common/actionFormDonePA120');
       store.state.common.isNewRowPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
@@ -345,7 +347,7 @@ export default defineComponent({
       labelResidebId,
       foreigner,
       funcAddress,
-      residentId,
+      // residentId,
       employeeId,
       postCode,
       radioCheckForeigner,

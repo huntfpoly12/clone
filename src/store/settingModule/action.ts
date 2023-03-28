@@ -21,7 +21,6 @@ const actions: ActionTree<SettingState, any> = {
   },
   confirmPopup({commit,state}){
     commit('setPopupVisible', false)
-    commit('setClickYearStatus', ClickYearStatus.none)
   },
   hidePopup({commit,state}){
     commit('setPopupVisible', false)

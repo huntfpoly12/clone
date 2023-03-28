@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-pewview-image">
+  <div class="upload-pewview-image" :style=" !!width ? `max-width: ${width}px; width: 100%` : ''">
     <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
       headers="dsadasdsad" @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload"
       accept="image/png, image/jpeg, image/jpg image/gif">
@@ -48,6 +48,10 @@ export default defineComponent({
     multiple: {
       type: Boolean,
       default: false
+    },
+    width: {
+      type: String,
+      default: ""
     }
   },
   setup(props, { emit }) {

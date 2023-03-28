@@ -10,7 +10,7 @@
                 :disabled="formState.relation == 0" :required="true"
                 :itemSelected="itemSelected"></dependants-relation-select-box>
             </a-form-item>
-            <a-form-item label="성명" label-align="right" class="red">
+            <a-form-item label="성명" label-align="right" class="red" @onChange="onChange">
               <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
                 :disabled="disabledButton || formState.relation == 0"
                 v-model:valueInput="formState.name"></default-text-box>
@@ -21,7 +21,7 @@
             </a-form-item>
             <a-form-item :label="labelResidebId" label-align="right" class="red">
               <id-number-text-box :required="true" width="150px" :disabled="disabledButton || formState.relation == 0"
-                v-model:valueInput="formState.residentId" :isCheckId="true">
+                v-model:valueInput="formState.residentId">
               </id-number-text-box>
             </a-form-item>
             <a-form-item label="나이" label-align="right">
@@ -111,7 +111,7 @@ import { taxWaring } from '../../utils/index';
 import { h } from 'vue';
 import { Message } from '@/configs/enum';
 const messageUpdate = Message.getMessage('COMMON', '106').message;
-const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 합니다'), h('div', '그래도 삭제하시겠습니까?')])
+const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 '), h('div', '합니다. 그래도 삭제하시겠습니까?')])
 export default defineComponent({
   components: {},
   props: {
@@ -285,6 +285,9 @@ export default defineComponent({
       }
     })
     itemSelected.value = itemSelected.value.filter((item: any) => item.value !== formState.relation);
+    const onChange = (emitVal: any) => {
+      formState.name = emitVal.toUpperCase();
+    }
     return {
       // women,
       // singleParent,
@@ -295,7 +298,8 @@ export default defineComponent({
       ageCount,
       disabledButton, convertAge,
       setModalVisible, actionUpdated, statusComfirm,
-      labelResidebId, actionDeleteFuc, modalStatusDelete, isDisabledSenior, itemSelected, consignDisabled, vnode
+      labelResidebId, actionDeleteFuc, modalStatusDelete, isDisabledSenior, itemSelected, consignDisabled, vnode,
+      onChange
     };
   },
 });

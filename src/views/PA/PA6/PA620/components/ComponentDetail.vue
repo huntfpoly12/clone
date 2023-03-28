@@ -706,7 +706,7 @@ export default defineComponent({
     const onChangeFormError = () => {
       removeHoverRowKey();
       emit('subValidate');
-
+      resetOnError();
       focusedRowKey.value = dataAction.value.input.incomeId;
     }
     const {
