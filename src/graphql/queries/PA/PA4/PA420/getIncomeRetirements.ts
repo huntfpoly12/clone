@@ -56,5 +56,13 @@ export default gql`
                 nonTaxableRetirementBenefits
                 taxableRetirementBenefits
                 totalDeduction
+                specification{
+                  specificationDetail{
+                    settlementRetiredYearsOfService{
+                      settlementStartDate
+                      settlementFinishDate
+                    }
+                  }
+                }
             }
         }`

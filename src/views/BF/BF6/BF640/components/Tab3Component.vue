@@ -8,7 +8,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="제작요청일(기간)" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" />
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"/>
                 </a-form-item>
             </a-col>
             <a-col>
@@ -106,7 +106,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(1, 'week'), dayjs()]);
+        const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')),parseInt( dayjs().format('YYYYMMDD'))]);
         let trigger = ref(true)
         let dataModalDetail = ref();
         // ================== GRAPHQL=================
@@ -136,8 +136,8 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [newVal]
         })
         watch(() => props.searchStep, (val: any) => {
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+            dataSearch.value.requesteStartDate = rangeDate.value[0]
+            dataSearch.value.requesteFinishDate = rangeDate.value[1]
             if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()

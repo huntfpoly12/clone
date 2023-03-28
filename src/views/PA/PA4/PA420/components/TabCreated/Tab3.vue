@@ -112,8 +112,8 @@
                         :required="false" width="20%" placeholder="계좌입금금액" />
                 </div>
             </a-col>
-            <div class="mb-10 wf-100 text-center">
-                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="calculateIncomeRetirementTax" :disabled="dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits == 0"/>
+            <div class="mb-10 wf-100 text-center">{{ dataForm.taxCalculationInput.lastRetirementBenefitStatus.taxableRetirementBenefits }}
+                <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="calculateIncomeRetirementTax" :disabled="taxableRetirementBenefits == 0"/>
             </div>
 
             <a-col :span="12">

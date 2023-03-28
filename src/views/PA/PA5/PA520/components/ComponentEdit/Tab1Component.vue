@@ -231,7 +231,8 @@ export default defineComponent({
     onDone(() => {
         store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId
         store.state.common.checkChangeValueEditTab1PA520 = false
-        dataDefault.value = dataEdited
+        store.state.common.isValidateEditPA520 = false
+      dataDefault.value = { ...dataEdited }
         emit('closePopup', false)
         notification('success', Message.getCommonMessage('106').message)
         if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
@@ -280,13 +281,14 @@ export default defineComponent({
             dataEdited.roadAddress = data.roadAddress;
         }
         const actionUpdated = () => {
-            //  If the year changes and there is an edit event, save the previous year
-            let year = store.state.common.checkChangeValueEditTab1PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value
             var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
               res.brokenRules[0].validator.focus();
               store.state.common.checkChangeValueEditTab1PA520 = true
-              store.commit('settings/setFormStatus',FormStatus.editing)
+              store.state.common.isValidateEditPA520 = true
+              store.state.common.isClickRowPA520 = false
+              store.commit('settings/setFormStatus', FormStatus.editing)
+              return
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
