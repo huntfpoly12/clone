@@ -1,8 +1,8 @@
 <template>
     <!-- check a birthday not later than the current date (if any) -->
-    <div :class="isValid ? 'validate-datepicker':''" :style="{ width: widthBoder+'px' }">
+    <div :class="isValid ? 'validate-datepicker':''" :style="{ width: widthBoder }">
       <Datepicker v-model="date" :textInput="textInput" locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
-          @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
+          @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
           :multi-calendars="multiCalendars" 
           :teleport="teleport" :disabled="disabled" >
@@ -70,7 +70,16 @@ export default defineComponent({
         Datepicker,
     },
   setup(props, { emit }) {
-        const widthBoder = computed(()=> parseInt(props.width.replace("px", "")) + 2 )
+        const widthBoder = computed(() => {
+          const regex1 = /\%/gm;
+          const regex2 = /px/gm;
+          if ((regex1.exec(props.width))) {
+            return String(parseInt(props.width.replace("px", "")) + 2) + '%'
+          } 
+          if ((regex2.exec(props.width))) {
+            return String(parseInt(props.width.replace("px", "")) + 2) + 'px'
+          } 
+        })
         const date: any = ref(filters.formatDate(props.valueDate))
         const isValid = ref(false)
         watch(
