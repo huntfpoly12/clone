@@ -263,10 +263,10 @@ export default defineComponent({
         watch(dataEdited, (newvl, oldvl) => {
           // If the corrected data is different from the default data, change the check change status
           if (JSON.stringify(dataDefault.value) !== JSON.stringify(dataEdited)) {
-            store.state.common.checkChangeValueEditTab1PA520 = true
+            store.commit('common/setCheckEditTab1PA520',true)
             store.commit('settings/setFormStatus',FormStatus.editing)
           } else {
-            store.state.common.checkChangeValueEditTab1PA520 = false
+             store.commit('common/setCheckEditTab1PA520',false)
             store.commit('settings/setFormStatus',FormStatus.none)
           }
         }, { deep: true })

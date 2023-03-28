@@ -246,7 +246,6 @@ export default defineComponent({
   setup() {
     const pa520Grid = ref<any>(null);
     const focusedRowKey =  ref<any>(null);
-    const modalChangeValueEdit = ref(false);
     const actionChangeComponent = ref(1);
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
@@ -272,10 +271,11 @@ export default defineComponent({
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
     const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
-    const isValidateAddPA520 = computed(() => store.state.common.isValidateAddPA520);
+    const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
     const isClickRow =  computed(() => store.state.common.isClickRowPA520); // determine when action click row
     const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
-
+    const modalChangeValueEdit = computed(() => store.getters['common/modalChangeValueEditPA520'])
+    const modalChangeValueAdd = computed(() => store.getters['common/modalChangeValueAddPA520'])
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -285,7 +285,7 @@ export default defineComponent({
     const isAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
     const modalDeleteStatus = ref<boolean>(false);
-    const modalChangeValueAdd = ref<boolean>(false);
+
     const idRowEdit = ref();
 
    
@@ -383,7 +383,7 @@ export default defineComponent({
           store.state.common.countBtOnclickPA520 = 0;
 
           store.state.common.isClickRowPA520 = false;
-          isDelete.value = false;
+          // isDelete.value = false;
           store.state.common.rowIdSaveDonePa520 = 0
         }
 
@@ -416,8 +416,7 @@ export default defineComponent({
       dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
     },{ deep: true })
 
-    watch(
-      () => isAddNewStatus.value,
+    watch(() => isAddNewStatus.value,
       (value) => {
         if (value == false) {
           trigger.value = true;
@@ -426,8 +425,7 @@ export default defineComponent({
       }
     );
 
-    watch(
-      () => store.state.common.rowIdSaveDonePa520,
+    watch(() => store.state.common.rowIdSaveDonePa520,
       (value) => {
         trigger.value = true;
         refetchData();
@@ -546,22 +544,13 @@ export default defineComponent({
       actionChangeComponent.value = 1;
     }
     // Opening a modal window.
-    const onAddBtClick = () => {
+    const onAddBtClick = async () => {
+   
+      
+      await store.dispatch('common/checkAddForm')
+      await store.dispatch('common/checkEditForm')
 
-      if (
-        store.state.common.checkChangeValueEditTab1PA520 == true || 
-        store.state.common.checkChangeValueEditTab2PA520 == true 
-      ) {
-        modalChangeValueEdit.value = true;
-        return;
-      }
-
-      if (
-        store.state.common.activeAddRowPA520 &&
-        store.state.common.checkChangeValueAddPA520
-      ) {
-        modalChangeValueAdd.value = true;
-      }
+  
 
       store.state.common.addRowBtOnclickPA520 = true;
       store.state.common.countBtOnclickPA520++;
@@ -574,36 +563,46 @@ export default defineComponent({
 
     };
     const confirmAndSaveAdd = async (res: any) => {
-      if (res == true && addRowBtOnclick.value) {
+      // if (res == true && addRowBtOnclick.value) {
+      //   await actionSave();
+      // } else if (res == true && !addRowBtOnclick.value) {
+      //   await actionSave();
+      //   if (!isValidateAddPA520.value) {
+      //     idRowEdit.value = idRowCurrentClick.value;
+      //     focusedRowKey.value = idRowCurrentClick.value;
+      //     store.state.common.countBtOnclickPA520 = 0
+      //     //Not save
+      //     store.state.common.activeAddRowPA520 = false;
+      //     store.state.common.checkChangeValueAddPA520 = false;
+      //   }
+      // } else if (!res && addRowBtOnclick.value) {
+      //   store.state.common.countBtOnclickPA520 = 0
+      //   // Change status switch in store
+      //   store.state.common.activeAddRowPA520 = false;
+      //   store.state.common.checkChangeValueAddPA520 = false;
+      //   // Setting the value of the addRowOnclick variable to false.
+      //   store.state.common.addRowBtOnclickPA520 = false;
+      //   resetAddComponent.value++; // increment one unit to reset the newly created form
+      //   onAddBtClick();
+      //   await store.dispatch('settings/resetYearStatus')
+      // } else {
+      //   idRowEdit.value = idRowCurrentClick.value;
+      //   focusedRowKey.value = idRowCurrentClick.value;
+      //   store.state.common.countBtOnclickPA520 = 0
+      //   //Not save
+      //   store.state.common.activeAddRowPA520 = false;
+      //   store.state.common.checkChangeValueAddPA520 = false;
+      //   await store.dispatch('settings/resetYearStatus')
+      // }
+
+      if(res == true){
         await actionSave();
-      } else if (res == true && !addRowBtOnclick.value) {
-        await actionSave();
-        if (!isValidateAddPA520.value) {
-          idRowEdit.value = idRowCurrentClick.value;
-          focusedRowKey.value = idRowCurrentClick.value;
-          store.state.common.countBtOnclickPA520 = 0
-          //Not save
-          store.state.common.activeAddRowPA520 = false;
-          store.state.common.checkChangeValueAddPA520 = false;
+        await store.dispatch('common/resetStatusModal')
+        if(!isValidateAddPA520.value){
+funcAddNewRow();
         }
-      } else if (!res && addRowBtOnclick.value) {
-        store.state.common.countBtOnclickPA520 = 0
-        // Change status switch in store
-        store.state.common.activeAddRowPA520 = false;
-        store.state.common.checkChangeValueAddPA520 = false;
-        // Setting the value of the addRowOnclick variable to false.
-        store.state.common.addRowBtOnclickPA520 = false;
-        resetAddComponent.value++; // increment one unit to reset the newly created form
-        onAddBtClick();
-        await store.dispatch('settings/resetYearStatus')
-      } else {
-        idRowEdit.value = idRowCurrentClick.value;
-        focusedRowKey.value = idRowCurrentClick.value;
-        store.state.common.countBtOnclickPA520 = 0
-        //Not save
-        store.state.common.activeAddRowPA520 = false;
-        store.state.common.checkChangeValueAddPA520 = false;
-        await store.dispatch('settings/resetYearStatus')
+      }else{
+        await store.dispatch('common/resetStatusModal')
       }
     };
     const actionUpdate = (currentTab: number) => {
@@ -615,8 +614,8 @@ export default defineComponent({
       }
     };
 
-    const closePopupConfirmEdit = ()=>{
-      modalChangeValueEdit.value = false
+    const closePopupConfirmEdit = async()=>{
+      await store.commit('common/setModalChangeValueEditPA520',false)
     }
     // A function that is called when the user clicks on the save button.
     const comfirmAndSaveEdit = async (res: any) => {
@@ -661,8 +660,8 @@ export default defineComponent({
       modalHistoryStatus.value = companyId;
     };
     const onDeleteRow = (data: any) => {
-      isDelete.value = true;
-      idAction.value = data;
+      // isDelete.value = true;
+      // idAction.value = data;
       modalComfirmDelete.value = true;
     };
     // A function that is called when the user clicks on the delete button.
@@ -671,13 +670,15 @@ export default defineComponent({
         actionDelete({
           companyId: companyId,
           imputedYear: globalYear.value,
-          employeeId: idAction.value,
+          employeeId: 1,
         });
     };
     const closeAction = () => {
       trigger.value = true;
       refetchData();
     };
+
+  
     return {
       pa520Grid,
       modalChangeValueAdd,
@@ -712,7 +713,7 @@ export default defineComponent({
       onConfirmDelete,
       Message,
       addRowBtOnclick,
-      countBtOnclick,
+     // countBtOnclick,
       trigger,
       onFocusedRowChanged,
       onFocusedRowChanging,

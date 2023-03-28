@@ -17,8 +17,6 @@ const statesPA520 = {
   isClickRowPA520: false,
   isClickDelete: false,
 
-  keyActiveStepPA520: '1',
-
   activeAddRowPA520: false,
 
   actionSaveAddPA520: 0,
@@ -28,7 +26,7 @@ const statesPA520 = {
   isChangeYearPA520: false,
   
   setTabActivePA520: '1',
-
-
+  modalChangeValueEditPA520:false,
+  modalChangeValueAddPA520:false
 };
 export default statesPA520;
