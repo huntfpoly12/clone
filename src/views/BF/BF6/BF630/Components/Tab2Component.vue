@@ -11,8 +11,8 @@
           </a-col>
           <a-col :span="16">
             <div class="custom-note">
-              <a-form-item label="제작요청후">
-                <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작후'"
+              <a-form-item label="제작요청상태">
+                <switch-basic v-model:valueSwitch="filterForm.afterProduction" :textCheck="'제작요청후'"
                   :textUnCheck="'제작요청전'" />
               </a-form-item>
               <span class="style-note">
