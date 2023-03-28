@@ -95,10 +95,10 @@
                     format="yyyy-MM-dd hh:mm"/>
           <DxColumn caption="제작현황" cell-template="productionStatus"/>
           <template #productionStatus="{ data }">
-            <GetStatusTable :data="data.data"/>
             <template v-if="data.data.lastProductionRequestedAt === null">
               <span class="status-3">제작요청전</span>
             </template>
+            <GetStatusTable :data="data.data"/>
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}"/>
@@ -230,7 +230,7 @@ export default defineComponent({
         }
       })
       dataSourceOriginal.value = arrDataConvert.map((item: any, index: number) => ({...item,productionStatus: 3, index}))
-      const arrayStatus = await fetchDataStatus(arrDataConvert.map((item: any) => ({
+      const arrayStatus = await fetchDataStatus(arrDataConvert.filter((i: any) => i.lastProductionRequestedAt).map((item: any) => ({
         companyId: item.companyId,
         paymentYear: item.paymentYear,
         paymentMonth: item.paymentMonth
