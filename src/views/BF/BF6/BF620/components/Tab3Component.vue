@@ -11,8 +11,7 @@
           </a-col>
           <a-col>
             <a-form-item label="제작요청일(기간)">
-              <range-date-time-box v-model:valueDate="rangeDate" width="250px"
-                :multi-calendars="true"></range-date-time-box>
+              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"/>
             </a-form-item>
           </a-col>
           <a-col>
@@ -108,7 +107,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const rangeDate = ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs())]);
+    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')),parseInt( dayjs().format('YYYYMMDD'))]);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const productionStatuses = ref(0);
@@ -226,4 +225,14 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 @import '../style/style.scss';
+:deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
+    background: v-bind("styleCheckBox.ColorCheckBox");
+    margin-top: -13px;
+    margin-left: 3px;
+}
+:deep .dx-radiobutton-icon::before {
+    border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
+    width: 14px;
+    height: 14px;
+}
 </style>
