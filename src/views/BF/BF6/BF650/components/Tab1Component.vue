@@ -336,7 +336,7 @@ export default defineComponent({
       }
     }
     const selectionChanged = (res: any) => {
-      keySelect.value = res.selectedRowKeys
+      keySelect.value = res.selectedRowKeys.map((i:any)=> res.selectedRowsData[i].companyId)
     }
     const customTextSummary = () => {
       return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;
