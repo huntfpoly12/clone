@@ -1,0 +1,53 @@
+#ac-510 {
+    margin: 10px;
+
+    .top {
+        .grid {
+            display: flex;
+            justify-content: space-between;
+
+            .items {
+                border: 1px solid #BFBFBF;
+                border-radius: 10px;
+                text-align: center;
+                padding: 8px;
+                display: flex;
+                align-items: center;
+
+                .text {
+                    margin-right: 8px;
+                    display: flex;
+                    flex-direction: column;
+
+                    span {
+                        font-size: 11px;
+                        line-height: 12px;
+                        color: #7F7F7F;
+                    }
+                }
+            }
+        }
+
+        .flex {
+            margin-top: 15px;
+        }
+
+        .month {
+            display: flex;
+            align-items: center;
+
+            .period {
+                color: red;
+                margin-right: 10px;
+            }
+        }
+
+        .dflex {
+            display: flex;
+        }
+
+    }
+    .main {
+        margin-top: 20px;
+    }
+}

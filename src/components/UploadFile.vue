@@ -1,6 +1,6 @@
 <template>
-  <div class="fileuploader-container mt-20">
-    <span>등본 등 증빙파일</span>
+<!--  <div class="fileuploader-container mt-20">-->
+<!--    <span>등본 등 증빙파일</span>-->
     <a-upload
       v-model:file-list="fileList"
       name="file"
@@ -16,7 +16,7 @@
       </div>
     </a-upload>
 
-  </div>
+<!--  </div>-->
 </template>
 
 <script src="" lang="ts">
@@ -148,40 +148,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.fileuploader-container {
+.iconUpload {
+  width: 20px;
+  height: 20px;
+}
+.ant-form-item {
+  margin-bottom: 0;
+}
+.btn-upload {
   display: flex;
   align-items: center;
-
-  padding: 10px;
-  border: 1px solid #d3d3d3;
-  border-radius: 10px;
-  .iconUpload {
-    width: 20px;
-    height: 20px;
+  justify-content: center;
+  gap: 8px;
+  background: #c0c0c0;
+  border-radius: 5px;
+  padding: 5px 20px;
+  cursor: pointer;
+  &:hover {
+    background: #e5e5e5;
+    transition: all 0.3s ease;
   }
-  .ant-form-item {
-    margin-bottom: 0;
-  }
-  .btn-upload {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: #f5f5f5;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    &:hover {
-      background: #e5e5e5;
-      transition: all 0.3s ease;
-    }
-    span {
-      font-size: 14px;
-      font-weight: 500;
-      color: #000;
-    }
-
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
   }
 }
 

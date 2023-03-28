@@ -5,7 +5,7 @@
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
             <number-box placeholder="숫자만 입력 가능" width="200px" :min="1" :max="9999999999" :required="true" v-model:valueInput="initFormStateTabPA120.employeeId"
-              :disabled="isEdit || !isNewRowPA120"/>
+              :disabled="isEdit || notDatasourcePA120"/>
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
             </span>
@@ -14,7 +14,7 @@
 
         <a-form-item label="대표자 여부 " label-align="right">
           <div class="input-text">
-            <switch-basic :disabled="!isNewRowPA120" v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+            <switch-basic :disabled="notDatasourcePA120" v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
               style="width: 80px"></switch-basic>
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 대표자인 경우 고용보험 제외됩니다.
@@ -23,16 +23,16 @@
         </a-form-item>
 
         <a-form-item label="성명" label-align="right" class="red">
-          <default-text-box width="200px" :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.name" @onChange="onChange"
+          <default-text-box width="200px" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.name" @onChange="onChange"
             :required="true" placeholder="한글,영문(대문자) 입력 가능" />
         </a-form-item>
         <a-form-item label="입사년월일" label-align="right">
-          <date-time-box width="150px" :disabled="!isNewRowPA120" v-model:valueDate="initFormStateTabPA120.joinedAt">
+          <date-time-box width="150px" :disabled="notDatasourcePA120" v-model:valueDate="initFormStateTabPA120.joinedAt">
           </date-time-box>
         </a-form-item>
         <a-form-item label="퇴사년월일" label-align="right">
           <div class="input-text">
-            <date-time-box width="150px" :disabled="!isNewRowPA120" v-model:valueDate="initFormStateTabPA120.leavedAt">
+            <date-time-box width="150px" :disabled="notDatasourcePA120" v-model:valueDate="initFormStateTabPA120.leavedAt">
             </date-time-box>
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 마지막 근무한 날
@@ -41,29 +41,29 @@
         </a-form-item>
 
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group :arrayValue="radioCheckForeigner" :disabled="!isNewRowPA120" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"
+          <radio-group :arrayValue="radioCheckForeigner" :disabled="notDatasourcePA120" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"
             class="mt-1"></radio-group>
         </a-form-item>
         <a-row>
           <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
             <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
               @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
-              :disabled="!initFormStateTabPA120.foreigner || !isNewRowPA120" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
+              :disabled="!initFormStateTabPA120.foreigner || notDatasourcePA120" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
           </a-form-item>
           <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
             <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
-              :disabled="foreigner == 0 || !isNewRowPA120" :required="initFormStateTabPA120.foreigner" />
+              :disabled="foreigner == 0 || notDatasourcePA120" :required="initFormStateTabPA120.foreigner" />
           </a-form-item>
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" :disabled="!isNewRowPA120" v-model:valueInput="residentId" width="150px"></id-number-text-box>
+          <id-number-text-box :required="true" :disabled="notDatasourcePA120" v-model:valueInput="residentId" width="150px"></id-number-text-box>
         </a-form-item>
 
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
-            <number-box :required="true" :spinButtons="true" :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
+            <number-box :required="true" :spinButtons="true" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.weeklyWorkingHours"
               width="150px" :min="1" :max="52"></number-box>
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 급여명세서 및 4대보험 취득신고시 이용됩니다.
@@ -72,25 +72,25 @@
         </a-form-item>
 
         <a-form-item label="세대주여부" label-align="right">
-          <switch-basic :disabled="!isNewRowPA120" v-model:valueSwitch="initFormStateTabPA120.householder" textCheck="O" textUnCheck="X"
+          <switch-basic :disabled="notDatasourcePA120" v-model:valueSwitch="initFormStateTabPA120.householder" textCheck="O" textUnCheck="X"
             style="width: 80px"></switch-basic>
         </a-form-item>
 
 
         <a-form-item label="주소" class="clr" label-align="left">
           <div class="zip-code">
-            <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true || !isNewRowPA120"
+            <default-text-box v-model:valueInput="initFormStateTabPA120.roadAddress" width="300px" :disabled="true || notDatasourcePA120"
               class="roadAddress" placeholder="도로명주소" />
             <div style="margin-left: 5px">
               <post-code-button @dataAddress="funcAddress" text="주소검색" />
             </div>
           </div>
-          <default-text-box :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
+          <default-text-box :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.addressExtend" width="300px"
             placeholder="상세 주소 입력" />
         </a-form-item>
         <a-form-item label="이메일" label-align="right">
           <div class="input-text">
-            <mail-text-box :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.email" width="200px" placeholder="abc@example.com">
+            <mail-text-box :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.email" width="200px" placeholder="abc@example.com">
             </mail-text-box>
             <span style="color: #888888; font-size:12px">
               <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 원천징수영수증 등 주요 서류를 메일로 전달
@@ -99,17 +99,17 @@
           </div>
         </a-form-item>
         <a-form-item label="부서" label-align="right">
-          <custom-item-select-box width="200px" :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.department"
+          <custom-item-select-box width="200px" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.department"
             :arrSelect="arrDepartments"></custom-item-select-box>
         </a-form-item>
         <a-form-item label="직위" label-align="right">
-          <custom-item-select-box width="200px" :disabled="!isNewRowPA120" v-model:valueInput="initFormStateTabPA120.responsibility" :id="'pa-120-2'"
+          <custom-item-select-box width="200px" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.responsibility" :id="'pa-120-2'"
             :arrSelect="arrResponsibility"></custom-item-select-box>
         </a-form-item>
         <a-row class="mt-15">
           <a-col :span="8" :offset="8" style="text-align: center;">
             <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
-              @onClick="createNewEmployeeWage($event)" :disabled="!isNewRowPA120" />
+              @onClick="createNewEmployeeWage($event)" :disabled="notDatasourcePA120" />
           </a-col>
         </a-row>
       </standard-form>
@@ -151,7 +151,9 @@ export default defineComponent({
     const initFormStateTabPA120 = computed(() => store.state.common.initFormStateTabPA120)
     const yearPA120 = computed(() => store.state.common.yearPA120);
     const isNewRowPA120 = computed(() => store.state.common.isNewRowPA120);
-
+    const notDatasourcePA120 = computed(() => store.state.common.notDatasourcePA120);
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
+    
     const postCode = ref();
     const funcAddress = (data: any) => {
       postCode.value = data.zonecode;
@@ -237,7 +239,7 @@ export default defineComponent({
     });
     onDoneEdit((res) => {
       store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
-      notification('success', '업데이트 완료!');
+      notification('success', messageUpdate);
       store.commit('common/actionFormDonePA120');
       store.state.common.isNewRowPA120 = false;
       store.commit('common/editRowPA120', initFormStateTabPA120.value);
@@ -346,7 +348,8 @@ export default defineComponent({
       changeTextCountry,
       onFocusOut,
       onChange,
-      isEdit, yearPA120,isNewRowPA120
+      isEdit, yearPA120,isNewRowPA120,
+      notDatasourcePA120,
     };
   },
 });

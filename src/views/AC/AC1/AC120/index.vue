@@ -358,7 +358,7 @@
                 </a-col>
                 <a-col span="7" class="ac-120__main-detail-detail2">
                     <div class="ac-120__main-detail-detail2-upload">
-                      <UploadPreviewImage v-model:list-image-file="fileList"/>
+                      <UploadPreviewImage v-model:list-image-file="fileList" width="387"/>
                     </div>
                 </a-col>
             </a-row>

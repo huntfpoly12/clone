@@ -9,26 +9,26 @@
           'mt-10': index > 0 && listChat[index - 1].name !== items.name,
         }">
           <div class="form-chat-timeline-avatar">
-            <img
-              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" 
-              :src="items.avatar"
+            <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
               alt="">
           </div>
-          <div 
-          class="form-chat-timeline-content"
-          :class="{
+          <div class="form-chat-timeline-content" :class="{
             'borderRadiusleft10': (index === 0 || listChat[index - 1].name !== items.name) && items.name !== userName,
             'borderRadiusRight10': (index === 0 || listChat[index - 1].name !== items.name) && items.name === userName,
             'borderEdit': idEditComment === items.id
-            }">
+          }">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
-                <span class="form-chat-timeline-content-info-user-status">{{ items.status }}</span>
-                <div class="form-chat-timeline-content-info-user-name">{{ items.name }}</div>
+                <span class="form-chat-timeline-content-info-user-status"
+                  :class="{ 'hidden-avatar': index !== 0 && listChat[index - 1].name === items.name }">{{ items.status
+                  }}</span>
+                <div class="form-chat-timeline-content-info-user-name"
+                  :class="{ 'hidden-avatar': index !== 0 && listChat[index - 1].name === items.name }">{{ items.name }}
+                </div>
               </div>
               <div class="form-chat-timeline-content-info-time">{{ items.createdAt }}</div>
             </div>
-            <div   class="form-chat-timeline-content-text" v-html="items.content">
+            <div class="form-chat-timeline-content-text" v-html="items.content">
             </div>
           </div>
           <div class="form-chat-timeline-common-menu">
@@ -37,7 +37,7 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="editComment(items)">
-                    <EditOutlined/>
+                    <EditOutlined />
                     수정
                   </a-menu-item>
                   <a-menu-item @click="deleteComment(index)">
@@ -59,7 +59,7 @@
         <textarea rows="1" ref="inputChat" placeholder="댓글을 입력하세요…" v-model="textChat" @input="changeInput"
           @keypress.enter.exact.prevent="sendChat"></textarea>
         <div class="form-chat-bottom-input-tool">
-          <CloseOutlined @click="removeText()"/>
+          <CloseOutlined @click="removeText()" />
           <SmileOutlined style="margin: 0 5px;" />
           <FileAddOutlined />
         </div>
@@ -102,20 +102,12 @@ export default defineComponent({
         id: 1,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ',
+        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       },
       {
         id: 2,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Helloc',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 3,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello ...',
@@ -123,7 +115,7 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 4,
+        id: 3,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
         content: 'Hello Hello Hello Hello ffffffff',
@@ -131,30 +123,30 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 5,
+        id: 4,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello ',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       }, {
+        id: 5,
+        name: 'other users',
+        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
+        content: 'Hello Hello Hello Hello \n...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...',
+        createdAt: '2023-03-08  03:00:00',
+        status: '일반'
+      },
+      {
         id: 6,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...',
+        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvnmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Hello ...c',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       },
       {
         id: 7,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Hello ...c',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 8,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
         content: 'Hello Hello Hello Hello :)))))))))))))))))))',
@@ -162,7 +154,7 @@ export default defineComponent({
         status: '일반'
       },
       {
-        id: 9,
+        id: 8,
         name: 'other users',
         avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
         content: 'Hello Hello Hello Hello +ggggggggggggggggggggg',
@@ -170,10 +162,26 @@ export default defineComponent({
         status: '일반'
       },
       {
+        id: 9,
+        name: userName.value,
+        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
+        content: ':)))))))))))))))))))',
+        createdAt: '2023-03-08  03:00:00',
+        status: '일반'
+      },
+      {
         id: 10,
         name: userName.value,
         avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello Hello Hello Hello ',
+        content: 'Hello\nHello \nHello \nHello  ooooo',
+        createdAt: '2023-03-08  03:00:00',
+        status: '일반'
+      },
+      {
+        id: 11,
+        name: userName.value,
+        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
+        content: '1\n2\n3\n',
         createdAt: '2023-03-08  03:00:00',
         status: '일반'
       }
@@ -186,12 +194,12 @@ export default defineComponent({
     })
     const sendChat = () => {
       if (!textChat.value.trim()) return
-      if(idEditComment.value !== null) {
+      if (idEditComment.value !== null) {
         listChat.value.find((items: any) => items.id === idEditComment.value).content = textChat.value
         textChat.value = ''
         idEditComment.value = null
-      }else {
-        listChat.value.push({ ...payload, id: listChat.value[listChat.value.length].id + 1, content: textChat.value })
+      } else {
+        listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
         textChat.value = ''
       }
       nextTick(() => {
@@ -211,7 +219,7 @@ export default defineComponent({
     }
 
     const editComment = (item: any) => {
-      idEditComment.value  = item.id
+      idEditComment.value = item.id
       textChat.value = item.content
       nextTick(() => {
         changeInput(inputChat.value)
@@ -268,6 +276,7 @@ export default defineComponent({
     &-avatar {
       width: 40px;
       height: 40px;
+
       img {
         width: 100%;
         height: 100%;
@@ -309,6 +318,7 @@ export default defineComponent({
       background-color: #DCE6F2;
       border-radius: 2px;
       padding: 5px 12px 8px 12px;
+
       &-info {
         display: flex;
         align-items: center;
@@ -417,12 +427,15 @@ export default defineComponent({
 .hidden-avatar {
   display: none;
 }
+
 .borderRadiusleft10 {
   border-radius: 20px 2px 2px 2px;
 }
+
 .borderRadiusRight10 {
   border-radius: 2px 20px 2px 2px;
 }
+
 .borderEdit {
   border: 1px solid red;
 }

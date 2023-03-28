@@ -102,10 +102,10 @@
     <div class="ac-110__main">
       <div class="ac-110__main-main">
         <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
-          :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
+          v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSelection mode="multiple" :fixed="true" />
+          <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
           <DxColumn caption="통장" cell-template="fill1" />
           <template #fill1="{ data }">
             <a-tooltip placement="left" title="{은행명} {통장번호} ">
@@ -152,7 +152,7 @@
             <b>-정상여부:</b><span>Tag{정상여부}</span>
           </div>
           <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
-            :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
+            :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="selectedRowKeys"
             :allow-column-resizing="colomn_resize" :column-auto-width="true">
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxExport :enabled="true" />
@@ -173,8 +173,8 @@
               </a-tooltip>
             </template>
             <DxColumn caption="결의구분" data-field="fill1" />
-            <DxColumn caption="수입액" data-field="fill2" />
-            <DxColumn caption="지출액" data-field="fill3" />
+            <DxColumn caption="수입액" data-field="fill8" format="fixedPoint" alignment="end" />
+            <DxColumn caption="지출액" data-field="fill8" format="fixedPoint" alignment="end" />
             <DxColumn caption="적요" data-field="fill4" />
             <DxColumn caption="계정과목" cell-template="accountSubject" width="100" />
             <template #accountSubject="{ data }">
@@ -188,7 +188,7 @@
             <template #sourceOfFunding="{ data }">
               <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
-            <DxColumn caption="거래처" data-field="fill8" format="fixedPoint" />
+            <DxColumn caption="거래처" data-field="fill4" alignment="start"/>
             <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
             <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
@@ -215,14 +215,14 @@
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage v-model:list-image-file="fileList"/>
+            <UploadPreviewImage v-model:list-image-file="fileList" width="387" />
           </div>
         </a-col>
       </a-row>
     </div>
-    <PopupMessage :modalStatus="isModalRetrieveStatements" @closePopup="isModalRetrieveStatements = false"
-      :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
-      :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
+    <PopupRetrieveStatements :isModalRetrieveStatements="isModalRetrieveStatements"
+      @closePopup="isModalRetrieveStatements = false" :title="''" :content="contentPopupRetrieveStatements"
+      :okText="'네. 불러옵니다'" :cancelText="'아니요'" @confirm="handleConfirmChange" />
     <PopupSlipCancellation :isModalSlipCancellation="isModalSlipCancellation"
       @closePopup="isModalSlipCancellation = false" @submit="isModalSlipCancellation = false" />
     <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion"
@@ -249,6 +249,7 @@ import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupSlipRegistrationSelected from "./components/PopupSlipRegistrationSelected.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
+import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
 
 export default defineComponent({
@@ -272,6 +273,7 @@ export default defineComponent({
     DxToolbar,
     DxExport,
     PopupNoteItemDetail,
+    PopupRetrieveStatements,
     UploadPreviewImage
   },
   setup() {
@@ -283,7 +285,7 @@ export default defineComponent({
     let statusInput = ref(20);
     let statusAdjusting = ref(30);
     let statusAdjusted = ref(40);
-    let focusedRowKey = ref()
+    let selectedRowKeys = ref<any>([])
     let dataSource = ref<any[]>([])
     let fileList = ref<any[]>([])
     const previewImage = ref<string | undefined>('');
@@ -318,14 +320,34 @@ export default defineComponent({
 
     // METHODS
 
-    const selectionChanged = () => { }
+    const selectionChanged = (event: any) => {
+      // normality
+      // slipRegistration
+      console.log('okkkkkkkkkkkk');
+
+      const listItemDisable: any = []
+      dataDemoMain.forEach((items: any) => {
+        if (items.normality && !items.slipRegistration){}
+        else{listItemDisable.push(items.id)}
+      })
+      const indexItemDisable = selectedRowKeys.value.findIndex((items: any) => listItemDisable.includes(items))
+      if (indexItemDisable >= 0) {
+        
+        selectedRowKeys.value.splice(indexItemDisable, 1)
+      }
+    }
+
+    const onFocusedRowChanging = (event: any) => {
+      // event.cancel = true;
+      // console.log('onFocusedRowChanging')
+    }
 
     const totalDeposits = () => {
       let total = 0;
       dataDemoMain.forEach((item) => {
         total += item.fill6;
       });
-      return `입금액 합계: ${total}`
+      return `입금액 합계: ${formatNumber(total)}`
     };
 
     const totalWithdrawal = () => {
@@ -333,7 +355,7 @@ export default defineComponent({
       dataDemoMain.forEach((item) => {
         total += item.fill7;
       });
-      return `출금액 합계: ${total}`
+      return `출금액 합계: ${formatNumber(total)}`
     };
 
     const countSlipRegistration = () => {
@@ -373,7 +395,7 @@ export default defineComponent({
       dataDemoMain.forEach((item) => {
         total += item.fill6;
       });
-      return `수입액 합계: ${total}`
+      return `수입액 합계: ${formatNumber(total)}`
     }
 
     const sumOfExpenses = () => {
@@ -381,7 +403,15 @@ export default defineComponent({
       dataDemoMain.forEach((item) => {
         total += item.fill7;
       });
-      return `지출액 합계: ${total}`
+      return `지출액 합계: ${formatNumber(total)}`
+    }
+
+    const formatNumber = (value: number) => {
+      if (Number.isInteger(value)) {
+        return new Intl.NumberFormat().format(value)
+      } else {
+        return 0
+      }
     }
 
     const openPopupItemDetail = () => {
@@ -391,7 +421,7 @@ export default defineComponent({
     const openPopupNoteItemDetail = () => {
       isModalNoteItemDetail.value = true
     }
-    
+
     return {
       statusEntering,
       statusInput,
@@ -400,8 +430,9 @@ export default defineComponent({
       move_column,
       colomn_resize,
       globalYear,
-      focusedRowKey,
+      selectedRowKeys,
       selectionChanged,
+      onFocusedRowChanging,
       dataDemoMain,
       totalDeposits,
       totalWithdrawal,

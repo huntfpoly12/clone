@@ -4,7 +4,7 @@
     :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
     :column-auto-width="true">
     <DxScrolling mode="standard" show-scrollbar="always" />
-    <DxColumn caption="수총수입(A)량" data-field="key1" />
+    <DxColumn caption="총수입(A)" data-field="key1" />
     <DxColumn caption="총지출(B)" data-field="key2" />
     <DxColumn caption="장부잔액(A-B)" data-field="key3" />
     <DxColumn caption="통장잔액(C)" data-field="key4" />

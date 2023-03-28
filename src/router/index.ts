@@ -199,6 +199,22 @@ const routes = [
         component: () => import('../views/PA/PA8/PA810/index.vue'),
       },
       {
+        path: "pa-820",
+        component: () => import('../views/PA/PA8/PA820/index.vue'),
+      },
+      {
+        path: "pa-830",
+        component: () => import('../views/PA/PA8/PA830/index.vue'),
+      },
+      {
+        path: "pa-840",
+        component: () => import('../views/PA/PA8/PA840/index.vue'),
+      },
+      {
+        path: "pa-870",
+        component: () => import('../views/PA/PA8/PA870/index.vue'),
+      },
+      {
         path: "ac-110",
         component: () => import('../views/AC/AC1/AC110/index.vue'),
       },
@@ -209,6 +225,10 @@ const routes = [
       {
         path: "ac-130",
         component: () => import('../views/AC/AC1/AC130/index.vue'),
+      },
+      {
+        path: "ac-510",
+        component: () => import('../views/AC/AC5/AC510/index.vue'),
       },
       {
         path: "ac-530",
@@ -225,6 +245,14 @@ const routes = [
       {
         path: "ac-560",
         component: () => import('../views/AC/AC5/AC560/index.vue'),
+      },
+      {
+        path: "ac-570",
+        component: () => import('../views/AC/AC5/AC570/index.vue'),
+      },
+      {
+        path: "ac-590",
+        component: () => import('../views/AC/AC5/AC590/index.vue'),
       },
       {
         path: "ac-610",

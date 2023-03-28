@@ -86,6 +86,11 @@ export class Message extends BaseType {
   public static PA420 = new Message({
         '001': { "message" : "과세대상 퇴직급여가 0원이면 신고 불가합니다."}, // If the taxable retirement benefit is 0 won, it cannot be reported.
       });
+  
+  //보험사무대행신고
+  public static PA860= new Message({
+        '001': { "message" : "보험사무대행 신청서류의 일괄 자동생성 동의체크 먼저 하세요."}, // Please agree to create Application form for an insurance agent first.
+      });
    
       //기초정보설정
     public static CM110 = new Message({
