@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{modalChangeValueEdit}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -29,9 +29,10 @@
           focusedRowKey :  {{ focusedRowKey }}<br>
           idRowSaveDone :  {{ idRowSaveDone }}<br>
           idRowEdit : {{ idRowEdit }}<br>
-          idRowCurrentClick: {{ idRowCurrentClick }}
+          idRowCurrentClick: {{ idRowCurrentClick }}<br>
+          isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
+  </a-row>
 
   <div id="pa-520" class="page-content">
   
@@ -271,6 +272,7 @@ export default defineComponent({
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
     const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
     const isValidateAddPA520 = computed(() => store.state.common.isValidateAddPA520);
+    const isClickRow =  computed(() => store.state.common.isClickRowPA520); // determine when action click row
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -282,7 +284,7 @@ export default defineComponent({
     const modalDeleteStatus = ref<boolean>(false);
     const modalChangeValueAdd = ref<boolean>(false);
     const idRowEdit = ref();
-    let isClickRow = false; // determine when action click row
+
     const isDelete = ref<boolean>(false); // determine when action click icon delete
     const resetAddComponent = ref<number>(1);
    
@@ -372,12 +374,12 @@ export default defineComponent({
         // this is case after save done
         if (store.state.common.rowIdSaveDonePa520 != 0 && !addRowBtOnclick.value) {
           // Get index row change
-          let idRowNextForcus = isClickRow ? idRowCurrentClick.value : idRowSaveDone.value;
+          let idRowNextForcus = isClickRow.value ? idRowCurrentClick.value : idRowSaveDone.value;
           idRowEdit.value = parseInt(idRowNextForcus);
           focusedRowKey.value = parseInt(idRowNextForcus);
           store.state.common.countBtOnclickPA520 = 0;
 
-          isClickRow = false;
+          store.state.common.isClickRowPA520 = false;
           isDelete.value = false;
           store.state.common.rowIdSaveDonePa520 = 0
         }
@@ -478,7 +480,7 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks on the edit button.
     const onFocusedRowChanging = (event: any) => {
-      isClickRow = true;
+      store.state.common.isClickRowPA520 = true;
       const gridTable = pa520Grid.value.instance.getVisibleRows();
       gridTable.forEach((row:any) => {
         const rowElement = pa520Grid.value.instance.getRowElement(row.rowIndex);
@@ -633,7 +635,7 @@ export default defineComponent({
             if (store.state.common.checkChangeValueEditTab2PA520) {
               store.state.common.setTabActivePA520 = '2'
             }
-            isClickRow = true
+            store.state.common.isClickRowPA520 = true
             
           }
         }
