@@ -27,15 +27,15 @@ export default [
         subMenus: [
           { title: "요금청구,심사", url: "#", id: "bf-410" },
           { title: "서비스해지", url: "#", id: "bf-420" },
-          { title: "미납관리", url: "#", id: "bf-430" },          
+          { title: "미납관리", url: "#", id: "bf-430" },
         ],
       },
       {
         title: "업무마감",
         id: "bf-500",
         subMenus: [
-          { title: "회계업무마감", url: "#", id: "bf-510" },          
-          { title: "4대보험업무관리", url: "#", id: "bf-530"},          
+          { title: "회계업무마감", url: "#", id: "bf-510" },
+          { title: "4대보험업무관리", url: "#", id: "bf-530"},
         ],
       },
       {
@@ -45,10 +45,10 @@ export default [
           { title: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610" },
           { title: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620" },
           { title: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-630", id: "bf-630" },
-          { title: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" }, 
+          { title: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640" },
           { title: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-650", id: "bf-650" },
         ],
-      },      
+      },
     ],
   },
   {
@@ -94,11 +94,11 @@ export default [
       {
         title: "예산",
         id: "ac-300",
-        subMenus: [          
+        subMenus: [
           { title: "예산서자동작성", url: "#", id: "ac-380" },
         ],
       },
-      
+
       {
         title: "보고서",
         id: "ac-500",
@@ -120,7 +120,7 @@ export default [
         subMenus: [
           { title: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
           { title: "후원자관리", url: "#", id: "ac-620" },
-          { title: "기부금영수증", url: "#", id: "ac-630" },          
+          { title: "기부금영수증", url: "#", id: "ac-630" },
         ],
       },
 
@@ -151,7 +151,7 @@ export default [
           { title: "연말정산현황", url: "#", id: "pa-270" },
         ],
       },
-     
+
       {
         title: "퇴직소득관리",
         id: "pa-400",
@@ -193,16 +193,19 @@ export default [
         id: "pa-800",
         subMenus: [
           { title: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810" },
-          { title: "상실신고", url: "#", id: "pa-820" },
+          { title: "상실신고", url: "/dashboard/pa-820", id: "pa-820" },
           { title: "급여변경신고", url: "#", id: "pa-830" },
           { title: "휴직복직신고", url: "#", id: "pa-840" },
+          { title: "상실신고", url: "#", id: "pa-820" },
+          { title: "급여변경신고", url: "/dashboard/pa-830", id: "pa-830" },
+          { title: "휴직복직신고", url: "/dashboard/pa-840", id: "pa-840" },
           { title: "보수총액신고", url: "#", id: "pa-850" },
           { title: "보험사무대행신고", url: "#", id: "pa-860"},
-          { title: "사업장가입신고", url: "#", id: "pa-870" },
-          { title: "사업장탈퇴신고", url: "#", id: "pa-880" },         
+          { title: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870" },
+          { title: "사업장탈퇴신고", url: "#", id: "pa-880" },
         ],
       },
-    
+
     ],
   },
 ];
