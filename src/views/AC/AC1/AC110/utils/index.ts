@@ -77,4 +77,7 @@ export const dataDemoMain = [
     slipRegistration: false,
   },
 ];
-export const contentPopupRetrieveStatements = '새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?'
+export const contentPopupRetrieveStatements =  `새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 </br>
+사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 </br>
+ 있으니 주의하셔서 이용하시기 바랍니다. </br>
+ 그래도 불러오시겠습니까?`
