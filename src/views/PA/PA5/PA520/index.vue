@@ -269,6 +269,8 @@ export default defineComponent({
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
     const countBtOnclick = computed(() => store.state.common.countBtOnclickPA520);// count the number of times the add button clicks
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
+    const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
+    const isValidateAddPA520 = computed(() => store.state.common.isValidateAddPA520);
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -366,6 +368,7 @@ export default defineComponent({
           (val: any) => val.status == 0
         ).length;
         totalUser.value = result.value.getEmployeeWageDailies.length;
+
         // this is case after save done
         if (store.state.common.rowIdSaveDonePa520 != 0 && !addRowBtOnclick.value) {
           // Get index row change
@@ -429,7 +432,7 @@ export default defineComponent({
     // ======================= FUNCTION ================================
 
     const resetAllCheckerStatus = () => {
-      //store.state.common.checkChangeValueEditTab1PA520 = false
+      store.state.common.checkChangeValueEditTab1PA520 = false
       store.state.common.checkChangeValueEditTab2PA520 = false
       store.state.common.checkChangeValueAddPA520 = false
       store.state.common.activeAddRowPA520 = false
@@ -437,8 +440,6 @@ export default defineComponent({
       store.state.common.countBtOnclickPA520  = 0
     }
     const onExporting = (e: { component: any; cancel: boolean }) => {
-      
-      
       const workbook = new Workbook();
       const worksheet = workbook.addWorksheet("Employees");
 
@@ -477,6 +478,7 @@ export default defineComponent({
 
     // The above code is a function that is called when the user clicks on the edit button.
     const onFocusedRowChanging = (event: any) => {
+      isClickRow = true;
       const gridTable = pa520Grid.value.instance.getVisibleRows();
       gridTable.forEach((row:any) => {
         const rowElement = pa520Grid.value.instance.getRowElement(row.rowIndex);
@@ -519,7 +521,7 @@ export default defineComponent({
         actionChangeComponent.value = 2;
         store.state.common.idRowChangePa520 = focusedRowKey.value;
         idRowEdit.value = event.row.data.employeeId;
-        removeNewRow()
+        //removeNewRow()
       }
     }
 
@@ -540,8 +542,7 @@ export default defineComponent({
     }
     // Opening a modal window.
     const onAddBtClick = () => {
-      store.state.common.addRowBtOnclickPA520 = true;
-      store.state.common.countBtOnclickPA520++;
+
       if (
         store.state.common.checkChangeValueEditTab1PA520 == true || 
         store.state.common.checkChangeValueEditTab2PA520 == true 
@@ -549,33 +550,37 @@ export default defineComponent({
         modalChangeValueEdit.value = true;
         return;
       }
-      // // Adding a new row to the table.
-      if (store.state.common.activeAddRowPA520 == false) {
-      
-        funcAddNewRow();     
-        actionChangeComponent.value = 1;
-        isAddNewStatus.value = true;
-      }
+
       if (
         store.state.common.activeAddRowPA520 &&
         store.state.common.checkChangeValueAddPA520
       ) {
         modalChangeValueAdd.value = true;
       }
+
+      store.state.common.addRowBtOnclickPA520 = true;
+      store.state.common.countBtOnclickPA520++;
+      // // Adding a new row to the table.
+      if (store.state.common.activeAddRowPA520 == false) {
+        funcAddNewRow();     
+        actionChangeComponent.value = 1;
+        isAddNewStatus.value = true;
+      }
+
     };
     const confirmAndSaveAdd = async (res: any) => {
-      await store.dispatch('settings/resetYearStatus')
       if (res == true && addRowBtOnclick.value) {
-        actionSave();
-      }else if (res == true &&  !addRowBtOnclick.value) {
-        actionSave();
-        idRowEdit.value = idRowCurrentClick.value;
-        focusedRowKey.value = idRowCurrentClick.value;
-        store.state.common.countBtOnclickPA520 = 0
-        //Not save
-        store.state.common.activeAddRowPA520 = false;
-        store.state.common.checkChangeValueAddPA520 = false;
-
+        await actionSave();
+      } else if (res == true && !addRowBtOnclick.value) {
+        await actionSave();
+        if (!isValidateAddPA520.value) {
+          idRowEdit.value = idRowCurrentClick.value;
+          focusedRowKey.value = idRowCurrentClick.value;
+          store.state.common.countBtOnclickPA520 = 0
+          //Not save
+          store.state.common.activeAddRowPA520 = false;
+          store.state.common.checkChangeValueAddPA520 = false;
+        }
       } else if (!res && addRowBtOnclick.value) {
         store.state.common.countBtOnclickPA520 = 0
         // Change status switch in store
@@ -585,7 +590,7 @@ export default defineComponent({
         store.state.common.addRowBtOnclickPA520 = false;
         resetAddComponent.value++; // increment one unit to reset the newly created form
         onAddBtClick();
-
+        await store.dispatch('settings/resetYearStatus')
       } else {
         idRowEdit.value = idRowCurrentClick.value;
         focusedRowKey.value = idRowCurrentClick.value;
@@ -593,7 +598,7 @@ export default defineComponent({
         //Not save
         store.state.common.activeAddRowPA520 = false;
         store.state.common.checkChangeValueAddPA520 = false;
-        // Get index row change
+        await store.dispatch('settings/resetYearStatus')
       }
     };
     const actionUpdate = (currentTab: number) => {
@@ -605,7 +610,6 @@ export default defineComponent({
       }
     };
 
-
     const closePopupConfirmEdit = ()=>{
       modalChangeValueEdit.value = false
     }
@@ -614,27 +618,30 @@ export default defineComponent({
       await store.dispatch('settings/resetYearStatus')
       if (res == true) {
           store.state.common.checkChangeValueEditTab1PA520
-          ? await actionUpdate(1)
-          : await actionUpdate(2);
-        // In case you are editing and then click on another and agree to save the information,
-        if (addRowBtOnclick.value) {
-          funcAddNewRow();
-          store.state.common.isTab2ValidatePA520 = false
-        } else {
-          // In case reset the tab when one of the two tabs is fixed and validated
-          if (store.state.common.checkChangeValueEditTab1PA520) {
-            store.state.common.setTabActivePA520 = '1'
-          }
+          ? await actionUpdate(1) : await actionUpdate(2);
+        if (!isValidateEditPA520.value) {// If form validate do nothing
+          // In case you are editing and then click on another and agree to save the information,
+          if (addRowBtOnclick.value) {
+            funcAddNewRow();
+            store.state.common.isTab2ValidatePA520 = false
+          } else {
+            // In case reset the tab when one of the two tabs is fixed and validated
+            if (store.state.common.checkChangeValueEditTab1PA520) {
+              store.state.common.setTabActivePA520 = '1'
+            }
 
-          if (store.state.common.checkChangeValueEditTab2PA520) {
-            store.state.common.setTabActivePA520 = '2'
+            if (store.state.common.checkChangeValueEditTab2PA520) {
+              store.state.common.setTabActivePA520 = '2'
+            }
+            isClickRow = true
+            
           }
-          isClickRow = true
-          
         }
+  
       } else {
         if (addRowBtOnclick.value) {
-          funcAddNewRow();
+          await funcAddNewRow();
+          resetAllCheckerStatus()
         } else {
           focusedRowKey.value = idRowCurrentClick.value;
           idRowEdit.value = idRowCurrentClick.value;
