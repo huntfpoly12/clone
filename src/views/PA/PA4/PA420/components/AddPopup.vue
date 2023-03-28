@@ -124,13 +124,15 @@
 import { defineComponent, ref, computed, reactive, watch } from "vue";
 import notification from "@/utils/notification";
 import { companyId } from "@/helpers/commonFunction";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
+import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import Tab1 from "./TabCreated/Tab1.vue";
 import Tab2 from "./TabCreated/Tab2.vue";
 import Tab3 from "./TabCreated/Tab3.vue";
 import { initialFormState } from "../utils/index";
 import { useStore } from "vuex";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -171,6 +173,12 @@ export default defineComponent({
         JSON.stringify({ ...initialFormState, processKey: props.processKey })
       )
     );
+    const defaltDataForm = reactive(
+      JSON.parse(
+        JSON.stringify({ ...initialFormState, processKey: props.processKey })
+      )
+    );
+    
 
     const option1 = reactive([
       { id: true, text: "사원" },
@@ -181,8 +189,13 @@ export default defineComponent({
       { id: 2, text: "중도정산" },
     ]);
     const setModalVisible = () => {
-      modalStatusAccept.value = false;
-      emit("closePopup", false);
+      if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm) == true)
+      {
+        emit("closePopup", false)
+        modalStatusAccept.value = false;
+      }else{
+        comfirmClosePopup(() => { emit("closePopup", false); modalStatusAccept.value = false;})
+      }
     };
 
     store.dispatch("common/getListEmployee", {
@@ -192,7 +205,26 @@ export default defineComponent({
     const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410);
 
     // =========================  GRAPQL =================================================
+    // query get config from screen cm-130
+    const {
+              loading: loadingConfig,
+              result: resultConfig,
+            } = useQuery(
+                  queriescm130.getWithholdingConfig,
+                  {
+                    companyId:companyId,
+                    imputedYear:globalYear
+                  },
+                  () => ({
+                      fetchPolicy: "no-cache",
+                  })
+            );
 
+        watch(resultConfig,(resConfig)=>{
+          if (resConfig) {
+            store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
+          }
+        })    
     const {
       mutate: mutateCreateIncomeRetirement,
       onDone: onDoneCreateIncomeRetirement,

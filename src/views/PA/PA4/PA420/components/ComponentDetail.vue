@@ -66,11 +66,13 @@
                 </template>
                 <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" />
                 <template #joinedAt="{ data }">
-                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
+                    <div>{{ data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate ?
+                     $filters.formatDate(data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" />
                 <template #leavedAt="{ data }">
-                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
+                    <div>{{ data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate ?
+                     $filters.formatDate(data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
                     width="120px" alignment="right"/>
@@ -275,6 +277,8 @@ export default defineComponent({
         const deleteItem = () => {
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
+            }else{
+                notification('warning',Message.getMessage('COMMON', '404').message)
             }
         };
         const actionDeleteSuccess = () => {
