@@ -10,7 +10,9 @@
       justify-content: space-between;
     }
   }
-
+  :deep .ant-tabs.ant-tabs-top {
+    min-height: 500px;
+  }
   .tab-3 {
     display: flex;
     width: 100%;
