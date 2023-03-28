@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{modalChangeValueEdit}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
+  </a-row>
 
   <div id="pa-520" class="page-content">
   
@@ -257,27 +257,30 @@ export default defineComponent({
               data: [],
           }
     }));
-    const store = useStore();
+
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
     const totalUser = ref(0);
     const idRowCurrentClick = ref(0);
+    // vuex declare
+    const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520);
     const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
-    const countBtOnclick = computed(() => store.state.common.countBtOnclickPA520);// count the number of times the add button clicks
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
     const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
     const isValidateAddPA520 = computed(() => store.state.common.isValidateAddPA520);
     const isClickRow =  computed(() => store.state.common.isClickRowPA520); // determine when action click row
+    const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
+
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
     });
-    const idAction = ref();
+    
     const trigger = ref<boolean>(true);
     const isAddNewStatus = ref<boolean>(false);
     const modalHistoryStatus = ref<boolean>(false);
@@ -285,7 +288,7 @@ export default defineComponent({
     const modalChangeValueAdd = ref<boolean>(false);
     const idRowEdit = ref();
 
-    const isDelete = ref<boolean>(false); // determine when action click icon delete
+   
     const resetAddComponent = ref<number>(1);
    
     // use to catch case click add button and change something after that click add button  again
@@ -617,7 +620,7 @@ export default defineComponent({
     }
     // A function that is called when the user clicks on the save button.
     const comfirmAndSaveEdit = async (res: any) => {
-      await store.dispatch('settings/resetYearStatus')
+      //await store.dispatch('settings/resetYearStatus')
       if (res == true) {
           store.state.common.checkChangeValueEditTab1PA520
           ? await actionUpdate(1) : await actionUpdate(2);
@@ -636,7 +639,6 @@ export default defineComponent({
               store.state.common.setTabActivePA520 = '2'
             }
             store.state.common.isClickRowPA520 = true
-            
           }
         }
   
@@ -651,7 +653,7 @@ export default defineComponent({
           store.state.common.idRowChangePa520 = idRowCurrentClick.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
         }
-        
+        store.commit('settings/setCurrentYear')
       }
       //store.state.common.checkChangeValueEditTab1PA520 = false;
     };

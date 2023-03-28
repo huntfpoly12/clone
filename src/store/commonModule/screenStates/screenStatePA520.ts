@@ -1,25 +1,34 @@
 
 const statesPA520 = {
-  idRowChangePa520: 0,
-  keyActiveStepPA520: '1',
-  actionSavePA520: 0,
   checkChangeValueEditTab1PA520: false,
   checkChangeValueEditTab2PA520: false,
   checkChangeValueAddPA520: false,
-  dataDetailAddTab1PA520: {},
-  activeAddRowPA520: false,
+ 
+  isValidateAddPA520: false,
+  isTab1ValidateEditPA520: false,
+  isTab2ValidateEditPA520: false,
+
   addRowBtOnclickPA520: false,
-  countBtOnclickPA520: 0,
-  rowIdSaveDonePa520: 0,
+
+  idRowCurrentClick: 0,
+  idRowCurrentEdit: 0,
+  focusedRowKey: 0,
+  
+  isClickRowPA520: false,
+  isClickDelete: false,
+
+  keyActiveStepPA520: '1',
+
+  activeAddRowPA520: false,
+
   actionSaveAddPA520: 0,
   actionUpdateTab1PA520: 0,
   actionUpdateTab2PA520: 0,
+
   isChangeYearPA520: false,
-  isTab2ValidatePA520: false,
-  oldGlobalYearPA520: 0,
+  
   setTabActivePA520: '1',
-  isValidateEditPA520: false,
-  isValidateAddPA520: false,
-  isClickRowPA520: false
+
+
 };
 export default statesPA520;

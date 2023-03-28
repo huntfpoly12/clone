@@ -173,7 +173,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch,computed } from "vue";
+import { defineComponent, ref, watch,computed ,onMounted} from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -211,20 +211,13 @@ import {
   PA730,
   PA720,
   PA810,
-  PA820,
-  PA830,
-  PA840,
-  PA870,
   AC110,
   AC120,
   AC130,
-  AC510,
   AC530,
   AC540,
   AC550,
   AC560,
-  AC570,
-  AC590,
   AC610,
   AC620,
   Test,
@@ -287,20 +280,13 @@ export default defineComponent({
     PA720,
     PA730,
     PA810,
-    PA820,
-    PA830,
-    PA840,
-    PA870,
     AC110,
     AC120,
     AC130,
-    AC510,
     AC530,
     AC540,
     AC550,
     AC560,
-    AC570,
-    AC590,
     AC610,
     AC620,
     Test,
@@ -340,6 +326,8 @@ export default defineComponent({
       this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
       this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
     }
+
+
   },
   watch: {
      activeTab: {
@@ -456,21 +444,13 @@ export default defineComponent({
       if (this.activeTab.id === "pa-720") return 'PA720';
       if (this.activeTab.id === "pa-730") return 'PA730';
       if (this.activeTab.id === "pa-810") return 'PA810';
-      if (this.activeTab.id === "pa-820") return 'PA820';
-      if (this.activeTab.id === "pa-820") return 'PA820';
-      if (this.activeTab.id === "pa-830") return 'PA830';
-      if (this.activeTab.id === "pa-840") return 'PA840';
-      if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
-      if (this.activeTab.id === "ac-510") return 'AC510';
       if (this.activeTab.id === "ac-530") return 'AC530';
       if (this.activeTab.id === "ac-540") return 'AC540';
       if (this.activeTab.id === "ac-550") return 'AC550';
       if (this.activeTab.id === "ac-560") return 'AC560';
-      if (this.activeTab.id === "ac-570") return 'AC570';
-      if (this.activeTab.id === "ac-590") return 'AC590';
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
@@ -478,8 +458,6 @@ export default defineComponent({
     },
   },
   setup() {
-
-
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);
@@ -495,9 +473,13 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-  //     const token = sessionStorage.getItem("token");
-  // const jwtObject = getJwtObject(token);
-  //   console.log(jwtObject);
+
+    onMounted(() => {
+      const token = sessionStorage.getItem("token");
+      const jwtObject = getJwtObject(token);
+      store.commit('auth/setTockenInfor',jwtObject)
+      console.log(store.getters['auth/getTockenInfor']);
+    })
     /**
     * Check scroll tab if overflow
     */

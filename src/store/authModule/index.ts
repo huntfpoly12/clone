@@ -7,6 +7,7 @@ const authModule = {
     userInfor: [],
     authData: '',
     token: 'hi',
+    tockenInfor: {}
   }),
   getters,
   mutations,
