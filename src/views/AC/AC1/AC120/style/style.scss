@@ -1,89 +1,130 @@
 .ac-120 {
-  margin: 10px;
+    margin: 10px;
 
-  &__top {
-    &-grid {
-      display: flex;
-      justify-content: space-between;
-      &-items {
-        border: 1px solid #BFBFBF;
-        border-radius: 10px;
-        text-align: center;
-        padding: 8px;
-        display: flex;
-        align-items: center;
-        &-text {
-          margin-right: 8px;
-          display: flex;
-          flex-direction: column;
-          span {
-            font-size: 11px;
-            line-height: 12px;
-            color: #7F7F7F;
-          }
+    .top {
+        .grid {
+            display: flex;
+            justify-content: space-between;
+
+            .items {
+                border: 1px solid #BFBFBF;
+                border-radius: 10px;
+                text-align: center;
+                padding: 8px;
+                display: flex;
+                align-items: center;
+
+                .text {
+                    margin-right: 8px;
+                    display: flex;
+                    flex-direction: column;
+
+                    span {
+                        font-size: 11px;
+                        line-height: 12px;
+                        color: #7F7F7F;
+                    }
+                }
+            }
         }
-      }
-    }
 
-    &-flex {
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+        .flex {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-      &-action {
-        display: flex;
-        align-items: center;
-      }
-    }
-  }
-
-  &__main {
-    margin-top: 15px;
-
-    &-main {
-      &-slipRegistration {
-        display: flex;
-        align-items: center;
-
-        &-stt {
-          margin-right: 10px;
+            .action {
+                display: flex;
+                align-items: center;
+            }
         }
-      }
     }
 
-    &-detail {
-      margin-top: 15px;
+    .main {
+        margin-top: 15px;
 
-      &-detail1 {}
-
-      &-detail2 {
-        padding-left: 15px;
-
-        &-upload {
-          border: 1px solid #ddd;
-          height: 100%;
-          padding: 15px;
-          display: flex;
-          justify-content: center;
+        .slipRegistration {
+            display: flex;
+            align-items: center;
         }
-      }
+
+        .detail {
+            margin-top: 15px;
+
+            .detail1 {
+                width: calc(100% - 307px);
+                border: 1px solid #ddd;
+                padding: 15px;
+            }
+
+            .columns {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                height: auto;
+            }
+
+
+            .detail2 {
+                width: 307px;
+                padding-left: 15px;
+
+                .upload {
+                    border: 1px solid #ddd;
+                    height: 100%;
+                    padding: 15px;
+                }
+            }
+        }
     }
-  }
 }
-:deep .col .ant-form-item-label {
-  >label {
-      width: 130px;
-  }
+
+.column {
+    overflow: hidden;
+    transition: flex 1s ease-out; // note that we're transitioning flex, not height!
+    height: auto;
+    flex: 1;
 }
+
+.collapse {
+
+    &-enter,
+    &-leave-to {
+        flex: 0;
+    }
+}
+
+.input_info {
+    display: flex;
+    align-items: center;
+}
+
+:deep .col-1 .ant-form-item-label {
+    >label {
+        width: 100px;
+    }
+}
+
+:deep .col-2,
+:deep .col-3,
+:deep .col-4 {
+    .ant-form-item-label {
+        >label {
+            width: 75px;
+        }
+    }
+}
+
 .top-content {
-  margin-bottom: 10px;
-  padding: 2px 4px;
-}
-.text-align-center {
-  text-align: center;
-}
-:deep .custom-button .dx-button-content {
-  padding: 6px 8px;
+    margin-bottom: 10px;
+    padding: 2px 4px;
 }
 
+.text-align-center {
+    text-align: center;
+}
+
+:deep .custom-button .dx-button-content {
+    padding: 6px 8px;
+}
