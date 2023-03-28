@@ -25,7 +25,7 @@
           <div class="checkbox-tab-1">
             <span>연간(1.1~12.31)지급분</span>
             <div class="group-checkbox">
-              <a-row>
+              <a-row :style="!filterForm.afterProduction ? 'opacity: 0.6': ''">
                 <a-col :span="12">
                   <div class="checkbox-item">
                     <checkbox-basic v-model:valueCheckbox="checkbox1" :disabled="!filterForm.afterProduction"
@@ -118,7 +118,10 @@
             {{ data.data.company.name }}
             {{ data.data.company.address }}
           </template>
-          <DxColumn caption="사업자등록번호" data-field="company.bizNumber" />
+          <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+          <template #bizNumber="{ data }">
+            {{ formatBizNumber(data.data.company.bizNumber) }}
+          </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
             format="yyyy-MM-dd hh:mm" />
           <DxColumn caption="제작현황" cell-template="imputed" width="430"/>
@@ -468,6 +471,11 @@ export default defineComponent({
         }
       }
     }
+
+    const formatBizNumber = (value:any) => {
+      const bizNumber = value.toString()
+      return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`
+    }
     return {
       globalYear,
       filterForm,
@@ -489,7 +497,8 @@ export default defineComponent({
       productStatusSummary,
       productionStatusData,
       selectionChanged,
-      selectedRowKeys
+      selectedRowKeys,
+      formatBizNumber
     }
   }
 })

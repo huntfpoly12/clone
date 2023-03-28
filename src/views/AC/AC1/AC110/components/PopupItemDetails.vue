@@ -1,9 +1,20 @@
 <template>
   <a-modal :visible="isModalItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
-    <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
+    <DxDataGrid key-expr="id" class="mt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
       :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
       :column-auto-width="true">
+      <DxToolbar>
+        <DxItem location="after" template="button-add" css-class="cell-button-add" />
+      </DxToolbar>
+      <template #button-add>
+        <a-tooltip placement="top">
+          <template #title>신규</template>
+          <div>
+            <DxButton icon="plus" />
+          </div>
+        </a-tooltip>
+      </template>
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxColumn caption="품목" cell-template="item" width="100" />
       <template #item="{ data }">
@@ -18,8 +29,8 @@
         <select-box-common :arrSelect="arraySelectBox" :required="true" />
       </template>
       <DxColumn caption="수량" data-field="fill4"></DxColumn>
-      <DxColumn caption="단가" data-field="fill4"></DxColumn>
-      <DxColumn caption="금액" data-field="fill4"></DxColumn>
+      <DxColumn caption="단가" data-field="fill8" format="fixedPoint" alignment="end"></DxColumn>
+      <DxColumn caption="금액" data-field="fill8" format="fixedPoint" alignment="end"></DxColumn>
       <DxColumn caption="비고" data-field="fill4"></DxColumn>
       <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
       <template #action="{ data }">
@@ -35,7 +46,7 @@
     </DxDataGrid>
 
     <div class="ac-110-popup-detail-btn">
-      <button-basic text="초기화" type="default" :mode="'contained'" />
+      <button-basic text="저장" type="default" :mode="'contained'" />
     </div>
   </a-modal>
   <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false"
@@ -48,7 +59,8 @@
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { dataDemoMain } from '../utils/index'
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
+import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
 export default defineComponent({
@@ -59,7 +71,7 @@ export default defineComponent({
     },
   },
   components: {
-    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined
+    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton
   },
 
   setup(props, { emit }) {
