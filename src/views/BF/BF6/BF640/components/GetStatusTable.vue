@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="loading">{{ arrStatus }}
+    <a-spin :spinning="loading">
         <production-status :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
         <production-status :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
         <production-status :typeTag="4" v-if="checkStatus(2)" padding="1px 10px" :message="'전자신고파일 다운로드'"/>

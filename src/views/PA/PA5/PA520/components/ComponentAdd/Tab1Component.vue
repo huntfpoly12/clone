@@ -190,13 +190,14 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(res => {
+        onDone( async () => {
             //store.state.common.addRowBtOnclickPA520 = false
             store.state.common.activeAddRowPA520 = false
             store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
             store.state.common.checkChangeValueAddPA520 = false
-            notification('success', Message.getCommonMessage('106').message);
-            if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
+            notification('success', Message.getCommonMessage('101').message);
+            if (clickYearStatus.value !== ClickYearStatus.none) await store.commit('settings/setCurrentYear')
+            await store.dispatch('settings/resetYearStatus')
         })
         //============ WATCH =================================
 
@@ -259,11 +260,14 @@ export default defineComponent({
             dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
         }
-        const actionCreated = () => {
+    const actionCreated = () => {
+         
             var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                store.commit('settings/setFormStatus',FormStatus.adding)
+                store.commit('settings/setFormStatus', FormStatus.adding)
+                store.state.common.isValidateAddPA520 = true
+                return
             } else {
                 let newValDataCreat = {
                     ...dataCreated,
@@ -280,7 +284,8 @@ export default defineComponent({
                     imputedYear: globalYear.value,
                     input: newValDataCreat
                 }
-                mutate(dataCallCreat)
+              mutate(dataCallCreat)
+              store.state.common.addRowBtOnclickPA520 = false
             }
         }
         return {
