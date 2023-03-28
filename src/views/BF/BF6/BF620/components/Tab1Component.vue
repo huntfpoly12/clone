@@ -1,9 +1,9 @@
 <template>
   <div class="tab-group">
-    <SearchArea :tab1="true"/>
-    {{ filterBF620 }} filterBF620 <br />
+    <SearchArea :tab1="true" />
+    <!-- {{ filterBF620 }} filterBF620 <br />
     {{ dataSource }} dataSource <br />
-    {{ searchWithholdingParam }} searchWithholdingParam <br />
+    {{ requestFileData }} requestFileData <br /> -->
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -27,13 +27,18 @@
       <a-spin :spinning="searchWithholdingLoading" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+          :allowSelection="true" @editor-preparing="onEditorPreparing">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn caption="사업자코드" data-field="code" />
+          <DxColumn caption="사업자코드" data-field="companyCode" cell-template="companyCode"/>
+          <template #companyCode="{ data }">
+            {{ data.data.companyCode }}
+            {{ data.data.active ? '' : '해지' }}
+          </template>
           <DxColumn caption="상호 주소" cell-template="companyName" />
           <template #companyName="{ data }">
-            {{ data.data.name }}
+            {{ data.data.companyName }}
             {{ data.data.address }}
           </template>
           <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
@@ -77,6 +82,7 @@
           <template #productionStatus="{ data }">
             <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
               @productionStatusData="productionStatusData" />
+            <span class="before-production-tag" v-if="!filterBF620.beforeProduction">제작요청전</span>
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -87,7 +93,8 @@
         </DxDataGrid>
       </a-spin>
     </div>
-    <RequestFilePopup v-if="modalStatus" :data="requestFileData" tab-name="tab1" @cancel="modalStatus = false" />
+    <RequestFilePopup v-if="modalStatus" :requestFileData="requestFileData" tab-name="tab1"
+      @cancel="modalStatus = false" />
   </div>
 </template>
 
@@ -106,6 +113,7 @@ import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
 import { formatMonth } from '../utils/index'
 import dayjs from 'dayjs';
+import { isNumber } from 'lodash';
 export default defineComponent({
   components: {
     SearchArea,
@@ -124,9 +132,9 @@ export default defineComponent({
     search: {
       type: Number,
     },
-    onSearch:{
+    onSearch: {
       type: Function,
-      default: () => {},
+      default: () => { },
     }
   },
   setup(props, { emit }) {
@@ -136,6 +144,15 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
+
+    //-----------------------Fcn common-----------------------------------------
+
+    const changeWithholdingTaxType = (index: Number, afterDeadline: boolean) => {
+      if (index === 0) {
+        return afterDeadline ? 3 : 1;
+      }
+      return 2;
+    }
 
     //-----------------------Search with holding and data source----------------
 
@@ -159,11 +176,11 @@ export default defineComponent({
     );
     watch(searchWithholdingResult, (newVal) => {
       let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth.map((item: any) => {
-        let arrData={};
+        let arrData = {};
         if (item) {
           arrData = {
-            code: item.company.code,
-            name: item.company.name,
+            companyCode: item.company.code,
+            companyName: item.company.name,
             address: item.company.address,
             manageUserId: item.companyServiceContract.manageUserId,
             salesRepresentativeId: item.companyServiceContract.salesRepresentativeId,
@@ -171,6 +188,7 @@ export default defineComponent({
             reportType: item.reportType,
             afterDeadline: item.afterDeadline,
             index: item.index,
+            reportId: item.reportId,
             totalCollectedTaxAmount: item.totalCollectedTaxAmount,
             statusUpdatedAt: item.statusUpdatedAt,
             lastProductionRequestedAt: item.lastProductionRequestedAt,
@@ -179,7 +197,12 @@ export default defineComponent({
             paymentMonth: item.paymentMonth,
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
+            beforeProduction: item.lastProductionRequestedAt ? true : false,
+            allowSelection: false,
+            withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
+          // filterBF620.value.imputedYear = item.imputedYear;
+          // filterBF620.value.imputedMonth = item.imputedMonth;
         }
         return arrData;
       });
@@ -191,7 +214,7 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       filteredDataSource.value = [...result];
-      if(props.onSearch){
+      if (props.onSearch) {
         props.onSearch();
       }
     });
@@ -211,16 +234,24 @@ export default defineComponent({
 
     // count the number of status
     let productionStatusArr = ref<any>([]);
-    const countStatus = (arr: any[], type: number, propertyCompare: string) => {
+    const countStatus = (arr: any[], type: number | Boolean, propertyCompare: string) => {
       if (Object.keys(arr).length === 0 || arr.length === 0) {
         return 0;
       }
+      let typeCustom: number = 0;
+      if (typeof type === 'boolean') {
+        typeCustom = type ? 1 : 0;
+      }
+      if (isNumber(type)) {
+        typeCustom = type;
+      }
       let count = arr.reduce((acc: any, crr: any) => {
-        acc[crr[propertyCompare]] = acc[crr[propertyCompare]] ? acc[crr[propertyCompare]] + 1 : 1;
+        let item = crr[propertyCompare] === false ? 0 : crr[propertyCompare];
+        acc[item] = acc[item] ? acc[item] + 1 : 1;
         return acc;
       }, {});
-      if (count[type]) {
-        return count[type];
+      if (count[typeCustom]) {
+        return count[typeCustom];
       }
       return 0;
     };
@@ -229,11 +260,11 @@ export default defineComponent({
       return `매월 ${countStatus(filteredDataSource.value, 1, 'reportType')} 반기 ${countStatus(filteredDataSource.value, 6, 'reportType')}`
     };
     const afterDeadlineSummary = () => {
-      return `정기 ${countStatus(filteredDataSource.value, 0, 'afterDeadline')} 기한후 ${countStatus(filteredDataSource.value, 0, 'afterDeadline')} 수정 ${countStatus(
-        filteredDataSource.value, 1, 'afterDeadline')}`;
+      return `정기 ${countStatus(filteredDataSource.value, 1, 'withholdingTaxType')} 기한후 ${countStatus(filteredDataSource.value, 2, 'withholdingTaxType')} 수정 ${countStatus(
+        filteredDataSource.value, 3, 'withholdingTaxType')}`;
     };
     const productStatusSummary = () => {
-      return `제작전 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
+      return `제작요청전 ${countStatus(filteredDataSource.value, false, 'beforeProduction')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
         productionStatusArr.value,
         1, 'productionStatus'
       )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
@@ -241,34 +272,37 @@ export default defineComponent({
     // caculator sum
     const productionStatusData = (emitVal: any) => {
       productionStatusArr.value = [emitVal];
-      filteredDataSource.value = filteredDataSource.value.map((item: any) =>{
-        if(item.companyId == emitVal.companyId) {
-          return {...item, productionStatus: emitVal.productionStatus, beforeProduction: true}
+      filteredDataSource.value = filteredDataSource.value.map((item: any) => {
+        if (item.companyId == emitVal.companyId) {
+          return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
         }
-        return {...item, beforeProduction: false};
+        return { ...item, beforeProduction: false, allowSelection: false };
       })
       // reFreshDataGrid();
     };
 
     //--------------------on Search----------------------
 
+    watch([() => filterBF620.value.index, () => filterBF620.value.afterDeadline], ([newIndex, newAfter]) => {
+      filterBF620.value.withholdingTaxType = changeWithholdingTaxType(newIndex, newAfter);
+    });
     watch(
       () => props.search,
       () => {
-        let { paymentYear, paymentMonth, ...compareObj } = filterBF620.value;
+        let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, ...compareObj } = filterBF620.value;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(compareObj).every((key: any) => {
-            if (key == 'index' || key=='afterDeadline'){
-              if (compareObj.afterDeadline !== item.afterDeadline){
-                return false;
-              }
-              if((compareObj.index && item.index)||(compareObj.index === item.index)) {
-                return true;
-              }
-              return false;
-            }
-            if(key === 'productionStatuses'){  //error search main reason is this.
-              return compareObj.productionStatuses.length>0 ? compareObj.productionStatuses.findIndex((status:any)=> status === item.productionStatus) > -1 : true;
+            // if (key == 'index' || key == 'afterDeadline') {
+            //   if (compareObj.afterDeadline !== item.afterDeadline) {
+            //     return false;
+            //   }
+            //   if ((compareObj.index && item.index) || (compareObj.index === item.index)) {
+            //     return true;
+            //   }
+            //   return false;
+            // }
+            if (key === 'productionStatuses') {  //error search main reason is 
+              return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
             }
             if (compareObj[key]) {
               return compareObj[key] == item[key];
@@ -292,10 +326,23 @@ export default defineComponent({
       },
     });
     const selectionChanged = (event: any) => {
+      let deselectRowKeys: any = [];
+      event.selectedRowsData.forEach((item: any) => {
+        if (!item.allowSelection)
+          deselectRowKeys.push(event.component.keyOf(item));
+      });
+      if (deselectRowKeys.length) {
+        event.component.deselectRows(deselectRowKeys);
+        return;
+      }
+      // checkBoxUpdating = true;
+      // selectAllCheckBox.option("value", true);
+      // checkBoxUpdating = false;
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.company.id, imputedYear: item.imputedYear, reportId: item.reportId };
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
         });
+      // requestFileData.value.filter
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
@@ -310,6 +357,18 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
+
+    //------------------------disable selection row--------------------------------
+
+    const onEditorPreparing = (e: any) => {
+      // if (e.command === 'select') {
+      //   if (e.parentType === 'dataRow' && e.row) {
+      //     if (!e.row.data.allowSelection) {
+      //       e.editorOptions.disabled = true;
+      //     }
+      //   }
+      // }
+    }
     return {
       filterBF620,
       searchWithholdingLoading,
@@ -327,7 +386,8 @@ export default defineComponent({
       selectionChanged,
       formatMonth,
       searchWithholdingParam,
-      filteredDataSource
+      filteredDataSource,
+      onEditorPreparing
     };
   },
 })
