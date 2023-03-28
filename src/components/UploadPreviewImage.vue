@@ -132,7 +132,7 @@ export default defineComponent({
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
-    margin: 0 9px 8px 0;
+    margin: 8px 5px;
   }
 
   .ant-upload-list-item {
