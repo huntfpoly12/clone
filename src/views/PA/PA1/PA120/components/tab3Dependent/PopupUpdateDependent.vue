@@ -111,7 +111,7 @@ import { taxWaring } from '../../utils/index';
 import { h } from 'vue';
 import { Message } from '@/configs/enum';
 const messageUpdate = Message.getMessage('COMMON', '106').message;
-const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 '), h('div', '합니다그래도 삭제하시겠습니까?')])
+const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 '), h('div', '합니다. 그래도 삭제하시겠습니까?')])
 export default defineComponent({
   components: {},
   props: {

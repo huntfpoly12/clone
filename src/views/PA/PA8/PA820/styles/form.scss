@@ -1,0 +1,59 @@
+.form-container {
+  :deep .ant-form-item-label {
+    label {
+      width: 140px;
+    }
+  }
+
+  .form-group {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #d4d2d2;
+    border-radius: 10px;
+    padding-left: 20px;
+
+    :deep div.month-custom-1 {
+      border: 1px solid #ddd;
+
+      .text-box-1 {
+        color: black;
+      }
+    }
+  }
+
+  .check-box-group {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+
+    :deep .dx-checkbox-container {
+      .dx-checkbox-text {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .input-text {
+    display: flex;
+    align-items: center;
+
+    .select-group {
+      display: inline-flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .notice {
+      color: #888888;
+      font-size: 12px
+    }
+  }
+
+  .jobtype-margin {
+
+    // margin-left: 40px;
+    .text-detail {
+      margin-left: 33px;
+      margin-right: 10px;
+    }
+  }
+}

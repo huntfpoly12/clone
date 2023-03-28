@@ -2,7 +2,7 @@
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
       <!-- {{ originDataDetail }} originDataDetail <br /> -->
-      <!-- {{ initFormStateTabPA120 }} initFormStateTabPA120 <br /> -->
+      <!-- {{ initFormStateTabPA120.residentId }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -167,7 +167,7 @@ export default defineComponent({
     watch(() => props.popupStatus, (newValue: any) => {
       if (!newValue) {
         employeeId.value = null;
-        residentId.value = '';
+        // residentId.value = '';
         foreigner.value = 0;
         Object.assign(initFormStateTabPA120.value, initFormStateTab1);
       }
@@ -184,10 +184,10 @@ export default defineComponent({
         labelResidebId.value = '주민등록번호';
       }
     });
-    const residentId = ref('');
-    watch(residentId, (newValue: any) => {
-      initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
-    });
+    // const residentId = ref('');
+    // watch(residentId, (newValue: any) => {
+    //   initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
+    // });
     const employeeId = ref(null);
     // watch(employeeId, (newValue: any) => {
     //   formStateTab1.employeeId = parseInt(newValue);
@@ -347,7 +347,7 @@ export default defineComponent({
       labelResidebId,
       foreigner,
       funcAddress,
-      residentId,
+      // residentId,
       employeeId,
       postCode,
       radioCheckForeigner,
