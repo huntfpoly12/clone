@@ -1,0 +1,220 @@
+<template>
+  <a-modal
+    class="form-modal"
+    width="60%"
+    :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
+    :visible="isOpenModalCreate"
+    title="급여변경신고"
+    centered
+    @cancel="$emit('closeModal')"
+    :footer="null"
+  >
+    <standard-form ref="formRef">
+      <div class="mb-10">
+        <DxField label="직원선택">
+          <employ-select
+            :arrayValue="employeeWages"
+            width="300px"
+          />
+        </DxField>
+      </div>
+      <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-col span="8">
+          <DxField label="업체명">
+            <default-text-box
+              v-model:valueInput="formData.company_name"
+              placeholder="업체명"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="전화번호">
+            <default-text-box
+              v-model:valueInput="formData.phone"
+              placeholder="전화번호"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="팩스번호">
+            <default-text-box
+              v-model:valueInput="formData.fax"
+              placeholder="팩스번호"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="사업장관리번호">
+            <default-text-box
+              v-model:valueInput="formData.adding"
+              placeholder="사업장관리번호"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="16">
+          <DxField label="팩스번호">
+            <default-text-box
+              v-model:valueInput="formData.address"
+              placeholder="팩스번호"
+            />
+          </DxField>
+        </a-col>
+      </a-row>
+      <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-col span="8">
+          <DxField label="성명">
+            <default-text-box
+              v-model:valueInput="formData.company_name"
+              placeholder="성명"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="4"></a-col>
+        <a-col span="8">
+          <DxField label="주민등록번호" class="field-custom">
+            <default-text-box
+              v-model:valueInput="formData.fax"
+              placeholder="주민등록번호"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="8">
+          <DxField label="보수변경 년월">
+            <default-text-box
+              v-model:valueInput="formData.fax"
+              placeholder="보수변경 년월"
+            />
+          </DxField>
+        </a-col>
+        <a-col span="4"></a-col>
+        <a-col span="8">
+          <DxField label="변경된 보수월액" class="field-custom">
+            <default-text-box
+              v-model:valueInput="formData.address"
+              placeholder="변경된 보수월액"
+            />
+          </DxField>
+        </a-col>
+      </a-row>
+      <a-row :gutter="[0, 0]" class="item-group mb-10">
+        <a-col span="12">
+          <DxField label="취득대상보험선택" class="field-custom">
+            <div class="d-flex gap-20">
+              <checkbox-basic
+                :disabled="true"
+                label="국민연금"
+                v-model:valueCheckbox="formData.boolean"
+              />
+              <checkbox-basic
+                label="건강보험"
+                v-model:valueCheckbox="formData.boolean"
+              />
+              <checkbox-basic
+                label="고용보험"
+                v-model:valueCheckbox="formData.boolean"
+              />
+            </div>
+          </DxField>
+        </a-col>
+        <a-col span="12">
+          <DxField label="일자리안정자금 지원 신청여부" class="field-custom-2" >
+            <div class="d-flex gap-20">
+              <a-radio-group
+                v-model:value="formData.radio"
+                class="d-flex items-center"
+              >
+                <a-radio :value="1">예</a-radio>
+                <a-radio :value="2">아니요</a-radio>
+              </a-radio-group>
+            </div>
+          </DxField>
+        </a-col>
+        <a-col span="12">
+          <DxField label="변경사유" >
+            <div class="d-flex gap-20">
+              <a-radio-group
+                v-model:value="formData.radio1"
+                class="d-flex items-center"
+              >
+                <a-radio :value="1">보수 인상</a-radio>
+                <a-radio :value="2">보수 인하</a-radio>
+                <a-radio :value="3">착오 정정</a-radio>
+              </a-radio-group>
+            </div>
+          </DxField>
+        </a-col>
+      </a-row>
+      <div class="d-flex justify-center mt-20">
+        <button-basic
+          :width="90"
+          id="btn-save"
+          @onClick="onSubmit()"
+          style="margin: auto"
+          mode="contained"
+          type="default"
+          text="저장"
+        />
+      </div>
+    </standard-form>
+  </a-modal>
+</template>
+
+<script lang="ts">
+import {computed, defineComponent, reactive, ref} from 'vue'
+import UploadFile from "@/components/UploadFile.vue";
+import StandardForm from "@/components/common/StandardForm.vue";
+import DxField from "@/views/PA/PA8/components/DxField.vue";
+import {useQuery} from "@vue/apollo-composable";
+import queries from "@/graphql/queries/PA/PA8/PA810/index";
+import {companyId} from "@/helpers/commonFunction";
+import {useStore} from "vuex";
+import {FormCreatePA830} from "@/views/PA/PA8/const";
+import INITIAL_FORM from "@/views/PA/PA8/const"
+export default defineComponent({
+  components: {
+    UploadFile,
+    StandardForm,
+    DxField
+  },
+  props: {
+    isOpenModalCreate: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props) {
+    const store = useStore();
+    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const employeeWages = ref();
+    const formData = ref({...INITIAL_FORM.INITIAL_FORM_PA830})
+    const variables = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
+    const {result: dataEmployeeWages, onResult: onResultEmployeeWages, refetch: refetchDataEmployeeWages} = useQuery(queries.getEmployeeWages, variables, () => ({
+        fetchPolicy: "no-cache",
+      }));
+    onResultEmployeeWages((res) => {
+      const data = res.data.getEmployeeWages;
+      if (data?.length) {
+        employeeWages.value = data;
+      }
+    })
+    const onSubmit = async () => {
+      console.log(formData.value)
+    }
+    return {
+      employeeWages,
+      formData,
+      onSubmit
+    }
+  },
+})
+</script>
+
+<style scoped>
+@import "@/views/PA/PA8/styles/index.scss";
+.gap-20 {
+  gap: 20px;
+}
+</style>

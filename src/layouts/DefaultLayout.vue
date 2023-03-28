@@ -212,6 +212,9 @@ import {
   PA720,
   PA810,
   PA820,
+  PA830,
+  PA840,
+  PA870,
   AC110,
   AC120,
   AC130,
@@ -285,6 +288,9 @@ export default defineComponent({
     PA730,
     PA810,
     PA820,
+    PA830,
+    PA840,
+    PA870,
     AC110,
     AC120,
     AC130,
@@ -452,6 +458,9 @@ export default defineComponent({
       if (this.activeTab.id === "pa-810") return 'PA810';
       if (this.activeTab.id === "pa-820") return 'PA820';
       if (this.activeTab.id === "pa-820") return 'PA820';
+      if (this.activeTab.id === "pa-830") return 'PA830';
+      if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
@@ -469,8 +478,8 @@ export default defineComponent({
     },
   },
   setup() {
-   
- 
+
+
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);

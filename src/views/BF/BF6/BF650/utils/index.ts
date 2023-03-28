@@ -12,7 +12,7 @@ export const dataSearchUtils = {
 };
 export const dataSearchStep2Utils = {
   type: 9,
-  requesteStartDate: parseInt(dayjs().format("YYYYMMDD")) - 10000,
+  requesteStartDate: parseInt(dayjs().subtract(7, 'd').format("YYYYMMDD")),
   requesteFinishDate: parseInt(dayjs().format("YYYYMMDD")),
   productionStatuses: [2, -1],
   manageUserId: null,

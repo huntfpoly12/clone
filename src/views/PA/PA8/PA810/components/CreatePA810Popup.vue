@@ -141,7 +141,7 @@
             <div class="item-wrap">
               <span class="item-wrap-title">외국인</span>
               <a-row :gutter="[7, 20]">
-                <a-col :span="col.item">
+                <wa-col :span="col.item">
                   <DxField label="국적코드">
                     <div class="d-flex items-center gap-4">
                       <text-number-box
@@ -156,7 +156,7 @@
                       />
                     </div>
                   </DxField>
-                </a-col>
+                </wa-col>
                 <a-col :span="col.space"/>
                 <a-col :span="col.item">
                   <DxField label="체류자격">
@@ -419,6 +419,7 @@
         </a-row>
       </div>
       <div class="fileuploader-container mt-20">
+        <span>등본 등 증빙파일</span>
         <UploadFile @response-fileId="getFileId" :isFileList="isFileList"/>
       </div>
       <div class="mt-20 table-container" >
@@ -957,5 +958,14 @@ export default defineComponent({
   background-color: #5b80b9;
 }
 
+.fileuploader-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #939393;
+  border-radius: 10px;
+
+}
 
 </style>

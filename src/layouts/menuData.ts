@@ -105,8 +105,11 @@ export default [
   { name: "상실신고", url: "/dashboard/pa-820", id: "pa-820" },
   { name: "급여변경신고", url: "#", id: "pa-830" },
   { name: "휴직복직신고", url: "#", id: "pa-840" },
+  { name: "상실신고", url: "#", id: "pa-820" },
+  { name: "급여변경신고", url: "/dashboard/pa-830", id: "pa-830" },
+  { name: "휴직복직신고", url: "/dashboard/pa-840", id: "pa-840" },
   { name: "보수총액신고", url: "#", id: "pa-850" },
   { name: "보험사무대행신고", url: "#", id: "pa-860" },
-  { name: "사업장가입신고", url: "#", id: "pa-870" },
+  { name: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870" },
   { name: "사업장탈퇴신고", url: "#", id: "pa-880" },
 ];
