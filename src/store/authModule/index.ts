@@ -1,13 +1,16 @@
 import getters from "./getters";
 import mutations from "./mutations";
 import actions from "./actions";
+import {Module} from "vuex";
+import {AuthState} from "./types";
 
-const authModule = {
+const authModule: Module<AuthState, any> = {
+  namespaced: true,
   state: () => ({
-    userInfor: [],
+    userInfor: null,
     authData: '',
     token: 'hi',
-    tockenInfor: {}
+    tokenInfo: {}
   }),
   getters,
   mutations,

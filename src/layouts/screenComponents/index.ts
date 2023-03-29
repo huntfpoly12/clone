@@ -112,6 +112,9 @@ const PA830 = defineAsyncComponent(() =>
 const PA840 = defineAsyncComponent(() =>
     import("@/views/PA/PA8/PA840/index.vue")
 );
+const PA860 = defineAsyncComponent(() =>
+    import("@/views/PA/PA8/PA860/index.vue")
+);
 const PA870 = defineAsyncComponent(() =>
     import("@/views/PA/PA8/PA870/index.vue")
 );
@@ -194,6 +197,7 @@ export {
     PA820,
     PA830,
     PA840,
+    PA860,
     PA870,
     PA880,
     AC110,

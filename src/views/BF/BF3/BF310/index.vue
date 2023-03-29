@@ -40,8 +40,10 @@
                     </a-col>
 
                     <a-col>
-                        <label class="lable-item">신청기간 :</label>
-                        <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">신청기간 :</label>
+                            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :placeholder="['Start', 'End']"/>
+                        </div>
                     </a-col>
                 </a-row>
             </div>
@@ -144,7 +146,6 @@ import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
-import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -163,7 +164,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate = ref([parseInt(dayjs().subtract(1, 'year').format('YYYYMMDD')),parseInt( dayjs().format('YYYYMMDD'))]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
@@ -176,8 +177,8 @@ export default defineComponent({
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
-            startDate: +dayjs().subtract(1, 'year').format('YYYYMMDD'),
-            finishDate: +dayjs().format('YYYYMMDD')
+            startDate: rangeDate.value[0],
+            finishDate: rangeDate.value[1]
         })
 
         const setModalVisible = (data: any,) => {
@@ -211,8 +212,8 @@ export default defineComponent({
         }
         const searching = (e: any) => {
             originData.page = 1
-            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
+            originData.startDate = rangeDate.value[0]
+            originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             // refetchData()
@@ -220,8 +221,8 @@ export default defineComponent({
         }
         const changePage = (e: any) => {
             actionSearch.value = true
-            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
+            originData.startDate = rangeDate.value[0]
+            originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
             trigger.value = true;
             // refetchData()

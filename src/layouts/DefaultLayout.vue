@@ -215,6 +215,7 @@ import {
   PA820,
   PA830,
   PA840,
+  PA860,
   PA870,
   PA880,
   AC110,
@@ -246,6 +247,7 @@ import {
 import { getJwtObject } from '@bankda/jangbuda-common';
 import { companyId } from "@/helpers/commonFunction";
 import dayjs from "dayjs";
+import {getJwtObject} from '@bankda/jangbuda-common';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -292,6 +294,7 @@ export default defineComponent({
     PA820,
     PA830,
     PA840,
+    PA860,
     PA870,
     PA880,
     AC110,
@@ -460,6 +463,7 @@ export default defineComponent({
       if (this.activeTab.id === "pa-820") return 'PA820';
       if (this.activeTab.id === "pa-830") return 'PA830';
       if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-860") return 'PA860';
       if (this.activeTab.id === "pa-880") return 'PA880';
       if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
@@ -501,6 +505,9 @@ export default defineComponent({
       let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
       await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
 
+
+      store.commit('auth/setTokenInfo',jwtObject)
+      console.log(store.getters['auth/getTokenInfo']);
     })
     /**
     * Check scroll tab if overflow

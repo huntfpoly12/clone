@@ -43,7 +43,12 @@
 
     .main {
         margin-top: 15px;
-
+        
+        .data-grid {
+            height: calc(100vh - 805px);
+            overflow: hidden;
+            transition: 1s;
+        }
         .slipRegistration {
             display: flex;
             align-items: center;
@@ -51,20 +56,28 @@
 
         .detail {
             margin-top: 15px;
+            .button-arrow {
+                margin-top: -15px;
+                transition: transform 1s ease-in-out;
+                img {
+                    cursor: pointer;
+                    width: 30px; 
+                }
+            }
+            .button-arrow.rotate {
+                transform: rotate(180deg);
+            }
 
             .detail1 {
                 width: calc(100% - 307px);
                 border: 1px solid #ddd;
                 padding: 15px;
             }
-
-            .columns {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                height: auto;
+            .hidden-show {
+                height: 0;
+                overflow: hidden;
+                transition: 1s;
             }
-
 
             .detail2 {
                 width: 307px;
@@ -77,21 +90,6 @@
                 }
             }
         }
-    }
-}
-
-.column {
-    overflow: hidden;
-    transition: flex 1s ease-out; // note that we're transitioning flex, not height!
-    height: auto;
-    flex: 1;
-}
-
-.collapse {
-
-    &-enter,
-    &-leave-to {
-        flex: 0;
     }
 }
 
