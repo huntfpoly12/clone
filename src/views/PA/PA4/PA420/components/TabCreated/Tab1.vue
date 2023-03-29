@@ -400,10 +400,9 @@ export default defineComponent({
         watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
             props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate = newVal
         });
-        watch(() => paymentDay, (newVal) => {
+        watch(paymentDay, (newVal) => {
           props.dataForm.input.paymentDay = newVal
           store.state.common.paymentDayPA420 = newVal
-          
         });
 
         // =============== FUNCTION ================================

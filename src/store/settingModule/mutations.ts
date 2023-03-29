@@ -21,6 +21,9 @@ const mutations: MutationTree<SettingState> = {
   },
   setGlobalFacilityBizId(state, value: number) {
     state.globalFacilityBizId = value
+  },
+  setAccoountSubjects(state, value: any) {
+    state.accountSubject = value
   }
 };
 

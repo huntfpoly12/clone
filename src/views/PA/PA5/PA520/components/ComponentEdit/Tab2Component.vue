@@ -374,6 +374,7 @@ export default defineComponent({
       const actionUpdated = () => {
           if (isBtnYellow.value) {
             validateCalculate.value = true
+            store.commit('common/setTab2ValidateEditPA520', true)
             store.commit('settings/setFormStatus',FormStatus.editing)
           } else {
             originDataUpdate.value.imputedYear = store.state.common.checkChangeValueEditTab2PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value

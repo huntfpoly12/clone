@@ -109,7 +109,7 @@
                     width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated()"
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated(true)"
                     id="action-save" />
             </div>
         </standard-form>
@@ -188,13 +188,15 @@ export default defineComponent({
             loading:loadingCreated,
         } = useMutation(mutations.createEmployeeWageDaily);
         onError(e => {
+            store.dispatch('common/resetActionStatus')
             notification('error', e.message)
         })
         onDone( async () => {
             //store.state.common.addRowBtOnclickPA520 = false
-            store.state.common.activeAddRowPA520 = false
-            store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
-            store.state.common.checkChangeValueAddPA520 = false
+            //store.state.common.activeAddRowPA520 = false
+            //store.commit('common/setAddBtOnclickPA520',false) 
+            store.commit('common/setIdRowSaveDonePA520',dataCreated.employeeId) 
+            store.commit('common/setCheckChangeValueAddPA520',false) 
             notification('success', Message.getCommonMessage('101').message);
             if (clickYearStatus.value !== ClickYearStatus.none) await store.commit('settings/setCurrentYear')
             await store.dispatch('settings/resetYearStatus')
@@ -260,8 +262,8 @@ export default defineComponent({
             dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
         }
-    const actionCreated = () => {
-         
+    const actionCreated = (isclickbtn = false) => {
+            store.commit('common/setIsClickBtnSavePA520',isclickbtn)
             var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
