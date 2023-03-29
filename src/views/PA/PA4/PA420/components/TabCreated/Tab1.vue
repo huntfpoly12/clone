@@ -16,7 +16,7 @@
                 <a-form-item label="지급일" class="label-required">
                   <div class="d-flex-center">
                     <number-box min="1" max="31" :required="true" width="150px"
-                        v-model:valueInput="store.state.common.paymentDayPA420" />
+                        v-model:valueInput="paymentDay" />
                       <div class="ml-5 d-flex-center">
                           <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                           <span class="custom-waring">
@@ -308,6 +308,7 @@ export default defineComponent({
         const dataPrevRetiredYearsOfService: any = ref({})
         const dataLastRetiredYearsOfService: any = ref({})
         const dataSettlement: any = ref({})
+        const paymentDay = ref(store.state.common.paymentDayPA420)
         // =============== GRAPQL ==================================
 
         // =============== WATCH ==================================
@@ -399,8 +400,10 @@ export default defineComponent({
         watch(() => props.dataForm.taxCalculationInput.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
             props.dataForm.taxCalculationInput.lastRetiredYearsOfService.settlementStartDate = newVal
         });
-        watch(() => store.state.common.paymentDayPA420, (newVal) => {
-          props.dataForm.input.paymentDay  = newVal
+        watch(() => paymentDay, (newVal) => {
+          props.dataForm.input.paymentDay = newVal
+          store.state.common.paymentDayPA420 = newVal
+          
         });
 
         // =============== FUNCTION ================================
@@ -460,7 +463,7 @@ export default defineComponent({
           lastSettlementFinishDate,
           lastRetiredYearsOfServicePaymentDate,
           incomeCalculationInputSettlementStartDate,
-          incomeCalculationInputSettlementFinishDate,
+          incomeCalculationInputSettlementFinishDate,paymentDay
         }
     }
 })
