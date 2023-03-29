@@ -78,6 +78,7 @@ export default defineComponent({
             processKey: props.processKey,
             incomeId: 0
         })
+        const  firstLoad = ref(0)
         store.dispatch('common/getListEmployee', {
             companyId: companyId,
             imputedYear: globalYear,
@@ -123,7 +124,7 @@ export default defineComponent({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
-        resultGetDetail(newValue => {
+        resultGetDetail( async(newValue) => {
           if (newValue && newValue.data) {
             let checkBoxCallApi = true
             // if prevRetiredYearsOfService or prevRetirementBenefitStatus is null then assign it with a default value
@@ -145,11 +146,12 @@ export default defineComponent({
                 taxableRetirementBenefits: 0
               }
             }
-            store.state.common.formStateEditPA420 =  {
+            await store.dispatch("common/setFormStateEditPA420", {
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": checkBoxCallApi,
-            }
-
+            });
+           
+            firstLoad.value = 0
             trigger.value = false
             step.value = 0
           }
@@ -159,16 +161,20 @@ export default defineComponent({
         })
         // ================WATCHING============================================ 
         watch(() => store.state.common.formStateEditPA420, (newValue, oldValue) => {
-          if (Object.keys(oldValue).length !== 0) {
+          if (Object.keys(oldValue).length !== 0 && firstLoad.value >0) {
             isDataFormChange.value = true
           }
-        })
+          firstLoad.value++
+         }, { deep: true })
+        
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
-            trigger.value = true
-          refetchGetDetail()
-         
+            if (newValue) {
+              trigger.value = true
+              refetchGetDetail()
+              firstLoad.value = 0
+            }
         }, { deep: true })
         // =========================  FUNCTION =============================================== 
         const checkStepTwo = computed(() => {
@@ -259,6 +265,7 @@ export default defineComponent({
             );
             mutate(cleanData)
         }
+
         const setModalVisible = () => {
           if (isDataFormChange.value)
           {
@@ -271,6 +278,7 @@ export default defineComponent({
               emit("closePopup", false);
               statusModal.value = false;
               isDataFormChange.value = false;
+            
           }
 
         };

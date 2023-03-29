@@ -3,6 +3,8 @@ import { useQuery } from "@vue/apollo-composable";
 import queries1 from "@/graphql/queries/PA/PA1/PA120/index";
 import queries2 from "@/graphql/queries/PA/PA2/PA230/index";
 import screenActionPA720 from './screenActions/screenActionPA720'
+import screenActionPA520 from './screenActions/screenActionPA520';
+import screenActionPA420 from './screenActions/screenActionPA420';
 const actions = {
     getListEmployee: (context: any, originData: any) => {
     
@@ -42,6 +44,8 @@ const actions = {
         
     },
     ...screenActionPA720,
+    ...screenActionPA520,
+    ...screenActionPA420
   };
   
   export default actions;

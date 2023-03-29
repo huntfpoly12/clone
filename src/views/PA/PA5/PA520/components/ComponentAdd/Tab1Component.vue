@@ -238,10 +238,10 @@ export default defineComponent({
 
             store.state.common.dataSourcePA520 = dataTable
             if (JSON.stringify(DataCreated) !== JSON.stringify(value)){
-                store.state.common.checkChangeValueAddPA520 = true
+                store.commit('common/setCheckChangeValueAddPA520',true)
                 store.commit('settings/setFormStatus',FormStatus.adding)
             }else{
-                store.state.common.checkChangeValueAddPA520 = false
+                store.commit('common/setCheckChangeValueAddPA520',false)
                 store.commit('settings/setFormStatus',FormStatus.none)
             }
         }, { deep: true })
@@ -266,7 +266,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
                 store.commit('settings/setFormStatus', FormStatus.adding)
-                store.state.common.isValidateAddPA520 = true
+                store.commit('common/setValidateAddPA520', true)
                 return
             } else {
                 let newValDataCreat = {
