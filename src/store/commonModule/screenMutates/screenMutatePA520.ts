@@ -26,6 +26,9 @@ const screenMutatePA520 = {
     setIdRowCurrentEditPA520(state: any, data: number) {
         state.idRowCurrentEditPA520 = data
     },
+    setIdRowSaveDonePA520(state: any, data: number) {
+        state.idRowSaveDonePA520 = data
+    },
     setFocusedRowKeyPA520(state: any, data: number) {
         state.focusedRowKeyPA520 = data
     },
@@ -34,9 +37,15 @@ const screenMutatePA520 = {
     },
     setIsClickDeletePA520(state: any, status: boolean) {
         state.isClickDeletePA520 = status
+    }, 
+    setIsClickBtnSavePA520(state: any, status: boolean) {
+        state.isClickBtnSavePA520 = status
     },
     setKeyActiveStepPA520(state: any, data: string) {
         state.keyActiveStepPA520 = data
+    },
+    setActiveAddRowPA520(state: any, status: boolean) {
+        state.activeAddRowPA520 = status
     },
     setTabActivePA520(state: any, data: string) {
         state.setTabActivePA520 = data

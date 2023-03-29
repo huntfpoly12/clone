@@ -12,11 +12,13 @@ const statesPA520 = {
 
   idRowCurrentClickPA520: 0,
   idRowCurrentEditPA520: 0,
+  idRowSaveDonePA520: 0,
   focusedRowKeyPA520: null,
   
   isClickRowPA520: false,
   isClickDeletePA520: false,
-
+  isClickBtnSavePA520: false,
+  
   activeAddRowPA520: false,
 
   actionSaveAddPA520: 0,

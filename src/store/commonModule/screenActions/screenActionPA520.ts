@@ -18,7 +18,12 @@ const screenActionPA520 = {
     commit('setModalChangeValueEditPA520',false)
     commit('setModalChangeValueAddPA520',false)
   },
-
+  resetActionStatus({getters,commit} : any){
+    commit('setIsClickRowPA520',false)
+    commit('setIsClickDeletePA520',false)
+    commit('setIsClickBtnSavePA520',false)
+    commit('setAddBtOnclickPA520',false)
+  },
   hasValidator({ getters, commit }: any) {
     if (getters.isTab1ValidateEditPA520 || getters.isTab2ValidateEditPA520 || getters.isValidateAddPA520) return true
     return false

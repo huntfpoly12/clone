@@ -238,9 +238,8 @@ export default defineComponent({
         if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
     })
         // ============ WATCH ================================   
-    watch(() => props.idRowEdit, (newVal) => {
-          alert(newVal)
-          
+       watch(() => props.idRowEdit, (newVal) => {
+
             originDataDetail.value.employeeId = newVal
             trigger.value = true
             refetchValueDetail()
