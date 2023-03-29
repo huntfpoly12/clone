@@ -340,12 +340,12 @@ export default defineComponent({
         store.state.common.checkChangeValueEditTab2PA520 == true) &&
         newVal !== ClickYearStatus.none
       ) {
-        modalChangeValueEdit.value = true;
+        //modalChangeValueEdit.value = true;
         return;
       }
       
       if (store.state.common.checkChangeValueAddPA520 == true && newVal !== ClickYearStatus.none) {
-        modalChangeValueAdd.value = true;
+        //modalChangeValueAdd.value = true;
         return;
       } 
 
@@ -501,13 +501,13 @@ export default defineComponent({
         store.state.common.checkChangeValueEditTab1PA520 == true ||
         store.state.common.checkChangeValueEditTab2PA520 == true
       ) {
-        modalChangeValueEdit.value = true;
+        //modalChangeValueEdit.value = true;
         event.cancel = true
       }
       // for case Add  but click other row and had input form
       if (store.state.common.checkChangeValueAddPA520 == true) {
         store.state.common.addRowBtOnclickPA520 = false
-        modalChangeValueAdd.value = true;
+        //modalChangeValueAdd.value = true;
         event.cancel = true
       } 
       // for case adding but click other row 
