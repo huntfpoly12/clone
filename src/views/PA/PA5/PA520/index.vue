@@ -19,7 +19,7 @@
         </a-col>
         <a-col :span="6">
           actionChangeComponent: {{ actionChangeComponent }} ---tab---{{ store.state.common.setTabActivePA520 }}<br> 
-          addRowBtOnclick: {{ addRowBtOnclick  }}<br>
+          addRowBtOnclick: {{ addBtOnclick  }}<br>
          
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
         </a-col>
@@ -245,16 +245,16 @@ export default defineComponent({
   },
   setup() {
     const pa520Grid = ref<any>(null);
-    const focusedRowKey =  ref<any>(null);
-    const actionChangeComponent = ref(1);
+  
+
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
     const dataSource = ref<any>(new DataSource({
-          store: {
-              type: "array",
-              key: 'employeeId',
-              data: [],
-          }
+      store: {
+        type: "array",
+        key: 'employeeId',
+        data: [],
+      }
     }));
 
     const totalUserOnl = ref(0);
@@ -264,18 +264,24 @@ export default defineComponent({
     // vuex declare
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const focusedRowKey = computed(() => store.getters['common/focusedRowKeyPA520'])
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const idRowSaveDone = computed(() => store.state.common.rowIdSaveDonePa520);
-    const addRowBtOnclick = computed(() => store.state.common.addRowBtOnclickPA520);// determine when click add new button
+    const addBtOnclick = computed(() => store.getters['common/addBtOnclickPA520']);// determine when click add new button
     const isChangeYear = computed(() => store.state.common.isChangeYearPA520);// determine when click change year
     const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
     const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
-    const isClickRow =  computed(() => store.state.common.isClickRowPA520); // determine when action click row
+    const isClickRow = computed(() => store.getters['common/isClickRowPA520']); // determine when action click row
     const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
+    const tab1IsChange = computed(() => store.getters['common/checkChangeValueEditTab1PA520']);
+    const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
+    const fromAddIsChange = computed(() => store.getters['common/checkChangeValueAddPA520']);
     const modalChangeValueEdit = computed(() => store.getters['common/modalChangeValueEditPA520'])
     const modalChangeValueAdd = computed(() => store.getters['common/modalChangeValueAddPA520'])
+    const actionChangeComponent = computed(() => store.getters['common/setComponentPA520'])
+    const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -286,7 +292,7 @@ export default defineComponent({
     const modalHistoryStatus = ref<boolean>(false);
     const modalDeleteStatus = ref<boolean>(false);
 
-    const idRowEdit = ref();
+    
 
    
     const resetAddComponent = ref<number>(1);
@@ -331,7 +337,6 @@ export default defineComponent({
         trigger.value = true;
         resetAllCheckerStatus()
       }
-      
     })
 
     watch(clickYearStatus, async (newVal : ClickYearStatus) => {
@@ -374,43 +379,56 @@ export default defineComponent({
         ).length;
         totalUser.value = result.value.getEmployeeWageDailies.length;
 
+
+        // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
+        if (addBtOnclick.value && !isClickRow.value) {
+          funcAddNewRow(); 
+          return
+        }
+
+        // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
+        if (isClickRow.value) {
+          setRowEdit(idRowCurrentClick.value)
+        }
+
         // this is case after save done
-        if (store.state.common.rowIdSaveDonePa520 != 0 && !addRowBtOnclick.value) {
-          // Get index row change
-          let idRowNextForcus = isClickRow.value ? idRowCurrentClick.value : idRowSaveDone.value;
-          idRowEdit.value = parseInt(idRowNextForcus);
-          focusedRowKey.value = parseInt(idRowNextForcus);
-          store.state.common.countBtOnclickPA520 = 0;
+        // if (store.state.common.rowIdSaveDonePa520 != 0 && !addBtOnclick.value) {
+        //   // Get index row change
+        //   let idRowNextForcus = isClickRow.value ? idRowCurrentClick.value : idRowSaveDone.value;
+        //   idRowEdit.value = parseInt(idRowNextForcus);
+        //   store.commit('common/setFocusedRowKeyPA520',parseInt(idRowNextForcus))
+      
 
-          store.state.common.isClickRowPA520 = false;
-          // isDelete.value = false;
-          store.state.common.rowIdSaveDonePa520 = 0
-        }
+        //   store.state.common.isClickRowPA520 = false;
+        //   // isDelete.value = false;
+        //   store.state.common.rowIdSaveDonePa520 = 0
+        // }
 
-        // for the case of changing the year and having to focus on the first row
-        if (isChangeYear.value) {
-          store.state.common.isChangeYearPA520 = false
-          dataSource.value.load()
-          let items = dataSource.value.items()
-          if (items.length > 0) { // If there is data, focus on the first row
-            idRowEdit.value = dataSource.value.items()[0].employeeId;
-            focusedRowKey.value = dataSource.value.items()[0].employeeId;
-            store.state.common.idRowChangePa520 = dataSource.value.items()[0].employeeId;
-            actionChangeComponent.value = 2;
-          } else {// If there is no data, add an input box
-            onAddBtClick()
-          }
-        }
+        // // for the case of changing the year and having to focus on the first row
+        // if (isChangeYear.value) {
+        //   store.state.common.isChangeYearPA520 = false
+        //   dataSource.value.load()
+        //   let items = dataSource.value.items()
+        //   if (items.length > 0) { // If there is data, focus on the first row
+        //     idRowEdit.value = dataSource.value.items()[0].employeeId;
+        //     store.commit('common/setFocusedRowKeyPA520',dataSource.value.items()[0].employeeId)
+        //     store.state.common.idRowChangePa520 = dataSource.value.items()[0].employeeId;
+        //     store.commit('common/setComponentPA520',2);
+        //   } else {// If there is no data, add an input box
+        //     onAddBtClick()
+        //   }
+        // }
 
-        // for the case of click to add button when edit value
-        if (addRowBtOnclick.value) {
-          store.state.common.activeAddRowPA520 = false
-          onAddBtClick()
-        }
+        // // for the case of click to add button when edit value
+        // if (addBtOnclick.value) {
+        //   store.state.common.activeAddRowPA520 = false
+        //   onAddBtClick()
+        // }
 
         trigger.value = false;
       }
     });
+
 
     watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
       dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
@@ -439,7 +457,7 @@ export default defineComponent({
       store.state.common.checkChangeValueEditTab2PA520 = false
       store.state.common.checkChangeValueAddPA520 = false
       store.state.common.activeAddRowPA520 = false
-      store.state.common.addRowBtOnclickPA520 = false
+      //store.state.common.addRowBtOnclickPA520 = false
       store.state.common.countBtOnclickPA520  = 0
     }
     const onExporting = (e: { component: any; cancel: boolean }) => {
@@ -480,8 +498,9 @@ export default defineComponent({
     };
 
     // The above code is a function that is called when the user clicks on the edit button.
-    const onFocusedRowChanging = (event: any) => {
-      store.state.common.isClickRowPA520 = true;
+    const onFocusedRowChanging = async (event: any) => {
+      store.commit('common/setIsClickRowPA520', true)
+      // remove tất cả class focus đã thêm vào trước đấy
       const gridTable = pa520Grid.value.instance.getVisibleRows();
       gridTable.forEach((row:any) => {
         const rowElement = pa520Grid.value.instance.getRowElement(row.rowIndex);
@@ -494,36 +513,37 @@ export default defineComponent({
       if (rowElement) {
         rowElement.addClass('dx-state-hover-new');
       }
-
+      console.log('dfgdgdg');
+      
       idRowCurrentClick.value = event.rows[newRowIndex].data.employeeId
-      // for case Edit  but click other row
-      if (
-        store.state.common.checkChangeValueEditTab1PA520 == true ||
-        store.state.common.checkChangeValueEditTab2PA520 == true
-      ) {
-        //modalChangeValueEdit.value = true;
+     
+      // // for case Editing or Adding  but click other row
+      if (fromAddIsChange.value) {
+        store.commit('common/setModalChangeValueAddPA520', true);
         event.cancel = true
       }
-      // for case Add  but click other row and had input form
-      if (store.state.common.checkChangeValueAddPA520 == true) {
-        store.state.common.addRowBtOnclickPA520 = false
-        //modalChangeValueAdd.value = true;
+      if (tab1IsChange.value || tab2IsChange.value) {
+        store.commit('common/setModalChangeValueEditPA520', true)
         event.cancel = true
-      } 
-      // for case adding but click other row 
-      if(store.state.common.activeAddRowPA520 && store.state.common.addRowBtOnclickPA520){
-        store.state.common.activeAddRowPA520 = false
-        store.state.common.addRowBtOnclickPA520 = false
+        
       }
+     
+
+      // // for case adding but click other row 
+      // if(store.state.common.activeAddRowPA520 && store.state.common.addRowBtOnclickPA520){
+      //   store.state.common.activeAddRowPA520 = false
+      //   //store.state.common.addRowBtOnclickPA520 = false
+      // }
 
     }
     const onFocusedRowChanged = (event : any)=>{
-      if(store.state.common.activeAddRowPA520 && store.state.common.addRowBtOnclickPA520){
-        actionChangeComponent.value = 1;
-      }else{
-        actionChangeComponent.value = 2;
-        store.state.common.idRowChangePa520 = focusedRowKey.value;
-        idRowEdit.value = event.row.data.employeeId;
+      if(addBtOnclick.value){
+        store.commit('common/setComponentPA520',1);
+      } else {
+        console.log("checkAdd,checkEdit");
+        store.commit('common/setComponentPA520',2);
+        //store.state.common.idRowChangePa520 = focusedRowKey.value;
+        setRowEdit(event.row.data.employeeId);
         //removeNewRow()
       }
     }
@@ -539,26 +559,19 @@ export default defineComponent({
       dataSource.value.store().remove(0).then(() => {
         dataSource.value.store().insert(DataCreatedTable).then(() => dataSource.value.reload());
       })
-      focusedRowKey.value = 0
+      store.commit('common/setFocusedRowKeyPA520',0);
       resetAddComponent.value++;
-      actionChangeComponent.value = 1;
+      store.commit('common/setComponentPA520',1);
     }
     // Opening a modal window.
     const onAddBtClick = async () => {
-   
-      
-      await store.dispatch('common/checkAddForm')
-      await store.dispatch('common/checkEditForm')
-
-  
-
-      store.state.common.addRowBtOnclickPA520 = true;
-      store.state.common.countBtOnclickPA520++;
+      await store.dispatch('common/checkAddFormPA520')
+      await store.dispatch('common/checkEditFormPA520')
+      store.commit('common/setAddBtOnclickPA520',true);
       // // Adding a new row to the table.
       if (store.state.common.activeAddRowPA520 == false) {
         funcAddNewRow();     
-        actionChangeComponent.value = 1;
-        isAddNewStatus.value = true;
+        store.commit('common/setComponentPA520',1);
       }
 
     };
@@ -597,16 +610,28 @@ export default defineComponent({
 
       if(res == true){
         await actionSave();
-        await store.dispatch('common/resetStatusModal')
-        if(!isValidateAddPA520.value){
-funcAddNewRow();
+        const hasValidator = await store.dispatch('common/hasValidator')
+        
+        // nếu có validate = true không làm gì tiếp theo cả
+        if (hasValidator) {
+          await store.dispatch('common/resetStatusModal')
+          return
         }
+     
+    
+        // nếu trước đấy chuyển năm thì chuyển năm mới
+        if (clickYearStatus.value !== ClickYearStatus.none) {
+          
+        }
+
+
+
+
       }else{
         await store.dispatch('common/resetStatusModal')
       }
     };
     const actionUpdate = (currentTab: number) => {
-      
       if (currentTab == 1) {
         store.state.common.actionUpdateTab1PA520++;
       } else {
@@ -625,7 +650,7 @@ funcAddNewRow();
           ? await actionUpdate(1) : await actionUpdate(2);
         if (!isValidateEditPA520.value) {// If form validate do nothing
           // In case you are editing and then click on another and agree to save the information,
-          if (addRowBtOnclick.value) {
+          if (addBtOnclick.value) {
             funcAddNewRow();
             store.state.common.isTab2ValidatePA520 = false
           } else {
@@ -642,12 +667,12 @@ funcAddNewRow();
         }
   
       } else {
-        if (addRowBtOnclick.value) {
+        if (addBtOnclick.value) {
           await funcAddNewRow();
           resetAllCheckerStatus()
         } else {
-          focusedRowKey.value = idRowCurrentClick.value;
-          idRowEdit.value = idRowCurrentClick.value;
+          //focusedRowKey.value = idRowCurrentClick.value;
+          //idRowEdit.value = idRowCurrentClick.value;
           // for case edit tab2 and click other row
           store.state.common.idRowChangePa520 = idRowCurrentClick.value
           store.state.common.checkChangeValueEditTab2PA520 = false;
@@ -656,6 +681,10 @@ funcAddNewRow();
       }
       //store.state.common.checkChangeValueEditTab1PA520 = false;
     };
+    const setRowEdit = (rowId: number) => {
+      store.commit('common/setIdRowCurrentEditPA520',rowId)
+      store.commit('common/setFocusedRowKeyPA520',rowId)
+    }
     const modalHistory = () => {
       modalHistoryStatus.value = companyId;
     };
@@ -712,7 +741,7 @@ funcAddNewRow();
       onAddBtClick,
       onConfirmDelete,
       Message,
-      addRowBtOnclick,
+      addBtOnclick,
      // countBtOnclick,
       trigger,
       onFocusedRowChanged,

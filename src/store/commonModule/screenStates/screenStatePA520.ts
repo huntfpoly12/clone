@@ -10,12 +10,12 @@ const statesPA520 = {
 
   addRowBtOnclickPA520: false,
 
-  idRowCurrentClick: 0,
-  idRowCurrentEdit: 0,
-  focusedRowKey: 0,
+  idRowCurrentClickPA520: 0,
+  idRowCurrentEditPA520: 0,
+  focusedRowKeyPA520: null,
   
   isClickRowPA520: false,
-  isClickDelete: false,
+  isClickDeletePA520: false,
 
   activeAddRowPA520: false,
 
@@ -27,6 +27,7 @@ const statesPA520 = {
   
   setTabActivePA520: '1',
   modalChangeValueEditPA520:false,
-  modalChangeValueAddPA520:false
+  modalChangeValueAddPA520: false,
+  setComponentPA520: 1
 };
 export default statesPA520;

@@ -1,27 +1,27 @@
+
 const screenActionPA520 = {
-  formPA720(context: any, payload:any) {
-    context.commit('formPA720', {
-      input: {
-        ...payload.input,
-        paymentDay: payload.input.paymentDay || context.state.common.paymentDayPA720,
-      }
-    });
-  },
-  checkEditForm({getters,commit} : any) {
+  checkEditFormPA520({getters,commit} : any) {
     if (getters.checkChangeValueEditTab1PA520 || getters.checkChangeValueEditTab2PA520) {
-      commit('setModalChangeValueEditPA520',true)
+      commit('setModalChangeValueEditPA520', true)
+      return true
     }
+    return false
   },
-  checkAddForm({getters,commit} : any){
-    console.log(getters);
-    
+  checkAddFormPA520({getters,commit} : any){
     if (getters.checkChangeValueAddPA520) {
-      commit('setModalChangeValueAddPA520',true)
+      commit('setModalChangeValueAddPA520', true)
+      return true
     }
+    return false
   },
   resetStatusModal({getters,commit} : any){
     commit('setModalChangeValueEditPA520',false)
     commit('setModalChangeValueAddPA520',false)
+  },
+
+  hasValidator({ getters, commit }: any) {
+    if (getters.isTab1ValidateEditPA520 || getters.isTab2ValidateEditPA520 || getters.isValidateAddPA520) return true
+    return false
   }
 }
 
