@@ -90,7 +90,7 @@ export default defineComponent({
         const dataGet: any = ref({
             ...store.state.common.formStateEditPA420
         })
-
+        
         let requestCallDetail: any = ref()
 
         const calculateIncomeRetirement = () => {
