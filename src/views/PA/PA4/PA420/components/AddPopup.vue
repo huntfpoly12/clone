@@ -223,6 +223,7 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
+            dataForm.input.paymentDay = store.state.common.paymentDayPA420 
           }
         })    
     const {
