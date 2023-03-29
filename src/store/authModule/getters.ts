@@ -1,6 +1,10 @@
-const getters = {
-  getAuthData: (state: any) => state.authData,
-  getTockenInfor: (state : any) => state.tockenInfor,
+import {GetterTree} from "vuex";
+import {AuthState} from "@/store/authModule/types";
+import {JwtObject} from "@bankda/jangbuda-common";
+
+const getters: GetterTree<AuthState, any> = {
+  getAuthData: (state) => state.authData,
+  getTokenInfo: (state): JwtObject => state.tokenInfo as JwtObject,
 };
 
 export default getters;

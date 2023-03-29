@@ -244,7 +244,7 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
-import { getJwtObject } from '@bankda/jangbuda-common';
+import {getJwtObject} from '@bankda/jangbuda-common';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -499,8 +499,8 @@ export default defineComponent({
     onMounted(() => {
       const token = sessionStorage.getItem("token");
       const jwtObject = getJwtObject(token);
-      store.commit('auth/setTockenInfor',jwtObject)
-      console.log(store.getters['auth/getTockenInfor']);
+      store.commit('auth/setTokenInfo',jwtObject)
+      console.log(store.getters['auth/getTokenInfo']);
     })
     /**
     * Check scroll tab if overflow
