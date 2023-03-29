@@ -2,24 +2,24 @@
   <div class="search-group">
     <a-row>
       <a-col>
-        <div class="search-date" style="margin-left: 181px;">
-          <a-form-item label="신고주기" label-align="left" class="mb-0" v-if="tab1">
+        <div class="search-date">
+          <span class="search-text mt-5 ml-10">지급연월:</span>
+          <div>
+            <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
+          </div>
+          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10" v-if="tab1">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
             <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
-          
+
         </div>
         <div class="search-date">
-          <span class="search-text mt-5">지급연월</span>
-          <div>
-            <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
-          </div>
           <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-          <a-form-item label="신고구분" label-align="left" class="ml-10" v-else>
+          <a-form-item label="신고구분" label-align="right" class="ml-10 mt-5" v-else>
             <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
@@ -28,7 +28,8 @@
       <a-col>
         <div class="search-production">
           <a-form-item label="제작요청상태">
-            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작요청후'" :textUnCheck="'제작요청전'" />
+            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작요청후'"
+              :textUnCheck="'제작요청전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
@@ -41,7 +42,8 @@
       <a-col class="search-company">
         <a-form-item label="사업자코드">
           <!-- <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" /> -->
-          <default-text-box v-model:valueInput="filterBF620.companyCode" width="150px" @onChange="onChange"></default-text-box>
+          <default-text-box v-model:valueInput="filterBF620.companyCode" width="150px"
+            @onChange="onChange"></default-text-box>
         </a-form-item>
         <a-form-item label="상호">
           <default-text-box width="150px" v-model:valueInput="filterBF620.companyName"></default-text-box>
@@ -92,8 +94,8 @@ export default defineComponent({
     const searchWithholdingTrigger = ref(true);
     // watch filterBF620.reportType to change value
     watch(
-      () => reportType.checkbox1,(newVal: any) => {
-        if(!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
+      () => reportType.checkbox1, (newVal: any) => {
+        if (!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
           return;
         }
         reportType.checkbox2 = newVal;

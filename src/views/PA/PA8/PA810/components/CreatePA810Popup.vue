@@ -6,8 +6,9 @@
     :visible="isOpenModalCreate"
     title="취득신고 신규 등록"
     centered
-    @cancel="$emit('closeModal')"
+    @cancel="closePopup"
     :footer="null"
+    :mask-closable="false"
   >
     <standard-form ref="formRef">
       <div class="form">
@@ -597,7 +598,8 @@ import TableEmployeeWage from "./TableEmployeeWage.vue";
 import notification from "@/utils/notification";
 import DxField from "./DxField.vue";
 import filters from "@/helpers/filters";
-import {clone, cloneDeep} from "lodash";
+import {clone, cloneDeep, isEqual} from "lodash";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 
 let dpRelation = enum2Entries(DependantsRelation);
 const getCodeOrLabel = (id: number) => {
@@ -680,6 +682,11 @@ export default defineComponent({
           formData.value.employeementInsuranceReport ||
           formData.value.industrialAccidentInsuranceReport
       );
+    const isFormChange = computed(() => {
+      return !isEqual(cloneDeep(INITIAL_DATA.InitialFormCreate), cloneDeep(formData.value))
+        || Boolean(employeeWageSelected.value)
+        || employeeWageType.value !== EmployeeWageType.WAGE;
+    });
     const handleRadioChange = (event: Event) => {
       stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement)
         .value;
@@ -849,6 +856,15 @@ export default defineComponent({
         });
       }
     };
+    const closePopup = () => {
+      if (isFormChange.value) {
+        comfirmClosePopup(() => {
+          emit('closeModal')
+        })
+      } else {
+        emit('closeModal')
+      }
+    }
     const getFileId = (fileId: { id: Number }) => {
       formData.value.dependentsEvidenceFileStorageId = fileId.id;
     };
@@ -887,6 +903,7 @@ export default defineComponent({
       },
       formRef,
       isFileList,
+      closePopup
     };
   },
 });

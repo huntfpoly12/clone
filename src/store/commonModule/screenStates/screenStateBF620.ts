@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 let statesBF620 = {
   filterBF620: {
-    beforeProduction: false,
-    productionStatuses: [],
+    beforeProduction: true,
+    productionStatuses: [1,0,-1,2],
     companyCode: "",
     companyName: "",
     manageUserId: 0,
