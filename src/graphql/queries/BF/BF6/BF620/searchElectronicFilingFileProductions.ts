@@ -20,7 +20,13 @@ export default gql`
       updatedBy
       ip
       active
-      # productionRequestUser
+      # productionRequestUser {
+      #   id
+      #   type
+      #   username
+      #   name
+      #   active
+      # }
       # fileStorage
     }
   }

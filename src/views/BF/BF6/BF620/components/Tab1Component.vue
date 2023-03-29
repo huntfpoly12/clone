@@ -82,7 +82,7 @@
           <template #productionStatus="{ data }">
             <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
               @productionStatusData="productionStatusData" />
-            <span class="before-production-tag" v-if="!filterBF620.beforeProduction">제작요청전</span>
+            <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
           </template>
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -198,7 +198,7 @@ export default defineComponent({
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
             beforeProduction: item.lastProductionRequestedAt ? true : false,
-            allowSelection: false,
+            allowSelection: true,
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
           // filterBF620.value.imputedYear = item.imputedYear;
