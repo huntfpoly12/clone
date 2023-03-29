@@ -189,7 +189,7 @@ export default defineComponent({
       { id: 2, text: "중도정산" },
     ]);
     const setModalVisible = () => {
-      if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm) == true)
+      if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm))
       {
         emit("closePopup", false)
         modalStatusAccept.value = false;

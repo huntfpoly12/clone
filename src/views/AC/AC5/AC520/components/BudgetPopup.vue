@@ -1,0 +1,125 @@
+<template>
+  <a-modal
+    :visible="modalStatus"
+    :title="step === StepCreateBudget.Step1 ? '' : `예산서`"
+    centered
+    @cancel="setModalVisible()"
+    :mask-closable="false"
+    :width="step === StepCreateBudget.Step2 ? '70%' : 500 "
+    :footer="false"
+  >
+    <div v-if="step === StepCreateBudget.Step1">
+      <div v-if="dataBudget?.budget" class="modal-content">
+        <span>전년도 최종차수 ${서식명}를 불러와서 작성합니다.</span>
+        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
+        <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
+        <span>${서식명}를 작성하시겠습니까?</span>
+      </div>
+      <div v-else class="modal-content">
+        <span>직전 최종차수 ${서식명}를 불러와서 작성합니다.</span>
+        <span>(단, 과목전용조서 전용액은 불러오지 않습니다.)</span>
+        <span>상기의 내역들이 없으면 초기상태로 작성합니다.</span>
+        <span>${서식명}를 작성하시겠습니까?</span>
+      </div>
+    </div>
+    <div v-else-if="step === StepCreateBudget.Step2">
+      <keep-alive>
+        <component v-bind:is="currentComponent" />
+      </keep-alive>
+    </div>
+    <div v-else>
+
+    </div>
+
+    <div v-if="step === StepCreateBudget.Step1" class="footer">
+      <button-basic
+        class="button-form-modal"
+        text="아니요"
+        :type="'default'"
+        :mode="'outlined'"
+        @onClick="setModalVisible()"
+      />
+      <button-basic
+        class="button-form-modal"
+        text="네. 작성합니다."
+        :width="140"
+        :type="'default'"
+        :mode="'contained'"
+        @onClick="onConfirm"
+      />
+    </div>
+  </a-modal>
+</template>
+
+<script lang="ts">
+import {computed, defineComponent, PropType, ref, watchEffect} from 'vue'
+import {Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
+import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
+export default defineComponent({
+  components: {
+    EmployeeSalaryTable
+  },
+  props: {
+    modalStatus: {
+      type: Boolean,
+      required: true,
+    },
+    budget: {
+      type: Boolean,
+      default: true,
+    },
+    dataBudget: {
+      type:  Object as PropType<Budget | null>,
+      required: true,
+    }
+  },
+  emits: ['closePopup'],
+  setup(props, {emit}) {
+    const step = ref<StepCreateBudget>(StepCreateBudget.Step1)
+    const setModalVisible = () => {
+      emit('closePopup', false)
+    };
+    const onConfirm = () => {
+      if (step.value === StepCreateBudget.Step1) {
+        step.value = StepCreateBudget.Step2
+      } else if (step.value === StepCreateBudget.Step2) {
+        step.value = StepCreateBudget.Step3
+      } else {
+        emit('closePopup', false)
+      }
+    }
+    watchEffect(() => {
+      if (props.modalStatus) step.value = StepCreateBudget.Step1
+    })
+    const currentComponent = computed(() => {
+      if (props.dataBudget?.type === ComponentCreateBudget.EmployeeSalaryTable){
+        return 'EmployeeSalaryTable'
+      }
+    })
+    return {
+      setModalVisible,
+      onConfirm,
+      step,
+      StepCreateBudget,
+      currentComponent
+    }
+  }
+})
+</script>
+
+<style scoped lang="scss">
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  span {
+    text-align: center;
+  }
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+</style>

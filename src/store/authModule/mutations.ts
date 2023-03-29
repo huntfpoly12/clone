@@ -2,10 +2,9 @@
 const mutations = {
   setAuthData: (state : any,authData: string) => {
     sessionStorage.setItem("token", authData);
-    
-    
-    state.authData = 'dsfsdfsdfsdfsdfsf';
-    console.log(state.authData);
+  },
+  setTockenInfor: (state : any,data : any) => {
+    state.tockenInfor = data
   },
   logout: (state: { authData: null; }) => {
     state.authData = null;
@@ -15,6 +14,7 @@ const mutations = {
   loadUserInfor(state: any, dataInfor: any) {
     state.userInfor = dataInfor
   }
+  
 };
 
 export default mutations;

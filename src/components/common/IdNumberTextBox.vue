@@ -4,7 +4,7 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator>
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule :validation-callback="checkID" :message="msgError" />
+      <!-- <DxCustomRule :validation-callback="checkID" :message="msgError" /> -->
     </DxValidator>
   </DxTextBox>
 </template>
@@ -61,6 +61,10 @@ export default defineComponent({
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
+    const convertValue = (val: string) => {
+      if (val.length === 14 && val.includes("-")) return val.split("-").join("")
+      return val;
+    };
     const value = ref(props.valueInput);
 
     const updateValue = (value: any) => {
@@ -69,7 +73,7 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        value.value = newValue;
+        value.value = convertValue(newValue);
       }
     );
     const checkID = (e: any) => {

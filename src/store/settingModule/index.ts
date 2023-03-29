@@ -19,6 +19,8 @@ const settingModule: Module<SettingState, any>  = {
     formStatus: FormStatus.none, // trạng thái form
     clickYearStatus: ClickYearStatus.none, // trạng thái click button nắm
     newYear: dayjs().year(), // lưu trữ năm mới khi click năm
+    // globalFacilityBizId
+    globalFacilityBizId: 1
   },
   mutations: mutations,
   actions: actions,
