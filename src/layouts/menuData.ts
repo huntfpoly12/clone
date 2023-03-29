@@ -111,5 +111,5 @@ export default [
   { name: "보수총액신고", url: "#", id: "pa-850" },
   { name: "보험사무대행신고", url: "#", id: "pa-860" },
   { name: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870" },
-  { name: "사업장탈퇴신고", url: "#", id: "pa-880" },
+  { name: "사업장탈퇴신고", url: "/dashboard/pa-880", id: "pa-880" },
 ];

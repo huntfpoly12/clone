@@ -1,0 +1,76 @@
+.form-container {
+
+
+  .item-wrap {
+    position: relative;
+    border: 1px solid #cfcfcf77;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+
+    :deep .ant-form-item-label>label {
+      width: 140px;
+    }
+
+    &-title {
+      position: absolute;
+      top: -10px;
+      left: 23px;
+      background-color: #ffffff;
+      z-index: 100;
+      text-align: center;
+      padding: 0px 10px;
+      // border: 1px solid black
+    }
+  }
+
+  .check-box-tab1 {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+
+  .check-box-group {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+
+    :deep .dx-checkbox-container {
+      .dx-checkbox-text {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .input-text {
+    display: flex;
+    align-items: center;
+
+    .select-group {
+      display: inline-flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .notice {
+      color: #888888;
+      font-size: 12px
+    }
+  }
+
+  .jobtype-margin {
+    .text-detail {
+      margin-left: 33px;
+      margin-right: 10px;
+    }
+  }
+
+  :deep div.month-custom-1 {
+    border: 1px solid #ddd;
+
+    .text-box-1 {
+      color: black;
+    }
+  }
+}

@@ -1,0 +1,98 @@
+<template>
+    <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
+        :width="562">
+        <standard-form action="" name="add-ac570">
+            <div class="custom-modal mt-20">
+                <div class="custom-center">
+                    <a-form-item label="전용일자" class="red">
+                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="원천계정과목" class="red">
+                        <select-box-common width="150px" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="전용계정과목" class="red">
+                        <select-box-common width="150px" :required="true" />
+                    </a-form-item>
+                    <a-form-item label="전용액" class="red">
+                        <default-text-box width="150px" :required="true" />
+                    </a-form-item>
+                    <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
+                </div>
+            </div>
+            <div class="text-align-center mt-20">
+                <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+                    @onClick="setModalVisible()" />
+                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
+                    :mode="'contained'" @onClick="onSubmit" />
+            </div>
+        </standard-form>
+    </a-modal>
+</template>
+
+<script lang="ts">
+import { defineComponent, watch, ref } from 'vue'
+import notification from "@/utils/notification";
+import { useMutation } from "@vue/apollo-composable";
+import { Message } from "@/configs/enum";
+export default defineComponent({
+    props: {
+        modalStatus: {
+            type: Boolean,
+            default: false,
+        },
+        data: {
+            type: Object,
+            default: {}
+        }
+    },
+    components: {
+    },
+    setup(props, { emit }) {
+
+
+        const setModalVisible = () => {
+            emit("closePopup", false)
+        };
+
+        const onSubmit = (e: any) => {
+            var res = e.validationGroup.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+
+            }
+        };
+
+        watch(() => props.modalStatus, (value) => {
+
+        })
+
+        return {
+            setModalVisible,
+            onSubmit,
+            labelCol: { style: { width: "150px" } },
+        }
+    },
+})
+</script>
+
+<style lang="scss">
+.custom-modal {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.custom-modal .ant-form-item-label>label {
+    width: 130px;
+    padding-left: 10px;
+}
+.text-align-center {
+    text-align: center;
+}
+
+.button-form-modal {
+    margin: 0px 5px;
+}
+</style>

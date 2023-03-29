@@ -5,6 +5,7 @@
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
       <div class="user-info" v-if="username">
+        <FacilityBizTypeHeader />
         <year-header />
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
@@ -211,6 +212,11 @@ import {
   PA730,
   PA720,
   PA810,
+  PA820,
+  PA830,
+  PA840,
+  PA870,
+  PA880,
   AC110,
   AC120,
   AC130,
@@ -280,6 +286,11 @@ export default defineComponent({
     PA720,
     PA730,
     PA810,
+    PA820,
+    PA830,
+    PA840,
+    PA870,
+    PA880,
     AC110,
     AC120,
     AC130,
@@ -444,6 +455,11 @@ export default defineComponent({
       if (this.activeTab.id === "pa-720") return 'PA720';
       if (this.activeTab.id === "pa-730") return 'PA730';
       if (this.activeTab.id === "pa-810") return 'PA810';
+      if (this.activeTab.id === "pa-820") return 'PA820';
+      if (this.activeTab.id === "pa-830") return 'PA830';
+      if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-880") return 'PA880';
+      if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';

@@ -101,39 +101,46 @@
     </div>
     <div class="ac-110__main">
       <div class="ac-110__main-main">
-        <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
+        <DxDataGrid key-expr="bankbookId" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
           v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
-          <DxColumn caption="통장" cell-template="fill1" />
-          <template #fill1="{ data }">
-            <a-tooltip placement="left" title="{은행명} {통장번호} ">
-              <div>{{ data.data.fill1 }}</div>
+          <DxColumn caption="통장" cell-template="nickName" />
+          <template #nickName="{ data }">
+            <a-tooltip placement="left" :title="`${getNameBankType(data.data.bankbook.type)} ${data.data.bankbook.bankbookNumber}`">
+              <div>{{ data.data.bankbook.bankbookNickname }}</div>
             </a-tooltip>
           </template>
-          <DxColumn caption="통장용도" data-field="fill2" />
-          <DxColumn caption="일자" data-field="fill3" />
-          <DxColumn caption="통장적요" data-field="fill4" />
-          <DxColumn caption="내용|비고" data-field="fill5" />
-          <DxColumn caption="입금액" data-field="fill6" format="fixedPoint" />
-          <DxColumn caption="출금액" data-field="fill7" format="fixedPoint" />
-          <DxColumn caption="통장잔액" data-field="fill8" format="fixedPoint" />
-          <DxColumn caption="증빙" data-field="fill9" />
-          <DxColumn caption="거래내역" data-field="fill10" />
-          <DxColumn caption="정상여부" cell-template="normality" width="80" />
-          <template #normality="{ data }">
-            <button-basic :text="data.data.normality ? 'O' : 'X'" :type="data.data.normality ? 'success' : 'danger'"
+          <DxColumn caption="통장용도" data-field="bankbook.useType">
+            <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
+          </DxColumn>
+          <DxColumn caption="일자" data-field="bankbookDetailDate" />
+          <DxColumn caption="통장적요" data-field="summary" />
+          <DxColumn caption="내용|비고" cell-template="content" />
+          <template #content="{ data }">
+            <div>
+              {{ data.data.content }} {{ data.data.note }} 
+            </div>
+          </template>
+          <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
+          <DxColumn caption="출금액" data-field="withdraw" format="fixedPoint" />
+          <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
+          <DxColumn caption="증빙" data-field="proofCount" />
+          <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
+          <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" />
+          <template #normalTransactionDetails="{ data }">
+            <button-basic :text="data.data.normalTransactionDetails ? 'O' : 'X'" :type="data.data.normalTransactionDetails ? 'success' : 'danger'"
               :mode="'contained'" />
           </template>
-          <DxColumn caption="전표등록" cell-template="slipRegistration" width="200" />
-          <template #slipRegistration="{ data }">
+          <DxColumn caption="전표등록" cell-template="documentRegistered" width="200" />
+          <template #documentRegistered="{ data }">
             <div class="ac-110__main-main-slipRegistration">
-              <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
-                :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+              <button-basic :text="data.data.documentRegistered ? 'O' : 'X'"
+                :type="data.data.documentRegistered ? 'success' : 'danger'" :mode="'contained'"
                 style="margin-right: 5px;" />
-              <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'" :mode="'contained'"
-                @onClick="openPopupRegistration(data.data.slipRegistration)" />
+              <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="'contained'"
+                @onClick="openPopupRegistration(data.data.documentRegistered)" />
             </div>
           </template>
 
@@ -188,7 +195,7 @@
             <template #sourceOfFunding="{ data }">
               <FundingSourceSelect v-model:valueInput="valueFundingSource" />
             </template>
-            <DxColumn caption="거래처" data-field="fill4" alignment="start"/>
+            <DxColumn caption="거래처" data-field="fill4" alignment="start" />
             <DxColumn caption="품의종류" cell-template="typeOfProduct" width="100" />
             <template #typeOfProduct="{ data }">
               <select-box-common :arrSelect="arraySelectBox" :required="true" />
@@ -237,9 +244,13 @@
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, ref, reactive, computed, watch } from "vue";
+import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import queries from "@/graphql/queries/AC/AC1/AC110";
+import mutations from "@/graphql/mutations/AC/AC1/AC110";
+import { companyId } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import { dataDemoMain, MAX_UP_LOAD, contentPopupRetrieveStatements } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -251,6 +262,7 @@ import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
+import { BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
 
 export default defineComponent({
   components: {
@@ -274,13 +286,27 @@ export default defineComponent({
     DxExport,
     PopupNoteItemDetail,
     PopupRetrieveStatements,
-    UploadPreviewImage
+    UploadPreviewImage,
+    DxLookup
   },
   setup() {
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear = computed(() => store.state.settings.globalYear)
+    const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+    const bankType = BankType.all();
+    const bankbookUseType: any = computed(() => {
+      let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
+    // trigger
+    let triggerAccountingProcesses = ref<boolean>(true)
+    let triggerBankbookDetails = ref<boolean>(true)
+
     let statusEntering = ref(10);
     let statusInput = ref(20);
     let statusAdjusting = ref(30);
@@ -288,8 +314,6 @@ export default defineComponent({
     let selectedRowKeys = ref<any>([])
     let dataSource = ref<any[]>([])
     let fileList = ref<any[]>([])
-    const previewImage = ref<string | undefined>('');
-    const previewVisible = ref<boolean>(false);
     let isModalRetrieveStatements = ref(false);
     let isModalSlipCancellation = ref(false);
     let isModalSlipRegistrantion = ref(false);
@@ -318,21 +342,73 @@ export default defineComponent({
     let valueFundingSource = ref(null)
     // COMPUTED
 
+
+
+
+    // GRAPHQL
+    const {
+      result: resAccountingProcesses,
+      // onResult: onResAccountingProcesses,
+      loading: loadingGetAccountingProcesses,
+      // refetch,
+      // onError
+    } = useQuery(queries.getAccountingProcesses, {
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: globalFacilityBizId.value
+    },
+      () => ({
+        enabled: triggerAccountingProcesses.value,
+        fetchPolicy: "no-cache",
+      }))
+
+    const {
+      result: resBankbookDetails,
+      // onResult: onResBankbookDetails,
+      loading: loadingGetBankbookDetails,
+      // refetch,
+      // onError
+    } = useQuery(queries.getBankbookDetails, {
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: globalFacilityBizId.value,
+      year: globalYear.value,
+      month: 3
+    },
+      () => ({
+        enabled: triggerBankbookDetails.value,
+        fetchPolicy: "no-cache",
+      }))
+
+    // WATCH
+    watch(resAccountingProcesses, (value) => {
+      console.log('valuevaluevalue', value)
+      triggerAccountingProcesses.value = false
+    })
+
+    watch(resBankbookDetails, (value) => {
+      dataSource.value = value.getBankbookDetails
+      triggerBankbookDetails.value = false
+    })
+    // MOUNTED
+    onMounted(() => {
+    })
     // METHODS
-
+    const getNameBankType = (value: any) => {
+      const item: any = bankType.find((items: any) => items.c === value.toString())
+      return item.n || ''
+    }
     const selectionChanged = (event: any) => {
-      // normality
+      // normalTransactionDetails
       // slipRegistration
-      console.log('okkkkkkkkkkkk');
-
       const listItemDisable: any = []
       dataDemoMain.forEach((items: any) => {
-        if (items.normality && !items.slipRegistration){}
-        else{listItemDisable.push(items.id)}
+        if (items.normalTransactionDetails && !items.documentRegistered) { }
+        else { listItemDisable.push(items.id) }
       })
       const indexItemDisable = selectedRowKeys.value.findIndex((items: any) => listItemDisable.includes(items))
       if (indexItemDisable >= 0) {
-        
+
         selectedRowKeys.value.splice(indexItemDisable, 1)
       }
     }
@@ -434,6 +510,7 @@ export default defineComponent({
       selectionChanged,
       onFocusedRowChanging,
       dataDemoMain,
+      dataSource,
       totalDeposits,
       totalWithdrawal,
       countSlipRegistration,
@@ -457,6 +534,9 @@ export default defineComponent({
       valueAccountSubjectClassification,
       valueFundingSource,
       fileList,
+      bankType,
+      bankbookUseType,
+      getNameBankType
     };
   },
 });

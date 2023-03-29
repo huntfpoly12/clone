@@ -320,7 +320,7 @@ export default defineComponent({
       return false;
     };
     const openAddNewModal = async () => {
-      compareType.value = 1;
+      compareType.value = 3;
       if (isNewRowPA120.value) {
         if (!compareForm()) {
           rowChangeStatus.value = true;
@@ -349,9 +349,6 @@ export default defineComponent({
     const rowKeyTab2PA120 = computed(() => store.state.common.rowKeyTab2PA120)
     const onRowChangeComfirm = async (ok: boolean) => {
       if (ok) {
-        if (compareType.value == 1) {
-          compareType.value = 3;
-        }
         if (tabCurrent.value == 1) {
           let ele11 = document.getElementById('btn-save') as HTMLInputElement;
           ele11?.click();
@@ -366,10 +363,6 @@ export default defineComponent({
         }
       } else {
         removeHoverRowKey();
-        if (compareType.value == 3) {
-          compareType.value = 1;
-          return;
-        }
         if (isClickYearDiff.value) {
           changeYear(globalYear.value);
           isClickYearDiff.value = false;
@@ -378,7 +371,7 @@ export default defineComponent({
         if (isNewRowPA120.value) {
           dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         }
-        if (compareType.value == 1) {
+        if (compareType.value == 1 || compareType.value == 3) {
           addNewRow();
           return;
         }
@@ -406,7 +399,7 @@ export default defineComponent({
       focusedRowKey.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId.toString() : idRowFake.value.toString();
       store.state.common.isNewRowPA120 = false;
       trigger.value = true;
-      idRowEdit.value = idRowFake.value;
+      idRowEdit.value = compareType.value == 1 ? initFormStateTabPA120.value.employeeId : idRowFake.value;
       if (compareType.value == 2) {
         actionChangeComponent.value = 2;
       }
