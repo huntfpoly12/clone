@@ -18,5 +18,6 @@ export interface SettingState {
   formStatus: FormStatus
   clickYearStatus: ClickYearStatus
   newYear: number,
-  globalYear: number
+  globalYear: number,
+  globalFacilityBizId: number
 }
