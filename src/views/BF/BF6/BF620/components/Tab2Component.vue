@@ -10,8 +10,8 @@
         </span>
       </a-col>
       <a-col style="display: flex">
-        <div>
-          <label class="lable-item ml-15">작성일(지방소득세납부서:</label>
+        <div class="d-flex-center">
+          <label class="lable-item ml-15">작성일(지방소득세납부서):</label>
           <date-time-box width="150px" default="2022-12-12" dateFormat="YYYY-MM-DD" />
         </div>
         <a-tooltip placement="topLeft" color="black">
