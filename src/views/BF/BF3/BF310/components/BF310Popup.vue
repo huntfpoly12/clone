@@ -427,12 +427,17 @@ export default defineComponent({
         const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay])
         var formState = ref<any>({ ...initialFormState });
         const dataSource = ref([]);
+        const dataSourceOld = ref([]);
         // event close popup
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState.value) == true)
-                emit("closePopup", false)
-            else
+            if (
+                (JSON.stringify(objDataDefault.value) != JSON.stringify(formState.value)) || 
+                (JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value))
+                )
                 comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
+                
         };
         // watch event modal popup
         watch(() => props.modalStatus, (newValue, old) => {
@@ -501,9 +506,7 @@ export default defineComponent({
                     id: value.getSubscriptionRequest.id,
                     bizNumber: value.getSubscriptionRequest.companyBizNumber,
                 }
-                objDataDefault.value = {
-                    ...value.getSubscriptionRequest
-                }
+                objDataDefault.value = JSON.parse(JSON.stringify(value.getSubscriptionRequest))
                 objDataDefault.value.institutionNumber =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0
                         ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : "";
@@ -517,6 +520,7 @@ export default defineComponent({
                     dataActiveRow.value = dataSource.value[0]
                     focusedRowKey.value = 0
                 }
+                dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
                 triggerCheckPer.value = true;
             }
         });
