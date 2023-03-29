@@ -14,17 +14,11 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
-import { Message } from "@/configs/enum";
 import Tab1Component from "./ComponentAdd/Tab1Component.vue"; 
 export default defineComponent({
     components: {
         DxSelectBox, 
         Tab1Component,
-    },
-    props: {
-        modalStatus: {
-            type: Boolean
-        },
     },
     setup(props, { emit }) {
         // ============ FUNCTION ============================= 
