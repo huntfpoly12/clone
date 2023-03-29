@@ -310,7 +310,7 @@ export default defineComponent({
       notification("error", e.message);
     });
     successDelete((e) => {
-      notification("success", Message.getCommonMessage('102').message);
+      notification("success", Message.getCommonMessage('402').message);
       trigger.value = true;
       refetchData();
     });

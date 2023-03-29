@@ -1,8 +1,8 @@
 <template>
     <!-- Check start date and finishDate -->
-    <div :class="isValid ? 'validate-datepicker':''" :style="{ width: widthBoder+'px' }">
+    <div :class="isValid ? 'validate-datepicker':''" :style="{ width: widthBoder }">
       <Datepicker v-model="date" textInput locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
-          @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
+          @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="finishDate" :min-date="startDate" :placeholder="placeholder"
           :teleport="teleport" :disabled="disabled" >
       </Datepicker>
@@ -56,7 +56,16 @@ export default defineComponent({
     },
     setup(props, { emit }) { 
         const isValid = ref(false)
-        const widthBoder = computed(()=> parseInt(props.width.replace("px", "")) + 2 )
+        const widthBoder = computed(() => {
+          const regex1 = /\%/gm;
+          const regex2 = /px/gm;
+          if ((regex1.exec(props.width))) {
+            return String(parseInt(props.width.replace("px", "")) + 2) + '%'
+          } 
+          if ((regex2.exec(props.width))) {
+            return String(parseInt(props.width.replace("px", "")) + 2) + 'px'
+          } 
+        })
         const date: any = ref(filters.formatDate(props.valueDate))
         watch(
             () => props.valueDate,

@@ -260,7 +260,7 @@ export default defineComponent({
       return `매월 ${countStatus(filteredDataSource.value, 1, 'reportType')} 반기 ${countStatus(filteredDataSource.value, 6, 'reportType')}`
     };
     const afterDeadlineSummary = () => {
-      return `정기 ${countStatus(filteredDataSource.value, 1, 'withholdingTaxType')} 기한후 ${countStatus(filteredDataSource.value, 2, 'withholdingTaxType')} 수정 ${countStatus(
+      return `정기 ${countStatus(filteredDataSource.value, 1, 'withholdingTaxType')} 수정 ${countStatus(filteredDataSource.value, 2, 'withholdingTaxType')} 기한후 ${countStatus(
         filteredDataSource.value, 3, 'withholdingTaxType')}`;
     };
     const productStatusSummary = () => {

@@ -1,0 +1,93 @@
+#ac-570 {
+
+    #gridContainer {
+        max-height: 750px;
+    }
+
+
+
+    .text-align-center {
+        text-align: center;
+    }
+
+    :deep .ant-form-item-label>label {
+        width: 180px;
+        padding-left: 10px;
+
+    }
+
+    .data-table {
+        margin-top: 10px;
+    }
+
+    :deep .dx-datagrid-header-panel {
+        border: 1px solid #d7d7d7;
+        border-bottom: none;
+        padding: 5px;
+    }
+
+    .custom-layout {
+        margin-top: 10px;
+        padding-left: 10px;
+
+        >div {
+            border: 1px solid #d7d7d7;
+            padding: 10px;
+            height: 100%;
+        }
+    }
+
+    .custom-note {
+        >span {
+            font-size: 11px;
+            color: #666666;
+            padding-left: 5px;
+        }
+    }
+}
+
+.custom-modal-delete {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
+
+    img {
+        width: 40px;
+        margin-right: 5px;
+    }
+
+    span {
+        padding: 0px 5px;
+    }
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.button-form-modal {
+    margin: 0px 5px;
+}
+
+.disabledBlock {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.top-content {
+    margin-bottom: 10px;
+    padding: 2px 4px;
+
+}
+.ac-570-form .custom-center {
+    text-align: center;
+    .ant-form-item {
+        display: inline-flex;
+    }
+}

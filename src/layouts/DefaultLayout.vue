@@ -216,6 +216,7 @@ import {
   PA830,
   PA840,
   PA870,
+  PA880,
   AC110,
   AC120,
   AC130,
@@ -292,6 +293,7 @@ export default defineComponent({
     PA830,
     PA840,
     PA870,
+    PA880,
     AC110,
     AC120,
     AC130,
@@ -458,9 +460,9 @@ export default defineComponent({
       if (this.activeTab.id === "pa-730") return 'PA730';
       if (this.activeTab.id === "pa-810") return 'PA810';
       if (this.activeTab.id === "pa-820") return 'PA820';
-      if (this.activeTab.id === "pa-820") return 'PA820';
       if (this.activeTab.id === "pa-830") return 'PA830';
       if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-880") return 'PA880';
       if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
