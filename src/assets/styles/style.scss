@@ -84,6 +84,13 @@ $lenght: 50;
     padding-bottom: $i+ px;
   }
 
+  .p-#{$i} {
+    padding-left: $i+ px;
+    padding-right: $i+ px;
+    padding-top: $i+ px;
+    padding-bottom: $i+ px;
+  }
+
   .ml-#{$i} {
     margin-left: $i+ px;
   }
@@ -106,6 +113,13 @@ $lenght: 50;
   }
 
   .my-#{$i} {
+    margin-top: $i+ px;
+    margin-bottom: $i+ px;
+  }
+
+  .m-#{$i} {
+    margin-left: $i+ px;
+    margin-right: $i+ px;
     margin-top: $i+ px;
     margin-bottom: $i+ px;
   }
