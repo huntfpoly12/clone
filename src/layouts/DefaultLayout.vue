@@ -226,6 +226,7 @@ import {
   AC560,
   AC610,
   AC620,
+  AC520,
   Test,
   Example,
 } from "./screenComponents";
@@ -300,6 +301,7 @@ export default defineComponent({
     AC560,
     AC610,
     AC620,
+    AC520,
     Test,
     Example,
     MenuFoldOutlined,
@@ -464,6 +466,7 @@ export default defineComponent({
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
       if (this.activeTab.id === "ac-530") return 'AC530';
+      if (this.activeTab.id === "ac-520") return 'AC520';
       if (this.activeTab.id === "ac-540") return 'AC540';
       if (this.activeTab.id === "ac-550") return 'AC550';
       if (this.activeTab.id === "ac-560") return 'AC560';
