@@ -20,7 +20,7 @@
         <a-col :span="6">
           actionChangeComponent: {{ actionChangeComponent }} ---tab---{{ store.state.common.setTabActivePA520 }}<br> 
           addRowBtOnclick: {{ addRowBtOnclick  }}<br>
-          countBtOnclick: {{ countBtOnclick  }}<br>
+         
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
         </a-col>
         <a-col :span="6">
