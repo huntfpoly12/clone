@@ -18,6 +18,9 @@ const mutations: MutationTree<SettingState> = {
   },
   setClickYearStatus(state, clickYearStatus: ClickYearStatus) {
     state.clickYearStatus = clickYearStatus
+  },
+  setGlobalFacilityBizId(state, value: number) {
+    state.globalFacilityBizId = value
   }
 };
 

@@ -5,6 +5,7 @@
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
       <div class="user-info" v-if="username">
+        <FacilityBizTypeHeader />
         <year-header />
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
