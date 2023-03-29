@@ -1,4 +1,5 @@
 <template>
+  <div :style="[heightHidden ? { height: heightHidden, overflow: 'hidden' } : {}]">
   <div class="upload-pewview-image" :style=" !!width ? `max-width: ${width}px; width: 100%` : ''">
     <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
       headers="dsadasdsad" @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload"
@@ -15,6 +16,7 @@
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
       <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
     </a-modal>
+  </div>
   </div>
 </template>
 <script lang="ts">
@@ -50,6 +52,10 @@ export default defineComponent({
       default: false
     },
     width: {
+      type: String,
+      default: ""
+    },
+    heightHidden: {
       type: String,
       default: ""
     }

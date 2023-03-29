@@ -127,153 +127,170 @@
             </div>
         </div>
         <div class="main">
-            <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
-                :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
-                <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
-                <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxColumn caption="결의번호" data-field="fill2" />
-                <DxColumn caption="통장" cell-template="fill1" />
-                <template #fill1="{ data }">
-                    <a-tooltip placement="left" title="{은행명} {통장번호} ">
-                        <div>{{ data.data.fill1 }}</div>
-                    </a-tooltip>
-                </template>
-                <DxColumn caption="일자" data-field="fill2" />
-                <DxColumn caption="결의 구분" data-field="fill3" />
-                <DxColumn caption="수입액" data-field="fill4" />
-                <DxColumn caption="지출액" data-field="fill5" />
-                <DxColumn caption="잔액" data-field="fill6" format="fixedPoint" />
-                <DxColumn caption="통장적요" data-field="fill7" format="fixedPoint" />
-                <DxColumn caption="적요" data-field="fill8" format="fixedPoint" />
-                <DxColumn caption="계정과목" data-field="fill9" />
-                <DxColumn caption="상대계정" data-field="fill10" />
-                <DxColumn caption="자금원천" data-field="fill10" />
-                <DxColumn caption="거래처" data-field="fill10" />
-                <DxColumn caption="결제수단" data-field="fill10" />
-                <DxColumn caption="증빙" data-field="fill10" />
+            <div class="data-grid" ref="refCssTable" :style="[statusShowFull ? {} : { height: heightTable }]">
+                <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
+                    :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+                    <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxColumn caption="일자" data-field="fill1" cell-template="fill1"/>
+                    <template #fill1="{ data }">
+                        {{ $filters.formatDate(data.value) }}
+                    </template>
+                    <DxColumn caption="순번" data-field="fill2" />
+                    <DxColumn caption="결의번호" data-field="fill3" />
+                    <DxColumn caption="통장" cell-template="fill4" />
+                    <template #fill4="{ data }">
+                        <a-tooltip placement="left" title="{은행명} {통장번호} ">
+                            <div>{{ data.data.fill4 }}</div>
+                        </a-tooltip>
+                    </template>
+                    
+                    <DxColumn caption="결의 구분" data-field="fill5" />
+                    <DxColumn caption="수입액" data-field="fill6" />
+                    <DxColumn caption="지출액" data-field="fill7" />
+                    <DxColumn caption="잔액" data-field="fill8" format="fixedPoint" />
+                    <DxColumn caption="통장적요" data-field="fill9" format="fixedPoint" />
+                    <DxColumn caption="적요" data-field="fill10" format="fixedPoint" />
+                    <DxColumn caption="계정과목" data-field="fill11" />
+                    <DxColumn caption="상대계정" data-field="fill12" />
+                    <DxColumn caption="자금원천" data-field="fill13" />
+                    <DxColumn caption="거래처" data-field="fill14" />
+                    <DxColumn caption="증빙" data-field="fill15" />
 
-                <DxColumn caption="물품 내역" cell-template="normality" />
-                <template #normality="{ data }">
-                    <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail" />
-                </template>
-                <!-- <template #normality="{ data }">
+                    <DxColumn caption="물품 내역" cell-template="normality" />
+                    <template #normality="{ data }">
+                        <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail" />
+                    </template>
+                    <!-- <template #normality="{ data }">
                         <button-basic :text="data.data.normality ? 'O' : 'X'"
                             :type="data.data.normality ? 'success' : 'danger'" :mode="'contained'" />
                     </template> -->
-                <DxColumn caption="수기 여부 " cell-template="slipRegistration" />
-                <template #slipRegistration="{ data }">
-                    <div class="slipRegistration">
-                        <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
-                            :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
-                            style="margin-right: 5px;" />
-                        <!-- <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'"
+                    <DxColumn caption="수기 여부 " cell-template="slipRegistration" />
+                    <template #slipRegistration="{ data }">
+                        <div class="slipRegistration">
+                            <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
+                                :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+                                style="margin-right: 5px;" />
+                            <!-- <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'"
                                 :mode="'contained'" @onClick="openPopupRegistration(data.data.slipRegistration)" /> -->
-                    </div>
-                </template>
-                <DxColumn caption="정상 여부" cell-template="slipRegistration1" />
-                <template #slipRegistration1="{ data }">
-                    <div class="slipRegistration">
-                        <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
-                            :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
-                            style="margin-right: 5px;" />
-                        <!-- <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'"
+                        </div>
+                    </template>
+                    <DxColumn caption="정상 여부" cell-template="slipRegistration1" />
+                    <template #slipRegistration1="{ data }">
+                        <div class="slipRegistration">
+                            <button-basic :text="data.data.slipRegistration ? 'O' : 'X'"
+                                :type="data.data.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+                                style="margin-right: 5px;" />
+                            <!-- <button-basic :text="data.data.slipRegistration ? '전표취소' : '전표등록'" :type="'default'"
                                 :mode="'contained'" @onClick="openPopupRegistration(data.data.slipRegistration)" /> -->
-                    </div>
-                </template>
+                        </div>
+                    </template>
 
-                <DxSummary>
-                    <DxTotalItem column="결의번호" summary-type="count" display-format="전표 건수: {0}" />
-                    <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="totalDeposits" />
-                    <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="totalWithdrawal" />
-                    <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="countSlipRegistration" />
-                    <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
-                </DxSummary>
-            </DxDataGrid>
-            <button @click="toggle">Toggle</button>
+                    <DxSummary>
+                        <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="totalDeposits" />
+                        <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="totalWithdrawal" />
+                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="countSlipRegistration" />
+                        <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
+                    </DxSummary>
+                </DxDataGrid>
+            </div>
+
+
             <a-row class="detail">
-                <a-col class="detail1 columns">
-                    <transition name="collapse" mode="in-out">
-                        <div v-if="view" class="column">
-                            <a-spin :spinning="false">
-                                <StandardForm formName="pa-510-form" ref="pa510FormRef">
-                                    <a-row class="text-align-center">
-                                        <a-col :span="8"></a-col>
-                                        <a-col :span="8">
-                                            <div style="display: flex; justify-content: center;">
-                                                <h2>결의서</h2>
-                                                <button-basic style="margin: 0 10px;" text="O" type="success"
-                                                    :mode="'contained'" />
-                                                <button-basic text="X" type="danger" :mode="'contained'" />
-                                            </div>
-                                        </a-col>
-                                        <a-col :span="8">
-                                            <div style="display: flex; justify-content: flex-end;">
-                                                <a-form-item label="결의번호">
-                                                    <button-basic text="수기" type="danger" :mode="'contained'" />
-                                                </a-form-item>
-                                            </div>
-                                        </a-col>
-                                    </a-row>
-                                    <a-row class="mt-20">
-                                        <a-col :span="6" class="col-1">
-                                            <a-form-item label="결의구분">
-                                                <default-text-box width="70px" placeholder="지출" />
+                <a-col class="detail1">
+                    <div class="text-align-center button-arrow" :class="statusShowFull ? 'rotate' : ''">
+                        <img @click="toggleTransition" src="@/assets/images/iconArrowUp.png" alt="">
+                    </div>
+                    <div class="column">
+                        <a-spin :spinning="false">
+                            <StandardForm formName="pa-510-form" ref="pa510FormRef">
+                                <a-row class="text-align-center">
+                                    <a-col :span="8"></a-col>
+                                    <a-col :span="8">
+                                        <div style="display: flex; justify-content: center;">
+                                            <h2>결의서</h2>
+                                            <button-basic style="margin: 0 10px;" text="O" type="success"
+                                                :mode="'contained'" />
+                                            <button-basic text="X" type="danger" :mode="'contained'" />
+                                        </div>
+                                    </a-col>
+                                    <a-col :span="8">
+                                        <div style="display: flex; justify-content: flex-end;">
+                                            <a-form-item label="결의번호">
+                                                <button-basic text="수기" type="danger" :mode="'contained'" />
                                             </a-form-item>
+                                        </div>
+                                    </a-col>
+                                </a-row>
+                                <a-row class="mt-20">
+                                    <a-col :span="6" class="col-1">
+                                        <a-form-item label="결의구분">
+                                            <default-text-box width="70px" placeholder="지출" />
+                                        </a-form-item>
+                                        <div class="input_info">
+                                            <a-form-item label="결의서 종류">
+                                                <default-text-box width="70px" placeholder="여입" />
+                                            </a-form-item>
+                                            <button-basic @onClick="actionPopupCopyData" style="margin: -5px 0px 0px 5px"
+                                                mode="contained" type="default" text="{} 로 변경" />
+                                        </div>
+                                    </a-col>
+                                    <a-col :span="6" class="col-2">
+                                        <a-form-item label="결의일자" class="red">
+                                            <date-time-box width="150px" :required="true" />
+                                        </a-form-item>
 
+                                        <a-form-item label="통장" class="red">
                                             <div class="input_info">
-                                                <a-form-item label="결의서 종류">
-                                                    <default-text-box width="70px" placeholder="여입" />
-                                                </a-form-item>
-                                                <button-basic @onClick="actionPopupCopyData"
-                                                    style="margin: -5px 0px 0px 5px" mode="contained" type="default"
-                                                    text="{} 로 변경" />
+                                                <default-text-box width="70px" style="margin-right: 10px;"
+                                                    :required="true" />
+                                                <default-text-box width="70px" :required="true" />
                                             </div>
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="6" class="col-3">
+                                        <a-form-item label="금액" class="red">
+                                            <number-box-money width="150px" :required="true" :spinButtons="false" />
+                                        </a-form-item>
 
+                                        <a-form-item label="적요" class="red">
+                                            <default-text-box width="150px" :required="true" />
+                                        </a-form-item>
+                                    </a-col>
+                                    <a-col :span="6" class="col-4">
+                                        <a-form-item label="계정과목" class="red">
+                                            <account-code-select width="150px" :required="true" />
+                                        </a-form-item>
+                                        <a-form-item label="자금원천" class="red">
+                                            <account-code-select width="150px" :required="true" />
+                                        </a-form-item>
+                                    </a-col>
+                                </a-row>
+                                <div class="hidden-show" ref="refCssForm"
+                                    :style="[statusShowFull ? { height: heightForm } : {}]">
+                                    <a-row>
+                                        <a-col :span="6" class="col-1">
                                             <a-form-item label="원인행위일자" class="red">
                                                 <date-time-box width="150px" :required="true" />
                                             </a-form-item>
-
                                             <a-form-item label="결재일자">
                                                 <date-time-box width="150px" />
                                             </a-form-item>
                                         </a-col>
                                         <a-col :span="6" class="col-2">
-                                            <a-form-item label="결의일자" class="red">
-                                                <date-time-box width="150px" :required="true" />
-                                            </a-form-item>
-
-                                            <a-form-item label="통장" class="red">
-                                                <div class="input_info">
-                                                    <default-text-box width="70px" style="margin-right: 10px;"
-                                                        :required="true" />
-                                                    <default-text-box width="70px" :required="true" />
-                                                </div>
-                                            </a-form-item>
-
                                             <a-form-item label="발의일자">
                                                 <date-time-box width="150px" />
                                             </a-form-item>
-
                                             <a-form-item label="출납일자">
                                                 <date-time-box width="150px" />
                                             </a-form-item>
-
                                             <a-form-item label="등기일자">
                                                 <date-time-box width="150px" />
                                             </a-form-item>
-
-
                                         </a-col>
                                         <a-col :span="6" class="col-3">
-                                            <a-form-item label="금액" class="red">
-                                                <number-box-money width="150px" :required="true" :spinButtons="false" />
-                                            </a-form-item>
-
-                                            <a-form-item label="적요" class="red">
-                                                <default-text-box width="150px" :required="true" />
-                                            </a-form-item>
-
                                             <div class="input_info">
                                                 <a-form-item label="거래처">
                                                     <customer-select width="150px" />
@@ -285,11 +302,9 @@
                                                         class="mr-5">
                                                 </a-tooltip>
                                             </div>
-
                                             <a-form-item label="수입원">
                                                 <default-text-box width="150px" />
                                             </a-form-item>
-
                                             <div class="input_info">
                                                 <a-form-item label="작성자">
                                                     <default-text-box width="150px" />
@@ -302,12 +317,6 @@
                                             </div>
                                         </a-col>
                                         <a-col :span="6" class="col-4">
-                                            <a-form-item label="계정과목" class="red">
-                                                <account-code-select width="150px" :required="true" />
-                                            </a-form-item>
-                                            <a-form-item label="자금원천" class="red">
-                                                <account-code-select width="150px" :required="true" />
-                                            </a-form-item>
                                             <a-form-item label="상대계정">
                                                 <account-code-select width="150px" />
                                             </a-form-item>
@@ -346,101 +355,29 @@
                                     <a-row>
                                         <p style="width: 100%;">품의 원인 및 용도:</p>
                                         <textarea style="width: 100%; height: 100px; border-radius: 5px;
-                                            border: 1px solid gray;"></textarea>
+                                                                border: 1px solid gray;"></textarea>
                                     </a-row>
-                                </StandardForm>
-                                <div class="text-align-center mt-20">
-                                    <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
-                                        :height="$config_styles.HeightInput">
-                                        <div class="d-flex-center">
-                                            <checkbox-basic :valueCheckbox="true" disabled="true" />
-                                            <span class="pl-5">전표취소</span>
-                                        </div>
-                                    </DxButton>
-                                    <button-basic style="margin: 0px 5px" mode="contained" type="default" text="저장" />
+                                    <div class="text-align-center mt-20">
+                                        <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
+                                            :height="$config_styles.HeightInput">
+                                            <div class="d-flex-center">
+                                                <checkbox-basic :valueCheckbox="true" disabled="true" />
+                                                <span class="pl-5">전표취소</span>
+                                            </div>
+                                        </DxButton>
+                                        <button-basic style="margin: 0px 5px" mode="contained" type="default" text="저장" />
+                                    </div>
                                 </div>
-                            </a-spin>
-                        </div>
-                    </transition>
-                    <transition name="collapse" mode="out-in">
-                        <div v-if="!view" class="column">
-                            <a-spin :spinning="false">
-                                <StandardForm formName="pa-510-form" ref="pa510FormRef">
-                                    <a-row class="text-align-center">
-                                        <a-col :span="8"></a-col>
-                                        <a-col :span="8">
-                                            <div style="display: flex; justify-content: center;">
-                                                <h2>결의서</h2>
-                                                <button-basic style="margin: 0 10px;" text="O" type="success"
-                                                    :mode="'contained'" />
-                                                <button-basic text="X" type="danger" :mode="'contained'" />
-                                            </div>
-                                        </a-col>
-                                        <a-col :span="8">
-                                            <div style="display: flex; justify-content: flex-end;">
-                                                <a-form-item label="결의번호">
-                                                    <button-basic text="수기" type="danger" :mode="'contained'" />
-                                                </a-form-item>
-                                            </div>
-                                        </a-col>
-                                    </a-row>
-                                    <a-row class="mt-20">
-                                        <a-col :span="6" class="col-1">
-                                            <a-form-item label="결의구분">
-                                                <default-text-box width="70px" placeholder="지출" />
-                                            </a-form-item>
-
-                                            <div class="input_info">
-                                                <a-form-item label="결의서 종류">
-                                                    <default-text-box width="70px" placeholder="여입" />
-                                                </a-form-item>
-                                                <button-basic @onClick="actionPopupCopyData"
-                                                    style="margin: -5px 0px 0px 5px" mode="contained" type="default"
-                                                    text="{} 로 변경" />
-                                            </div>
-                                        </a-col>
-                                        <a-col :span="6" class="col-2">
-                                            <a-form-item label="결의일자" class="red">
-                                                <date-time-box width="150px" :required="true" />
-                                            </a-form-item>
-
-                                            <a-form-item label="통장" class="red">
-                                                <div class="input_info">
-                                                    <default-text-box width="70px" style="margin-right: 10px;"
-                                                        :required="true" />
-                                                    <default-text-box width="70px" :required="true" />
-                                                </div>
-                                            </a-form-item>
-                                        </a-col>
-                                        <a-col :span="6" class="col-3">
-                                            <a-form-item label="금액" class="red">
-                                                <number-box-money width="150px" :required="true" :spinButtons="false" />
-                                            </a-form-item>
-
-                                            <a-form-item label="적요" class="red">
-                                                <default-text-box width="150px" :required="true" />
-                                            </a-form-item>
-                                        </a-col>
-                                        <a-col :span="6" class="col-4">
-                                            <a-form-item label="계정과목" class="red">
-                                                <account-code-select width="150px" :required="true" />
-                                            </a-form-item>
-                                            <a-form-item label="자금원천" class="red">
-                                                <account-code-select width="150px" :required="true" />
-                                            </a-form-item>
-                                        </a-col>
-                                    </a-row>
-                                </StandardForm>
-                            </a-spin>
-                        </div>
-                    </transition>
+                            </StandardForm>
+                        </a-spin>
+                    </div>
                 </a-col>
                 <a-col class="detail2">
                     <div class="upload">
-                        <UploadPreviewImage v-model:list-image-file="fileList" width="387"/>
+                        <UploadPreviewImage v-model:list-image-file="fileList" width="387"
+                            :heightHidden="statusShowFull ? '' : '130px'" />
                     </div>
                 </a-col>
-                <div class="columns"></div>
             </a-row>
         </div>
 
@@ -463,7 +400,7 @@
 <script lang="ts">
 import { useStore } from 'vuex';
 import DxButton from "devextreme-vue/button"
-import { defineComponent, ref, reactive, computed } from "vue";
+import { defineComponent, ref, reactive, computed, onMounted } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
@@ -498,10 +435,12 @@ export default defineComponent({
     },
     setup() {
 
-        const view = ref(true)
-        const toggle = () => {
-            view.value = !view.value
-        }
+        const statusShowFull = ref(false)
+        const heightForm: any = ref(0)
+        const heightTable: any = ref(0)
+        const refCssForm: any = ref(null);
+        const refCssTable: any = ref(null);
+
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -546,6 +485,43 @@ export default defineComponent({
         // COMPUTED
 
         // METHODS
+        const toggleTransition = () => {
+            statusShowFull.value = !statusShowFull.value
+        }
+        const initHeight = () => {
+
+            refCssForm.value.style.height = 'auto';
+            refCssForm.value.style.position = 'absolute';
+            refCssForm.value.style.visibility = 'hidden';
+            refCssForm.value.style.display = 'block';
+
+            refCssTable.value.style.height = 'auto';
+            refCssTable.value.style.position = 'absolute';
+            refCssTable.value.style.visibility = 'hidden';
+            refCssTable.value.style.display = 'block';
+
+            const height = getComputedStyle(refCssForm.value).height;
+            const height2 = getComputedStyle(refCssTable.value).height;
+
+            // heightForm.value = height;
+            heightForm.value = '352px';
+            heightTable.value = height2;
+
+            refCssForm.value.style.position = null;
+            refCssForm.value.style.visibility = null;
+            refCssForm.value.style.display = null;
+            refCssForm.value.style.height = 0;
+
+            refCssTable.value.style.position = null;
+            refCssTable.value.style.visibility = null;
+            refCssTable.value.style.display = null;
+            refCssTable.value.style.height = 0;
+        }
+        onMounted(() => {
+            setTimeout(() => {
+                initHeight()
+            }, 500);
+        });
 
         const selectionChanged = () => { }
 
@@ -624,7 +600,7 @@ export default defineComponent({
 
 
         return {
-            view, toggle,
+            statusShowFull, toggleTransition, heightForm, refCssForm, refCssTable, heightTable,
             statusEntering,
             statusInput,
             statusAdjusting,
