@@ -174,7 +174,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch,computed ,onMounted} from "vue";
+import { defineComponent, ref, watch, computed, onMounted } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -244,6 +244,9 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
+import { getJwtObject } from '@bankda/jangbuda-common';
+import { companyId } from "@/helpers/commonFunction";
+import dayjs from "dayjs";
 import {getJwtObject} from '@bankda/jangbuda-common';
 export default defineComponent({
   name: `LayoutDefault`,
@@ -341,8 +344,6 @@ export default defineComponent({
       this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
       this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
     }
-
-
   },
   watch: {
      activeTab: {
@@ -496,9 +497,15 @@ export default defineComponent({
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
 
-    onMounted(() => {
+    onMounted(async() => {
       const token = sessionStorage.getItem("token");
       const jwtObject = getJwtObject(token);
+      store.commit('auth/setTockenInfor',jwtObject)
+     // get and set account subject
+      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+      await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+
+
       store.commit('auth/setTokenInfo',jwtObject)
       console.log(store.getters['auth/getTokenInfo']);
     })

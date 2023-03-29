@@ -37,6 +37,7 @@ import getClientLogs from "./getClientLogs";
 import getBackerLogs from "./getBackerLogs";
 import getMajorInsuranceCompanyEmployeeAcquisitionLogs from "./getMajorInsuranceCompanyEmployeeAcquisitionLogs";
 import getBankbooksLogs from "./getBankbooksLogs";
+import getAccoountSubjects from "./getAccoountSubjects";
 const queries = {
   getUser: getUser,
   getListSale: getListSale,
@@ -79,6 +80,7 @@ const queries = {
   getClientLogs: getClientLogs,
   getBankbooksLogs: getBankbooksLogs,
   getBackerLogs: getBackerLogs,
+  getAccoountSubjects:getAccoountSubjects
 };
 
 export default queries;

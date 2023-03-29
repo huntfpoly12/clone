@@ -19,5 +19,13 @@ export interface SettingState {
   clickYearStatus: ClickYearStatus
   newYear: number,
   globalYear: number,
-  globalFacilityBizId: number
+  globalFacilityBizId: number,
+  accountSubject: any
+  
+}
+
+export interface PayLoadAccSubject {
+  companyId: number,
+  fiscalYear: number,
+  facilityBizType: number
 }
