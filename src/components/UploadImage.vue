@@ -140,16 +140,11 @@ export default defineComponent({
             messageUpload = "File must smaller than 5MB!"; 
             return;
         }
-        console.log(file,'fileName');
         const formData = new FormData();
         formData.append("category", "SubscriptionRequestCompanyLicense");
         formData.append("file", file);
         fileName.value = file.name; 
         // Display the key/value pairs
-        console.log(formData.getAll('file')); 
-
-              
-          
         loading.value = true;
         const data = await uploadRepository.public(formData); 
 

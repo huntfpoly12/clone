@@ -252,7 +252,7 @@
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage v-model:list-image-file="fileList" width="387" />
+            <UploadPreviewImage v-model:list-image-file="fileList" width="387" :payLoadProofs="payloadGetTransactionDetails" />
           </div>
         </a-col>
       </a-row>
@@ -274,7 +274,7 @@
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" @closePopup="isModalNoteItemDetail = false"
       @submit="isModalNoteItemDetail = false" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
-      typeHistory="ac-110" :data="popupHistoryData" />
+      typeHistory="ac-110" :data="payloadGetTransactionDetails" />
   </div>
 </template>
 <script lang="ts">
@@ -282,6 +282,7 @@ import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
+import  getAccoountSubjects  from "@/graphql/queries/common/getAccoountSubjects";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
@@ -297,9 +298,10 @@ import PopupSlipRegistrationSelected from "./components/PopupSlipRegistrationSel
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
-import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
+import UploadPreviewImage from './components/UploadPreviewImage.vue'
 import { BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
+import { trigger } from '@vue/reactivity';
 
 export default defineComponent({
   components: {
@@ -350,6 +352,7 @@ export default defineComponent({
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerBankbookDetails = ref<boolean>(true)
     let triggerTransactionDetails = ref<boolean>(false)
+    let triggerAccoountSubjects = ref<boolean>(true)
 
     let statusEntering = ref(10);
     let statusInput = ref(20);
@@ -367,6 +370,11 @@ export default defineComponent({
     let isModalSlipRegistrationSelected = ref(false);
     let isModalItemDetail = ref(false);
     let isModalNoteItemDetail = ref(false);
+    watch(() => fileList.value, (value) => {
+      console.log('fileList.value EEEEEEEEEEEE', fileList.value)
+    }, {
+      deep: true,
+    }) 
     let CommonResolutionClassification: any = [
       {
         label: '수입',
@@ -430,16 +438,6 @@ export default defineComponent({
     let idRowEdit = ref<number>(0);
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value))
-
-    const popupHistoryData = computed(() => {
-      return {
-        companyId: companyId,
-        fiscalYear: globalYear.value,
-        facilityBusinessId: globalFacilityBizId.value,
-        bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
-        bankbookDetailId: bankbookSelected.value.bankbookDetailId
-      }
-    })
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -491,6 +489,21 @@ export default defineComponent({
       notification('error', e.message)
       dataSourceTransactionDetails.value = demTableTransactionDetails
     })
+    const {
+      result: resgetAccoountSubjects,
+      // onResult: onResgetAccoountSubjects,
+      loading: loadingGetgetAccoountSubjects,
+      // refetch,
+      // onError
+    } = useQuery(getAccoountSubjects, {
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBizType: globalFacilityBizId.value,
+    },
+      () => ({
+        enabled: triggerAccoountSubjects.value,
+        fetchPolicy: "no-cache",
+      }))
     // mutations
     const {
       mutate: syncBankbookDetails,
@@ -564,6 +577,10 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       dataSourceTransactionDetails.value = demTableTransactionDetails
       triggerTransactionDetails.value = false
+    })
+    watch(resgetAccoountSubjects, (value) => {
+      console.log('resgetAccoountSubjects', value);
+      triggerAccoountSubjects.value = false
     })
     // MOUNTED
     onMounted(() => {
@@ -813,7 +830,7 @@ export default defineComponent({
       isModalHistory,
       idRowEdit,
       modalHistory,
-      popupHistoryData,
+      payloadGetTransactionDetails,
       handleInitializeTransactionDetails,
     };
   },
