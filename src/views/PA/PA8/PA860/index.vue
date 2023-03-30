@@ -13,7 +13,7 @@
       </div>
       <div style="font-weight: 600;">보험사무대행 신청서류 일괄 생성안내:</div>
     </div>
-    <div class="table-ctn mt-20">
+    <div class="table-ctn">
       <a-spin :spinning="false" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="ID" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"

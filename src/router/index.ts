@@ -263,6 +263,10 @@ const routes = [
         component: () => import('../views/AC/AC5/AC570/index.vue'),
       },
       {
+        path: "ac-580",
+        component: () => import('../views/AC/AC5/AC580/index.vue'),
+      },
+      {
         path: "ac-590",
         component: () => import('../views/AC/AC5/AC590/index.vue'),
       },

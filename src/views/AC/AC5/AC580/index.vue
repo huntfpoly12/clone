@@ -1,121 +1,128 @@
 <template>
   <action-header title="기부금영수증" :buttonDelete="false" :buttonSearch="true" @actionSearch="onSearch()" :buttonPrint="false"
     :buttonSave="false" />
-  <div id="ac-630" class="p-20">
-    <!-- {{ dataState }} dataState <br /> -->
+  <div id="ac-580" class="p-20">
+    {{ dataState }} dataState <br />
     <!-- {{ mailData }} mailData <br />
     {{ printData }} printData <br />
     {{ modalCreate }} modalCreate <br /> -->
     <div class="top-container">
       <a-row>
-        <a-col :span="8">
-          <a-form-item label="기부기간" label-align="right" class="red">
-            <year-picker-box width="100px" v-model:valueDate="dataState.imputedYear" color="#a6a6a6"></year-picker-box>
-          </a-form-item>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item label="발행기간">
-            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
-          </a-form-item>
-          <div style="font-size: 12px; color: #888888" class="mt-5">
-            <img src="@/assets/images/iconInfo.png" style="width: 14px" />본 회계연도내 기부내역 대상의 발행내역만 검색가능하며, 발행기간과는 무관합니다.
+        <a-col span="24">
+          <div class="input-text">
+            <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="dataState.tableType"
+              layoutCustom="horizontal" class="mt-1"></radio-group>
+            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
+            <span class="custom-waring">
+              후원금의 경우 조정마감된 결의서 기준으로 후원금 수입/사용내역 조회합니다
+            </span>
           </div>
         </a-col>
-        <a-col :span="8">
-          <a-form-item label="후원자" label-align="right" class="red">
-            <default-text-box width="200px" :disabled="true" v-model:valueInput="dataState.name" :required="true" />
+        <a-col span="24">
+          <div class="input-text">
+            <span class="mr-10">결의서별 후원금 등록 조회 여부:</span>
+            <radio-group :arrayValue="employeeFashionArr2" v-model:valueRadioCheck="dataState.employeeType2"
+              layoutCustom="horizontal" class="mt-1"></radio-group>
+            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
+            <span class="custom-waring">
+              후원금의 경우 조정마감된 결의서 기준으로 후원금 수입/사용내역 조회합니다
+            </span>
+          </div>
+        </a-col>
+        <a-col>
+          <a-form-item label="기간" label-align="right" class="red">
+            <div class="input-text">
+              <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataState.imputedYear" />
+              <ProcessStatus :valueStatus="30" />
+            </div>
           </a-form-item>
+        </a-col>
+        <a-col>
+          <div class="input-text">
+            <span class="mx-5">~</span>
+            <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataState.monthEnd" />
+            <ProcessStatus :valueStatus="10" />
+            <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
+            <span class="custom-waring">
+              후원금의 경우 조정마감된 결의서 기준으로 후원금 수입/사용내역 조회합니다
+            </span>
+          </div>
         </a-col>
       </a-row>
     </div>
-    <div class="table-ctn mt-15">
-      <a-spin :spinning="false" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="ID" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" :focused-row-enabled="true" ref="taxPayDataRef">
-          <DxPaging :page-size="0" />
-          <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
-          <DxExport :enabled="true" />
-          <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSelection select-all-mode="allPages" mode="multiple" />
-          <DxToolbar>
-            <DxItem name="searchPanel" />
-            <DxItem name="exportButton" css-class="cell-button-export" />
-            <DxItem location="after" template="button-mail" css-class="cell-button-add" />
-            <DxItem location="after" template="button-print" css-class="cell-button-add" />
-            <DxItem location="after" template="button-delete" css-class="cell-button-add" />
-            <DxItem location="after" template="button-add" css-class="cell-button-add" />
-            <DxItem location="after" template="button-history" css-class="cell-button-add" />
-          </DxToolbar>
-          <template #button-mail>
-            <div style="text-align: center;">
-              <DxButton class="ml-3" @click="modalMail = true">
-                <img src="@/assets/images/email.svg" alt="" style="width: 18px;" />
-              </DxButton>
+    <a-row class="tool-bar mt-10" justify="space-between">
+      <a-col>
+        <div>
+          <span class="header">서식 설정</span>
+          <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
+          <span class="custom-waring">
+            본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다
+          </span>
+        </div>
+        <div>
+          <checkbox-basic size="14" label="후원자 마스킹 처리" v-model:valueCheckbox="dataState.employeementInsuranceReport" />
+          <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
+          <span class="custom-waring">
+            본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다
+          </span>
+        </div>
+        <div>
+          후원금 전용계좌정보
+          <edit-outlined class="ml-8" :style="{ fontSize: '18px', color: 'black' }" />
+        </div>
+      </a-col>
+      <a-col class="d-flex-center">
+        <a-tooltip placement="top" class="custom-tooltip">
+          <template #title>
+            출력 / 저장
+          </template>
+          <div style="text-align: center;">
+            <DxButton class="ml-3" @click="modalPrint = true">
+              <img src="@/assets/images/print.svg" alt="" style="width: 18px;">
+            </DxButton>
+          </div>
+        </a-tooltip>
+        <div style="text-align: center;">
+          <DxButton class="ml-3" @click="modalMail = true">
+            <img src="@/assets/images/email.svg" alt="" style="width: 18px;" />
+          </DxButton>
+        </div>
+        <div style="text-align: center;">
+          <DxButton class="ml-3" @click="modalHistory = true">
+            <HistoryOutlined style="font-size: 18px" />
+          </DxButton>
+        </div>
+        <a-tooltip placement="top" class="custom-tooltip">
+          <template #title>
+            <div style="width: 100px">
+              기부금영수증 신규 발행
             </div>
           </template>
-          <template #button-print>
-            <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                출력 / 저장
-              </template>
-              <div style="text-align: center;">
-                <DxButton class="ml-3" @click="modalPrint = true">
-                  <img src="@/assets/images/print.svg" alt="" style="width: 18px;">
-                </DxButton>
-              </div>
-            </a-tooltip>
-          </template>
-          <template #button-delete>
-            <div style="text-align: center;">
-              <DxButton class="ml-3" @click="modalDelete = true">
-                <img src="@/assets/images/icon_delete.png" alt="" style="width: 18px;">
-              </DxButton>
-            </div>
-          </template>
-          <template #button-add>
-            <a-tooltip placement="top" class="custom-tooltip">
-              <template #title>
-                <div style="width: 100px">
-                  기부금영수증 신규 발행
-                </div>
-              </template>
-              <div style="text-align: center;">
-                <DxButton icon="plus" @click="modalCreate = true" />
-              </div>
-            </a-tooltip>
-          </template>
-          <template #button-history>
-            <div style="text-align: center;">
-              <DxButton class="ml-3" @click="modalHistory = true">
-                <HistoryOutlined style="font-size: 16px" />
-              </DxButton>
-            </div>
-          </template>
-          <DxColumn caption="발행번호(발행코드)" data-field="documentName" />
-          <DxColumn caption="기부금유형" data-field="businessSite" />
-          <DxColumn caption="후원자코드" data-field="administrationAgency" />
-          <DxColumn caption="후원자명" data-field="administrationAgency" />
-          <DxColumn caption="후원자구분" data-field="administrationAgency" />
-          <DxColumn caption="주민등록번호" data-field="administrationAgency" />
-          <DxColumn caption="사업자(고유)등록번호" data-field="administrationAgency" />
-          <DxColumn caption="금액" data-field="administrationAgency" />
-          <DxColumn caption="기부기간" data-field="administrationAgency" cell-template="administrationAgency" />
-          <template #administrationAgency="{ data }" class="custom-action">
-            <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
-              {{ data.value }}
-            </div>
-          </template>
-        </DxDataGrid>
-      </a-spin>
-    </div>
+          <div style="text-align: center;">
+            <DxButton icon="plus" class="ml-3" @click="modalCreate = true" />
+          </div>
+        </a-tooltip>
+      </a-col>
+    </a-row>
+    <a-row class="bot-ctn mt-10" :gutter="[25]">
+      <a-col :span="15" class="col1">
+        <Table1 v-if="dataState.tableType == 1 || dataState.tableType == 2" />
+        <Table2 v-if="dataState.tableType == 3" />
+        <Table3 v-if="dataState.tableType == 4" />
+      </a-col>
+      <a-col :span="9" class="col2">
+        <Form1 v-if="dataState.tableType == 1" />
+        <Form2 v-if="dataState.tableType == 2" />
+        <Form3 v-if="dataState.tableType == 3" />
+        <Form4 v-if="dataState.tableType == 4" />
+      </a-col>
+    </a-row>
   </div>
   <MailPopup v-if="modalMail" v-model:mailData="mailData" @onMailModal="onMailModal" />
   <PrintPopup v-if="modalPrint" v-model:printData="printData" @onPrintModal="onPrintModal" />
   <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm"
     :content="() => deleteContent" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onDeleteModal" />
   <CreatePopup v-if="modalCreate" @onCreateModal="onCreateModal" />
-  <ShowDataCreated v-if="modalShowCreated" @onShowCreateModdal="onShowCreateModdal" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, reactive, computed } from 'vue';
@@ -128,9 +135,9 @@ import {
   DxSearchPanel,
   DxExport,
   DxToolbar,
-DxSelection,
+  DxSelection,
 } from 'devextreme-vue/data-grid';
-import { DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { DownloadOutlined, HistoryOutlined, EditOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA8/PA860/index';
 import mutations from '@/graphql/mutations/PA/PA8/PA860/index';
@@ -143,8 +150,16 @@ import { DxItem } from 'devextreme-vue/select-box';
 import MailPopup from './components/MailPopup.vue';
 import PrintPopup from './components/PrintPopup.vue';
 import CreatePopup from './components/CreatePopup.vue';
-import ShowDataCreated from './components/ShowDataCreated.vue';
+import Form1 from './components/Form1.vue';
+import Form2 from './components/Form2.vue';
+import Form3 from './components/Form3.vue';
+import Form4 from './components/Form4.vue';
 import { h } from 'vue';
+import Table1 from './components/Table1.vue';
+import Table2 from './components/Table2.vue';
+import Table3 from './components/Table3.vue';
+import { employeeFashionArr, employeeFashionArr2, } from "./utils/index";
+import OnlyMonthPickerBox from '../components/OnlyMonthPickerBox.vue';
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -152,18 +167,26 @@ export default defineComponent({
     DxPaging,
     DxScrolling,
     DxButton,
-    DownloadOutlined,
     DxSearchPanel,
     DxExport,
     DxToolbar,
     DxItem,
-    HistoryOutlined,
+    HistoryOutlined, EditOutlined, DownloadOutlined,
     MailPopup,
     PrintPopup,
-    ShowDataCreated,
+    Form1,
+    Form2,
+    Form3,
+    Form4,
     CreatePopup,
-    DxSelection
-},
+    DxSelection,
+    Table1,
+    Table2,
+    Table3,
+    employeeFashionArr,
+    employeeFashionArr2,
+    OnlyMonthPickerBox
+  },
   setup() {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
@@ -189,6 +212,11 @@ export default defineComponent({
       workId: 1,
       imputedYear: globalYear.value,
       name: 'ss',
+      tableType: 1,
+      employeeType2: 1,
+      monthStart: dayjs().format('MM'),
+      monthEnd: dayjs().format('MM'),
+      employeementInsuranceReport: false,
     })
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
 
@@ -399,6 +427,15 @@ export default defineComponent({
         // renewMajor(formData);
       }
     }
+
+    // watch(()=>dataState.value.tableType,(newVal)=>{
+    //   if(newVal == 1) 
+    //   if(newVal == 1)
+    //   if(newVal == 1)
+    //   if(newVal == 1)
+    // })
+
+
     return {
       per_page, move_column, colomn_resize, dataSource,
       modalMail, modalPrint, modalDelete, modalCreate, modalShowCreated, modalHistory,
@@ -407,6 +444,7 @@ export default defineComponent({
       handleCreate, isDelete, handleDelete, contentDelete, dataState,
       onSubmit, dayjs, onSearch,
       rangeDate, deleteContent,
+      employeeFashionArr, employeeFashionArr2,
     };
   },
 })
