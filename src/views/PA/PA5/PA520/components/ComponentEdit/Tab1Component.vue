@@ -195,7 +195,7 @@ export default defineComponent({
       loading
     } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
       enabled: trigger.value,
-      fetchPolicy: "no-cache",
+      fetchPolicy: "no-cache"
     }))
     getValueDefault(res => {
       if (res.data) {
@@ -239,7 +239,6 @@ export default defineComponent({
     })
         // ============ WATCH ================================   
        watch(() => props.idRowEdit, (newVal) => {
-
             originDataDetail.value.employeeId = newVal
             trigger.value = true
             refetchValueDetail()

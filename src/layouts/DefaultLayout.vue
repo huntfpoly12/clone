@@ -514,14 +514,15 @@ export default defineComponent({
     onMounted(async() => {
       const token = sessionStorage.getItem("token");
       const jwtObject = getJwtObject(token);
-      store.commit('auth/setTokenInfo',jwtObject)
+
+      //store.commit('auth/setTokenInfo',jwtObject)
      // get and set account subject
-      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-      await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      //let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
 
 
-      store.commit('auth/setTokenInfo',jwtObject)
-      console.log(store.getters['auth/getTokenInfo']);
+      // store.commit('auth/setTokenInfo',jwtObject)
+      // console.log(store.getters['auth/getTokenInfo']);
     })
     /**
     * Check scroll tab if overflow

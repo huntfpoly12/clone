@@ -127,6 +127,9 @@
     </div>
     <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail" :data="dataModalSave"
         :step="2" />
+    <div v-for="data in defaultDataSource" :key="data.id">
+        <GetStatusTableHidden   :data="data" @productionStatusData="productionStatusData" />
+    </div>
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -200,7 +203,7 @@ export default defineComponent({
         resTable(queryResult => {
         if (queryResult && queryResult.data) {
           defaultDataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
-          dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
+          //dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
           trigger.value = false
         }
         })
@@ -330,7 +333,7 @@ export default defineComponent({
 
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData
+            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData,defaultDataSource
         }
     }
 })
