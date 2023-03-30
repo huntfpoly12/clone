@@ -49,6 +49,11 @@ const INITIAL_FORM_PA840 = {
   dependentsEvidenceFileStorageId: 0
 }
 
+const INITIAL_FORM_PA870 = {
+  nationalPension: false,
+  employmentInsurance: false
+}
+
 const LeaveOfAbsenceDocument = [
   {name: '휴직', id: 1},
   {name: '육아휴직', id: 2},
@@ -92,6 +97,7 @@ export type FormCreatePA830 = typeof INITIAL_FORM_PA830
 export default {
   INITIAL_FORM_PA830,
   INITIAL_FORM_PA840,
+  INITIAL_FORM_PA870,
   LeaveOfAbsenceDocument,
   NationalPensionPaymentExemptionCode,
   ReasonForDeferringHealthInsurancePayments,
