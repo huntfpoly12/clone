@@ -85,7 +85,7 @@
     </a-spin>
     <!-- <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
       typeHistory="pa-810" /> -->
-    <CreatePA820Popup :modalCreate="modalCreate" @closeModal="modalCreate = false"
+    <CreatePA820Popup :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false"
       @handleCreate="handleCreate" />
     <PopupMessage :modalStatus="isDelete" @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete"
       okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
@@ -170,13 +170,13 @@ export default defineComponent({
 
     //---------------------------ADD FORM------------------
 
-    const modalCreate = ref(false);
+    const isOpenModalCreate = ref(false);
     const openAddNewModal = () => {
-      modalCreate.value = true;
+      isOpenModalCreate.value = true;
     }
     const handleCreate = () => {
       // refetch();
-      modalCreate.value = false;
+      isOpenModalCreate.value = false;
     };
 
     // -----------------------------HISTORY-------------------
@@ -246,7 +246,7 @@ export default defineComponent({
       per_page, move_column, colomn_resize,
       focusedRowKey, dataSource, modalHistory,
       openAddNewModal, onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
-      handleCreate, modalCreate, isDelete, handleDelete, contentDelete
+      handleCreate, isOpenModalCreate, isDelete, handleDelete, contentDelete
     };
   },
 })

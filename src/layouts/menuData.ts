@@ -59,7 +59,7 @@ export default [
   { name: "사업비명세서", url: "/dashboard/ac-550", id: "ac-550" },
   { name: "기타비용명세서", url: "/dashboard/ac-560", id: "ac-560" },
   { name: "과목전용조서", url: "/dashboard/ac-570", id: "ac-570" },
-  { name: "후원금수입 및 사용결과보고서", url: "#", id: "ac-580" },
+  { name: "후원금수입 및 사용결과보고서", url: "/dashboard/ac-580", id: "ac-580" },
   { name: "후원금전용계좌의 입출금명세", url: "/dashboard/ac-590", id: "ac-590" },
 
   { name: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
