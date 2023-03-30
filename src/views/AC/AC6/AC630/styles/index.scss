@@ -1,0 +1,10 @@
+#ac-630{
+  .top-container{
+    &>div{
+      padding: 5px 0;
+    }
+    border: 1px solid #dddcdc;
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
