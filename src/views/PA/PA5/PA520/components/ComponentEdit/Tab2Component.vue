@@ -151,7 +151,7 @@ import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEm
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
-import { FormStatus } from "@/store/settingModule/types";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -163,6 +163,7 @@ export default defineComponent({
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
         const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
         const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
         const totalDeduction = ref(0)
@@ -242,11 +243,10 @@ export default defineComponent({
 
       resApiGetEmployeeWageDaily((dtValue: any) => {
           
-          trigger.value = false
-          validateCalculate.value = false
-        isBtnYellow.value = false
-          alert(isBtnYellow.value)
-          if (dtValue.data) {
+            trigger.value = false
+            validateCalculate.value = false
+            isBtnYellow.value = false
+            if (dtValue.data) {
                 let res = dtValue.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
@@ -290,12 +290,12 @@ export default defineComponent({
         })
         onDone((result) => {
             store.state.common.rowIdSaveDonePa520 = result.data.employeeId
-            store.dispatch('common/setCheckEditTab2PA520',false)
+            store.commit('common/setCheckEditTab2PA520',false)
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
-            store.commit('settings/setCurrentYear')
+            if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
         })
         // ================== WATCH ====================================
       watch(() => originDataUpdate.value, (newVal) => {
@@ -317,10 +317,10 @@ export default defineComponent({
       
         // call api on tab 2 next time
         watch(idRowEdit, (res) => {
-          if (!tab2IsChange.value && !isBtnYellow.value && idRowEdit.value) {
+          //if (!tab2IsChange.value && !isBtnYellow.value && idRowEdit.value) {
               trigger.value = true
               refectchDetail()
-          }
+          //}
           store.commit('common/setCheckEditTab2PA520',false)
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
@@ -361,7 +361,6 @@ export default defineComponent({
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
           // Compare two object if different change button color to orange
           if (JSON.stringify(defValue) !== JSON.stringify(originValue)) {
-            alert('lolo')
             isBtnYellow.value = true
           } else {
             isBtnYellow.value = false

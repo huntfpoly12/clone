@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row>
+  </a-row> -->
 
   <div id="pa-520" class="page-content">
   
@@ -366,9 +366,7 @@ export default defineComponent({
 
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
         if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value ) {
-          alert('addBtOnclick')
           funcAddNewRow()
-       
         }
 
         // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
@@ -377,21 +375,8 @@ export default defineComponent({
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
         if(isClickBtnSavePA520.value){
-          alert('isClickBtnSavePA520')
          setRowEdit(parseInt(idRowSaveDone.value))
         }
-        // this is case after save done
-        // if (store.state.common.rowIdSaveDonePa520 != 0 && !addBtOnclick.value) {
-        //   // Get index row change
-        //   let idRowNextForcus = isClickRow.value ? idRowCurrentClick.value : idRowSaveDone.value;
-        //   idRowEdit.value = parseInt(idRowNextForcus);
-        //   store.commit('common/setFocusedRowKeyPA520',parseInt(idRowNextForcus))
-      
-
-        //   store.state.common.isClickRowPA520 = false;
-        //   // isDelete.value = false;
-        //   store.state.common.rowIdSaveDonePa520 = 0
-        // }
 
         // for the case of changing the year and having to focus on the first row
         if (isChangeYear.value) {
@@ -405,13 +390,6 @@ export default defineComponent({
             onAddBtClick()
           }
         }
-
-        // // for the case of click to add button when edit value
-        // if (addBtOnclick.value) {
-        //   store.state.common.activeAddRowPA520 = false
-        //   onAddBtClick()
-        // }
-
         trigger.value = false;
       }
       store.dispatch('common/resetActionStatus')
@@ -478,13 +456,6 @@ export default defineComponent({
           event.cancel = true
           
         }
-      
-
-        // // for case adding but click other row 
-        // if(store.state.common.activeAddRowPA520 && store.state.common.addRowBtOnclickPA520){
-        //   store.state.common.activeAddRowPA520 = false
-        //   //store.state.common.addRowBtOnclickPA520 = false
-        // }
         store.commit('common/setAddBtOnclickPA520',false);
       }
     }
@@ -532,39 +503,6 @@ export default defineComponent({
       funcAddNewRow();     
     };
     const confirmAndSaveAdd = async (res: any) => {
-
-      // if (res == true && addRowBtOnclick.value) {
-      //   await actionSave();
-      // } else if (res == true && !addRowBtOnclick.value) {
-      //   await actionSave();
-      //   if (!isValidateAddPA520.value) {
-      //     idRowEdit.value = idRowCurrentClick.value;
-      //     focusedRowKey.value = idRowCurrentClick.value;
-      //     store.state.common.countBtOnclickPA520 = 0
-      //     //Not save
-      //     store.state.common.activeAddRowPA520 = false;
-      //     store.state.common.checkChangeValueAddPA520 = false;
-      //   }
-      // } else if (!res && addRowBtOnclick.value) {
-      //   store.state.common.countBtOnclickPA520 = 0
-      //   // Change status switch in store
-      //   store.state.common.activeAddRowPA520 = false;
-      //   store.state.common.checkChangeValueAddPA520 = false;
-      //   // Setting the value of the addRowOnclick variable to false.
-      //   store.state.common.addRowBtOnclickPA520 = false;
-      //   resetAddComponent.value++; // increment one unit to reset the newly created form
-      //   onAddBtClick();
-      //   await store.dispatch('settings/resetYearStatus')
-      // } else {
-      //   idRowEdit.value = idRowCurrentClick.value;
-      //   focusedRowKey.value = idRowCurrentClick.value;
-      //   store.state.common.countBtOnclickPA520 = 0
-      //   //Not save
-      //   store.state.common.activeAddRowPA520 = false;
-      //   store.state.common.checkChangeValueAddPA520 = false;
-      //   await store.dispatch('settings/resetYearStatus')
-      // }
-
       if(res == true){
         await actionSave();
         const hasValidator = await store.dispatch('common/hasValidator')
@@ -764,7 +702,6 @@ export default defineComponent({
       onConfirmDelete,
       Message,
       addBtOnclick,
-     // countBtOnclick,
       trigger,
       onFocusedRowChanged,
       onFocusedRowChanging,
