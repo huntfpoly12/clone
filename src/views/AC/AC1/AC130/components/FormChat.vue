@@ -1,5 +1,8 @@
 <template>
   <div class="form-chat">
+    <p class="form-chat-title">
+      회계마감 관리사항
+    </p>
     <div ref="formTimeline" class="form-chat-timeline">
       <div v-for="(items, index) in listChat" :key="index">
         <div class="form-chat-timeline-common" :class="{
@@ -9,8 +12,12 @@
           'mt-10': index > 0 && listChat[index - 1].name !== items.name,
         }">
           <div class="form-chat-timeline-avatar">
-            <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
-              alt="">
+            <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
+              alt=""> -->
+            <a-badge :dot="true" :offset="[-5, 33]" :status="items.name === userName ? 'success' : 'error'"
+              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }">
+              <a-avatar shape="circle" size="large" :src="items.avatar" />
+            </a-badge>
           </div>
           <div class="form-chat-timeline-content" :class="{
             'borderRadiusleft10': (index === 0 || listChat[index - 1].name !== items.name) && items.name !== userName,
@@ -52,9 +59,13 @@
       </div>
     </div>
     <div class="form-chat-bottom">
-      <img class="form-chat-bottom-avatar"
+      <!-- <img class="form-chat-bottom-avatar"
         src="https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg"
-        alt="" />
+        alt="" /> -->
+      <a-badge :dot="true" :offset="[-5, 33]" status="success" class="mr-5">
+        <a-avatar shape="circle" size="large"
+          src="https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg" />
+      </a-badge>
       <div class="form-chat-bottom-input">
         <textarea rows="1" ref="inputChat" placeholder="댓글을 입력하세요…" v-model="textChat" @input="changeInput"
           @keypress.enter.exact.prevent="sendChat"></textarea>
@@ -265,12 +276,23 @@ export default defineComponent({
   height: 100%;
   padding: 5px;
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
+
+  &-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(17, 17, 26, 0.1);
+  }
 
   &-timeline {
     flex-grow: 1;
-    height: calc(100% - 40px);
+    // height: calc(100% - 40px);
     padding-bottom: 10px;
+    padding-top: 2px;
     overflow-y: auto;
 
     &-avatar {
@@ -282,7 +304,7 @@ export default defineComponent({
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
       }
     }
 
