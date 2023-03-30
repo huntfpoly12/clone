@@ -263,7 +263,7 @@ export default defineComponent({
     let indexRow = ref(0)
     let firstLoad = ref(true)
     let countResetForm = ref(0)
-    const modalHistoryStatus = ref<boolean>(false);
+    let modalHistoryStatus = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     let popupHistoryData = ref();
     let dataPopupScrapingStatus = ref<any>()
