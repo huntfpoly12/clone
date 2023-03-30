@@ -39,12 +39,17 @@
                 :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="일련번호" data-field="electronicFilingId"  width="100px" alignment="center"/>
                 <DxColumn caption="참고사항" data-field="referenceInformation" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
                         format="yyyy-MM-dd hh:mm" />
-                <DxColumn caption="아이디" data-field="productionRequestUser.id"/>
-                <DxColumn caption="제작현황" data-field="productionStatus" />
+                <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center"/>
+                <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center"/>
+                <template #productionStatus="{ data }">
+                  <production-status :typeTag="0" v-if="data.data.productionStatus == 0" padding="0px 10px"/>
+                  <production-status :typeTag="4" v-if="data.data.productionStatus == 2" padding="1px 10px"/>
+                  <production-status :typeTag="5" v-if="data.data.productionStatus == -1" padding="1px 10px"/>
+                </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action"/>
                 <template #action="{ data }"> 
                   <div style="text-align: center">
@@ -74,10 +79,11 @@ import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import filters from "@/helpers/filters";
 import CompaniesPopup from "./CompaniesPopup.vue";
+import GetStatusTable from "./GetStatusTable.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup, GetStatusTable
   },
   props: {
     activeSearch: {
