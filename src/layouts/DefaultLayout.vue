@@ -246,8 +246,7 @@ import {
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
 import { companyId } from "@/helpers/commonFunction";
-import dayjs from "dayjs";
-import {getJwtObject} from '@bankda/jangbuda-common';
+import dayjs from "dayjs";;
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
