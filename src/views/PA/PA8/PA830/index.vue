@@ -19,7 +19,12 @@
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
-          <DxButton icon="plus" @click="openAddNewModal"/>
+          <a-tooltip placement="top">
+            <template #title>신규</template>
+            <div>
+              <DxButton icon="plus" @click="openAddNewModal"/>
+            </div>
+          </a-tooltip>
         </template>
         <DxColumn caption="일련번호" data-field="workId" width="100" alignment="center"/>
         <DxColumn caption="성명" data-field="name" alignment="center"/>
@@ -33,12 +38,12 @@
             {{ MajorInsuranceWorkingStatus[data.data.workingStatus] }}
           </div>
         </template>
-        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>
+<!--        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>-->
         <DxColumn caption="등록일" data-field="registeredAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수일" data-field="acceptedAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="완료일" data-field="completedAt" width="100" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수번호" data-field="accedpedNumber" width="70" alignment="center"/>
-         <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>
+<!--         <DxColumn caption="FAX상태" data-field="paymentYear" width="70" alignment="center"/>-->
         <DxColumn caption="메모" data-field="memo" alignment="center"/>
         <DxScrolling column-rendering-mode="virtual"/>
         <DxColumn caption="급여변경신고다운로드" data-field="fileStorageId" cell-template="dependentsEvidenceFileStorageId" width="80" alignment="center"/>

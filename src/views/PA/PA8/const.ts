@@ -11,6 +11,8 @@ const INITIAL_FORM_PA830 = {
   change_time: '',
   change_amount: '',
   boolean: true,
+  boolean1: true,
+  boolean2: true,
   radio: 2,
   radio1: 2,
 }

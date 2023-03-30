@@ -4,7 +4,7 @@
     width="60%"
     :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate"
-    title="급여변경신고"
+    title="급여변경신고 신규 등록"
     centered
     @cancel="$emit('closeModal')"
     :footer="null"
@@ -14,7 +14,9 @@
         <DxField label="직원선택">
           <employ-select
             :arrayValue="employeeWages"
+            v-model:valueEmploy="employeeWageSelected"
             width="300px"
+            placeholder="선택"
           />
         </DxField>
       </div>
@@ -24,6 +26,7 @@
             <default-text-box
               v-model:valueInput="formData.company_name"
               placeholder="업체명"
+              disabled
             />
           </DxField>
         </a-col>
@@ -32,6 +35,7 @@
             <default-text-box
               v-model:valueInput="formData.phone"
               placeholder="전화번호"
+              disabled
             />
           </DxField>
         </a-col>
@@ -40,22 +44,25 @@
             <default-text-box
               v-model:valueInput="formData.fax"
               placeholder="팩스번호"
+              disabled
             />
           </DxField>
         </a-col>
         <a-col span="8">
           <DxField label="사업장관리번호">
             <default-text-box
-              v-model:valueInput="formData.adding"
+              v-model:valueInput="infoCompany.adding"
               placeholder="사업장관리번호"
+              disabled
             />
           </DxField>
         </a-col>
         <a-col span="16">
-          <DxField label="팩스번호">
+          <DxField label="주소">
             <default-text-box
-              v-model:valueInput="formData.address"
-              placeholder="팩스번호"
+              v-model:valueInput="infoCompany.adding"
+              placeholder="주소"
+              disabled
             />
           </DxField>
         </a-col>
@@ -66,6 +73,7 @@
             <default-text-box
               v-model:valueInput="formData.company_name"
               placeholder="성명"
+              disabled
             />
           </DxField>
         </a-col>
@@ -75,6 +83,7 @@
             <default-text-box
               v-model:valueInput="formData.fax"
               placeholder="주민등록번호"
+              disabled
             />
           </DxField>
         </a-col>
@@ -83,6 +92,7 @@
             <default-text-box
               v-model:valueInput="formData.fax"
               placeholder="보수변경 년월"
+              disabled
             />
           </DxField>
         </a-col>
@@ -92,6 +102,7 @@
             <default-text-box
               v-model:valueInput="formData.address"
               placeholder="변경된 보수월액"
+              disabled
             />
           </DxField>
         </a-col>
@@ -101,17 +112,17 @@
           <DxField label="취득대상보험선택" class="field-custom">
             <div class="d-flex gap-20">
               <checkbox-basic
-                :disabled="true"
+                disabled
                 label="국민연금"
                 v-model:valueCheckbox="formData.boolean"
               />
               <checkbox-basic
                 label="건강보험"
-                v-model:valueCheckbox="formData.boolean"
+                v-model:valueCheckbox="formData.boolean1"
               />
               <checkbox-basic
                 label="고용보험"
-                v-model:valueCheckbox="formData.boolean"
+                v-model:valueCheckbox="formData.boolean2"
               />
             </div>
           </DxField>
@@ -160,7 +171,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive, ref} from 'vue'
+import {computed, defineComponent, reactive, ref, watch} from 'vue'
 import UploadFile from "@/components/UploadFile.vue";
 import StandardForm from "@/components/common/StandardForm.vue";
 import DxField from "@/views/PA/PA8/components/DxField.vue";
@@ -170,6 +181,8 @@ import {companyId} from "@/helpers/commonFunction";
 import {useStore} from "vuex";
 import {FormCreatePA830} from "@/views/PA/PA8/const";
 import INITIAL_FORM from "@/views/PA/PA8/const"
+import {Company} from "@/views/PA/PA8/PA810/utils";
+import getCompany from "@/graphql/queries/common/getCompany";
 export default defineComponent({
   components: {
     UploadFile,
@@ -186,10 +199,17 @@ export default defineComponent({
     const store = useStore();
     const globalYear = computed(() => store.getters['settings/currentYear']);
     const employeeWages = ref();
+    const employeeWageSelected = ref();
     const formData = ref({...INITIAL_FORM.INITIAL_FORM_PA830})
     const variables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
+    });
+    const infoCompany = reactive({
+      name: "",
+      adding: "",
+      presidentName: "",
+      bizNumber: "",
     });
     const {result: dataEmployeeWages, onResult: onResultEmployeeWages, refetch: refetchDataEmployeeWages} = useQuery(queries.getEmployeeWages, variables, () => ({
         fetchPolicy: "no-cache",
@@ -200,13 +220,37 @@ export default defineComponent({
         employeeWages.value = data;
       }
     })
+
+    // get Company
+    const {
+      result: dataCompany,
+      loading,
+      refetch,
+    } = useQuery<{ getCompany: Company }>(
+      getCompany,
+      {id: companyId},
+      () => ({
+        // enabled: trigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(dataCompany, (value) => {
+      if (value) {
+        infoCompany.name = value.getCompany.name;
+        infoCompany.bizNumber = value.getCompany.bizNumber;
+        infoCompany.presidentName = value.getCompany.presidentName;
+        infoCompany.adding = value.getCompany.address;
+      }
+    });
     const onSubmit = async () => {
       console.log(formData.value)
     }
     return {
       employeeWages,
       formData,
-      onSubmit
+      onSubmit,
+      employeeWageSelected,
+      infoCompany
     }
   },
 })
