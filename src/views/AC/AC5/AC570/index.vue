@@ -1,4 +1,5 @@
 <template>
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div id="ac-570">
         <div class="page-content">
             <a-row>
