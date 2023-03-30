@@ -127,7 +127,7 @@
           <DxColumn caption="제작현황" cell-template="imputed" width="430"/>
           <template #imputed="{ data }">
             <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab4"
-              @productionStatusData="(value) => productionStatusData(value, data.rowIndex)" />
+              @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
           </template>
 
           <DxSummary>
@@ -139,7 +139,7 @@
     </div>
   </div>
   <request-file-popup v-if="modalRequestFile" :modalStatus="modalRequestFile" @closePopup="modalRequestFile = false"
-    :data="dataRequestFile" tabName="tab4"></request-file-popup>
+    :data="dataRequestFile" tabName="tab4" @onDoneRequest="doneRequestFile"></request-file-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -182,7 +182,7 @@ export default defineComponent({
     const checkbox2 = ref<boolean>(false);
     const checkbox3 = ref<boolean>(false);
     const checkbox4 = ref<boolean>(false);
-    const modalRequestFile = ref<boolean>(false);
+    let modalRequestFile = ref<boolean>(false);
     let companyIds = Array();
     const dataRequestFile = ref()
     const filterForm = reactive({
@@ -476,6 +476,11 @@ export default defineComponent({
       const bizNumber = value.toString()
       return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`
     }
+
+    const doneRequestFile = () => {
+      modalRequestFile.value = false
+      trigger.value = true
+    }
     return {
       globalYear,
       filterForm,
@@ -497,7 +502,8 @@ export default defineComponent({
       productionStatusData,
       selectionChanged,
       selectedRowKeys,
-      formatBizNumber
+      formatBizNumber,
+      doneRequestFile
     }
   }
 })

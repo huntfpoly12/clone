@@ -4,88 +4,88 @@
     <div class="ac-110__top">
       <div class="ac-110__top-grid">
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">01</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusEntering" />
+          <ProcessStatus :disabled="true" :valueStatus="statusEntering" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">02</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">03</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">04</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">05</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">06</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">07</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">08</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">09</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">10</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" />
+          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">11</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-110__top-grid-items">
-          <div class="ac-110__top-grid-items-text">
+          <div class="ac-110__top-grid-items-month">
             <span class="">12</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
+          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
       </div>
       <div class="ac-110__top-flex">
@@ -159,10 +159,11 @@
       <a-row class="ac-110__main-detail">
         <a-col span="17" class="ac-110__main-detail-detail1">
           <div class="ac-110__main-detail-detail1-title">
-            <b>거래내역-</b><span v-if="!!bankbookSelected">{{  bankbookSelected.bankbook.bankbookNickname  }} {{ getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
+            <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
+              getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
             <b style="margin-right: 5px;">-정상여부: </b>
             <button-basic v-if="!!bankbookSelected" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
-                :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
+              :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <DxDataGrid key-expr="bankbookId" :show-row-lines="true" :hoverStateEnabled="true"
@@ -171,70 +172,82 @@
               <DxScrolling mode="standard" show-scrollbar="always" />
               <DxExport :enabled="true" />
               <DxToolbar>
+                <DxItem template="summary-transaction-detail" css-class="cell-button-export" location="before" />
                 <DxItem template="button-reset" css-class="cell-button-export" />
                 <DxItem name="exportButton" css-class="cell-button-export" />
                 <DxItem location="after" template="button-add" css-class="cell-button-add" />
               </DxToolbar>
-              <template #button-reset>
-                <button-basic text="초기화" type="default" :mode="'contained'" />
-              </template>
-              <template #button-add>
-                <a-tooltip placement="top">
-                  <template #title>신규</template>
-                  <div>
-                    <DxButton icon="plus" />
-                  </div>
-                </a-tooltip>
-              </template>
-              <DxColumn caption="결의구분" cell-template="resolutionClassification" />
-              <template #resolutionClassification="{ data }">
-                {{ CommonResolutionClassification.find((item: any) => item.value ==
-                  data.data.transactionDetails.resolutionClassification).label }}
-              </template>
-              <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
-              <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
-              <DxColumn caption="적요" data-field="transactionDetails.summary" />
-              <DxColumn caption="계정과목" cell-template="accountCode" width="100" />
-              <template #accountCode="{ data }">
-                <account-code-select v-model:valueInput="data.data.transactionDetails.accountCode" />
-              </template>
-              <DxColumn caption="상대계정" cell-template="relationCode" width="100" />
-              <template #relationCode="{ data }">
-                <select-box-common :arrSelect="CommonFundingSource"
-                  v-model:valueInput="data.data.transactionDetails.relationCode" :required="true" />
-              </template>
-              <DxColumn caption="자금원천" cell-template="fundingSource" width="100" />
-              <template #fundingSource="{ data }">
-                <FundingSourceSelect v-model:valueInput="data.data.transactionDetails.fundingSource" />
-              </template>
-              <DxColumn caption="거래처" data-field="transactionDetails.clientId" alignment="start" />
-              <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
-              <template #letterOfApprovalType="{ data }">
-                <select-box-common :arrSelect="ComonLetterOfApprovalType"
-                  v-model:valueInput="data.data.transactionDetails.letterOfApprovalType" :required="true" />
-              </template>
-              <DxColumn caption="원인/용도" cell-template="causeUse" alignment="center" />
-              <template #causeUse="{ data }">
-                <EditOutlined v-if="data.data.content.length" style="font-size: 12px" @click="openPopupNoteItemDetail" />
-                <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail" />
-              </template>
-              <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
-              <template #goodsCount="{ data }">
-                <PlusOutlined v-if="!data.data.content.length" style="font-size: 12px" @click="openPopupItemDetail" />
-                <div v-else>{{ data.data.transactionDetails.goodsCount }}</div>
-              </template>
-              <DxColumn caption="메모" cell-template="memo" alignment="center" />
-              <template #memo="{ data }">
-                <EditOutlined v-if="data.data.content.length" style="font-size: 12px" @click="openPopupNoteItemDetail" />
-                <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail" />
-              </template>
 
-              <DxSummary>
-                <DxTotalItem column="결의구분" summary-type="count" display-format="통장내역수: {0}" />
-                <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="sumOfIncome" />
-                <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="sumOfExpenses" />
-              </DxSummary>
-            </DxDataGrid>
+            <template #summary-transaction-detail>
+              <div class="ac-110__main-detail-detail1-summary">
+                <div class="ac-110__main-detail-detail1-summary-quantity">
+                  <p class="ac-110__main-detail-detail1-summary-label">거래내역수:</p>
+                  <p class="ac-110__main-detail-detail1-summary-value">{{ dataSourceTransactionDetails.length }}</p>
+                </div>
+                <div class="ac-110__main-detail-detail1-summary-income">
+                  <p class="ac-110__main-detail-detail1-summary-label">수입액 합계:</p>
+                  <p class="ac-110__main-detail-detail1-summary-value">{{ sumOfIncome() }}</p>
+                </div>
+                <div class="ac-110__main-detail-detail1-summary-expenses">
+                  <p class="ac-110__main-detail-detail1-summary-label">지출액 합계:</p>
+                  <p class="ac-110__main-detail-detail1-summary-value">{{ sumOfExpenses() }}</p>
+                </div>
+              </div>
+            </template>
+            <template #button-reset>
+              <button-basic text="초기화" type="default" :mode="'contained'" @onClick="handleInitializeTransactionDetails" />
+            </template>
+            <template #button-add>
+              <a-tooltip placement="top">
+                <template #title>신규</template>
+                <div>
+                  <DxButton icon="plus" />
+                </div>
+              </a-tooltip>
+            </template>
+            <DxColumn caption="결의구분" cell-template="resolutionClassification" />
+            <template #resolutionClassification="{ data }">
+              {{ CommonResolutionClassification.find((item: any) => item.value ==
+                data.data.transactionDetails.resolutionClassification).label }}
+            </template>
+            <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
+            <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
+            <DxColumn caption="적요" data-field="transactionDetails.summary" />
+            <DxColumn caption="계정과목" cell-template="accountCode" width="100" />
+            <template #accountCode="{ data }">
+              <account-code-select v-model:valueInput="data.data.transactionDetails.accountCode" />
+            </template>
+            <DxColumn caption="상대계정" cell-template="relationCode" width="100" />
+            <template #relationCode="{ data }">
+              <select-box-common :arrSelect="CommonFundingSource"
+                v-model:valueInput="data.data.transactionDetails.relationCode" :required="true" />
+            </template>
+            <DxColumn caption="자금원천" cell-template="fundingSource" width="100" />
+            <template #fundingSource="{ data }">
+              <FundingSourceSelect v-model:valueInput="data.data.transactionDetails.fundingSource" />
+            </template>
+            <DxColumn caption="거래처" data-field="transactionDetails.clientId" alignment="start" />
+            <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
+            <template #letterOfApprovalType="{ data }">
+              <select-box-common :arrSelect="ComonLetterOfApprovalType"
+                v-model:valueInput="data.data.transactionDetails.letterOfApprovalType" :required="true" />
+            </template>
+            <DxColumn caption="원인/용도" cell-template="causeUse" alignment="center" />
+            <template #causeUse="{ data }">
+              <EditOutlined v-if="data.data.content.length" style="font-size: 12px" @click="openPopupNoteItemDetail" />
+              <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail" />
+            </template>
+            <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
+            <template #goodsCount="{ data }">
+              <PlusOutlined v-if="!data.data.content.length" style="font-size: 12px" @click="openPopupItemDetail" />
+              <div v-else>{{ data.data.transactionDetails.goodsCount }}</div>
+            </template>
+            <DxColumn caption="메모" cell-template="memo" alignment="center" />
+            <template #memo="{ data }">
+              <EditOutlined v-if="data.data.content.length" style="font-size: 12px" @click="openPopupNoteItemDetail" />
+              <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail" />
+            </template>
+          </DxDataGrid> 
           </a-spin>
         </a-col>
         <a-col span="7" class="ac-110__main-detail-detail2">
@@ -260,8 +273,8 @@
       @submit="isModalItemDetail = false" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" @closePopup="isModalNoteItemDetail = false"
       @submit="isModalNoteItemDetail = false" />
-    <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false"
-        title="변경이력" :idRowEdit="idRowEdit" typeHistory="ac-110" :data="popupHistoryData"/>
+    <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
+      typeHistory="ac-110" :data="popupHistoryData" />
   </div>
 </template>
 <script lang="ts">
@@ -416,8 +429,8 @@ export default defineComponent({
     const isModalHistory = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     // COMPUTED
-    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value)) 
-    
+    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value))
+
     const popupHistoryData = computed(() => {
       return {
         companyId: companyId,
@@ -515,6 +528,18 @@ export default defineComponent({
     errorUnregisterTransactionDetailsToAccountingDocuments(e => {
       notification('error', e.message)
     })
+    const {
+      mutate: initializeTransactionDetails,
+      onDone: doneInitializeTransactionDetails,
+      onError: errorInitializeTransactionDetails,
+      loading: loadingInitializeTransactionDetails,
+    } = useMutation(mutations.initializeTransactionDetails);
+    doneInitializeTransactionDetails((e) => {
+      notification('success', Message.getMessage('COMMON', '106').message)
+    })
+    errorInitializeTransactionDetails(e => {
+      notification('error', e.message)
+    })
     // WATCH
     watch(resAccountingProcesses, (value) => {
       triggerAccountingProcesses.value = false
@@ -569,7 +594,6 @@ export default defineComponent({
     const onFocusedRowChanging = (event: any) => {
       const item = event.rows[event.newRowIndex].data
       if (payloadGetTransactionDetails.bankbookDetailId === item.bankbookDetailId) return
-      console.log(item.bankbookDetailId);
       payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
       payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
       console.log(payloadGetTransactionDetails)
@@ -694,7 +718,7 @@ export default defineComponent({
       dataSourceTransactionDetails.value.forEach((item) => {
         total += item.transactionDetails.income
       });
-      return `수입액 합계: ${formatNumber(total)}`
+      return formatNumber(total)
     }
 
     const sumOfExpenses = () => {
@@ -702,7 +726,7 @@ export default defineComponent({
       dataSourceTransactionDetails.value.forEach((item) => {
         total += item.transactionDetails.spending
       });
-      return `지출액 합계: ${formatNumber(total)}`
+      return formatNumber(total)
     }
 
     const formatNumber = (value: number) => {
@@ -723,6 +747,14 @@ export default defineComponent({
 
     const modalHistory = () => {
       isModalHistory.value = true
+    }
+
+    const handleInitializeTransactionDetails = () => {
+      initializeTransactionDetails({
+        ...payloadGetTransactionDetails,
+        bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
+        bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
+      })
     }
 
     return {
@@ -781,7 +813,8 @@ export default defineComponent({
       isModalHistory,
       idRowEdit,
       modalHistory,
-      popupHistoryData
+      popupHistoryData,
+      handleInitializeTransactionDetails,
     };
   },
 });
