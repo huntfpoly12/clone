@@ -356,7 +356,6 @@ export default defineComponent({
     const isStatusLeaveOfAbsence = computed(() => formData.value.employmentStatus === EmploymentStatus.LeaveOfAbsence);
     const resetForm = () => {
       formData.value = cloneDeep(INITIAL_FORM.INITIAL_FORM_PA840)
-      console.log('employeeWageSelected', employeeWageSelected.value)
       employeeWageSelected.value = null
     };
     // watch listen props.isOpenModalCreate

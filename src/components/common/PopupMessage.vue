@@ -1,6 +1,6 @@
 <template>
-    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="521"
-        @cancel="cancelModal">
+    <a-modal v-model:visible="visibleConfirm" :mask-closable="false" class="confirm-md" footer="" :width="550"
+        @cancel="cancelModal" :style="{width: width}">
         <a-row>
             <a-col :span="4" v-if="false">
                 <warning-outlined :style="{ fontSize: '70px', color: '#faad14', paddingTop: '20px' }" />
@@ -50,6 +50,10 @@ export default defineComponent({
         isConfirmIcon: {
             type: Boolean,
             default: false
+        },
+        width: {
+          type: [Number, String],
+          default: 521,
         }
     },
     components: {
@@ -113,6 +117,7 @@ export default defineComponent({
                             cancelText: props.cancelText,
                             ...icon,
                             class: props.isConfirmIcon ? '' : 'noIcon',
+                            width: props.width,
                             onOk() {
                                 emit("closePopup", false)
                                 emit("checkConfirm", true)
