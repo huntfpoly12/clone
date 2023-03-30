@@ -6,14 +6,16 @@
     :visible="isOpenModalCreate"
     title="급여변경신고"
     centered
-    @cancel="$emit('closeModal')"
+    @cancel="closePopup"
     :footer="null"
+    :mask-closable="false"
   >
     <standard-form ref="formRef">
       <div class="mb-10">
         <DxField label="직원선택">
           <employ-select
             :arrayValue="employeeWages"
+            v-model:valueEmploy="employeeWageSelected"
             width="300px"
           />
         </DxField>
@@ -22,24 +24,18 @@
         <a-col span="8">
           <DxField label="업체명">
             <default-text-box
-              v-model:valueInput="formData.company_name"
+              v-model:valueInput="infoCompany.name"
               placeholder="업체명"
+              disabled
             />
           </DxField>
         </a-col>
         <a-col span="8">
-          <DxField label="전화번호">
+          <DxField label="대표자명">
             <default-text-box
               v-model:valueInput="formData.phone"
-              placeholder="전화번호"
-            />
-          </DxField>
-        </a-col>
-        <a-col span="8">
-          <DxField label="팩스번호">
-            <default-text-box
-              v-model:valueInput="formData.fax"
-              placeholder="팩스번호"
+              placeholder="대표자명"
+              disabled
             />
           </DxField>
         </a-col>
@@ -48,14 +44,7 @@
             <default-text-box
               v-model:valueInput="formData.adding"
               placeholder="사업장관리번호"
-            />
-          </DxField>
-        </a-col>
-        <a-col span="16">
-          <DxField label="팩스번호">
-            <default-text-box
-              v-model:valueInput="formData.address"
-              placeholder="팩스번호"
+              disabled
             />
           </DxField>
         </a-col>
@@ -68,6 +57,7 @@
               v-model:valueInput="formData.company_name"
               placeholder="성명"
               width="200px"
+              disabled
             />
           </DxField>
         </a-col>
@@ -77,6 +67,7 @@
               v-model:valueInput="formData.fax"
               placeholder="주민등록번호"
               width="200px"
+              disabled
             />
           </DxField>
         </a-col>
@@ -101,6 +92,7 @@
               dateFormat="YYYY-MM-DD"
               v-model="formData.contractExpiredDate"
               width="200px"
+              :disabled="isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -116,13 +108,20 @@
               name="type"
               placeholder="선택"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             >
             </DxSelectBox>
           </DxField>
         </a-col>
         <a-col :span="col.right">
           <DxField label="복귀후 급여(납부재개)" class="field-custom">
-            <number-box-money :disabled="true" width="200px" v-model:valueInput="formData.money" />
+            <number-box-money
+              width="200px"
+              v-model:valueInput="formData.money"
+              :disabled="isStatusLeaveOfAbsence"
+              placeholder="원"
+              format="#,### 원"
+            />
           </DxField>
 
         </a-col>
@@ -131,7 +130,12 @@
         <a-col :span="col.left">
           <DxField label="휴직계파일">
             <div class="fileuploader-container">
-              <UploadFile label="파일 선택" @response-fileId="getFileId" :isFileList="false"/>
+              <UploadFile
+                label="파일 선택"
+                @response-fileId="getFileId"
+                :isFileList="false"
+                :disabled="!isStatusLeaveOfAbsence"
+              />
             </div>
           </DxField>
         </a-col>
@@ -140,6 +144,7 @@
             <a-radio-group
               v-model:value="formData.paymentDesire"
               class="d-flex items-center"
+              :disabled="isStatusLeaveOfAbsence"
             >
               <a-radio :value="PaymentDesire.No">{{ PaymentDesire.No }}</a-radio>
               <a-radio :value="PaymentDesire.Yes">{{ PaymentDesire.Yes }}</a-radio>
@@ -154,6 +159,7 @@
               dateFormat="YYYY-MM-DD"
               v-model="formData.leaveStartDate"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -168,12 +174,17 @@
               dateFormat="YYYY-MM-DD"
               v-model="formData.leaveOfAbsence"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
         <a-col :span="col.right">
           <DxField label="연도" class="field-custom">
-            <year-picker-box-custom v-model:valueDate="formData.year" color="#a6a6a6" />
+            <year-picker-box-custom
+              v-model:valueDate="formData.year"
+              color="#a6a6a6"
+              :disabled="isStatusLeaveOfAbsence"
+            />
           </DxField>
         </a-col>
 
@@ -188,6 +199,7 @@
               name="type"
               placeholder="선택"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -197,6 +209,8 @@
               width="200px"
               v-model:valueInput="formData.totalRemuneration"
               placeholder="원"
+              :disabled="isStatusLeaveOfAbsence"
+              format="#,### 원"
             />
           </DxField>
         </a-col>
@@ -212,6 +226,7 @@
               name="type"
               placeholder="선택"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -220,8 +235,9 @@
 
             <text-number-box
               :value="formData.totalRemuneration"
-              placeholder="원"
+              placeholder="건"
               width="200px"
+              :disabled="isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -237,6 +253,7 @@
               name="type"
               placeholder="선택"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -253,6 +270,7 @@
               name="type"
               placeholder="선택"
               width="200px"
+              :disabled="!isStatusLeaveOfAbsence"
             />
           </DxField>
         </a-col>
@@ -274,7 +292,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive, ref} from 'vue'
+import {computed, defineComponent, reactive, ref, watch} from 'vue'
 import UploadFile from "@/components/UploadFile.vue";
 import StandardForm from "@/components/common/StandardForm.vue";
 import DxField from "@/views/PA/PA8/components/DxField.vue";
@@ -285,6 +303,10 @@ import {useStore} from "vuex";
 import {EmploymentStatus, FormCreatePA830, PaymentDesire} from "@/views/PA/PA8/const";
 import INITIAL_FORM from "@/views/PA/PA8/const"
 import DxSelectBox from 'devextreme-vue/select-box';
+import {useCompanyInfo} from "@/helpers/useCompanyInfo";
+import {cloneDeep, isEqual} from "lodash";
+import INITIAL_DATA from "@/views/PA/PA8/PA810/utils";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 
 
 export default defineComponent({
@@ -300,10 +322,13 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const store = useStore();
+    const { infoCompany } = useCompanyInfo(companyId)
+
     const globalYear = computed(() => store.getters['settings/currentYear']);
     const employeeWages = ref();
+    const employeeWageSelected = ref();
     const formData = ref({...INITIAL_FORM.INITIAL_FORM_PA840})
     const variables = reactive({
       companyId: companyId,
@@ -324,14 +349,42 @@ export default defineComponent({
     const getFileId = (fileId: { id: number }) => {
       formData.value.dependentsEvidenceFileStorageId = fileId.id;
     };
+    const isFormChange = computed(() => {
+      return !isEqual(cloneDeep(INITIAL_FORM.INITIAL_FORM_PA840), cloneDeep(formData.value))
+        || Boolean(employeeWageSelected.value)
+    });
+    const isStatusLeaveOfAbsence = computed(() => formData.value.employmentStatus === EmploymentStatus.LeaveOfAbsence);
+    const resetForm = () => {
+      formData.value = cloneDeep(INITIAL_FORM.INITIAL_FORM_PA840)
+      employeeWageSelected.value = null
+    };
+    // watch listen props.isOpenModalCreate
+    watch(() => props.isOpenModalCreate, (val) => {
+      if (!val) {
+        resetForm();
+      }
+    })
+    const closePopup = () => {
+      if (isFormChange.value) {
+        comfirmClosePopup(() => {
+          emit('closeModal')
+        })
+      } else {
+        emit('closeModal')
+      }
+    }
     return {
       employeeWages,
+      employeeWageSelected,
       formData,
       onSubmit,
       EmploymentStatus,
       PaymentDesire,
       INITIAL_FORM,
       getFileId,
+      infoCompany,
+      closePopup,
+      isStatusLeaveOfAbsence,
       col: {
         left: 13,
         right: 9,
@@ -346,5 +399,8 @@ export default defineComponent({
 @import "@/views/PA/PA8/styles/index.scss";
 .gap-20 {
   gap: 20px;
+}
+:deep(.dx-texteditor-input){
+  text-align: left !important;
 }
 </style>

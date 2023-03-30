@@ -7,14 +7,15 @@
           <div>
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
+        </div>
+      </a-col>
+      <a-col>
+        <div class="search-date" style="flex-direction: column;">
           <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10" v-if="tab1">
             <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
             <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
-
-        </div>
-        <div class="search-date">
           <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
@@ -23,6 +24,7 @@
             <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
+
         </div>
       </a-col>
       <a-col>
@@ -137,7 +139,7 @@ export default defineComponent({
       if (!newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
-        filterBF620.value.productionStatuses = [0];
+        filterBF620.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
     // afterDeadLineIndex

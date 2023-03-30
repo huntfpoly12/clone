@@ -1,5 +1,6 @@
 <template>
-    <div id="ac-510">
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
+    <div id="ac-590">
         <div class="top">
             <div class="month">
                 <span class="period">기간</span>

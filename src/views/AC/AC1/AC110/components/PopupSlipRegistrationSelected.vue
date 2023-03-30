@@ -7,13 +7,13 @@
           <a-row>
             <a-col span="12" class="ac-110-popup-registrantion-selected-form-input">
               <a-form-item label="선택된 통장내역">
-                <default-text-box :width="150" />
+                <default-text-box :width="150" :readOnly="true" :valueInput="propListSlipRegistrationSelected.count"/>
               </a-form-item>
               <span class="mr-10">건</span>
             </a-col>
             <a-col span="12" class="ac-110-popup-registrantion-selected-form-input">
               <a-form-item label="대상 거래내역">
-                <default-text-box :width="150" />
+                <default-text-box :width="150" :readOnly="true" :valueInput="propListSlipRegistrationSelected.selectedRowKeys"/>
               </a-form-item>
               <span class="mr-10">건</span>
             </a-col>
@@ -40,6 +40,13 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    propListSlipRegistrationSelected: {
+      type: Object,
+      default: () => ({
+        count: 0,
+        selectedRowKeys: []
+      })
+    }
   },
   components: {
   },

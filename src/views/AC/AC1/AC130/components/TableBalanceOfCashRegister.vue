@@ -89,6 +89,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+p {
+  padding: 10px 10px 0 10px;
+}
 .ac-110-popup-detail {
   &-btn {
     margin-top: 20px;

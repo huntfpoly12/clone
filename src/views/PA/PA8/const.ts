@@ -11,6 +11,8 @@ const INITIAL_FORM_PA830 = {
   change_time: '',
   change_amount: '',
   boolean: true,
+  boolean1: true,
+  boolean2: true,
   radio: 2,
   radio1: 2,
 }
@@ -45,6 +47,11 @@ const INITIAL_FORM_PA840 = {
   totalRemuneration: '',
   numberOfInstallmentPayments: '',
   dependentsEvidenceFileStorageId: 0
+}
+
+const INITIAL_FORM_PA870 = {
+  nationalPension: false,
+  employmentInsurance: false
 }
 
 const LeaveOfAbsenceDocument = [
@@ -90,6 +97,7 @@ export type FormCreatePA830 = typeof INITIAL_FORM_PA830
 export default {
   INITIAL_FORM_PA830,
   INITIAL_FORM_PA840,
+  INITIAL_FORM_PA870,
   LeaveOfAbsenceDocument,
   NationalPensionPaymentExemptionCode,
   ReasonForDeferringHealthInsurancePayments,

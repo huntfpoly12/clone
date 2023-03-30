@@ -5,7 +5,7 @@
         <div class="ac-110-popup-cancellation-text">
           <span class="mr-10">대상 거래내역</span>
           <a-form-item>
-            <default-text-box :width="150" />
+            <default-text-box :width="150" :valueInput="transactionDetailsCountSelected" :readOnly="true" />
           </a-form-item>
           <span class="mr-10">건</span>
           <span>상기와 같이 전표취소하시겠습니까? </span>
@@ -29,6 +29,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    transactionDetailsCountSelected: {
+      type: Number,
+      default: null,
+    }
   },
   components: {
   },

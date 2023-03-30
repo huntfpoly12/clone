@@ -1,4 +1,5 @@
 <template>
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div id="ac-570">
         <div class="page-content">
             <a-row>
@@ -71,10 +72,10 @@
                         <StandardForm class="ac-570-form" formName="ac-570-form" ref="ac570FormRef">
                             <h2 class="text-align-center">과목전용조서</h2>
                             <a-row>
-                                <a-col :span="12"></a-col>
-                                <a-col :span="12">
+                                <a-col :span="11"></a-col>
+                                <a-col :span="13">
                                     <a-form-item label="전용일자" :label-col="{ span: 9 }" class="red">
-                                        <date-time-box width="140px" dateFormat="YYYY-MM-DD" disabled="true" />
+                                        <date-time-box width="145px" dateFormat="YYYY-MM-DD" disabled="true" />
                                     </a-form-item>
                                 </a-col>
                             </a-row>
@@ -126,7 +127,7 @@
                                     <number-box width="150px" placeholder="" disabled="true" />
                                 </a-form-item>
                                 <a-form-item label="전용사유" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" disabled="true" />
+                                    <number-box width="150px" placeholder="" />
                                 </a-form-item>
                             </div>
                             <div class="text-align-center mt-20" style="display: flex; justify-content: center;">

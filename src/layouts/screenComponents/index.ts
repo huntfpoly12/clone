@@ -148,6 +148,9 @@ const AC560 = defineAsyncComponent(() =>
 const AC570 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC570/index.vue")
 );
+const AC580 = defineAsyncComponent(() =>
+    import("@/views/AC/AC5/AC580/index.vue")
+);
 const AC590 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC590/index.vue")
 );
@@ -156,6 +159,9 @@ const AC610 = defineAsyncComponent(() =>
 );
 const AC620 = defineAsyncComponent(() =>
     import("@/views/AC/AC6/AC620/index.vue")
+);
+const AC630 = defineAsyncComponent(() =>
+    import("@/views/AC/AC6/AC630/index.vue")
 );
 const AC520 = defineAsyncComponent(() =>
     import("@/views/AC/AC5/AC520/index.vue")
@@ -209,9 +215,11 @@ export {
     AC550,
     AC560,
     AC570,
+    AC580,
     AC590,
     AC610,
     AC620,
+    AC630,
     AC520,
     Test,
     Example

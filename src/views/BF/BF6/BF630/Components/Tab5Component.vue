@@ -39,12 +39,17 @@
                 :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="일련번호" data-field="electronicFilingId"  width="100px" alignment="center"/>
                 <DxColumn caption="참고사항" data-field="referenceInformation" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
                         format="yyyy-MM-dd hh:mm" />
-                <DxColumn caption="아이디" data-field="productionRequestUser.id"/>
-                <DxColumn caption="제작현황" data-field="productionStatus" />
+                <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center"/>
+                <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center"/>
+                <template #productionStatus="{ data }">
+                  <production-status :typeTag="0" v-if="data.data.productionStatus == 0" padding="0px 10px"/>
+                  <production-status :typeTag="4" v-if="data.data.productionStatus == 2" padding="1px 10px"/>
+                  <production-status :typeTag="5" v-if="data.data.productionStatus == -1" padding="1px 10px"/>
+                </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action"/>
                 <template #action="{ data }"> 
                   <div style="text-align: center">
@@ -69,7 +74,6 @@ import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
-import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import filters from "@/helpers/filters";
@@ -97,10 +101,9 @@ export default defineComponent({
     const trigger = ref<boolean>(true);
     const typeCheckbox = ref([0, 2, -1])
     const valueType = ref(0)
-    const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
+    const rangeDate =  ref([filters.formatDateToInterger(dayjs().subtract(7, 'day')), filters.formatDateToInterger(dayjs())])
     const productionStatuses =  ref(0)
     const dataSource = ref<any>([])
-    let companyIds = Array();
     const dataPopup = ref()
     const modalCompanies = ref<boolean>(false)
     const originData = reactive({

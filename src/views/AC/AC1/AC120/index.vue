@@ -1,5 +1,5 @@
 <template>
-    <action-header title="통장내역" :buttonDelete="false" />
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div class="ac-120">
         <div class="top">
             <div class="grid">
@@ -8,84 +8,84 @@
                         <span class="">01</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusEntering" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusEntering" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">02</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusInput" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">03</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">04</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">05</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">06</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">07</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">08</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">09</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">10</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">11</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
                 </div>
                 <div class="items">
                     <div class="text">
                         <span class="">12</span>
                         <span class="">월</span>
                     </div>
-                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" />
+                    <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
                 </div>
             </div>
             <div class="flex">

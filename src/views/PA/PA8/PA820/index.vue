@@ -143,7 +143,33 @@ export default defineComponent({
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const dataSource = ref([]);
     const focusedRowKey = ref();
-    //---------------------------add new data------------------
+    
+    // -----------------------------MAIL-------------------
+
+    const modalMail = ref(false);
+    const openMailModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+    
+    // -----------------------------PRINT-------------------
+
+    const modalPrint = ref(false);
+    const openPrintModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+    
+    // -----------------------------DELETE-------------------
+
+    const modalDelete = ref(false);
+    const openDeleteModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+
+    //---------------------------ADD FORM------------------
+
     const isOpenModalCreate = ref(false);
     const openAddNewModal = () => {
       isOpenModalCreate.value = true;
@@ -152,7 +178,8 @@ export default defineComponent({
       // refetch();
       isOpenModalCreate.value = false;
     };
-    // -----------------------------history-------------------
+
+    // -----------------------------HISTORY-------------------
 
     const modalHistory = ref(false);
     const onOpenLogs = (e: any) => {
