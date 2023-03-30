@@ -46,13 +46,13 @@
           <DxColumn caption="참고사항" data-field="referenceInformation" />
           <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="아이디" data-field="productionRequestUserId" />
-          <DxColumn caption="다운로드" data-field="seal" cell-template="seal"/>
+          <!-- <DxColumn caption="다운로드" data-field="seal" cell-template="seal"/>
           <template #seal="{ data }">
             <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
             <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
             <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
             <production-status :typeTag="5" v-if="data.value == -1" padding="1px 10px" />
-          </template>
+          </template> -->
           <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" />
           <template #productionStatus="{ data }">
             <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
