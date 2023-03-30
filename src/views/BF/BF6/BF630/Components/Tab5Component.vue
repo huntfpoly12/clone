@@ -74,16 +74,14 @@ import { useStore } from "vuex";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
-import {companyId} from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from "dayjs";
 import filters from "@/helpers/filters";
 import CompaniesPopup from "./CompaniesPopup.vue";
-import GetStatusTable from "./GetStatusTable.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup, GetStatusTable
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
   },
   props: {
     activeSearch: {
@@ -103,10 +101,9 @@ export default defineComponent({
     const trigger = ref<boolean>(true);
     const typeCheckbox = ref([0, 2, -1])
     const valueType = ref(0)
-    const rangeDate =  ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs().add(7, 'day'))])
+    const rangeDate =  ref([filters.formatDateToInterger(dayjs().subtract(7, 'day')), filters.formatDateToInterger(dayjs())])
     const productionStatuses =  ref(0)
     const dataSource = ref<any>([])
-    let companyIds = Array();
     const dataPopup = ref()
     const modalCompanies = ref<boolean>(false)
     const originData = reactive({

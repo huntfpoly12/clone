@@ -108,7 +108,7 @@ export default defineComponent({
         // onDone tab 1
         onDoneTab1(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab1((e: any) => {
             notification('error', e.message)
@@ -116,7 +116,7 @@ export default defineComponent({
         // onDone tab 2
         onDoneTab2(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab2((e: any) => {
             notification('error', e.message)
@@ -124,7 +124,7 @@ export default defineComponent({
         // onDone tab 3
         onDoneTab3(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab3((e: any) => {
             notification('error', e.message)
@@ -132,7 +132,7 @@ export default defineComponent({
         // onDone tab 4
         onDoneTab4(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab4((e: any) => {
             notification('error', e.message)

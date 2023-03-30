@@ -4,88 +4,88 @@
     <div class="ac-130__top">
       <div class="ac-130__top-grid">
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">01</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusEntering" />
+          <ProcessStatus :valueStatus="statusEntering" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">02</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">03</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">04</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">05</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">06</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">07</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">08</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">09</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">10</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" />
+          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">11</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" />
+          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
-          <div class="ac-130__top-grid-items-text">
+          <div class="ac-130__top-grid-items-month">
             <span class="">12</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" />
+          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
       </div>
       <div class="ac-130__top-status">
