@@ -53,7 +53,7 @@ export default [
   { name: "예산서 자동작성", url: "#", id: "ac-380" },
 
   { name: "장부", url: "/dashboard/ac-510", id: "ac-510" },
-  { name: "예산서", url: "#", id: "ac-520" },
+  { name: "예산서", url: "/dashboard/ac-520", id: "ac-520" },
   { name: "정부보조금명세서", url: "/dashboard/ac-530", id: "ac-530" },
   { name: "예비비사용조서", url: "/dashboard/ac-540", id: "ac-540" },
   { name: "사업비명세서", url: "/dashboard/ac-550", id: "ac-550" },
@@ -103,13 +103,10 @@ export default [
 
   { name: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810" },
   { name: "상실신고", url: "/dashboard/pa-820", id: "pa-820" },
-  { name: "급여변경신고", url: "#", id: "pa-830" },
-  { name: "휴직복직신고", url: "#", id: "pa-840" },
-  { name: "상실신고", url: "#", id: "pa-820" },
   { name: "급여변경신고", url: "/dashboard/pa-830", id: "pa-830" },
   { name: "휴직복직신고", url: "/dashboard/pa-840", id: "pa-840" },
   { name: "보수총액신고", url: "#", id: "pa-850" },
-  { name: "보험사무대행신고", url: "#", id: "pa-860" },
+  { name: "보험사무대행신고", url: "/dashboard/pa-860", id: "pa-860" },
   { name: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870" },
   { name: "사업장탈퇴신고", url: "/dashboard/pa-880", id: "pa-880" },
 ];

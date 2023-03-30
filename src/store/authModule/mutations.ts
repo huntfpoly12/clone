@@ -1,18 +1,19 @@
+import {MutationTree} from "vuex";
+import {AuthState} from "./types";
 
-const mutations = {
-  setAuthData: (state : any,authData: string) => {
+const mutations: MutationTree<AuthState> = {
+  setAuthData: (state,authData) => {
     sessionStorage.setItem("token", authData);
-    
-    
-    state.authData = 'dsfsdfsdfsdfsdfsf';
-    console.log(state.authData);
   },
-  logout: (state: { authData: null; }) => {
+  setTokenInfo: (state,data) => {
+    state.tokenInfo = data
+  },
+  logout: (state) => {
     state.authData = null;
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('username');
   },
-  loadUserInfor(state: any, dataInfor: any) {
+  loadUserInfo(state: any, dataInfor: any) {
     state.userInfor = dataInfor
   }
 };

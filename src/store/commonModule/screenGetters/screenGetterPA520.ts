@@ -1,0 +1,28 @@
+const screenGetterPA520 = {
+  checkChangeValueEditTab1PA520:(state:any)=> state.checkChangeValueEditTab1PA520,
+  checkChangeValueEditTab2PA520: (state: any) => state.checkChangeValueEditTab2PA520,
+  checkChangeValueAddPA520:(state:any)=> state.checkChangeValueAddPA520,
+  isValidateAddPA520: (state: any) => state.isValidateAddPA520,
+  isTab1ValidateEditPA520:(state:any)=> state.isTab1ValidateEditPA520,
+  isTab2ValidateEditPA520: (state: any) => state.isTab2ValidateEditPA520,
+  addBtOnclickPA520:(state:any)=> state.addBtOnclickPA520,
+  idRowCurrentClickPA520: (state: any) => state.idRowCurrentClickPA520,
+  idRowCurrentEditPA520:(state:any)=> state.idRowCurrentEditPA520,
+  idRowSaveDonePA520:(state:any)=> state.idRowSaveDonePA520,
+  focusedRowKeyPA520: (state: any) => state.focusedRowKeyPA520,
+  isClickRowPA520:(state:any)=> state.isClickRowPA520,
+  isClickDeletePA520: (state: any) => state.isClickDeletePA520,
+  isClickBtnSavePA520: (state: any) => state.isClickBtnSavePA520,
+  keyActiveStepPA520: (state: any) => state.keyActiveStepPA520,
+  activeAddRowPA520: (state: any) => state.activeAddRowPA520,
+  actionSaveAddPA520: (state: any) => state.actionSaveAddPA520,
+  actionUpdateTab1PA520:(state:any)=> state.actionUpdateTab1PA520,
+  actionUpdateTab2PA520: (state: any) => state.actionUpdateTab2PA520,
+  isChangeYearPA520: (state: any) => state.isChangeYearPA520,
+  setTabActivePA520:(state:any)=> state.setTabActivePA520,
+  modalChangeValueEditPA520:(state:any)=> state.modalChangeValueEditPA520,
+  modalChangeValueAddPA520: (state: any) => state.modalChangeValueAddPA520,
+  setComponentPA520: (state: any) => state.setComponentPA520,
+};
+  
+export default screenGetterPA520;

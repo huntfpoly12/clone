@@ -174,7 +174,7 @@
   </a-layout>
 </template>
 <script >
-import { defineComponent, ref, watch,computed } from "vue";
+import { defineComponent, ref, watch, computed, onMounted } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
@@ -215,20 +215,19 @@ import {
   PA820,
   PA830,
   PA840,
+  PA860,
   PA870,
   PA880,
   AC110,
   AC120,
   AC130,
-  AC510,
   AC530,
   AC540,
   AC550,
   AC560,
-  AC570,
-  AC590,
   AC610,
   AC620,
+  AC520,
   Test,
   Example,
 } from "./screenComponents";
@@ -246,6 +245,8 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import { getJwtObject } from '@bankda/jangbuda-common';
+import { companyId } from "@/helpers/commonFunction";
+import dayjs from "dayjs";;
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -292,20 +293,19 @@ export default defineComponent({
     PA820,
     PA830,
     PA840,
+    PA860,
     PA870,
     PA880,
     AC110,
     AC120,
     AC130,
-    AC510,
     AC530,
     AC540,
     AC550,
     AC560,
-    AC570,
-    AC590,
     AC610,
     AC620,
+    AC520,
     Test,
     Example,
     MenuFoldOutlined,
@@ -462,18 +462,17 @@ export default defineComponent({
       if (this.activeTab.id === "pa-820") return 'PA820';
       if (this.activeTab.id === "pa-830") return 'PA830';
       if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-860") return 'PA860';
       if (this.activeTab.id === "pa-880") return 'PA880';
       if (this.activeTab.id === "pa-870") return 'PA870';
       if (this.activeTab.id === "ac-110") return 'AC110';
       if (this.activeTab.id === "ac-120") return 'AC120';
       if (this.activeTab.id === "ac-130") return 'AC130';
-      if (this.activeTab.id === "ac-510") return 'AC510';
       if (this.activeTab.id === "ac-530") return 'AC530';
+      if (this.activeTab.id === "ac-520") return 'AC520';
       if (this.activeTab.id === "ac-540") return 'AC540';
       if (this.activeTab.id === "ac-550") return 'AC550';
       if (this.activeTab.id === "ac-560") return 'AC560';
-      if (this.activeTab.id === "ac-570") return 'AC570';
-      if (this.activeTab.id === "ac-590") return 'AC590';
       if (this.activeTab.id === "ac-610") return 'AC610';
       if (this.activeTab.id === "ac-620") return 'AC620';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
@@ -481,8 +480,6 @@ export default defineComponent({
     },
   },
   setup() {
-
-
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref(["bf-000"]);
@@ -498,9 +495,19 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-  //     const token = sessionStorage.getItem("token");
-  // const jwtObject = getJwtObject(token);
-  //   console.log(jwtObject);
+
+    onMounted(async() => {
+      const token = sessionStorage.getItem("token");
+      const jwtObject = getJwtObject(token);
+      store.commit('auth/setTockenInfor',jwtObject)
+     // get and set account subject
+      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+      await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+
+
+      store.commit('auth/setTokenInfo',jwtObject)
+      console.log(store.getters['auth/getTokenInfo']);
+    })
     /**
     * Check scroll tab if overflow
     */

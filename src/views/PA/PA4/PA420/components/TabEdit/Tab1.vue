@@ -256,7 +256,7 @@
     </standard-form>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted, onBeforeMount, onBeforeUnmount } from 'vue'
+import { defineComponent, ref, watch, reactive } from 'vue'
 import dayjs from "dayjs";
 import { openTab } from '@/helpers/commonFunction';
 import  filters from '@/helpers/filters';
@@ -316,6 +316,7 @@ export default defineComponent({
             (document.getElementById("btn-next-step") as HTMLInputElement).click();
         });
 
+
         watch(() => store.state.common.formStateEditPA420, (value: any,oldValue) => {
             dataGet.value = value
             month1.value = props.processKey.imputedYear.toString() + filters.formatMonth(props.processKey.imputedMonth.toString()) 
@@ -327,7 +328,7 @@ export default defineComponent({
         });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService.settlementFinishDate, (newVal) => {
-            dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal
+            if(newVal) dataGet.value.specification.specificationDetail.lastRetiredYearsOfService.settlementStartDate = newVal 
         });
 
         watch(() => dataGet.value.specification.specificationDetail.prevRetiredYearsOfService, (newVal) => {

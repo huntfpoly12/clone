@@ -352,6 +352,7 @@ export default defineComponent({
         const formStateExtraOld: any = ref({});
         const resetFormNum = ref(1);
         const dataSource = ref([]);
+        const dataSourceOld = ref([]);
         const dataActiveRow = ref<any>(JSON.parse(JSON.stringify({ ...initialState.info.accounting[0] })))
         const withholdingServiceType = ref(false)
         const rowIndex = ref<number>(0);
@@ -474,6 +475,7 @@ export default defineComponent({
                         ...item, rowIndex: key
                     }
                 })
+                dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
                 dataActiveRow.value = dataSource.value[0]
             }
             setTimeout(() => {
@@ -518,7 +520,8 @@ export default defineComponent({
 
         // ============= FUNCTION ==============================
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault) != JSON.stringify(formState))
+            if ((JSON.stringify(objDataDefault) != JSON.stringify(formState)) ||
+            (JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value)))
                 comfirmClosePopup(() => emit("closePopup", false))
             else
                 emit("closePopup", false)

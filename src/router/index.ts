@@ -211,6 +211,10 @@ const routes = [
         component: () => import('../views/PA/PA8/PA840/index.vue'),
       },
       {
+        path: "pa-860",
+        component: () => import('../views/PA/PA8/PA860/index.vue'),
+      },
+      {
         path: "pa-880",
         component: () => import('../views/PA/PA8/PA880/index.vue'),
       },
@@ -237,6 +241,10 @@ const routes = [
       {
         path: "ac-530",
         component: () => import('../views/AC/AC5/AC530/index.vue'),
+      },
+      {
+        path: "ac-520",
+        component: () => import('../views/AC/AC5/AC520/index.vue'),
       },
       {
         path: "ac-540",
