@@ -7,9 +7,10 @@
       @change="onFileChange"
       :beforeUpload="beforeUpload"
       :headers="headers"
+      :disabled="disabled"
     >
       <div class="d-flex d-flex-center justify-content-center">
-        <div class="btn-upload">
+        <div :class="`btn-upload ${disabled && 'disable'}`">
           <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload" />
           <span>{{ label }}</span>
         </div>
@@ -36,12 +37,6 @@ import Repository from "@/repositories";
 
 const uploadRepository = Repository.get("upload");
 
-function getBase64(file: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(file);
-}
-
 export default defineComponent({
   props: {
     category: {
@@ -66,6 +61,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     UploadOutlined,
@@ -167,6 +166,10 @@ export default defineComponent({
   &:hover {
     background: #e5e5e5;
     transition: all 0.3s ease;
+  }
+  &.disable {
+    background: #e5e5e5;
+    cursor: not-allowed;
   }
   span {
     font-size: 14px;
