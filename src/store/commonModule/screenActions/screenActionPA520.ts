@@ -24,6 +24,17 @@ const screenActionPA520 = {
     commit('setIsClickBtnSavePA520',false)
     commit('setAddBtOnclickPA520',false)
   },
+
+  resetStatusChangeFrom({getters,commit} : any){
+    commit('setCheckEditTab1PA520',false)
+    commit('setCheckEditTab2PA520',false)
+    commit('setCheckChangeValueAddPA520',false)
+  },
+
+  resetStatusValidate({getters,commit} : any){
+    commit('setTab1ValidateEditPA520',false)
+    commit('setTab2ValidateEditPA520',false)
+  },
   hasValidator({ getters, commit }: any) {
     if (getters.isTab1ValidateEditPA520 || getters.isTab2ValidateEditPA520 || getters.isValidateAddPA520) return true
     return false

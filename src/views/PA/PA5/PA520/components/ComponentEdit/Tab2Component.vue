@@ -1,7 +1,7 @@
 <template>
-    <div id="tab2-pa520"> 
+    <div id="tab2-pa520">
       <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
-        <div class="header-text-1">공제</div>
+        <div class="header-text-1">공제 {{ validateCalculate }} {{ isBtnYellow }}</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
@@ -155,7 +155,7 @@ import { FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
-        idRowEdit: Number
+ 
     },
     setup(props, { emit }) {
         let dataReturn = ref()
@@ -163,6 +163,8 @@ export default defineComponent({
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
+        const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const insuranceSupport = ref(false)
@@ -172,17 +174,17 @@ export default defineComponent({
         
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
         })
         const originDataDetail = ref({
             companyId: companyId,
             imputedYear: globalYear,
-            employeeId: props.idRowEdit,
+            employeeId: idRowEdit,
         })
         let originDataUpdate: any = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
-            employeeId: props.idRowEdit,
+            employeeId: idRowEdit.value,
             input: {
                 ...originDataInputUpdate
             },
@@ -205,7 +207,8 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
-            originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
+            // originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
+            // store.dispatch('common/setCheckEditTab2PA520',false)
           }
         })    
           
@@ -237,9 +240,13 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
 
-        resApiGetEmployeeWageDaily((dtValue: any) => {
-            trigger.value = false
-            if (dtValue.data) {
+      resApiGetEmployeeWageDaily((dtValue: any) => {
+          
+          trigger.value = false
+          validateCalculate.value = false
+        isBtnYellow.value = false
+          alert(isBtnYellow.value)
+          if (dtValue.data) {
                 let res = dtValue.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
@@ -269,7 +276,8 @@ export default defineComponent({
                 })
                 if (dataAddDedution)
                     originDataUpdate.value.input.deductionItems = dataAddDedution
-                dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
+              dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
+            
             }
         })
         const {
@@ -282,7 +290,7 @@ export default defineComponent({
         })
         onDone((result) => {
             store.state.common.rowIdSaveDonePa520 = result.data.employeeId
-            store.state.common.checkChangeValueEditTab2PA520 = false
+            store.dispatch('common/setCheckEditTab2PA520',false)
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
@@ -290,8 +298,8 @@ export default defineComponent({
             store.commit('settings/setCurrentYear')
         })
         // ================== WATCH ====================================
-        watch(() => originDataUpdate.value, (newVal) => {
-          let valueConvert = JSON.parse(dataDefaultGet.value)
+      watch(() => originDataUpdate.value, (newVal) => {
+        let valueConvert = JSON.parse(dataDefaultGet.value)
           if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
               store.commit('common/setCheckEditTab2PA520',false)
               store.commit('settings/setFormStatus',FormStatus.none)
@@ -301,20 +309,19 @@ export default defineComponent({
           }
         }, { deep: true })
 
-        // call api on tab 2 for the first time
-        if (store.state.common.idRowChangePa520 != 0) { 
-            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
-            trigger.value = true
-            refectchDetail()
+        //call api on tab 2 for the first time
+        if (store.state.common.idRowChangePa520 != 0) {
+              trigger.value = true
+              refectchDetail()
         }
+      
         // call api on tab 2 next time
-        watch([()=> props.idRowEdit,() => store.state.common.idRowChangePa520], (res) => {
-          if (!store.state.common.checkChangeValueEditTab2PA520 && !isBtnYellow.value && props.idRowEdit) {
-              originDataDetail.value.employeeId = store.state.common.idRowChangePa520
+        watch(idRowEdit, (res) => {
+          if (!tab2IsChange.value && !isBtnYellow.value && idRowEdit.value) {
               trigger.value = true
               refectchDetail()
           }
-          store.state.common.checkChangeValueEditTab2PA520 = false
+          store.commit('common/setCheckEditTab2PA520',false)
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -323,19 +330,20 @@ export default defineComponent({
             })
             totalDeduction.value = total
         }, { deep: true })
+
         watch(() => store.state.common.actionUpdateTab2PA520, () => {
           if (!isBtnYellow.value) {
-            store.state.common.isTab2ValidatePA520 = false
+            store.commit('common/setTab2ValidateEditPA520', false)
             actionUpdated()
-            originDataDetail.value.employeeId = props.idRowEdit
+            originDataDetail.value.employeeId = idRowEdit
             trigger.value = true
             refectchDetail()
           } else {
             // If you are filling out the form and haven't calculated it, 
             // but click on the add button, 
             // then reset the state of clicking on the add button with false
-            if (store.state.common.addRowBtOnclickPA520) store.state.common.addRowBtOnclickPA520 = false
-            store.state.common.isTab2ValidatePA520 = true
+            if (store.state.common.addBtOnclickPA520) store.state.common.addBtOnclickPA520 = false
+            store.commit('common/setTab2ValidateEditPA520', true)
             validateCalculate.value = true
           }
         })
@@ -352,7 +360,8 @@ export default defineComponent({
           let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
           // Compare two object if different change button color to orange
-          if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
+          if (JSON.stringify(defValue) !== JSON.stringify(originValue)) {
+            alert('lolo')
             isBtnYellow.value = true
           } else {
             isBtnYellow.value = false
@@ -377,9 +386,8 @@ export default defineComponent({
             store.commit('common/setTab2ValidateEditPA520', true)
             store.commit('settings/setFormStatus',FormStatus.editing)
           } else {
-            originDataUpdate.value.imputedYear = store.state.common.checkChangeValueEditTab2PA520 && store.state.common.isChangeYearPA520 ? store.state.common.oldGlobalYearPA520 : globalYear.value
             mutate(originDataUpdate.value)
-            store.state.common.checkChangeValueEditTab2PA520 = false
+            store.commit('common/setCheckEditTab2PA520',false)
           }
 
         }
@@ -415,7 +423,7 @@ export default defineComponent({
               originDataUpdate.value.input.deductionItems = arrCallApi
               isBtnYellow.value = false
               validateCalculate.value = false
-              store.state.common.isTab2ValidatePA520 = false
+              store.state.common.isTab2ValidateEditPA520 = false
                             
           }
         }
@@ -460,8 +468,8 @@ export default defineComponent({
             }
         }
         return {dataDefaultGet,
-            store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear
+          originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear,idRowEdit
         };
     },
 });

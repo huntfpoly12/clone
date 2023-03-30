@@ -9,7 +9,9 @@ const mutations: MutationTree<SettingState> = {
     state.formStatus = status
   },
   setCurrentYear(state, year?: number) {
+   
     state.globalYear = year ? year : state.newYear
+    alert(state.globalYear)
     state.clickYearStatus = ClickYearStatus.none
     state.formStatus = FormStatus.none
   },
