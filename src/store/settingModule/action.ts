@@ -1,5 +1,10 @@
 import {ActionTree} from "vuex";
-import {ClickYearStatus, FormStatus, SettingState} from "@/store/settingModule/types";
+import {ClickYearStatus, FormStatus, PayLoadAccSubject, SettingState} from "@/store/settingModule/types";
+import { watch, ref } from 'vue'
+import { useQuery } from "@vue/apollo-composable";
+import queries from "@/graphql/queries/common/index";
+import { getJwtObject } from "@bankda/jangbuda-common";
+
 
 const actions: ActionTree<SettingState, any> = {
   //showPopupIfNeeded({ commit, state }): boolean {
@@ -27,6 +32,25 @@ const actions: ActionTree<SettingState, any> = {
     commit('setCurrentYear', state.newYear)
     commit('setClickYearStatus', ClickYearStatus.none)
     commit('setFormStatus', FormStatus.none)
-  }
+  },
+  getAccountSubject: ({commit,state}, data: PayLoadAccSubject) => {
+    let accountSubjects: any = ref();
+    const {
+        loading,
+        result 
+    } = useQuery(queries.getAccoountSubjects,data, () => ({
+        fetchPolicy: "no-cache",
+    }));
+    if (loading) {
+      watch(result, value => {
+        if (value) {
+          commit('setAccoountSubjects',value.getAccoountSubjects) 
+        }
+          
+      }) 
+    }
+     
 }
+};
+
 export default actions

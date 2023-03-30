@@ -16,7 +16,9 @@ const getters:  GetterTree<SettingState, any> = {
   },
   clickYearStatus(state: SettingState): ClickYearStatus {
     return state.clickYearStatus
-  }
+  },
+  globalFacilityBizId: (state: any) => state.globalFacilityBizId,
+  accountSubjects: (state: any) => state.accountSubject,
 };
 
 export default getters;

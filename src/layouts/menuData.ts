@@ -64,7 +64,7 @@ export default [
 
   { name: "거래처등록", url: "/dashboard/ac-610", id: "ac-610" },
   { name: "후원자 관리", url: "/dashboard/ac-620", id: "ac-620" },
-  { name: "기부금영수증", url: "#", id: "ac-630" },
+  { name: "기부금영수증", url: "/dashboard/ac-630", id: "ac-630" },
 
   { name: "근로소득자료입력", url: "/dashboard/pa-110", id: "pa-110" },
   { name: "사원등록", url: "/dashboard/pa-120", id: "pa-120" },
@@ -106,7 +106,7 @@ export default [
   { name: "급여변경신고", url: "/dashboard/pa-830", id: "pa-830" },
   { name: "휴직복직신고", url: "/dashboard/pa-840", id: "pa-840" },
   { name: "보수총액신고", url: "#", id: "pa-850" },
-  { name: "보험사무대행신고", url: "#", id: "pa-860" },
+  { name: "보험사무대행신고", url: "/dashboard/pa-860", id: "pa-860" },
   { name: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870" },
   { name: "사업장탈퇴신고", url: "/dashboard/pa-880", id: "pa-880" },
 ];

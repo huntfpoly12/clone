@@ -17,26 +17,35 @@ const screenMutatePA520 = {
     setTab2ValidateEditPA520(state: any, status: boolean) {
         state.isTab2ValidateEditPA520 = status
     },
-    setAddRowBtOnclickPA520(state: any, status: boolean) {
-        state.addRowBtOnclickPA520 = status
+    setAddBtOnclickPA520(state: any, status: boolean) {
+        state.addBtOnclickPA520 = status
     },
-    setIdRowCurrentClick(state: any, data: number) {
-        state.idRowCurrentClick = data
+    setIdRowCurrentClickPA520(state: any, data: number) {
+        state.idRowCurrentClickPA520 = data
     },
-    setIdRowCurrentEdit(state: any, data: number) {
-        state.idRowCurrentEdit = data
+    setIdRowCurrentEditPA520(state: any, data: number) {
+        state.idRowCurrentEditPA520 = data
     },
-    setFocusedRowKey(state: any, data: number) {
-        state.focusedRowKey = data
+    setIdRowSaveDonePA520(state: any, data: number) {
+        state.idRowSaveDonePA520 = data
+    },
+    setFocusedRowKeyPA520(state: any, data: number) {
+        state.focusedRowKeyPA520 = data
     },
     setIsClickRowPA520(state: any, status: boolean) {
         state.isClickRowPA520 = status
     },
-    setIsClickDelete(state: any, status: boolean) {
-        state.isClickDelete = status
+    setIsClickDeletePA520(state: any, status: boolean) {
+        state.isClickDeletePA520 = status
+    }, 
+    setIsClickBtnSavePA520(state: any, status: boolean) {
+        state.isClickBtnSavePA520 = status
     },
     setKeyActiveStepPA520(state: any, data: string) {
         state.keyActiveStepPA520 = data
+    },
+    setActiveAddRowPA520(state: any, status: boolean) {
+        state.activeAddRowPA520 = status
     },
     setTabActivePA520(state: any, data: string) {
         state.setTabActivePA520 = data
@@ -55,6 +64,9 @@ const screenMutatePA520 = {
     },
     setModalChangeValueAddPA520(state: any, status: boolean) {
         state.modalChangeValueAddPA520 = status
+    },
+    setComponentPA520(state: any,  data: number) {
+      state.setComponentPA520 = data
     }
 };
 export default screenMutatePA520;

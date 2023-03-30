@@ -85,7 +85,7 @@
     </a-spin>
     <!-- <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
       typeHistory="pa-810" /> -->
-    <CreatePA820Popup :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false"
+    <CreatePA820Popup :modalCreate="modalCreate" @closeModal="modalCreate = false"
       @handleCreate="handleCreate" />
     <PopupMessage :modalStatus="isDelete" @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete"
       okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
@@ -143,16 +143,43 @@ export default defineComponent({
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const dataSource = ref([]);
     const focusedRowKey = ref();
-    //---------------------------add new data------------------
-    const isOpenModalCreate = ref(false);
+    
+    // -----------------------------MAIL-------------------
+
+    const modalMail = ref(false);
+    const openMailModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+    
+    // -----------------------------PRINT-------------------
+
+    const modalPrint = ref(false);
+    const openPrintModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+    
+    // -----------------------------DELETE-------------------
+
+    const modalDelete = ref(false);
+    const openDeleteModal = (e: any) => {
+      modalHistory.value = true;
+      // actionParam.workId = e;
+    };
+
+    //---------------------------ADD FORM------------------
+
+    const modalCreate = ref(false);
     const openAddNewModal = () => {
-      isOpenModalCreate.value = true;
+      modalCreate.value = true;
     }
     const handleCreate = () => {
       // refetch();
-      isOpenModalCreate.value = false;
+      modalCreate.value = false;
     };
-    // -----------------------------history-------------------
+
+    // -----------------------------HISTORY-------------------
 
     const modalHistory = ref(false);
     const onOpenLogs = (e: any) => {
@@ -219,7 +246,7 @@ export default defineComponent({
       per_page, move_column, colomn_resize,
       focusedRowKey, dataSource, modalHistory,
       openAddNewModal, onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
-      handleCreate, isOpenModalCreate, isDelete, handleDelete, contentDelete
+      handleCreate, modalCreate, isDelete, handleDelete, contentDelete
     };
   },
 })
