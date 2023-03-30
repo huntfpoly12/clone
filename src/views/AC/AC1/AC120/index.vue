@@ -1,5 +1,5 @@
 <template>
-    <action-header title="통장내역" :buttonDelete="false" />
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div class="ac-120">
         <div class="top">
             <div class="grid">

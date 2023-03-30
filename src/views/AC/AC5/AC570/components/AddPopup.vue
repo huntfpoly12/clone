@@ -8,13 +8,13 @@
                         <date-time-box width="150px" dateFormat="YYYY-MM-DD" :required="true" />
                     </a-form-item>
                     <a-form-item label="원천계정과목" class="red">
-                        <select-box-common width="150px" :required="true" />
+                        <account-code-select width="150px" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용계정과목" class="red">
-                        <select-box-common width="150px" :required="true" />
+                        <account-code-select width="150px" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용액" class="red">
-                        <default-text-box width="150px" :required="true" />
+                        <number-box-money width="150px" :required="true" placeholder="음수가능"/>
                     </a-form-item>
                     <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
                 </div>

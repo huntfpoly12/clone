@@ -1,4 +1,5 @@
 <template>
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
     <div id="ac-510">
         <div class="top">
             <div class="grid">
@@ -14,7 +15,7 @@
                 <a-form-item label="서식 설정">
                     <div class="dflex custom-flex">
                         <div style="margin-right: 10px;">
-                            <a-tooltip>
+                            <a-tooltip :overlayStyle="{maxWidth: '500px'}">
                                 <template #title>본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.</template>
                                 <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             </a-tooltip>

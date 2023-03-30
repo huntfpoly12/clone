@@ -11,7 +11,7 @@
                                         :foreigner="data.foreigner" :checkStatus="false" :forDailyUse="activeType20 == true && data.type == 20"/>
                 <DxTextBox style="display: none;" />
             </div>
-            <div v-else style="padding: 4px">
+            <div v-else style="padding: 4px; color: rgba(128,128,128,0.7)">
                 <span>선택</span>
                 <DxTextBox style="display: none;" />
             </div>
@@ -147,4 +147,3 @@ export default defineComponent({
     justify-content: center;
 }
 </style>
-  

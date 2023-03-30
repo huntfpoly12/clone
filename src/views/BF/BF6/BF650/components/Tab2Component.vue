@@ -97,7 +97,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(7, 'd'), dayjs()]);
+        const rangeDate = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
         let trigger = ref(true)
         let dataModalDetail: any = ref({})
         // ================== GRAPHQL=================
@@ -114,22 +114,21 @@ export default defineComponent({
         resTable((val: any) => {
             dataSource.value = val.data.searchElectronicFilingFileProductions
             dataModalDetail.value.type = dataSearch.value.type
-            trigger.value = false
+          trigger.value = false
         })
         errorTable((error: any) => {
             notification('error', error.message)
         })
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
-            if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [2, -1]
-            else
-                dataSearch.value.productionStatuses = [typeStatus.value]
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+          typeStatus.value == 0
+            ? dataSearch.value.productionStatuses = [2, -1]
+            : dataSearch.value.productionStatuses = [typeStatus.value]
+          dataSearch.value.requesteStartDate = rangeDate.value[0]
+          dataSearch.value.requesteFinishDate = rangeDate.value[1]
             if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
+              // refetchTable()
+              trigger.value = true
             }
         }, { deep: true })
         // ============== FUNCTION =====================
