@@ -189,9 +189,9 @@
 
                     <DxSummary>
                         <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="totalDeposits" />
-                        <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="totalWithdrawal" />
-                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="countSlipRegistration" />
+                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum" display-format="수입액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum" display-format="지출액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="count8" />
                         <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
                     </DxSummary>
                 </DxDataGrid>
@@ -354,8 +354,7 @@
                                     </a-row>
                                     <a-row>
                                         <p style="width: 100%;">품의 원인 및 용도:</p>
-                                        <textarea style="width: 100%; height: 100px; border-radius: 5px;
-                                                                border: 1px solid gray;"></textarea>
+                                        <textarea class="text-area"></textarea>
                                     </a-row>
                                     <div class="text-align-center mt-20">
                                         <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
@@ -411,7 +410,7 @@ import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupCopyData from "./components/PopupCopyData.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
-
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         ProcessStatus,
@@ -551,8 +550,21 @@ export default defineComponent({
                     totalCancellation++
                 }
             });
-            return `전표등록 여부 (O: ${totalRegistration}, X: ${totalCancellation})`
+            return `전표등록 여부 (O: ${filters.formatCurrency(totalRegistration)}, X: ${filters.formatCurrency(totalCancellation)})`
         };
+        const count8 = () => { 
+            let total = 0;
+            let totalfill8 = 0;
+            let totalfill6 = 0;
+            let totalfill7 = 0;
+            dataDemoMain.forEach((item) => {
+                totalfill6 += item.fill6
+                totalfill7 += item.fill7
+                totalfill8 += item.fill8
+            });
+            total = totalfill8 + totalfill6 - totalfill7
+            return `전월 잔액: ${filters.formatCurrency(totalfill8)}, 예상 잔액: ${filters.formatCurrency(total)}`
+        }
 
 
         const actionPopupSlipCancellation = (value: any) => {
@@ -635,6 +647,7 @@ export default defineComponent({
             actionPopupSlipCancellation,
             actionPopupSlipRegistration,
             arrayRadioCheck,
+            count8,
         };
     },
 });
