@@ -210,26 +210,28 @@
                 <a-tooltip placement="top">
                   <template #title>신규</template>
                   <DxButton :focusStateEnabled="false" @click="submitTransactionDetails">
-                    <SaveFilled style="font-size: 19px;"/>
+                    <SaveFilled style="font-size: 19px;" />
                   </DxButton>
                 </a-tooltip>
               </template>
               <DxColumn caption="결의구분" cell-template="resolutionClassification" />
               <template #resolutionClassification="{ data }">
-                {{ CommonResolutionClassification.find((item: any) => item.value ==
+                {{ resolutionClassification.find((item: any) => item.value ==
                   data.data.transactionDetails.resolutionClassification).label }}
               </template>
               <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
               <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
               <DxColumn caption="적요" data-field="transactionDetails.summary" />
-              <DxColumn caption="계정과목" cell-template="accountCode" width="100" />
+              <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
               <template #accountCode="{ data }">
-                <account-code-select v-model:valueInput="data.data.transactionDetails.accountCode" />
+                <account-code-select v-model:valueInput="data.data.transactionDetails.accountCode"
+                  :classification="data.data.transactionDetails.income !== 0 ? [4] : [5]" />
               </template>
-              <DxColumn caption="상대계정" cell-template="relationCode" width="100" />
+              <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
               <template #relationCode="{ data }">
-                <select-box-common :arrSelect="CommonFundingSource"
-                  v-model:valueInput="data.data.transactionDetails.relationCode" :required="true" />
+                <account-code-select v-model:valueInput="data.data.transactionDetails.relationCode"
+                  :classification="data.data.transactionDetails.resolutionClassification === 2 ? [4] : [11111]"
+                  :disabled="data.data.transactionDetails.resolutionClassification === 1" />
               </template>
               <DxColumn caption="자금원천" cell-template="fundingSource" width="100" />
               <template #fundingSource="{ data }">
@@ -238,8 +240,9 @@
               <DxColumn caption="거래처" data-field="transactionDetails.clientId" alignment="start" />
               <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
               <template #letterOfApprovalType="{ data }">
-                <select-box-common :arrSelect="ComonLetterOfApprovalType"
-                  v-model:valueInput="data.data.transactionDetails.letterOfApprovalType" :required="true" />
+                <LetterOfApprovalTypeSelect v-model:valueInput="data.data.transactionDetails.letterOfApprovalType"
+                :disabled="data.data.transactionDetails.resolutionClassification === 1"
+                :required="data.data.transactionDetails.resolutionClassification === 2" />
               </template>
               <DxColumn caption="원인/용도" cell-template="causeUse" alignment="center" />
               <template #causeUse="{ data }">
@@ -301,7 +304,6 @@ import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
-import getAccoountSubjects from "@/graphql/queries/common/getAccoountSubjects";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
@@ -318,9 +320,8 @@ import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from './components/UploadPreviewImage.vue'
-import { BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
+import { BankType, enum2Entries, BankBookUseType, ResolutionClassification } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import { trigger } from '@vue/reactivity';
 
 export default defineComponent({
   components: {
@@ -363,6 +364,13 @@ export default defineComponent({
       }));
       return bsDeduction;
     });
+    const resolutionClassification: any = computed(() => {
+      let bsDeduction: any = enum2Entries(ResolutionClassification).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
     const propListSlipRegistrationSelected: any = ref({
       count: 0,
       selectedRowKeys: []
@@ -395,56 +403,7 @@ export default defineComponent({
     }, {
       deep: true,
     })
-    let CommonResolutionClassification: any = [
-      {
-        label: '수입',
-        value: 1,
-      },
-      {
-        label: '지출',
-        value: 2,
-      }
-    ]
-    let CommonFundingSource = reactive([
-      {
-        value: 1,
-        label: '수익사업'
-      },
-      {
-        value: 2,
-        label: '자부담'
-      },
-      {
-        value: 3,
-        label: '보조금'
-      },
-      {
-        value: 4,
-        label: '후원듬'
-      }
-    ])
-    let ComonLetterOfApprovalType = reactive([
-      {
-        value: 1,
-        label: '구입'
-      },
-      {
-        value: 2,
-        label: '운반'
-      },
-      {
-        value: 3,
-        label: '수선'
-      },
-      {
-        value: 4,
-        label: '인쇄'
-      },
-      {
-        value: 4,
-        label: '지출'
-      }
-    ])
+
     let valueAccountSubjectClassification = ref(null)
     let valueFundingSource = ref(null)
     const payloadGetTransactionDetails: any = reactive({
@@ -509,21 +468,6 @@ export default defineComponent({
       notification('error', e.message)
       dataSourceTransactionDetails.value = demTableTransactionDetails
     })
-    const {
-      result: resgetAccoountSubjects,
-      // onResult: onResgetAccoountSubjects,
-      loading: loadingGetgetAccoountSubjects,
-      // refetch,
-      // onError
-    } = useQuery(getAccoountSubjects, {
-      companyId: companyId,
-      fiscalYear: globalYear.value,
-      facilityBizType: globalFacilityBizId.value,
-    },
-      () => ({
-        enabled: triggerAccoountSubjects.value,
-        fetchPolicy: "no-cache",
-      }))
     // mutations
     const {
       mutate: syncBankbookDetails,
@@ -609,10 +553,6 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       dataSourceTransactionDetails.value = demTableTransactionDetails
       triggerTransactionDetails.value = false
-    })
-    watch(resgetAccoountSubjects, (value) => {
-      console.log('resgetAccoountSubjects', value);
-      triggerAccoountSubjects.value = false
     })
     // MOUNTED
     // METHODS
@@ -831,9 +771,7 @@ export default defineComponent({
       openPopupSlipRegistrationSelected,
       sumOfIncome,
       sumOfExpenses,
-      CommonFundingSource,
-      ComonLetterOfApprovalType,
-      CommonResolutionClassification,
+      resolutionClassification,
       openPopupItemDetail,
       openPopupNoteItemDetail,
       isModalNoteItemDetail,
