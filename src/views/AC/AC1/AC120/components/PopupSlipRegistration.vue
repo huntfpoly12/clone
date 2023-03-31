@@ -29,11 +29,11 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-                <div class="mt-10"><span>상기의 전표들을 취소하시겠습니까?</span></div>
+                <div class="mt-10"><span>전표를 등록하시겠습니까?</span></div>
                 <div class="mt-20">
-                    <button-basic class="button-form-modal" :text="'아니요'" :width="140" :type="'default'" :mode="'outlined'"
+                    <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                         @onClick="cancel" />
-                    <button-basic class="button-form-modal" :text="'네. 취소합니다'" :width="140" :type="'default'"
+                    <button-basic class="button-form-modal" :text="'네. 취소합니다'" :type="'default'"
                         :mode="'contained'" @onClick="submit" />
                 </div>
             </standard-form>
