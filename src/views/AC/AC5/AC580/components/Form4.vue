@@ -8,7 +8,7 @@
         <a-row>
           <a-col :span="24">
             <a-form-item label="발생일" label-align="right" class="red">
-              <date-time-box width="200px" v-model:valueDate="formState.joinedAt"></date-time-box>
+              <date-time-box width="200px" v-model:valueDate="formState.joinedAt" :required="true" ></date-time-box>
             </a-form-item>
           </a-col>
           <a-col :span="24">
@@ -26,7 +26,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="명세" label-align="right" class="red">
+            <a-form-item label="명세" label-align="right">
               <div class="input-text">
                 <default-text-box width="200px" v-model:valueInput="formState.name" :required="true" />
                 <span style="font-size: 12px; color: #888888" class="mt-5">
@@ -36,7 +36,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="품명" label-align="right" class="red">
+            <a-form-item label="품명" label-align="right">
               <div class="input-text">
                 <select-box-common width="200px" :arrSelect="nationaPersionSelectbox" :required="true"
                   v-model:valueInput="formState.nationalPensionAcquisitionCode" />
@@ -49,7 +49,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="단위" label-align="right" class="red">
+            <a-form-item label="단위" label-align="right" >
               <select-box-common width="200px" :arrSelect="nationaPersionSelectbox" :required="true"
                 v-model:valueInput="formState.nationalPensionAcquisitionCode" />
             </a-form-item>
