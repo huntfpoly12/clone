@@ -26,7 +26,7 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+                <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
                     <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
