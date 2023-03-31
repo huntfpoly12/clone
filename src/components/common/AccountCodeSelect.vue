@@ -1,35 +1,19 @@
 <template>
-    <DxSelectBox :width="width" :data-source="accountSubjects" placeholder="선택" value-expr="code" display-expr="name"
-        :show-clear-button="clearButton" v-model:value="value" field-template="field" item-template="item" :key="resetSelect"
-        :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
+    <DxSelectBox :width="width" :search-enabled="true" :searchExpr="['name', 'code']" :data-source="accountSubjects"
+        placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
+        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled"
+        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <div v-if="data" style="padding: 5px;">
-                <a-tooltip zIndex="9999" placement="top" color="black">
-                    <template #title>{{ data.name1 }} > {{ data.name2 }}</template>
-                    <span>
-                        <div>
-                            {{ data.name }} {{ data.shortCode }}
-                        </div>
-                    </span>
-                </a-tooltip>
-                <DxTextBox style="display: none;" />
-            </div>
-            <div v-else style="padding: 5px; height: 30px;">
-                <div>
-                    <span>선택</span>
-                    <DxTextBox style="display: none;" />
-                </div>
-            </div>
+            <DxTextBox v-if="data" :value="data.name + ' ' + data.shortCode"></DxTextBox>
+            <DxTextBox v-else placeholder="선택" />
         </template>
         <template #item="{ data }">
             <div class="custom-value">
                 <a-tooltip zIndex="9999" placement="top" color="black">
                     <template #title>{{ data.name1 }} > {{ data.name2 }}</template>
-                    <span>
-                        <div>
-                            {{ data.name }} {{ data.shortCode }}
-                        </div>
-                    </span>
+                    <div>
+                        {{ data.name }} {{ data.shortCode }}
+                    </div>
                 </a-tooltip>
             </div>
         </template>
@@ -72,6 +56,10 @@ export default {
         },
         useFinishDate: {
             type: Number,
+            default: null,
+        },
+        classification: {
+            type: Array,
             default: null,
         }
     },
@@ -126,7 +114,11 @@ export default {
             }
         }
         const fillRow = (row: any) => {
-            row.codes?.map((val: any) => {
+            const filteredArr = ref(row.codes)
+            if (props.classification) {
+                filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
+            }
+            filteredArr.value?.map((val: any) => {
                 accountSubjects.value.push({
                     name: val.name,
                     name1: val.name1,
@@ -136,7 +128,7 @@ export default {
                 })
             })
         }
-        watch(() => [props.useStartDate, props.useFinishDate], () => {
+        watch(() => [props.useStartDate, props.useFinishDate, props.classification], () => {
             fillData()
         });
 
