@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,15 +32,13 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
-
+  </a-row>
   <div id="pa-520" class="page-content">
   
       <a-row>
-          <a-col :span="13" class="custom-layout">
+          <a-col :span="13" class="custom-layout" >
               <a-spin :spinning="loading" size="large">
-                <div class="grid-table">
-   
+                <div class="grid-table" style="height: 100%;">
                   <DxDataGrid 
                   :show-row-lines="true" 
                   :hoverStateEnabled="true" 
@@ -54,11 +52,12 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
+                  style="max-height: 700px;"
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
                   >
-                      <DxScrolling mode="standard" show-scrollbar="always"/>
+                      <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
                       <DxExport :enabled="true"/>
                       <DxPaging :enabled="false" />
@@ -245,8 +244,6 @@ export default defineComponent({
   },
   setup() {
     const pa520Grid = ref<any>(null);
-  
-
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
     const dataSource = ref<any>(new DataSource({
@@ -366,8 +363,9 @@ export default defineComponent({
 
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
         if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value) {
+        
           //store.dispatch('common/resetActionStatus')
-          onAddBtClick()
+          funcAddNewRow()
         }
 
         // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
@@ -375,7 +373,8 @@ export default defineComponent({
           setRowEdit(idRowCurrentClick.value)
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
-        if(isClickBtnSavePA520.value){
+        if (isClickBtnSavePA520.value) {
+          alert('isClickBtnSavePA520')
          setRowEdit(parseInt(idRowSaveDone.value))
         }
 
@@ -561,10 +560,10 @@ export default defineComponent({
         if (addBtOnclick.value) {
           trigger.value = true;
           await refetchData();
-          store.commit('common/setTab2ValidateEditPA520', false)
-          await store.dispatch('common/resetStatusModal')
-          //await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
+          // store.commit('common/setTab2ValidateEditPA520', false)
+          // await store.dispatch('common/resetStatusModal')
+          // //await store.dispatch('common/resetActionStatus')
+          // await store.dispatch('common/resetStatusChangeFrom')
           funcAddNewRow();
         } else {
           // In case reset the tab when one of the two tabs is fixed and validated
