@@ -175,7 +175,7 @@
                 <DxItem template="summary-transaction-detail" css-class="cell-button-export" location="before" />
                 <DxItem template="button-reset" css-class="cell-button-export" />
                 <DxItem location="after" template="button-add" css-class="cell-button-add" />
-                <DxItem name="exportButton" css-class="cell-button-export" />
+                <DxItem template="button-save" css-class="cell-button-export" />
               </DxToolbar>
 
               <template #summary-transaction-detail>
@@ -202,8 +202,16 @@
                 <a-tooltip placement="top">
                   <template #title>신규</template>
                   <div>
-                    <DxButton icon="plus" />
+                    <DxButton :focusStateEnabled="false" icon="plus" />
                   </div>
+                </a-tooltip>
+              </template>
+              <template #button-save>
+                <a-tooltip placement="top">
+                  <template #title>신규</template>
+                  <DxButton :focusStateEnabled="false" @click="submitTransactionDetails">
+                    <SaveFilled style="font-size: 19px;"/>
+                  </DxButton>
                 </a-tooltip>
               </template>
               <DxColumn caption="결의구분" cell-template="resolutionClassification" />
@@ -298,7 +306,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup } from "devextreme-vue/data-grid";
-import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { dataDemoMain, demTableMain, contentPopupRetrieveStatements, demTableTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
@@ -338,7 +346,8 @@ export default defineComponent({
     PopupRetrieveStatements,
     UploadPreviewImage,
     DxLookup,
-    HistoryPopup
+    HistoryPopup,
+    SaveFilled
   },
   setup() {
     const store = useStore();
@@ -564,6 +573,18 @@ export default defineComponent({
     errorInitializeTransactionDetails(e => {
       notification('error', e.message)
     })
+    const {
+      mutate: saveTransactionDetails,
+      onDone: doneSaveTransactionDetails,
+      onError: errorSaveTransactionDetails,
+      loading: loadingSaveTransactionDetails,
+    } = useMutation(mutations.saveTransactionDetails);
+    doneSaveTransactionDetails((e) => {
+      notification('success', Message.getMessage('COMMON', '106').message)
+    })
+    errorSaveTransactionDetails(e => {
+      notification('error', e.message)
+    })
     // WATCH
     watch(resAccountingProcesses, (value) => {
       triggerAccountingProcesses.value = false
@@ -767,6 +788,9 @@ export default defineComponent({
       if (resolutionClassification === 1) return
       isModalNoteItemDetail.value = true
     }
+
+    const submitTransactionDetails = () => {
+    }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
       if (Number.isInteger(value)) {
@@ -833,6 +857,7 @@ export default defineComponent({
       modalHistory,
       payloadGetTransactionDetails,
       handleInitializeTransactionDetails,
+      submitTransactionDetails
     };
   },
 });
