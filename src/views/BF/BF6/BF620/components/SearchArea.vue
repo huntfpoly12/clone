@@ -20,8 +20,8 @@
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-          <a-form-item label="신고구분" label-align="right" class="ml-10 mt-5" v-else>
-            <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
+          <a-form-item label="신고주기" label-align="right" class="ml-10 mt-5" v-else>
+            <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
 
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
@@ -90,9 +90,8 @@ export default defineComponent({
     let reportType = reactive({
       checkbox1: true,
       checkbox2: true,
-      checkbox3: true,
+      checkbox3: filterBF620.value.reportType == 6 || filterBF620.value.reportType == 6,
     });
-    const checkbox2 = ref([]);
     const searchWithholdingTrigger = ref(true);
     // watch filterBF620.reportType to change value
     watch(
@@ -102,7 +101,8 @@ export default defineComponent({
         }
         reportType.checkbox2 = newVal;
         reportType.checkbox3 = newVal;
-        delete filterBF620.value.reportType;
+        // delete filterBF620.value.reportType;
+        filterBF620.value.reportType = null;
 
       },
       { deep: true }
@@ -112,7 +112,8 @@ export default defineComponent({
       (newVal: any) => {
         if (newVal.checkbox2 == true && newVal.checkbox3 == true) {
           newVal.checkbox1 = true;
-          delete filterBF620.value.reportType;
+          // delete filterBF620.value.reportType;
+          filterBF620.value.reportType = null;
           return;
         }
         newVal.checkbox1 = false;
@@ -127,6 +128,11 @@ export default defineComponent({
       },
       { deep: true }
     );
+    watchEffect(() => {
+      reportType.checkbox1 = filterBF620.value.reportType == 0 || filterBF620.value.reportType == null;
+      reportType.checkbox2 = filterBF620.value.reportType == 1 || filterBF620.value.reportType == null;
+      reportType.checkbox3 = filterBF620.value.reportType == 6 || filterBF620.value.reportType == null;
+    });
     //watch date
     watch(month2, (newVal: any) => {
       if (newVal) {
@@ -170,8 +176,6 @@ export default defineComponent({
       reportTypeCheckbox,
       productionStatusesCheckbox,
       reportType,
-      checkbox1: '',
-      checkbox2,
       // afterDeadLineIndex,
       reportTypeTab2,
       onChange

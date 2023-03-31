@@ -1,7 +1,7 @@
 <template>
   <action-header title="계약정보관리&심사" @actionSearch="onSearch()" :buttonDelete="false" :buttonPrint="false" :buttonSave="activeKey == '5'" />
   <div id="bf-620" class="px-10">
-    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10">
+    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10" @change="onSearch">
       <a-tab-pane key="1" tab="원천세">
         <tab-1-component :search="search1" :onSearch="onSearch"></tab-1-component>
       </a-tab-pane>
@@ -49,7 +49,7 @@ export default defineComponent({
       }
     };
     onMounted(()=>{
-      onSearch();
+      // onSearch();
     })
     return {
       activeKey,
