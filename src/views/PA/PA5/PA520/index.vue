@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
+  </a-row>
 
   <div id="pa-520" class="page-content">
   
@@ -271,11 +271,11 @@ export default defineComponent({
     const idRowSaveDone = computed(() => store.getters['common/idRowSaveDonePA520']);
     const addBtOnclick = computed(() => store.getters['common/addBtOnclickPA520']);// determine when click add new button
     const isChangeYear = computed(() => store.getters['common/isChangeYearPA520']);// determine when click change year
-    const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
-    const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
+    // const isValidateEditPA520 = computed(() => store.state.common.isValidateEditPA520);
+    // const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
     const isClickRow = computed(() => store.getters['common/isClickRowPA520']); // determine when action click row
     const isClickBtnSavePA520 = computed(() => store.getters['common/isClickBtnSavePA520']); 
-    const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
+    // const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
     const tab1IsChange = computed(() => store.getters['common/checkChangeValueEditTab1PA520']);
     const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
     const fromAddIsChange = computed(() => store.getters['common/checkChangeValueAddPA520']);
@@ -365,8 +365,9 @@ export default defineComponent({
 
 
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
-        if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value ) {
-          funcAddNewRow()
+        if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value) {
+          //store.dispatch('common/resetActionStatus')
+          onAddBtClick()
         }
 
         // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
@@ -415,20 +416,19 @@ export default defineComponent({
         refetchData();
       },
     );
-    // ======================= FUNCTION ================================
 
-    const resetAllCheckerStatus = () => {
-      store.state.common.checkChangeValueEditTab1PA520 = false
-      store.state.common.checkChangeValueEditTab2PA520 = false
-      store.state.common.checkChangeValueAddPA520 = false
-      store.state.common.activeAddRowPA520 = false
-      store.state.common.addRowBtOnclickPA520 = false
-      store.state.common.countBtOnclickPA520  = 0
+    watch(focusedRowKey, () => {
+      let newRow = dataSource.value.items().filter((item: any) => item.key == 0);
+      if (newRow.length > 0) {
+        removeNewRow()
+      }
+    })
+    const removeNewRow = ()=>{
+        dataSource.value.store().remove(0).then(() => {dataSource.value.reload()})
     }
-   
+    // ======================= FUNCTION ================================
     // The above code is a function that is called when the user clicks on the edit button.
-    const onFocusedRowChanging = async (event: any) => {
-      if(event){
+    const onFocusedRowChanging = (event: any) => {
         store.commit('common/setIsClickRowPA520', true)
         // remove tất cả class focus đã thêm vào trước đấy
         const gridTable = pa520Grid.value.instance.getVisibleRows();
@@ -457,7 +457,7 @@ export default defineComponent({
           
         }
         store.commit('common/setAddBtOnclickPA520',false);
-      }
+      
     }
     const onFocusedRowChanged = (event : any)=>{
       if((addBtOnclick.value && activeAddRowPA520.value) || event.row.data.employeeId == 0){
@@ -465,18 +465,14 @@ export default defineComponent({
       } else {
         store.commit('common/setComponentPA520',2);
         setRowEdit(event.row.data.employeeId);
-        removeNewRow()
       }
     }
 
     const actionSave = () => {
       store.state.common.actionSaveAddPA520++;
     };
-    const removeNewRow = ()=>{
-        dataSource.value.store().remove(0).then(() => {dataSource.value.reload()})
-    }
-    const funcAddNewRow = async () => {
-      
+
+    const funcAddNewRow = async () => { 
       store.commit('common/setActiveAddRowPA520',true);
       dataSource.value.store().remove(0).then(() => {
         dataSource.value.store().insert(DataCreatedTable).then(() => dataSource.value.reload());
@@ -488,7 +484,8 @@ export default defineComponent({
     }
     // Opening a modal window.
     const onAddBtClick = async () => {
-      store.commit('common/setAddBtOnclickPA520',true);
+      store.commit('common/setAddBtOnclickPA520', true);
+      store.commit('common/setIsClickRowPA520', false);
       if (fromAddIsChange.value) {
         
         store.commit('common/setModalChangeValueAddPA520', true);
@@ -498,7 +495,6 @@ export default defineComponent({
         store.commit('common/setModalChangeValueEditPA520', true)
         return
       }
-      
       // // Adding a new row to the table.
       funcAddNewRow();     
     };
@@ -563,9 +559,11 @@ export default defineComponent({
         
         // In case you are editing and then click on another and agree to save the information,
         if (addBtOnclick.value) {
+          trigger.value = true;
+          await refetchData();
           store.commit('common/setTab2ValidateEditPA520', false)
           await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
+          //await store.dispatch('common/resetActionStatus')
           await store.dispatch('common/resetStatusChangeFrom')
           funcAddNewRow();
         } else {
@@ -581,10 +579,11 @@ export default defineComponent({
         }
       } else {
         if (addBtOnclick.value && !isClickRow.value && clickYearStatus.value == ClickYearStatus.none) {
+          funcAddNewRow();
           await store.dispatch('common/resetStatusModal')
           await store.dispatch('common/resetActionStatus')
           await store.dispatch('common/resetStatusChangeFrom')
-          funcAddNewRow();
+          
         }
 
         if (isClickRow.value && !addBtOnclick.value && clickYearStatus.value == ClickYearStatus.none) {
@@ -607,7 +606,7 @@ export default defineComponent({
 
     const setRowEdit = (rowId: number) => {
       store.commit('common/setIdRowCurrentEditPA520',rowId)
-      store.commit('common/setFocusedRowKeyPA520',rowId)
+      store.commit('common/setFocusedRowKeyPA520', rowId)
     }
     const modalHistory = () => {
       modalHistoryStatus.value = companyId;
