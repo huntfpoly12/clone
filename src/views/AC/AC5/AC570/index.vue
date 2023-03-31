@@ -104,8 +104,7 @@
                             </div>
 
                             <div class="top-content">
-                                <a-typography-title :level="5" style="margin-bottom: 0;">두루누리사회보험
-                                    공제</a-typography-title>
+                                <a-typography-title :level="5" style="margin-bottom: 0;">전용계정과목</a-typography-title>
                             </div>
                             <div class="custom-center">
                                 <a-form-item label="전용계정과목" :label-col="labelCol" class="red">
