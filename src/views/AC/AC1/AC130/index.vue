@@ -8,84 +8,84 @@
             <span class="">01</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusEntering" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusEntering" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">02</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">03</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">04</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">05</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">06</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">07</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">08</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">09</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">10</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusInput" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">11</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
         </div>
         <div class="ac-130__top-grid-items">
           <div class="ac-130__top-grid-items-month">
             <span class="">12</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :heightBtn="36" />
+          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
         </div>
       </div>
       <div class="ac-130__top-status">

@@ -207,16 +207,17 @@ export default defineComponent({
         emit("update:listImageFile", listFileStorageId.value)
         return
       }
+      e.onSuccess("ok");
       const basr64 =  await getBase64(e.file)
-      const res = await UploadImage({
-        companyId: companyId,
-        seal: basr64
-      })
-      if(res) {
-        e.onSuccess("ok");
-      }else {
-        e.onError("");
-      }
+      // const res = await UploadImage({
+      //   companyId: companyId,
+      //   seal: basr64
+      // })
+      // if(res) {
+      //   e.onSuccess("ok");
+      // }else {
+      //   e.onError("");
+      // }
     }
     const remove = (e:any) => {
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
