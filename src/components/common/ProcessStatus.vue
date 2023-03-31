@@ -1,7 +1,7 @@
 <template>
     <span v-if="(disabled || managerGrade == 3)">
         <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="90" :text="item.text" :class="item.class"
+            <button-basic v-if="(currentBt == item.id)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
                 class="buttonModal disabled">
             </button-basic>
         </span>
@@ -21,7 +21,7 @@
             </div>
         </template>
         <span v-for="item in arrayRadioManager" :key="item.id">
-            <button-basic v-if="(currentBt == item.id)" :width="90" :text="item.text" :class="item.class"
+            <button-basic v-if="(currentBt == item.id)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
                 class="buttonModal">
             </button-basic>
         </span>
@@ -43,7 +43,11 @@ export default defineComponent({
         dataRow: {
             type: Array,
             required: false
-        }
+        },
+        heightBtn: {
+          type: Number,
+          default: 30
+        },
     },
     setup(props, { emit }) {
         const value = ref(props.valueStatus);

@@ -3,9 +3,9 @@
     :buttonSave="false" />
   <div id="ac-630" class="p-20">
     <!-- {{ dataState }} dataState <br /> -->
-    {{ mailData }} mailData <br />
+    <!-- {{ mailData }} mailData <br />
     {{ printData }} printData <br />
-    {{ modalCreate }} modalCreate <br />
+    {{ modalCreate }} modalCreate <br /> -->
     <div class="top-container">
       <a-row>
         <a-col :span="8">
@@ -37,7 +37,7 @@
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
           <DxExport :enabled="true" />
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="일련번호" cell-template="tag" width="205" />
+          <DxSelection select-all-mode="allPages" mode="multiple" />
           <DxToolbar>
             <DxItem name="searchPanel" />
             <DxItem name="exportButton" css-class="cell-button-export" />
@@ -92,38 +92,30 @@
               </DxButton>
             </div>
           </template>
-          <DxColumn caption="문서명" data-field="documentName" />
-          <DxColumn caption="사업장정보" data-field="businessSite" />
-          <DxColumn caption="사무대행업체정보" data-field="administrationAgency" />
-          <DxColumn caption="다운로드" cell-template="downA" />
-          <template #downA="{ data }" class="custom-action">
+          <DxColumn caption="발행번호(발행코드)" data-field="documentName" />
+          <DxColumn caption="기부금유형" data-field="businessSite" />
+          <DxColumn caption="후원자코드" data-field="administrationAgency" />
+          <DxColumn caption="후원자명" data-field="administrationAgency" />
+          <DxColumn caption="후원자구분" data-field="administrationAgency" />
+          <DxColumn caption="주민등록번호" data-field="administrationAgency" />
+          <DxColumn caption="사업자(고유)등록번호" data-field="administrationAgency" />
+          <DxColumn caption="금액" data-field="administrationAgency" />
+          <DxColumn caption="기부기간" data-field="administrationAgency" cell-template="administrationAgency" />
+          <template #administrationAgency="{ data }" class="custom-action">
             <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
-              <DxButton type="ghost" class="" style="cursor: pointer">
-                <DownloadOutlined :size="12" />
-              </DxButton>
+              {{ data.value }}
             </div>
           </template>
         </DxDataGrid>
       </a-spin>
     </div>
-    <a-row class="mt-20">
-      <a-col :span="8" :offset="8" style="text-align: center;">
-        <checkbox-basic size="14" v-model:valueCheckbox="dataState.check" :required="true"
-          label="보험사무대행 신청서류의 일괄 자동생성에 동의합니다."></checkbox-basic>
-      </a-col>
-    </a-row>
-    <a-row class="mt-20">
-      <a-col :span="8" :offset="8" style="text-align: center;">
-        <button-basic text="신청서류 일괄생성" type="default" mode="contained" :width="140" id="btn-save"
-          @onClick="onSubmit($event)" />
-      </a-col>
-    </a-row>
   </div>
   <MailPopup v-if="modalMail" v-model:mailData="mailData" @onMailModal="onMailModal" />
   <PrintPopup v-if="modalPrint" v-model:printData="printData" @onPrintModal="onPrintModal" />
   <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm"
     :content="() => deleteContent" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onDeleteModal" />
   <CreatePopup v-if="modalCreate" @onCreateModal="onCreateModal" />
+  <ShowDataCreated v-if="modalShowCreated" @onShowCreateModdal="onShowCreateModdal" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, reactive, computed } from 'vue';
@@ -136,6 +128,7 @@ import {
   DxSearchPanel,
   DxExport,
   DxToolbar,
+DxSelection,
 } from 'devextreme-vue/data-grid';
 import { DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
@@ -165,52 +158,26 @@ export default defineComponent({
     DxToolbar,
     DxItem,
     HistoryOutlined,
-    MailPopup, PrintPopup, ShowDataCreated, CreatePopup,
-  },
+    MailPopup,
+    PrintPopup,
+    ShowDataCreated,
+    CreatePopup,
+    DxSelection
+},
   setup() {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const dataSource = ref([{
       ID: 1,
       documentName: '건강보험 EDI 위임장',
-      businessSite: '사업장관리번호, 업체명, 주소, 대표자, 대표자주민번호, 사업자등록번호, 직인',
-      administrationAgency: '사업장관리번호, 업체명, 주소, 대표자, 대표자주민번호',
+      businessSite: '사업장관리번호, ',
+      administrationAgency: '사업장관리번호,',
       hasDownFile: true,
     }, {
       ID: 2,
       documentName: '국민연금 EDI 위임장',
-      businessSite: '사업장관리번호, 업체명, 주소, 사업자등록번호, 법인등록번호, 대표자, 대표자생년월일, 직인',
-      administrationAgency: '사업장관리번호, 업체명, 주소, 사업자등록번호, 법인등록번호, 대표자, 대표자생년월일, 직인',
-      hasDownFile: true,
-    }, {
-      ID: 3,
-      documentName: '보험사무대행기관 사무위탁서',
-      businessSite: '사업장관리번호, 업체명, 주소, 전화번호, 대표자, 직인',
-      administrationAgency: '업체명, 직인',
-      hasDownFile: true,
-    }, {
-      ID: 4,
-      documentName: '위임장',
-      businessSite: '업체명, 주소, 전화번호, 대표자, 직인',
-      administrationAgency: '업체명, 주소, 전화번호, 대표자',
-      hasDownFile: true,
-    }, {
-      ID: 5,
-      documentName: '고용산재 업무대행 수임(해지)신청서',
-      businessSite: '보험종류(고용,산재), 사업장관리번호, 업체명, 대표자, 전화번호, 근로자수, 해지시 해지사유, 직인',
-      administrationAgency: '',
-      hasDownFile: true,
-    }, {
-      ID: 6,
-      documentName: '사무위탁해지통지서',
-      businessSite: '사업장관리번호, 업체명, 주소, 전화번호, 대표자, 사업의종류, 근로자수, 해지사유, 직인',
-      administrationAgency: '',
-      hasDownFile: true,
-    }, {
-      ID: 7,
-      documentName: '개인정보제공 동의서',
-      businessSite: '업체명, 주소, 대표자, 직인',
-      administrationAgency: '업체명, 주소, 사업자등록번호, 대표자, 전화번호, 보험사무대행인가번호',
+      businessSite: '사업장관리번호, 업체명,',
+      administrationAgency: '사업장관리번호, ',
       hasDownFile: true,
     }]);
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -274,13 +241,25 @@ export default defineComponent({
       if (!emitVal) {
         modalCreate.value = false;
       } else {
-
+        modalCreate.value = false;
+        modalShowCreated.value = true;
       }
     }
     const handleCreate = () => {
       // refetch();
       modalCreate.value = false;
     };
+
+    //---------------------------SHOW CREATED------------------
+
+    const modalShowCreated = ref(false);
+    const onShowCreateModdal = (emitVal: Boolean) => {
+      if (!emitVal) {
+        modalShowCreated.value = false;
+      } else {
+        modalShowCreated.value = false;
+      }
+    }
 
     // -----------------------------HISTORY-------------------
 
@@ -422,8 +401,8 @@ export default defineComponent({
     }
     return {
       per_page, move_column, colomn_resize, dataSource,
-      modalMail, modalPrint, modalDelete, modalCreate, modalHistory,
-      onMailModal, onPrintModal, onDeleteModal, onCreateModal, onHistoryModal,
+      modalMail, modalPrint, modalDelete, modalCreate, modalShowCreated, modalHistory,
+      onMailModal, onPrintModal, onDeleteModal, onCreateModal, onShowCreateModdal, onHistoryModal,
       mailData, printData,
       handleCreate, isDelete, handleDelete, contentDelete, dataState,
       onSubmit, dayjs, onSearch,

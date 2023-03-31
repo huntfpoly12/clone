@@ -52,10 +52,10 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
+                    <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col class="search-4">
@@ -127,6 +127,9 @@
     </div>
     <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail" :data="dataModalSave"
         :step="2" />
+    <div v-for="data in defaultDataSource" :key="data.id">
+        <GetStatusTableHidden   :data="data" @productionStatusData="productionStatusData" />
+    </div>
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
@@ -200,7 +203,7 @@ export default defineComponent({
         resTable(queryResult => {
         if (queryResult && queryResult.data) {
           defaultDataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
-          dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
+          //dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
           trigger.value = false
         }
         })
@@ -330,7 +333,7 @@ export default defineComponent({
 
         return {
             loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData
+            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData,defaultDataSource
         }
     }
 })

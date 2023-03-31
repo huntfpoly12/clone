@@ -56,10 +56,10 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
+                    <list-sales-dropdown  v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col class="search-4">
@@ -131,6 +131,10 @@
         </div>
         <PopupConfirmSave  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
+        <div v-for="data in defaultDataSource" :key="data.id">
+            <GetStatusTableHidden   :data="data" @productionStatusData="productionStatusData" />
+        </div>
+       
     </div>
 </template>
 <script lang="ts">
@@ -141,6 +145,8 @@ import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
+import GetStatusTableHidden from "./GetStatusTableHidden.vue";
+
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
@@ -149,7 +155,7 @@ import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
-        PopupConfirmSave, GetStatusTable
+        PopupConfirmSave, GetStatusTable,GetStatusTableHidden
     },
     props: {
         searchStep: Number,
@@ -196,9 +202,8 @@ export default defineComponent({
         resTable(queryResult => {
         if (queryResult && queryResult.data) {
           defaultDataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
-          dataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+         // dataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
           trigger.value = false
-         
         }
         })
         
@@ -344,7 +349,7 @@ export default defineComponent({
           colomn_resize,
           move_column,
           modalConfirmMail,
-          dayReport,
+          dayReport,defaultDataSource,
           actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr,beforeProduction
         }
     }

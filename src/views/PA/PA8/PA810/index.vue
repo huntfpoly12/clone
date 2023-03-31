@@ -14,8 +14,11 @@
         style="max-height: 770px"
       >
         <DxPaging :page-size="0" />
-        <DxScrolling mode="standard" show-scrollbar="always"/>
+        <DxSearchPanel :visible="true" placeholder="Search..." />
+        <DxExport :enabled="true" />
         <DxToolbar>
+          <DxItem name="searchPanel" />
+          <DxItem name="exportButton" css-class="cell-button-export" />
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
@@ -89,15 +92,22 @@ import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import {companyId, convertBirthDayKorea} from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
-// import ViewPA810Popup from "@/views/PA/PA8/PA810/components/ViewPA810Popup.vue";
-import { DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined } from '@ant-design/icons-vue';
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import {DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined} from '@ant-design/icons-vue';
+import {useMutation, useQuery} from '@vue/apollo-composable';
 import dayjs from "dayjs";
 import DxButton from 'devextreme-vue/button';
-import { DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxPaging } from 'devextreme-vue/data-grid';
-import { DxItem } from 'devextreme-vue/select-box';
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import { useStore } from 'vuex';
+import {
+  DxColumn,
+  DxDataGrid,
+  DxExport,
+  DxPaging,
+  DxScrolling,
+  DxSearchPanel,
+  DxToolbar
+} from 'devextreme-vue/data-grid';
+import {DxItem} from 'devextreme-vue/select-box';
+import {computed, defineComponent, reactive, ref, watch, watchEffect} from 'vue';
+import {useStore} from 'vuex';
 import CreatePA810Popup from './components/CreatePA810Popup.vue';
 import {Message} from "@/configs/enum";
 
@@ -125,7 +135,9 @@ export default defineComponent({
     DownloadOutlined,
     ZoomInOutlined,
     imgUpload,
-    DxPaging
+    DxPaging,
+    DxSearchPanel,
+    DxExport
   },
   setup() {
     const contentDelete = Message.getCommonMessage('401').message as string

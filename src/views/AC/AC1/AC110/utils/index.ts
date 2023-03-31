@@ -80,7 +80,7 @@ export const dataDemoMain = [
 
 export const demTableMain = [
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 1,
     bankbookId: 11111,
     bankbookDetailTime: "2023",
@@ -106,7 +106,7 @@ export const demTableMain = [
     },
   },
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 2,
     bankbookId: 22222,
     bankbookDetailTime: "2023",
@@ -132,7 +132,7 @@ export const demTableMain = [
     },
   },
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 3,
     bankbookId: 33333,
     bankbookDetailTime: "2023",
@@ -160,7 +160,7 @@ export const demTableMain = [
 ];
 export const demTableTransactionDetails = [
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 11111111,
     bankbookId: 11111111,
     bankbookDetailTime: 11111111,
@@ -198,7 +198,7 @@ export const demTableTransactionDetails = [
     },
   },
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 2222222,
     bankbookId: 2222222,
     bankbookDetailTime: 2222222,
@@ -236,7 +236,7 @@ export const demTableTransactionDetails = [
     },
   },
   {
-    bankbookDetailDate: 16793870,
+    bankbookDetailDate: 20230330,
     bankbookDetailId: 33333333,
     bankbookId: 33333333,
     bankbookDetailTime: 33333333,

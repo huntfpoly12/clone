@@ -8,14 +8,17 @@
         :data-source="dataSource"
         :show-borders="true"
         :allow-column-reordering="move_column"
-        key-expr="companyId"
+        key-expr="workId"
         :allow-column-resizing="colomn_resize"
         :column-auto-width="true"
         style="max-height: 770px"
       >
         <DxPaging :page-size="0" />
-        <DxScrolling mode="standard" show-scrollbar="always"/>
+        <DxSearchPanel :visible="true" placeholder="Search..." />
+        <DxExport :enabled="true" />
         <DxToolbar>
+          <DxItem name="searchPanel" />
+          <DxItem name="exportButton" css-class="cell-button-export" />
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
@@ -62,9 +65,9 @@
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >
                 <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
-<!--              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">-->
-<!--                <DeleteOutlined/>-->
-<!--              </DxButton>-->
+              <DxButton type="ghost" @click="handleDelete(data.data.workId)">
+                <DeleteOutlined/>
+              </DxButton>
             </a-space>
           </div>
         </template>
@@ -74,22 +77,30 @@
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
                   typeHistory="pa-810"/>
     <CreatePA830Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" />
-<!--    <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />-->
   </div>
 </template>
 
 <script setup lang="ts">
-import {DxColumn, DxDataGrid, DxPaging, DxScrolling, DxToolbar} from 'devextreme-vue/data-grid';
-import {DownloadOutlined, HistoryOutlined} from '@ant-design/icons-vue';
+import {
+  DxColumn,
+  DxDataGrid,
+  DxExport,
+  DxPaging,
+  DxScrolling,
+  DxSearchPanel,
+  DxToolbar
+} from 'devextreme-vue/data-grid';
+import {DeleteOutlined, DownloadOutlined, HistoryOutlined} from '@ant-design/icons-vue';
 import DxButton from 'devextreme-vue/button';
 import {DxItem} from 'devextreme-vue/select-box';
 import CreatePA830Popup from "./components/CreatePA830Popup.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 
 import dayjs from "dayjs";
-import {companyId, convertBirthDayKorea} from "../../../../helpers/commonFunction";
+import {companyId, convertBirthDayKorea} from "@/helpers/commonFunction";
 import {computed, reactive, ref} from "vue";
 import {useStore} from "vuex";
+import deletePopup from "@/utils/deletePopup";
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -98,12 +109,13 @@ enum MajorInsuranceWorkingStatus {
   오류 = -1,
   취소 = 0
 }
-const dataSource = [
+const data = [
   {"companyId": 2, "type": 1, "imputedYear": 2023, "workId": 58, "employeeType": 10, "employeeId": 99831231, "name": "ABESHINZO", "nationalPensionReport": true, "healthInsuranceReport": true, "employeementInsuranceReport": true, "industrialAccidentInsuranceReport": true, "workingStatus": 1, "registeredAt": 1679043291582, "acceptedAt": null, "completedAt": null, "accedpedNumber": null, "memo": null, "createdAt": 1679043291589, "createdBy": "C23010402", "updatedAt": 1679043291589, "updatedBy": "C23010402", "ip": "1.54.101.150", "active": true, "includeDependents": true, "fileStorageId": 256, "residentId": "123123-2132131", "dependentsEvidenceFile": {"url": "https://jangbuda-frs.bankda.com/B93xLAjFmhN9lq3JxaA3hyrOjXAoBP.png", "__typename": "FileStorage"}, "__typename": "MajorInsuranceCompanyEmployeeAcquisition"}
 ]
 const store = useStore();
 const {per_page, move_column, colomn_resize} = store.state.settings;
 const globalYear = computed(() => store.getters['settings/currentYear'])
+const dataSource = ref(data)
 const isOpenModalCreate = ref(false);
 const modalHistory = ref(false);
 const actionParam = reactive({
@@ -121,6 +133,13 @@ const onGetFileStorageId = (url: string) => {
 const openAddNewModal = () => {
   isOpenModalCreate.value = true;
 };
+const handleDelete = (id: number) => {
+  deletePopup({
+    callback: () => {
+      dataSource.value = dataSource.value.filter((item: any) => item.workId !== id)
+    }
+  })
+}
 const dateFormat = (value: any) => {
   if (value) {
     return dayjs(value).format('YYYY-MM-DD');

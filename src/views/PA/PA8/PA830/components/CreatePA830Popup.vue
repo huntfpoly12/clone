@@ -6,8 +6,9 @@
     :visible="isOpenModalCreate"
     title="급여변경신고 신규 등록"
     centered
-    @cancel="$emit('closeModal')"
+    @cancel="closePopup"
     :footer="null"
+    :mask-closable="false"
   >
     <standard-form ref="formRef">
       <div class="mb-10">
@@ -51,7 +52,7 @@
         <a-col span="8">
           <DxField label="사업장관리번호">
             <default-text-box
-              v-model:valueInput="infoCompany.adding"
+              v-model:valueInput="infoCompany.address"
               placeholder="사업장관리번호"
               disabled
             />
@@ -60,7 +61,7 @@
         <a-col span="16">
           <DxField label="주소">
             <default-text-box
-              v-model:valueInput="infoCompany.adding"
+              v-model:valueInput="infoCompany.address"
               placeholder="주소"
               disabled
             />
@@ -179,10 +180,11 @@ import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
 import {companyId} from "@/helpers/commonFunction";
 import {useStore} from "vuex";
-import {FormCreatePA830} from "@/views/PA/PA8/const";
-import INITIAL_FORM from "@/views/PA/PA8/const"
-import {Company} from "@/views/PA/PA8/PA810/utils";
-import getCompany from "@/graphql/queries/common/getCompany";
+import INITIAL_FORM from "@/views/PA/PA8/const";
+import {useCompanyInfo} from "@/helpers/useCompanyInfo";
+import {cloneDeep, isEqual} from "lodash";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
+
 export default defineComponent({
   components: {
     UploadFile,
@@ -195,8 +197,9 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup(props, {emit}) {
     const store = useStore();
+    const { infoCompany } = useCompanyInfo(companyId)
     const globalYear = computed(() => store.getters['settings/currentYear']);
     const employeeWages = ref();
     const employeeWageSelected = ref();
@@ -204,12 +207,6 @@ export default defineComponent({
     const variables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
-    });
-    const infoCompany = reactive({
-      name: "",
-      adding: "",
-      presidentName: "",
-      bizNumber: "",
     });
     const {result: dataEmployeeWages, onResult: onResultEmployeeWages, refetch: refetchDataEmployeeWages} = useQuery(queries.getEmployeeWages, variables, () => ({
         fetchPolicy: "no-cache",
@@ -220,28 +217,30 @@ export default defineComponent({
         employeeWages.value = data;
       }
     })
-
-    // get Company
-    const {
-      result: dataCompany,
-      loading,
-      refetch,
-    } = useQuery<{ getCompany: Company }>(
-      getCompany,
-      {id: companyId},
-      () => ({
-        // enabled: trigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(dataCompany, (value) => {
-      if (value) {
-        infoCompany.name = value.getCompany.name;
-        infoCompany.bizNumber = value.getCompany.bizNumber;
-        infoCompany.presidentName = value.getCompany.presidentName;
-        infoCompany.adding = value.getCompany.address;
-      }
+    const isFormChange = computed(() => {
+      return !isEqual(cloneDeep(INITIAL_FORM.INITIAL_FORM_PA830), cloneDeep(formData.value))
+        || Boolean(employeeWageSelected.value)
     });
+    const resetForm = () => {
+      formData.value = cloneDeep(INITIAL_FORM.INITIAL_FORM_PA830)
+      employeeWageSelected.value = null
+    };
+
+    const closePopup = () => {
+      if (isFormChange.value) {
+        comfirmClosePopup(() => {
+          emit('closeModal')
+        })
+      } else {
+        emit('closeModal')
+      }
+    }
+    // watch listen props.isOpenModalCreate
+    watch(() => props.isOpenModalCreate, (val) => {
+      if (!val) {
+        resetForm();
+      }
+    })
     const onSubmit = async () => {
       console.log(formData.value)
     }
@@ -250,7 +249,8 @@ export default defineComponent({
       formData,
       onSubmit,
       employeeWageSelected,
-      infoCompany
+      infoCompany,
+      closePopup
     }
   },
 })

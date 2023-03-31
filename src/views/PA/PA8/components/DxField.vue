@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div class="dx-field-label" :title="label">{{ label }}:</div>
+    <div :class="dxFieldLabel" :title="label">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>
@@ -16,7 +16,7 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    isRequired: {
+    required: {
       type: Boolean,
       default: false
     },
@@ -34,12 +34,16 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const dxFieldLabel = computed(() => {
+      return `dx-field-label ${props.required ? 'required' : ''}`
+    })
     const computedClass = computed(() => {
       return `dx-field px-10 d-flex items-center ${props.class}`;
     });
 
     return {
       computedClass,
+      dxFieldLabel
     };
   },
 })
@@ -47,11 +51,17 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dx-field {
   align-items: center;
+  margin-bottom: 0;
+  width: 100%;
   .dx-field-label {
     width: 110px ;
+    flex: 0 0 auto;
+    &.required {
+      color: red;
+    }
   }
   .dx-field-value {
-    width: calc(100% - 140px) !important;
+    flex:  1;
   }
   &.field-custom {
     .dx-field-label {
@@ -67,6 +77,11 @@ export default defineComponent({
     }
     .dx-field-value {
       width: calc(100% - 200px) !important;
+    }
+  }
+  &.field-custom-auto {
+    .dx-field-label {
+      width: auto ;
     }
   }
 }
