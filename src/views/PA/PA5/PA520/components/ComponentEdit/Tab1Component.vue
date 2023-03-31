@@ -232,6 +232,7 @@ export default defineComponent({
         // store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId
         // store.state.common.checkChangeValueEditTab1PA520 = false
         // store.state.common.isValidateEditPA520 = false
+        store.commit('common/setCheckEditTab1PA520',false) 
         dataDefault.value = { ...dataEdited }
         emit('closePopup', false)
         notification('success', Message.getCommonMessage('106').message)

@@ -45,7 +45,7 @@
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
                   <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
                   <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
-                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" />
+                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" :message="data.data.causeOfProductionFailure"/>
                 </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
