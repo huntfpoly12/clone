@@ -56,10 +56,10 @@
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
+                    <list-sales-dropdown  v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col class="search-4">
