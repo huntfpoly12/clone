@@ -20,7 +20,7 @@
         </a-col>
       </a-row>
       <div class="text-center mt-10">상기 내용으로 기부금영수증 발행하시겠습니까?</div>
-      <div class="text-align-center mt-30">
+      <div class="d-flex-center mt-30" style="justify-content: center; column-gap: 10px;">
         <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined" @onClick="setModalVisible" />
         <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
           @onClick="onSubmit" />

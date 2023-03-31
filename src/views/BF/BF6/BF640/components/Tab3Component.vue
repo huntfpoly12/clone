@@ -26,7 +26,7 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+                <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
                     <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
@@ -45,7 +45,7 @@
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
                   <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
                   <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
-                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" />
+                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" :message="data.data.causeOfProductionFailure"/>
                 </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
