@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :search-enabled="true" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
+    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="true" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
         placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
         field-template="field" item-template="item" :key="resetSelect" :disabled="disabled"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
@@ -139,8 +139,11 @@ export default {
         watch(() => props.valueInput, (newValue) => {
             value.value = newValue;
         });
+        const onOpened = (e: any) => {
+            e.component._popup.option('width', 250);
+        }
         return {
-            messageRequired, arrAllCallApi, resetSelect,
+            messageRequired, arrAllCallApi, resetSelect, onOpened,
             accountSubjects,
             updateValue,
             value,
