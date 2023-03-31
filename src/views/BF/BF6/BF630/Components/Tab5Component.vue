@@ -9,7 +9,7 @@
               </a-col>
               <a-col>
                   <a-form-item  label="제작요청일(기간)"> 
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" maxRange="365"></range-date-time-box>
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" ></range-date-time-box>
                   </a-form-item>
               </a-col>
               <a-autocomplete>
@@ -25,7 +25,7 @@
                 </a-form-item>
               </a-autocomplete>
               <a-col>
-                <a-form-item  label="매니저리스트"> 
+                <a-form-item  label="제작요청자"> 
                   <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId"/>
                 </a-form-item>
               </a-col>
