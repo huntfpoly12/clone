@@ -8,7 +8,7 @@
         <a-row>
           <a-col :span="24">
             <a-form-item label="사용일" label-align="right" class="red">
-              <date-time-box width="200px" v-model:valueDate="formState.joinedAt" :disabled="true"></date-time-box>
+              <date-time-box width="200px" v-model:valueDate="formState.joinedAt" :required="true" :disabled="true"></date-time-box>
             </a-form-item>
           </a-col>
           <a-col :span="24">
