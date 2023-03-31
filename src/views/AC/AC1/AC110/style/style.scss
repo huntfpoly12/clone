@@ -106,4 +106,8 @@
       }
     }
   }
+  .disable-button-edit-add {
+    pointer-events: none;
+    color: rgb(180, 177, 177);
+  }
 }
