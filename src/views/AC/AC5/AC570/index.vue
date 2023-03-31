@@ -137,7 +137,6 @@
                     </a-spin>
                 </a-col>
             </a-row>
-            <account-code-select width="350px" :required="true" />
         </div>
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
             title="변경이력" :idRowEdit="idRowEdit" typeHistory="ac-570" />
