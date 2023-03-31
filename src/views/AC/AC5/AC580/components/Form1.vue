@@ -8,7 +8,8 @@
         <a-row>
           <a-col :span="24">
             <a-form-item label="발생일" label-align="right" class="red">
-              <date-time-box width="200px" v-model:valueDate="formState.joinedAt"></date-time-box>
+              <date-time-box width="200px" v-model:valueDate="formState.joinedAt" :disabled="true"
+                :required="true"></date-time-box>
             </a-form-item>
           </a-col>
           <a-col :span="24">
@@ -41,9 +42,9 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="명세" label-align="right" class="red">
+            <a-form-item label="명세" label-align="right">
               <div class="input-text">
-                <default-text-box width="200px" v-model:valueInput="formState.name" :required="true" />
+                <default-text-box width="200px" v-model:valueInput="formState.name" />
                 <span style="font-size: 12px; color: #888888" class="mt-5">
                   <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5" />통장적요: {}
                 </span>
@@ -56,8 +57,8 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="비고" label-align="right" class="red">
-              <default-text-box width="200px" v-model:valueInput="formState.name" :required="true" />
+            <a-form-item label="비고" label-align="right">
+              <default-text-box width="200px" v-model:valueInput="formState.name" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -203,11 +204,11 @@ export default defineComponent({
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
       } else {
-        modalConfirm.value = true;
+        // modalConfirm.value = true;
       }
     }
     const openAddNewModal = () => { }
-    const onDelete = () => { }
+    const onDelete = () => { modalConfirm.value = true; }
     return {
       globalYear, employeeWages,
       employeeFashionArr, employeeFashionArr2, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
