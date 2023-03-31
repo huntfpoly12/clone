@@ -1,7 +1,7 @@
 <template>
   <a-modal :visible="isModalNoteItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
-    <text-area-box placeholder="Note....." height="300" style="margin-top: 20px;"/>
+    <text-area-box v-model="valueInput" placeholder="Note....." height="300" style="margin-top: 20px;"/>
     <div class="ac-110-popup-detail-btn">
       <button-basic text="초기화" type="default" :mode="'contained'" @onClick="submit" />
     </div>
@@ -9,31 +9,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
-import { useStore } from 'vuex';
+import { defineComponent, ref, watch,  } from 'vue'
 export default defineComponent({
   props: {
     isModalNoteItemDetail: {
       type: Boolean,
       default: false,
     },
+    transactionSelected: {
+      type: Object,
+      default: () => {}
+    }
   },
   components: {
   },
 
   setup(props, { emit }) {
-    const store = useStore();
-
+    const valueInput =  ref(props.transactionSelected?.noteValue);
+    watch(() => props.transactionSelected?.noteValue, (value) => {
+      valueInput.value = value
+    },{
+      deep: true
+    })
     const cancel = () => {
+      valueInput.value = props.transactionSelected?.noteValue
       emit("closePopup", false)
     };
     const submit = () => {
-      emit("submit")
+      emit("submit", {...props.transactionSelected, noteValue: valueInput.value})
     }
-  
     return {
       submit,
       cancel,
+      valueInput,
     }
   },
 })
