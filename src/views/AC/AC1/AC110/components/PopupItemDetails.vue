@@ -1,7 +1,7 @@
 <template>
   <a-modal :visible="isModalItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
-    <DxDataGrid key-expr="id" class="mt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
+    <DxDataGrid class="mt-20" :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.statementOfGoodsItems"
       :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
       :column-auto-width="true">
       <DxToolbar>
@@ -18,20 +18,24 @@
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxColumn caption="품목" cell-template="item" width="100" />
       <template #item="{ data }">
-        <select-box-common :arrSelect="arraySelectBox" :required="true" />
+        <select-box-common  :required="true" />
+        <!-- <select-box-common :arrSelect="arraySelectBox" :required="true" /> -->
+        {{ data.data.item }}
       </template>
       <DxColumn caption="규격" cell-template="standard" width="100" />
       <template #standard="{ data }">
-        <select-box-common :arrSelect="arraySelectBox" :required="true" />
+        <!-- <select-box-common :arrSelect="arraySelectBox" :required="true" /> -->
+        {{ data.data.standard }}
       </template>
       <DxColumn caption="단위" cell-template="unit" width="100" />
       <template #unit="{ data }">
-        <select-box-common :arrSelect="arraySelectBox" :required="true" />
+        <!-- <select-box-common :arrSelect="arraySelectBox" :required="true" /> -->
+        {{ data.data.unit }}
       </template>
-      <DxColumn caption="수량" data-field="fill4"></DxColumn>
-      <DxColumn caption="단가" data-field="fill8" format="fixedPoint" alignment="end"></DxColumn>
-      <DxColumn caption="금액" data-field="fill8" format="fixedPoint" alignment="end"></DxColumn>
-      <DxColumn caption="비고" data-field="fill4"></DxColumn>
+      <DxColumn caption="수량" data-field="quantity"></DxColumn>
+      <DxColumn caption="단가" data-field="unitPrice" format="fixedPoint" alignment="end"></DxColumn>
+      <DxColumn caption="금액" data-field="amount" format="fixedPoint" alignment="end"></DxColumn>
+      <DxColumn caption="비고" data-field="remark"></DxColumn>
       <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
       <template #action="{ data }">
         <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
@@ -58,17 +62,28 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import { dataDemoMain } from '../utils/index'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
+import notification from '@/utils/notification';
+import mutations from "@/graphql/mutations/AC/AC1/AC110";
 export default defineComponent({
   props: {
     isModalItemDetail: {
       type: Boolean,
       default: false,
     },
+    data: {
+      type: Object,
+      default: () => {}
+    },
+    payload: {
+      type: Object,
+      default: () => {}
+    }
   },
   components: {
     DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton
@@ -97,9 +112,19 @@ export default defineComponent({
       }
     ])
     let isModalDelete = ref(false)
-
-
-
+    // graphql
+    const {
+      mutate: deleteStatementOfGoods,
+      onDone: doneDeleteStatementOfGoods,
+      onError: errorDeleteStatementOfGoods,
+      loading: loadingDeleteStatementOfGoods,
+    } = useMutation(mutations.deleteStatementOfGoods);
+    doneDeleteStatementOfGoods((e) => {
+      notification('success', Message.getMessage('COMMON', '106').message)
+    })
+    errorDeleteStatementOfGoods(e => {
+      notification('error', e.message)
+    })
 
     const cancel = () => {
       emit("closePopup", false)
@@ -108,19 +133,34 @@ export default defineComponent({
       emit("submit")
     }
     const totalValue = () => {
-      return '금액합계: 100'
+      let total = 0;
+      props.data.statementOfGoodsItems.forEach((item:any) => {
+        total += item.amount
+      });
+      return `금액합계: ${total}`
     }
     const totalExpenditure = () => {
-      return '지출액: 100'
+      return `지출액: ${props.data.spending}`
     }
     const totalDifference = () => {
-      return '차액: 100'
+      let total = 0;
+      props.data.statementOfGoodsItems.forEach((item:any) => {
+        total += item.amount
+      });
+      return `차액: ${props.data.spending}-${total}`
     }
     const openPopupDeleteItem = (data: any) => {
       isModalDelete.value = true
     }
     const handleDelete = () => {
-
+      const payloadRequest = {...props.payload}
+      delete payloadRequest.bankbookDetailDate
+      delete payloadRequest.bankbookDetailId
+      deleteStatementOfGoods({
+        ...payloadRequest,
+        transactionDetailDate: props.data.transactionDetailDate,
+        accountingDocumentId:props.data.accountingDocumentId
+      })
     }
     return {
       move_column,
