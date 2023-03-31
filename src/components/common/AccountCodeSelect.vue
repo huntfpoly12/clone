@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :width="width" :search-enabled="true" :searchExpr="['name', 'code']" :data-source="accountSubjects"
+    <DxSelectBox :width="width" :search-enabled="true" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
         placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
         field-template="field" item-template="item" :key="resetSelect" :disabled="disabled"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
