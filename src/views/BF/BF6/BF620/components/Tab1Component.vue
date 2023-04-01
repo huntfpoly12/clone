@@ -1,9 +1,6 @@
 <template>
   <div class="tab-group">
     <SearchArea :tab1="true" />
-    <!-- {{ filterBF620 }} filterBF620 <br />
-    {{ dataSource }} dataSource <br />
-    {{ requestFileData }} requestFileData <br /> -->
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -24,74 +21,72 @@
       </a-col>
     </a-row>
     <div class="content-grid">
-      <a-spin :spinning="searchWithholdingLoading" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
-          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          :allowSelection="true" @editor-preparing="onEditorPreparing">
-          <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxSelection mode="multiple" :fixed="true" />
-          <DxColumn caption="사업자코드" data-field="companyCode" cell-template="companyCode"/>
-          <template #companyCode="{ data }">
-            {{ data.data.companyCode }}
-            {{ data.data.active ? '' : '해지' }}
-          </template>
-          <DxColumn caption="상호 주소" cell-template="companyName" />
-          <template #companyName="{ data }">
-            {{ data.data.companyName }}
-            {{ data.data.address }}
-          </template>
-          <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
-          <template #inputYearMonth="{ data }">
-            <!-- {{ data.data.imputedYear }} -->
-            <a-tooltip color="black">
-              <template #title>삭제</template>
-              <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
-                color: 'white',
-                backgroundColor: 'gray',
-                height: $config_styles.HeightInput
-              }" class="btn-date" />
-            </a-tooltip>
-          </template>
-          <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
-          <template #paymentYearMonth="{ data }">
-            <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
+      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
+        key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true"
+        @editor-preparing="onEditorPreparing">
+        <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxLoadPanel :enabled="true" :showPane="true"/>
+        <DxSelection mode="multiple" :fixed="true" />
+        <DxColumn caption="사업자코드" data-field="companyCode" cell-template="companyCode" />
+        <template #companyCode="{ data }">
+          {{ data.data.companyCode }}
+          {{ data.data.active ? '' : '해지' }}
+        </template>
+        <DxColumn caption="상호 주소" cell-template="companyName" />
+        <template #companyName="{ data }">
+          {{ data.data.companyName }}
+          {{ data.data.address }}
+        </template>
+        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
+        <template #inputYearMonth="{ data }">
+          <!-- {{ data.data.imputedYear }} -->
+          <a-tooltip color="black">
+            <template #title>삭제</template>
+            <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
               color: 'white',
-              backgroundColor: 'black',
+              backgroundColor: 'gray',
               height: $config_styles.HeightInput
             }" class="btn-date" />
-          </template>
-          <DxColumn caption="신고 주기" cell-template="reportType" width="95px" />
-          <template #reportType="{ data }">
-            <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-            <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
-            <div v-else></div>
-          </template>
-          <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
-          <template #afterDeadline="{ data }">
-            <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
-            <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
-            <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
-              data.data.index }}</div>
-          </template>
-          <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
-          <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-            format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="제작현황" cell-template="productionStatus" />
-          <template #productionStatus="{ data }">
-            <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
-              @productionStatusData="productionStatusData" />
-            <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
-          </template>
-          <DxSummary>
-            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text="reportTypeSummary" />
-            <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text="afterDeadlineSummary" />
-            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
-          </DxSummary>
-        </DxDataGrid>
-      </a-spin>
+          </a-tooltip>
+        </template>
+        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
+        <template #paymentYearMonth="{ data }">
+          <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
+            color: 'white',
+            backgroundColor: 'black',
+            height: $config_styles.HeightInput
+          }" class="btn-date" />
+        </template>
+        <DxColumn caption="신고 주기" cell-template="reportType" width="95px" />
+        <template #reportType="{ data }">
+          <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
+          <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
+          <div v-else></div>
+        </template>
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
+        <template #afterDeadline="{ data }">
+          <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
+          <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
+          <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
+            data.data.index }}</div>
+        </template>
+        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
+        <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+        <DxColumn caption="제작현황" cell-template="productionStatus" />
+        <template #productionStatus="{ data }">
+          <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
+            @productionStatusData="productionStatusData" />
+          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+        </template>
+        <DxSummary>
+          <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text="reportTypeSummary" />
+          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text="afterDeadlineSummary" />
+          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
+        </DxSummary>
+      </DxDataGrid>
     </div>
     <RequestFilePopup v-if="modalStatus" :requestFileData="requestFileData" tab-name="tab1"
       @cancel="modalStatus = false" />
@@ -106,7 +101,7 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
@@ -127,6 +122,7 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     GetStatusTable,
+    DxLoadPanel
   },
   props: {
     search: {

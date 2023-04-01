@@ -10,20 +10,25 @@
       <a-row>
         <a-col :span="8">
           <a-form-item label="기부기간" label-align="right" class="red">
-            <year-picker-box width="100px" v-model:valueDate="dataState.imputedYear" color="#a6a6a6"></year-picker-box>
+            <div class="input-text">
+              <year-picker-box width="100px" v-model:valueDate="dataState.imputedYear" color="#a6a6a6"></year-picker-box>
+              <span>
+                (1/1~12/31)
+              </span>
+            </div>
           </a-form-item>
         </a-col>
         <a-col :span="8">
           <a-form-item label="발행기간">
-            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+            <range-month-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
           </a-form-item>
           <div style="font-size: 12px; color: #888888" class="mt-5">
             <img src="@/assets/images/iconInfo.png" style="width: 14px" />본 회계연도내 기부내역 대상의 발행내역만 검색가능하며, 발행기간과는 무관합니다.
           </div>
         </a-col>
         <a-col :span="8">
-          <a-form-item label="후원자" label-align="right" class="red">
-            <default-text-box width="200px" :disabled="true" v-model:valueInput="dataState.name" :required="true" />
+          <a-form-item label="후원자" label-align="right">
+            <default-text-box width="200px" v-model:valueInput="dataState.name" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -128,7 +133,7 @@ import {
   DxSearchPanel,
   DxExport,
   DxToolbar,
-DxSelection,
+  DxSelection,
 } from 'devextreme-vue/data-grid';
 import { DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { companyId } from '@/helpers/commonFunction';
@@ -163,7 +168,7 @@ export default defineComponent({
     ShowDataCreated,
     CreatePopup,
     DxSelection
-},
+  },
   setup() {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
@@ -190,7 +195,7 @@ export default defineComponent({
       imputedYear: globalYear.value,
       name: 'ss',
     })
-    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
+    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMM')), parseInt(dayjs().format('YYYYMM'))]);
 
 
     // -----------------------------MAIL-------------------
@@ -224,7 +229,7 @@ export default defineComponent({
     // -----------------------------DELETE-------------------
 
     const modalDelete = ref(false);
-    const deleteContent = h('div', [h('div', '선택된 기부금영수증 {1} 건을 삭제합니다.'), h('div', '삭제 후 복구는 불가합니다. 그래도 삭제하시겠습니까?')])
+    const deleteContent = h('div', [h('div', `선택된 기부금영수증 ${1} 건을 삭제합니다.`), h('div', '삭제 후 복구는 불가합니다. 그래도 삭제하시겠습니까?')])
     const onDeleteModal = (emitVal: Boolean) => {
       if (!emitVal) {
         modalDelete.value = false;

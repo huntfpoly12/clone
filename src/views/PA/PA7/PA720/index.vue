@@ -503,7 +503,6 @@ export default defineComponent({
         changeFommDone.value++;
         formTaxRef.value.incomeExtraParam.incomeId = emit[0];
         formTaxRef.value.triggerIncomeExtra = true;
-        // store.commit('common/selectedRowKeysPA720', emit);
         taxPayRef.value.selectRow(emit);
         taxPayRef.value.focusedRowKey = emit[0];
       } else {
