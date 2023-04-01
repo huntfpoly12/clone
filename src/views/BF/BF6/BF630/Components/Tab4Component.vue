@@ -66,7 +66,7 @@
               <list-manager-dropdown width="150px" v-model:valueInput="filterForm.manageUserId" />
             </a-form-item>
             <a-form-item label="영업자리스트">
-              <list-sales-dropdown width="150px" :required="true" v-model:valueInput="filterForm.salesRepresentativeId" />
+              <list-sales-dropdown width="150px" v-model:valueInput="filterForm.salesRepresentativeId" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -123,7 +123,7 @@
             {{ formatBizNumber(data.data.company.bizNumber) }}
           </template>
           <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
-            format="yyyy-MM-dd hh:mm" />
+            format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="imputed" width="430"/>
           <template #imputed="{ data }">
             <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab4"

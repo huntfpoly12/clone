@@ -1,71 +1,78 @@
 <template>
   <div class="search-form">
-      <div id="components-grid-demo-flex">
-          <a-row justify="start" :gutter="[16, 8]">
-              <a-col>
-                  <a-form-item  label="신고구분 :"> 
-                    <electronic-filing-type v-model:valueInput="originData.type" width="200px" :disabledList="[1,2,7,8,9]"></electronic-filing-type> 
-                  </a-form-item>
-              </a-col>
-              <a-col>
-                  <a-form-item  label="제작요청일(기간)"> 
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" ></range-date-time-box>
-                  </a-form-item>
-              </a-col>
-              <a-autocomplete>
-                <a-form-item  label="제작상태"> 
-                    <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
-                        layout="horizontal" :icon-size="12">
-                        <template #radio="{ data }">
-                            <production-status :typeTag="0" v-if="data == 0" padding="0px 10px"/>
-                            <production-status :typeTag="4" v-if="data == 2" padding="1px 10px"/>
-                            <production-status :typeTag="5" v-if="data == -1" padding="1px 10px"/>
-                        </template>
-                    </DxRadioGroup>
-                </a-form-item>
-              </a-autocomplete>
-              <a-col>
-                <a-form-item  label="제작요청자"> 
-                  <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId"/>
-                </a-form-item>
-              </a-col>
-          </a-row>
-      </div>
+    <div id="components-grid-demo-flex">
+      <a-row justify="start" :gutter="[16, 8]">
+        <a-col>
+          <a-form-item label="신고구분 :">
+            <electronic-filing-type v-model:valueInput="originData.type" width="200px"
+              :disabledList="[1, 2, 7, 8, 9]"></electronic-filing-type>
+          </a-form-item>
+        </a-col>
+        <a-col>
+          <a-form-item label="제작요청일(기간)">
+            <range-date-time-box v-model:valueDate="rangeDate" width="250px"
+              :multi-calendars="true"></range-date-time-box>
+          </a-form-item>
+        </a-col>
+        <a-autocomplete>
+          <a-form-item label="제작상태">
+            <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
+              layout="horizontal" :icon-size="12">
+              <template #radio="{ data }">
+                <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
+                <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
+                <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
+              </template>
+            </DxRadioGroup>
+          </a-form-item>
+        </a-autocomplete>
+        <a-col>
+          <a-form-item label="제작요청자">
+            <list-manager-dropdown width="150px" v-model:valueInput="originData.manageUserId" />
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </div>
   </div>
   <div class="grid-view">
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxColumn caption="일련번호" data-field="electronicFilingId"  width="100px" alignment="center"/>
-                <DxColumn caption="참고사항" data-field="referenceInformation" />
-                <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date"
-                        format="yyyy-MM-dd hh:mm" />
-                <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center"/>
-                <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center"/>
-                <template #productionStatus="{ data }">
-                  <production-status :typeTag="0" v-if="data.data.productionStatus == 0" padding="0px 10px"/>
-                  <production-status :typeTag="4" v-if="data.data.productionStatus == 2" padding="1px 10px"/>
-                  <production-status :typeTag="5" v-if="data.data.productionStatus == -1" padding="1px 10px"/>
-                </template>
-                <DxColumn caption="상세보기" width="80px" cell-template="action"/>
-                <template #action="{ data }"> 
-                  <div style="text-align: center">
-                    <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
-                        @click="openPopupDetail(data.data)" />
-                  </div>
-                </template>
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+          class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true">
+          <DxScrolling mode="standard" show-scrollbar="always" />
+          <DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
+          <DxColumn caption="참고사항" data-field="referenceInformation" />
+          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
+          <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center" />
+          <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center" />
+          <template #productionStatus="{ data }">
+            <a-tooltip placement="topLeft" color="black" v-if="data.data.productionStatus == -1">
+              <template #title>{{ data.data.causeOfProductionFailure }}</template>
+              <div>
+                <production-status :typeTag="5" padding="1px 10px" />
+              </div>
+            </a-tooltip>
+            <production-status :typeTag="0" v-if="data.data.productionStatus == 0" padding="0px 10px" />
+            <production-status :typeTag="4" v-if="data.data.productionStatus == 2" padding="1px 10px" />
+          </template>
+          <DxColumn caption="상세보기" width="80px" cell-template="action" />
+          <template #action="{ data }">
+            <div style="text-align: center">
+              <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
+                @click="openPopupDetail(data.data)" />
+            </div>
+          </template>
 
-                <DxSummary>
-                  <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />      
-                </DxSummary>
-            </DxDataGrid>
-        </a-spin>
+          <DxSummary>
+            <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+          </DxSummary>
+        </DxDataGrid>
+      </a-spin>
     </div>
   </div>
-  <companies-popup v-if="modalCompanies" :modalStatus="modalCompanies"  @closePopup="modalCompanies = false" :data="dataPopup"></companies-popup>
+  <companies-popup v-if="modalCompanies" :modalStatus="modalCompanies" @closePopup="modalCompanies = false"
+    :data="dataPopup"></companies-popup>
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch } from "vue";
@@ -81,7 +88,7 @@ import CompaniesPopup from "./CompaniesPopup.vue";
 
 export default defineComponent({
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup, DxSummary, DxTotalItem, CompaniesPopup
   },
   props: {
     activeSearch: {
@@ -101,26 +108,26 @@ export default defineComponent({
     const trigger = ref<boolean>(true);
     const typeCheckbox = ref([0, 2, -1])
     const valueType = ref(0)
-    const rangeDate =  ref([filters.formatDateToInterger(dayjs().subtract(7, 'day')), filters.formatDateToInterger(dayjs())])
-    const productionStatuses =  ref(0)
+    const rangeDate = ref([filters.formatDateToInterger(dayjs().subtract(7, 'day')), filters.formatDateToInterger(dayjs())])
+    const productionStatuses = ref(0)
     const dataSource = ref<any>([])
     const dataPopup = ref()
     const modalCompanies = ref<boolean>(false)
     const originData = reactive({
-        type:3,
-        requesteStartDate: rangeDate.value[0],
-        requesteFinishDate: rangeDate.value[1],
-        productionStatuses: [2,-1],
-        manageUserId: 0
-      }
+      type: 3,
+      requesteStartDate: rangeDate.value[0],
+      requesteFinishDate: rangeDate.value[1],
+      productionStatuses: [2, -1],
+      manageUserId: 0
+    }
     )
 
     // watch range date time
     watch(productionStatuses, (newValue) => {
       if (newValue == 0) {
-        originData.productionStatuses = [2,-1]
+        originData.productionStatuses = [2, -1]
       } else {
-        originData.productionStatuses =  [newValue]
+        originData.productionStatuses = [newValue]
       }
     })
     // watch range picker change
@@ -128,24 +135,24 @@ export default defineComponent({
       originData.requesteStartDate = newValue[0]
       originData.requesteFinishDate = newValue[1]
     })
-    
+
 
     // ============ GRAPQL ===============================
     const {
-        result:  resElectronicFiling,
-        onResult: onResElectronicFiling,
-        loading: loadingElectronicFiling,
-        refetch: refetchElectronicFiling,
-        onError: onErrorElectronicFiling
+      result: resElectronicFiling,
+      onResult: onResElectronicFiling,
+      loading: loadingElectronicFiling,
+      refetch: refetchElectronicFiling,
+      onError: onErrorElectronicFiling
     } = useQuery(queries.searchElectronicFilingFileProductions, {
       filter: originData
     }, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache",
+      enabled: trigger.value,
+      fetchPolicy: "no-cache",
     }))
 
-    
-    
+
+
     // ===================DONE GRAPQL==================================
     // watch result  api searchElectronicFilingFileProductions
     onResElectronicFiling(() => {
@@ -164,7 +171,7 @@ export default defineComponent({
       }
     })
     onErrorElectronicFiling(e => {
-            notification('error', e.message)
+      notification('error', e.message)
     })
 
     // watch active searching
@@ -174,16 +181,17 @@ export default defineComponent({
     })
 
     const openPopupDetail = (data: any) => {
+      console.log('datadatadata', data);
       dataPopup.value = data
       modalCompanies.value = true
     }
-   
+
     return {
       globalYear,
       originData,
       move_column,
       colomn_resize,
-      dataSource,typeCheckbox,valueType,modalCompanies,
+      dataSource, typeCheckbox, valueType, modalCompanies,
       loadingElectronicFiling,
       trigger,
       rangeDate,
@@ -194,8 +202,7 @@ export default defineComponent({
   }
 })
 </script>
-<style  scoped lang="scss" src="../style/styleTabs.scss">
-</style>
+<style  scoped lang="scss" src="../style/styleTabs.scss"></style>
 
 
 

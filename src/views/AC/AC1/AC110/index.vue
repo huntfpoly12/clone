@@ -156,8 +156,8 @@
           </DxDataGrid>
         </a-spin>
       </div>
-      <a-row class="ac-110__main-detail">
-        <a-col span="17" class="ac-110__main-detail-detail1">
+      <div class="ac-110__main-detail">
+        <div class="ac-110__main-detail-detail1">
           <div class="ac-110__main-detail-detail1-title">
             <b>거래내역-</b><span v-if="!!bankbookSelected">{{ bankbookSelected.bankbook.bankbookNickname }} {{
               getNameBankBookUseType(bankbookSelected.bankbook.useType) }}</span>
@@ -251,8 +251,7 @@
                     :class="{ 'disable-button-edit-add': data.data.transactionDetails.resolutionClassification === 1 }">
                     <EditOutlined v-if="data.data.content.length" style="font-size: 12px"
                       @click="openPopupNoteItemDetail(data, 'causeUsage')" />
-                    <PlusOutlined v-else style="font-size: 12px"
-                      @click="openPopupItemDetail(data.data)" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
@@ -267,21 +266,20 @@
                     :class="{ 'disable-button-edit-add': data.data.transactionDetails.resolutionClassification === 1 }">
                     <EditOutlined v-if="data.data.content.length" style="font-size: 12px"
                       @click="openPopupNoteItemDetail(data, 'memo')" />
-                    <PlusOutlined v-else style="font-size: 12px"
-                      @click="openPopupItemDetail(data.data)" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>
               </DxDataGrid>
             </standard-form>
           </a-spin>
-        </a-col>
-        <a-col span="7" class="ac-110__main-detail-detail2">
+        </div>
+        <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage v-model:list-image-file="fileList" width="387"
+            <UploadPreviewImage v-model:list-image-file="fileList" width="385"
               :payLoadProofs="payloadGetTransactionDetails" />
           </div>
-        </a-col>
-      </a-row>
+        </div>
+      </div>
     </div>
     <PopupRetrieveStatements :isModalRetrieveStatements="isModalRetrieveStatements"
       @closePopup="isModalRetrieveStatements = false" :title="''" :content="contentPopupRetrieveStatements"
@@ -295,7 +293,8 @@
     <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion"
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
-    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems" :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false"
+    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
+      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false"
       @submit="isModalItemDetail = false" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
@@ -404,8 +403,8 @@ export default defineComponent({
     let isModalNoteItemDetail = ref(false);
     let transactionSelected: any = ref()
     let dataStatementOfGoodsItems: any = ref()
+
     watch(() => fileList.value, (value) => {
-      console.log('fileList.value EEEEEEEEEEEE', fileList.value)
     }, {
       deep: true,
     })
@@ -592,7 +591,6 @@ export default defineComponent({
       if (payloadGetTransactionDetails.bankbookDetailId === item.bankbookDetailId) return
       payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
       payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
-      console.log(payloadGetTransactionDetails)
       triggerTransactionDetails.value = true
     }
 
