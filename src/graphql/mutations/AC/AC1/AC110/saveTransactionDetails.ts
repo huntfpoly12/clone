@@ -1,15 +1,15 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation syncBankbookDetails(
+  mutation saveTransactionDetails(
     $companyId: Int!,
     $fiscalYear: Int!,
     $facilityBusinessId: Int!,
     $bankbookDetailId: Int!,
     $bankbookDetailDate: Int!,
     $creates: [TransactionDetailCreateInput!],
-    $updates: [TransactionDetailCreateInput!]
+    $updates: [TransactionDetailUpdateInput!]
   ) {
-    syncBankbookDetails(
+    saveTransactionDetails(
       companyId: $companyId,
       fiscalYear: $fiscalYear,
       facilityBusinessId: $facilityBusinessId,
