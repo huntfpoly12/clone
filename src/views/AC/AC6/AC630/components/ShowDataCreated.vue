@@ -6,11 +6,14 @@
       <standard-form>
         <div class="form-container">
 
-          <div class="header">가입신고 기재항목</div>
-          <a-row>
+          <div class="header">후원자</div>
+          <a-row class="px-15">
             <a-col :span="12">
               <a-form-item label="후원자" label-align="right" class="red">
-                <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                <div class="input-text">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                  <a-tag color="orange" class="ml-5">{{ formState.beckeType }}</a-tag>
+                </div>
               </a-form-item>
             </a-col>
             <a-col :span="12">
@@ -20,7 +23,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <a-row>
+          <a-row class="px-15">
             <a-col :span="12">
               <a-form-item label="주민등록번호" label-align="right" class="red">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
@@ -34,8 +37,8 @@
             </a-col>
           </a-row>
 
-          <div class="header">가입신고 기재항목</div>
-          <a-row>
+          <div class="header">기부기간 / 금액 / 내역</div>
+          <a-row class="px-15">
             <a-col :span="12">
               <a-form-item label="기부기간" label-align="right" class="red">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
@@ -48,7 +51,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <a-row>
+          <a-row class="px-15">
             <a-col :span="12">
               <a-form-item label="기부금 총액 (건)" label-align="right" class="red">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
@@ -60,30 +63,30 @@
                   :required="true" />
               </a-form-item>
             </a-col>
-          </a-row>
 
-          <div class="header">기부(후원금(품))내역상세</div>
-          <a-spin :spinning="false" size="large">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="formState" :show-borders="true"
-              key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-              :column-auto-width="true">
-              <DxPaging :page-size="0" />
-              <DxColumn caption="사업명" data-field="name" />
-              <DxColumn caption="구분" data-field="bizNumber" />
-              <DxColumn caption="연월일" data-field="presidentName" />
-              <DxColumn caption="내용">
-                <DxColumn caption="품명" data-field="adding" />
-                <DxColumn caption="수량" data-field="totalPay" />
-                <DxColumn caption="단가" data-field="residentId" />
-              </DxColumn>
-              <DxColumn caption="금액" data-field="jobTypeCode" cell-template="jobTypeCode"/>
-              <template #jobTypeCode="{ data }" class="custom-action">
-                <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
-                  {{ data.value }}
-                </div>
-              </template>
-            </DxDataGrid>
-          </a-spin>
+            <div class="header-1">기부(후원금(품))내역상세</div>
+            <a-spin :spinning="false" size="large">
+              <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="formState" :show-borders="true"
+                key-expr="employeeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                :column-auto-width="true">
+                <DxPaging :page-size="0" />
+                <DxColumn caption="사업명" data-field="name" />
+                <DxColumn caption="구분" data-field="bizNumber" />
+                <DxColumn caption="연월일" data-field="presidentName" />
+                <DxColumn caption="내용" alignment="center">
+                  <DxColumn caption="품명" data-field="adding" />
+                  <DxColumn caption="수량" data-field="totalPay" />
+                  <DxColumn caption="단가" data-field="residentId" />
+                </DxColumn>
+                <DxColumn caption="금액" data-field="jobTypeCode" cell-template="jobTypeCode" />
+                <template #jobTypeCode="{ data }" class="custom-action">
+                  <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
+                    {{ data.value }}
+                  </div>
+                </template>
+              </DxDataGrid>
+            </a-spin>
+          </a-row>
 
           <div class="header">서식 설정</div>
           <a-row>
@@ -101,8 +104,8 @@
           </a-row>
           <a-row>
             <a-col :span="12">
-              <div>
-                기부금공제대상 기부금단체 근거법령
+              <div style="color: red">
+                기부금공제대상 기부금단체 근거법령:
               </div>
               <div class="label-width">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
@@ -122,7 +125,7 @@
       </standard-form>
     </a-spin>
     <PopupMessage :modalStatus="modalConfirm" @closePopup="modalConfirm = false" typeModal="confirm" :width="530"
-      :content="() => confirmContent" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onConfirmModal" />
+      :content="() => confirmContent" okText="네. 발행합니다" cancelText="아니요" @checkConfirm="onConfirmModal" />
   </a-modal>
 </template>
 
@@ -196,6 +199,7 @@ export default defineComponent({
       acquisitionMonthPayment2: false,
       jobTypeCode: 1,
       contractWorker: 'contractWorker',
+      beckeType: 'beckeType',
     })
 
     // ----------------get and refetch data when employeeWageType change---------
