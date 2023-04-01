@@ -4,7 +4,7 @@
     width="50%"
     :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
     :visible="isOpenModalCreate"
-    title="휴복직신고 신규 등록"
+    title="급여변경신고"
     centered
     @cancel="closePopup"
     :footer="null"

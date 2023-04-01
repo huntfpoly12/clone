@@ -114,24 +114,26 @@
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import {computed, defineComponent, reactive, ref, watch} from "vue";
+import {defineComponent, ref, computed, watch, watchEffect, reactive, toRefs} from "vue";
 import {dataSearchUtils} from "../utils";
-import {SaveOutlined} from "@ant-design/icons-vue";
+import {
+  SaveOutlined
+} from "@ant-design/icons-vue";
 import {useStore} from 'vuex'
 import {
-  DxColumn,
   DxDataGrid,
+  DxToolbar,
+  DxSelection,
+  DxColumn,
   DxItem,
   DxScrolling,
-  DxSelection,
   DxSummary,
-  DxToolbar,
   DxTotalItem
 } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
-import {useApolloClient, useQuery} from "@vue/apollo-composable";
+import {useQuery, useMutation, useApolloClient} from "@vue/apollo-composable";
 import notification from "@/utils/notification"
 
 function checkAllSameValue(obj: any) {
@@ -268,7 +270,8 @@ export default defineComponent({
     // =================== WATCH ====================
     watch(() => props.searchStep, (newValue) => {
       // Array object to array value of filter.productionStatuses
-      filter.productionStatuses = Object.values(filter.productionStatuses)
+      const arrProductionStatuses = Object.values(filter.productionStatuses)
+      filter.productionStatuses = arrProductionStatuses
       dataSource.value = dataSourceOriginal.value.filter((item: any) => {
         return (filter.productionStatuses.length > 0
             ? filter.productionStatuses.includes(item.productionStatus)
@@ -276,8 +279,8 @@ export default defineComponent({
           && (filter.companyServiceContractActive ? item.companyServiceContract.active : true)
           && item.company.code.toLocaleLowerCase().includes(filter.companyCode.toLocaleLowerCase())
           && item.company.name.toLocaleLowerCase().includes(filter.companyName.toLocaleLowerCase())
-          && (filter.companyServiceContractManageUserId === null || filter.companyServiceContractManageUserId === item.companyServiceContract?.manageUserId)
-          && (filter.companyServiceContractSalesRepresentativeId === null || filter.companyServiceContractSalesRepresentativeId === item.companyServiceContract?.salesRepresentativeId)
+          && (filter.companyServiceContractManageUserId === null || filter.companyServiceContractManageUserId === item.companyServiceContract.manageCompactUser?.manageUserId)
+          && (filter.companyServiceContractSalesRepresentativeId === null || filter.companyServiceContractSalesRepresentativeId === item.companyServiceContract.salesRepresentativeId?.id)
       })
 
     }, {deep: true})

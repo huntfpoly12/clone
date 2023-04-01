@@ -61,8 +61,8 @@
 import {computed, ref} from "vue";
 import InfoToolTip from "@/views/AC/AC5/components/InfoToolTip.vue";
 import {useStore} from "vuex";
-import {DeleteOutlined} from '@ant-design/icons-vue';
-import {DxColumn, DxDataGrid} from 'devextreme-vue/data-grid';
+import {DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined} from '@ant-design/icons-vue';
+import {DxColumn, DxDataGrid, DxScrolling, DxToolbar, DxPaging} from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import ProcessStatus from "@/components/common/ProcessStatus.vue";
 import BudgetPopup from "@/views/AC/AC5/AC520/components/BudgetPopup.vue";
@@ -81,6 +81,7 @@ const closePopupBudget = () => modalBudget.value = false;
 const openModalBudget = (data: any) => {
   modalBudget.value = true;
   dataBudget.value = data
+  console.log(data);
 }
 </script>
 
