@@ -647,7 +647,7 @@ export default {
                     },
                     president: {
                         name: contractCreacted.namePresident,
-                        birthday: dayjs(contractCreacted.birthday).format('YYYY-MM-DD'),
+                        birthday: parseInt(dayjs(contractCreacted.birthday).format('YYYYMMDD')),
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },
