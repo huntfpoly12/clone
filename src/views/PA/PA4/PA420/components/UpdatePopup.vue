@@ -18,7 +18,7 @@
               </template>
           
               <template v-if="step === 2">
-                  <Tab3  />
+                  <Tab3  ref="formEditTab3"/>
               </template>
         </div>
         <div style="justify-content: center;" class="pt-10 wf-100 d-flex-center">
@@ -63,6 +63,7 @@ export default defineComponent({
         Tab1, Tab2, Tab3
     },
   setup(props, { emit }) {
+        const formEditTab3 = ref()
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
         const step = ref(9)
@@ -217,53 +218,78 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-          let dataDefault = store.state.common.formStateEditPA420.specification 
-            let dataCallApiUpdate =
-            {
-                "companyId": companyId,
-                "processKey": props.processKey,
-                "incomeId": props.keyRowIndex,
-                "input": {
-                    retirementType: store.state.common.formStateEditPA420.retirementType,
-                    executive: dataDefault.executive,
-                    retirementReason: dataDefault.retirementReason,
-                },
-                "incomeCalculationInput": {
-                    "totalPay3Month": dataDefault.totalPay3Month,
-                    "totalAnualBonus": dataDefault.totalAnualBonus,
-                    "annualLeaveAllowance": dataDefault.annualLeaveAllowance,
-                    "settlementStartDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate,
-                    "settlementFinishDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate,
-                    "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
-                    "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
-                },
-                "taxCalculationInput": {
-                    "calculationOfDeferredRetirementIncomeTax": {
-                        "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
-                        "statements": [...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements]
-                    },
-                    "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
-                    "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
-                    "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService,
-                    "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,
-                    "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
-                    "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
-                }
+            let dataDefault = store.state.common.formStateEditPA420.specification 
+            // validate datepicker tab 3
+            let statements = dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements;
+            let dtValidate = true
+            if (formEditTab3.value.isReqStatements1 && statements.length > 0 && statements[0].depositDate == null) {
+                formEditTab3.value.statements1Ref.validate(true)
+                dtValidate = false
+            } else {
+                formEditTab3.value.statements1Ref.validate(false)
             }
-            // remove all row name : __typename
-            const cleanData = JSON.parse(
-              JSON.stringify(dataCallApiUpdate, (name, val) => {
-                if (
-                  name === "__typename" || 
-                  (!store.state.common.formStateEditPA420.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
-                ) {
-                    delete val[name];
-                } else {
-                    return val;
+            if (formEditTab3.value.isReqStatements2 && statements.length > 1 && statements[1].depositDate == null) {
+                formEditTab3.value.statements2Ref.validate(true)
+                dtValidate = false
+            } else {
+                formEditTab3.value.statements2Ref.validate(false)
+            }
+
+            // validate form tab 3
+            const  validForm3 =   formEditTab3.value.tab3EditForm.validate();
+            if (!validForm3.isValid ) {
+                validForm3.brokenRules[0].validator.focus();
+            } else if (!dtValidate) { 
+                    dtValidate = true
+            } else {
+                
+                let dataCallApiUpdate =
+                {
+                    "companyId": companyId,
+                    "processKey": props.processKey,
+                    "incomeId": props.keyRowIndex,
+                    "input": {
+                        retirementType: store.state.common.formStateEditPA420.retirementType,
+                        executive: dataDefault.executive,
+                        retirementReason: dataDefault.retirementReason,
+                    },
+                    "incomeCalculationInput": {
+                        "totalPay3Month": dataDefault.totalPay3Month,
+                        "totalAnualBonus": dataDefault.totalAnualBonus,
+                        "annualLeaveAllowance": dataDefault.annualLeaveAllowance,
+                        "settlementStartDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate,
+                        "settlementFinishDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate,
+                        "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
+                        "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
+                    },
+                    "taxCalculationInput": {
+                        "calculationOfDeferredRetirementIncomeTax": {
+                            "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
+                            "statements": [...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements]
+                        },
+                        "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
+                        "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
+                        "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService,
+                        "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,
+                        "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
+                        "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
+                    }
                 }
-              })
-            );
-            mutate(cleanData)
+                // remove all row name : __typename
+                const cleanData = JSON.parse(
+                    JSON.stringify(dataCallApiUpdate, (name, val) => {
+                    if (
+                        name === "__typename" || 
+                        (!store.state.common.formStateEditPA420.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
+                    ) {
+                        delete val[name];
+                    } else {
+                        return val;
+                    }
+                    })
+                );
+                mutate(cleanData)
+            }
         }
 
         const setModalVisible = () => {
@@ -283,6 +309,7 @@ export default defineComponent({
 
         };
         return {
+            formEditTab3,
             setModalVisible,
             changeStep,
             nextStep, prevStep, updated,

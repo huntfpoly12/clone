@@ -262,7 +262,7 @@ export default defineComponent({
             dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
         }
-    const actionCreated = (isclickbtn = false) => {
+        const actionCreated = async (isclickbtn = false) => {
             store.commit('common/setIsClickBtnSavePA520',isclickbtn)
             var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
@@ -287,7 +287,7 @@ export default defineComponent({
                     input: newValDataCreat
                 }
               mutate(dataCallCreat)
-              store.state.common.addRowBtOnclickPA520 = false
+              await store.commit('common/setAddBtOnclickPA520', false);
             }
         }
         return {
