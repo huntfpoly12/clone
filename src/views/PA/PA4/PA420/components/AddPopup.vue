@@ -89,7 +89,7 @@
       </keep-alive>
       <keep-alive>
         <template v-if="step === 2">
-          <Tab3 :dataForm="dataForm" />
+          <Tab3 :dataForm="dataForm" ref="formAddTab3"/>
         </template>
       </keep-alive>
     </div>
@@ -110,6 +110,7 @@
         v-if="step < 2"
       />
       <button-basic
+ 
         text="저장"
         type="default"
         mode="contained"
@@ -161,6 +162,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
+    const formAddTab3 = ref()
     const globalYear = computed(() => store.state.settings.globalYear);
     const step = ref(0);
     const valueNextStep = ref(0);
@@ -224,6 +226,7 @@ export default defineComponent({
           if (resConfig) {
             store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
             dataForm.input.paymentDay = store.state.common.paymentDayPA420 
+            defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420 
           }
         })    
     const {
@@ -286,20 +289,45 @@ export default defineComponent({
     };
 
     const created = (e: any) => {
-      const variables: any = reactive({
-        companyId: companyId,
-        processKey: { ...dataForm.processKey },
-        input: { ...dataForm.input },
-        incomeCalculationInput: { ...dataForm.incomeCalculationInput },
-        taxCalculationInput: { ...dataForm.taxCalculationInput },
-      });
-      if (!dataForm.checkBoxCallApi) {
-        delete variables.taxCalculationInput.prevRetiredYearsOfService;
-        delete variables.taxCalculationInput.prevRetirementBenefitStatus;
+      // validate datepicker tab 3
+      let statements = dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements;
+      let dtValidate = true
+      if (formAddTab3.value.isReqStatements1 && statements.length > 0 && statements[0].depositDate == null) {
+        formAddTab3.value.statements1Ref.validate(true)
+        dtValidate = false
+      } else {
+        formAddTab3.value.statements1Ref.validate(false)
+      }
+      if (formAddTab3.value.isReqStatements2 && statements.length > 1 && statements[1].depositDate == null) {
+        formAddTab3.value.statements2Ref.validate(true)
+        dtValidate = false
+      } else {
+        formAddTab3.value.statements2Ref.validate(false)
       }
 
-      delete variables.checkBoxCallApi;
-      mutateCreateIncomeRetirement(variables)
+      // validate form tab 3
+      const validFrom3 = formAddTab3.value.tab3AddForm.validate();
+      if (!validFrom3.isValid ) {
+        validFrom3.brokenRules[0].validator.focus();
+      } else if (!dtValidate) { 
+            dtValidate = true
+      } else {
+        const variables: any = reactive({
+          companyId: companyId,
+          processKey: { ...dataForm.processKey },
+          input: { ...dataForm.input },
+          incomeCalculationInput: { ...dataForm.incomeCalculationInput },
+          taxCalculationInput: { ...dataForm.taxCalculationInput },
+        });
+        if (!dataForm.checkBoxCallApi) {
+          delete variables.taxCalculationInput.prevRetiredYearsOfService;
+          delete variables.taxCalculationInput.prevRetirementBenefitStatus;
+        }
+
+        delete variables.checkBoxCallApi;
+        mutateCreateIncomeRetirement(variables)
+      }
+     
     };
 
     const openModalAdd = () => {
@@ -334,6 +362,7 @@ export default defineComponent({
     };
     return {
       setModalVisible,
+      formAddTab3,
       changeStep,
       nextStep,
       prevStep,
