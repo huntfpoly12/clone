@@ -8,7 +8,7 @@
         <a-row>
           <a-col :span="24">
             <a-form-item label="사용일" label-align="right" class="red">
-              <date-time-box width="200px" v-model:valueDate="formState.joinedAt"></date-time-box>
+              <date-time-box width="200px" v-model:valueDate="formState.joinedAt" :required="true" :disabled="true"></date-time-box>
             </a-form-item>
           </a-col>
           <a-col :span="24">
@@ -17,7 +17,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="사용처" label-align="right" class="red">
+            <a-form-item label="사용처" label-align="right">
               <div class="input-text">
                 <select-box-common width="200px" :arrSelect="nationaPersionSelectbox" :required="true"
                   v-model:valueInput="formState.nationalPensionAcquisitionCode" />
@@ -25,7 +25,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="결연후원금품 여부" label-align="right" class="red">
+            <a-form-item label="결연후원금품 여부" label-align="right">
               <div class="input-text">
                 <switch-basic width="100px" class="switch-insurance" switch-basic textCheck="Y" textUnCheck="N"
                   v-model:valueSwitch="formState.nationalPensionReport"></switch-basic>
@@ -40,13 +40,13 @@
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="단위" label-align="right" class="red">
+            <a-form-item label="단위" label-align="right">
               <select-box-common width="200px" :arrSelect="nationaPersionSelectbox" :required="true"
                   v-model:valueInput="formState.nationalPensionAcquisitionCode" />
             </a-form-item>
           </a-col>
           <a-col :span="24">
-            <a-form-item label="상당금액" label-align="right">
+            <a-form-item label="상당금액" label-align="right" class="red">
               <default-text-box width="200px" v-model:valueInput="formState.name" :required="true" />
             </a-form-item>
           </a-col>

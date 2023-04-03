@@ -147,8 +147,8 @@
                     </template>
                     
                     <DxColumn caption="결의 구분" data-field="fill5" />
-                    <DxColumn caption="수입액" data-field="fill6" />
-                    <DxColumn caption="지출액" data-field="fill7" />
+                    <DxColumn caption="수입액" data-field="fill6" format="fixedPoint"/>
+                    <DxColumn caption="지출액" data-field="fill7" format="fixedPoint"/>
                     <DxColumn caption="잔액" data-field="fill8" format="fixedPoint" />
                     <DxColumn caption="통장적요" data-field="fill9" format="fixedPoint" />
                     <DxColumn caption="적요" data-field="fill10" format="fixedPoint" />
@@ -189,9 +189,9 @@
 
                     <DxSummary>
                         <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="totalDeposits" />
-                        <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="totalWithdrawal" />
-                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="countSlipRegistration" />
+                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum" display-format="수입액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum" display-format="지출액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="count8" />
                         <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
                     </DxSummary>
                 </DxDataGrid>
@@ -227,11 +227,11 @@
                                 <a-row class="mt-20">
                                     <a-col :span="6" class="col-1">
                                         <a-form-item label="결의구분">
-                                            <default-text-box width="70px" placeholder="지출" />
+                                            <default-text-box width="70px" placeholder="지출" disabled="true" />
                                         </a-form-item>
                                         <div class="input_info">
                                             <a-form-item label="결의서 종류">
-                                                <default-text-box width="70px" placeholder="여입" />
+                                                <default-text-box width="70px" placeholder="여입" disabled="true" />
                                             </a-form-item>
                                             <button-basic @onClick="actionPopupCopyData" style="margin: -5px 0px 0px 5px"
                                                 mode="contained" type="default" text="{} 로 변경" />
@@ -239,20 +239,20 @@
                                     </a-col>
                                     <a-col :span="6" class="col-2">
                                         <a-form-item label="결의일자" class="red">
-                                            <date-time-box width="150px" :required="true" />
+                                            <date-time-box width="150px" :required="true" disabled="true"/>
                                         </a-form-item>
 
                                         <a-form-item label="통장" class="red">
                                             <div class="input_info">
                                                 <default-text-box width="70px" style="margin-right: 10px;"
-                                                    :required="true" />
-                                                <default-text-box width="70px" :required="true" />
+                                                    :required="true" disabled="true"/>
+                                                <default-text-box width="70px" :required="true" disabled="true"/>
                                             </div>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6" class="col-3">
                                         <a-form-item label="금액" class="red">
-                                            <number-box-money width="150px" :required="true" :spinButtons="false" />
+                                            <number-box-money width="150px" :required="true" :spinButtons="false" disabled="true"/>
                                         </a-form-item>
 
                                         <a-form-item label="적요" class="red">
@@ -261,10 +261,10 @@
                                     </a-col>
                                     <a-col :span="6" class="col-4">
                                         <a-form-item label="계정과목" class="red">
-                                            <account-code-select width="150px" :required="true" />
+                                            <account-code-select width="240px" :required="true" />
                                         </a-form-item>
                                         <a-form-item label="자금원천" class="red">
-                                            <account-code-select width="150px" :required="true" />
+                                            <account-code-select width="240px" :required="true" />
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
@@ -318,10 +318,10 @@
                                         </a-col>
                                         <a-col :span="6" class="col-4">
                                             <a-form-item label="상대계정">
-                                                <account-code-select width="150px" />
+                                                <account-code-select width="240px" />
                                             </a-form-item>
                                             <a-form-item label="메모">
-                                                <default-text-box width="150px" />
+                                                <default-text-box width="240px" />
                                             </a-form-item>
                                         </a-col>
                                     </a-row>
@@ -354,8 +354,7 @@
                                     </a-row>
                                     <a-row>
                                         <p style="width: 100%;">품의 원인 및 용도:</p>
-                                        <textarea style="width: 100%; height: 100px; border-radius: 5px;
-                                                                border: 1px solid gray;"></textarea>
+                                        <textarea class="text-area"></textarea>
                                     </a-row>
                                     <div class="text-align-center mt-20">
                                         <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
@@ -411,7 +410,7 @@ import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
 import PopupCopyData from "./components/PopupCopyData.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import UploadPreviewImage from '@/components/UploadPreviewImage.vue'
-
+import filters from "@/helpers/filters";
 export default defineComponent({
     components: {
         ProcessStatus,
@@ -476,10 +475,11 @@ export default defineComponent({
             }
         ])
         const arrayRadioCheck = [
-            { id: 0, text: '수입' },
-            { id: 1, text: '지출' },
-            { id: 2, text: '마이너스수입' },
-            { id: 3, text: '여입' }
+            { id: 0, text: '구입' },
+            { id: 1, text: '운반' },
+            { id: 2, text: '수선' },
+            { id: 3, text: '인쇄' },
+            { id: 4, text: '지출' }
         ]
 
         // COMPUTED
@@ -551,8 +551,22 @@ export default defineComponent({
                     totalCancellation++
                 }
             });
-            return `전표등록 여부 (O: ${totalRegistration}, X: ${totalCancellation})`
+            return `정상 내역 건수: ${filters.formatCurrency(totalRegistration)},
+             비정상 내역 건: ${filters.formatCurrency(totalCancellation)}`
         };
+        const count8 = () => { 
+            let total = 0;
+            let totalfill8 = 0;
+            let totalfill6 = 0;
+            let totalfill7 = 0;
+            dataDemoMain.forEach((item) => {
+                totalfill6 += item.fill6
+                totalfill7 += item.fill7
+                totalfill8 += item.fill8
+            });
+            total = totalfill8 + totalfill6 - totalfill7
+            return `전월 잔액: ${filters.formatCurrency(totalfill8)}, 예상 잔액: ${filters.formatCurrency(total)}`
+        }
 
 
         const actionPopupSlipCancellation = (value: any) => {
@@ -635,6 +649,7 @@ export default defineComponent({
             actionPopupSlipCancellation,
             actionPopupSlipRegistration,
             arrayRadioCheck,
+            count8,
         };
     },
 });

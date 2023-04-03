@@ -222,3 +222,8 @@ $lenght: 50;
 .ele-opacity {
   opacity: 0.7;
 }
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

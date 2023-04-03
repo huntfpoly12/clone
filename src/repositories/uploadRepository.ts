@@ -11,4 +11,7 @@ export default {
   majorInsurance(payload: any) {
     return Client.post(`${resource}/major-insurance`, payload);
   },
+  accountingProof(payload: any) {
+    return Client.post(`${resource}/accounting-proof `, payload);
+  },
 };

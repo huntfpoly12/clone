@@ -8,13 +8,13 @@
           <div class="form-first pl-15">
             <a-row>
               <a-col :span="10">
-                <a-form-item label="내/외국인" label-align="right">
+                <a-form-item label="상실신고 신규 등록" label-align="right">
                   <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="formState.employeeType"
                     layoutCustom="horizontal" class="mt-1"></radio-group>
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="사원" class="label-required">
+                <a-form-item label="직원선택" class="label-required">
                   <div class="d-flex-center">
                     <employ-select :arrayValue="employeeWages" :required="true" v-model:valueEmploy="formState.employeeId"
                       width="300px" />
@@ -80,8 +80,8 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item label="상실년월일(퇴사일)" label-align="right" class="red">
-                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt"
-                    bgColor="white"></month-picker-box-custom>
+                  <date-time-box text="지" v-model:valueDate="formState.joinedAt" width="200px"
+                    bgColor="white"></date-time-box>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -103,16 +103,17 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common :arrSelect="nationaPersionSelectbox" :required="true"
+                    <select-box-common width="348px" :arrSelect="nationaPersionSelectbox" :required="true"
                       v-model:valueInput="formState.nationalPensionAcquisitionCode"
                       :disabled="!formState.nationalPensionReport" />
                   </div>
                   <span class="ml-50">
-                    <checkbox-basic size="14" label="산재보험" v-model:valueCheckbox="formState.acquisitionMonthPayment"
+                    <checkbox-basic size="14" label="취득월 국민연금 납부"
+                      v-model:valueCheckbox="formState.acquisitionMonthPayment"
                       :disabled="!formState.acquisitionMonthPayment" />
                   </span>
                   <span class="ml-10 notice">
-                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 최초 저장된 이후 수정 불가.
+                    <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
                   </span>
                 </div>
               </a-form-item>
@@ -122,7 +123,7 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common :arrSelect="healthInsuranceSelectbox" :required="true"
+                    <select-box-common width="348px" :arrSelect="healthInsuranceSelectbox" :required="true"
                       v-model:valueInput="formState.healthInsuranceAcquisitionCode"
                       :disabled="!formState.nationalPensionReport" />
                   </div>
@@ -134,7 +135,20 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common :arrSelect="includeDependentsSelectbox" :required="true"
+                    <!-- <DxSelectBox :dataSource="includeDependentsSelectbox" valueExpr="value" displayExpr="label"
+                      :showDropDownButton="true" :searchEnabled="true" :searchExpr="['label']" :searchMode="'contains'"
+                      :value="formState.healthInsuranceAcquisitionCode2" :disabled="!formState.healthInsuranceReport"
+                      width="200px" :required="true">
+                      <template #item="data">
+                        <a-tooltip placement="top" zIndex="999999" color="black">
+                          <template #title>
+                            {{ data.data.label }}
+                          </template>
+                          <div class="text-overflow">{{ data.data.label }}</div>
+                        </a-tooltip>
+                      </template>
+                    </DxSelectBox> -->
+                    <select-box-common width="348px" :arrSelect="includeDependentsSelectbox" :required="true"
                       v-model:valueInput="formState.healthInsuranceAcquisitionCode2"
                       :disabled="!formState.healthInsuranceReport" />
                   </div>
@@ -156,13 +170,13 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="당해년도 보수총액" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode"
+                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode2"
                     :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="당해년도 산정월수" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode"
+                  <default-text-box width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode3"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -170,7 +184,7 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="전년도 보수총액" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode"
+                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode4"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -181,6 +195,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
+
           </div>
           <a-row class="mt-15">
             <a-col :span="8" :offset="8" style="text-align: center;">
@@ -213,8 +228,8 @@ import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
+import DxSelectBox from "devextreme-vue/select-box";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
-import { DxFileUploader } from "devextreme-vue/file-uploader";
 import {
   computed,
   defineComponent,
@@ -236,7 +251,7 @@ export default defineComponent({
     HistoryOutlined,
     DeleteOutlined,
     SearchOutlined,
-    DxFileUploader,
+    DxSelectBox,
   },
   props: {
     isOpenModalCreate: {
@@ -261,13 +276,16 @@ export default defineComponent({
       healthInsuranceReport: true,
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
-      nationalPensionAcquisitionCode: 1,
+      nationalPensionAcquisitionCode: 3,
       acquisitionMonthPayment: false,
       healthInsuranceAcquisitionCode: 1,
       healthInsuranceAcquisitionCode2: 1,
       includeDependents: true,
       acquisitionMonthPayment2: false,
-      jobTypeCode: 1,
+      jobTypeCode: 100000,
+      jobTypeCode2: 100000,
+      jobTypeCode3: 1,
+      jobTypeCode4: 100000,
       contractWorker: 'contractWorker',
     })
 
@@ -317,11 +335,22 @@ export default defineComponent({
         store.commit('common/actionFormErrorPA120');
       } else { }
     }
+    function onOptionRendered(e: any) {
+      console.log(`output->e`, e)
+      e.element.dxTooltip({
+        target: `.${e.component._$element.attr('class')}`,
+        showEvent: 'mouseenter',
+        hideEvent: 'mouseleave',
+        contentTemplate: function () {
+          return e.component.option('valueExpr') === 'value' ? e.text : e.component.option('displayExpr');
+        },
+      })
+    };
     return {
       globalYear, employeeWages,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
       formState, onSubmit,
-      isDisabled1, isDisabled2,
+      isDisabled1, isDisabled2, onOptionRendered
     };
   },
 });

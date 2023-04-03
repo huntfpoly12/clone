@@ -26,17 +26,30 @@
         </template>
         <DxColumn caption="일련번호" data-field="id" cell-template="tag" />
         <DxColumn caption="상태" data-field="name" alignment="left" />
-        <DxColumn caption="등록일" data-field="workId" width="100" alignment="right" />
-        <DxColumn caption="접수일" data-field="residentId" width="100" alignment="right" />
-        <DxColumn caption="완료일" data-field="workingStatus" width="100" alignment="right" />
+        <DxColumn caption="등록일" data-field="workId" width="100" alignment="left" />
+        <DxColumn caption="접수일" data-field="residentId" width="100" alignment="left" />
+        <DxColumn caption="완료일" data-field="workingStatus" width="100" alignment="left" />
         <DxColumn caption="접수번호" data-field="registeredAt" width="100" alignment="left" />
-        <DxColumn caption="메모" data-field="acceptedAt" width="120px" alignment="right" />
+        <DxColumn caption="메모" data-field="acceptedAt" width="120px" alignment="left" />
         <DxColumn caption="사업장탈퇴신고서다운로드" cell-template="downA" alignment="right" />
         <template #downA="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
             </DxButton>
+          </div>
+        </template>
+        <DxColumn caption="" cell-template="action" alignment="right" />
+        <template #action="{ data }" class="custom-action">
+          <div class="custom-action" style="text-align: center">
+            <a-space>
+              <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
+                <EditOutlined style="font-size: 16px"  />
+              </DxButton>
+              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
+                <DeleteOutlined />
+              </DxButton>
+            </a-space>
           </div>
         </template>
       </DxDataGrid>
@@ -76,6 +89,7 @@ import DxButton from 'devextreme-vue/button';
 // import { formatMonth } from '../utils/index';
 import { Message } from "@/configs/enum";
 import FormReport from './components/FormReport.vue';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
   components: {
@@ -94,8 +108,10 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     DxButton,
-    FormReport
-  },
+    FormReport,
+    DeleteOutlined,
+    EditOutlined
+},
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;

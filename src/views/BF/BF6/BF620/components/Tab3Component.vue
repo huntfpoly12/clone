@@ -29,7 +29,7 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="매니저리스트">
+            <a-form-item label="제작요청자">
               <list-manager-dropdown width="150px" v-model:valueInput="ElecFilingFileFilter.manageUserId" />
             </a-form-item>
           </a-col>
@@ -37,39 +37,32 @@
       </div>
     </div>
     <div class="content-grid mt-10">
-      <a-spin :spinning="searchElectronicFilingLoading" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-          key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true">
-          <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="일련번호" data-field="electronicFilingId" />
-          <DxColumn caption="참고사항" data-field="referenceInformation" />
-          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-          <DxColumn caption="아이디" data-field="productionRequestUserId" />
-          <!-- <DxColumn caption="다운로드" data-field="seal" cell-template="seal"/>
-          <template #seal="{ data }">
-            <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
-            <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
-            <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
-            <production-status :typeTag="5" v-if="data.value == -1" padding="1px 10px" />
-          </template> -->
-          <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" />
-          <template #productionStatus="{ data }">
-            <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
-            <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
-            <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
-            <production-status :typeTag="5" v-if="data.value == -1" :message="data.data.causeOfProductionFailure" padding="1px 10px" />
-          </template>
-          <DxColumn caption="상세보기" cell-template="afterDeadline" />
-          <template #afterDeadline="{ data }">
-            <DxButton class="custom-action" @click="onShow(data.data.electronicFilingId)"
-              style="border: none; margin-top: -2px; width: 35px; height: 35px;">
-              <zoom-in-outlined :style="{ fontSize: '20px', color: 'black' }" />
-            </DxButton>
-          </template>
-        </DxDataGrid>
-        <!-- <div @click="onShow">Kính lúp</div> -->
-      </a-spin>
+      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering="move_column"
+        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+        <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxLoadPanel :enabled="true" />
+        <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
+        <DxColumn caption="참고사항" data-field="referenceInformation" />
+        <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+        <DxColumn caption="아이디" data-field="productionRequestUserId" alignment="left" />
+        <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" alignment="left" />
+        <template #productionStatus="{ data }">
+          <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
+          <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
+          <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
+          <production-status :typeTag="5" v-if="data.value == -1" :message="data.data.causeOfProductionFailure"
+            padding="1px 10px" />
+        </template>
+        <DxColumn caption="상세보기" cell-template="afterDeadline" />
+        <template #afterDeadline="{ data }">
+          <DxButton class="custom-action" @click="onShow(data.data.electronicFilingId)"
+            style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+            <zoom-in-outlined :style="{ fontSize: '20px', color: 'black' }" />
+          </DxButton>
+        </template>
+      </DxDataGrid>
+      <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
     <a-modal :visible="modalStatus" @cancel="modalStatus = false" :mask-closable="false" class="confirm-md" footer=""
       :width="700">
@@ -97,7 +90,7 @@ import { computed, defineComponent, getCurrentInstance, reactive, ref, watch } f
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import DxRadioGroup from 'devextreme-vue/radio-group';
@@ -117,7 +110,8 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     ZoomInOutlined,
-    GetStatusTable
+    GetStatusTable,
+    DxLoadPanel
   },
   props: {
     search: {

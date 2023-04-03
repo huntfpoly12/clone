@@ -10,7 +10,7 @@ let statesBF620 = {
     active: true,
     paymentYear: +dayjs().format("YYYY"),
     paymentMonth: +dayjs().format("MM"),
-    reportType: 0,
+    reportType: null,
     // index: 0,
     // afterDeadline: false,
     excludeCancel: false,

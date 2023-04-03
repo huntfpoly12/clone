@@ -11,8 +11,12 @@
                             :column-auto-width="true" @focused-row-changing="onFocusedRowChanging" ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
                             <DxScrolling mode="standard" show-scrollbar="always" />
+                            <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
                             <DxPaging :enabled="false" />
+                            <DxExport :enabled="true"/>
                             <DxToolbar>
+                                <DxItem name="searchPanel" />
+                                <DxItem name="exportButton" css-class="cell-button-export"/>
                                 <DxItem location="after" template="print" css-class="cell-button-add" />
                                 <DxItem location="after" template="group_email" css-class="cell-button-add" />
                                 <DxItem location="after" template="button-history" css-class="cell-button-add" />
@@ -104,8 +108,7 @@
                             </div>
 
                             <div class="top-content">
-                                <a-typography-title :level="5" style="margin-bottom: 0;">두루누리사회보험
-                                    공제</a-typography-title>
+                                <a-typography-title :level="5" style="margin-bottom: 0;">전용계정과목</a-typography-title>
                             </div>
                             <div class="custom-center">
                                 <a-form-item label="전용계정과목" :label-col="labelCol" class="red">
@@ -149,7 +152,7 @@ import { defineComponent, ref, watch, reactive, computed, watchEffect } from "vu
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useStore } from 'vuex';
-import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxExport, DxScrolling, DxPaging } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxExport, DxScrolling, DxPaging, DxSearchPanel, } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import notification from "@/utils/notification";
 import DxButton from "devextreme-vue/button";
@@ -159,7 +162,7 @@ import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
         AddPopup,
-        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging
+        DxDataGrid, DxColumn, EditOutlined, HistoryOutlined, DxToolbar, DxItem, DxExport, DeleteOutlined, DxButton, HistoryPopup, SaveOutlined, DxScrolling, DxPaging, DxSearchPanel
     },
     setup() {
         // const contentDelete = Message.getMessage('PA120', '002').message

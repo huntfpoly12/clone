@@ -43,13 +43,11 @@
         </template> -->
         <DxColumn caption="성명" data-field="name" width="60" alignment="left" />
         <DxColumn caption="생년월일" data-field="workId" width="100" alignment="right" />
-        <DxColumn caption="주민등록증" data-field="residentId" width="100" alignment="right" />
         <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="right" />
         <DxColumn caption="등록일" data-field="registeredAt" width="45" alignment="left" />
         <DxColumn caption="접수일" data-field="acceptedAt" width="120px" alignment="right" />
         <DxColumn caption="완료일" data-field="completedAt" width="120px" alignment="right" />
         <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="right" />
-        <DxColumn caption="FAX상태" data-field="paymentYear" width="120px" alignment="right" />
         <DxColumn caption="메모" data-field="memo" width="120px" alignment="right" />
         <DxColumn caption="상실신고서다운로드" cell-template="downA" width="120px" alignment="right" />
         <template #downA="{ data }" class="custom-action">
@@ -118,6 +116,7 @@ import DxButton from 'devextreme-vue/button';
 // import { formatMonth } from '../utils/index';
 import { Message } from "@/configs/enum";
 import CreatePA820Popup from './components/CreatePA820Popup.vue';
+import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 
 export default defineComponent({
   components: {
@@ -136,8 +135,10 @@ export default defineComponent({
     DxSummary,
     DxTotalItem,
     DxButton,
-    CreatePA820Popup
-  },
+    CreatePA820Popup,
+    DeleteOutlined,
+    HistoryOutlined
+},
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
