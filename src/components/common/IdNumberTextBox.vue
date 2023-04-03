@@ -44,6 +44,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    foreigner : {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     DxTextBox,
@@ -77,7 +81,14 @@ export default defineComponent({
       }
     );
     const checkID = (e: any) => {
-      return validResidentId(value.value);
+      const fNumber = parseInt(value.value.charAt(6));
+      if (props.foreigner && fNumber > 4 && fNumber < 9) {
+          return validResidentId(value.value);
+      } else if (props.foreigner && (fNumber < 4 || fNumber > 9)) {
+          return false
+      } else {
+          return validResidentId(value.value);
+      };
     }
     return {
       updateValue,
