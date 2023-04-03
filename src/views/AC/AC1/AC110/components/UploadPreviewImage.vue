@@ -5,7 +5,7 @@
         heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
         !!width ? `min-width: ${width}px; width: 100%` : ''
       ]">
-    <div ref="elementUpload" class="upload-pewview-image">
+    <div ref="elementUpload" class="upload-pewview-img">
       <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
         @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" :remove="remove"
         accept="image/png, image/jpeg, image/jpg image/gif">
@@ -255,7 +255,7 @@ export default defineComponent({
 
 </script>
 <style lang="scss">
-.upload-pewview-image {
+.upload-pewview-img {
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
