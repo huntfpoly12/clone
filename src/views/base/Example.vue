@@ -39,6 +39,9 @@ import DxButton from "devextreme-vue/button";
 import { defineComponent, ref, defineAsyncComponent } from "vue";
 import service from "./listTab.ts";
 import CountryCodeSelectBox from "../../components/CountryCodeSelectBox.vue";
+const JWTInfor = defineAsyncComponent(() =>
+  import("../base/JWTInfor.vue")
+);
 const TextBoxFrom = defineAsyncComponent(() =>
   import("../base/TextBoxFrom.vue")
 );
@@ -98,7 +101,8 @@ export default defineComponent({
     TagBox,
     ActionHeader,
     GridPrototype,
-    GridPrototype2
+    GridPrototype2,
+    JWTInfor
   },
   setup() {
     const allTab = ref(allListTab);
