@@ -7,27 +7,34 @@
     ip : {{ jwtObject.ip }} <br/>
     hasReadScreenRole CONTRACT_MANAGE : {{ jwtObject.hasReadScreenRole(AdminScreenRole.CONTRACT_MANAGE) }} <br/>
     hasWriteScreenRole CONTRACT_MANAGE : {{ jwtObject.hasWriteScreenRole(AdminScreenRole.CONTRACT_MANAGE) }}<br/>
-    <ul>
-      <li v-for="item in infos">
-        id : {{ item.id }} - startYearMonth : {{ item.startYearMonth }} - additionalServiceTypes : {{ item.additionalServiceTypes }}
-      </li>
-    </ul>
-    <br/>
-    readAdminScreenRoles : 
-    <ul>
-      <li v-for="item in jwtObject.readAdminScreenRoles">
-        {{ item.name }} - {{ item.enumKey }}
-      </li>
-    </ul>
-    <br/>
-    writeAdminScreenRoles:
-    <ul>
-      <li v-for="item in jwtObject.writeAdminScreenRoles">
-        {{ item.name }} - {{ item.enumKey }}
-      </li>
-    </ul>
-    <br/>
-  <pre style="height: 600px;"> {{ jwtObject }} </pre>
+    <a-row>
+      <a-col span="12">
+        <ul>
+          <li v-for="item in infos">
+            id : {{ item.id }} - startYearMonth : {{ item.startYearMonth }} - additionalServiceTypes : {{ item.additionalServiceTypes }}
+          </li>
+        </ul>
+        <br/>
+        readAdminScreenRoles : 
+        <ul>
+          <li v-for="item in jwtObject.readAdminScreenRoles">
+            {{ item.name }} - {{ item.enumKey }}
+          </li>
+        </ul>
+        <br/>
+        writeAdminScreenRoles:
+        <ul>
+          <li v-for="item in jwtObject.writeAdminScreenRoles">
+            {{ item.name }} - {{ item.enumKey }}
+          </li>
+      </ul>
+      </a-col>
+      <a-col span="12">
+        <pre style="height: 600px; border: 1px solid;"> {{ jwtObject }} </pre>
+      </a-col>
+    </a-row>
+   
+
   </div>
 
 </template>
