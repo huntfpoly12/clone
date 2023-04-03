@@ -17,7 +17,7 @@
         <div class="ac-540-formatting-option-usage">
           <span class="ac-540-formatting-option-usage-label">사용명세:</span>
           <checkbox-basic class="mr-10" label="거래처" :disabled="false" :size="'20'" />
-          <checkbox-basic class="mr-20" label="통장적요" :disabled="false" :size="'20'" />
+          <checkbox-basic class="mr-20" label="통장적요" :disabled="false" :size="'20'" :valueCheckbox="true"/>
           <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
           <span class="style-note style-note-cm121">사용명세 컬럼에 해당 항목이 있는 경우 기재됩니다. 모두 해제시 공란으로 표시됩니다.</span>
         </div>
@@ -37,7 +37,7 @@
         <DxColumn caption="메일/출력" width="100px" cell-template="action" />
         <template #action="{}">
           <div class="custom-action" style="text-align: center;">
-            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;" />
+            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;" @click="openPopupSendMail"/>
             <a-tooltip>
               <template #title>출력 / 저장</template>
               <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
@@ -46,6 +46,7 @@
         </template>
       </DxDataGrid>
     </div>
+    <PopupSendMail :isModalSendMail="isModalSendMail" @closePopup="isModalSendMail = false"/>
   </div>
 </template>
 <script lang="ts">
@@ -53,10 +54,11 @@ import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { DxDataGrid, DxColumn, DxScrolling } from "devextreme-vue/data-grid";
 import OnlyMonthPickerBox from '../components/OnlyMonthPickerBox.vue'
+import PopupSendMail from '../components/PopupSendMail.vue'
 export default defineComponent({
   components: {
     OnlyMonthPickerBox,
-    DxDataGrid, DxColumn, DxScrolling
+    DxDataGrid, DxColumn, DxScrolling, PopupSendMail
   },
   setup() {
     const store = useStore();
@@ -80,6 +82,11 @@ export default defineComponent({
         fill: '03'
       }
     ])
+    let isModalSendMail = ref(false)
+
+    const openPopupSendMail = () => {
+      isModalSendMail.value = true;
+    }
     return {
       move_column,
       colomn_resize,
@@ -87,7 +94,9 @@ export default defineComponent({
       statusAdjusting,
       statusEntering,
       monthStart,
-      monthEnd
+      monthEnd,
+      isModalSendMail,
+      openPopupSendMail
     };
   },
 });

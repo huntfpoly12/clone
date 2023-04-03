@@ -2,7 +2,7 @@
   <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" :width="562">
     <standard-form action="" name="email-single-630">
       <div class="custom-modal-send-email">
-        <a-form-item label="공통사항" label-align="right" class="red">
+        <a-form-item>
           <radio-group :arrayValue="printRadio" v-model:valueRadioCheck="emailAddress"
             layoutCustom="horizontal" class="mt-1"></radio-group>
         </a-form-item>

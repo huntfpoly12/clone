@@ -37,13 +37,13 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <label>메니저명 :</label>
+                            <label>매니저리스트:</label>
                             <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <label>영업자명 :</label>
+                            <label>영업자리스트:</label>
                             <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
                         </div>
                     </a-col>

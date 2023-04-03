@@ -1,23 +1,23 @@
 <template>
-    <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="644">
+    <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="800">
         <div class="mt-20">
             <standard-form action="" class="text-align-center mt-20">
                 <a-row class="row-1">
-                    <a-col :span="8" class="col-1">
+                    <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
-                            <select-box-common :arrSelect="arraySelectBox" :required="true" :width="100" />
+                            <select-box-common :arrSelect="arraySelectBox" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="100" :required="true" />
+                            <number-box :width="200" :required="true" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <number-box :width="100" :required="true" />
+                            <number-box :width="200" :required="true" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
-                            <FundingSourceSelect :width="100" :required="true" />
+                            <FundingSourceSelect :width="200" :required="true" />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="16" class="col-2">
+                    <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
                             <date-time-box width="150px" :required="true"/>
                         </a-form-item>
@@ -29,11 +29,11 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-                <div class="mt-10"><span>상기의 전표들을 취소하시겠습니까?</span></div>
+                <div class="mt-10"><span>전표를 등록하시겠습니까?</span></div>
                 <div class="mt-20">
-                    <button-basic class="button-form-modal" :text="'아니요'" :width="140" :type="'default'" :mode="'outlined'"
+                    <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                         @onClick="cancel" />
-                    <button-basic class="button-form-modal" :text="'네. 취소합니다'" :width="140" :type="'default'"
+                    <button-basic class="button-form-modal" :text="'네. 등록합니다'" :type="'default'"
                         :mode="'contained'" @onClick="submit" />
                 </div>
             </standard-form>

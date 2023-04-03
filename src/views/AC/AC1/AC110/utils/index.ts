@@ -158,15 +158,48 @@ export const demTableMain = [
     },
   },
 ];
-export const demTableTransactionDetails = [
+export const InitTransactionDetails = {
+  transactionDetails: {
+    transactionDetailDate: null,
+    accountingDocumentId: null,
+    documentOrderByDate: null,
+    bankbookId: null,
+    bankbookDetailId: null,
+    resolutionClassification: null,
+    income: null,
+    spending: null,
+    summary: "",
+    theOrder: null,
+    accountCode: null,
+    relationCode: null,
+    fundingSource: null,
+    clientId: null,
+    letterOfApprovalType: null,
+    causeUsage: "",
+    goodsCount: null,
+    memo: "",
+    goodsId: null,
+    documentRegistered: false,
+  },
+};
+export const InitStatementOfGoods = {
+  item: '',
+  standard: '',
+  unit: '',
+  quantity: null,
+  unitPrice: null,
+  amount: null,
+  remark: ''
+};
+export const demoTableTransactionDetails = [
   {
     bankbookDetailDate: 20230330,
     bankbookDetailId: 11111111,
-    bankbookId: 11111111,
+    bankbookId: 111111111111111111111,
     bankbookDetailTime: 11111111,
-    summary: 'summary',
-    content: 'content',
-    note: 'note',
+    summary: "summary",
+    content: "content",
+    note: "note",
     deposit: 11111111,
     withdraw: 11111111,
     balance: 11111111,
@@ -183,28 +216,57 @@ export const demTableTransactionDetails = [
       resolutionClassification: 1,
       income: 11111111,
       spending: 11111111,
-      summary: 'summary',
-      theOrder: 11111111,
+      summary: "summary",
+      theOrder: 1,
       accountCode: 1,
       relationCode: 1,
       fundingSource: 1,
       clientId: 11111111,
       letterOfApprovalType: 5,
-      causeUsage: 11111111,
+      causeUsage: "causeUsage causeUsage",
       goodsCount: 1,
-      memo: 11111111,
+      memo: "memo memo memo",
       goodsId: 11111111,
       documentRegistered: true,
+      statementOfGoodsItems: [
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+      ],
     },
   },
   {
     bankbookDetailDate: 20230330,
     bankbookDetailId: 2222222,
-    bankbookId: 2222222,
+    bankbookId: 2222222222222222222,
     bankbookDetailTime: 2222222,
-    summary: 'summary',
-    content: '',
-    note: 'note',
+    summary: "summary",
+    content: "",
+    note: "note",
     deposit: 2222222,
     withdraw: 2222222,
     balance: 2222222,
@@ -221,28 +283,57 @@ export const demTableTransactionDetails = [
       resolutionClassification: 2,
       income: 2222222,
       spending: 2222222,
-      summary: 'summary',
-      theOrder: 2222222,
+      summary: "summary",
+      theOrder: 2,
       accountCode: 4,
       relationCode: 2,
       fundingSource: 2,
       clientId: 2222222,
       letterOfApprovalType: 3,
-      causeUsage: 2222222,
+      causeUsage: "causeUsage causeUsage",
       goodsCount: 2,
-      memo: 2222222,
+      memo: "memo memo memo",
       goodsId: 2222222,
       documentRegistered: true,
+      statementOfGoodsItems: [
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+      ],
     },
   },
   {
     bankbookDetailDate: 20230330,
     bankbookDetailId: 33333333,
-    bankbookId: 33333333,
+    bankbookId: 33333333333333333,
     bankbookDetailTime: 33333333,
-    summary: 'summary',
-    content: 'content',
-    note: 'note',
+    summary: "summary",
+    content: "content",
+    note: "note",
     deposit: 33333333,
     withdraw: 33333333,
     balance: 33333333,
@@ -259,21 +350,80 @@ export const demTableTransactionDetails = [
       resolutionClassification: 1,
       income: 33333333,
       spending: 33333333,
-      summary: 'summary',
-      theOrder: 33333333,
+      summary: "summary",
+      theOrder: 3,
       accountCode: 5,
       relationCode: 3,
       fundingSource: 3,
       clientId: 33333333,
       letterOfApprovalType: 1,
-      causeUsage: 33333333,
+      causeUsage: "causeUsage causeUsage",
       goodsCount: 3,
-      memo: 33333333,
+      memo: "memo memo memo",
       goodsId: 33333333,
       documentRegistered: true,
+      statementOfGoodsItems: [
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+        {
+          item: "string",
+          standard: "string",
+          unit: "string",
+          quantity: 3,
+          unitPrice: 4,
+          amount: 3,
+          remark: "string",
+        },
+      ],
     },
   },
 ];
+
+export interface PayloadTransactionUpdate {
+  resolutionClassification: number;
+  income: number;
+  spending: number;
+  summary?: string;
+  theOrder?: number;
+  accountCode?: string;
+  relationCode?: string;
+  fundingSource?: number;
+  letterOfApprovalType?: number;
+  causeUsage?: string;
+  memo?: string;
+  clientId?: number;
+  accountingDocumentId: number;
+}
+export interface PayloadTransactionCreate {
+  resolutionClassification: number;
+  income: number;
+  spending: number;
+  summary?: string;
+  theOrder?: number;
+  accountCode?: string;
+  relationCode?: string;
+  fundingSource?: number;
+  letterOfApprovalType?: number;
+  causeUsage?: string;
+  memo?: string;
+  clientId?: number;
+}
 export const contentPopupRetrieveStatements = `새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 </br>
 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 </br>
  있으니 주의하셔서 이용하시기 바랍니다. </br>

@@ -2,7 +2,7 @@
   <action-header title="기부금영수증" :buttonDelete="false" :buttonSearch="true" @actionSearch="onSearch()" :buttonPrint="false"
     :buttonSave="false" />
   <div id="ac-580" class="p-20">
-    {{ dataState }} dataState <br />
+    <!-- {{ dataStateAC580 }} dataStateAC580 <br /> -->
     <!-- {{ mailData }} mailData <br />
     {{ printData }} printData <br />
     {{ modalCreate }} modalCreate <br /> -->
@@ -10,7 +10,7 @@
       <a-row>
         <a-col span="24">
           <div class="input-text">
-            <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="dataState.tableType"
+            <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="dataStateAC580.tableType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
             <span class="custom-waring">
@@ -21,7 +21,7 @@
         <a-col span="24">
           <div class="input-text">
             <span class="mr-10">결의서별 후원금 등록 조회 여부:</span>
-            <radio-group :arrayValue="employeeFashionArr2" v-model:valueRadioCheck="dataState.employeeType2"
+            <radio-group :arrayValue="employeeFashionArr2" v-model:valueRadioCheck="dataStateAC580.employeeType2"
               layoutCustom="horizontal" class="mt-1"></radio-group>
             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
             <span class="custom-waring">
@@ -32,7 +32,7 @@
         <a-col>
           <a-form-item label="기간" label-align="right" class="red">
             <div class="input-text">
-              <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataState.imputedYear" />
+              <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataStateAC580.imputedYear" />
               <ProcessStatus :valueStatus="30" />
             </div>
           </a-form-item>
@@ -40,7 +40,7 @@
         <a-col>
           <div class="input-text">
             <span class="mx-5">~</span>
-            <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataState.monthEnd" />
+            <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataStateAC580.monthEnd" />
             <ProcessStatus :valueStatus="10" />
             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
             <span class="custom-waring">
@@ -52,23 +52,26 @@
     </div>
     <a-row class="tool-bar mt-10" justify="space-between">
       <a-col>
-        <div>
+        <div class="mt-5">
           <span class="header">서식 설정</span>
           <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
           <span class="custom-waring">
             본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다
           </span>
         </div>
-        <div>
-          <checkbox-basic size="14" label="후원자 마스킹 처리" v-model:valueCheckbox="dataState.employeementInsuranceReport" />
+        <div class="mt-5">
+          <checkbox-basic size="14" label="후원자 마스킹 처리"
+            v-model:valueCheckbox="dataStateAC580.employeementInsuranceReport" />
           <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
           <span class="custom-waring">
             본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다
           </span>
         </div>
-        <div>
+        <div class="mt-5">
           후원금 전용계좌정보
-          <edit-outlined class="ml-8" :style="{ fontSize: '18px', color: 'black' }" />
+          <DxButton class="ml-3" @click="modalCreate = true">
+            <edit-outlined :style="{ fontSize: '16px', color: 'black' }" />
+          </DxButton>
         </div>
       </a-col>
       <a-col class="d-flex-center">
@@ -93,28 +96,28 @@
           </DxButton>
         </div>
         <a-tooltip placement="top" class="custom-tooltip">
-          <template #title>
+          <!-- <template #title>
             <div style="width: 100px">
               기부금영수증 신규 발행
             </div>
-          </template>
+          </template> -->
           <div style="text-align: center;">
-            <DxButton icon="plus" class="ml-3" @click="modalCreate = true" />
+            <DxButton icon="plus" class="ml-3"  />
           </div>
         </a-tooltip>
       </a-col>
     </a-row>
     <a-row class="bot-ctn mt-10" :gutter="[25]">
       <a-col :span="15" class="col1">
-        <Table1 v-if="dataState.tableType == 1 || dataState.tableType == 2" />
-        <Table2 v-if="dataState.tableType == 3" />
-        <Table3 v-if="dataState.tableType == 4" />
+        <Table1 v-if="dataStateAC580.tableType == 1 || dataStateAC580.tableType == 2" />
+        <Table2 v-if="dataStateAC580.tableType == 3" />
+        <Table3 v-if="dataStateAC580.tableType == 4" />
       </a-col>
       <a-col :span="9" class="col2">
-        <Form1 v-if="dataState.tableType == 1" />
-        <Form2 v-if="dataState.tableType == 2" />
-        <Form3 v-if="dataState.tableType == 3" />
-        <Form4 v-if="dataState.tableType == 4" />
+        <Form1 v-if="dataStateAC580.tableType == 1" />
+        <Form2 v-if="dataStateAC580.tableType == 2" />
+        <Form3 v-if="dataStateAC580.tableType == 3" />
+        <Form4 v-if="dataStateAC580.tableType == 4" />
       </a-col>
     </a-row>
   </div>
@@ -122,7 +125,7 @@
   <PrintPopup v-if="modalPrint" v-model:printData="printData" @onPrintModal="onPrintModal" />
   <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm"
     :content="() => deleteContent" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="onDeleteModal" />
-  <CreatePopup v-if="modalCreate" @onCreateModal="onCreateModal" />
+  <ActionFormPopup v-if="modalCreate" @onCreateModal="onCreateModal" />
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, reactive, computed } from 'vue';
@@ -149,7 +152,7 @@ import dayjs from 'dayjs';
 import { DxItem } from 'devextreme-vue/select-box';
 import MailPopup from './components/MailPopup.vue';
 import PrintPopup from './components/PrintPopup.vue';
-import CreatePopup from './components/CreatePopup.vue';
+import ActionFormPopup from './components/ActionFormPopup.vue';
 import Form1 from './components/Form1.vue';
 import Form2 from './components/Form2.vue';
 import Form3 from './components/Form3.vue';
@@ -178,7 +181,7 @@ export default defineComponent({
     Form2,
     Form3,
     Form4,
-    CreatePopup,
+    ActionFormPopup,
     DxSelection,
     Table1,
     Table2,
@@ -204,20 +207,7 @@ export default defineComponent({
       hasDownFile: true,
     }]);
     const globalYear = computed(() => store.state.settings.globalYear);
-    const dataState = ref({
-      registeredAt: '',
-      manageId: '',
-      check: false,
-      companyId: companyId,
-      workId: 1,
-      imputedYear: globalYear.value,
-      name: 'ss',
-      tableType: 1,
-      employeeType2: 1,
-      monthStart: dayjs().format('MM'),
-      monthEnd: dayjs().format('MM'),
-      employeementInsuranceReport: false,
-    })
+    const dataStateAC580 = computed(() => store.state.common.dataStateAC580);
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
 
 
@@ -362,7 +352,7 @@ export default defineComponent({
     const getMajorInsuranceParam = ref<any>({
       companyId: companyId,
       imputedYear: globalYear.value,
-      workId: dataState.value.workId,
+      workId: dataStateAC580.value.workId,
     });
     const getMajorInsuranceTrigger = ref<boolean>(false);
     const {
@@ -397,7 +387,7 @@ export default defineComponent({
     createMajorDone((res: any) => {
       notification('success', messageCreate);
       let data = res.data.createMajorInsuranceConsignStatus;
-      dataState.value.registeredAt = data.registeredAt;
+      dataStateAC580.value.registeredAt = data.registeredAt;
     })
     createMajorError((res: any) => {
       notification('error', res.message);
@@ -415,20 +405,20 @@ export default defineComponent({
     const messageDelNoItem = Message.getMessage('PA860', '001').message;
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();
-      if (!res.isValid || !dataState.value.check) {
+      if (!res.isValid || !dataStateAC580.value.check) {
         res?.brokenRules[0]?.validator.focus();
         notification('warning', messageDelNoItem);
       } else {
         let formData = {
-          manageId: dataState.value.manageId,
-          companyId: dataState.value.companyId,
+          manageId: dataStateAC580.value.manageId,
+          companyId: dataStateAC580.value.companyId,
         }
         createMajor(formData);
         // renewMajor(formData);
       }
     }
 
-    // watch(()=>dataState.value.tableType,(newVal)=>{
+    // watch(()=>dataStateAC580.value.tableType,(newVal)=>{
     //   if(newVal == 1) 
     //   if(newVal == 1)
     //   if(newVal == 1)
@@ -441,7 +431,7 @@ export default defineComponent({
       modalMail, modalPrint, modalDelete, modalCreate, modalShowCreated, modalHistory,
       onMailModal, onPrintModal, onDeleteModal, onCreateModal, onShowCreateModdal, onHistoryModal,
       mailData, printData,
-      handleCreate, isDelete, handleDelete, contentDelete, dataState,
+      handleCreate, isDelete, handleDelete, contentDelete, dataStateAC580,
       onSubmit, dayjs, onSearch,
       rangeDate, deleteContent,
       employeeFashionArr, employeeFashionArr2,

@@ -28,7 +28,7 @@
         <DxColumn caption="메일/출력" width="100px" cell-template="action" />
         <template #action="{}">
           <div class="custom-action" style="text-align: center;">
-            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;" />
+            <img src="@/assets/images/email.svg" alt="" style="width: 25px; margin-right: 3px; cursor: pointer;" @click="openPopupSendMail"/>
             <a-tooltip>
               <template #title>출력 / 저장</template>
               <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer" />
@@ -37,6 +37,7 @@
         </template>
       </DxDataGrid>
     </div>
+    <PopupSendMail :isModalSendMail="isModalSendMail" @closePopup="isModalSendMail = false"/>
   </div>
 </template>
 <script lang="ts">
@@ -44,10 +45,11 @@ import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { DxDataGrid, DxColumn, DxScrolling } from "devextreme-vue/data-grid";
 import OnlyMonthPickerBox from '../components/OnlyMonthPickerBox.vue'
+import PopupSendMail from '../components/PopupSendMail.vue'
 export default defineComponent({
   components: {
     OnlyMonthPickerBox,
-    DxDataGrid, DxColumn, DxScrolling
+    DxDataGrid, DxColumn, DxScrolling, PopupSendMail
   },
   setup() {
     const store = useStore();
@@ -71,6 +73,11 @@ export default defineComponent({
         fill: '03'
       }
     ])
+    let isModalSendMail = ref(false)
+
+    const openPopupSendMail = () => {
+      isModalSendMail.value = true;
+    }
     return {
       move_column,
       colomn_resize,
@@ -78,7 +85,9 @@ export default defineComponent({
       statusAdjusting,
       statusEntering,
       monthStart,
-      monthEnd
+      monthEnd,
+      isModalSendMail,
+      openPopupSendMail
     };
   },
 });

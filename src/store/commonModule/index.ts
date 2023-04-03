@@ -13,6 +13,7 @@ import statesPA720 from "./screenStates/screenStatePA720";
 import layputState from "./screenStates/layoutState";
 import statesPA520 from "./screenStates/screenStatePA520";
 import statesBF620 from "./screenStates/screenStateBF620";
+import statesAC580 from "./screenStates/screenStateAC580";
 const commonModule = {
     state: () => ({
         ...layputState,
@@ -27,6 +28,7 @@ const commonModule = {
         ...statesPA720,
         ...statesPA520,
         ...statesBF620,
+        ...statesAC580,
     }),
     getters,
     mutations,

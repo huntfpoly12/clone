@@ -13,6 +13,10 @@ export const printRadio = [
   { id: 0, text: "인감포함" },
   { id: 1, text: "인감 제외" },
 ];
+export const addDetailRadio = [
+  { id: 0, text: "수입" },
+  { id: 1, text: "사용" },
+];
 export const productionStatusesCheckbox = [
   { id: 0, text: "국민연금" },
   { id: 1, text: "건강보험" },

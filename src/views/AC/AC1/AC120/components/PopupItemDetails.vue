@@ -1,41 +1,54 @@
 <template>
-    <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer=""
-        :width="1000">
+    <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="1000">
         <div class="mt-30">
+            <div class="text-align-center">
+                <h2><b>물품내역</b></h2>
+            </div>
             <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
-            :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true">
-            <DxScrolling mode="standard" show-scrollbar="always" />
-            <DxColumn caption="품목" cell-template="item" />
-            <template #item="{ data }">
-                <select-box-common :arrSelect="arraySelectBox" :required="true" />
-            </template>
+                :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                :column-auto-width="true">
+                <DxScrolling mode="standard" show-scrollbar="always" />
+                <DxToolbar>
+                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
+                </DxToolbar>
+                <template #button-template>
+                    <DxButton icon="plus" />
+                </template>
+                <DxColumn caption="품목" cell-template="item" />
+                <template #item="{ data }">
+                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
+                </template>
 
 
-            <DxColumn caption="규격" cell-template="standard" />
-            <template #standard="{ data }">
-                <select-box-common :arrSelect="arraySelectBox" :required="true" />
-            </template>
-            <DxColumn caption="단위" cell-template="unit" />
-            <template #unit="{ data }">
-                <select-box-common :arrSelect="arraySelectBox" :required="true" />
-            </template>
-            <DxColumn caption="수량" data-field="fill4"></DxColumn>
-            <DxColumn caption="단가" data-field="fill4"></DxColumn>
-            <DxColumn caption="금액" data-field="fill4"></DxColumn>
-            <DxColumn caption="비고" data-field="fill4"></DxColumn>
-            <DxColumn caption="삭제" cell-template="action" />
-            <template #action="{ data }">
-                <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
-                    @click="deleteItem(data.data)" />
-            </template>
+                <DxColumn caption="규격" cell-template="standard" />
+                <template #standard="{ data }">
+                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
+                </template>
+                <DxColumn caption="단위" cell-template="unit" />
+                <template #unit="{ data }">
+                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
+                </template>
+                <DxColumn caption="수량" data-field="fill4"></DxColumn>
+                <DxColumn caption="단가" data-field="fill4"></DxColumn>
+                <DxColumn caption="금액" data-field="fill4"></DxColumn>
+                <DxColumn caption="비고" data-field="fill4"></DxColumn>
+                <DxColumn caption="삭제" cell-template="action" />
+                <template #action="{ data }">
+                    <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
+                        @click="deleteItem(data.data)" />
+                </template>
 
-            <DxSummary>
-                <DxTotalItem column="결의구분" summary-type="count" display-format="통장내역수: {0}" />
-                <!-- <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="sumOfIncome" />
+                <DxSummary>
+                    <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
+                    <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" />
+                    <!-- <DxTotalItem cssClass="custom-sumary" column="수입액" :customize-text="sumOfIncome" />
                <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="sumOfExpenses" /> -->
-            </DxSummary>
-        </DxDataGrid>
+                </DxSummary>
+            </DxDataGrid>
+        </div>
+        <div class="btn_submit text-align-center mt-20">
+            <button-basic class="button-form-modal" :text="'저장'" :type="'default'"
+                :mode="'contained'" />
         </div>
     </a-modal>
 </template>
@@ -44,7 +57,8 @@
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { dataDemoMain } from '../utils/index'
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
+import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
     props: {
@@ -54,7 +68,7 @@ export default defineComponent({
         },
     },
     components: {
-        DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined
+        DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxButton, DxToolbar
     },
 
     setup(props, { emit }) {

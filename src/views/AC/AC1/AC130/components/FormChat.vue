@@ -47,7 +47,7 @@
                     <EditOutlined />
                     수정
                   </a-menu-item>
-                  <a-menu-item @click="deleteComment(index)">
+                  <a-menu-item @click="deleteComment(items, index)">
                     <DeleteOutlined />
                     삭제
                   </a-menu-item>
@@ -237,9 +237,16 @@ export default defineComponent({
         inputChat.value.focus()
       })
     }
-    const deleteComment = (index: number) => {
+    const deleteComment = (items:any, index: number) => {
+      if(items.id === idEditComment.value){
+        textChat.value = ''
+        idEditComment.value = null
+        nextTick(() => {
+          changeInput(inputChat.value)
+          inputChat.value.focus()
+        })
+      }
       listChat.value.splice(index, 1)
-      idEditComment.value = null
     }
     const removeText = () => {
       idEditComment.value = null
@@ -406,7 +413,7 @@ export default defineComponent({
         width: 100%;
         min-height: 40px;
         max-height: 100px;
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 7px 75px 7px 10px;
         font-size: 15px;
         border: 1px solid #385D8A;
@@ -414,8 +421,8 @@ export default defineComponent({
 
       &-tool {
         position: absolute;
-        right: 5px;
-        top: 10.5px;
+        right: 8px;
+        top: 10px;
 
         .anticon {
           font-size: 18px;

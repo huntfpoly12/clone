@@ -22,7 +22,7 @@
             <div class="text-align-center mt-20">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 등록합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
