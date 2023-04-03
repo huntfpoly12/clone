@@ -9,8 +9,8 @@ import { getJwtObject } from "@bankda/jangbuda-common";
 import { defineComponent, ref } from "vue";
 export default defineComponent({
   setup() {
-    const token = sessionStorage.getItem("token");
-    const jwtObject = getJwtObject(token);
+    const token  = sessionStorage.getItem("token")
+    const jwtObject = getJwtObject(token!);
     return {
       jwtObject
     }
