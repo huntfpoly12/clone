@@ -196,32 +196,12 @@ export default defineComponent({
     let focusedRowKey = ref()
     let dataSource = ref<any[]>([])
     let fileList = ref<any[]>([])
-    const previewImage = ref<string | undefined>('');
-    const previewVisible = ref<boolean>(false);
     let isModalRetrieveStatements = ref(false);
     let isModalSlipCancellation = ref(false);
     let isModalSlipRegistrantion = ref(false);
     let isModalSlipRegistrationSelected = ref(false);
     let isModalItemDetail = ref(false);
     let isModalNoteItemDetail = ref(false);
-    let arraySelectBox = reactive([
-      {
-        value: 1,
-        label: '수익사업'
-      },
-      {
-        value: 2,
-        label: '자부담'
-      },
-      {
-        value: 3,
-        label: '보조금'
-      },
-      {
-        value: 4,
-        label: '후원듬'
-      }
-    ])
     let valueAccountSubjectClassification = ref(null)
     let valueFundingSource = ref(null)
     // COMPUTED
@@ -288,7 +268,6 @@ export default defineComponent({
       isModalSlipRegistrationSelected,
       isModalItemDetail,
       openPopupSlipRegistrationSelected,
-      arraySelectBox,
       openPopupItemDetail,
       openPopupNoteItemDetail,
       isModalNoteItemDetail,

@@ -3,10 +3,10 @@
   <div class="ac-560">
     <div class="ac-560-month">
       <span class="ac-560-month-period">기간</span>
-      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthStart" />
+      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthStart" :max="monthEnd"/>
       <ProcessStatus :valueStatus="statusAdjusting" />
       <span class="mr-5 ml-5">~</span>
-      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthEnd" />
+      <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="monthEnd" :min="monthStart"/>
       <ProcessStatus :valueStatus="statusEntering" />
       <img src="@/assets/images/iconInfo.png" style="width: 14px; margin-left: 5px;" />
       <span class="style-note style-note-cm121">조정마감된 월만 해당 (조정마감이 아닌 월은 제외).</span>
@@ -44,11 +44,9 @@
 import { useStore } from 'vuex';
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import { DxDataGrid, DxColumn, DxScrolling } from "devextreme-vue/data-grid";
-import OnlyMonthPickerBox from '../components/OnlyMonthPickerBox.vue'
 import PopupSendMail from '../components/PopupSendMail.vue'
 export default defineComponent({
   components: {
-    OnlyMonthPickerBox,
     DxDataGrid, DxColumn, DxScrolling, PopupSendMail
   },
   setup() {
