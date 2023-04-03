@@ -7,61 +7,66 @@ interface ListTab {
 const listTab: ListTab[] = [
   {
     ID: 1,
+    TabName: "Decode JWT Information",
+    layoutName: "JWTInfor",
+  },
+  {
+    ID: 2,
     TabName: "Grid Prototype Option 1",
     layoutName: "GridPrototype2",
   },
   {
-    ID: 2,
+    ID: 3,
     TabName: "Grid Prototype Option 2",
     layoutName: "GridPrototype",
   },
   {
-    ID: 3,
+    ID: 4,
     TabName: "Text Box",
     layoutName: "TextBoxFrom",
   },
   {
-    ID: 4,
+    ID: 5,
     TabName: "Number Box",
     layoutName: "NumberBoxForm",
   },
   {
-    ID: 5,
+    ID: 6,
     TabName: "Date Time Box",
     layoutName: "DateTimeBoxForm",
   },
   {
-    ID: 6,
+    ID: 7,
     TabName: "Check Box",
     layoutName: "CheckBoxFrom",
   },
   {
-    ID: 7,
+    ID: 8,
     TabName: "Modal Message",
     layoutName: "ModalMessage",
   },
   {
-    ID: 8,
+    ID: 9,
     TabName: "Preview Image",
     layoutName: "PreviewImage",
   },
   {
-    ID: 9,
+    ID: 10,
     TabName: "Button Basic",
     layoutName: "ButtonBasic",
   },
   {
-    ID: 10,
+    ID: 11,
     TabName: "Tag",
     layoutName: "TagBox",
   },
   {
-    ID: 11,
+    ID: 12,
     TabName: "Action Header",
     layoutName: "ActionHeader",
   },
   {
-    ID: 12,
+    ID: 13,
     TabName: "Select Box",
     layoutName: "SelectBox",
   }
