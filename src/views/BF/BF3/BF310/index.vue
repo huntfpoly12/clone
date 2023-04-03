@@ -146,6 +146,7 @@ import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
+import notification from '@/utils/notification';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -187,10 +188,13 @@ export default defineComponent({
             popupData.value = data;
 
         }
-        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
+        const { refetch: refetchData, loading, error, result ,onError} = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        onError((error) => {
+            notification('error', error.message)
+        });
         const onExporting = (e: { component: any; cancel: boolean; }) => {
             onExportingCommon(e.component, e.cancel, '계약정보관리&심사')
         }
