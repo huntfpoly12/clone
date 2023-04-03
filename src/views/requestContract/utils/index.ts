@@ -40,7 +40,7 @@ export const dataDefaultsUtil = {
     bankType: "",
     accountNumber: "",
     ownerBizNumber: "",
-    withdrawDay: "매월 5일",
+    withdrawDay: "5일",
     salesRepresentativeId: parseInt(''),
     comment: "",
     ownerName: "",
