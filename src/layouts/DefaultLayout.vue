@@ -518,7 +518,7 @@ export default defineComponent({
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
       let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-      await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
 
 
       // store.commit('auth/setTokenInfo',jwtObject)
