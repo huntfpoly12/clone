@@ -2,7 +2,6 @@ export interface Budget {
   budget: boolean;
   status: number;
   employeeSalaryTable: number | null;
-  type: ComponentCreateBudget;
 }
 
 export enum StepCreateBudget {
@@ -11,6 +10,6 @@ export enum StepCreateBudget {
   Step3 = 3,
 }
 export enum ComponentCreateBudget {
-  EmployeeSalaryTable = "EMPLOYEE_SALARY_TABLE",
-  ExpenseAndRevenueBudget = "EXPENSE_BUDGET",
+  EmployeeSalaryTable = "EmployeeSalaryTable",
+  ExpenseAndRevenueBudget = "ExpenseAndRevenueBudget",
 }

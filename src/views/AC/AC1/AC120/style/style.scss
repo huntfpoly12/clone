@@ -49,7 +49,7 @@
         .data-grid {
             height: calc(100vh - 805px);
             overflow: hidden;
-            transition: 1s;
+            transition: .5s;
         }
         .slipRegistration {
             display: flex;
@@ -60,7 +60,7 @@
             margin-top: 15px;
             .button-arrow {
                 margin-top: -15px;
-                transition: transform 1s ease-in-out;
+                transition: transform .5s ease-in-out;
                 img {
                     cursor: pointer;
                     width: 30px; 
@@ -84,7 +84,7 @@
             .hidden-show {
                 height: 0;
                 overflow: hidden;
-                transition: 1s;
+                transition: .5s;
             }
 
             .detail2 {
