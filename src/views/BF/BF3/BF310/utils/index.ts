@@ -143,8 +143,8 @@ export const dataSearchIndex = {
   finishDate: 0,
   accounting: true,
   withholding: true,
-  companyName: "",
-  presidentName: "",
+  companyName: null,
+  presidentName: null,
   statuses: [10, 20, 30, 99],
 };
 
