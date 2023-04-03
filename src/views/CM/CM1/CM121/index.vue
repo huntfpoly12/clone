@@ -210,7 +210,7 @@
         @checkConfirm="handleConfirmChange" />
       <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus"
         @closePopup="isModalLastScrapingStatus = false" @agreeDeleteBankbook="agreeDeleteBankbook" />
-      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupHistoryData"
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" keyExpr="bankbookId" />
     </a-row>
   </div>
@@ -234,7 +234,7 @@ import notification from '@/utils/notification';
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { cloneDeep, isEqual } from "lodash";
 import { Message } from "@/configs/enum"
-import { BankBookInit, newSampleID } from './utils/data'
+import { BANK_BOOK_INIT, DATA_DETAIL_BANKBOOK, newSampleID } from './utils/data'
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxToolbar, DxItem, DxSearchPanel, DxExport, DxScrolling, DxButton, DxRowDragging, DxSorting, DxSelectBox,
@@ -265,7 +265,6 @@ export default defineComponent({
     let countResetForm = ref(0)
     let modalHistoryStatus = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
-    let popupHistoryData = ref();
     let dataPopupScrapingStatus = ref<any>()
     let accountSubject = ref('')
     let keyResetPopupRegisterBankbook = ref(0)
@@ -291,29 +290,9 @@ export default defineComponent({
     let isTypeClassification = ref<boolean>(false)
     const cm121Form = ref()
     let dataDetailBankbook = ref({
+      ...cloneDeep(DATA_DETAIL_BANKBOOK),
       companyId: companyId,
       fiscalYear: globalYear.value,
-      facilityBusinessId: null,
-      bankbookId: null,
-      bankbookInput: {
-        bankbookNickname: '',
-        useType: 1,
-        owner: '',
-        useScrap: true,
-        sort: null,
-        type: null,
-        bankbookNumber: null,
-        classification: '',
-        accountCode: '',
-        accountName: '',
-      },
-      scrapingInfoInput: {
-        accountPassword: null,
-        birthday: '',
-        bizNumber: null,
-        webId: '',
-        webPassword: '',
-      },
     })
     let oldDataDetailBankbook: any = ref({})
     let isCreate = ref<boolean>(false)
@@ -749,7 +728,7 @@ export default defineComponent({
       dataDetailBankbook.value.bankbookInput.type = data.type
       oldDataDetailBankbook.value = cloneDeep(dataDetailBankbook.value)
       dataSource.value = [...dataSource.value, {
-        ...BankBookInit,
+        ...BANK_BOOK_INIT,
         bankbookId: newSampleID,
         type: data.type,
         facilityBusinessId: data.facilityBiz,
@@ -959,7 +938,6 @@ export default defineComponent({
       modalHistoryStatus,
       modalHistory,
       idRowEdit,
-      popupHistoryData,
       isModalLastScrapingStatus,
       showPopupLastScrapingStatus,
       dataPopupScrapingStatus,

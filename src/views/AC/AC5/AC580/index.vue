@@ -162,7 +162,6 @@ import Table1 from './components/Table1.vue';
 import Table2 from './components/Table2.vue';
 import Table3 from './components/Table3.vue';
 import { employeeFashionArr, employeeFashionArr2, } from "./utils/index";
-import OnlyMonthPickerBox from '../components/OnlyMonthPickerBox.vue';
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -188,7 +187,6 @@ export default defineComponent({
     Table3,
     employeeFashionArr,
     employeeFashionArr2,
-    OnlyMonthPickerBox
   },
   setup() {
     const store = useStore();
