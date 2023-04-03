@@ -182,6 +182,15 @@ export const InitTransactionDetails = {
     documentRegistered: false,
   },
 };
+export const InitStatementOfGoods = {
+  item: '',
+  standard: '',
+  unit: '',
+  quantity: null,
+  unitPrice: null,
+  amount: null,
+  remark: ''
+};
 export const demoTableTransactionDetails = [
   {
     bankbookDetailDate: 20230330,

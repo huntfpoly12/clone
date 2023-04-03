@@ -6,6 +6,7 @@ import addBankbookDetailProof from './addBankbookDetailProof'
 import removeBankbookDetailProof from './removeBankbookDetailProof'
 import saveTransactionDetails from './saveTransactionDetails'
 import deleteStatementOfGoods from './deleteStatementOfGoods'
+import saveStatementOfGoods from './saveStatementOfGoods'
 const mutations = {
   syncBankbookDetails,
   registerTransactionDetailsToAccountingDocuments,
@@ -14,7 +15,8 @@ const mutations = {
   addBankbookDetailProof,
   removeBankbookDetailProof,
   saveTransactionDetails,
-  deleteStatementOfGoods
+  deleteStatementOfGoods,
+  saveStatementOfGoods
 };
 
 export default mutations;

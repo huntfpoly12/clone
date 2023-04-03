@@ -5,7 +5,7 @@
     centered
     @cancel="setModalVisible()"
     :mask-closable="false"
-    :width="step === StepCreateBudget.Step2 ? '70%' : 500 "
+    :width="step === StepCreateBudget.Step2 ? '90%' : 500 "
     :footer="false"
   >
     <div v-if="step === StepCreateBudget.Step1">
@@ -52,33 +52,29 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, PropType, ref, watchEffect} from 'vue'
+import {computed, ComputedRef, defineComponent, PropType, ref, watchEffect} from 'vue'
 import {Budget, ComponentCreateBudget, StepCreateBudget} from "@/views/AC/AC5/AC520/type";
 import EmployeeSalaryTable from "./EmployeeSalaryTable.vue";
+import ExpenseAndRevenueBudget from "./ExpenseAndRevenueBudget.vue";
+import {useStore} from "vuex";
 export default defineComponent({
   components: {
-    EmployeeSalaryTable
+    EmployeeSalaryTable,
+    ExpenseAndRevenueBudget
   },
   props: {
     modalStatus: {
       type: Boolean,
       required: true,
     },
-    budget: {
-      type: Boolean,
-      default: true,
-    },
-    dataBudget: {
-      type:  Object as PropType<Budget | null>,
-      required: true,
-    }
   },
   emits: ['closePopup'],
   setup(props, {emit}) {
+    const store = useStore()
     const step = ref<StepCreateBudget>(StepCreateBudget.Step1)
-    const setModalVisible = () => {
-      emit('closePopup', false)
-    };
+    const typePopup = computed(() => store.getters['ac520Module/getTypeCreateBudget'])
+    const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters['ac520Module/getDataBudget'])
+    const setModalVisible = () => {emit('closePopup', false)};
     const onConfirm = () => {
       if (step.value === StepCreateBudget.Step1) {
         step.value = StepCreateBudget.Step2
@@ -92,8 +88,10 @@ export default defineComponent({
       if (props.modalStatus) step.value = StepCreateBudget.Step1
     })
     const currentComponent = computed(() => {
-      if (props.dataBudget?.type === ComponentCreateBudget.EmployeeSalaryTable){
-        return 'EmployeeSalaryTable'
+      if (typePopup.value === ComponentCreateBudget.EmployeeSalaryTable){
+        return ComponentCreateBudget.EmployeeSalaryTable
+      } else {
+        return ComponentCreateBudget.ExpenseAndRevenueBudget
       }
     })
     return {
@@ -101,7 +99,8 @@ export default defineComponent({
       onConfirm,
       step,
       StepCreateBudget,
-      currentComponent
+      currentComponent,
+      dataBudget
     }
   }
 })

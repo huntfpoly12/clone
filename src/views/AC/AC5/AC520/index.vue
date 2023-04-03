@@ -29,7 +29,7 @@
       <DxColumn caption="인건비비율 (%)"/>
 
       <DxColumn caption="임직원보수일람표" cell-template="employeeSalaryTable"/>
-      <DxColumn caption="세출예산서"/>
+      <DxColumn caption="세출예산서" cell-template="expenseAndRevenueBudget"/>
       <DxColumn caption="세입예산서"/>
       <DxColumn caption="예산총괄표"/>
       <DxColumn caption="" width="100px" cell-template="action"/>
@@ -46,13 +46,15 @@
         <ProcessStatus :valueStatus="data.data.status" />
       </template>
       <template #employeeSalaryTable="{data}">
-        <DxButton type="ghost" icon="plus" @click="openModalBudget(data.data)"/>
+        <DxButton type="ghost" icon="plus" @click="openModalBudget({data: data.data, type: ComponentCreateBudget.EmployeeSalaryTable})"/>
+      </template>
+      <template #expenseAndRevenueBudget="{data}">
+        <DxButton type="ghost" icon="plus" @click="openModalBudget({data: data.data, type: ComponentCreateBudget.ExpenseAndRevenueBudget})"/>
       </template>
     </DxDataGrid>
     <BudgetPopup
       :modal-status="modalBudget"
       @close-popup="closePopupBudget"
-      :dataBudget="dataBudget"
     />
   </div>
 </template>
@@ -72,16 +74,14 @@ const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
 const dataSource = ref<Budget[]>([
-  {budget: true, status: 30, employeeSalaryTable: null, type: ComponentCreateBudget.EmployeeSalaryTable},
+  {budget: true, status: 30, employeeSalaryTable: null},
   // {budget: false, status: 10},
 ])
 const modalBudget = ref(false);
-const dataBudget = ref(null);
 const closePopupBudget = () => modalBudget.value = false;
 const openModalBudget = (data: any) => {
   modalBudget.value = true;
-  dataBudget.value = data
-  console.log(data);
+  store.dispatch('ac520Module/setDataBudget', data)
 }
 </script>
 

@@ -21,7 +21,7 @@
                 </template>
                 <DxColumn caption="소득종류" cell-template="type" alignment="center"/>
                 <template #type="{ data }">
-                    {{ EmployeeType[data.data.type] }}
+                    {{ IncomeType[data.data.type] }}
                 </template>
                 <!-- <DxColumn caption="총지급액" data-field="totalPayment" />
                 <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" /> -->
@@ -59,11 +59,11 @@ import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } fro
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
-import { EmployeeType } from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
+import {IncomeType} from "@bankda/jangbuda-common";
 export default defineComponent({
     components: {
-        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
     },
     props: {
         modalStatus: Boolean,
@@ -155,8 +155,9 @@ export default defineComponent({
         }
 
         return {
-            dataSource, loadingTable, loadingChangeStatus, EmployeeType, dayjs,
-            setModalVisible, changeStatusRowTable, getColorTag
+            dataSource, loadingTable, loadingChangeStatus, dayjs,
+            setModalVisible, changeStatusRowTable, getColorTag,
+            IncomeType
         }
     }
 })

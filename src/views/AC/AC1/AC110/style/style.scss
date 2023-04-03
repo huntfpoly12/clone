@@ -49,8 +49,11 @@
       }
     }
     &-detail {
+      display: flex;
       margin-top: 15px;
       &-detail1 {
+        flex-grow: 1;
+        padding-right: 10px;
         :deep(.dx-toolbar .dx-toolbar-items-container) {
           height: 55px !important;
         }
@@ -95,7 +98,6 @@
         }
       }
       &-detail2 {
-        padding-left: 15px;
         &-upload {
           border: 1px solid #ddd;
           height: 100%;

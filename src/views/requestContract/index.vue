@@ -477,7 +477,7 @@ export default {
         const funcAddress = (data: any) => {
             contractCreacted.zipcode = data.zonecode;
             contractCreacted.roadAddress = data.roadAddress;
-            contractCreacted.jibunAddress = data.jibunAddress;
+            contractCreacted.jibunAddress = data.jibunAddress ? data.jibunAddress : 'not found';
             contractCreacted.bcode = data.bcode;
             contractCreacted.bname = data.bname;
             contractCreacted.buildingCode = data.buildingCode;
@@ -647,7 +647,7 @@ export default {
                     },
                     president: {
                         name: contractCreacted.namePresident,
-                        birthday: dayjs(contractCreacted.birthday).format('YYYY-MM-DD'),
+                        birthday: parseInt(dayjs(contractCreacted.birthday).format('YYYYMMDD')),
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },

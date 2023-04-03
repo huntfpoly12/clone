@@ -32,6 +32,7 @@
                 style="max-height: 700px;"
               >
                 <DxPaging :page-size="0"/>
+                <DxScrolling mode="standard" show-scrollbar="always"/>
                 <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
@@ -297,6 +298,7 @@ import {useMutation, useQuery} from "@vue/apollo-composable";
 import {
   DxColumn,
   DxDataGrid,
+  DxScrolling,
   DxEditing,
   DxExport,
   DxGrouping,
@@ -342,7 +344,7 @@ import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   name: 'MyForm',
   components: {
-    DxDataGrid,
+    DxDataGrid,DxScrolling,
     DxColumn,
     DxSelection,
     DxExport,

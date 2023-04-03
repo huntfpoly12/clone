@@ -1,5 +1,5 @@
 <template>
-  <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" width="36%">
+  <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer="" width="750px">
     <standard-form action="" name="delete-510">
       <a-row class="mt-20">
         <a-col class="ml-20">
@@ -7,6 +7,7 @@
             <div class="input-text">
               <select-box-common :arrSelect="healthInsuranceSelectbox" :required="true"
                 v-model:valueInput="formState.healthInsuranceAcquisitionCode" />
+              <a-tag color="orange" class="ml-5">{{ formState.beckeType }}</a-tag>
               <span style="font-size: 12px; color: #888888" class="mt-5">
                 <img src="@/assets/images/iconInfo.png" style="width: 14px" class="mr-5" />기부금영수증 발행 가능한 후원자만 조회됩니다.
               </span>
@@ -14,7 +15,7 @@
           </a-form-item>
         </a-col>
         <a-col class="ml-20 mt-10">
-          <a-form-item label="발행기간">
+          <a-form-item label="기부기간">
             <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
           </a-form-item>
         </a-col>
@@ -22,7 +23,7 @@
       <div class="text-center mt-10">상기 내용으로 기부금영수증 발행하시겠습니까?</div>
       <div class="d-flex-center mt-30" style="justify-content: center; column-gap: 10px;">
         <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined" @onClick="setModalVisible" />
-        <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
+        <button-basic class="button-form-modal" text="네. 발행합니다" :width="140" type="default" mode="contained"
           @onClick="onSubmit" />
       </div>
     </standard-form>
@@ -48,6 +49,7 @@ export default defineComponent({
     const messageDel = Message.getMessage('COMMON', '402').message;
     const formState = reactive({
       healthInsuranceAcquisitionCode: 1,
+      beckeType:'beckeType',
     })
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
     const setModalVisible = () => {
@@ -79,10 +81,6 @@ export default defineComponent({
 .input-text {
   display: flex;
   align-items: center;
-
-  span {
-    margin-left: 10px;
-  }
 }
 
 :deep .ant-form-item-label>label {
