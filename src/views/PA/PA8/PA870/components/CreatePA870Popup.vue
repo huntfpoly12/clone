@@ -17,22 +17,26 @@
             <a-col span="6">
               <checkbox-basic
                 label="국민연금"
+                v-model:valueCheckbox="formData.nationalPension"
               />
             </a-col>
             <a-col span="6">
               <checkbox-basic
                 label="건강보험"
+                v-model:valueCheckbox="formData.employmentInsurance"
               />
             </a-col>
             <a-col span="6">
               <checkbox-basic
                 label="고용보험성립"
+                v-model:value-checkbox="formData.employeeInsuranceEligibility"
               />
             </a-col>
-             <a-col span="6">
-               <checkbox-basic
-                 label="산재보험성립"
-               />
+            <a-col span="6">
+              <checkbox-basic
+                label="산재보험성립"
+                v-model:value-checkbox="formData.workerEligibility"
+              />
             </a-col>
           </a-row>
         </box-title>
@@ -315,22 +319,22 @@
           </a-row>
 
           <a-row>
-           <a-col span="12">
-             <DxField label="수신자명" >
-               <default-text-box
-                 placeholder="성명"
-                 style="flex: 1"
-               />
-             </DxField>
-           </a-col>
             <a-col span="12">
-             <DxField label="수신자주민등록번호" class="field-custom">
-               <id-number-text-box
-                 placeholder="성명"
-                 style="flex: 1"
-               />
-             </DxField>
-           </a-col>
+              <DxField label="수신자명" >
+                <default-text-box
+                  placeholder="성명"
+                  style="flex: 1"
+                />
+              </DxField>
+            </a-col>
+            <a-col span="12">
+              <DxField label="수신자주민등록번호" class="field-custom">
+                <id-number-text-box
+                  placeholder="성명"
+                  style="flex: 1"
+                />
+              </DxField>
+            </a-col>
           </a-row>
         </box-title>
 
@@ -360,11 +364,11 @@
           <div class="d-flex-center justify-content-around">
             <checkbox-basic
               label="국민연금"
-              v-model:valueCheckbox="formData.nationalPension"
+
             />
             <checkbox-basic
               label="고용보험"
-              v-model:valueCheckbox="formData.employmentInsurance"
+
             />
           </div>
         </box-title>
@@ -453,7 +457,7 @@
                 <default-text-box
                   placeholder=""
                   :required="formData.employmentInsurance"
-                  />
+                />
               </DxField>
             </a-col>
             <a-col span="12">
@@ -492,18 +496,18 @@
         <box-title title="고용보험">
           <a-row>
             <a-col span="8">
-              <DxField label="상시근로자수" :required="formData.employmentInsurance">
-                <text-number-box placeholder="" :required="formData.employmentInsurance" />
+              <DxField label="상시근로자수" :required="formData.employeeInsuranceEligibility">
+                <text-number-box placeholder="" :required="formData.employeeInsuranceEligibility" />
               </DxField>
             </a-col>
             <a-col span="8">
-              <DxField label="피보험자수" :required="formData.employmentInsurance">
-                <text-number-box placeholder="" :required="formData.employmentInsurance" />
+              <DxField label="피보험자수" :required="formData.employeeInsuranceEligibility">
+                <text-number-box placeholder="" :required="formData.employeeInsuranceEligibility" />
               </DxField>
             </a-col>
             <a-col span="8">
-              <DxField label="성립일" :required="formData.employmentInsurance">
-                <date-time-box placeholder="" :required="formData.employmentInsurance" />
+              <DxField label="성립일" :required="formData.employeeInsuranceEligibility">
+                <date-time-box placeholder="" :required="formData.employeeInsuranceEligibility" />
               </DxField>
             </a-col>
           </a-row>
@@ -539,19 +543,26 @@
         <box-title title="산재보험">
           <a-row>
             <a-col span="12">
-              <DxField label="상시근로자수">
-                <default-text-box placeholder="" />
+              <DxField label="상시근로자수" :required="formData.workerEligibility">
+                <default-text-box
+                  placeholder=""
+                  :required="formData.workerEligibility"
+                />
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="성립일" >
-                <date-time-box placeholder="" />
+              <DxField label="성립일" :required="formData.workerEligibility">
+                <date-time-box
+                  placeholder=""
+                  :required="formData.workerEligibility"
+                />
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="사업의형태" >
+              <DxField label="사업의형태" :required="formData.workerEligibility">
                 <a-radio-group
                   :value="1"
+                  :required="formData.workerEligibility"
                 >
                   <a-radio :value="1">계속</a-radio>
                   <a-radio :value="2">기간이정해진사업</a-radio>
@@ -559,9 +570,10 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="주된사업장여부" >
+              <DxField label="주된사업장여부" :required="formData.workerEligibility">
                 <a-radio-group
                   :value="2"
+                  :required="formData.workerEligibility"
                 >
                   <a-radio :value="1">있음</a-radio>
                   <a-radio :value="2">없음</a-radio>
@@ -666,8 +678,8 @@ export default defineComponent({
       imputedYear: globalYear.value,
     });
     const {result: dataEmployeeWages, onResult: onResultEmployeeWages, refetch: refetchDataEmployeeWages} = useQuery(queries.getEmployeeWages, variables, () => ({
-        fetchPolicy: "no-cache",
-      }));
+      fetchPolicy: "no-cache",
+    }));
     onResultEmployeeWages((res) => {
       const data = res.data.getEmployeeWages;
       if (data?.length) {
