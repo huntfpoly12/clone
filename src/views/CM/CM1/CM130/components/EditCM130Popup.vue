@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { ref, defineComponent, reactive, watch, computed } from "vue";
 import notification from "@/utils/notification";
@@ -156,6 +156,7 @@ export default defineComponent({
                         formula: formState.formula
                     }
                 };
+                makeDataClean(variables)
                 actionUpdateWithholdingConfigPayItem(variables)
             }
         };

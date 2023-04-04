@@ -497,11 +497,12 @@ export default defineComponent({
             if (value.getIncomeWageDailies) {
                 delete(value.getIncomeWageDailies.deductionItems)
                 store.state.common.dataTaxPayInfo = value.getIncomeWageDailies;
+                store.state.common.resetArrayEmploySelect++
                 // if (value.getIncomeWageDailies[0] && !store.state.common.statusFormAdd) { // if have data
                 if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
                     store.state.common.addRow++ // add row
+                    return
                 }
-                store.state.common.resetArrayEmploySelect++
                 if (value.getIncomeWageDailies[0]) { // if have data
                     if (store.state.common.onDoneEdit) { // sửa ngày thành công
                         store.state.common.onDoneEdit = false
