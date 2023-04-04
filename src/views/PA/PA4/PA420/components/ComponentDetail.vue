@@ -2,15 +2,15 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{dataTableDetail.processKey.imputedYear != 0 ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
-                <div class="text-box-2">지 {{dataTableDetail.processKey.paymentYear != 0 ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="dataTableDetail.processKey.imputedYear == 0"/>
+                <div class="text-box-1">귀 {{hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
+                <div class="text-box-2">지 {{hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="hasDataIncRetirements"/>
             </div>
             <div class="table-detail-right">
-                <DxButton @click="deleteItem" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0" >
+                <DxButton @click="deleteItem" :disabled="checkActionValue || hasDataIncRetirements" >
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0" />
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || hasDataIncRetirements" />
                 <DxButton @click="onItemClick('history')" :disabled="checkActionValue  && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
@@ -28,7 +28,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || dataTableDetail.processKey.imputedYear == 0">
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || hasDataIncRetirements">
                     <div class="d-flex-center">
                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -200,6 +200,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
         const rowTable = ref(0);
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
@@ -248,11 +249,10 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
-            dataTableDetail.value = newValue
             if (newValue) {
-                checkActionValue.value = false
-                triggerDetail.value = true
-                refetchTableDetail()
+              dataTableDetail.value = newValue
+              triggerDetail.value = true
+              refetchTableDetail()
             }
         }, { deep: true })
       
@@ -374,7 +374,7 @@ export default defineComponent({
             refetchTableDetail,
             resetFormNum,
             listEmployeeId,
-            closeChangePaymentDay,store
+            closeChangePaymentDay,store,hasDataIncRetirements
         }
     }
 });

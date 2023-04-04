@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :visible="modalStatus"
-    @cancel="setModalVisible"
+    @cancel="setModalSelectVisible"
     :mask-closable="false"
     class="confirm-md"
     footer=""
@@ -14,6 +14,7 @@
         v-model:valueRadioCheck="retirementIncome1"
         layoutCustom="horizontal"
       />
+      {{ dataForm.input.retirementType }}
       <radio-group
         class="radio-group two"
         :arrayValue="option2"
@@ -180,8 +181,11 @@ export default defineComponent({
         JSON.stringify({ ...initialFormState, processKey: props.processKey })
       )
     );
+    // set riêng trường hợp retirementType vì 
+    watch(()=>dataForm.input.retirementType, () => {
+      alert()
+    }, { deep: true })
     
-
     const option1 = reactive([
       { id: true, text: "사원" },
       { id: false, text: "일용직사원" },
@@ -191,6 +195,8 @@ export default defineComponent({
       { id: 2, text: "중도정산" },
     ]);
     const setModalVisible = () => {
+      console.log(JSON.stringify(defaltDataForm));
+      console.log(JSON.stringify(dataForm));
       if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm))
       {
         emit("closePopup", false)
@@ -199,7 +205,9 @@ export default defineComponent({
         comfirmClosePopup(() => { emit("closePopup", false); modalStatusAccept.value = false;})
       }
     };
-
+    const setModalSelectVisible = () => {
+      emit("closePopup", false)
+    };
     store.dispatch("common/getListEmployee", {
       companyId: companyId,
       imputedYear: globalYear,
@@ -362,6 +370,7 @@ export default defineComponent({
     };
     return {
       setModalVisible,
+      setModalSelectVisible,
       formAddTab3,
       changeStep,
       nextStep,

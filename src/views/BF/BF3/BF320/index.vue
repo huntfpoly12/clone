@@ -128,6 +128,7 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
 import { onExportingCommon } from "@/helpers/commonFunction"
+import notification from '@/utils/notification';
 import dayjs from "dayjs";
 export default defineComponent({
     components: {
@@ -153,10 +154,13 @@ export default defineComponent({
             ...dataSearchIndex,
             rows: per_page,
         })
-        const { refetch: refetchData, result, loading } = useQuery(queries.searchCompanies, originData, () => ({
+        const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
+        onError((e) => {
+            notification("error", e.message);
+        });
         const searching = () => {
             trigger.value = true;
         }

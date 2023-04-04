@@ -293,7 +293,7 @@ export default defineComponent({
                     ...dataEdited,
                     joinedAt: dataEdited.joinedAt,
                     leavedAt: dataEdited.leavedAt,
-                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
+                    residentId: dataEdited.residentId
                 };
                 delete newValDataEdit.employeeId;
                 delete newValDataEdit.zipcode;
