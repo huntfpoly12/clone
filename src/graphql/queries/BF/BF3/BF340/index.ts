@@ -1,9 +1,9 @@
-import getDataSale from "./getSale";
+import searchSalesRepresentatives from "./searchSalesRepresentatives";
 import getSalesRepresentative from "./getSalesRepresentative";
 import isSalesRepresentativeChangableName from "./isSalesRepresentativeChangableName";
 
 const queries = {
-    getDataSale: getDataSale,
+  searchSalesRepresentatives: searchSalesRepresentatives,
     getSalesRepresentative:getSalesRepresentative,
     isSalesRepresentativeChangableName:isSalesRepresentativeChangableName
 };
