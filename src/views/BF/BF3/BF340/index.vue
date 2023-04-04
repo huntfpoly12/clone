@@ -154,7 +154,7 @@ export default defineComponent({
         const dataSource = ref([]);
         const trigger = ref<boolean>(true);
         // ============= GRAPHQL ===========================
-        const { refetch: refetchData, loading, onError, result } = useQuery(queries.getDataSale, originData, () => ({
+        const { refetch: refetchData, loading, onError, result } = useQuery(queries.searchSalesRepresentatives, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
