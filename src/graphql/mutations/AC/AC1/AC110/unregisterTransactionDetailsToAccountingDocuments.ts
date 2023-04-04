@@ -5,7 +5,7 @@ export default gql`
     $fiscalYear: Int!,
     $facilityBusinessId: Int!,
     $bankbookDetailDate: Int!,
-    $bankbookDetailIds: [Int!]!
+    $bankbookDetailIds: Int!
   ) {
     unregisterTransactionDetailsToAccountingDocuments(
       companyId: $companyId,

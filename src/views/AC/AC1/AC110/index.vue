@@ -701,11 +701,11 @@ export default defineComponent({
     }
     const handleConfirmSlipCancellation = () => {
       let bankbookDetailDate: number = 0
-      const bankbookDetailIds: number[] = []
+      let bankbookDetailIds: number = 0
       dataSource.value.forEach(items => {
         if (transactionDetailsCountSelected.value === items.transactionDetailsCount) {
           bankbookDetailDate = items.bankbookDetailDate
-          bankbookDetailIds.push(items.bankbookDetailId)
+          bankbookDetailIds = items.bankbookDetailId
         }
       })
       isModalSlipCancellation.value = false

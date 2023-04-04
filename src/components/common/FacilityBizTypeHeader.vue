@@ -2,7 +2,7 @@
   <div class="facilityBizType-header">
     <label for="" class="facilityBizType-header-label">시설사업명</label>
     <select-box-common :arrSelect="facilityBizTypeCommon" v-model:valueInput="facilityBiz" displayeExpr="n" valueExpr="v"
-      width="170px" placeholder="사업유형 선택" />
+      width="170px" placeholder="사업유형 선택" :searchEnabled="false"/>
   </div>
 </template>
 <script lang="ts">
