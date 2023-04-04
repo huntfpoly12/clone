@@ -75,7 +75,7 @@
                         <a-col :span="8" :md="13" :lg="11">
                             <a-form-item :wrapper-col="{ span: 24 }" class="detail-address" label-align="right"
                                 :label-col="labelCol">
-                                <default-text-box v-model:valueInput="formState.addressExtend" placeholder="상세주소"
+                                <default-text-box v-model:valueInput="formState.addressExtend" placeholder="상세주소" :required="true"
                                     width="438px" />
                             </a-form-item>
                         </a-col>
@@ -159,6 +159,7 @@ import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
 import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: Boolean,
