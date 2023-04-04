@@ -1,4 +1,5 @@
 <template>
+
   <a-modal wrapClassName="custom-modal" width="50%" v-bind="$props" @ok="handleOk" @cancel="closePopup"
            :mask-closable="false">
     <a-row >
@@ -7,6 +8,7 @@
           <a-radio-group
             :value="typeCal"
             class="d-flex-center"
+
             required
           >
             <a-radio :value="1">제목</a-radio>
@@ -32,7 +34,6 @@
       <div class="wf-100 text-center">
         <DxButton type="default" @click="handleSubmit" text="산출내역 저장"/>
       </div>
-
     </a-row>
   </a-modal>
 </template>
