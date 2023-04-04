@@ -101,52 +101,56 @@
               <template #title>{{ menuItem.title }}</template>
               <!-- list sub menu level 1 -->
               <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
-                <a-menu-item v-if="!itemLevel1.hasOwnProperty('subMenus')"
-                        :class="[
+                <div v-if="isPermission(itemLevel1?.roles)" class="menuuuuu">
+                  <a-menu-item v-if="!itemLevel1.hasOwnProperty('subMenus')"
+                               :class="[
                         itemLevel1.id === activeTab.id
                           ? 'ant-menu-item-selected-active'
                         : '',
                         itemLevel1.url == '#' ? 'not-done' : ''
                           ]
                         "
-                        @click.enter="addMenuTab(itemLevel1.id)"
-                      >
-                      <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
-                </a-menu-item>
-                <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
-                  <!-- list sub menu level 2 if have subMenus -->
-                  <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
-                    <a-menu-item
-                        v-if="!itemLevel2.hasOwnProperty('subMenus')"
-                        :class="[
-                        itemLevel2.id === activeTab.id
-                          ? 'ant-menu-item-selected-active'
-                        : '',
-                        itemLevel2.url == '#' ? 'not-done' : ''
-                          ]
-                        "
-                        @click.enter="addMenuTab(itemLevel2.id)"
-                      >
-                      <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
-                    </a-menu-item>
-                    <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
-                      <a-menu-item
-                        v-for="subMenu1 in itemLevel2.subMenus"
-                        :key="subMenu1.id"
-                        :class="[
+                               @click.enter="addMenuTab(itemLevel1.id)"
+                  >
+                    <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
+                  </a-menu-item>
+                  <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
+                    <!-- list sub menu level 2 if have subMenus -->
+                    <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
+                      <div v-if="isPermission(itemLevel2?.roles)">
+                        <a-menu-item
+                          v-if="!itemLevel2.hasOwnProperty('subMenus')"
+                          :class="[
+                          itemLevel2.id === activeTab.id
+                            ? 'ant-menu-item-selected-active'
+                          : '',
+                          itemLevel2.url == '#' ? 'not-done' : ''
+                            ]
+                          "
+                          @click.enter="addMenuTab(itemLevel2.id)"
+                        >
+                          <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
+                        </a-menu-item>
+                        <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
+                        <a-menu-item
+                          v-for="subMenu1 in itemLevel2.subMenus"
+                          :key="subMenu1.id"
+                          :class="[
                           subMenu1.id === activeTab.id
                             ? 'ant-menu-item-selected-active'
                           : '',
                           subMenu1.url == '#' ? 'not-done' : ''
                             ]
                           "
-                        @click.enter="addMenuTab(subMenu1.id)"
-                      >
-                        <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
-                      </a-menu-item>
-                    </a-sub-menu>
-                  </template>
-                </a-sub-menu>
+                          @click.enter="addMenuTab(subMenu1.id)"
+                        >
+                          <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
+                        </a-menu-item>
+                      </a-sub-menu>
+                      </div>
+                    </template>
+                  </a-sub-menu>
+                </div>
               </template>
             </a-sub-menu>
           </a-menu>
@@ -173,7 +177,7 @@
     </a-layout-content>
   </a-layout>
 </template>
-<script >
+<script>
 import { defineComponent, ref, watch, computed, onMounted } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
@@ -249,7 +253,7 @@ import {
   CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
-import { getJwtObject } from '@bankda/jangbuda-common';
+import {AdminScreenRole, getJwtObject, ScreenRole} from '@bankda/jangbuda-common';
 import { companyId } from "@/helpers/commonFunction";
 import dayjs from "dayjs";;
 export default defineComponent({
@@ -501,7 +505,8 @@ export default defineComponent({
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
-    let menuDatas = menuData;
+
+    // let menuDatas = menuData;
     let menuItems = menuTree;
     const store = useStore();
     const router = useRouter()
@@ -510,19 +515,22 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-
+    const token = sessionStorage.getItem("token");
+    const jwtObject = getJwtObject(token);
+    let menuDatas = menuData.filter(i => {
+      if(i.roles.length === 0) return true
+      return Boolean(i.roles.some(i => jwtObject?.hasReadScreenRole(i)))
+    })
+    const isPermission = (roles) => {
+      if (!roles || roles.length === 0) return true
+      return Boolean(roles?.some((role) => jwtObject?.hasReadScreenRole(role)))
+    }
     onMounted(async() => {
-      const token = sessionStorage.getItem("token");
-      const jwtObject = getJwtObject(token);
-
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
       let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
-
-
+      await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
       // store.commit('auth/setTokenInfo',jwtObject)
-      // console.log(store.getters['settings/accountSubjects']);
     })
     /**
     * Check scroll tab if overflow
@@ -566,6 +574,7 @@ export default defineComponent({
       filteredResult.value = [];
       inputSearchText.value = key;
       if (menuDatas?.length > 0) {
+
         menuDatas.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
           if (searchId) {
@@ -713,7 +722,8 @@ export default defineComponent({
       scrollX,
       scroll_container,
       isArrowScroll,
-      tabLeft,tabRight,cachedTab,store
+      tabLeft,tabRight,cachedTab,store,
+      isPermission
     }
   },
 });

@@ -50,8 +50,10 @@ const INITIAL_FORM_PA840 = {
 }
 
 const INITIAL_FORM_PA870 = {
-  nationalPension: false,
-  employmentInsurance: false
+  nationalPension: true,
+  employmentInsurance: true,
+  workerEligibility: true,
+  employeeInsuranceEligibility: true
 }
 
 const LeaveOfAbsenceDocument = [

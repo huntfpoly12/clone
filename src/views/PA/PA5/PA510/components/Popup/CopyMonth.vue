@@ -190,6 +190,7 @@ export default defineComponent({
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
+            store.state.common.statusRowAdd = true
             // store.state.common.paymentDayCopy = paymentDayCopy.value
             // store.state.common.actionCopy++
             sampleDataIncomeWageDaily.paymentDay = paymentDayCopy.value

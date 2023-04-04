@@ -189,7 +189,7 @@ import { initialState, initialOptionsRadio } from "./utils/index"
 import mutations from "@/graphql/mutations/PA/PA7/PA710/index";
 import queries from "@/graphql/queries/PA/PA7/PA710/index";
 import DxButton from "devextreme-vue/button";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from "@/configs/enum"
 export default defineComponent({
     components: {
@@ -380,7 +380,7 @@ export default defineComponent({
                     nationality: formState.value.nationality,
                     nationalityCode: formState.value.nationalityCode,
                     stayQualification: formState.value.stayQualification,
-                    residentId: residentId.slice(0, 6) + '-' + residentId.slice(6, 13),
+                    residentId: residentId,
                     email: formState.value.email,
                     incomeTypeName: formState.value.incomeTypeName,
                 }
@@ -392,6 +392,7 @@ export default defineComponent({
                         incomeTypeCode: formState.value.incomeTypeCode,
                         input: { ...input }
                     };
+                    makeDataClean(dataUpdate)
                     updateEmployeeExtra(dataUpdate);
                 } else {
                     let dataCreate = {
@@ -403,6 +404,7 @@ export default defineComponent({
                             ...input,
                         },
                     };
+                    makeDataClean(dataCreate)
                     createEmployeeExtra(dataCreate);
                 }
             }

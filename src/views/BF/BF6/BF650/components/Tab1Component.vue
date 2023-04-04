@@ -34,7 +34,7 @@
         <a-form-item label="상호" label-align="left" class="fix-width-label">
           <default-text-box v-model:valueInput="filter.companyName" textUppercase/>
         </a-form-item>
-        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
+        <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
           <list-sales-dropdown v-model:valueInput="filter.companyServiceContractSalesRepresentativeId"/>
         </a-form-item>
       </a-col>
@@ -114,35 +114,25 @@
 </template>
 <script lang="ts">
 import dayjs from "dayjs";
-import {defineComponent, ref, computed, watch, watchEffect, reactive, toRefs} from "vue";
+import {computed, defineComponent, reactive, ref, watch} from "vue";
 import {dataSearchUtils} from "../utils";
-import {
-  SaveOutlined
-} from "@ant-design/icons-vue";
+import {SaveOutlined} from "@ant-design/icons-vue";
 import {useStore} from 'vuex'
 import {
-  DxDataGrid,
-  DxToolbar,
-  DxSelection,
   DxColumn,
+  DxDataGrid,
   DxItem,
   DxScrolling,
+  DxSelection,
   DxSummary,
+  DxToolbar,
   DxTotalItem
 } from "devextreme-vue/data-grid";
 import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
-import {useQuery, useMutation, useApolloClient} from "@vue/apollo-composable";
+import {useApolloClient, useQuery} from "@vue/apollo-composable";
 import notification from "@/utils/notification"
-
-function checkAllSameValue(obj: any) {
-  const values = Object.values(obj);
-  if (values.every(v => v === true) || values.every(v => v === false)) {
-    return true;
-  }
-  return false;
-}
 
 export default defineComponent({
   components: {
@@ -190,24 +180,28 @@ export default defineComponent({
       enabled: trigger.value,
       fetchPolicy: "no-cache"
     }));
+
     interface CompanyVariable {
       companyId: number;
       paymentYear: number;
       paymentMonth: number;
     }
-    const { client } = useApolloClient();
+
+    const {client} = useApolloClient();
 
     const fetchDataStatus = async (companies: CompanyVariable[]) => {
       if (companies.length === 0) return;
       const total = [];
       for (let i = 0; i < companies.length; i++) {
-        total.push(client.query({ query: queries.getElectronicFilingsByIncomeWageDailyPaymentStatement, variables: {
+        total.push(client.query({
+          query: queries.getElectronicFilingsByIncomeWageDailyPaymentStatement, variables: {
             input: {
               companyId: companies[i].companyId,
               paymentYear: companies[i].paymentYear,
               paymentMonth: companies[i].paymentMonth,
             }
-          } }).then((res) => res.data.getElectronicFilingsByIncomeWageDailyPaymentStatement[0]));
+          }
+        }).then((res) => res.data.getElectronicFilingsByIncomeWageDailyPaymentStatement[0]));
       }
       try {
         return await Promise.all(total);
@@ -229,7 +223,11 @@ export default defineComponent({
           arrDataConvert.push(val)
         }
       })
-      dataSourceOriginal.value = arrDataConvert.map((item: any, index: number) => ({...item,productionStatus: 3, index}))
+      dataSourceOriginal.value = arrDataConvert.map((item: any, index: number) => ({
+        ...item,
+        productionStatus: 3,
+        index
+      }))
       const arrayStatus = await fetchDataStatus(arrDataConvert.filter((i: any) => i.lastProductionRequestedAt).map((item: any) => ({
         companyId: item.companyId,
         paymentYear: item.paymentYear,
@@ -270,8 +268,7 @@ export default defineComponent({
     // =================== WATCH ====================
     watch(() => props.searchStep, (newValue) => {
       // Array object to array value of filter.productionStatuses
-      const arrProductionStatuses = Object.values(filter.productionStatuses)
-      filter.productionStatuses = arrProductionStatuses
+      filter.productionStatuses = Object.values(filter.productionStatuses)
       dataSource.value = dataSourceOriginal.value.filter((item: any) => {
         return (filter.productionStatuses.length > 0
             ? filter.productionStatuses.includes(item.productionStatus)
@@ -279,8 +276,8 @@ export default defineComponent({
           && (filter.companyServiceContractActive ? item.companyServiceContract.active : true)
           && item.company.code.toLocaleLowerCase().includes(filter.companyCode.toLocaleLowerCase())
           && item.company.name.toLocaleLowerCase().includes(filter.companyName.toLocaleLowerCase())
-          && (filter.companyServiceContractManageUserId === null || filter.companyServiceContractManageUserId === item.companyServiceContract.manageCompactUser?.manageUserId)
-          && (filter.companyServiceContractSalesRepresentativeId === null || filter.companyServiceContractSalesRepresentativeId === item.companyServiceContract.salesRepresentativeId?.id)
+          && (filter.companyServiceContractManageUserId === null || filter.companyServiceContractManageUserId === item.companyServiceContract?.manageUserId)
+          && (filter.companyServiceContractSalesRepresentativeId === null || filter.companyServiceContractSalesRepresentativeId === item.companyServiceContract?.salesRepresentativeId)
       })
 
     }, {deep: true})
@@ -298,7 +295,7 @@ export default defineComponent({
     let productionFailed = 0
     let productionSuccess = 0
     watch(dataSource, (value) => {
-      const result = value.reduce((acc: any, curr: any ) => {
+      const result = value.reduce((acc: any, curr: any) => {
         return [
           acc[0] + (curr.productionStatus === 3 ? 1 : 0),
           acc[1] + (curr.productionStatus === 0 ? 1 : 0),
@@ -336,7 +333,7 @@ export default defineComponent({
       }
     }
     const selectionChanged = (res: any) => {
-      keySelect.value = res.selectedRowKeys.map((i:any)=> res.selectedRowsData[i].companyId)
+      keySelect.value = res.selectedRowKeys.map((i: any) => res.selectedRowsData[i].companyId)
     }
     const customTextSummary = () => {
       return `제작요청전: ${beforeProductionRequest}, 제작대기: ${waitingForProduction}, 제작중: ${productionInProgress}, 제작실패: ${productionFailed}, 제작성공: ${productionSuccess}`;
