@@ -208,7 +208,6 @@ const handleSubmit = () => {
   padding: 0px 10px;
   background-color: #97c0e1;
 }
-
 .table-left {
   padding: 10px;
   height: 700px;

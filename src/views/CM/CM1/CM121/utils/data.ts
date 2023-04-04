@@ -1,4 +1,4 @@
-export const BankBookInit = {
+export const BANK_BOOK_INIT = {
     facilityBusinessId: null,
     bankbookId: null,
     sort: null,
@@ -22,5 +22,30 @@ export const BankBookInit = {
         scrapingStatus: null,
         errorMessage: null,
     },
+}
+export const DATA_DETAIL_BANKBOOK = {
+  companyId: null,
+  fiscalYear: null,
+  facilityBusinessId: null,
+  bankbookId: null,
+  bankbookInput: {
+    bankbookNickname: '',
+    useType: 1,
+    owner: '',
+    useScrap: true,
+    sort: null,
+    type: null,
+    bankbookNumber: null,
+    classification: '',
+    accountCode: '',
+    accountName: '',
+  },
+  scrapingInfoInput: {
+    accountPassword: null,
+    birthday: '',
+    bizNumber: null,
+    webId: '',
+    webPassword: '',
+  },
 }
 export const newSampleID = 'newSampleID'

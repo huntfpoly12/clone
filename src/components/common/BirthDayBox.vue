@@ -34,8 +34,7 @@ export default defineComponent({
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: {
-            type: String,
-            default: "",
+            type: Number,
         },
         readOnly: Boolean,
         nameInput: {
@@ -60,15 +59,15 @@ export default defineComponent({
         if (props.messRequired != "") {
             messageRequired.value = props.messRequired;
         }
-        const value = ref(props.valueInput.replaceAll("-", ""));
+        const value = ref(props.valueInput?.toString().replaceAll("-", ""));
         const updateValue = (value: any) => {
-            emit("update:valueInput", value);
+            emit("update:valueInput", parseInt(value));
         };
 
         watch(
             () => props.valueInput,
             (newValue) => {
-                value.value = newValue.replaceAll("-", "");
+                value.value = newValue?.toString().replaceAll("-", "");
             }
         );
 
