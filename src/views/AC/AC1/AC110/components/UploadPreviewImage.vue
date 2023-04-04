@@ -5,9 +5,9 @@
         heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
         !!width ? `min-width: ${width}px; width: 100%` : ''
       ]">
-    <div class="upload-pewview-image">
+    <div ref="elementUpload" class="upload-pewview-img">
       <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
-        @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" 
+        @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" :remove="remove"
         accept="image/png, image/jpeg, image/jpg image/gif">
         <div v-if="fileList.length <= limit">
           <div class="ant-btn-upload">
@@ -83,6 +83,7 @@ export default defineComponent({
     const previewImage = ref<string | undefined>('');
     const previewVisible = ref<boolean>(false);
     let triggerBankbookDetailProofs = ref(false);
+    const elementUpload = ref<any>()
     // computed
     const payload = computed(() => props.payLoadProofs)
     // graphQL
@@ -185,8 +186,13 @@ export default defineComponent({
     watch(() => fileList.value, (value) => {
       nextTick(() => {
         if(value.length){
-          const elementsIconPreview = document.querySelectorAll("a[title='Preview file']")
-          const elementsIconDelete = document.querySelectorAll("button[title='Remove file']")
+          value.forEach(items => {
+            if(items.status === 'error') {
+              items.response = '업로드 오류'
+            }
+          })
+          const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
+          const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
           elementsIconPreview.forEach((el:any) => {
             el.setAttribute("title", "원본 보기");
           })
@@ -216,14 +222,19 @@ export default defineComponent({
         })
       }).catch((error:any) => {
         e.onError(error.message);
+        listFileStorageId.value.push({
+          ...fileList.value[fileList.value.length - 1], fileStorageId: null
+        })
       })
     }
     const remove = (e: any) => {
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
-      removeBankbookDetailProof({
+      if(!!listFileStorageId.value[index].fileStorageId && Number.isInteger(listFileStorageId.value[index].fileStorageId)) {
+        removeBankbookDetailProof({
         ...props.payLoadProofs,
         fileStorageId: listFileStorageId.value[index].fileStorageId
       })
+      }
       listFileStorageId.value.splice(index, 1)
       emit("update:listImageFile", listFileStorageId.value)
     }
@@ -237,13 +248,14 @@ export default defineComponent({
       changeFile,
       customRequest,
       remove,
+      elementUpload
     }
   }
 })
 
 </script>
 <style lang="scss">
-.upload-pewview-image {
+.upload-pewview-img {
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
