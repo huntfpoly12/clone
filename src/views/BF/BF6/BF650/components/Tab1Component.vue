@@ -34,7 +34,7 @@
         <a-form-item label="상호" label-align="left" class="fix-width-label">
           <default-text-box v-model:valueInput="filter.companyName" textUppercase/>
         </a-form-item>
-        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
+        <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
           <list-sales-dropdown v-model:valueInput="filter.companyServiceContractSalesRepresentativeId"/>
         </a-form-item>
       </a-col>
