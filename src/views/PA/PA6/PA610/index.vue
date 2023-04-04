@@ -320,7 +320,8 @@ import Tooltip from "@/components/common/Tooltip.vue";
 import {Message} from "@/configs/enum";
 import mutations from "@/graphql/mutations/PA/PA6/PA610/index";
 import {companyId, onExportingCommon} from "@/helpers/commonFunction";
-import {isEqualObject} from "@/utils";
+import isEqual from "lodash/isEqual";
+
 import {
   DeleteOutlined,
   EditOutlined,
@@ -384,7 +385,7 @@ export default defineComponent({
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
 
     const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
-    const isFormChange = computed(() => !isEqualObject(dataShow.value, previousRowData.value));
+    const isFormChange = computed(() => !isEqual(dataShow.value, previousRowData.value));
     const isPopupVisible = computed(() => store.getters['settings/isPopupVisible'])
 
     // Ref
@@ -511,14 +512,14 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !isEqualObject(previousRowData.value, dataShow.value)) {
+        if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
           isDiscard.value = true;
         } else {
         // create new row
           addNewRow()
         }
       } else {
-         if (previousRowData.value && !isEqualObject(previousRowData.value, dataShow.value)) {
+         if (previousRowData.value && !isEqual(previousRowData.value, dataShow.value)) {
           selectRowKeyAction.value = 0
           isClickAddRow.value = true;
           isDiscard.value = true;
@@ -534,7 +535,7 @@ export default defineComponent({
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
-        if (isEqualObject(dataShow.value, valueDefaultAction)) {
+        if (isEqual(dataShow.value, valueDefaultAction)) {
 
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
@@ -562,7 +563,7 @@ export default defineComponent({
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
           previousRowData.value &&
-          !isEqualObject(dataShow.value, previousRowData.value)
+          !isEqual(dataShow.value, previousRowData.value)
         ) {
           rowElement?.classList.add("dx-state-hover-custom")
           isDiscard.value = true;
