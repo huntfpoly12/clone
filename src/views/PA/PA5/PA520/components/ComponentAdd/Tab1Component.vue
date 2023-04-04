@@ -277,7 +277,7 @@ export default defineComponent({
                     weeklyWorkingHours: parseInt(dataCreated.weeklyWorkingHours),
                     joinedAt: dataCreated.joinedAt,
                     leavedAt: dataCreated.leavedAt,
-                    residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
+                    residentId: dataCreated.residentId
                 };
 
                 delete newValDataCreat.zipcode;
@@ -287,9 +287,7 @@ export default defineComponent({
                     input: newValDataCreat
                 }
               dataCallCreat = await makeDataClean(dataCallCreat)
-                console.log(dataCallCreat);
-                
-              //mutate(dataCallCreat)
+              mutate(dataCallCreat)
               store.commit('common/setAddBtOnclickPA520', false);
             }
         }
