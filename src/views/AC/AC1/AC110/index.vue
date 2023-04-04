@@ -95,7 +95,7 @@
             @onClick="openPopupRetrieveStatements" />
           <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
             @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
-          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
+          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory"/>
         </div>
       </div>
     </div>
@@ -217,8 +217,8 @@
                 </template>
                 <DxColumn caption="결의구분" cell-template="resolutionClassification" />
                 <template #resolutionClassification="{ data }">
-                  {{ resolutionClassification.find((item: any) => item.value ==
-                    data.data.transactionDetails.resolutionClassification).label }}
+                  {{ data.data.transactionDetails.bankbookId !== null ?  resolutionClassification.find((item: any) => item.value ==
+                    data.data.transactionDetails.resolutionClassification).label : ''}}
                 </template>
                 <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
                 <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
@@ -744,10 +744,14 @@ export default defineComponent({
       isModalNoteItemDetail.value = false
     }
     const addNewRowTransactionDetails = () => {
-      const initTransactionDetails = { ...InitTransactionDetails }
-      initTransactionDetails.transactionDetails.theOrder = dataSourceTransactionDetails.value[dataSourceTransactionDetails.value.length - 1].transactionDetails.theOrder + 1
+      const initTransactionDetails: any = { ...InitTransactionDetails }
+      const lengthData = dataSourceTransactionDetails.value.length
+      if(lengthData > 0) {
+        initTransactionDetails.transactionDetails.theOrder = dataSourceTransactionDetails.value[lengthData - 1].transactionDetails.theOrder + 1
+      }else {
+        initTransactionDetails.transactionDetails.theOrder = 0
+      }
       dataSourceTransactionDetails.value = [...dataSourceTransactionDetails.value, initTransactionDetails]
-
     }
     const submitTransactionDetails = (event: any) => {
       const res = event.validationGroup.validate();

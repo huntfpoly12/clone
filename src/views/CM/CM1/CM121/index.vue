@@ -151,8 +151,8 @@
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="통장 비밀번호 (숫자 4자리)"
                     class="form-item-bottom" :class="{ 'red': isRequiredAccountPassword || !isCreateduseScrap }">
-                    <text-number-box :required="isRequiredAccountPassword || !isCreateduseScrap" :width="150" maxLength="4"
-                      v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword" 
+                    <text-number-box :required="isRequiredAccountPassword || !isCreateduseScrap" :width="150"
+                      maxLength="4" v-model:value="dataDetailBankbook.scrapingInfoInput.accountPassword"
                       :ruleCustom="() => isLength4" messageRuleCustom="숫자 4자리" />
                   </a-form-item>
                 </a-col>
@@ -168,7 +168,8 @@
                 </a-col>
                 <a-col span="12">
                   <a-form-item v-if="dataDetailBankbook.bankbookInput.useScrap" label="생년월일 (개인통장)"
-                    class="form-item-bottom" :class="{ 'red': !isTypeClassification && (isCreate || !isCreateduseScrap) }">
+                    class="form-item-bottom"
+                    :class="{ 'red': !isTypeClassification && (isCreate || !isCreateduseScrap) }">
                     <birth-day-box v-model:valueInput="dataDetailBankbook.scrapingInfoInput.birthday" width="150px"
                       :required="isCreate || !isCreateduseScrap" :disabled="isTypeClassification" />
                   </a-form-item>
@@ -210,8 +211,8 @@
         @checkConfirm="handleConfirmChange" />
       <PopupLastScrapingStatus :isModalLastScrapingStatus="isModalLastScrapingStatus" :data="dataPopupScrapingStatus"
         @closePopup="isModalLastScrapingStatus = false" @agreeDeleteBankbook="agreeDeleteBankbook" />
-      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
-        title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-121" keyExpr="bankbookId" />
+      <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" title="변경이력"
+        :idRowEdit="idRowEdit" typeHistory="cm-121" keyExpr="bankbookId" />
     </a-row>
   </div>
 </template>
@@ -571,15 +572,15 @@ export default defineComponent({
 
     watch(() => isTypeClassification.value, (value) => {
       if (value) {
-        dataDetailBankbook.value.scrapingInfoInput.birthday = ''
+        dataDetailBankbook.value.scrapingInfoInput.birthday = null
       } else {
-        dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
+        dataDetailBankbook.value.scrapingInfoInput.bizNumber = ''
       }
       countResetForm.value++
     })
     watch(() => dataDetailBankbook.value.bankbookInput.useScrap, (value) => {
       if (!value) {
-        dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
+        dataDetailBankbook.value.scrapingInfoInput.accountPassword = ''
         dataDetailBankbook.value.scrapingInfoInput.webPassword = ""
         dataDetailBankbook.value.scrapingInfoInput.webId = ""
         countResetForm.value++
@@ -633,13 +634,13 @@ export default defineComponent({
       isDuplicaseName.value = !dataSource.value.some((items, index) => index !== indexRow.value && items.bankbookNickname === value)
     })
 
-    watch(() => dataDetailBankbook.value.scrapingInfoInput.accountPassword, (value:any) => {
+    watch(() => dataDetailBankbook.value.scrapingInfoInput.accountPassword, (value: any) => {
       const valueCheck = !!value ? value.replaceAll(/\D/g, '') : ''
       isLength4.value = !!valueCheck && valueCheck.length < 4 ? false : true
     })
 
-    watch(()=> isModalRegister.value, (value) => {
-      if(!value) {
+    watch(() => isModalRegister.value, (value) => {
+      if (!value) {
         keyResetPopupRegisterBankbook.value++
       }
     })
@@ -718,7 +719,7 @@ export default defineComponent({
     }
 
     const dataRegisterBankbook = (data: any) => {
-      if(dataSource.value.length && dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID){
+      if (dataSource.value.length && dataSource.value[dataSource.value.length - 1].bankbookId === newSampleID) {
         dataSource.value.splice(dataSource.value.length - 1, 1)
       }
       resetDataDetail()
@@ -746,16 +747,16 @@ export default defineComponent({
       dataDetailBankbook.value.bankbookInput.type = null
       dataDetailBankbook.value.bankbookInput.sort = dataSource.value.length ? dataSource.value[dataSource.value.length - 1].sort + 1 : 0
       dataDetailBankbook.value.bankbookId = null
-      dataDetailBankbook.value.bankbookInput.bankbookNumber = null
+      dataDetailBankbook.value.bankbookInput.bankbookNumber = ''
       dataDetailBankbook.value.bankbookInput.bankbookNickname = ''
       dataDetailBankbook.value.bankbookInput.useType = 1
       dataDetailBankbook.value.bankbookInput.owner = ''
       dataDetailBankbook.value.bankbookInput.useScrap = true
       dataDetailBankbook.value.bankbookInput.accountName = '보통예금'
       dataDetailBankbook.value.bankbookInput.accountCode = '101010103'
-      dataDetailBankbook.value.scrapingInfoInput.accountPassword = null
-      dataDetailBankbook.value.scrapingInfoInput.birthday = ''
-      dataDetailBankbook.value.scrapingInfoInput.bizNumber = null
+      dataDetailBankbook.value.scrapingInfoInput.accountPassword = ''
+      dataDetailBankbook.value.scrapingInfoInput.birthday = null
+      dataDetailBankbook.value.scrapingInfoInput.bizNumber = ''
       dataDetailBankbook.value.scrapingInfoInput.webId = ''
       dataDetailBankbook.value.scrapingInfoInput.webPassword = ''
       setAccountSubject(dataDetailBankbook.value.bankbookInput.accountName, dataDetailBankbook.value.bankbookInput.accountCode)
