@@ -77,6 +77,22 @@ const convertAge = (idCart: any) => {
     }
 }
 
+const makeDataClean = (obj: any) => {
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === "") {
+      obj[key] = null;
+    } else if (typeof obj[key] === "object") {
+      obj[key] = makeDataClean(obj[key]);
+    }
+  });
+
+  return obj;
+};
+
 const convertBirthDayKorea = (residentId: string) => {
   const birthYear = residentId.slice(0, 2);
   const birthMonth = residentId.slice(2, 4);
@@ -175,5 +191,6 @@ export {
     calculateLongTermCareInsurance,
     calculateEmployeementInsuranceEmployee,
     convertBirthDayKorea,
+    makeDataClean
 }
 

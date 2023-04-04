@@ -121,7 +121,7 @@ import { radioCheckForeigner, DataCreated } from "../../utils/index";
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
@@ -286,8 +286,11 @@ export default defineComponent({
                     imputedYear: globalYear.value,
                     input: newValDataCreat
                 }
-              mutate(dataCallCreat)
-              await store.commit('common/setAddBtOnclickPA520', false);
+              dataCallCreat = await makeDataClean(dataCallCreat)
+                console.log(dataCallCreat);
+                
+              //mutate(dataCallCreat)
+              store.commit('common/setAddBtOnclickPA520', false);
             }
         }
         return {
