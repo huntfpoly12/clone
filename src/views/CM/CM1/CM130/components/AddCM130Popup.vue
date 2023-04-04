@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, reactive, watch } from "vue";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import TaxPay from "@/components/TaxPay.vue";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/CM/CM130/index";
@@ -120,7 +120,7 @@ export default defineComponent({
                             formState.taxPayCode[0] === "과세" ? formState.taxPayCode[1] : null,
                     },
                 };
-
+                makeDataClean(variables)
                 creactConfigPayItem(variables);
             }
         };

@@ -126,6 +126,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PrinterOutlined } from "@ant-design/icons-vue"; 
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF330/index"
+import notification from '@/utils/notification';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -177,7 +178,10 @@ export default defineComponent({
                 usedWithholding: true,
             }
         })
-        const { refetch: refetchData, loading, result } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        const { refetch: refetchData, loading, result, onError } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        onError((e) => {
+            notification("error", e.message);
+        });
         // process data after call getServiceContracts api
         watch(result, (value: any) => {
             rowTable.value = value.searchServiceContracts.totalCount

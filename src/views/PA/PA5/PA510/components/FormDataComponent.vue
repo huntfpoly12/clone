@@ -298,7 +298,7 @@ export default defineComponent({
             } else { // if click save modal
                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
-            await (triggerIncomeWageDaily.value = true);
+            // await (triggerIncomeWageDaily.value = true);
             await (store.state.common.statusRowAdd = true);
             await (store.state.common.statusFormAdd = false);
             
@@ -340,7 +340,7 @@ export default defineComponent({
                 store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
             }
             
-            await (triggerIncomeWageDaily.value = true);
+            // await (triggerIncomeWageDaily.value = true);
             
         })
         onerrorUpdate(async (e: any) => {
@@ -731,6 +731,7 @@ export default defineComponent({
             await arrDeduction.value?.map((data: any) => {
                 data.price = 0
             })
+            employeeWageDailyParam.employeeId = null
             await (store.state.common.statusChangeFormEdit = false);
             await (store.state.common.statusChangeFormAdd = false);
             await (store.state.common.statusFormAdd = true); // trạng thái form add

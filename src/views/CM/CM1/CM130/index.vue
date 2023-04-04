@@ -369,7 +369,7 @@
     </div>
 </template>
 <script lang="ts">
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import {
     EditOutlined,
     SearchOutlined,
@@ -502,7 +502,7 @@ export default defineComponent({
                 dataQueryInstitution.value = {
                     bcode: value.getWithholdingConfig.companyAddressInfo.bcode
                 }
-                if (dataQueryInstitution.value) {
+                if (dataQueryInstitution.value.bcode) {
                     // refetchConfigInstitution()
                     trigger.value = true;
                 }
@@ -563,6 +563,7 @@ export default defineComponent({
         );
         const dataPublicInstitution = ref<any>({})
         watch(resultConfigInstitution, (value) => {
+            trigger.value = false;
             dataPublicInstitution.value = value.getPublicInstitution
         });
         // update config 
@@ -623,6 +624,7 @@ export default defineComponent({
                     formula: formStateDeduction.formula
                 }
             };
+            makeDataClean(variables)
             updateWithholdingConfigDeductionItem(variables)
         };
         const onFocusedRowChanging = (e: any) => {
