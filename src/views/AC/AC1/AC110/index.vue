@@ -3,84 +3,96 @@
   <div class="ac-110">
     <div class="ac-110__top">
       <div class="ac-110__top-grid">
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 1 }"
+          @click="selectedMonth(1)">
           <div class="ac-110__top-grid-items-month">
             <span class="">01</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusEntering" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 2 }"
+          @click="selectedMonth(2)">
           <div class="ac-110__top-grid-items-month">
             <span class="">02</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 3 }"
+          @click="selectedMonth(3)">
           <div class="ac-110__top-grid-items-month">
             <span class="">03</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 4 }"
+          @click="selectedMonth(4)">
           <div class="ac-110__top-grid-items-month">
             <span class="">04</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 5 }"
+          @click="selectedMonth(5)">
           <div class="ac-110__top-grid-items-month">
             <span class="">05</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 6 }"
+          @click="selectedMonth(6)">
           <div class="ac-110__top-grid-items-month">
             <span class="">06</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 7 }"
+          @click="selectedMonth(7)">
           <div class="ac-110__top-grid-items-month">
             <span class="">07</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 8 }"
+          @click="selectedMonth(8)">
           <div class="ac-110__top-grid-items-month">
             <span class="">08</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 9 }"
+          @click="selectedMonth(9)">
           <div class="ac-110__top-grid-items-month">
             <span class="">09</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 10 }"
+          @click="selectedMonth(10)">
           <div class="ac-110__top-grid-items-month">
             <span class="">10</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 11 }"
+          @click="selectedMonth(11)">
           <div class="ac-110__top-grid-items-month">
             <span class="">11</span>
             <span class="">월</span>
           </div>
           <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
         </div>
-        <div class="ac-110__top-grid-items">
+        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 12 }"
+          @click="selectedMonth(12)">
           <div class="ac-110__top-grid-items-month">
             <span class="">12</span>
             <span class="">월</span>
@@ -95,7 +107,7 @@
             @onClick="openPopupRetrieveStatements" />
           <button-basic :text="'☑전표등록'" :type="'default'" :mode="'contained'" style="margin-left: 5px;"
             @onClick="openPopupSlipRegistrationSelected" :disabled="!selectedRowKeys.length" />
-          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory"/>
+          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistory" />
         </div>
       </div>
     </div>
@@ -217,8 +229,9 @@
                 </template>
                 <DxColumn caption="결의구분" cell-template="resolutionClassification" />
                 <template #resolutionClassification="{ data }">
-                  {{ data.data.transactionDetails.bankbookId !== null ?  resolutionClassification.find((item: any) => item.value ==
-                    data.data.transactionDetails.resolutionClassification).label : ''}}
+                  {{ data.data.transactionDetails.bankbookId !== null ? resolutionClassification.find((item: any) =>
+                    item.value ==
+                    data.data.transactionDetails.resolutionClassification).label : '' }}
                 </template>
                 <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
                 <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
@@ -383,7 +396,6 @@ export default defineComponent({
     let triggerAccountingProcesses = ref<boolean>(true)
     let triggerBankbookDetails = ref<boolean>(true)
     let triggerTransactionDetails = ref<boolean>(false)
-    let triggerAccoountSubjects = ref<boolean>(true)
 
     let statusEntering = ref(10);
     let statusInput = ref(20);
@@ -403,7 +415,7 @@ export default defineComponent({
     let isModalNoteItemDetail = ref(false);
     let transactionSelected: any = ref()
     let dataStatementOfGoodsItems: any = ref()
-
+    let monthSelected: any = ref(3)
     watch(() => fileList.value, (value) => {
     }, {
       deep: true,
@@ -449,7 +461,7 @@ export default defineComponent({
       fiscalYear: globalYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       year: globalYear.value,
-      month: 3
+      month: monthSelected.value
     },
       () => ({
         enabled: triggerBankbookDetails.value,
@@ -457,6 +469,7 @@ export default defineComponent({
       }))
     errorGetBankbookDetails(e => {
       notification('error', e.message)
+      triggerBankbookDetails.value = false
     })
     const {
       result: resTransactionDetails,
@@ -572,6 +585,10 @@ export default defineComponent({
     const modalHistory = () => {
       isModalHistory.value = true
     }
+    const selectedMonth = (month: number) => {
+      monthSelected.value = month
+      triggerBankbookDetails.value = true
+    }
     // Grid Main
     const selectionChanged = (event: any) => {
       // normalTransactionDetails
@@ -660,7 +677,7 @@ export default defineComponent({
         fiscalYear: globalYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         year: globalYear.value,
-        month: 3
+        month: monthSelected.value
       })
     }
     const handleConfirmSlipRegistrationSelected = () => {
@@ -746,9 +763,9 @@ export default defineComponent({
     const addNewRowTransactionDetails = () => {
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.length
-      if(lengthData > 0) {
+      if (lengthData > 0) {
         initTransactionDetails.transactionDetails.theOrder = dataSourceTransactionDetails.value[lengthData - 1].transactionDetails.theOrder + 1
-      }else {
+      } else {
         initTransactionDetails.transactionDetails.theOrder = 0
       }
       dataSourceTransactionDetails.value = [...dataSourceTransactionDetails.value, initTransactionDetails]
@@ -861,7 +878,9 @@ export default defineComponent({
       transactionSelected,
       updateNoteValue,
       addNewRowTransactionDetails,
-      dataStatementOfGoodsItems
+      dataStatementOfGoodsItems,
+      monthSelected,
+      selectedMonth
     };
   },
 });
