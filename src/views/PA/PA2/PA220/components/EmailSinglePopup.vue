@@ -22,6 +22,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -57,7 +58,8 @@ export default defineComponent({
             } else {
                 let variables = props.data
                 variables.employeeInputs.receiverAddress = emailAddress.value
-                sendEmail(variables);
+                const payloadClear = makeDataClean(variables)
+                sendEmail(payloadClear);
             }
         };
         onDoneAdd(() => {

@@ -1,5 +1,5 @@
 <template>
-    <DxSelectBox :search-enabled="true" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
+    <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
         v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="선택">
         <DxValidator :name="nameInput">
@@ -42,6 +42,10 @@ export default defineComponent({
             type: String,
             default: 'value',
         },
+        searchEnabled: {
+          type: Boolean,
+          default: true
+        }
     },
     components: {
         DxSelectBox,
