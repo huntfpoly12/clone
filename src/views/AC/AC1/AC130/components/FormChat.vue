@@ -239,8 +239,8 @@ export default defineComponent({
         inputChat.value.focus()
       })
     }
-    const deleteComment = (items:any, index: number) => {
-      if(items.id === idEditComment.value){
+    const deleteComment = (items: any, index: number) => {
+      if (items.id === idEditComment.value) {
         textChat.value = ''
         idEditComment.value = null
         nextTick(() => {
@@ -323,6 +323,17 @@ export default defineComponent({
 
       &-menu {
         margin: 0 5px;
+        display: none;
+
+        &:hover {
+          display: block;
+        }
+      }
+
+      &:hover {
+        .form-chat-timeline-common-menu {
+          display: block;
+        }
       }
     }
 
@@ -341,6 +352,27 @@ export default defineComponent({
 
       .form-chat-timeline-avatar {
         margin-left: 10px;
+      }
+
+      .form-chat-timeline-content-info {
+        display: flex;
+        flex-direction: row-reverse;
+
+        &-user {
+          margin: 0;
+          margin-left: 30px;
+          display: flex;
+          flex-direction: row-reverse;
+
+          &-status {
+            margin-left: 5px;
+            margin-right: 0;
+          }
+        }
+
+        &-time {
+          margin: 0;
+        }
       }
     }
 
@@ -443,9 +475,11 @@ export default defineComponent({
       align-items: center;
       justify-content: center;
       border-radius: 50%;
+
       &:hover {
         background-color: rgba(22, 90, 238, 0.075);
       }
+
       &-icon {
         font-size: 20px;
         color: rgb(22, 90, 238);
@@ -480,6 +514,5 @@ export default defineComponent({
 
 .borderEdit {
   border: 1px solid red;
-}
-</style>
+}</style>
 
