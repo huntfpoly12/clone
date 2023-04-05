@@ -101,8 +101,8 @@
               <template #title>{{ menuItem.title }}</template>
               <!-- list sub menu level 1 -->
               <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
-                <div v-if="isPermission(itemLevel1?.roles)" class="menuuuuu">
-                  <a-menu-item v-if="!itemLevel1.hasOwnProperty('subMenus')"
+                <div  v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
+                  <a-menu-item v-if="!itemLevel1?.subMenus"
                                :class="[
                         itemLevel1.id === activeTab.id
                           ? 'ant-menu-item-selected-active'
@@ -117,7 +117,7 @@
                   <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
                     <!-- list sub menu level 2 if have subMenus -->
                     <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
-                      <div v-if="isPermission(itemLevel2?.roles)">
+                      <div v-check-permission:read="itemLevel2?.roles">
                         <a-menu-item
                           v-if="!itemLevel2.hasOwnProperty('subMenus')"
                           :class="[
@@ -521,10 +521,6 @@ export default defineComponent({
       if(i.roles.length === 0) return true
       return Boolean(i.roles.some(i => jwtObject?.hasReadScreenRole(i)))
     })
-    const isPermission = (roles) => {
-      if (!roles || roles.length === 0) return true
-      return Boolean(roles?.some((role) => jwtObject?.hasReadScreenRole(role)))
-    }
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
@@ -723,7 +719,6 @@ export default defineComponent({
       scroll_container,
       isArrowScroll,
       tabLeft,tabRight,cachedTab,store,
-      isPermission
     }
   },
 });
