@@ -138,7 +138,7 @@ export default defineComponent({
       requesteStartDate: rangeDate.value[0],
       requesteFinishDate: rangeDate.value[1],
       productionStatuses: [2, -1],
-      manageUserId: 1,
+      manageUserId: null,
     });
     const {
       result: searchElectronicFilingResult,

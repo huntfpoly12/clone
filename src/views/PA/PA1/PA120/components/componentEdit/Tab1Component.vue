@@ -125,7 +125,7 @@ import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import { radioCheckForeigner, initFormStateTab1 } from '../../utils/index';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, makeDataClean } from '@/helpers/commonFunction';
 import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
@@ -278,6 +278,7 @@ export default defineComponent({
         res.brokenRules[0].validator.focus();
         store.commit('common/actionFormErrorPA120');
       } else {
+        makeDataClean(initFormStateTabPA120.value);
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
         delete editData.employeeId;
         delete editData.key;
@@ -285,7 +286,6 @@ export default defineComponent({
           ...originDataDetail.value,
           input: {
             ...editData,
-            residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
           },
         };
         mutate(dataCallCreat);
@@ -309,7 +309,9 @@ export default defineComponent({
     }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
-      initFormStateTabPA120.value.name = newVal.toUpperCase();
+      if (newVal) {
+        initFormStateTabPA120.value.name = newVal.toUpperCase();
+      }
     }, { deep: true })
     const changeTextCountry = (text: any) => {
       initFormStateTabPA120.value.nationality = text

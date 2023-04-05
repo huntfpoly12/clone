@@ -30,7 +30,7 @@
                       <span>전체</span>
                     </div>
                     <div>
-                      <img src="@/assets/images/user.svg" alt=""/>
+                      <img src="@/assets/images/user.svg" alt="" />
                     </div>
                   </div>
                 </a-col>
@@ -41,7 +41,7 @@
                       <span>재직</span>
                     </div>
                     <div>
-                      <img src="@/assets/images/user.svg" alt=""/>
+                      <img src="@/assets/images/user.svg" alt="" />
                     </div>
                   </div>
                 </a-col>
@@ -52,7 +52,7 @@
                       <span>퇴사</span>
                     </div>
                     <div>
-                      <img src="@/assets/images/user.svg" alt=""/>
+                      <img src="@/assets/images/user.svg" alt="" />
                     </div>
                   </div>
                 </a-col>
@@ -330,6 +330,7 @@ export default defineComponent({
         dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1);
         dataSource.value = dataSource.value.concat([initFormStateTabPA120.value]);
         addComponentKey.value++;
+        store.state.common.notDatasourcePA120 = false;
         return;
       }
       if (!compareForm()) {
@@ -338,6 +339,7 @@ export default defineComponent({
       }
       initFormStateTabPA120.value.stayQualification = initFormStateTab1.stayQualification;
       addNewRow();
+      store.state.common.notDatasourcePA120 = false;
       return;
     };
     const tabCurrent = computed(() => {

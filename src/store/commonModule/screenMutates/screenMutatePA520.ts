@@ -65,7 +65,7 @@ const screenMutatePA520 = {
     setModalChangeValueAddPA520(state: any, status: boolean) {
         state.modalChangeValueAddPA520 = status
     },
-  setComponentPA520(state: any, data: number) {
+    setComponentPA520(state: any, data: number) {
       state.setComponentPA520 = data
     }
 };

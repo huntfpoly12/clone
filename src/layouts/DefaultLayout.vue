@@ -91,68 +91,70 @@
             :open-keys="openKeys"
             @openChange="onOpenChange"
           >
-            <!-- list main menu lavel 0 -->
-            <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
-              <template #icon>
-                <div id="icon-menu">
-                  <i :class="iconClass(menuItem.id)" class="dx-icon"></i>
-                </div>
-              </template>
-              <template #title>{{ menuItem.title }}</template>
-              <!-- list sub menu level 1 -->
-              <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
-                <div  v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
-                  <a-menu-item v-if="!itemLevel1?.subMenus"
-                               :class="[
-                        itemLevel1.id === activeTab.id
-                          ? 'ant-menu-item-selected-active'
-                        : '',
-                        itemLevel1.url == '#' ? 'not-done' : ''
-                          ]
-                        "
-                               @click.enter="addMenuTab(itemLevel1.id)"
-                  >
-                    <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
-                  </a-menu-item>
-                  <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
-                    <!-- list sub menu level 2 if have subMenus -->
-                    <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
-                      <div v-check-permission:read="itemLevel2?.roles">
-                        <a-menu-item
-                          v-if="!itemLevel2.hasOwnProperty('subMenus')"
-                          :class="[
-                          itemLevel2.id === activeTab.id
+            <div v-for="menuItem in menuItems" :key="menuItem.id" v-check-permission="menuItem.roles">
+              <a-sub-menu :key="menuItem.id" >
+                <!-- list main menu lavel 0 -->
+                <template #icon v-if="menuItem.icon">
+                  <div id="icon-menu">
+                    <i :class="menuItem.icon" class="dx-icon"></i>
+                  </div>
+                </template>
+                <template #title>{{ menuItem.title }}</template>
+                <!-- list sub menu level 1 -->
+                <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
+                    <div  v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
+                      <a-menu-item v-if="!itemLevel1?.subMenus"
+                                   :class="[
+                          itemLevel1.id === activeTab.id
                             ? 'ant-menu-item-selected-active'
                           : '',
-                          itemLevel2.url == '#' ? 'not-done' : ''
+                          itemLevel1.url == '#' ? 'not-done' : ''
                             ]
                           "
-                          @click.enter="addMenuTab(itemLevel2.id)"
-                        >
-                          <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
-                        </a-menu-item>
-                        <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
-                        <a-menu-item
-                          v-for="subMenu1 in itemLevel2.subMenus"
-                          :key="subMenu1.id"
-                          :class="[
-                          subMenu1.id === activeTab.id
-                            ? 'ant-menu-item-selected-active'
-                          : '',
-                          subMenu1.url == '#' ? 'not-done' : ''
-                            ]
-                          "
-                          @click.enter="addMenuTab(subMenu1.id)"
-                        >
-                          <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
-                        </a-menu-item>
+                                   @click.enter="addMenuTab(itemLevel1.id)"
+                      >
+                        <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
+                      </a-menu-item>
+                      <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
+                        <!-- list sub menu level 2 if have subMenus -->
+                        <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
+                          <div v-check-permission:read="itemLevel2?.roles">
+                            <a-menu-item
+                              v-if="!itemLevel2.hasOwnProperty('subMenus')"
+                              :class="[
+                            itemLevel2.id === activeTab.id
+                              ? 'ant-menu-item-selected-active'
+                            : '',
+                            itemLevel2.url == '#' ? 'not-done' : ''
+                              ]
+                            "
+                              @click.enter="addMenuTab(itemLevel2.id)"
+                            >
+                              <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
+                            </a-menu-item>
+                            <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
+                              <a-menu-item
+                                v-for="subMenu1 in itemLevel2.subMenus"
+                                :key="subMenu1.id"
+                                :class="[
+                            subMenu1.id === activeTab.id
+                              ? 'ant-menu-item-selected-active'
+                            : '',
+                            subMenu1.url == '#' ? 'not-done' : ''
+                              ]
+                            "
+                                @click.enter="addMenuTab(subMenu1.id)"
+                              >
+                                <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
+                              </a-menu-item>
+                            </a-sub-menu>
+                          </div>
+                        </template>
                       </a-sub-menu>
-                      </div>
-                    </template>
-                  </a-sub-menu>
-                </div>
-              </template>
-            </a-sub-menu>
+                    </div>
+                  </template>
+              </a-sub-menu>
+            </div>
           </a-menu>
         </a-layout-sider>
         <a-layout>
@@ -183,6 +185,8 @@ import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
+import { DownOutlined } from '@ant-design/icons-vue';
+
 import {
   BF310,
   BF320,
@@ -267,6 +271,7 @@ export default defineComponent({
     };
   },
   components: {
+    DownOutlined,
     BF310,
     BF320,
     BF330,
@@ -419,6 +424,9 @@ export default defineComponent({
           if (newValue.id.includes("pa-7")) {
             this.openKeys = ["pa-000", "pa-700"];
           }
+          if (newValue.id.includes("pa-8")) {
+            this.openKeys = ["pa-000", "pa-800"];
+          }
           if (newValue.id.includes("ac-6")) {
             this.openKeys = ["ac-000", "ac-600"];
           }
@@ -501,7 +509,7 @@ export default defineComponent({
   setup() {
     const inputSearchText = ref("");
     const filteredResult =ref([]);
-    const openKeys = ref(["bf-000"]);
+    const openKeys = ref([]);
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
@@ -671,34 +679,7 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
-
-    /**
-     * List icon in sidebar menu
-     * @param {*} id
-     */
-    const iconClass = (id) => {
-      let classIcon = ''
-      switch (id) {
-        case 'bf-000':
-          classIcon = "dx-icon-card";
-          break;
-        case 'cm-100':
-          classIcon = "dx-icon-inactivefolder";
-          break;
-        case 'ac-000':
-          classIcon = "dx-icon-columnchooser";
-          break;
-        case 'pa-000':
-          classIcon = "dx-icon-box";
-          break;
-        default:
-          classIcon = "dx-icon-box";
-          break;
-      }
-      return classIcon;
-    }
     return {
-      iconClass,
       logout,
       onSearch,
       toggleDropdown,
