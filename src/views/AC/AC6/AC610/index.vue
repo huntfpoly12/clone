@@ -143,7 +143,7 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <a-col span="8" class="custom-layout">
+        <a-col span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
           <standard-form formName="ac-610" ref="formRef">
             <a-form-item label="거래처명" :label-col="labelCol" class="red">
               <default-text-box
@@ -360,7 +360,7 @@ export default defineComponent({
         store: {
           type: "array",
           key: "clientId",
-          data: listClient.value,
+          data: listClient.value || [],
         },
         // requireTotalCount: true,
       });
@@ -368,7 +368,7 @@ export default defineComponent({
 
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
-    // const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
+    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
     onDoneAdd(async (res: any) => {
@@ -641,6 +641,7 @@ export default defineComponent({
       handleDiscardPopup,
       handleConfirm,
       isDiscard,
+      storeDataSourceCount
     };
   },
 });
