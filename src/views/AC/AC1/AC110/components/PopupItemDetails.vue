@@ -77,6 +77,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import { cloneDeep } from 'lodash';
+import { makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
   props: {
     isModalItemDetail: {
@@ -170,12 +171,13 @@ export default defineComponent({
       const res = event.validationGroup.validate();
       if (!res.isValid) return
       const payloadRequest = { ...props.payload }
-      saveStatementOfGoods({
+      const payloadClear = makeDataClean({
         ...payloadRequest,
         transactionDetailDate: dataSource.value.transactionDetailDate,
         accountingDocumentId: dataSource.value.accountingDocumentId,
         items: dataSource.value.statementOfGoodsItems
       })
+      saveStatementOfGoods(payloadClear)
     }
     const addNewRow = () => {
       if (dataSource.value.statementOfGoodsItems) {

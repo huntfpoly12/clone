@@ -308,7 +308,7 @@ import { defineComponent, ref, reactive, computed, watch, onMounted } from "vue"
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
@@ -778,16 +778,18 @@ export default defineComponent({
       if (isCreate) {
         payloadCreate = payLoadUpdate.splice(payLoadUpdate.length - 1, 1)
         delete payloadCreate.accountingDocumentId
-        saveTransactionDetails({
+        const payloadClear = makeDataClean({
           ...payloadGetTransactionDetails,
           updates: payLoadUpdate,
           creates: payloadCreate
         })
+        saveTransactionDetails(payloadClear)
       } else {
-        saveTransactionDetails({
+        const payloadClear = makeDataClean({
           ...payloadGetTransactionDetails,
           updates: payLoadUpdate
         })
+        saveTransactionDetails(payloadClear)
       }
     }
 
