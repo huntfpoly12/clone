@@ -158,8 +158,8 @@ import cloneDeep from "lodash/cloneDeep";
 const store = useStore();
 const move_column = computed(() => store.state.settings.move_column);
 const colomn_resize = computed(() => store.state.settings.colomn_resize);
-const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters["ac520Module/getDataBudget"]);
-const typePopup: ComputedRef<boolean> = computed(() => store.getters['ac520Module/getTypeCreateBudget'])
+const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters["common/getDataBudget"]);
+const typePopup: ComputedRef<boolean> = computed(() => store.getters['common/getTypeCreateBudget'])
 const isPopupCalculateVisible = ref(false)
 const focusedRowKey = ref<number>(0); // focused row key
 const formState = ref();
