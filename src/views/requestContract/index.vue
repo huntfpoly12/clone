@@ -323,7 +323,7 @@
                         <button-basic v-if="step > 0" text="이 전" type="info" mode="contained" @onClick="prevStep"
                             style="margin-right: 10px" />
                         <button-basic v-if="step < 3" text="다음" type="default" mode="contained" @onClick="nextStep" />
-                        <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Creat" />
+                        <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Create" />
                     </div>
                 </form>
             </div>
@@ -345,6 +345,7 @@ import mutations from "../../graphql/mutations/RqContract/index";
 import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
+import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
 import dayjs from 'dayjs';
 export default {
@@ -382,7 +383,7 @@ export default {
         const focusedRowKey = ref(0)
         let dataImg = ref();
         let dataImgStep3 = ref();
-        let valueRadioWithdrawDay = ref("매월 5일");
+        let valueRadioWithdrawDay = ref("5일");
         const dataActiveRow: any = ref()
         // =================================== GRAPQL ============================================
         const {
@@ -603,7 +604,7 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
-        const Creat = () => {
+        const Create = () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
                 delete val.__KEY__
@@ -673,8 +674,11 @@ export default {
                     }
                 }
             }
-            if (dataCallCreated)
-                mutateCreated(dataCallCreated)
+          if (dataCallCreated) {
+            dataCallCreated = makeDataClean(dataCallCreated)
+            mutateCreated(dataCallCreated)
+          }
+               
         }
         const onSelectionChanged = (value: any) => {
             dataActiveRow.value = value.selectedRowsData[0]
@@ -762,7 +766,7 @@ export default {
         });
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
-            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };
