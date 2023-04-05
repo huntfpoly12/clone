@@ -192,6 +192,11 @@ export default defineComponent({
     ConfirmloadNew
   },
   setup(props, { emit }) {
+    const store = useStore();
+    const per_page = computed(() => store.state.settings.per_page);
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+  
     const wrapper =  ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false)
 
@@ -218,6 +223,7 @@ export default defineComponent({
       afterChange: (changes: any,source : string)=>{
         if(source == 'edit'){
           calculateWithholdingStatusReport(wrapper)
+          store.commit('common/setHasChangedPopupPA210',true);
         }
       },
    
@@ -230,11 +236,6 @@ export default defineComponent({
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
-
-    const store = useStore();
-    const per_page = computed(() => store.state.settings.per_page);
-    const move_column = computed(() => store.state.settings.move_column);
-    const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
     const trigger = ref<boolean>(false)
     const dataSource = ref<any>(props.dataReport);
