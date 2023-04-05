@@ -70,14 +70,14 @@ export default defineComponent({
         }
         const value = ref(props.valueInput);
       const maxNum = ref(props.max??0);
-      const minNum = ref(props.min);
+      const minNum = ref(props.min??0);
       const updateValue = (e: any) => {
           if (maxNum.value && e.value >= maxNum.value) {
               e.component.option('value', maxNum.value);
               emit("update:valueInput", maxNum.value);
               return;
           }
-          if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
+          if (typeof minNum.value == "number" && e.value <= minNum.value) {
               e.component.option('value', minNum.value);
               emit("update:valueInput", minNum.value);
               return;

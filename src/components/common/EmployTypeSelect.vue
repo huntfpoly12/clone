@@ -6,7 +6,6 @@
       <div v-if="data" style="padding: 2px">
         <income-type :typeCode="data?.employeeId" :typeName="(data?.name)" :incomeTypeName="data?.incomeTypeName" />
         <DxTextBox style="display: none;" />
-        {{ data }}
       </div>
       <div v-else class="pt-5 pl-5">
         <span>선택</span>
@@ -15,10 +14,6 @@
 
     </template>
     <template #item-data="{ data }">
-      <!-- <div>
-                <income-type :typeCode="data?.incomeTypeCode" :typeName="data?.name"
-                    :incomeTypeName="data?.incomeTypeName" />
-            </div> -->
       <div class="employee-group" v-if="data.employeeId">
         <span class="btn-container">
           {{ data.employeeId }}

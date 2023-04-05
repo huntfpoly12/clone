@@ -14,13 +14,13 @@
                 <default-text-box width="130px" v-model:valueInput="item.type" :required="true" />
                 <default-text-box width="130px" v-model:valueInput="item.bankbookNumber" :required="true" />
                 <default-text-box width="130px" v-model:valueInput="item.owner" :required="true" />
-                <a-tooltip placement="top" class="custom-tooltip">
+                <a-tooltip placement="top" class="custom-tooltip" zIndex="1000" v-if="inputArr.length - 1 == index">
                   <template #title>
                     <div>
                       후원자 등록
                     </div>
                   </template>
-                  <div style="text-align: center;" v-if="inputArr.length - 1 == index">
+                  <div style="text-align: center;">
                     <DxButton icon="plus" @click="onAddnewBtn(index)" />
                   </div>
                 </a-tooltip>
@@ -140,7 +140,7 @@ export default defineComponent({
       setModalVisible,
       onSubmit, onAddnewBtn, inputArr, isOpenAddModal,
       healthInsuranceSelectbox, formState,
-      addDetailRadio, onSubmit2, 
+      addDetailRadio, onSubmit2,
     };
   },
 });
@@ -152,6 +152,7 @@ export default defineComponent({
   align-items: center;
   column-gap: 10px;
   flex-wrap: wrap;
+  flex: 1;
 
   span {
     margin-left: 10px;

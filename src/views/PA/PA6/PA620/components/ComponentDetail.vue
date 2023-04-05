@@ -106,7 +106,7 @@
     </a-col>
     <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
-        <!-- {{ selectedRowKeys }} selectedRowKeys <br />
+        <!-- {{ dataAction }} dataAction <br />
         {{ focusedRowKey }} focusedRowKey <br /> -->
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">

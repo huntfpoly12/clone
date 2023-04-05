@@ -75,8 +75,7 @@
               </div>
             </a-form-item>
             <a-form-item label="위탁관계" label-align="right">
-              <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
-                :disabled="formState.relation == 0"
+              <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20" :disabled="formState.relation == 0"
                 v-model:valueInput="formState.consignmentRelationship"></default-text-box>
             </a-form-item>
             <!-- <a-form-item label="세대주여부" label-align="right">
@@ -110,6 +109,7 @@ import { companyId, convertAge } from "@/helpers/commonFunction";
 import { taxWaring } from '../../utils/index';
 import { h } from 'vue';
 import { Message } from '@/configs/enum';
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 const messageUpdate = Message.getMessage('COMMON', '106').message;
 const vnode = h('div', [h('div', '연말정산에 이미 반영된 경우, 삭제 후 연말정산 재정산해야 '), h('div', '합니다. 그래도 삭제하시겠습니까?')])
 export default defineComponent({
@@ -133,12 +133,17 @@ export default defineComponent({
     const idAction = ref()
     let disabledButton = ref<boolean>(false);
     const labelResidebId = ref("주민등록번호");
-    let formState = reactive<any>({ ...props.dependentItem, residentId: props.dependentItem?.residentId.replace('-', '') });
+    let formState = reactive<any>({ ...props.dependentItem });
+    let formStateToCompare = ({ ...props.dependentItem });
     const ageCount = ref<any>(convertAge(props.dependentItem?.residentId));
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
     const itemSelected = ref<any>([...props.relationAll]);
     const setModalVisible = () => {
-      emit('closePopup', false);
+      if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
+        emit('closePopup', false);
+      } else {
+        comfirmClosePopup(() => emit("closePopup", false))
+      }
     };
     const notifcationTax = () => {
       notification('warning', taxWaring);
@@ -223,7 +228,7 @@ export default defineComponent({
         let newValDataEdit = {
           ...formState
         };
-        newValDataEdit.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
+        // newValDataEdit.residentId = formState.residentId.slice(0, 6) + "-" + formState.residentId.slice(6, 13);
         delete newValDataEdit?.employeeId;
         delete newValDataEdit?.incomeTypeCode;
         delete newValDataEdit?.index;

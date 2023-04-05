@@ -57,7 +57,7 @@
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" :disabled="notDatasourcePA120" v-model:valueInput="residentId" width="150px"></id-number-text-box>
+          <id-number-text-box :required="true" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"></id-number-text-box>
         </a-form-item>
 
 
@@ -129,7 +129,7 @@ import {
   radioCheckHouseholder,
   initFormStateTab1,
 } from "../../utils/index";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {
@@ -185,10 +185,10 @@ export default defineComponent({
      *  
      */
     const residentId = ref("");
-    watch(residentId, (newValue: any) => {
-      initFormStateTabPA120.value.residentId =
-        newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
-    });
+    // watch(residentId, (newValue: any) => {
+    //   initFormStateTabPA120.value.residentId =
+    //     newValue.slice(0, 6) + "-" + newValue.slice(6, 13);
+    // });
     const employeeId = ref();
 
     // getDepartments
@@ -281,6 +281,7 @@ export default defineComponent({
         store.state.common.isNewRowPA120 = true;
         store.commit('common/actionFormErrorPA120');
       } else {
+        makeDataClean(initFormStateTabPA120.value);
         emit('employeeId', +initFormStateTabPA120.value.employeeId);
         let formData = { ...initFormStateTabPA120.value, employeeId: +initFormStateTabPA120.value.employeeId, };
         delete formData.key;
