@@ -75,7 +75,9 @@
           <FileAddOutlined />
         </div>
       </div>
-      <SendOutlined class="form-chat-bottom-send" @click="sendChat" />
+      <div class="form-chat-bottom-send">
+        <SendOutlined class="form-chat-bottom-send-icon" @click="sendChat" />
+      </div>
     </div>
   </div>
 </template>
@@ -432,11 +434,22 @@ export default defineComponent({
     }
 
     &-send {
-      padding-top: 9px;
-      font-size: 20px;
-      margin-left: 8px;
+      box-sizing: border-box;
+      margin-left: 4px;
+      height: 40px;
+      width: 40px;
       cursor: pointer;
-      color: rgb(22, 90, 238);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      &:hover {
+        background-color: rgba(22, 90, 238, 0.075);
+      }
+      &-icon {
+        font-size: 20px;
+        color: rgb(22, 90, 238);
+      }
     }
   }
 }
