@@ -193,9 +193,7 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const changeValueType = (data: any) => {
-            triggerGroup.value = true;
-            trigger.value = true
-            setTimeout(() => {
+            // setTimeout(() => {
                 let value = data.value
                 if (data.value == 1 || data.value == 2)
                     value = 'm'
@@ -212,7 +210,9 @@ export default defineComponent({
                 formState.type = value
                 originData.value.types = [value.toString()]
                 dataCallGroup.value = dataCall
-            }, 100);
+                triggerGroup.value = true;
+                trigger.value = true
+            // }, 100);
         }
         const formState = reactive({ ...initialFormState });
         let objDataDefault = reactive({ ...initialFormState });
@@ -257,23 +257,6 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        // resGroup(e => {
-        //     let option: any = []
-        //     e.data.findGroups.map((val: any) => {
-        //         option.push({
-        //             label: val.groupCode + '  ' + val.groupName,
-        //             value: val.groupId
-        //         })
-        //     })
-        //     if (e.data.findGroups) {
-        //         formState.groupCode = e.data.findGroups[0].groupId
-        //         objDataDefault = {
-        //             ...objDataDefault,
-        //             groupCode: e.data.findGroups[0].groupId
-        //         }
-        //     }
-        //     selectSearch.value = option
-        // })
         watch(resGroup, (value: any) => {
             triggerGroup.value = false;
             let option: any = []
@@ -345,7 +328,7 @@ export default defineComponent({
         })
         var idRoleGroup: any = [];
         const onSelectionChanged = (selectedRows: any) => {
-            idRoleGroup = JSON.parse(JSON.stringify(selectedRows.selectedRowsData));
+            idRoleGroup = selectedRows.selectedRowsData;
         };
 
         const creactUserNew = (e: any) => {
@@ -353,22 +336,27 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                var RoleGroup = idRoleGroup.map((row: any) => {
-                    return row.id;
-                })
-                let dataCallApiCreate = {
-                    input: {
-                        type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
-                        name: formState.name,
-                        username: formState.username,
-                        screenRoleGroupIds: RoleGroup,
-                        mobilePhone: formState.mobilePhone,
-                        email: formState.email,
-                        groupId: formState.groupCode,
-                        managerGrade: formState.managerGrade,
+                if (idRoleGroup.length) {
+                    var RoleGroup = idRoleGroup.map((row: any) => {
+                        return row.id;
+                    })
+                    let dataCallApiCreate = {
+                        input: {
+                            type: (formState.type == '2' || formState.type == '3') ? 'm' : formState.type,
+                            name: formState.name,
+                            username: formState.username,
+                            screenRoleGroupIds: RoleGroup,
+                            mobilePhone: formState.mobilePhone,
+                            email: formState.email,
+                            groupId: formState.groupCode,
+                            managerGrade: formState.managerGrade,
+                        }
                     }
+                    creactUser(dataCallApiCreate)
+                } else {
+                    notification('error', '화면역할그룹은 반드시 1개 이상 필요합니다.')
+                    
                 }
-                creactUser(dataCallApiCreate)
             }
 
         }

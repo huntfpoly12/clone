@@ -41,10 +41,10 @@ export const initialFormState = {
 export const dataSearchIndex = {
     page: 1,
     type: "c",
-    groupCode: "",
-    groupName: "",
-    username: "",
-    name: "",
+    groupCode: null,
+    groupName: null,
+    username: null,
+    name: null,
     active: true,
 }
 
