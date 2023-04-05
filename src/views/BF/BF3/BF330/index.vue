@@ -127,6 +127,7 @@ import { EditOutlined, HistoryOutlined, SearchOutlined, SaveOutlined, DeleteOutl
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF330/index"
 import notification from '@/utils/notification';
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -167,18 +168,18 @@ export default defineComponent({
             filter: {
                 page: 1,
                 rows: per_page,
-                code: "",
-                name: "",
-                presidentName: "",
-                address: "",
-                manageUserId: undefined,
-                salesRepresentativeId: undefined,
+                code: null,
+                name: null,
+                presidentName: null,
+                address: null,
+                manageUserId: null,
+                salesRepresentativeId: null,
                 excludeCancel: true,
                 usedAccounting: true,
                 usedWithholding: true,
             }
         })
-        const { refetch: refetchData, loading, result, onError } = useQuery(queries.searchServiceContracts, originData, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
+        const { refetch: refetchData, loading, result, onError } = useQuery(queries.searchServiceContracts, originData.value, () => ({ fetchPolicy: "no-cache", enabled: trigger.value, }));
         onError((e) => {
             notification("error", e.message);
         });
@@ -189,17 +190,17 @@ export default defineComponent({
             trigger.value = false;
         });
         const changePage = () => {
+            makeDataClean(originData.value)
             trigger.value = true;
-            refetchData();
         }
         const searching = () => {
+            makeDataClean(originData.value)
             trigger.value = true;
-            refetchData()
         }
         const closePopup = () => {
             modalStatus.value = false
+            makeDataClean(originData.value)
             trigger.value = true;
-            refetchData()
         }
         const onExporting = (e: any) => {
             const workbook = new Workbook();
@@ -242,7 +243,6 @@ export default defineComponent({
             loading,
             searching,
             originData,
-            refetchData,
             rowTable,
             idSubRequest,
             setModalVisible,
