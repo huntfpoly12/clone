@@ -27,6 +27,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -70,7 +71,7 @@ export default defineComponent({
                         value.receiverAddress = emailAddress.value
                     }
                 })
-                let variables = props.data
+                let variables = makeDataClean(props.data)
                 sendEmail(variables);
             }
         };
