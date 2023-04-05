@@ -28,6 +28,7 @@ import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/BF/BF6/BF630/index"
 import { cloneDeep } from 'lodash'; 
+import { makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -85,18 +86,19 @@ export default defineComponent({
               const payload = cloneDeep(dataRequestFile.value)
               payload.filter.beforeProduction = !payload.filter.afterProduction
               delete payload.filter.afterProduction
+              const payloadClear = makeDataClean(payload)
               switch (props.tabName) {
                 case 'tab1':
-                  sendRequestFileTab1(payload);
+                  sendRequestFileTab1(payloadClear);
                   break;
                 case 'tab2':
-                  sendRequestFileTab2(payload);
+                  sendRequestFileTab2(payloadClear);
                   break;
                 case 'tab3':
-                  sendRequestFileTab3(payload);
+                  sendRequestFileTab3(payloadClear);
                   break;
                 case 'tab4':
-                  sendRequestFileTab4(payload);
+                  sendRequestFileTab4(payloadClear);
                   break;
                 default:
                   break;

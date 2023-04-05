@@ -159,6 +159,20 @@ export const demTableMain = [
   },
 ];
 export const InitTransactionDetails = {
+  bankbookDetailDate: null,
+  bankbookDetailId: null,
+  bankbookId: null,
+  bankbookDetailTime: null,
+  summary: "",
+  content: "",
+  note: "",
+  deposit: null,
+  withdraw: null,
+  balance: null,
+  proofCount: null,
+  transactionDetailsCount: null,
+  normalTransactionDetails: null,
+  documentRegistered: false,
   transactionDetails: {
     transactionDetailDate: null,
     accountingDocumentId: null,

@@ -143,7 +143,7 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <a-col span="8" class="custom-layout">
+        <a-col span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
           <standard-form formName="ac-610" ref="formRef">
             <a-form-item label="거래처명" :label-col="labelCol" class="red">
               <default-text-box
@@ -232,32 +232,33 @@
 </template>
 <script lang="ts">
 import HistoryPopup from "@/components/HistoryPopup.vue";
-import { Message } from "@/configs/enum";
+import {Message} from "@/configs/enum";
 import mutations from "@/graphql/mutations/AC/AC6/AC610/index";
 import queries from "@/graphql/queries/AC/AC6/AC610/index";
-import { companyId } from "@/helpers/commonFunction";
-import { isEqualObject } from "@/utils";
+import {companyId} from "@/helpers/commonFunction";
 import notification from "@/utils/notification";
 import PopupMessageCustom from "@/views/PA/PA6/PA610/components/PopupMessageCustom.vue";
-import {
-EditOutlined,
-HistoryOutlined,
-SaveOutlined,
-} from "@ant-design/icons-vue";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import {EditOutlined, HistoryOutlined, SaveOutlined,} from "@ant-design/icons-vue";
+import {useMutation, useQuery} from "@vue/apollo-composable";
 import DxButton from "devextreme-vue/button";
-import { DxColumn, DxDataGrid, DxExport, DxItem, DxPaging, DxScrolling, DxSearchPanel, DxToolbar} from "devextreme-vue/data-grid";
-import { Store } from "devextreme/data";
-import DataSource from "devextreme/data/data_source";
 import {
-  FocusedRowChangedEvent,
-  FocusedRowChangingEvent,
-  RowClickEvent,
-  RowDblClickEvent
-} from "devextreme/ui/data_grid";
-import {computed, defineComponent, ref, watch} from "vue";
-import { useStore } from "vuex";
-import { initialState } from "./utils/index";
+  DxColumn,
+  DxDataGrid,
+  DxExport,
+  DxItem,
+  DxPaging,
+  DxScrolling,
+  DxSearchPanel,
+  DxToolbar
+} from "devextreme-vue/data-grid";
+import {Store} from "devextreme/data";
+import DataSource from "devextreme/data/data_source";
+import {FocusedRowChangedEvent, FocusedRowChangingEvent} from "devextreme/ui/data_grid";
+import {computed, defineComponent, ref} from "vue";
+import {useStore} from "vuex";
+import {initialState} from "./utils/index";
+import isEqual from "lodash/isEqual";
+
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -359,7 +360,7 @@ export default defineComponent({
         store: {
           type: "array",
           key: "clientId",
-          data: listClient.value,
+          data: listClient.value || [],
         },
         // requireTotalCount: true,
       });
@@ -367,7 +368,7 @@ export default defineComponent({
 
     const dataGridRef = computed(() => gridRef.value?.instance as any); // ref of grid Instance
     // To listen for changes in variable `dataSource` and update the interface accordingly, you can use watch in Vue.
-    // const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
+    const storeDataSourceCount = computed(() => dataSource.value ? dataSource.value?.totalCount(): 0);
     // get store data
     const storeDataSource = computed(() => dataSource.value?.store() as Store);
     onDoneAdd(async (res: any) => {
@@ -407,7 +408,7 @@ export default defineComponent({
       if (!isNewRow.value) {
         // When there is no row created yet and you are focusing on one row,
         // compare 2 values to check and open a popup.
-        if (previousRowData.value && !isEqualObject(previousRowData.value, formState.value)) {
+        if (previousRowData.value && !isEqual(previousRowData.value, formState.value)) {
           isClickAddRow.value = true;
           isDiscard.value = true;
         } else {
@@ -424,7 +425,7 @@ export default defineComponent({
       } else {
         if (
           previousRowData.value &&
-          !isEqualObject(previousRowData.value, formState.value)
+          !isEqual(previousRowData.value, formState.value)
         ) {
           selectRowKeyAction.value = 0;
           isClickAddRow.value = true;
@@ -440,7 +441,7 @@ export default defineComponent({
         focusedRowKey.value = 0;
         if (e.rows[e.newRowIndex].key === 0) return;
         // when isNewRow and click row other then check data input
-        if (isEqualObject(formState.value, initialState)) {
+        if (isEqual(formState.value, initialState)) {
           storeDataSource.value.remove(0).then(() => {
             storeDataSource.value
               .byKey(e.rows[e.newRowIndex].key)
@@ -467,7 +468,7 @@ export default defineComponent({
         if (
           focusedRowKey.value !== e.rows[e.newRowIndex].key &&
           previousRowData.value &&
-          !isEqualObject(formState.value, previousRowData.value)
+          !isEqual(formState.value, previousRowData.value)
         ) {
           isDiscard.value = true;
           selectRowKeyAction.value = e.rows[e.newRowIndex].key;
@@ -640,6 +641,7 @@ export default defineComponent({
       handleDiscardPopup,
       handleConfirm,
       isDiscard,
+      storeDataSourceCount
     };
   },
 });

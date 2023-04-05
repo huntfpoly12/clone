@@ -12,7 +12,8 @@ const statesPA420 = {
     },
     monthSelectedPA420: dayjs().month() + 1,
     formStateEditPA420: {},
-    isEditChange:true
+    hasIncomeProcessRetirements: false,
+    
 };
 
 export default statesPA420;

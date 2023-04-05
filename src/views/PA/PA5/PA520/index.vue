@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -20,7 +20,6 @@
         <a-col :span="6">
           actionChangeComponent: {{ actionChangeComponent }} ---tab---{{ store.state.common.setTabActivePA520 }}<br> 
           addRowBtOnclick: {{ addBtOnclick  }}<br>
-         
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
         </a-col>
         <a-col :span="6">
@@ -32,7 +31,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row>
+  </a-row> -->
   <div id="pa-520" class="page-content">
   
       <a-row>
@@ -416,7 +415,7 @@ export default defineComponent({
 
     watch(focusedRowKey, () => {
       let newRow = dataSource.value.items().filter((item: any) => item.key == 0);
-      if (newRow.length > 0) {
+      if (newRow.length > 0 && isClickRow.value) {
         removeNewRow()
       }
     })
@@ -457,7 +456,7 @@ export default defineComponent({
       
     }
     const onFocusedRowChanged = (event: any) => {
-      if((addBtOnclick.value && activeAddRowPA520.value)){
+      if(focusedRowKey.value == 0 && !isClickRow.value ){
         store.commit('common/setComponentPA520',1);
       } else {
         store.commit('common/setComponentPA520', 2);

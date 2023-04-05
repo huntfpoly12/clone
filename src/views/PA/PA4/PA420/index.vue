@@ -400,11 +400,9 @@ export default defineComponent({
               }
 
             })
-          } else { //If the data is empty, set the value datetime as 0
-                valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = 0
-                valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = 0
-                valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = 0
-                valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = 0
+            store.commit('common/sethasIncProcRetirements',true)
+          }else { //If the data is empty, set the value datetime as 0
+            store.commit('common/sethasIncProcRetirements',false)
           }
         })
         errorGetIncomeProcessBusinesses(res => {
