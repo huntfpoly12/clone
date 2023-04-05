@@ -145,7 +145,7 @@ import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxI
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
-import { onExportingCommon } from "@/helpers/commonFunction"
+import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 export default defineComponent({
     components: {
@@ -219,8 +219,8 @@ export default defineComponent({
             originData.startDate = rangeDate.value[0]
             originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData()
             actionSearch.value = false
         }
         const changePage = (e: any) => {
@@ -228,8 +228,8 @@ export default defineComponent({
             originData.startDate = rangeDate.value[0]
             originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData()
         }
         watch(result, (value) => {
             trigger.value = false;
@@ -241,8 +241,8 @@ export default defineComponent({
         // Get api when page is changed
         const onChangePage = (page: any, pageSize: any) => {
             originData.page = page;
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData();
         }
         return {
             loading,

@@ -83,7 +83,7 @@ const makeDataClean = (obj: any) => {
   }
 
   Object.keys(obj).forEach((key) => {
-    if (obj[key] === "") {
+    if (typeof obj[key] === "string" && obj[key].trim() === "") {
       obj[key] = null;
     } else if (typeof obj[key] === "object") {
       obj[key] = makeDataClean(obj[key]);

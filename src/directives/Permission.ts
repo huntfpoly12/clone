@@ -3,7 +3,7 @@ import {
   AdminScreenRole,
   WorkScreenRole,
 } from "@bankda/jangbuda-common";
-import { DirectiveBinding} from "vue";
+import { DirectiveBinding } from "vue";
 
 export default {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
@@ -13,11 +13,11 @@ export default {
       const arrKey = binding.value;
       const adminAll = AdminScreenRole.all(); // Administrator screen role
       const filDataAdmin = adminAll?.filter((item: any) =>
-        arrKey.includes(item.enumKey)
+        arrKey?.includes(item.enumKey)
       );
       const wokrAll = WorkScreenRole.all(); // Work screen role
       const filDataWork = wokrAll?.filter((item: any) =>
-        arrKey.includes(item.enumKey)
+        arrKey?.includes(item.enumKey)
       );
       let statusShowHidden: boolean = false; // default is hidden
 
@@ -43,37 +43,28 @@ export default {
 
       /* This is a code that checks whether the user has a read or write role. */
       if (binding.arg == "read") {
-        if (filDataAdmin.length) {
-          filDataAdmin.map((item: any) => {
-            checkReadRole(item); // Whether the company information management read role is held
-          });
-        } else if (filDataWork.length) {
-          filDataWork.map((item: any) => {
-            checkReadRole(item); // Whether the basic settings read role is held
-          });
-        }
+        filDataAdmin?.map((item: any) => {
+          checkReadRole(item); // Whether the company information management read role is held
+        });
+        filDataWork?.map((item: any) => {
+          checkReadRole(item); // Whether the basic settings read role is held
+        });
       } else if (binding.arg == "write") {
-        if (filDataAdmin.length) {
-          filDataAdmin.map((item: any) => {
-            checkWriteRole(item); // Whether the company information management write role is held
-          });
-        } else if (filDataWork.length) {
-          filDataWork.map((item: any) => {
-            checkWriteRole(item); // Whether the basic settings write role is held
-          });
-        }
+        filDataAdmin?.map((item: any) => {
+          checkWriteRole(item); // Whether the company information management write role is held
+        });
+        filDataWork?.map((item: any) => {
+          checkWriteRole(item); // Whether the basic settings write role is held
+        });
       } else {
-        if (filDataAdmin.length) {
-          filDataAdmin.map((item: any) => {
-            checkReadRole(item); // Whether the company information management read role is held
-            checkWriteRole(item); // Whether the company information management write role is held
-          });
-        } else if (filDataWork.length) {
-          filDataWork.map((item: any) => {
-            checkReadRole(item); // Whether the basic settings read role is held
-            checkWriteRole(item); // Whether the basic settings write role is held
-          });
-        }
+        filDataAdmin?.map((item: any) => {
+          checkReadRole(item); // Whether the company information management read role is held
+          checkWriteRole(item); // Whether the company information management write role is held
+        });
+        filDataWork?.map((item: any) => {
+          checkReadRole(item); // Whether the basic settings read role is held
+          checkWriteRole(item); // Whether the basic settings write role is held
+        });
       }
       if (!statusShowHidden) {
         el.style.display = "none";
