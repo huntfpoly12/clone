@@ -130,7 +130,7 @@
 
         </a-col>
         <!-- section right -->
-        <a-col :span="8" class="custom-layout">
+        <a-col :span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
@@ -261,6 +261,7 @@
                     :width="90"
                     id="btn-save"
                     @onClick="saving()"
+                    :disabled="storeDataSourceCount === 0"
                   />
                 </a-col>
               </a-row>
@@ -762,7 +763,7 @@ export default defineComponent({
           nationality: dataShow.value.nationality,
           nationalityCode: dataShow.value.nationalityCode,
           stayQualification: dataShow.value.stayQualification,
-          residentId: residentId.slice(0, 6) + "-" + residentId.slice(6, 13),
+          residentId: residentId,
           email: dataShow.value.email,
           incomeTypeName: dataShow.value.incomeTypeName,
         },
@@ -804,8 +805,8 @@ export default defineComponent({
               nationality: dataShow.value.nationality,
               nationalityCode: dataShow.value.nationalityCode,
               stayQualification: dataShow.value.stayQualification,
-              residentId: dataShow.value.residentId.slice(0, 6) + "-" + dataShow.value.residentId.slice(6, 13),
-              email: dataShow.value.email,
+              residentId: dataShow.value.residentId,
+              email: dataShow.value.email || null,
               employeeId: parseInt(
                 dataShow.value.employeeId ? dataShow.value.employeeId : ""
               ),
