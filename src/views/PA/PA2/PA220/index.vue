@@ -208,12 +208,13 @@ export default defineComponent({
             companyId: companyId,
             filter: { imputedYear: globalYear, leaved: null, name: null }
         })
+        let payloadSearchParamClear: any = ref(makeDataClean(searchParam))
         const searchTrigger = ref<boolean>(true)
         const {
             refetch: refetchSearch,
             result: resultSearch,
             loading: loadingSearch,
-        } = useQuery(queries.searchIncomeWageWithholdingReceipts, makeDataClean(searchParam), () => ({
+        } = useQuery(queries.searchIncomeWageWithholdingReceipts, payloadSearchParamClear.value, () => ({
             enabled: searchTrigger.value,
             fetchPolicy: "no-cache",
         }));
@@ -225,6 +226,7 @@ export default defineComponent({
             searchParam.filter.leaved = newData.searchIncomeWageWithholdingReceipts?.leaved ?? null;
         })
         const onSearch = () => {
+            payloadSearchParamClear.value = makeDataClean(searchParam)
             searchTrigger.value = true;
             // refetchSearch()
         }
