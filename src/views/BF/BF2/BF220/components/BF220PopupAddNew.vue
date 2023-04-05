@@ -96,6 +96,7 @@ import mutations from "@/graphql/mutations/BF/BF2/BF220/index";
 import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { makeDataClean } from "@/helpers/commonFunction";
 export default defineComponent({
     props: ['modalStatus'],
     components: {
@@ -128,11 +129,16 @@ export default defineComponent({
             id: '',
             name: "",
             type: "m",
-            memo: ""
+            memo: null
         });
         let objDataDefault = ref({
             ...dataRes.value
         })
+        const formToCompare = {
+          memo:'',
+          readAdminScreenRoles:[],
+          writeAdminScreenRoles:[],
+        }
         let readAdminScreenRoles: any = ref([])
         let writeAdminScreenRoles: any = ref([])
         const checkId = () => {
@@ -185,6 +191,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+              makeDataClean(dataRes);
                 let dataCall = {
                     input: {
                         id: dataRes.value.id,
@@ -199,7 +206,12 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => { 
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(dataRes.value) == true)
+            let dataResToCompare = {
+                memo: dataRes.value.memo,
+                readAdminScreenRoles: readAdminScreenRoles.value,
+                writeAdminScreenRoles: writeAdminScreenRoles.value,
+            }
+            if (JSON.stringify(formToCompare) == JSON.stringify(dataResToCompare))
                 emit("closePopupAdd", false)
             else
                 comfirmClosePopup(() => emit("closePopupAdd", false))

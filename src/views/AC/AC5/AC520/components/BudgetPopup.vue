@@ -72,8 +72,8 @@ export default defineComponent({
   setup(props, {emit}) {
     const store = useStore()
     const step = ref<StepCreateBudget>(StepCreateBudget.Step1)
-    const typePopup = computed(() => store.getters['ac520Module/getTypeCreateBudget'])
-    const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters['ac520Module/getDataBudget'])
+    const typePopup = computed(() => store.getters['common/getTypeCreateBudget'])
+    const dataBudget: ComputedRef<Budget | null> = computed(() => store.getters['common/getDataBudget'])
     const setModalVisible = () => {emit('closePopup', false)};
     const onConfirm = () => {
       if (step.value === StepCreateBudget.Step1) {

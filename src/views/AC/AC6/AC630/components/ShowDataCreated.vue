@@ -1,6 +1,6 @@
 <template>
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
-    title="기부금영수증 발행" centered @cancel="$emit('onShowCreateModdal', false)" :footer="null">
+    title="기부금영수증 발행" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="false">
       <!-- {{ formState }} formState <br /> -->
       <standard-form>
@@ -97,7 +97,7 @@
             </a-col>
             <a-col :span="12">
               <a-form-item label="기부유형" label-align="right" class="red">
-                <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                <DonationTypeSelect v-model:valueInput="formState.donation" width="200px" :disabled="false"
                   :required="true" />
               </a-form-item>
             </a-col>
@@ -108,9 +108,7 @@
                 기부금공제대상 기부금단체 근거법령:
               </div>
               <div class="label-width">
-                <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
-                  :required="true" />
-                <default-text-box class="mt-5" width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                <FundamentalActDonation v-model:valueInput="formState.FundamentActDonation" width="200px" :disabled="false"
                   :required="true" />
               </div>
             </a-col>
@@ -144,7 +142,6 @@ import {
   employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, employeeFashionArr2,
   includeDependentsSelectbox,
 } from "../utils/index";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
@@ -161,6 +158,7 @@ import {
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import { h } from 'vue';
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -171,7 +169,7 @@ export default defineComponent({
     DeleteOutlined,
     SearchOutlined,
     DxFileUploader,
-    DxPaging
+    DxPaging,
   },
   setup(props, { emit }) {
     const store = useStore();
@@ -182,7 +180,7 @@ export default defineComponent({
       employeeId: 1,
       name: 'ss',
       bizNumber: 'ss',
-      presidentName: 'ss',
+      presidentName: 'prisidentName',
       adding: 'ADDING',
       totalPay: 'ss',
       residentId: '',
@@ -200,7 +198,10 @@ export default defineComponent({
       jobTypeCode: 1,
       contractWorker: 'contractWorker',
       beckeType: 'beckeType',
+      donation: 40,
+      FundamentActDonation: 401,
     })
+    const formStateToCompare = { ...formState };
 
     // ----------------get and refetch data when employeeWageType change---------
 
@@ -263,13 +264,23 @@ export default defineComponent({
         modalConfirm.value = true;
       }
     }
+
+    // ---------------------------------ON CANCEL MODAL--------------------------------
+
+    const onCanCelModal = () => {
+      if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
+        emit('onShowCreateModdal', false);
+      } else {
+        comfirmClosePopup(() => emit('onShowCreateModdal', false))
+      }
+    }
     return {
       globalYear, employeeWages,
       employeeFashionArr, employeeFashionArr2, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
       formState, onSubmit,
       isDisabled1, isDisabled2,
       per_page, move_column, colomn_resize,
-      modalConfirm, onConfirmModal, confirmContent,
+      modalConfirm, onConfirmModal, confirmContent, onCanCelModal,
     };
   },
 });

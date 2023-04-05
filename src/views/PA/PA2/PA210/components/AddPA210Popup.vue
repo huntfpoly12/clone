@@ -83,6 +83,7 @@ import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn,DxScrolling, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
 import { getReportType, showTooltipYearMonth } from "../utils/index"
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -100,7 +101,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+        const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const loading = ref<Boolean>(false)
         const dataReports: any = ref([])
         const dataReport: any = ref([])
@@ -308,8 +309,17 @@ export default defineComponent({
         };
 
         const closeAllPopupAdd = () => {
-          reportGridStatus.value = false
-          setModalVisible()
+          if (hasChangedPopupPA520.value)
+          {
+            comfirmClosePopup(() => {
+              reportGridStatus.value = false
+              setModalVisible()
+              store.commit('common/setHasChangedPopupPA210',false);
+            })
+          }else{
+            reportGridStatus.value = false
+            setModalVisible()
+          }
         }
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
