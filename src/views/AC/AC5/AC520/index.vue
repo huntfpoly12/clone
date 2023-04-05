@@ -81,7 +81,7 @@ const modalBudget = ref(false);
 const closePopupBudget = () => modalBudget.value = false;
 const openModalBudget = (data: any) => {
   modalBudget.value = true;
-  store.dispatch('ac520Module/setDataBudget', data)
+  store.dispatch('common/setDataBudget', data)
 }
 </script>
 

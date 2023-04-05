@@ -1,6 +1,6 @@
 <template>
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
-    :visible="isOpenModalCreate" title="취득신고 신규 등록" centered @cancel="$emit('closeModal')" :footer="null">
+    :visible="isOpenModalCreate" title="취득신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="false">
       <!-- {{ formState }} formState <br /> -->
       <standard-form ref="formPa820Ref">
@@ -242,6 +242,7 @@ import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import filters from "@/helpers/filters";
 import { clone, cloneDeep } from "lodash";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -288,6 +289,7 @@ export default defineComponent({
       jobTypeCode4: 100000,
       contractWorker: 'contractWorker',
     })
+    const formStateToCompare = {...formState};
 
     // ----------------get and refetch data when employeeWageType change---------
 
@@ -346,11 +348,22 @@ export default defineComponent({
         },
       })
     };
+
+    // ---------------------------------ON CANCEL MODAL--------------------------------
+
+    const onCanCelModal = () => {
+      if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
+        emit('closeModal');
+      } else {
+        comfirmClosePopup(() => emit('closeModal'))
+      }
+    }
     return {
       globalYear, employeeWages,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
       formState, onSubmit,
-      isDisabled1, isDisabled2, onOptionRendered
+      isDisabled1, isDisabled2, onOptionRendered,
+      onCanCelModal
     };
   },
 });

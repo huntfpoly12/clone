@@ -79,7 +79,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from 'vue'
+import { ref, defineComponent, watch, computed, reactive } from 'vue'
 import { useStore } from 'vuex';
 import { SearchOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import {
@@ -97,6 +97,7 @@ import { AdminScreenRole } from '@bankda/jangbuda-common';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: ['modalStatus', 'idRowIndex'],
     components: {
@@ -142,7 +143,12 @@ export default defineComponent({
                 visible.value = true;
             }
         }
-        const keyChecked = ref([])
+        const keyChecked = ref([]);
+        const formToCompare = {
+          memo:'',
+          readAdminScreenRoles:[],
+          writeAdminScreenRoles:[],
+        }
         watch(() => props.modalStatus, (value) => {
             spinning.value = true
             if (value == true) {
@@ -173,6 +179,7 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                makeDataClean(dataRes);
                 let dataCall = {
                     input: {
                         id: dataRes.value.id,
@@ -196,12 +203,14 @@ export default defineComponent({
                 readAdminScreenRoles.value = value.getScreenRoleGroup.readAdminScreenRoles
                 writeAdminScreenRoles.value = value.getScreenRoleGroup.writeAdminScreenRoles
                 spinning.value = false
-
+                formToCompare.memo = JSON.parse(JSON.stringify(value.getScreenRoleGroup.memo));
+                formToCompare.readAdminScreenRoles = JSON.parse(JSON.stringify(value.getScreenRoleGroup.readAdminScreenRoles));
+                formToCompare.writeAdminScreenRoles = JSON.parse(JSON.stringify(value.getScreenRoleGroup.writeAdminScreenRoles));
                 objDataDefault.value = {
                     ...dataRes.value
                 }
             }
-        }, { deep: true });
+        });
         const setReadWrite = (data: any, type: string) => {
             let count = 0
             if (type == 'read') {
@@ -253,7 +262,12 @@ export default defineComponent({
             }
         }
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(dataRes.value) == true)
+            let dataResToCompare = {
+              memo: dataRes.value.memo,
+              readAdminScreenRoles: dataRes.value.readAdminScreenRoles,
+              writeAdminScreenRoles: dataRes.value.writeAdminScreenRoles,
+            }
+            if (JSON.stringify(formToCompare) == JSON.stringify(dataResToCompare))
                 emit("closePopupEdit", false)
             else
                 comfirmClosePopup(() => emit("closePopupEdit", false))
@@ -275,7 +289,8 @@ export default defineComponent({
             setReadWrite,
             keyChecked,
             readAdminScreenRoles,
-            writeAdminScreenRoles
+            writeAdminScreenRoles,
+            formToCompare,
         }
     },
 })
