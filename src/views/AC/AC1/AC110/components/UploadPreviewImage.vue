@@ -7,7 +7,7 @@
       ]">
     <div ref="elementUpload" class="upload-pewview-img">
       <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
-        @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" :remove="remove"
+        @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
         accept="image/png, image/jpeg, image/jpg image/gif">
         <div v-if="fileList.length <= limit">
           <div class="ant-btn-upload">

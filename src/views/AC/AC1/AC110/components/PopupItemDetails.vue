@@ -13,7 +13,7 @@
             <a-tooltip placement="top">
               <template #title>신규</template>
               <div>
-                <DxButton icon="plus" @click="addNewRow"/>
+                <DxButton icon="plus" @click="addNewRow" />
               </div>
             </a-tooltip>
           </template>
@@ -77,6 +77,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
 import { cloneDeep } from 'lodash';
+import { makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
   props: {
     isModalItemDetail: {
@@ -101,7 +102,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     let isModalDelete = ref(false)
-    let dataSource:any = ref([])
+    let dataSource: any = ref([])
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -144,14 +145,14 @@ export default defineComponent({
       return `금액합계: ${total}`
     }
     const totalExpenditure = () => {
-      return `지출액: ${dataSource.value.spending}`
+      return `지출액: ${dataSource.value.spending || 0}`
     }
     const totalDifference = () => {
       let total = 0;
       dataSource.value.statementOfGoodsItems.forEach((item: any) => {
         total += item.amount
       });
-      return `차액: ${dataSource.value.spending}-${total}`
+      return `차액: ${dataSource.value.spending || 0}-${total}`
     }
     const openPopupDeleteItem = (data: any) => {
       isModalDelete.value = true
@@ -170,15 +171,20 @@ export default defineComponent({
       const res = event.validationGroup.validate();
       if (!res.isValid) return
       const payloadRequest = { ...props.payload }
-      saveStatementOfGoods({
+      const payloadClear = makeDataClean({
         ...payloadRequest,
         transactionDetailDate: dataSource.value.transactionDetailDate,
         accountingDocumentId: dataSource.value.accountingDocumentId,
         items: dataSource.value.statementOfGoodsItems
       })
+      saveStatementOfGoods(payloadClear)
     }
     const addNewRow = () => {
-      dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, InitStatementOfGoods]
+      if (dataSource.value.statementOfGoodsItems) {
+        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, InitStatementOfGoods]
+      } else {
+        dataSource.value.statementOfGoodsItems = [InitStatementOfGoods]
+      }
     }
     return {
       move_column,

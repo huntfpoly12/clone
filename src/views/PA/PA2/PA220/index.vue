@@ -154,6 +154,7 @@ import {
     companyId,
     onExportingCommon,
     userId,
+    makeDataClean
 } from "@/helpers/commonFunction";
 import queries from "@/graphql/queries/PA/PA2/PA220/index";
 export default defineComponent({
@@ -212,7 +213,7 @@ export default defineComponent({
             refetch: refetchSearch,
             result: resultSearch,
             loading: loadingSearch,
-        } = useQuery(queries.searchIncomeWageWithholdingReceipts, searchParam, () => ({
+        } = useQuery(queries.searchIncomeWageWithholdingReceipts, makeDataClean(searchParam), () => ({
             enabled: searchTrigger.value,
             fetchPolicy: "no-cache",
         }));
