@@ -199,20 +199,23 @@ export default defineComponent({
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-            }
-            else {
+            } else {
                 if (statusMailValidate.value == true) {
-                    let dataUpdate = {
-                        id: props.idRowEdit,
-                        input: {
-                            name: formState.value.name,
-                            screenRoleGroupIds: checkedNames.value,
-                            mobilePhone: formState.value.mobilePhone,
-                            email: formState.value.email,
-                            active: formState.value.active,
+                    if (checkedNames.value.length) {
+                        let dataUpdate = {
+                            id: props.idRowEdit,
+                            input: {
+                                name: formState.value.name,
+                                screenRoleGroupIds: checkedNames.value,
+                                mobilePhone: formState.value.mobilePhone,
+                                email: formState.value.email,
+                                active: formState.value.active,
+                            }
                         }
+                        updateUser(dataUpdate);
+                    } else {
+                        notification('error', '화면역할그룹은 반드시 1개 이상 필요합니다.')
                     }
-                    updateUser(dataUpdate);
                 } else {
                     notification('error', `이메일형식이 정확하지 않습니다.`)
                     var Url = document.getElementById("email") as HTMLInputElement;

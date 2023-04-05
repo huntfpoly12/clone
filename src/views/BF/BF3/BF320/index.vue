@@ -127,7 +127,7 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
-import { onExportingCommon } from "@/helpers/commonFunction"
+import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
 import dayjs from "dayjs";
 export default defineComponent({
@@ -138,7 +138,6 @@ export default defineComponent({
     },
     setup() {
         // config grid
-        // const amountFormat = { currency: 'VND', useGrouping: true }
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -154,7 +153,7 @@ export default defineComponent({
             ...dataSearchIndex,
             rows: per_page,
         })
-        const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData, () => ({
+        const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData.value, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
@@ -162,10 +161,12 @@ export default defineComponent({
             notification("error", e.message);
         });
         const searching = () => {
+            makeDataClean(originData.value)
             trigger.value = true;
         }
         const handleClosePopup = () => {
             modalStatus.value = false
+            makeDataClean(originData.value)
             trigger.value = true;
         }
         const onExporting = (e: any) => {
@@ -189,7 +190,6 @@ export default defineComponent({
             }
         });
         return {
-            // amountFormat,
             trigger,
             move_column,
             colomn_resize,
@@ -199,7 +199,6 @@ export default defineComponent({
             responApiSearchCompanies,
             originData,
             searching,
-            refetchData,
             onExporting,
             handleClosePopup,
             modalStatus,
