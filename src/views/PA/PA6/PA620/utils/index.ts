@@ -36,8 +36,8 @@ export const valueDefaultAction = {
 import { companyId } from "@/helpers/commonFunction";
 export const dataActionUtils = {
   input: {
-    employeeId: '',
-    incomeTypeCode: "",
+    employeeId: null,
+    incomeTypeCode: null,
     paymentAmount: null,
     taxRate: 3,
     withholdingIncomeTax: 0,
