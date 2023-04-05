@@ -195,8 +195,6 @@ export default defineComponent({
       { id: 2, text: "중도정산" },
     ]);
     const setModalVisible = () => {
-      console.log(JSON.stringify(defaltDataForm));
-      console.log(JSON.stringify(dataForm));
       if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm))
       {
         emit("closePopup", false)

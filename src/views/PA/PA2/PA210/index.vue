@@ -198,6 +198,7 @@ import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
 import ReportGridEditModify from "./components/ReportGrid/ReportGridEditModify.vue";
 import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/index"
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 
 export default defineComponent({
     components: {
@@ -207,6 +208,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const globalYear = computed(() => store.state.settings.globalYear);
         
         const move_column = computed(() => store.state.settings.move_column);
@@ -308,18 +310,47 @@ export default defineComponent({
         }
 
         const closeReportGridEdit = () => {
-          statusReportGridEdit.value = false;
-          refetchData()
+
+          if (hasChangedPopupPA520.value)
+          {
+              comfirmClosePopup(() => {
+                statusReportGridEdit.value = false;
+                refetchData()
+                store.commit('common/setHasChangedPopupPA210',false);
+              })
+          }else{
+            statusReportGridEdit.value = false;
+            refetchData()
+          }
+
         }
 
         const closeReportGridModify = () => {
-          statusReportGridModify.value = false;
-          refetchData()
+          if (hasChangedPopupPA520.value)
+          {
+                comfirmClosePopup(() => {
+                  statusReportGridModify.value = false;
+                  refetchData()
+                  store.commit('common/setHasChangedPopupPA210',false);
+                })
+            }else{
+              statusReportGridModify.value = false;
+              refetchData()
+          }
         }
 
         const closeReportGridEditModify = () => {
-          statusReportGridEditModify.value = false;
-          refetchData()
+          if (hasChangedPopupPA520.value)
+          {
+            comfirmClosePopup(() => {
+                statusReportGridEditModify.value = false;
+                refetchData()
+                store.commit('common/setHasChangedPopupPA210',false);
+            })
+          }else{
+              statusReportGridEditModify.value = false;
+              refetchData()
+          }
         }
 
         const openModalHistory = (data: any) => {

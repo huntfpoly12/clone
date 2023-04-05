@@ -1,4 +1,5 @@
 import screenGetterPA120 from "./screenGetters/screenPA120";
+import screenGetterPA210 from "./screenGetters/screenGetterPA210";
 import screenGetterPA420 from "./screenGetters/screenGetterPA420";
 import screenGetterPA520 from "./screenGetters/screenGetterPA520";
 import screenGetterPA620 from "./screenGetters/screenGetterPA620";
@@ -8,6 +9,7 @@ import {GetterTree} from "vuex";
 import {TypeCommonState} from "@/store/commonModule/index";
 const getters: GetterTree<TypeCommonState, any> = {
     ...screenGetterPA120,
+    ...screenGetterPA210,
     ...screenGetterPA420,
     ...screenGetterPA520,
     ...screenGetterPA620,
