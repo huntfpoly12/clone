@@ -18,7 +18,7 @@ const ROLE_BF000 =  [
   AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey,
   AdminScreenRole.ACCOUNTING_WORK_CLOSING_MANAGE.enumKey
 ]
-const ROLE_CM000 = [WorkScreenRole.BASIC_SETTINGS, WorkScreenRole.ACCOUNTING_SETTINGS, WorkScreenRole.WITHHOLDING_SETTINGS]
+const ROLE_CM000 = [WorkScreenRole.BASIC_SETTINGS.enumKey, WorkScreenRole.ACCOUNTING_SETTINGS.enumKey, WorkScreenRole.WITHHOLDING_SETTINGS.enumKey]
 export default [
   {
     title: "Back Office",
@@ -83,20 +83,20 @@ export default [
     title: "사용자업무설정",
     id: "cm-100",
     subMenus: [
-      {title: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110", roles: [WorkScreenRole.BASIC_SETTINGS]},
+      {title: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110", roles: [WorkScreenRole.BASIC_SETTINGS.enumKey]},
       {
         title: "회계설정",
         id: "cm-120",
         subMenus: [
-          {title: "통장관리", url: "/dashboard/cm-121", id: "cm-121", roles: [WorkScreenRole.ACCOUNTING_SETTINGS]},
-          {title: "수급자관리", url: "#", id: "cm-124", roles: [WorkScreenRole.ACCOUNTING_SETTINGS]},
-          {title: "회계기타", url: "#", id: "cm-125", roles: [WorkScreenRole.ACCOUNTING_SETTINGS]},
-          {title: "계정코드", url: "#", id: "cm-126", roles: [WorkScreenRole.ACCOUNTING_SETTINGS]},
+          {title: "통장관리", url: "/dashboard/cm-121", id: "cm-121", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey]},
+          {title: "수급자관리", url: "#", id: "cm-124", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey]},
+          {title: "회계기타", url: "#", id: "cm-125", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey]},
+          {title: "계정코드", url: "#", id: "cm-126", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey]},
         ],
-        roles: [WorkScreenRole.ACCOUNTING_SETTINGS]
+        roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey]
 
       },
-      {title: "원천설정", url: "/dashboard/cm-130", id: "cm-130", roles: [WorkScreenRole.WITHHOLDING_SETTINGS]},
+      {title: "원천설정", url: "/dashboard/cm-130", id: "cm-130", roles: [WorkScreenRole.WITHHOLDING_SETTINGS.enumKey]},
     ],
     icon: 'dx-icon-inactivefolder',
     roles: ROLE_CM000
