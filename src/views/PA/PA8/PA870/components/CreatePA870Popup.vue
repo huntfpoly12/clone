@@ -621,44 +621,17 @@
 
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from 'vue'
-import UploadFile from "@/components/UploadFile.vue";
-import StandardForm from "@/components/common/StandardForm.vue";
-import DxField from "@/views/PA/PA8/components/DxField.vue";
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
 import {companyId} from "@/helpers/commonFunction";
 import {useStore} from "vuex";
-import INITIAL_FORM from "@/views/PA/PA8/const";
+import INITIAL_FORM from "../utils";
 import {useCompanyInfo} from "@/helpers/useCompanyInfo";
 import {cloneDeep, isEqual} from "lodash";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
-import BoxTitle from "@/views/PA/PA8/components/BoxTitle.vue";
-import Tooltip from "@/components/common/Tooltip.vue";
-import TextNumberBox from "@/components/common/TextNumberBox.vue";
-import IdNumberTextBox from "@/components/common/IdNumberTextBox.vue";
-import TelTextBox from "@/components/common/TelTextBox.vue";
-import RadioGroup from "@/components/common/RadioGroup.vue";
-import DefaultTextBox from "@/components/common/DefaultTextBox.vue";
-import CheckboxBasic from "@/components/common/CheckboxBasic.vue";
-import DateTimeBox from "@/components/common/DateTimeBox.vue";
-import BizNumberTextBox from "@/components/common/BizNumberTextBox.vue";
 
 export default defineComponent({
-  components: {
-    BizNumberTextBox,
-    DateTimeBox,
-    CheckboxBasic,
-    DefaultTextBox,
-    RadioGroup,
-    TelTextBox,
-    IdNumberTextBox,
-    TextNumberBox,
-    Tooltip,
-    BoxTitle,
-    UploadFile,
-    StandardForm,
-    DxField
-  },
+  components: {},
   props: {
     isOpenModalCreate: {
       type: Boolean,
@@ -730,7 +703,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-@import "@/views/PA/PA8/styles/index.scss";
 .gap-20 {
   gap: 20px;
 }

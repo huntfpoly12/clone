@@ -1,39 +1,41 @@
-import {AdminScreenRole, WorkScreenRole} from "@bankda/jangbuda-common";
-const ROLE_BF600 = [AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE]
-const ROLE_AC000 = [WorkScreenRole.ACCOUNTING_WORK]
-const ROLE_PA000 = [WorkScreenRole.WITHHOLDING_WORK]
-
-export default [
+import useCheckPermission from "@/helpers/useCheckPermission";
+import { AdminScreenRole, getJwtObject, WorkScreenRole } from "@bankda/jangbuda-common";
+const ROLE_BF600 = [AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey]
+const ROLE_AC000 = [WorkScreenRole.ACCOUNTING_WORK.enumKey]
+const ROLE_PA000 = [WorkScreenRole.WITHHOLDING_WORK.enumKey]
+const token = sessionStorage.getItem("token");
+const jwtObject = token ? getJwtObject(token) : null;
+let menuData = [
   { name: "인증", url: "#", id: "bf-110", roles: [] },
   { name: "개인정보관리", url: "#", id: "bf-120", roles: [] },
 
-  { name: "회원등록", url: "/dashboard/bf-210", id: "bf-210", roles: [AdminScreenRole.USER_MANAGE] },
-  { name: "권한그룹관리", url: "/dashboard/bf-220", id: "bf-220", roles: [AdminScreenRole.ROLE_MANAGE] },
+  { name: "회원등록", url: "/dashboard/bf-210", id: "bf-210", roles: [AdminScreenRole.USER_MANAGE.enumKey] },
+  { name: "권한그룹관리", url: "/dashboard/bf-220", id: "bf-220", roles: [AdminScreenRole.ROLE_MANAGE.enumKey] },
 
-  { name: "계약정보관리&심사 ", url: "/dashboard/bf-310", id: "bf-310", roles: [AdminScreenRole.CONTRACT_MANAGE] },
-  { name: "사업자관리", url: "/dashboard/bf-320", id: "bf-320", roles: [AdminScreenRole.COMPANY_MANAGE] },
-  { name: "서비스관리", url: "/dashboard/bf-330", id: "bf-330", roles: [AdminScreenRole.SERVICE_MANAGE] },
-  { name: "영업자관리", url: "/dashboard/bf-340", id: "bf-340", roles: [AdminScreenRole.SALES_REPRESENTATIVE_MANAGE] },
+  { name: "계약정보관리&심사 ", url: "/dashboard/bf-310", id: "bf-310", roles: [AdminScreenRole.CONTRACT_MANAGE.enumKey] },
+  { name: "사업자관리", url: "/dashboard/bf-320", id: "bf-320", roles: [AdminScreenRole.COMPANY_MANAGE.enumKey] },
+  { name: "서비스관리", url: "/dashboard/bf-330", id: "bf-330", roles: [AdminScreenRole.SERVICE_MANAGE.enumKey] },
+  { name: "영업자관리", url: "/dashboard/bf-340", id: "bf-340", roles: [AdminScreenRole.SALES_REPRESENTATIVE_MANAGE.enumKey] },
 
-  { name: "요금청구,심사", url: "#", id: "bf-410", roles: [AdminScreenRole.BILLING_MANAGE] },
-  { name: "서비스해지", url: "#", id: "bf-420", roles: [AdminScreenRole.TERMINATION_MANAGE] },
-  { name: "미납관리", url: "#", id: "bf-430", roles: [AdminScreenRole.UNPAID_MANAGE] },
+  { name: "요금청구,심사", url: "#", id: "bf-410", roles: [AdminScreenRole.BILLING_MANAGE.enumKey] },
+  { name: "서비스해지", url: "#", id: "bf-420", roles: [AdminScreenRole.TERMINATION_MANAGE.enumKey] },
+  { name: "미납관리", url: "#", id: "bf-430", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
 
   { name: "회계업무마감", url: "#", id: "bf-510", roles: [] },
   { name: "4대보험업무관리", url: "#", id: "bf-530", roles: [] },
 
   { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610", roles: ROLE_BF600 },
-  { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620", roles: ROLE_BF600,},
-  { name: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-630", id: "bf-630", roles: ROLE_BF600,},
+  { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620", roles: ROLE_BF600, },
+  { name: "지급명세서전자신고(연말정산)", url: "/dashboard/bf-630", id: "bf-630", roles: ROLE_BF600, },
   { name: "간이지급명세서전자신고", url: "/dashboard/bf-640", id: "bf-640", roles: ROLE_BF600 },
-  { name: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-650", id: "bf-650", roles: ROLE_BF600,},
-  { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110", roles: [WorkScreenRole.BASIC_SETTINGS] },
-  { name: "통장관리", url: "/dashboard/cm-121", id: "cm-121", roles: [WorkScreenRole.ACCOUNTING_SETTINGS] },
-  { name: "수급자관리", url: "#", id: "cm-124", roles: [WorkScreenRole.ACCOUNTING_SETTINGS] },
-  { name: "회계기타", url: "#", id: "cm-125", roles: [WorkScreenRole.ACCOUNTING_SETTINGS] },
-  { name: "계정코드", url: "#", id: "cm-126", roles: [WorkScreenRole.ACCOUNTING_SETTINGS] },
+  { name: "일용직근로소득지급명세서전자신고", url: "/dashboard/bf-650", id: "bf-650", roles: ROLE_BF600, },
+  { name: "기초정보설정", url: "/dashboard/cm-110", id: "cm-110", roles: [WorkScreenRole.BASIC_SETTINGS.enumKey] },
+  { name: "통장관리", url: "/dashboard/cm-121", id: "cm-121", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey] },
+  { name: "수급자관리", url: "#", id: "cm-124", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey] },
+  { name: "회계기타", url: "#", id: "cm-125", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey] },
+  { name: "계정코드", url: "#", id: "cm-126", roles: [WorkScreenRole.ACCOUNTING_SETTINGS.enumKey] },
 
-  { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130", roles: [WorkScreenRole.WITHHOLDING_SETTINGS] },
+  { name: "원천설정", url: "/dashboard/cm-130", id: "cm-130", roles: [WorkScreenRole.WITHHOLDING_SETTINGS.enumKey] },
 
   { name: "통장내역", url: "/dashboard/ac-110", id: "ac-110", roles: ROLE_AC000 },
   { name: "전표", url: "/dashboard/ac-120", id: "ac-120", roles: ROLE_AC000 },
@@ -64,7 +66,7 @@ export default [
 
   { name: "원천징수이행상황신고서", url: "/dashboard/pa-210", id: "pa-210", roles: ROLE_PA000 },
   { name: "근로소득원천징수영수증", url: "/dashboard/pa-220", id: "pa-220", roles: ROLE_PA000 },
-  { name: "소득자별근로소득원천징수부", url: "/dashboard/pa-230", id: "pa-230", roles: ROLE_PA000,},
+  { name: "소득자별근로소득원천징수부", url: "/dashboard/pa-230", id: "pa-230", roles: ROLE_PA000, },
   { name: "연말정산간소화입력", url: "#", id: "pa-240", roles: ROLE_PA000 },
   { name: "의료비지급명세서", url: "#", id: "pa-250", roles: ROLE_PA000 },
   { name: "기부금명세서", url: "#", id: "pa-260", roles: ROLE_PA000 },
@@ -76,7 +78,7 @@ export default [
 
   { name: "일용직근로소득자료입력", url: "/dashboard/pa-510", id: "pa-510", roles: ROLE_PA000 },
   { name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520", roles: ROLE_PA000 },
-  { name: "일용직근로소득원천징수영수증", url: "/dashboard/pa-530", id: "pa-530", roles: ROLE_PA000,},
+  { name: "일용직근로소득원천징수영수증", url: "/dashboard/pa-530", id: "pa-530", roles: ROLE_PA000, },
 
   { name: "사업소득자등록", url: "/dashboard/pa-610", id: "pa-610", roles: ROLE_PA000 },
   { name: "사업소득자료입력", url: "/dashboard/pa-620", id: "pa-620", roles: ROLE_PA000 },
@@ -95,3 +97,8 @@ export default [
   { name: "사업장가입신고", url: "/dashboard/pa-870", id: "pa-870", roles: ROLE_PA000 },
   { name: "사업장탈퇴신고", url: "/dashboard/pa-880", id: "pa-880", roles: ROLE_PA000 },
 ];
+menuData = menuData.filter(i => {
+  if (i.roles.length === 0) return false
+  return useCheckPermission(i.roles).read
+})
+export default menuData;
