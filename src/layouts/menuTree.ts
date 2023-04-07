@@ -5,6 +5,20 @@ const ROLE_AC000 = [WorkScreenRole.ACCOUNTING_WORK.enumKey]
 const ROLE_PA000 = [WorkScreenRole.WITHHOLDING_WORK.enumKey]
 const ROLE_BF600 = [AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey]
 const ROLE_BF500 = [AdminScreenRole.ACCOUNTING_WORK_CLOSING_MANAGE.enumKey]
+
+const ROLE_BF000 =  [
+  AdminScreenRole.ROLE_MANAGE.enumKey,
+  AdminScreenRole.CONTRACT_MANAGE.enumKey,
+  AdminScreenRole.COMPANY_MANAGE.enumKey,
+  AdminScreenRole.SERVICE_MANAGE.enumKey,
+  AdminScreenRole.SALES_REPRESENTATIVE_MANAGE.enumKey,
+  AdminScreenRole.BILLING_MANAGE.enumKey,
+  AdminScreenRole.TERMINATION_MANAGE.enumKey,
+  AdminScreenRole.UNPAID_MANAGE.enumKey,
+  AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey,
+  AdminScreenRole.ACCOUNTING_WORK_CLOSING_MANAGE.enumKey
+]
+const ROLE_CM000 = [WorkScreenRole.BASIC_SETTINGS, WorkScreenRole.ACCOUNTING_SETTINGS, WorkScreenRole.WITHHOLDING_SETTINGS]
 export default [
   {
     title: "Back Office",
@@ -63,7 +77,7 @@ export default [
       },
     ],
     icon: 'dx-icon-card',
-    roles: AdminScreenRole.all().map(i => i.enumKey)
+    roles: ROLE_BF000
   },
   {
     title: "사용자업무설정",
@@ -85,7 +99,7 @@ export default [
       {title: "원천설정", url: "/dashboard/cm-130", id: "cm-130", roles: [WorkScreenRole.WITHHOLDING_SETTINGS]},
     ],
     icon: 'dx-icon-inactivefolder',
-    roles:WorkScreenRole.all().map(i => i.enumKey)
+    roles: ROLE_CM000
   },
   {
     title: "회계관리",
