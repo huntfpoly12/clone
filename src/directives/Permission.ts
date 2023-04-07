@@ -6,8 +6,9 @@ import {
 import { DirectiveBinding } from "vue";
 
 export default {
-  mounted(el: HTMLElement, binding: DirectiveBinding) {
+  async mounted(el: HTMLElement, binding: DirectiveBinding) {
     let token = sessionStorage.getItem("token");
+    let statusShowHidden: boolean = false; // default is hidden
     if (token) {
       const jwtObject = getJwtObject(token);
       const arrKey = binding.value;
@@ -19,7 +20,7 @@ export default {
       const filDataWork = wokrAll?.filter((item: any) =>
         arrKey?.includes(item.enumKey)
       );
-      let statusShowHidden: boolean = false; // default is hidden
+      const filDataAll = filDataAdmin.concat(filDataWork)
 
       /**
        * If the jwtObject has a readScreenRole, then set the statusShowHidden to true.
@@ -43,32 +44,22 @@ export default {
 
       /* This is a code that checks whether the user has a read or write role. */
       if (binding.arg == "read") {
-        filDataAdmin?.map((item: any) => {
-          checkReadRole(item); // Whether the company information management read role is held
-        });
-        filDataWork?.map((item: any) => {
-          checkReadRole(item); // Whether the basic settings read role is held
+        filDataAll?.map((item: any) => {
+          checkReadRole(item);
         });
       } else if (binding.arg == "write") {
-        filDataAdmin?.map((item: any) => {
-          checkWriteRole(item); // Whether the company information management write role is held
-        });
-        filDataWork?.map((item: any) => {
-          checkWriteRole(item); // Whether the basic settings write role is held
+        filDataAll?.map((item: any) => {
+          checkWriteRole(item);
         });
       } else {
-        filDataAdmin?.map((item: any) => {
-          checkReadRole(item); // Whether the company information management read role is held
-          checkWriteRole(item); // Whether the company information management write role is held
-        });
-        filDataWork?.map((item: any) => {
-          checkReadRole(item); // Whether the basic settings read role is held
-          checkWriteRole(item); // Whether the basic settings write role is held
+        filDataAll?.map((item: any) => {
+          checkReadRole(item);
+          checkWriteRole(item);
         });
       }
-      if (!statusShowHidden) {
-        el.style.display = "none";
-      }
+    }
+    if (!statusShowHidden) {
+      el.style.display = "none";
     }
   },
 };
