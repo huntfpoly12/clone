@@ -94,8 +94,6 @@ import {DeleteOutlined, DownloadOutlined, HistoryOutlined} from '@ant-design/ico
 import DxButton from 'devextreme-vue/button';
 import {DxItem} from 'devextreme-vue/select-box';
 import CreatePA830Popup from "./components/CreatePA830Popup.vue";
-import HistoryPopup from "@/components/HistoryPopup.vue";
-
 import dayjs from "dayjs";
 import {companyId, convertBirthDayKorea} from "@/helpers/commonFunction";
 import {computed, reactive, ref} from "vue";

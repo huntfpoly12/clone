@@ -293,27 +293,21 @@
 
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from 'vue'
-import UploadFile from "@/components/UploadFile.vue";
-import StandardForm from "@/components/common/StandardForm.vue";
-import DxField from "@/views/PA/PA8/components/DxField.vue";
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
 import {companyId} from "@/helpers/commonFunction";
 import {useStore} from "vuex";
-import {EmploymentStatus, FormCreatePA830, PaymentDesire} from "@/views/PA/PA8/const";
-import INITIAL_FORM from "@/views/PA/PA8/const"
+
 import DxSelectBox from 'devextreme-vue/select-box';
 import {useCompanyInfo} from "@/helpers/useCompanyInfo";
 import {cloneDeep, isEqual} from "lodash";
-import INITIAL_DATA from "@/views/PA/PA8/PA810/utils";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import INITIAL_FORM from '../utils';
+import { EmploymentStatus, PaymentDesire } from '../utils';
 
 
 export default defineComponent({
   components: {
-    UploadFile,
-    StandardForm,
-    DxField,
     DxSelectBox
   },
   props: {
@@ -396,7 +390,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-@import "@/views/PA/PA8/styles/index.scss";
 .gap-20 {
   gap: 20px;
 }

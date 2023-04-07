@@ -37,7 +37,7 @@
           <div class="wrap-search">
             <a-select
               v-model:value="selectedItems"
-              :options=" menuDatas.map((item) => ({
+              :options=" menuData.map((item) => ({
                   value: item.id,
                   label: item.id + ' | ' + item.name,
                 }))"
@@ -91,7 +91,7 @@
             :open-keys="openKeys"
             @openChange="onOpenChange"
           >
-            <div v-for="menuItem in menuItems" :key="menuItem.id" v-check-permission="menuItem.roles">
+            <div v-for="menuItem in menuItems" :key="menuItem.id" v-check-permission:read="menuItem.roles">
               <a-sub-menu :key="menuItem.id" >
                 <!-- list main menu lavel 0 -->
                 <template #icon v-if="menuItem.icon">
@@ -514,7 +514,6 @@ export default defineComponent({
     const selectedKeys = ref([]);
     const state = ref(false);
 
-    // let menuDatas = menuData;
     let menuItems = menuTree;
     const store = useStore();
     const router = useRouter()
@@ -525,10 +524,6 @@ export default defineComponent({
     const cachedTab = ref([]);
     const token = sessionStorage.getItem("token");
     const jwtObject = getJwtObject(token);
-    let menuDatas = menuData.filter(i => {
-      if(i.roles.length === 0) return true
-      return Boolean(i.roles.some(i => jwtObject?.hasReadScreenRole(i)))
-    })
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
@@ -577,9 +572,9 @@ export default defineComponent({
       state.value = true;
       filteredResult.value = [];
       inputSearchText.value = key;
-      if (menuDatas?.length > 0) {
+      if (menuData?.length > 0) {
 
-        menuDatas.forEach((val) => {
+        menuData.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
           if (searchId) {
             filteredResult.value.push(val);
@@ -599,12 +594,12 @@ export default defineComponent({
     const addMenuTab = (itemId) => {
       if (itemId != '') {
         let itemNew = [];
-        itemNew = menuDatas.find(item => item.id === itemId);
+        itemNew = menuData.find(item => item.id === itemId);
         if (itemNew.url == '#') {
           return
         }
 
-        activeTab.value = menuDatas.find(item => item.id === itemId);
+        activeTab.value = menuData.find(item => item.id === itemId);
         store.state.common.activeTab = itemNew
         store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
         //If the number of tabs exceeds 20, new tabs will not be added
@@ -689,7 +684,7 @@ export default defineComponent({
       focusInput,
       onOpenChange,
       menuItems,
-      menuDatas,
+      menuData,
       activeTab,
       menuTab,
       collapsed,
