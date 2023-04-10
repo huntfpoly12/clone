@@ -73,7 +73,7 @@
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
                                             <div style="margin-right: 10px">{{ textIDNo }} :</div>
-                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" />
+                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"/>
                                         </a-col>
                                     </a-row>
                                 </div>
@@ -385,6 +385,7 @@ export default {
         let dataImgStep3 = ref();
         let valueRadioWithdrawDay = ref("5일");
         const dataActiveRow: any = ref()
+        const isResidentId = ref(false);
         // =================================== GRAPQL ============================================
         const {
             mutate: mutateCreated,
@@ -470,9 +471,11 @@ export default {
         };
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
-                textIDNo.value = "법인등록번호";
+              textIDNo.value = "법인등록번호";
+              isResidentId.value = false
             } else if (val == 2) {
-                textIDNo.value = "주민등록번호";
+              textIDNo.value = "주민등록번호";
+              isResidentId.value = true
             }
         };
         const funcAddress = (data: any) => {
@@ -765,7 +768,7 @@ export default {
             optionSale.value = dataOption;
         });
         return {
-            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
