@@ -218,9 +218,7 @@ export default defineComponent({
             formState.addressDetail.zonecode = data.zonecode;
         }
         const createSale = (e: any) => {
-          var res = e.validationGroup.validate();
-            console.log(res);
-            
+            var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else if (formState.zipcode == '' || formState.roadAddress == '') {
