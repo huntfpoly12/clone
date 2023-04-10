@@ -1,9 +1,5 @@
 import { JwtObject, UserType, getJwtObject } from "@bankda/jangbuda-common";
-console.log(sessionStorage.getItem("token"),'sdsdfdsfsdfsdf');
-
 let token = sessionStorage.getItem("token");
-
-
 export default function useCheckPermission(roles: string[] | null) {
   // get JwtObject from token
   if (!token || !roles || roles.length === 0) {
