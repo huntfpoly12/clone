@@ -72,8 +72,8 @@
                                                 v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
-                                            <div style="margin-right: 10px">{{ textIDNo }} :</div>
-                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"/>
+                                            <div style="margin-right: 5px;width: 90px;">{{ textIDNo }} :</div>
+                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId" width="365px"/>
                                         </a-col>
                                     </a-row>
                                 </div>
