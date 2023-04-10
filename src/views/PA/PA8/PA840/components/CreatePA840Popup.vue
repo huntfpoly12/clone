@@ -261,7 +261,7 @@
 
         <!-- row 10 -->
         <a-col :span="col.left">
-          <DxField label="고용산재 보험구분" class="field-custom-2">
+          <DxField label="고용산재 휴직사유 코드" class="field-custom-2">
             <DxSelectBox
               :search-enabled="true"
               :data-source="INITIAL_FORM.EmploymentInjuryLeaveReasonCode"
