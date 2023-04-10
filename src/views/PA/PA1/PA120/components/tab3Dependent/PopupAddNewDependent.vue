@@ -218,7 +218,7 @@ export default defineComponent({
     onDoneAdd((res) => {
       notification('success', messageSave);
       emit('upDateData');
-      setModalVisible();
+      emit('closePopup', false);
     });
 
     onError((error) => {
