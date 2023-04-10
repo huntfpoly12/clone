@@ -39,7 +39,7 @@
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
                             :label-col="labelCol">
-                            <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="false"/>
+                            <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
                             <biz-number-text-box v-model:valueInput="formState.bizNumber" width="150px" />
@@ -171,6 +171,7 @@ export default defineComponent({
         const dataQuery = ref();
         let trigger = ref<boolean>(false);
         let triggerCheckPer = ref<boolean>(false);
+        const isResidentId =  ref<boolean>(false);
         const dataQueryCheckPer = ref({});
         let canChangeCompanyName = ref<boolean>(false);
         const visible = ref<boolean>(false);
@@ -313,6 +314,16 @@ export default defineComponent({
                 comfirmClosePopup(() => emit("closePopup", false))
             }
         }
+        watch(
+          () => formState.bizType,
+          (newVal) => {
+            if (newVal == 1) {
+              isResidentId.value = true
+            } else {
+              isResidentId.value = false
+            }
+          },{deep:true}
+        )
         // watch result resCheckPerEdit
         watch(() => formState.status, (value) => {
             if (value == 1) {
@@ -336,7 +347,8 @@ export default defineComponent({
             canChangeCompanyName,
             funcAddress,
             updateSale,
-            setModalVisible
+            setModalVisible,
+            isResidentId
         }
     }
 })
