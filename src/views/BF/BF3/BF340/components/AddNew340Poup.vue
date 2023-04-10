@@ -39,7 +39,7 @@
                             </a-form-item>
                             <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
                                 :label-col="labelCol">
-                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="false"/>
+                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                             </a-form-item>
                             <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
                                 <biz-number-text-box v-model:valueInput="formState.bizNumber" width="150px" />
@@ -169,6 +169,7 @@ export default defineComponent({
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
+        const isResidentId =  ref<boolean>(false);
         const formState = reactive<any>({ ...initialFormState });
         const receiptOrNot = ref<boolean>(false);
         // watch event modal popup
@@ -180,6 +181,17 @@ export default defineComponent({
                 }
             }
         );
+
+        watch(
+          () => formState.bizType,
+          (newVal) => {
+            if (newVal == 1) {
+              isResidentId.value = true
+            } else {
+              isResidentId.value = false
+            }
+          },{deep:true}
+        )
         // create saler
         const {
             mutate: createSaleMutate,
@@ -240,7 +252,7 @@ export default defineComponent({
         });
         return {
             labelCol, wrapperCol, formState, visible, confirm, receiptOrNot, loading,
-            createSaleMutate, funcAddress, setModalVisible, createSale,
+            createSaleMutate, funcAddress, setModalVisible, createSale,isResidentId
         }
     }
 })
