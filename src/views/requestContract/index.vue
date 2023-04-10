@@ -293,8 +293,10 @@
                             <label>4. 기타</label>
                             <div class="form-item">
                                 <label>영업관리담당 :</label>
-                                <select-box-common :arrSelect="optionSale" :required="true"
-                                    v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
+                                <list-sales-dropdown :required="true"
+                                        v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
+                                <!-- <select-box-common :arrSelect="optionSale" :required="true"
+                                    v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" /> -->
                             </div>
                             <div class="form-item">
                                 <label>전달사항 :</label>
@@ -365,7 +367,7 @@ export default {
         const disableFormVal = ref(false);
         const disableFormVal2 = ref(false);
         const checkAll = ref(false);
-        const optionSale = ref();
+        // const optionSale = ref();
         const statusMailValidate = ref(false);
         const contractCreacted: any = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
@@ -398,12 +400,12 @@ export default {
         onError((res) => {
             notification("error", res.message);
         });
-        const { result: resultConfig } = useQuery(
-            queries.getSaleRequestContact,
-            {}, () => ({
-                fetchPolicy: "no-cache",
-            })
-        );
+        // const { result: resultConfig } = useQuery(
+        //     queries.getSaleRequestContact,
+        //     {}, () => ({
+        //         fetchPolicy: "no-cache",
+        //     })
+        // );
         // =================================== FUNCTION ============================================
         const disableForm1 = () => {
             if (dataInputCallApi.dossier == 2) disableFormVal2.value = true;
@@ -754,18 +756,20 @@ export default {
                 }
             }
         );
-        watch(resultConfig, (value) => {
-            let dataOption: any = [];
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
-                dataOption.push({
-                    label: e.name,
-                    value: e.id,
-                });
-            });
-            optionSale.value = dataOption;
-        });
+        // watch(resultConfig, (value) => {
+        //     let dataOption: any = [];
+        //     value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+        //         dataOption.push({
+        //             label: e.name,
+        //             value: e.id,
+        //         });
+        //     });
+        //     optionSale.value = dataOption;
+        // });
         return {
-            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
+            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, 
+            // optionSale, 
+            disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
