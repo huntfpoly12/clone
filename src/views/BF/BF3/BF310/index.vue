@@ -76,7 +76,7 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
                     </template>
-                    <DxColumn data-field="compactSalesRepresentative.code" caption="사업자코드" css-class="cell-center" />
+                    <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" />
                     <DxColumn data-field="companyName" caption="상호" />
                     <DxColumn data-field="companyAddress" caption="주소" />
                     <DxColumn data-field="presidentName" caption="대표자" />
