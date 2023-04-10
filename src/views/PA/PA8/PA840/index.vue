@@ -93,6 +93,7 @@
 <!--        <DxScrolling column-rendering-mode="virtual"/>-->
       </DxDataGrid>
     </a-spin>
+    
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
                   typeHistory="pa-810"/>
     <CreatePA840Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" />
@@ -114,7 +115,6 @@ import {DeleteOutlined, DownloadOutlined, HistoryOutlined} from '@ant-design/ico
 import DxButton from 'devextreme-vue/button';
 import {DxItem} from 'devextreme-vue/select-box';
 import CreatePA840Popup from "./components/CreatePA840Popup.vue";
-import HistoryPopup from "@/components/HistoryPopup.vue";
 
 import dayjs from "dayjs";
 import {companyId, convertBirthDayKorea} from "../../../../helpers/commonFunction";
@@ -133,7 +133,7 @@ const data = [
   {"companyId": 2, "type": 1, "imputedYear": 2023, "workId": 58, "employeeType": 10, "employeeId": 99831231, "name": "ABESHINZO", "nationalPensionReport": true, "healthInsuranceReport": true, "employeementInsuranceReport": true, "industrialAccidentInsuranceReport": true, "workingStatus": 1, "registeredAt": 1679043291582, "acceptedAt": null, "completedAt": null, "accedpedNumber": null, "memo": null, "createdAt": 1679043291589, "createdBy": "C23010402", "updatedAt": 1679043291589, "updatedBy": "C23010402", "ip": "1.54.101.150", "active": true, "includeDependents": true, "fileStorageId": 256, "fileStorageId1": 256, "fileStorageId2": 256,"residentId": "123123-2132131", "dependentsEvidenceFile": {"url": "https://jangbuda-frs.bankda.com/B93xLAjFmhN9lq3JxaA3hyrOjXAoBP.png", "__typename": "FileStorage"}, "__typename": "MajorInsuranceCompanyEmployeeAcquisition"}
 ]
 const store = useStore();
-const {per_page, move_column, colomn_resize} = store.state.settings;
+const { move_column, colomn_resize} = store.state.settings;
 const globalYear = computed(() => store.getters['settings/currentYear'])
 const dataSource = ref(data)
 const isOpenModalCreate = ref(false);

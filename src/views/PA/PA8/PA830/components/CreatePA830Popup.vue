@@ -172,25 +172,18 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive, ref, watch} from 'vue'
-import UploadFile from "@/components/UploadFile.vue";
-import StandardForm from "@/components/common/StandardForm.vue";
-import DxField from "@/views/PA/PA8/components/DxField.vue";
-import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
-import {companyId} from "@/helpers/commonFunction";
-import {useStore} from "vuex";
-import INITIAL_FORM from "@/views/PA/PA8/const";
-import {useCompanyInfo} from "@/helpers/useCompanyInfo";
-import {cloneDeep, isEqual} from "lodash";
+import { companyId } from "@/helpers/commonFunction";
+import { useCompanyInfo } from "@/helpers/useCompanyInfo";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import { useQuery } from "@vue/apollo-composable";
+import { cloneDeep, isEqual } from "lodash";
+import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { useStore } from "vuex";
+import { INITIAL_FORM_PA830 } from '../utils';
 
 export default defineComponent({
-  components: {
-    UploadFile,
-    StandardForm,
-    DxField
-  },
+  components: {},
   props: {
     isOpenModalCreate: {
       type: Boolean,
@@ -203,7 +196,7 @@ export default defineComponent({
     const globalYear = computed(() => store.getters['settings/currentYear']);
     const employeeWages = ref();
     const employeeWageSelected = ref();
-    const formData = ref({...INITIAL_FORM.INITIAL_FORM_PA830})
+    const formData = ref({...INITIAL_FORM_PA830})
     const variables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
@@ -218,11 +211,11 @@ export default defineComponent({
       }
     })
     const isFormChange = computed(() => {
-      return !isEqual(cloneDeep(INITIAL_FORM.INITIAL_FORM_PA830), cloneDeep(formData.value))
+      return !isEqual(cloneDeep(INITIAL_FORM_PA830), cloneDeep(formData.value))
         || Boolean(employeeWageSelected.value)
     });
     const resetForm = () => {
-      formData.value = cloneDeep(INITIAL_FORM.INITIAL_FORM_PA830)
+      formData.value = cloneDeep(INITIAL_FORM_PA830)
       employeeWageSelected.value = null
     };
 
@@ -257,7 +250,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-@import "@/views/PA/PA8/styles/index.scss";
 .gap-20 {
   gap: 20px;
 }

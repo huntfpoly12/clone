@@ -74,8 +74,6 @@ import {DownloadOutlined} from '@ant-design/icons-vue';
 import DxButton from 'devextreme-vue/button';
 import {DxItem} from 'devextreme-vue/select-box';
 import CreatePA840Popup from "./components/CreatePA870Popup.vue";
-import HistoryPopup from "@/components/HistoryPopup.vue";
-
 import dayjs from "dayjs";
 import {computed, reactive, ref} from "vue";
 import {useStore} from "vuex";

@@ -86,8 +86,6 @@
 </template>
 
 <script lang="ts">
-import HistoryPopup from "@/components/HistoryPopup.vue";
-import imgUpload from "@/components/UploadImage.vue";
 import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
 import {companyId, convertBirthDayKorea} from '@/helpers/commonFunction';
@@ -122,7 +120,6 @@ export default defineComponent({
   methods: {convertBirthDayKorea},
   components: {
     // ViewPA810Popup,
-    HistoryPopup,
     DxDataGrid,
     DxColumn,
     DxButton,
@@ -134,7 +131,6 @@ export default defineComponent({
     DxItem,
     DownloadOutlined,
     ZoomInOutlined,
-    imgUpload,
     DxPaging,
     DxSearchPanel,
     DxExport

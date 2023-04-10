@@ -561,45 +561,37 @@
 </template>
 
 <script lang="ts">
-import UploadFile from "@/components/UploadFile.vue";
-import CheckboxBasic from "@/components/common/CheckboxBasic.vue";
-import DateTimeBox from "@/components/common/DateTimeBox.vue";
-import EmploySelect from "@/components/common/EmploySelect.vue";
-import NumberBox from "@/components/common/NumberBox.vue";
-import StandardForm from "@/components/common/StandardForm.vue";
 import mutations from "@/graphql/mutations/PA/PA8/PA810/index";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
 import getCompany from "@/graphql/queries/common/getCompany";
-import {companyId} from "@/helpers/commonFunction";
-import INITIAL_DATA, {Company, DependentsType} from "./../utils";
+import { companyId } from "@/helpers/commonFunction";
+import filters from "@/helpers/filters";
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import notification from "@/utils/notification";
 import {
-  DeleteOutlined,
-  HistoryOutlined,
-  SearchOutlined,
+DeleteOutlined,
+HistoryOutlined,
+SearchOutlined,
 } from "@ant-design/icons-vue";
-import {DependantsRelation, enum2Entries} from "@bankda/jangbuda-common";
-import {useMutation, useQuery} from "@vue/apollo-composable";
+import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
+import { useMutation, useQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import DxButton from "devextreme-vue/button";
-import {DxColumn, DxDataGrid, DxScrolling} from "devextreme-vue/data-grid";
-import {DxFileUploader} from "devextreme-vue/file-uploader";
+import { DxColumn, DxScrolling } from "devextreme-vue/data-grid";
+import { DxFileUploader } from "devextreme-vue/file-uploader";
+import { cloneDeep, isEqual } from "lodash";
 import {
-  computed,
-  defineComponent,
-  reactive,
-  ref,
-  watch,
-  watchEffect,
+computed,
+defineComponent,
+reactive,
+ref,
+watch
 } from "vue";
-import {useStore} from "vuex";
+import { useStore } from "vuex";
 import URL_CONST from "./../const";
+import INITIAL_DATA, { Company } from "./../utils";
 import SearchCodeButton from "./SearchCodeButton.vue";
 import TableEmployeeWage from "./TableEmployeeWage.vue";
-import notification from "@/utils/notification";
-import DxField from "./DxField.vue";
-import filters from "@/helpers/filters";
-import {clone, cloneDeep, isEqual} from "lodash";
-import comfirmClosePopup from "@/utils/comfirmClosePopup";
 
 let dpRelation = enum2Entries(DependantsRelation);
 const getCodeOrLabel = (id: number) => {
@@ -624,12 +616,6 @@ const getQuery = (type: EmployeeWageType) => {
 };
 export default defineComponent({
   components: {
-    EmploySelect,
-    NumberBox,
-    StandardForm,
-    CheckboxBasic,
-    DateTimeBox,
-    DxDataGrid,
     DxColumn,
     DxButton,
     DxScrolling,
@@ -637,10 +623,8 @@ export default defineComponent({
     DeleteOutlined,
     SearchOutlined,
     DxFileUploader,
-    UploadFile,
     TableEmployeeWage,
     SearchCodeButton,
-    DxField,
   },
   props: {
     isOpenModalCreate: {
@@ -909,8 +893,6 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-@import "../styles/index.scss";
-
 :deep(.label-custom) {
   .dx-field-label {
     width: 250px !important;
