@@ -21,7 +21,7 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">영업자 :</label>
-                            <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" />
+                            <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
                         </div>
                     </a-col>
 
@@ -49,6 +49,7 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :onRowPrepared="onCellPrepared"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
@@ -83,7 +84,7 @@
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="신청서비스" cell-template="acc-service" />
                     <template #acc-service="{ data }">
-                        <span v-if="data.data.simpleAccountingInfos">회계
+                        <span v-if="data.data.simpleAccountingInfos">
                             <a-popover>
                                 <template #content>
                                     <div v-for="item in data.data.simpleAccountingInfos" :key="item">
@@ -91,20 +92,21 @@
                                         (item.startYearMonth).toString().slice(4, 6) }}</div>
                                     </div>
                                 </template>
-                                <a-tag v-if="data.data.simpleAccountingInfos">{{
+                                <a-tag>회계</a-tag>
+                            </a-popover>
+                            <a-tag style="border-radius: 50%;" v-if="data.data.simpleAccountingInfos">{{
                                     data.data.simpleAccountingInfos.length
                                 }}
                                 </a-tag>
-                            </a-popover>
                         </span>
-                        <span v-if="data.data.simpleWithholdingInfo">원천
+                        <span v-if="data.data.simpleWithholdingInfo">
                             <a-popover>
                                 <template #content>
                                     <div>{{ data.data.simpleWithholdingInfo.name ? data.data.simpleWithholdingInfo.name + ':' : ''}} {{
                                                                         (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(0, 4) + '-' +
                                     (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(4, 6) }}</div>
                                 </template>
-                                <a-tag>1</a-tag>
+                                <a-tag color="black">원천</a-tag>
                             </a-popover>
                         </span>
                     </template>
@@ -244,6 +246,12 @@ export default defineComponent({
             makeDataClean(originData)
             trigger.value = true;
         }
+        const onCellPrepared = (e: any) => {
+            if (e.data) {
+                e.cells[3].cellElement ? e.cells[3].cellElement.style.color = 'blue' : '';
+                e.cells[5].cellElement ? e.cells[5].cellElement.style.color = 'blue' : '';
+            }
+        }
         return {
             loading,
             move_column,
@@ -263,6 +271,7 @@ export default defineComponent({
             onChangePage,
             dayjs,
             trigger,
+            onCellPrepared,
         }
     },
 

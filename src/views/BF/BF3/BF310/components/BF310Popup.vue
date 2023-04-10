@@ -108,6 +108,7 @@
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
                                             <id-number-text-box :required="true"
+                                                :isResidentId="isResidentId"
                                                 v-model:valueInput="formState.content.company.residentId" width="220"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="residentId" />
                                         </a-form-item>
@@ -428,6 +429,7 @@ export default defineComponent({
         var formState = ref<any>({ ...initialFormState });
         const dataSource = ref([]);
         const dataSourceOld = ref([]);
+        const isResidentId = ref(false);
         // event close popup
         const setModalVisible = () => {
             if (
@@ -527,8 +529,10 @@ export default defineComponent({
         // A function that returns a string based on the value of bizType.
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
+                isResidentId.value = true
                 return "주민등록번호";
             } else {
+                isResidentId.value = false
                 return "법인등록번호";
             }
         };
@@ -726,6 +730,7 @@ export default defineComponent({
             onInitRow,
             focusedRowKey,
             onFocusedRowChanged,
+            isResidentId,
         };
     },
 });
