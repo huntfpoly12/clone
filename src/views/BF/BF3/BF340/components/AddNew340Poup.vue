@@ -39,7 +39,7 @@
                             </a-form-item>
                             <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
                                 :label-col="labelCol">
-                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" />
+                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="false"/>
                             </a-form-item>
                             <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
                                 <biz-number-text-box v-model:valueInput="formState.bizNumber" width="150px" />
@@ -209,7 +209,7 @@ export default defineComponent({
             formState.addressDetail.bcode = data.bcode;
             formState.addressDetail.bname = data.bname;
             formState.addressDetail.buildingCode = data.buildingCode;
-            formState.addressDetail.buildingName = data.buildingName;
+            formState.addressDetail.buildingName = data.buildingName ? data.buildingName : '';
             formState.addressDetail.roadname = data.roadname;
             formState.addressDetail.roadnameCode = data.roadnameCode;
             formState.addressDetail.sido = data.sido;
@@ -218,7 +218,9 @@ export default defineComponent({
             formState.addressDetail.zonecode = data.zonecode;
         }
         const createSale = (e: any) => {
-            var res = e.validationGroup.validate();
+          var res = e.validationGroup.validate();
+            console.log(res);
+            
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else if (formState.zipcode == '' || formState.roadAddress == '') {
@@ -230,6 +232,7 @@ export default defineComponent({
                         ...formState
                     }
                 }
+                dataNew = makeDataClean(dataNew)
                 createSaleMutate(dataNew)
             }
         }
