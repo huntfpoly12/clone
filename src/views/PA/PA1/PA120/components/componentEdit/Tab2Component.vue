@@ -498,7 +498,7 @@ export default defineComponent({
 
     watch(resCalcIncomeWageTax, (value) => {
       if (value) {
-        let itemValue11 = value.calculateIncomeWageTax * initFormTab2PA120.value.incomeTaxMagnification / 100;
+        let itemValue11 = Math.floor(value.calculateIncomeWageTax * initFormTab2PA120.value.incomeTaxMagnification / 100);
         let itemValue12 = itemValue11 ? Math.floor(+itemValue11 / 100) * 10 : 0;
         dataConfigDeduction.value?.map((item: any) => {
           if (item.itemCode == 1011) {
