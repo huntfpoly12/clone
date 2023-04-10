@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -21,6 +21,7 @@
           actionChangeComponent: {{ actionChangeComponent }} ---tab---{{ store.state.common.setTabActivePA520 }}<br> 
           addRowBtOnclick: {{ addBtOnclick  }}<br>
           isChangeYearPA520 : {{ store.state.common.isChangeYearPA520 }} <br>
+          isClickBtnSavePA520: {{ store.state.common.isClickBtnSavePA520 }} <br>
         </a-col>
         <a-col :span="6">
           modalChangeValueAdd : {{  modalChangeValueAdd }}  <br>
@@ -31,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
+  </a-row>
   <div id="pa-520" class="page-content">
   
       <a-row>
@@ -299,11 +300,15 @@ export default defineComponent({
       refetch: refetchData,
       result,
       loading,
+      onError
     } = useQuery(queries.getEmployeeWageDailies, originData, () => ({
       enabled: trigger.value,
       fetchPolicy: "no-cache",
     }));
-
+    onError((e) => {
+      store.commit('settings/setCurrentYear')
+      notification("error", e.message);
+    });
     const {
       mutate: actionDelete,
       onError: errorDelete,
@@ -361,17 +366,24 @@ export default defineComponent({
 
 
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
-        if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value) {
+        if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value && !isClickBtnSavePA520.value) {
+          alert(' nếu sau confirm mà trươc đấy click thêm row thì thêm row mới ')
           onAddBtClick()
+          store.commit('common/setAddBtOnclickPA520', false);
+          store.dispatch('common/resetStatusModal')
         }
 
         // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
         if (isClickRow.value && !isClickBtnSavePA520.value) {
+          alert(' nếu trước đấy chuyển row thì focus vào row mới vừa chuyển ')
           setRowEdit(idRowCurrentClick.value)
+          store.dispatch('common/resetStatusModal')
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
         if (isClickBtnSavePA520.value) {
-         setRowEdit(parseInt(idRowSaveDone.value))
+          alert('nếu chỉ click Save btn -> focus vào row vừa tạo')
+          setRowEdit(parseInt(idRowSaveDone.value))
+          store.dispatch('common/resetStatusModal')
         }
 
         // for the case of changing the year and having to focus on the first row

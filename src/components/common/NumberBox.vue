@@ -5,6 +5,7 @@
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
+      <DxRangeRule v-if="required" :min="min" :message="messageMin"/>
     </DxValidator>
   </DxNumberBox>
 </template>
@@ -12,7 +13,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxNumberBox from "devextreme-vue/number-box";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule,DxRangeRule } from "devextreme-vue/validator";
 export default defineComponent({
   props: {
     width: String,
@@ -56,11 +57,13 @@ export default defineComponent({
     DxNumberBox,
     DxValidator,
     DxRequiredRule,
+    DxRangeRule
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
+    const messageMin = ref(messages.getCommonMessage('103').message);
     if (props.messRequired != "") {
       messageRequired.value = props.messRequired;
     }
@@ -99,7 +102,7 @@ export default defineComponent({
     return {
       updateValue,onChange,
       value,
-      messageRequired,
+      messageRequired,messageMin,
       formatValue:(value:any)=> {
         return value < 10 ? `0${value}` : value;
       },
