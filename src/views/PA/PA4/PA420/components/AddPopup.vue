@@ -14,7 +14,6 @@
         v-model:valueRadioCheck="retirementIncome1"
         layoutCustom="horizontal"
       />
-      {{ dataForm.input.retirementType }}
       <radio-group
         class="radio-group two"
         :arrayValue="option2"
