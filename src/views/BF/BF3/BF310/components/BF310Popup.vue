@@ -16,7 +16,7 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.createdAt) ? $filters.formatDate(formState.createdAt) : ''"
+                                                :valueInput="dayjs(formState.createdAt).format('YYYY-MM-DD')"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                     </a-col>

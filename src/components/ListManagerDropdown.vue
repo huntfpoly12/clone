@@ -8,7 +8,7 @@
       <template #field="{ data }">
         <!-- :name="nameInput"> -->
         <div v-if="data" class="text-overflow" style="padding: 4px;display: flex; align-items: center;">
-          <span class="mr-3" style="min-width: 15px;">{{ data?.id }}</span>
+          <span class="mr-3" style="min-width: 15px;">{{ data?.username }}</span>
           <div>
             {{ data.name }}
             <DxTextBox style="display: none;" />
@@ -21,7 +21,7 @@
       </template>
       <template #item="{ data }">
         <div style="display: flex; align-items: center;">
-          <span class="mr-3" style="min-width: 15px; text-align: center;">{{ data?.id }}</span>
+          <span class="mr-3" style="min-width: 15px; text-align: center;">{{ data?.username }}</span>
           <div>
             {{ data?.name }}
             <DxTextBox style="display: none;" />
