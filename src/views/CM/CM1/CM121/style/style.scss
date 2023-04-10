@@ -1,0 +1,80 @@
+.cm-121 {
+    p {
+      margin: 0;
+    }
+    &_row {
+        padding: 10px;
+        height: calc(100vh - 130px);
+    }
+    &_main {
+        padding-right: 10px;
+        height: 100%;
+        &-content {
+            height: 100%;
+            padding: 10px;
+            border: 1px solid #d7d7d7;
+        }
+    }
+    &_detail {
+        height: 100%;
+        padding: 10px;
+        border: 1px solid #d7d7d7;
+        &-infomation {
+            background-color: #c6d9f1;
+            font-size: 14px;
+            padding: 3px 0 3px 10px;
+            color: black;
+            line-height: 28px;
+            font-weight: bold;
+            margin-bottom: 15px !important;
+            &-top {
+            }
+            &-bottom {
+                margin-top: 30px;
+            }
+        }
+        &-btn {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+    }
+    &_disable {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    #gridContainer {
+      max-height: calc(100vh - 170px);
+    }
+    .style-note-cm121 {
+      width: 145px;
+      word-wrap: break-word;
+    }
+}
+:deep .form-item-top {
+  label {
+      width: 80px;
+  }
+  &-switch {
+    .ant-switch {
+      background-color: #1890ff;
+    }
+  }
+}
+:deep .form-item-bottom {
+  label {
+      width: 180px;
+  }
+  &-switch {
+    .ant-switch {
+      background-color: #d9534f;
+  }
+    .ant-switch-checked {
+      background-color: #5cb85c;
+    }
+  }
+}
+
+:deep .dx-command-drag {
+  cursor: move !important;
+}

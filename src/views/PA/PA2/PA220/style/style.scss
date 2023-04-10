@@ -15,10 +15,10 @@
 
     .selectRatio {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
     }
 
-    ::v-deep .custom-mail-group {
+    :deep .custom-mail-group {
         .dx-button-content {
             padding: 3px;
         }
@@ -58,20 +58,22 @@
                 padding-right: 5px;
             }
         }
-
-        .title-body-right {
-            float: right;
-        }
+    }
+    .created-date {
+        padding-top: 15px;
+        float: right;
+        display: flex;
+        align-items: center;
     }
 
 
-    ::v-deep .ant-form-item-label>label {
+    :deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
         color: red;
     }
 
-    ::v-deep .custom-layout {
+    :deep .custom-layout {
         padding: 10px 10px 10px 0;
 
         >div {
@@ -102,26 +104,25 @@
             text-align: center;
         }
     }
+    :deep .dx-radiobutton-icon {
+        padding-top: 2px;
+    }
 
-    .lable-item {
-        font-size: 16px;
-      }
-
-    ::v-deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
+    :deep .selectRatio .dx-item:nth-child(1) .dx-item-content {
         background: white;
         padding: 2px 15px;
         border-radius: 5px;
         color: black;
     }
 
-    ::v-deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
+    .status-red, :deep .selectRatio .dx-item:nth-child(2) .dx-item-content {
         background: rgb(194, 56, 56);
         padding: 2px 15px;
         border-radius: 5px;
         color: white;
     }
 
-    ::v-deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
+    .status-blue, :deep .selectRatio .dx-item:nth-child(3) .dx-item-content {
         background: rgb(76, 134, 65);
         padding: 2px 15px;
         border-radius: 5px;

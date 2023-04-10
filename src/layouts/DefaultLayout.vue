@@ -5,6 +5,7 @@
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
       <div class="user-info" v-if="username">
+        <FacilityBizTypeHeader />
         <year-header />
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
@@ -36,7 +37,7 @@
           <div class="wrap-search">
             <a-select
               v-model:value="selectedItems"
-              :options=" menuDatas.map((item) => ({
+              :options=" menuData.map((item) => ({
                   value: item.id,
                   label: item.id + ' | ' + item.name,
                 }))"
@@ -72,7 +73,7 @@
             <!-- hide or show scroll arrows right when page width is exceeded -->
             <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight" />
           </nav>
-          
+
         </div>
       </div>
       <a-layout>
@@ -90,64 +91,70 @@
             :open-keys="openKeys"
             @openChange="onOpenChange"
           >
-            <!-- list main menu lavel 0 -->
-            <a-sub-menu v-for="menuItem in menuItems" :key="menuItem.id">
-              <template #icon>
-                <div id="icon-menu">
-                  <i :class="iconClass(menuItem.id)" class="dx-icon"></i>
-                </div>
-              </template>
-              <template #title>{{ menuItem.title }}</template>
-              <!-- list sub menu level 1 -->
-              <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
-                <a-menu-item v-if="!itemLevel1.hasOwnProperty('subMenus')"
-                        :class="[
-                        itemLevel1.id === activeTab.id
-                          ? 'ant-menu-item-selected-active'
-                        : '',
-                        itemLevel1.url == '#' ? 'not-done' : ''
-                          ]
-                        "
-                        @click.enter="addMenuTab(itemLevel1.id)"
-                      > 
-                      <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
-                </a-menu-item>
-                <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
-                  <!-- list sub menu level 2 if have subMenus --> 
-                  <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
-                    <a-menu-item
-                        v-if="!itemLevel2.hasOwnProperty('subMenus')"
-                        :class="[
-                        itemLevel2.id === activeTab.id
-                          ? 'ant-menu-item-selected-active'
-                        : '',
-                        itemLevel2.url == '#' ? 'not-done' : ''
-                          ]
-                        "
-                        @click.enter="addMenuTab(itemLevel2.id)"
-                      > 
-                      <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
-                    </a-menu-item>
-                    <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id"> 
-                      <a-menu-item 
-                        v-for="subMenu1 in itemLevel2.subMenus"
-                        :key="subMenu1.id"
-                        :class="[
-                          subMenu1.id === activeTab.id
+            <div v-for="menuItem in menuItems" :key="menuItem.id" v-check-permission:read="menuItem.roles">
+              <a-sub-menu :key="menuItem.id" >
+                <!-- list main menu lavel 0 -->
+                <template #icon v-if="menuItem.icon">
+                  <div id="icon-menu">
+                    <i :class="menuItem.icon" class="dx-icon"></i>
+                  </div>
+                </template>
+                <template #title>{{ menuItem.title }}</template>
+                <!-- list sub menu level 1 -->
+                <template v-for="itemLevel1 in menuItem.subMenus"  :key="'sub-level-1-'+itemLevel1.id">
+                    <div  v-check-permission:read="itemLevel1?.roles" class="menuuuuu">
+                      <a-menu-item v-if="!itemLevel1?.subMenus"
+                                   :class="[
+                          itemLevel1.id === activeTab.id
                             ? 'ant-menu-item-selected-active'
                           : '',
-                          subMenu1.url == '#' ? 'not-done' : ''
+                          itemLevel1.url == '#' ? 'not-done' : ''
                             ]
                           "
-                        @click.enter="addMenuTab(subMenu1.id)"
+                                   @click.enter="addMenuTab(itemLevel1.id)"
                       >
-                        <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
+                        <router-link :to="itemLevel1.url" >{{ itemLevel1.title }}</router-link>
                       </a-menu-item>
-                    </a-sub-menu>
+                      <a-sub-menu v-else  :title="itemLevel1.title" :key="itemLevel1.id">
+                        <!-- list sub menu level 2 if have subMenus -->
+                        <template v-for="itemLevel2 in itemLevel1.subMenus"  :key="'sub-'+itemLevel2.id">
+                          <div v-check-permission:read="itemLevel2?.roles">
+                            <a-menu-item
+                              v-if="!itemLevel2.hasOwnProperty('subMenus')"
+                              :class="[
+                            itemLevel2.id === activeTab.id
+                              ? 'ant-menu-item-selected-active'
+                            : '',
+                            itemLevel2.url == '#' ? 'not-done' : ''
+                              ]
+                            "
+                              @click.enter="addMenuTab(itemLevel2.id)"
+                            >
+                              <router-link :to="itemLevel2.url" >{{ itemLevel2.title }}</router-link>
+                            </a-menu-item>
+                            <a-sub-menu v-else  :title="itemLevel2.title" :key="itemLevel2.id">
+                              <a-menu-item
+                                v-for="subMenu1 in itemLevel2.subMenus"
+                                :key="subMenu1.id"
+                                :class="[
+                            subMenu1.id === activeTab.id
+                              ? 'ant-menu-item-selected-active'
+                            : '',
+                            subMenu1.url == '#' ? 'not-done' : ''
+                              ]
+                            "
+                                @click.enter="addMenuTab(subMenu1.id)"
+                              >
+                                <router-link :to="subMenu1.url" >{{ subMenu1.title }} {{ subMenu1.id }} </router-link>
+                              </a-menu-item>
+                            </a-sub-menu>
+                          </div>
+                        </template>
+                      </a-sub-menu>
+                    </div>
                   </template>
-                </a-sub-menu>
-              </template>
-            </a-sub-menu>
+              </a-sub-menu>
+            </div>
           </a-menu>
         </a-layout-sider>
         <a-layout>
@@ -156,7 +163,7 @@
           >
             <div class="main-content">
               <template v-if="activeTab">
-                <keep-alive :exclude="cachedTab">   
+                <keep-alive :exclude="cachedTab">
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -172,12 +179,14 @@
     </a-layout-content>
   </a-layout>
 </template>
-<script >
-import { defineComponent, ref, watch } from "vue";
+<script>
+import { defineComponent, ref, watch, computed, onMounted } from "vue";
 import {  useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
+import { DownOutlined } from '@ant-design/icons-vue';
+
 import {
   BF310,
   BF320,
@@ -191,6 +200,7 @@ import {
   BF630,
   BF220,
   CM110,
+  CM121,
   CM130,
   PA110,
   PA120,
@@ -201,7 +211,7 @@ import {
   PA420,
   PA410,
   PA610,
-  PA620, 
+  PA620,
   PA630,
   PA530,
   PA520,
@@ -210,7 +220,27 @@ import {
   PA730,
   PA720,
   PA810,
+  PA820,
+  PA830,
+  PA840,
+  PA860,
+  PA870,
+  PA880,
+  AC110,
+  AC120,
+  AC130,
+  AC510,
+  AC530,
+  AC540,
+  AC550,
+  AC560,
+  AC570,
+  AC590,
+  AC580,
   AC610,
+  AC620,
+  AC630,
+  AC520,
   Test,
   Example,
 } from "./screenComponents";
@@ -224,9 +254,12 @@ import {
   SearchOutlined,
   SaveOutlined,
   CloseCircleFilled,
-  CaretLeftOutlined, 
+  CaretLeftOutlined,
   CaretRightOutlined
 } from "@ant-design/icons-vue";
+import {AdminScreenRole, getJwtObject, ScreenRole} from '@bankda/jangbuda-common';
+import { companyId } from "@/helpers/commonFunction";
+import dayjs from "dayjs";;
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -238,6 +271,7 @@ export default defineComponent({
     };
   },
   components: {
+    DownOutlined,
     BF310,
     BF320,
     BF330,
@@ -250,6 +284,7 @@ export default defineComponent({
     BF630,
     BF220,
     CM110,
+    CM121,
     CM130,
     PA110,
     PA120,
@@ -269,7 +304,27 @@ export default defineComponent({
     PA720,
     PA730,
     PA810,
+    PA820,
+    PA830,
+    PA840,
+    PA860,
+    PA870,
+    PA880,
+    AC110,
+    AC120,
+    AC130,
+    AC510,
+    AC530,
+    AC540,
+    AC550,
+    AC560,
+    AC570,
+    AC590,
+    AC580,
     AC610,
+    AC620,
+    AC630,
+    AC520,
     Test,
     Example,
     MenuFoldOutlined,
@@ -280,13 +335,13 @@ export default defineComponent({
     SearchOutlined,
     SaveOutlined,
     CloseCircleFilled,
-    CaretLeftOutlined, 
+    CaretLeftOutlined,
     CaretRightOutlined
   },
   created() {
     menuData.forEach((item) => {
       if (this.$route.fullPath.includes(item.id)) {
-        // clear vuex value cachedTab 
+        // clear vuex value cachedTab
         this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
         this.activeTab = item;
         this.$store.state.common.activeTab = item
@@ -310,7 +365,7 @@ export default defineComponent({
   },
   watch: {
      activeTab: {
-      handler(newValue, oldVal) {   
+      handler(newValue, oldVal) {
          if (newValue) {
           if (newValue.id.includes("bf-1")) {
             this.openKeys = ["bf-000", "bf-100"];
@@ -331,7 +386,7 @@ export default defineComponent({
             this.openKeys = ["bf-000", "bf-600"];
           }
           if (newValue.id.includes("cm-1")) {
-            this.openKeys = ["cm-000", "cm-100"];
+            this.openKeys = ["cm-100", "cm-120"];
           }
           if (newValue.id.includes("ac-1")) {
             this.openKeys = ["ac-000", "ac-100"];
@@ -369,6 +424,9 @@ export default defineComponent({
           if (newValue.id.includes("pa-7")) {
             this.openKeys = ["pa-000", "pa-700"];
           }
+          if (newValue.id.includes("pa-8")) {
+            this.openKeys = ["pa-000", "pa-800"];
+          }
           if (newValue.id.includes("ac-6")) {
             this.openKeys = ["ac-000", "ac-600"];
           }
@@ -380,8 +438,8 @@ export default defineComponent({
       immediate: true,
     },
   },
-  
-  computed: { 
+
+  computed: {
     username() {
       if (sessionStorage.getItem("username")) {
         return sessionStorage.getItem("username");
@@ -403,6 +461,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-650") return 'BF650';
       if (this.activeTab.id === "bf-630") return 'BF630';
       if (this.activeTab.id === "cm-110") return 'CM110';
+      if (this.activeTab.id === "cm-121") return 'CM121';
       if (this.activeTab.id === "cm-130") return 'CM130';
       if (this.activeTab.id === "pa-110") return 'PA110';
       if (this.activeTab.id === "pa-120") return 'PA120';
@@ -422,7 +481,27 @@ export default defineComponent({
       if (this.activeTab.id === "pa-720") return 'PA720';
       if (this.activeTab.id === "pa-730") return 'PA730';
       if (this.activeTab.id === "pa-810") return 'PA810';
+      if (this.activeTab.id === "pa-820") return 'PA820';
+      if (this.activeTab.id === "pa-830") return 'PA830';
+      if (this.activeTab.id === "pa-840") return 'PA840';
+      if (this.activeTab.id === "pa-860") return 'PA860';
+      if (this.activeTab.id === "pa-880") return 'PA880';
+      if (this.activeTab.id === "pa-870") return 'PA870';
+      if (this.activeTab.id === "ac-110") return 'AC110';
+      if (this.activeTab.id === "ac-120") return 'AC120';
+      if (this.activeTab.id === "ac-130") return 'AC130';
+      if (this.activeTab.id === "ac-510") return 'AC510';
+      if (this.activeTab.id === "ac-530") return 'AC530';
+      if (this.activeTab.id === "ac-520") return 'AC520';
+      if (this.activeTab.id === "ac-540") return 'AC540';
+      if (this.activeTab.id === "ac-550") return 'AC550';
+      if (this.activeTab.id === "ac-560") return 'AC560';
+      if (this.activeTab.id === "ac-570") return 'AC570';
+      if (this.activeTab.id === "ac-590") return 'AC590';
+      if (this.activeTab.id === "ac-580") return 'AC580';
       if (this.activeTab.id === "ac-610") return 'AC610';
+      if (this.activeTab.id === "ac-620") return 'AC620';
+      if (this.activeTab.id === "ac-630") return 'AC630';
       if (this.activeTab.id === "example" || this.activeTab.id === "") return 'Example';
       return Test;
     },
@@ -430,11 +509,11 @@ export default defineComponent({
   setup() {
     const inputSearchText = ref("");
     const filteredResult =ref([]);
-    const openKeys = ref(["bf-000"]);
+    const openKeys = ref([]);
     const rootSubmenuKeys = ref(["bf-000", "cm-100", "ac-000", "pa-000"]);
     const selectedKeys = ref([]);
     const state = ref(false);
-    let menuDatas = menuData;
+
     let menuItems = menuTree;
     const store = useStore();
     const router = useRouter()
@@ -443,7 +522,15 @@ export default defineComponent({
     const activeTab = ref();
     // cachedtab is used to handle exclude in the keep-alive tag
     const cachedTab = ref([]);
-
+    const token = sessionStorage.getItem("token");
+    const jwtObject = getJwtObject(token);
+    onMounted(async() => {
+      store.commit('auth/setTokenInfo',jwtObject)
+     //get and set account subject
+      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      // store.commit('auth/setTokenInfo',jwtObject)
+    })
     /**
     * Check scroll tab if overflow
     */
@@ -459,7 +546,7 @@ export default defineComponent({
                     behavior: 'smooth',
           }) ;
        }
-        
+
     }
     const tabRight = (e)=>{
        if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
@@ -485,8 +572,9 @@ export default defineComponent({
       state.value = true;
       filteredResult.value = [];
       inputSearchText.value = key;
-      if (menuDatas?.length > 0) {
-        menuDatas.forEach((val) => {
+      if (menuData?.length > 0) {
+
+        menuData.forEach((val) => {
           const searchId = val.name.includes(key) || val.id.includes(key);
           if (searchId) {
             filteredResult.value.push(val);
@@ -506,12 +594,12 @@ export default defineComponent({
     const addMenuTab = (itemId) => {
       if (itemId != '') {
         let itemNew = [];
-        itemNew = menuDatas.find(item => item.id === itemId);
+        itemNew = menuData.find(item => item.id === itemId);
         if (itemNew.url == '#') {
           return
         }
 
-        activeTab.value = menuDatas.find(item => item.id === itemId);
+        activeTab.value = menuData.find(item => item.id === itemId);
         store.state.common.activeTab = itemNew
         store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
         //If the number of tabs exceeds 20, new tabs will not be added
@@ -531,7 +619,7 @@ export default defineComponent({
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      // clear vuex value cachedTab 
+      // clear vuex value cachedTab
       let tabName = menuTab.value[item].id.toUpperCase().replaceAll('-', '')
       store.state.common.cachedTab = store.state.common.cachedTab.filter((item) => item != tabName )
 
@@ -555,7 +643,7 @@ export default defineComponent({
     /**
      * monitor cachedtabs variable on vuex to blow cachedtab variable at component
      */
-    watch(()=>store.state.common.cachedTab, (newValue)=>{     
+    watch(()=>store.state.common.cachedTab, (newValue)=>{
         cachedTab.value = newValue;
     }, { deep: true })
     const focusInput  = ()=>{
@@ -564,10 +652,10 @@ export default defineComponent({
     /**
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
-    watch(()=>store.state.common.activeTab, (newValue)=>{     
+    watch(()=>store.state.common.activeTab, (newValue)=>{
         activeTab.value = newValue;
     }, { deep: true })
-    
+
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1
@@ -586,34 +674,7 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
-
-    /**
-     * List icon in sidebar menu
-     * @param {*} id 
-     */
-    const iconClass = (id) => {
-      let classIcon = ''
-      switch (id) {
-        case 'bf-000':
-          classIcon = "dx-icon-card";
-          break;
-        case 'cm-000':
-          classIcon = "dx-icon-inactivefolder";
-          break;
-        case 'ac-000':
-          classIcon = "dx-icon-columnchooser";
-          break;
-        case 'pa-000':
-          classIcon = "dx-icon-box";
-          break;
-        default:
-          classIcon = "dx-icon-box";
-          break;
-      }
-      return classIcon;
-    }
     return {
-      iconClass,
       logout,
       onSearch,
       toggleDropdown,
@@ -623,7 +684,7 @@ export default defineComponent({
       focusInput,
       onOpenChange,
       menuItems,
-      menuDatas,
+      menuData,
       activeTab,
       menuTab,
       collapsed,
@@ -633,7 +694,7 @@ export default defineComponent({
       scrollX,
       scroll_container,
       isArrowScroll,
-      tabLeft,tabRight,cachedTab,store
+      tabLeft,tabRight,cachedTab,store,
     }
   },
 });

@@ -8,6 +8,7 @@
     }
 
     #step1 {
+        min-height: 700px;
         .search-form-step-1 {
             background-color: #f1f3f4;
             padding-top: 10px;
@@ -41,6 +42,7 @@
     }
 
     #step2 {
+        min-height: 700px;
         .search-form-step-1 {
             background-color: #f1f3f4;
             padding-top: 10px;
@@ -96,7 +98,9 @@
         }
     }
 
-    #step3 {}
+    #step3 {
+      min-height: 700px;
+    }
     .btn-modal-save {
         background-color: black;
         color: white;

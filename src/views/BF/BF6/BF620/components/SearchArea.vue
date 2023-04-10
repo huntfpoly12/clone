@@ -3,43 +3,49 @@
     <a-row>
       <a-col>
         <div class="search-date">
-          <span class="search-text mt-5">귀속연월</span>
-          <div class="search-date">
-            <month-picker-box-custom v-model:valueDate="month1" bgColor="gray"></month-picker-box-custom>
-          </div>
-          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10">
-            <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
-            <checkbox-basic size="14" label="정기" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
-            <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
-          </a-form-item>
-        </div>
-        <div class="search-date">
-          <span class="search-text mt-5">지급연월</span>
-          <div class="search-date">
+          <span class="search-text mt-5 ml-10">지급연월:</span>
+          <div>
             <month-picker-box-custom v-model:valueDate="month2" text="지"></month-picker-box-custom>
           </div>
-          <a-form-item label="신고구분" label-align="right" class=" ml-10">
+        </div>
+      </a-col>
+      <a-col>
+        <div class="search-date" style="flex-direction: column;">
+          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10" v-if="tab1">
+            <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
+            <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
+            <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
+          </a-form-item>
+          <a-form-item label="신고구분" label-align="right" class=" ml-10" v-if="tab1">
             <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
+          <a-form-item label="신고주기" label-align="right" class="ml-10 mt-5" v-else>
+            <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
+              layoutCustom="horizontal" class="mt-1"></radio-group>
+          </a-form-item>
+
         </div>
       </a-col>
       <a-col>
         <div class="search-production">
-          <a-form-item label="최종제작상태">
-            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작전'" :textUnCheck="'제작후'" />
+          <a-form-item label="제작요청상태">
+            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작요청후'"
+              :textUnCheck="'제작요청전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
           <div class="mt-5 production-check">
-            <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
+            <CheckboxGroup :disabled="!filterBF620.beforeProduction" :options="productionStatusesCheckbox"
               v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
       </a-col>
       <a-col class="search-company">
         <a-form-item label="사업자코드">
-          <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" />
+          <!-- <biz-number-text-box width="150px" v-model:valueInput="filterBF620.companyCode" /> -->
+          <default-text-box v-model:valueInput="filterBF620.companyCode" width="150px"
+            @onChange="onChange"></default-text-box>
         </a-form-item>
         <a-form-item label="상호">
           <default-text-box width="150px" v-model:valueInput="filterBF620.companyName"></default-text-box>
@@ -50,48 +56,53 @@
           </a-form-item>
         </a-row>
         <a-form-item label="영업자리스트">
-          <list-sales-dropdown width="150px" :required="true" v-model:valueInput="filterBF620.salesRepresentativeId" />
+          <list-sales-dropdown width="150px" v-model:valueInput="filterBF620.salesRepresentativeId" />
         </a-form-item>
       </a-col>
       <a-col class="search-4">
-        <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.excludeCancel" />
+        <switch-basic :textCheck="'해지제외'" :textUnCheck="'해지포함'" v-model:valueSwitch="filterBF620.active" />
       </a-col>
     </a-row>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
-import { reportTypeCheckbox, productionStatusesCheckbox } from '../utils/index';
+import { reportTypeCheckbox, productionStatusesCheckbox, reportTypeTab2 } from '../utils/index';
 import CheckboxGroup from './CheckboxGroup.vue';
 export default defineComponent({
   components: { DxButton, CheckboxGroup },
+  props: {
+    tab1: {
+      type: Boolean,
+      default: true
+    }
+  },
   setup() {
     const store = useStore();
     const filterBF620 = computed(() => store.state.common.filterBF620);
     const radioCheckForeigner = ref([]);
     const foreigner = ref();
-    const month1: any = ref(dayjs().format('YYYY-MM'));
     const month2: any = ref(dayjs().format('YYYY-MM'));
     let reportType = reactive({
       checkbox1: true,
       checkbox2: true,
-      checkbox3: true,
+      checkbox3: filterBF620.value.reportType == 6 || filterBF620.value.reportType == 6,
     });
-    const checkbox2 = ref([]);
     const searchWithholdingTrigger = ref(true);
     // watch filterBF620.reportType to change value
     watch(
-      () => reportType.checkbox1,(newVal: any) => {
-        if(!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
+      () => reportType.checkbox1, (newVal: any) => {
+        if (!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
           return;
         }
         reportType.checkbox2 = newVal;
         reportType.checkbox3 = newVal;
-        delete filterBF620.value.reportType;
+        // delete filterBF620.value.reportType;
+        filterBF620.value.reportType = null;
 
       },
       { deep: true }
@@ -101,7 +112,8 @@ export default defineComponent({
       (newVal: any) => {
         if (newVal.checkbox2 == true && newVal.checkbox3 == true) {
           newVal.checkbox1 = true;
-          delete filterBF620.value.reportType;
+          // delete filterBF620.value.reportType;
+          filterBF620.value.reportType = null;
           return;
         }
         newVal.checkbox1 = false;
@@ -116,21 +128,12 @@ export default defineComponent({
       },
       { deep: true }
     );
-    // watch filterBF620.beforeProduction to change value
-    watch(
-      () => filterBF620.value.beforeProduction,
-      (newValue) => {
-        if (newValue) {
-        }
-      }
-    );
-    //watch date
-    watch(month1, (newVal: any) => {
-      if (newVal) {
-        filterBF620.value.imputedYear = +month1.value.toString().slice(0, 4);
-        filterBF620.value.imputedMonth = +month1.value.toString().slice(4, 6);
-      }
+    watchEffect(() => {
+      reportType.checkbox1 = filterBF620.value.reportType == 0 || filterBF620.value.reportType == null;
+      reportType.checkbox2 = filterBF620.value.reportType == 1 || filterBF620.value.reportType == null;
+      reportType.checkbox3 = filterBF620.value.reportType == 6 || filterBF620.value.reportType == null;
     });
+    //watch date
     watch(month2, (newVal: any) => {
       if (newVal) {
         filterBF620.value.paymentYear = +month2.value.toString().slice(0, 4);
@@ -139,23 +142,43 @@ export default defineComponent({
     });
     // watch beforeProduction
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
-      if (newVal) {
+      if (!newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
-        filterBF620.value.productionStatuses = [0];
+        filterBF620.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
+    // afterDeadLineIndex
+    // const afterDeadLineIndex = ref(1);
+    // watch(afterDeadLineIndex,(newVal: any)=> {
+    //   if(newVal === 1) {
+    //     filterBF620.value.index = 0;
+    //     filterBF620.value.afterDeadline = false;
+    //   }
+    //   if(newVal === 2) {
+    //     filterBF620.value.index = 1;
+    //     filterBF620.value.afterDeadline = false;
+    //   }
+    //   if(newVal === 3) {
+    //     filterBF620.value.index = 0;
+    //     filterBF620.value.afterDeadline = true;
+    //   }
+    // })
+    // ----------------convert companyCode to upper case------------
+    const onChange = () => {
+      filterBF620.value.companyCode = filterBF620.value.companyCode.toUpperCase();
+    }
     return {
       radioCheckForeigner,
       foreigner,
       filterBF620,
-      month1,
       month2,
       reportTypeCheckbox,
       productionStatusesCheckbox,
       reportType,
-      checkbox1: '',
-      checkbox2,
+      // afterDeadLineIndex,
+      reportTypeTab2,
+      onChange
     };
   },
 });

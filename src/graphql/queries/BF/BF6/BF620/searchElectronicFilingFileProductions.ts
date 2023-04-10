@@ -4,14 +4,8 @@ export default gql`
     $filter: ElectronicFilingFileSearchFilter!
   ) {
     searchElectronicFilingFileProductions(filter: $filter) {
+      type
       electronicFilingId
-      imputedYear
-      imputedMonth
-      paymentYear
-      paymentHalfYear
-      paymentMonth
-      withholdingTaxType
-      reportType
       productionStatus
       productionRequestedAt
       productionRequestUserId
@@ -19,12 +13,20 @@ export default gql`
       productionStartedAt
       productionCompletedAt
       causeOfProductionFailure
+      referenceInformation
       createdAt
       createdBy
       updatedAt
       updatedBy
       ip
       active
+      # productionRequestUser {
+      #   id
+      #   type
+      #   username
+      #   name
+      #   active
+      # }
       # fileStorage
     }
   }

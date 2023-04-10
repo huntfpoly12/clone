@@ -72,8 +72,8 @@
                                                 v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                         </a-col>
                                         <a-col :span="12" class="d-flex">
-                                            <div style="margin-right: 10px">{{ textIDNo }} :</div>
-                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" />
+                                            <div style="margin-right: 5px;width: 90px;">{{ textIDNo }} :</div>
+                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId" width="365px"/>
                                         </a-col>
                                     </a-row>
                                 </div>
@@ -81,7 +81,7 @@
                                     <label class="red">주 소 :</label>
                                     <div class="group-label">
                                         <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :disabled="true" />
+                                            placeholder="우편번호" :readOnly="true" />
                                         <post-code-button @dataAddress="funcAddress" />
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend"
+                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
                                         placeholder="상세주소(입력)" width="100%" />
                                 </div>
                                 <div class="form-item">
@@ -293,12 +293,14 @@
                             <label>4. 기타</label>
                             <div class="form-item">
                                 <label>영업관리담당 :</label>
-                                <select-box-common :arrSelect="optionSale" :required="true"
-                                    v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
+                                <list-sales-dropdown :required="true"
+                                        v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
+                                <!-- <select-box-common :arrSelect="optionSale" :required="true"
+                                    v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" /> -->
                             </div>
                             <div class="form-item">
-                                <label>전달사항 :</label>
-                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
+                                <label class="red">전달사항 :</label>
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment" :required="true"
                                     placeholder="전달사항입력" />
                             </div>
                         </div>
@@ -323,7 +325,7 @@
                         <button-basic v-if="step > 0" text="이 전" type="info" mode="contained" @onClick="prevStep"
                             style="margin-right: 10px" />
                         <button-basic v-if="step < 3" text="다음" type="default" mode="contained" @onClick="nextStep" />
-                        <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Creat" />
+                        <button-basic v-if="step === 3" text="신 청" type="default" mode="contained" @onClick="Create" />
                     </div>
                 </form>
             </div>
@@ -345,6 +347,7 @@ import mutations from "../../graphql/mutations/RqContract/index";
 import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
+import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
 import dayjs from 'dayjs';
 export default {
@@ -364,7 +367,7 @@ export default {
         const disableFormVal = ref(false);
         const disableFormVal2 = ref(false);
         const checkAll = ref(false);
-        const optionSale = ref();
+        // const optionSale = ref();
         const statusMailValidate = ref(false);
         const contractCreacted: any = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
@@ -382,8 +385,9 @@ export default {
         const focusedRowKey = ref(0)
         let dataImg = ref();
         let dataImgStep3 = ref();
-        let valueRadioWithdrawDay = ref("매월 5일");
+        let valueRadioWithdrawDay = ref("5일");
         const dataActiveRow: any = ref()
+        const isResidentId = ref(false);
         // =================================== GRAPQL ============================================
         const {
             mutate: mutateCreated,
@@ -397,12 +401,12 @@ export default {
         onError((res) => {
             notification("error", res.message);
         });
-        const { result: resultConfig } = useQuery(
-            queries.getSaleRequestContact,
-            {}, () => ({
-                fetchPolicy: "no-cache",
-            })
-        );
+        // const { result: resultConfig } = useQuery(
+        //     queries.getSaleRequestContact,
+        //     {}, () => ({
+        //         fetchPolicy: "no-cache",
+        //     })
+        // );
         // =================================== FUNCTION ============================================
         const disableForm1 = () => {
             if (dataInputCallApi.dossier == 2) disableFormVal2.value = true;
@@ -469,15 +473,17 @@ export default {
         };
         const changeTypeCompany = (val: number) => {
             if (val == 1) {
-                textIDNo.value = "법인등록번호";
+              textIDNo.value = "법인등록번호";
+              isResidentId.value = false
             } else if (val == 2) {
-                textIDNo.value = "주민등록번호";
+              textIDNo.value = "주민등록번호";
+              isResidentId.value = true
             }
         };
         const funcAddress = (data: any) => {
             contractCreacted.zipcode = data.zonecode;
             contractCreacted.roadAddress = data.roadAddress;
-            contractCreacted.jibunAddress = data.jibunAddress;
+            contractCreacted.jibunAddress = data.jibunAddress ? data.jibunAddress : 'not found';
             contractCreacted.bcode = data.bcode;
             contractCreacted.bname = data.bname;
             contractCreacted.buildingCode = data.buildingCode;
@@ -519,6 +525,7 @@ export default {
                         contractCreacted.mobilePhone != "" &&
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
+                        contractCreacted.addressExtend != "" &&
                         contractCreacted.bizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
@@ -603,7 +610,7 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
-        const Creat = () => {
+        const Create = () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
                 delete val.__KEY__
@@ -647,7 +654,7 @@ export default {
                     },
                     president: {
                         name: contractCreacted.namePresident,
-                        birthday: dayjs(contractCreacted.birthday).format('YYYY-MM-DD'),
+                        birthday: parseInt(dayjs(contractCreacted.birthday).format('YYYYMMDD')),
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },
@@ -673,8 +680,11 @@ export default {
                     }
                 }
             }
-            if (dataCallCreated)
-                mutateCreated(dataCallCreated)
+          if (dataCallCreated) {
+            dataCallCreated = makeDataClean(dataCallCreated)
+            mutateCreated(dataCallCreated)
+          }
+               
         }
         const onSelectionChanged = (value: any) => {
             dataActiveRow.value = value.selectedRowsData[0]
@@ -750,19 +760,19 @@ export default {
                 }
             }
         );
-        watch(resultConfig, (value) => {
-            let dataOption: any = [];
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
-                dataOption.push({
-                    label: e.name,
-                    value: e.id,
-                });
-            });
-            optionSale.value = dataOption;
-        });
+        // watch(resultConfig, (value) => {
+        //     let dataOption: any = [];
+        //     value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+        //         dataOption.push({
+        //             label: e.name,
+        //             value: e.id,
+        //         });
+        //     });
+        //     optionSale.value = dataOption;
+        // });
         return {
-            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,
-            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Creat, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
+            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
         };
     },
 };

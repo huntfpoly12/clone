@@ -37,13 +37,16 @@ import { companyId } from "@/helpers/commonFunction";
 export const dataActionUtils = {
   input: {
     employeeId: null,
-    incomeTypeCode: "",
-    paymentAmount: 0,
+    incomeTypeCode: null,
+    paymentAmount: null,
     taxRate: 3,
     withholdingIncomeTax: 0,
     withholdingLocalIncomeTax: 0,
     paymentDay: 0,
-    incomeId: "99axbzkk",
+    incomeId: 0,
+    employee:{
+      key:0
+    }
   },
 };
 export const dataGetDetailEdit = {

@@ -2,16 +2,16 @@ import getCompaniesInElectronicFilingFile from  "@/graphql/queries/common/getCom
 import getElectronicFilingsByLocalIncomeTax from "./getElectronicFilingsByLocalIncomeTax";
 import getElectronicFilingsByWithholdingTax from "./getElectronicFilingsByWithholdingTax";
 import searchElectronicFilingFileProductions from "./searchElectronicFilingFileProductions";
-import searchLocalIncomeTaxElectronicFilings from "./searchLocalIncomeTaxElectronicFilings";
-import searchWithholdingTaxElectronicFilings from "./searchWithholdingTaxElectronicFilings";
+import searchLocalIncomeTaxElectronicFilingsByYearMonth from "./searchLocalIncomeTaxElectronicFilingsByYearMonth";
+import searchWithholdingTaxElectronicFilingsByYearMonth from "./searchWithholdingTaxElectronicFilingsByYearMonth";
 
 const queries = {
     getCompaniesInElectronicFilingFile,
     getElectronicFilingsByLocalIncomeTax,
     getElectronicFilingsByWithholdingTax,
     searchElectronicFilingFileProductions,
-    searchLocalIncomeTaxElectronicFilings,
-    searchWithholdingTaxElectronicFilings,
+    searchLocalIncomeTaxElectronicFilingsByYearMonth,
+    searchWithholdingTaxElectronicFilingsByYearMonth,
 };
 
 export default queries;

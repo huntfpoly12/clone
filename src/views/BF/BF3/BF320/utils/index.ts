@@ -3,10 +3,10 @@
 // Data searching default
 export const dataSearchIndex = {
     page: 1,
-    code: "",
-    name: "",
-    presidentName: "",
-    address: "",
+    code: null,
+    name: null,
+    presidentName: null,
+    address: null,
     manageUserId: null,
     salesRepresentativeId: null,
     excludeCancel: true

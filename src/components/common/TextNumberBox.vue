@@ -1,16 +1,17 @@
 <template>
   <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
     :placeholder="placeholder" v-model:value="value" mode="text" :disabled="disabled" :readOnly="readOnly"
-    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput">
+    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
+      <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
     </DxValidator>
   </DxTextBox>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { DxValidator, DxRequiredRule, DxCustomRule } from "devextreme-vue/validator";
 import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   props: {
@@ -22,7 +23,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    width: String,
+    width: {
+      type: String,
+      default: "100%",
+    },
     clearButton: Boolean,
     disabled: Boolean,
     valueInput: {
@@ -34,11 +38,24 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    maxLength: {
+      type: Number,
+      default: null,
+    },
+    ruleCustom: {
+      type: Function,
+      default: () => true,
+    },
+    messageRuleCustom: {
+      type: String,
+      default: "",
+    },
   },
   components: {
     DxTextBox,
     DxValidator,
     DxRequiredRule,
+    DxCustomRule
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance();

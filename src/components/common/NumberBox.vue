@@ -1,7 +1,7 @@
 <template>
-  <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
+  <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-    :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min"
+    :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled" :min="min" :format="isFormat && formatNumber"
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -47,8 +47,9 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    format:{
-      type: [String, Number, Function],
+    isFormat:{
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -64,11 +65,17 @@ export default defineComponent({
       messageRequired.value = props.messRequired;
     }
     const value = ref(props.valueInput);
-    const updateValue = (value: any) => {
-      emit("update:valueInput", value);
+    const maxNum = ref(props.max??0);
+    const updateValue = (e: any) => {
+      if (maxNum.value && e.value >= maxNum.value) {
+        e.component.option('value', +maxNum.value);
+        emit("update:valueInput", +maxNum.value);
+        return;
+      }
+      emit("update:valueInput", e.value);
     };
     const onChange = (e: any) => {
-            emit("changeInput",e);
+      emit("changeInput",e);
     }
     watch(
       () => props.valueInput,
@@ -76,14 +83,27 @@ export default defineComponent({
         value.value = newValue;
       }
     );
+    const formatNumber = (value: any) => {
+      if(value == 0) {
+        return '';
+      }
+      if (value !== null && value !== undefined) {
+        return value.toLocaleString('en-US', {
+          minimumIntegerDigits: 2,
+          useGrouping: false
+        });
+      }
+      return value;
+    }
 
     return {
       updateValue,onChange,
       value,
       messageRequired,
       formatValue:(value:any)=> {
-      return value < 10 ? `0${value}` : value;
-    }
+        return value < 10 ? `0${value}` : value;
+      },
+      formatNumber
     };
   },
 });

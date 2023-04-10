@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loadingCreated">
-        <standard-form action="" name="add-page-210">
+        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
@@ -14,7 +14,6 @@
               </div>
             </a-form-item>
             <a-form-item label="성명" label-align="right" class="label-red">
-              
                 <default-text-box width="200px" v-model:valueInput="dataCreated.name" :required="true"
                     placeholder="한글,영문(대문자) 입력 가능" />
             </a-form-item>
@@ -35,7 +34,7 @@
                 <div class="input-text">
                     <date-time-box width="150px" className="leavedAt" v-model:valueDate="dataCreated.leavedAt" />
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                    <span style="font-size: 10px; color: #888888">
+                    <span class="style-note">
                         마지막 근무한 날
                     </span>
                 </div>
@@ -50,16 +49,16 @@
                     <country-code-select-box v-model:valueCountry="dataCreated.nationalityCode"
                         :hiddenOptionKR="dataCreated.foreigner"
                         @textCountry="(res: any) => { dataCreated.nationality = res }" :disabled="disabledSelectBox"
-                        width="180px" />
+                        width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, 'pl-10': true }">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataCreated.stayQualification"
-                        width="180px" :disabled="disabledSelectBox" />
+                        width="180px" :disabled="disabledSelectBox"  :required="!disabledSelectBox"/>
                 </a-form-item>
             </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
-                <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" />
+                <id-number-text-box width="150px" v-model:valueInput="dataCreated.residentId" :required="true" :foreigner="dataCreated.foreigner"/>
             </a-form-item>
             <a-form-item label="주소정근무시간" label-align="right" class="label-red">
               <div class="input-text">
@@ -96,13 +95,10 @@
                     <mail-text-box width="200px" v-model:valueInput="dataCreated.email" placeholder="abc@example.com">
                     </mail-text-box>
                     <img src="@/assets/images/iconInfo.png" style="width: 16px;">
-                    <span style="font-size: 10px; color: #888888">
+                    <span class="style-note">
                         원천징수영수증 등 주요 서류를 메일로 전달 가능합니다.
                     </span>
                 </div>
-            </a-form-item>
-            <a-form-item label="연락처" label-align="right">
-              <tel-text-box width="200px" v-model:valueInput="dataCreated.department" />
             </a-form-item>
             <a-form-item label="부서" label-align="right">
                 <custom-item-select-box v-model:valueInput="dataCreated.department" :arrSelect="selectBoxData1"
@@ -113,7 +109,7 @@
                     width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated($event)"
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated(true)"
                     id="action-save" />
             </div>
         </standard-form>
@@ -125,12 +121,16 @@ import { radioCheckForeigner, DataCreated } from "../../utils/index";
 import queries from "@/graphql/queries/PA/PA5/PA520/index"
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import { useQuery, useMutation } from "@vue/apollo-composable"
-import { companyId } from "@/helpers/commonFunction"
+import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
+import { Message } from "@/configs/enum";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const formRefPa520Add = ref()
         const labelResident = ref('주민등록번호')
+        const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref([])
@@ -188,21 +188,36 @@ export default defineComponent({
             loading:loadingCreated,
         } = useMutation(mutations.createEmployeeWageDaily);
         onError(e => {
+            store.dispatch('common/resetActionStatus')
             notification('error', e.message)
         })
-        onDone(res => {
-            store.state.common.activeAddRowPA520 = false
-            store.state.common.rowIdSaveDonePa520 = dataCreated.employeeId 
-            store.state.common.checkChangeValueAddPA520 = false
-            notification('success', '업데이트 완료!');
+        onDone( async () => {
+            //store.state.common.addRowBtOnclickPA520 = false
+            //store.state.common.activeAddRowPA520 = false
+            //store.commit('common/setAddBtOnclickPA520',false) 
+            store.commit('common/setIdRowSaveDonePA520',dataCreated.employeeId) 
+            store.commit('common/setCheckChangeValueAddPA520',false) 
+            notification('success', Message.getCommonMessage('101').message);
+            if (clickYearStatus.value !== ClickYearStatus.none) await store.commit('settings/setCurrentYear')
+            await store.dispatch('settings/resetYearStatus')
         })
         //============ WATCH =================================
+
+        //check if the year is changed, then confirm first if you are adding or editing data
+        watch(() => globalYear.value, (newYear, oldYear) => {
+        
+          if (store.state.common.isChangeYearPA520 &&  store.state.common.checkChangeValueAddPA520) {
+            store.state.settings.globalYear = oldYear
+          }
+         })
+
         watch(() => dataCreated.foreigner, (value: any) => {
             if (value == true) {
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataCreated.stayQualification = 'C-4'
+                dataCreated.stayQualification = null
+                dataCreated.nationalityCode = null
             } else {
                 activeLabel.value = false
                 labelResident.value = '주민등록번호'
@@ -213,15 +228,27 @@ export default defineComponent({
             }
         })
         watch(() => dataCreated, (value) => {
-            if (JSON.stringify(DataCreated) !== JSON.stringify(value))
-                store.state.common.checkChangeValueAddPA520 = true
-            else
-                store.state.common.checkChangeValueAddPA520 = false
+            
+            // if (store.state.common.activeAddRowPA520 == true) {
+            let dataTable = {
+                employeeId : value.employeeId,
+                name : value.name,
+                foreigner  : value.foreigner,
+                status  :  dataCreated.leavedAt ? false : true,
+                residentId  :  value.residentId,
+            }
 
-
+            store.state.common.dataSourcePA520 = dataTable
+            if (JSON.stringify(DataCreated) !== JSON.stringify(value)){
+                store.commit('common/setCheckChangeValueAddPA520',true)
+                store.commit('settings/setFormStatus',FormStatus.adding)
+            }else{
+                store.commit('common/setCheckChangeValueAddPA520',false)
+                store.commit('settings/setFormStatus',FormStatus.none)
+            }
         }, { deep: true })
         watch(() => store.state.common.actionSaveAddPA520, (value) => {
-            document.getElementById('action-save')?.click()
+          actionCreated()
         }, { deep: true });
 
         // convert dataCreated.name to uppercase
@@ -235,10 +262,14 @@ export default defineComponent({
             dataCreated.zipcode = data.zonecode;
             dataCreated.roadAddress = data.roadAddress;
         }
-        const actionCreated = (e: any) => {
-            var res = e.validationGroup.validate();
+        const actionCreated = async (isclickbtn = false) => {
+            store.commit('common/setIsClickBtnSavePA520',isclickbtn)
+            var res = formRefPa520Add.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
+                store.commit('settings/setFormStatus', FormStatus.adding)
+                store.commit('common/setValidateAddPA520', true)
+                return
             } else {
                 let newValDataCreat = {
                     ...dataCreated,
@@ -246,7 +277,7 @@ export default defineComponent({
                     weeklyWorkingHours: parseInt(dataCreated.weeklyWorkingHours),
                     joinedAt: dataCreated.joinedAt,
                     leavedAt: dataCreated.leavedAt,
-                    residentId: dataCreated.residentId.slice(0, 6) + '-' + dataCreated.residentId.slice(6, 14)
+                    residentId: dataCreated.residentId
                 };
 
                 delete newValDataCreat.zipcode;
@@ -255,12 +286,14 @@ export default defineComponent({
                     imputedYear: globalYear.value,
                     input: newValDataCreat
                 }
-                mutate(dataCallCreat)
+              dataCallCreat = await makeDataClean(dataCallCreat)
+              mutate(dataCallCreat)
+              store.commit('common/setAddBtOnclickPA520', false);
             }
         }
         return {
             loadingCreated, activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionCreated, funcAddress,
+            actionCreated, funcAddress,formRefPa520Add,store
         };
     },
 });

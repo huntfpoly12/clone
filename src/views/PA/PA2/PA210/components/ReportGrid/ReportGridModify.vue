@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px', padding: '8px'}">
       <div class="report-grid">
         <div class="header-report">
           <div class="header-1">원천세신고서</div>
@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="table-grid">
-          <hot-table ref="wrapper" :settings="hotSettings" :disabled="dataSource[0].status != 10"></hot-table>
+          <hot-table ref="wrapper" :settings="hotSettings" ></hot-table>
         </div> 
       </div>
   </a-modal>
@@ -92,6 +92,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
 
@@ -119,11 +120,13 @@ export default defineComponent({
     const confirmStatus = ref<boolean>(false)
     const confirmLoadNewStatus = ref<boolean>(false)
     const hotSettings =  {
-          comments: true,
-          fillHandle: true,
-          colWidths: 100,
-          beforeKeyDown: (e: any) => {
-              var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
+      comments: true,
+      fillHandle: true,
+      colWidths: 102.5,
+      height: 740,
+      fixedRowsTop: 4,
+      beforeKeyDown: (e: any) => {
+          var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (!reg.test(e.key) && e.key != 'Backspace' && e.key != '-') {
           e.preventDefault()
         }
@@ -138,6 +141,7 @@ export default defineComponent({
       afterChange: (changes: any,source : string)=>{
         if(source == 'edit'){
           calculateWithholdingStatusReportModified(wrapper)
+          store.commit('common/setHasChangedPopupPA210',false);
         }
       },
       hotRef: null,
@@ -146,7 +150,6 @@ export default defineComponent({
       cell: [
         ...cellsSettingModified,
       ],
-      height: "auto",
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
@@ -312,11 +315,14 @@ export default defineComponent({
             onError: errChangeStatus
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
-    doneChangeStatus(() => {
-        notification('success', `업부상태 변경되었습니다!`)
+    doneChangeStatus((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
+      setModalVisible()
     })
     errChangeStatus((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
+      setModalVisible()
     })
 
     // The above code is a function that is called when the user clicks the "수정" button.
@@ -325,7 +331,20 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if (index >= 4 && index <= 61 && arrData[index][4]) {
+        if (
+            index >= 4 && index <= 61 &&
+            arrData[index][4] &&
+          (
+            arrData[index+1][5] != '' ||
+            arrData[index+1][6] != '' ||
+            arrData[index+1][7] != '' ||
+            arrData[index+1][8] != '' ||
+            arrData[index+1][9] != '' ||
+            arrData[index+1][10] != '' ||
+            arrData[index+1][11] != '' ||
+            arrData[index+1][12] != ''
+          )
+          ) {
           statement.push({
             code: arrData[index][4],
             numberOfPeopleModified: arrData[index+1][5] != '' ? arrData[index+1][5] : 0,
@@ -433,6 +452,7 @@ export default defineComponent({
     // Creating a function that will close the confirm box.
     const actionCloseConfirm = () => {
       confirmStatus.value = false
+      setModalVisible()
     }
     return {
       setModalVisible,
@@ -456,21 +476,18 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep .ant-modal-body{
-  padding-top: 30px;
-}
 :deep .cell-center {
     text-align: center !important
 }
 .report-grid{
-  padding: 20px 0px 0px 5px;
+  padding: 8px 0px 0px 5px;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
     background-color: #b3b4b3;
   }
   .action-right{
-    margin-bottom: 5px;
+    margin-bottom: 1px;
     display: flex;
     justify-content: flex-end;
   }
@@ -485,11 +502,11 @@ export default defineComponent({
       border-radius: 5px;
       height: 35px;
   }
-  .table-grid{
-    overflow-x: hidden;
-    overflow-y: scroll;
-    max-height: 700px;
-  }
+  // .table-grid{
+  //   overflow-x: hidden;
+  //   overflow-y: scroll;
+  //   max-height: 700px;
+  // }
   :deep .wtHolder {
     width: 100% !important;
    }

@@ -10,7 +10,8 @@ export default gql`
       key: $key
       input: $input
     ) {
-        companyId
+        companyId,
+        reportId
     }
   }
 `;

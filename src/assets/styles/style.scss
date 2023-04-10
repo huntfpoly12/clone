@@ -84,6 +84,13 @@ $lenght: 50;
     padding-bottom: $i+ px;
   }
 
+  .p-#{$i} {
+    padding-left: $i+ px;
+    padding-right: $i+ px;
+    padding-top: $i+ px;
+    padding-bottom: $i+ px;
+  }
+
   .ml-#{$i} {
     margin-left: $i+ px;
   }
@@ -109,6 +116,13 @@ $lenght: 50;
     margin-top: $i+ px;
     margin-bottom: $i+ px;
   }
+
+  .m-#{$i} {
+    margin-left: $i+ px;
+    margin-right: $i+ px;
+    margin-top: $i+ px;
+    margin-bottom: $i+ px;
+  }
 }
 
 .wf-100 {
@@ -124,13 +138,24 @@ $lenght: 50;
 .d-flex {
   display: flex;
 }
-
+.flex-1 {
+  flex: 1;
+}
+.flex-auto {
+  flex: 0 0 auto;
+}
 .d-flex-center {
   display: flex;
   align-items: center;
 }
 .justify-content-center {
   justify-content: center;
+}
+.justify-content-end {
+  justify-content: flex-end;
+}
+.justify-content-around {
+  justify-content: space-around;
 }
 .text-center {
   text-align: center;
@@ -142,6 +167,11 @@ $lenght: 50;
 }
 
 ::v-deep .red {
+  label {
+    color: red;
+  }
+}
+.red {
   label {
     color: red;
   }
@@ -173,9 +203,6 @@ $lenght: 50;
   text-align: center !important
 }
 
-.custom-grade-cell {
-  margin: 3px 10px;
-}
 
 .money-column {
   text-align: right !important;
@@ -185,6 +212,22 @@ $lenght: 50;
 }
 
 .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.column-focus {
+  background-color: #5c95c5;
+  color: black;
+}
+.column-hover {
+  background-color: #D1E1F8;
+  color: black;
+}
+.ele-opacity {
+  opacity: 0.7;
+}
+.text-overflow {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

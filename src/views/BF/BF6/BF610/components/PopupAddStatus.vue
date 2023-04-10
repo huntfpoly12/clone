@@ -5,35 +5,48 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="companyId" class="wf-100" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxColumn caption="귀속연월" cell-template="imputedYear" />
+                <DxColumn caption="귀속연월" cell-template="imputedYear" alignment="center"/>
                 <template #imputedYear="{ data }">
                     <span class="tag-custom-1">
                         {{ data.data.imputedYear }}-{{
                             data.data.imputedMonth < 10 ? '0' + data.data.imputedMonth : data.data.imputedMonth
                         }} </span>
                 </template>
-                <DxColumn caption="지급연월" cell-template="payment" />
+                <DxColumn caption="지급연월" cell-template="payment" alignment="center"/>
                 <template #payment="{ data }">
                     <span class="tag-custom-2">
                         {{ data.data.paymentYear }}-{{
                             data.data.paymentMonth < 10 ? '0' + data.data.paymentMonth : data.data.paymentMonth
                         }} </span>
                 </template>
-                <DxColumn caption="소득종류" cell-template="type" />
+                <DxColumn caption="소득종류" cell-template="type" alignment="center"/>
                 <template #type="{ data }">
-                    {{ EmployeeType[data.data.type] }}
+                    {{ IncomeType[data.data.type] }}
                 </template>
                 <!-- <DxColumn caption="총지급액" data-field="totalPayment" />
                 <DxColumn caption="인원" data-field="employeeStat.employeeCount"  data-type="string" /> -->
-                <DxColumn caption="마감현황" cell-template="status" />
+                <DxColumn caption="마감현황" cell-template="status" alignment="center"/>
                 <template #status="{ data }">
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
                     <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
                         :dataRow="data.data" @dataRow="changeStatus" /> -->
                 </template>
-                <DxColumn caption="마감일" cell-template="마감일"/>
+                <DxColumn caption="마감일" cell-template="마감일" alignment="center"/>
                 <template #마감일="{ data }">
-                    <span v-if="data.data.status == 40">{{ dayjs(data.data.updatedAt).format("YYYY-MM-DD") }}</span>
+                  <a-tooltip color="white" placement="top">
+                    <template #title>
+                      <div class="d-flex items-center gap-4 text-color-black">
+                        <span>{{ dayjs(data.data.updatedAt).format("YYYY-MM-DD") }}</span>
+                        <a-tag :color="getColorTag(data.data.statusUpdateUser.type)" class="mr-0">
+                            {{ data.data.statusUpdateUser.type == "m" ? "매" : "고"}}
+                        </a-tag>
+                        <span>{{ data.data.statusUpdateUser.username }}</span>
+                        <span>{{ data.data.statusUpdateUser.id }}</span>
+                      </div>
+
+                    </template>
+                    <span v-if="data.data.status == 40" class="tag-custom-3">{{ dayjs(data.data.updatedAt).format("MM-DD") }}</span>
+                  </a-tooltip>
                 </template>
             </DxDataGrid>
         </a-spin>
@@ -46,11 +59,11 @@ import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } fro
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import mutations from "@/graphql/mutations/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
-import { EmployeeType } from "@bankda/jangbuda-common";
 import dayjs from "dayjs";
+import {IncomeType} from "@bankda/jangbuda-common";
 export default defineComponent({
     components: {
-        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,
+        DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
     },
     props: {
         modalStatus: Boolean,
@@ -63,7 +76,7 @@ export default defineComponent({
         const dataSource = ref()
         let dataSearch = ref()
         /*
-        * ============== API ============== 
+        * ============== API ==============
         */
         //  QUERY : getIncomProcessesInTaxWithholdingStatusReport
         let {
@@ -76,7 +89,7 @@ export default defineComponent({
             fetchPolicy: "no-cache"
         }));
         resTable(res => {
-            dataSource.value = res.data.getIncomProcessesInTaxWithholdingStatusReport
+            dataSource.value = res.data?.getIncomProcessesInTaxWithholdingStatusReport
         })
         errorTable(res => {
             notification('error', res.message)
@@ -95,7 +108,7 @@ export default defineComponent({
             notification('error', error.message)
         })
         /*
-         * ============== WATCHING ============== 
+         * ============== WATCHING ==============
          */
         watch(() => props.modalStatus, (newVal: any) => {
             if (newVal == true) {
@@ -110,7 +123,7 @@ export default defineComponent({
             }
         }, { deep: true })
         /*
-         * ============== FUNCTION ============== 
+         * ============== FUNCTION ==============
          */
         const changeStatusRowTable = (data: any) => {
             let dataChangeStatus = {
@@ -129,11 +142,22 @@ export default defineComponent({
         const setModalVisible = () => {
             emit("closePopup", true)
         }
-
+        const getColorTag = (data: any) => {
+            if (data === "c") {
+                return "#91d5ff";
+            } else if (data === "m") {
+                return "black";
+            } else if (data === "r") {
+                return "grey";
+            } else if (data === "p") {
+                return "goldenrod";
+            }
+        }
 
         return {
-            dataSource, loadingTable, loadingChangeStatus, EmployeeType, dayjs,
-            setModalVisible, changeStatusRowTable
+            dataSource, loadingTable, loadingChangeStatus, dayjs,
+            setModalVisible, changeStatusRowTable, getColorTag,
+            IncomeType
         }
     }
 })
@@ -153,6 +177,23 @@ export default defineComponent({
     border-radius: 5px;
     color: white;
     cursor: pointer;
+}
+.tag-custom-3 {
+  background-color: white;
+  padding: 3px 24px;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid black;
+  cursor: pointer;
+}
+.text-color-black {
+  color: black;
+}
+.gap-4 {
+  gap: 6px;
+}
+.mr-0 {
+  margin-right: 0px;
 }
 :deep .buttonModal {
     margin-top: -5px;

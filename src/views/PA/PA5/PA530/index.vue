@@ -110,6 +110,8 @@
                         <div class="title-body-left-1">
                             <div>
                                 서식 설정 :
+                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
+                                    textUnCheck="지급자보관용" />
                             </div>
                             <div>
                                 <img src="@/assets/images/iconInfo.png" alt="">
@@ -118,17 +120,15 @@
                                 본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
                             </span>
                         </div>
-                        <div class="title-body-left-2">
-                            <span>소득자보관용 :</span>
-                            <div>
-                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자 보관용"
-                                    textUnCheck="지급자보관용" />
-                            </div>
-                        </div>
                     </a-col>
                     <a-col :span="12">
                         <div class="title-body-right">
-                            <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
+                            <a-form-item label="영수일">
+                                <div style="width: 150px">
+                                    <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
+                                </div>
+                            </a-form-item>
+                            <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
                         </div>
                     </a-col>
                 </a-row>
@@ -136,19 +136,22 @@
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" @selection-changed="selectionChanged">
+                    :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
                         <DxItem template="group-print" />
                     </DxToolbar>
                     <template #group-print>
-                        <div class="custom-mail-group">
-                            <DxButton>
+                        <a-tooltip placement="top" color="black">
+                            <template #title>출력 / 저장</template>
+                            <div class="custom-mail-group">
+                                <DxButton>
                                 <img src="@/assets/images/printGroup.png" alt="" style="width: 28px;"
                                     @click="printGroup" />
-                            </DxButton>
-                        </div>
+                                </DxButton>
+                            </div>
+                        </a-tooltip>
                     </template>
                     <template #pagination-send-group-mail>
                         <div class="custom-mail-group">
@@ -160,7 +163,7 @@
                     </template>
                     <DxSelection mode="multiple" />
                     <DxColumn caption="성명 (상호)" cell-template="tag" />
-                    <template #tag="{ data }" class="custom-action">
+                    <template #tag="{ data }">
                         <div class="custom-action" v-if="data.data.employee.employeeId != '-1'">
                             <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -190,11 +193,11 @@
                                 :ratio="data.data.employee.incomeTaxMagnification" />
                         </div>
                     </template>
-                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="#,###" width="150px" />
-                    <DxColumn caption="비과세소득" data-field="totalTaxfreePay" format="#,###" width="150px" />
-                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="#,###" />
+                    <DxColumn caption="과세소득" data-field="totalTaxPay" format="fixedPoint" width="150px" />
+                    <DxColumn caption="비과세소득" data-field="totalTaxfreePay" format="fixedPoint" width="150px" />
+                    <DxColumn caption="원천징수세액 소득세" data-field="withholdingIncomeTax" width="200px" format="fixedPoint" />
                     <DxColumn caption="원천징수세액 지방소득세" data-field="withholdingLocalIncomeTax" width="230px"
-                        format="#,###" />
+                        format="fixedPoint" />
                     <DxSummary>
                         <DxTotalItem :customize-text="customizeTotal" show-in-column="성명 (상호)" />
                         <DxTotalItem :customize-text="customizeTotalTaxPay" show-in-column="과세소득" />
@@ -207,9 +210,12 @@
                         <div class="custom-action" style="text-align: center;">
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
-                                @click="openPopup(data.data)" />
-                            <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
-                                @click="actionPrint(data.data.employee.employeeId)" />
+                                @click.stop="openPopup(data.data)" />
+                            <a-tooltip>
+                                <template #title>출력 / 저장</template>
+                                <img src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
+                                @click.stop="actionPrint(data.data.employee.employeeId)" />
+                            </a-tooltip>
                         </div>
                     </template>
                 </DxDataGrid>
@@ -257,6 +263,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        let vModalSelectedRowKeys: any = ref([])
         const arrCheckBoxSearch: any = reactive({
             quarter1: {
                 label: "1/4분기",
@@ -424,6 +431,11 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(globalYear, (value) => {
+            const subValue =  parseInt(globalYear.value + 1 + '01')
+            year1.label = globalYear.value + 1 + '년 01월',
+            year1.subValue = subValue
+            year2.label = globalYear.value + 1 + '년 02월',
+            year2.subValue = subValue
             dataApiSearch.filter.imputedYear = value
             trigger.value = true
             refetchData()
@@ -547,6 +559,7 @@ export default defineComponent({
             }
         };
         const openPopup = (res: any) => {
+            vModalSelectedRowKeys.value = [res.employee.employeeId]
             actionSendEmailGroup.value = false
             dataCallModal.value = {
                 senderName: sessionStorage.getItem("username"),
@@ -589,6 +602,7 @@ export default defineComponent({
             return "과세소득합계: " + filters.formatCurrency(total)
         }
         const actionPrint = (res: any) => {
+            vModalSelectedRowKeys.value = [res]
             dataCallApiPrint.value = {
                 companyId: companyId,
                 employeeIds: [res],
@@ -625,7 +639,7 @@ export default defineComponent({
                 notification('error', Message.getCommonMessage('601').message)
         }
         const selectionChanged = (data: any) => {
-            selectedItemKeys.value = data.selectedRowKeys
+          selectedItemKeys.value = data.selectedRowKeys
         }
 
         const checkAll = () => {
@@ -687,7 +701,7 @@ export default defineComponent({
         return {
             emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
             printGroup, checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
-            clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4
+            clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4, vModalSelectedRowKeys
         };
     },
 });

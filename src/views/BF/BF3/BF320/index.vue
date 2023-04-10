@@ -37,13 +37,13 @@
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <label>메니저명 :</label>
+                            <label>매니저리스트:</label>
                             <list-manager-dropdown v-model:valueInput="originData.manageUserId" width="150px" />
                         </div>
                     </a-col>
                     <a-col>
                         <div class="dflex custom-flex">
-                            <label>영업자명 :</label>
+                            <label>영업자리스트:</label>
                             <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" width="150px" />
                         </div>
                     </a-col>
@@ -87,9 +87,9 @@
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />
-                    <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
+                    <DxColumn data-field="servicePrice" caption="이용료" format="fixedPoint" data-type="number" />
                     <DxColumn :width="80" cell-template="pupop" />
-                    <template #pupop="{ data }" class="custom-action">
+                    <template #pupop="{ data }">
                         <div class="custom-action">
                             <a-space :size="10">
                                 <a-tooltip color="black" placement="top">
@@ -127,7 +127,8 @@ import { EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF3/BF320/index"
 import { dataSearchIndex } from "./utils/index";
-import { onExportingCommon } from "@/helpers/commonFunction"
+import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
+import notification from '@/utils/notification';
 import dayjs from "dayjs";
 export default defineComponent({
     components: {
@@ -137,7 +138,6 @@ export default defineComponent({
     },
     setup() {
         // config grid
-        const amountFormat = { currency: 'VND', useGrouping: true }
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -153,15 +153,20 @@ export default defineComponent({
             ...dataSearchIndex,
             rows: per_page,
         })
-        const { refetch: refetchData, result, loading } = useQuery(queries.searchCompanies, originData, () => ({
+        const { refetch: refetchData, result, loading, onError } = useQuery(queries.searchCompanies, originData.value, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
+        onError((e) => {
+            notification("error", e.message);
+        });
         const searching = () => {
+            makeDataClean(originData.value)
             trigger.value = true;
         }
         const handleClosePopup = () => {
             modalStatus.value = false
+            makeDataClean(originData.value)
             trigger.value = true;
         }
         const onExporting = (e: any) => {
@@ -185,7 +190,6 @@ export default defineComponent({
             }
         });
         return {
-            amountFormat,
             trigger,
             move_column,
             colomn_resize,
@@ -195,7 +199,6 @@ export default defineComponent({
             responApiSearchCompanies,
             originData,
             searching,
-            refetchData,
             onExporting,
             handleClosePopup,
             modalStatus,

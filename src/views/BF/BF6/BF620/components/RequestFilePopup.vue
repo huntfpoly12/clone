@@ -30,7 +30,7 @@ import notification from '@/utils/notification';
 
 export default defineComponent({
   props: {
-    data: {
+    requestFileData: {
       type: Object,
       default: {},
     },
@@ -40,7 +40,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const dataRequestFile = ref(props.data);
+    const dataRequestFile = ref(props.requestFileData);
 
     //----------------- query send request file tab 1--------------------------------
 

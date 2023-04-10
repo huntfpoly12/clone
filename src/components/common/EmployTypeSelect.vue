@@ -1,44 +1,38 @@
 <template>
-    <DxSelectBox :width="width" :data-source="arrayValue" item-template="item-data" value-expr="employeeId"
-        display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
-        :height="$config_styles.HeightInput" :disabled="disabled">
-        <template #field-data="{ data }">
-            <div v-if="data" style="padding: 2px">
-                <income-type :typeCode="data?.employeeId" :typeName="(data?.name)"
-                    :incomeTypeName="data?.incomeTypeName" />
-                <DxTextBox style="display: none;" />
-                {{ data }}
-            </div>
-            <div v-else class="pt-5 pl-5">
-                <span>선택</span>
-                <DxTextBox style="display: none;" />
-            </div>
+  <DxSelectBox :width="width" :data-source="arrayValue" item-template="item-data" value-expr="key"
+    display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
+    :height="$config_styles.HeightInput" :disabled="disabled">
+    <template #field-data="{ data }">
+      <div v-if="data" style="padding: 2px">
+        <income-type :typeCode="data?.employeeId" :typeName="(data?.name)" :incomeTypeName="data?.incomeTypeName" />
+        <DxTextBox style="display: none;" />
+      </div>
+      <div v-else class="pt-5 pl-5">
+        <span>선택</span>
+        <DxTextBox style="display: none;" />
+      </div>
 
-        </template>
-        <template #item-data="{ data }">
-          <!-- <div>
-                <income-type :typeCode="data?.incomeTypeCode" :typeName="data?.name"
-                    :incomeTypeName="data?.incomeTypeName" />
-            </div> -->
-          <div class="employee-group">
-            <button style="margin-right: 5px">
-              {{ data.employeeId }}
-            </button>
-            {{ data?.name }}
-            <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
-              <template #title>
-                {{ data.incomeTypeCode }}
-                <span v-if="data?.incomeTypeName?.length > 10">{{ data?.incomeTypeName
-                }}</span>
-              </template>
-              {{ checkLen(data?.incomeTypeName) }}
-            </a-tooltip>
-          </div>
-        </template>
-        <DxValidator :name="nameInput">
-            <DxRequiredRule v-if="required" :message="messageRequired" />
-        </DxValidator>
-    </DxSelectBox>
+    </template>
+    <template #item-data="{ data }">
+      <div class="employee-group" v-if="data.employeeId">
+        <span class="btn-container">
+          {{ data.employeeId }}
+        </span>
+        {{ data?.name }}
+        <a-tooltip placement="top" zIndex="999999" v-if="data?.incomeTypeName">
+          <template #title>
+            {{ data.incomeTypeCode }}
+            <span v-if="data?.incomeTypeName?.length > 10">{{ data?.incomeTypeName
+            }}</span>
+          </template>
+          {{ checkLen(data?.incomeTypeName) }}
+        </a-tooltip>
+      </div>
+    </template>
+    <DxValidator :name="nameInput">
+      <DxRequiredRule v-if="required" :message="messageRequired" />
+    </DxValidator>
+  </DxSelectBox>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, getCurrentInstance } from "vue";
@@ -47,117 +41,132 @@ import DxTextBox from "devextreme-vue/text-box";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 
 export default defineComponent({
-    props: {
-        required: {
-            type: Boolean,
-            default: true,
-        },
-        width: String,
-        disabled: Boolean,
-        valueEmploy: {
-            type: Number,
-        },
-        arrayValue: {
-            type: Array,
-            required: true
-        },
-        nameInput: {
-            type: String,
-            default: '',
-        },
+  props: {
+    required: {
+      type: Boolean,
+      default: true,
     },
-    components: {
-        DxSelectBox,
-        DxTextBox,
-        DxValidator,
-        DxRequiredRule,
+    width: String,
+    disabled: Boolean,
+    valueEmploy: {
+      type: Number,
     },
-    setup(props, { emit }) {
-        let valueEmployRes: any = ref(props.valueEmploy);
-        let arrayValueRes: any = ref(props.arrayValue);
-
-        const updateValue = (value: any) => {
-            emit("update:valueEmploy", value.value);  
-            props.arrayValue.forEach((val:any)=>{
-                if(val.employeeId == value.value){
-                    emit("incomeTypeCode", val.incomeTypeCode, val.employeeId);
-                }
-            })
-
-        };
-
-        // watch(
-        //     () => props.arrayValue,
-        //     (newValue) => {
-        //         arrayValueRes.value = newValue;
-        //     }
-        // ), { deep: true };
-        watch(
-            () => props.valueEmploy,
-            (newValue) => {
-                valueEmployRes.value = newValue;
-            }
-        );
-        const app: any = getCurrentInstance();
-        const messages = app.appContext.config.globalProperties.$messages;
-        const messageRequired = ref(messages.getCommonMessage('102').message);
-        const checkLen = (text: String) => {
-          if (text.length > 10) {
-            return text.substring(0, 7) + '...';
-          }
-          return text;
-        };
-        return {
-            updateValue,
-            valueEmployRes,
-            messageRequired,
-            checkLen,
-            // arrayValueRes,
-        };
+    arrayValue: {
+      type: Array,
+      required: true
     },
+    nameInput: {
+      type: String,
+      default: '',
+    },
+    newLoadKey: {
+      type: [String, Number],
+      default: null,
+    }
+  },
+  components: {
+    DxSelectBox,
+    DxTextBox,
+    DxValidator,
+    DxRequiredRule,
+  },
+  setup(props, { emit }) {
+    let valueEmployRes: any = ref(+props.newLoadKey > 0 && props.newLoadKey);
+    const updateValue = (value: any) => {
+      props.arrayValue.forEach((val: any) => {
+        if (val.key == value.value) {
+          emit("update:valueEmploy", val.employeeId);
+          emit("incomeTypeCode", val);
+          valueEmployRes.value = value.value;
+        }
+      })
+
+    };
+    watch(
+      () => props.newLoadKey,
+      () => {
+        valueEmployRes.value = +props.newLoadKey > 0 && props.newLoadKey;
+      }, { deep: true }
+    );
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
+    const messageRequired = ref(messages.getCommonMessage('102').message);
+    const checkLen = (text: String) => {
+      if (text.length > 10) {
+        return text.substring(0, 7) + '...';
+      }
+      return text;
+    };
+    return {
+      updateValue,
+      valueEmployRes,
+      messageRequired,
+      checkLen,
+    };
+  },
 });
 </script>
 <style scoped>
+:deep .dx-list-item.dx-state-active:focus {
+  border-color: blue;
+  box-shadow: 0 0 3px blue;
+}
+
 .main {
-    display: flex;
-    align-items: flex-end;
+  display: flex;
+  align-items: flex-end;
 }
 
 
 .tag-status {
-    background-color: red;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
+  background-color: red;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin: 0 5px;
 }
 
 
 .tag-status {
-    background-color: red;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
+  background-color: red;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin: 0 5px;
 }
 
 .tag-foreigner {
-    background-color: orange;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
+  background-color: orange;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin: 0 5px;
 }
 
 .display-none {
-    display: none;
+  display: none;
 }
 
 .jtf-center {
-    justify-content: center;
+  justify-content: center;
 }
+
 .employee-group {
   padding: 0 10px;
+}
+
+.btn-container {
+  margin-right: 5px;
+  text-align: center;
+  border: 1px solid rgb(164, 164, 164);
+  border-radius: 5px;
+  padding: 3px 4px;
+  height: 25px;
+  /* background: #ffffff; */
+}
+
+:deep .dx-list-item.dx-state-active {
+  color: black !important;
 }
 </style>
   

@@ -1,0 +1,139 @@
+.ac-110 {
+  padding: 10px;
+  &__top {
+    &-grid {
+      display: flex;
+      justify-content: space-between;
+      &-items {
+        border: 1px solid #bfbfbf;
+        border-radius: 10px;
+        text-align: center;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        &::before {
+          position: absolute;
+          content: "";
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+        &-active {
+          position: relative;
+          &::before {
+            position: absolute;
+            content: "";
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            background-color: #84adf371;
+          }
+        }
+        &-month {
+          margin-right: 3px;
+          display: flex;
+          flex-direction: column;
+          background-color: #d9d9d9;
+          border-radius: 5px;
+          padding: 5px 7px;
+          span {
+            font-size: 11px;
+            line-height: 12px;
+            color: #7f7f7f;
+          }
+        }
+      }
+    }
+    &-flex {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      &-action {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  &__main {
+    margin-top: 30px;
+    &-main {
+      &-slipRegistration {
+        display: flex;
+        align-items: center;
+        &-stt {
+          margin-right: 10px;
+        }
+      }
+    }
+    &-detail {
+      display: flex;
+      margin-top: 15px;
+      &-detail1 {
+        flex-grow: 1;
+        padding-right: 10px;
+        :deep(.dx-toolbar .dx-toolbar-items-container) {
+          height: 55px !important;
+        }
+        &-title {
+          background-color: #bdd7ee;
+          padding: 3px 5px;
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+        }
+        &-summary {
+          display: flex;
+          align-items: center;
+          color: #ffffff;
+          margin-bottom: 10px;
+          &-quantity {
+            background-color: #17375e;
+            padding: 5px;
+            width: 150px;
+            margin-right: 10px;
+          }
+          &-income {
+            background-color: #d99694;
+            padding: 5px;
+            width: 150px;
+            margin-right: 10px;
+          }
+          &-expenses {
+            background-color: #bfbfbf;
+            padding: 5px;
+            width: 150px;
+          }
+          p {
+            margin: 0;
+            font-size: 15px;
+          }
+          &-label {
+          }
+          &-value {
+            text-align: end;
+          }
+        }
+      }
+      &-detail2 {
+        &-upload {
+          border: 1px solid #ddd;
+          height: 100%;
+          padding: 15px;
+          display: flex;
+          justify-content: center;
+        }
+      }
+    }
+  }
+  .disable-button-edit-add {
+    pointer-events: none;
+    color: rgb(180, 177, 177);
+  }
+}

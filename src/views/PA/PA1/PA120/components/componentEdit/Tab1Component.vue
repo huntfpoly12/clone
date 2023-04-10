@@ -1,6 +1,8 @@
 <template>
   <div id="tab1-pa120">
     <a-spin :spinning="loading" size="large">
+      <!-- {{ originDataDetail }} originDataDetail <br /> -->
+      <!-- {{ initFormStateTabPA120.residentId }} initFormStateTabPA120 <br /> -->
       <standard-form formName="tab1-pa120">
         <a-form-item label="사번(코드)" label-align="right" class="red">
           <div class="input-text">
@@ -13,8 +15,8 @@
         </a-form-item>
         <a-form-item label="대표자 여부" label-align="right">
           <div class="input-text">
-            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X" @onChange="onChangePresident"
-              style="width: 80px"></switch-basic>
+            <switch-basic v-model:valueSwitch="initFormStateTabPA120.president" textCheck="O" textUnCheck="X"
+              @onChange="onChangePresident" style="width: 80px"></switch-basic>
             <span style="color: #888888; font-size: 12px"> <img src="@/assets/images/iconInfo.png" style="width: 14px" />
               대표자인 경우 고용보험 제외됩니다. </span>
           </div>
@@ -39,20 +41,17 @@
           </radio-group>
         </a-form-item>
 
-        <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
-          <country-code-select-box v-if="initFormStateTabPA120.foreigner" style="width: 200px"
-            v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-            :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner"
-            :hiddenOptionKR="true" />
-          <country-code-select-box v-else style="width: 200px"
-            v-model:valueCountry="initFormStateTabPA120.nationalityCode" @textCountry="changeTextCountry"
-            :required="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.foreigner" />
-        </a-form-item>
-
-        <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
-          <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
-            :disabled="foreigner == 0" />
-        </a-form-item>
+        <a-row>
+          <a-form-item label="외국인 국적" label-align="right" :class="{ red: foreigner == 1 }">
+            <country-code-select-box style="width: 200px" v-model:valueCountry="initFormStateTabPA120.nationalityCode"
+              @textCountry="changeTextCountry" :required="initFormStateTabPA120.foreigner"
+              :disabled="!initFormStateTabPA120.foreigner" :hiddenOptionKR="initFormStateTabPA120.foreigner" />
+          </a-form-item>
+          <a-form-item label="외국인 체류자격" label-align="right" :class="{ red: foreigner == 1 }">
+            <stay-qualification-select-box v-model:valueStayQualifiction="initFormStateTabPA120.stayQualification"
+              :disabled="foreigner == 0" :required="initFormStateTabPA120.foreigner" />
+          </a-form-item>
+        </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
           <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px">
@@ -126,8 +125,8 @@ import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import notification from '@/utils/notification';
 import { radioCheckForeigner, initFormStateTab1 } from '../../utils/index';
-import { companyId } from '@/helpers/commonFunction';
-// import _ from 'lodash';
+import { companyId, makeDataClean } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 export default defineComponent({
   components: {},
   props: {
@@ -137,6 +136,7 @@ export default defineComponent({
     },
     idRowEdit: {
       type: Number,
+      default: 0,
     },
     openPopup: {
       type: Number,
@@ -144,7 +144,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const yearPA120 = computed(() => store.state.common.yearPA120);
     let isForeigner = ref(false);
     const triggerDepartments = ref(true);
     const arrDepartments = ref([]);
@@ -162,11 +162,12 @@ export default defineComponent({
       postCode.value = data.zonecode;
       initFormStateTabPA120.value.roadAddress = data.roadAddress;
     };
+    const messageUpdate = Message.getMessage('COMMON', '106').message;
 
     watch(() => props.popupStatus, (newValue: any) => {
       if (!newValue) {
         employeeId.value = null;
-        residentId.value = '';
+        // residentId.value = '';
         foreigner.value = 0;
         Object.assign(initFormStateTabPA120.value, initFormStateTab1);
       }
@@ -183,10 +184,10 @@ export default defineComponent({
         labelResidebId.value = '주민등록번호';
       }
     });
-    const residentId = ref('');
-    watch(residentId, (newValue: any) => {
-      initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
-    });
+    // const residentId = ref('');
+    // watch(residentId, (newValue: any) => {
+    //   initFormStateTabPA120.value.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
+    // });
     const employeeId = ref(null);
     // watch(employeeId, (newValue: any) => {
     //   formStateTab1.employeeId = parseInt(newValue);
@@ -232,14 +233,15 @@ export default defineComponent({
     // get employee Information
     const originDataDetail = ref<any>({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: yearPA120.value,
       employeeId: props.idRowEdit,
     });
+    const getEmployeeWageTrigger = ref(false);
     const {
-      refetch: refetchValueDetail,
       result: getValueDefault,
       loading,
-    } = useQuery(queries.getEmployeeWage, originDataDetail.value, () => ({
+    } = useQuery(queries.getEmployeeWage, originDataDetail, () => ({
+      enabled: getEmployeeWageTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(getValueDefault, (value: any) => {
@@ -266,53 +268,50 @@ export default defineComponent({
       store.commit('common/editRowPA120', editRowData);
       store.commit('common/initFormStateTabPA120', editRowData);
       employeeId.value = data.employeeId;
+      getEmployeeWageTrigger.value = false
       // }
     });
     const { mutate, onError, onDone } = useMutation(mutations.updateEmployeeWage);
-    onError((e) => {
-      notification('error', e.message);
-    });
-    onDone((res) => {
-      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
-      notification('success', '업데이트 완료!');
-      store.commit('common/actionFormDonePA120');
-      store.state.common.isNewRowPA120 = false;
-      // store.commit('common/initFormStateTabPA120', initFormStateTab1);
-      store.commit('common/editRowPA120', initFormStateTabPA120.value);
-    });
-
-    watch(() => props.idRowEdit, (value: any) => {
-      originDataDetail.value.employeeId = value;
-    });
-    watch(
-      () => props.openPopup,
-      () => {
-        refetchValueDetail();
-      }
-    );
-
     const actionUpdated = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        store.state.common.isAddFormErrorPA120 = true;
+        store.commit('common/actionFormErrorPA120');
       } else {
+        makeDataClean(initFormStateTabPA120.value);
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
-        delete editData.employeeId
+        delete editData.employeeId;
+        delete editData.key;
         let dataCallCreat = {
           ...originDataDetail.value,
           input: {
             ...editData,
-            residentId: initFormStateTabPA120.value.residentId.slice(0, 6) + '-' + initFormStateTabPA120.value.residentId.slice(6, 14),
           },
         };
         mutate(dataCallCreat);
         store.state.common.isAddFormErrorPA120 = false;
       }
     };
+    onError((e) => {
+      notification('error', e.message);
+      store.commit('common/actionFormErrorPA120');
+    });
+    onDone((res) => {
+      store.state.common.reloadEmployeeList = !store.state.common.reloadEmployeeList;
+      notification('success', messageUpdate);
+      store.commit('common/actionFormDonePA120');
+      store.state.common.isNewRowPA120 = false;
+      store.commit('common/editRowPA120', initFormStateTabPA120.value);
+    });
+    watch(() => props.idRowEdit, (value: any) => {
+      originDataDetail.value = { ...originDataDetail.value, employeeId: value, imputedYear: yearPA120.value };
+      getEmployeeWageTrigger.value = true;
+    }, { immediate: true });
     // convert initFormStateTabPA120.value.name to uppercase
     watch(() => initFormStateTabPA120.value.name, (newVal: any) => {
-      initFormStateTabPA120.value.name = newVal.toUpperCase();
+      if (newVal) {
+        initFormStateTabPA120.value.name = newVal.toUpperCase();
+      }
     }, { deep: true })
     const changeTextCountry = (text: any) => {
       initFormStateTabPA120.value.nationality = text
@@ -338,7 +337,7 @@ export default defineComponent({
 
     const presidentWaring = "대표자는 고용보험에서 제외됩니다. ( 기존에 선택되어있는 경우 강제로 해지됩니다";
     const presidenStatus = ref(false);
-    const onChangePresident = (emit: any)=> {
+    const onChangePresident = (emit: any) => {
       if (emit) {
         presidenStatus.value = true;
       }
@@ -350,7 +349,7 @@ export default defineComponent({
       labelResidebId,
       foreigner,
       funcAddress,
-      residentId,
+      // residentId,
       employeeId,
       postCode,
       radioCheckForeigner,
@@ -361,7 +360,8 @@ export default defineComponent({
       initFormStateTabPA120,
       presidenStatus,
       presidentWaring,
-      onChangePresident
+      onChangePresident,
+      originDataDetail
     };
   },
 });

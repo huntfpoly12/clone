@@ -143,13 +143,13 @@ export const dataSearchIndex = {
   finishDate: 0,
   accounting: true,
   withholding: true,
-  companyName: "",
-  presidentName: "",
+  companyName: null,
+  presidentName: null,
   statuses: [10, 20, 30, 99],
 };
 
 export const initialArrayRadioWithdrawDay = [
-  { id: "매월 5일", text: "매월 5일" },
-  { id: "매월 12일", text: "매월 12일" },
-  { id: "매월 19일", text: "매월 19일" },
+  { id: '5일', text: '매월 5일' },
+    { id: '12일', text: '매월 12일' },
+    { id: '19일', text: '매월 19일' },
 ];

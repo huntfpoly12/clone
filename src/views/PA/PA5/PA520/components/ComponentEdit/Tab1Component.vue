@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <standard-form action="" name="add-page-210">
+        <standard-form  formName="update-page-PA520" ref="formRefPa520Update"> 
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
                 <div class="d-flex-center">
                     <text-number-box width="200px" v-model:valueInput="dataEdited.employeeId" :required="true"
@@ -47,16 +47,16 @@
                 <a-form-item label="외국인 국적" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true }">
                     <country-code-select-box v-model:valueCountry="dataEdited.nationalityCode"
-                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" />
+                        :hiddenOptionKR="dataEdited.foreigner" width="180px" :disabled="disabledSelectBox" :required="!disabledSelectBox"/>
                 </a-form-item>
                 <a-form-item label="외국인 체류자격" label-align="right"
                     :class="{ 'label-red': activeLabel, 'label-custom-width': true, }" style="padding-left: 10px;">
                     <stay-qualification-select-box v-model:valueStayQualifiction="dataEdited.stayQualification"
-                        :disabled="disabledSelectBox" width="180px" />
+                        :disabled="disabledSelectBox" width="180px"  :required="!disabledSelectBox"/>
                 </a-form-item>
             </div>
             <a-form-item :label="labelResident" label-align="right" class="label-red">
-                <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" />
+                <id-number-text-box width="150px" v-model:valueInput="dataEdited.residentId" :required="true" :foreigner="dataEdited.foreigner"/>
             </a-form-item>
             <a-form-item label="주소정근무시간" class="label-red" label-align="right">
               <div class="input-text">
@@ -107,16 +107,11 @@
                     width="200px" />
             </a-form-item>
             <div class="wf-100 text-center mt-10">
-                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated($event)"
+                <button-basic text="저장" type="default" mode="contained" @onClick="actionUpdated()"
                     id="action-update" />
             </div>
         </standard-form>
     </a-spin>
-    <PopupMessage :modalStatus="modalStatusChange" @closePopup="modalStatusChange = false" typeModal="confirm"
-        :content="Message.getCommonMessage('501').message" 
-        :okText="Message.getCommonMessage('501').yes" 
-        :cancelText="Message.getCommonMessage('501').no" 
-        @checkConfirm="statusComfirm" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, reactive } from "vue";
@@ -128,145 +123,153 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useStore } from 'vuex';
 import { Message } from "@/configs/enum";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         idRowEdit: Number,
         openPopup: Number,
-        actionSave: Number
     },
-    setup(props, { emit }) {
-        const modalStatusChange = ref(false)
-        const labelResident = ref('주민등록번호')
-        const activeLabel = ref(false)
-        const disabledSelectBox = ref(true)
-        const selectBoxData1 = ref()
-        const selectBoxData2 = ref()
-        let dataEdited: any = reactive({
-            ...DataEdit
-        })
-        const store = useStore();
-        const globalYear: any = computed(() => store.state.settings.globalYear);
-        const originData = ref({
-            companyId: companyId,
-        })
-        const originDataDetail = ref({
-            companyId: companyId,
-            imputedYear: globalYear.value,
-            employeeId: props.idRowEdit
-        })
-        let indexChange = ref(0)
-        let dataDefault = reactive({})
-        // ============ GRAPQL ===============================
-        const {
-            onResult: resGetDepartments,
-        } = useQuery(queries.getDepartments, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        resGetDepartments(res => {
-            let valArr: any = []
-          res.data.getDepartments.map((v: any) => {
-            // filter empty value
-            if (v.department != '') {
-                valArr.push({
-                    id: v.department,
-                    value: v.department
-                })
-              }
-            })
-            selectBoxData1.value = valArr
-        })
-        const {
-            onResult: resGetResponsibilities,
-        } = useQuery(queries.getResponsibilities, originData, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        resGetResponsibilities(res => {
-            let valArr: any = []
-            res.data.getResponsibilities.map((v: any) => {
-            // filter empty value
-              if (v.responsibility != '') {
-                valArr.push({
-                  id: v.responsibility,
-                  value: v.responsibility
-                })
-              }
-            })
-            selectBoxData2.value = valArr
-        })
-        const {
-            refetch: refetchValueDetail,
-            onResult: getValueDefault,
-            loading
-        } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
-            fetchPolicy: "no-cache",
-        }))
-        getValueDefault(res => {
-            if (res.data) {
-                dataEdited.name = res.data.getEmployeeWageDaily.name
-                dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
-                dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
-                dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
-                dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
-                dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
-                dataEdited.zipcode = ''
-                dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
-                dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
-                dataEdited.email = res.data.getEmployeeWageDaily.email
-                dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
-                dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
-                dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
-                dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
-                dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
-                dataEdited.department = res.data.getEmployeeWageDaily.department
-                dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
-                dataDefault = JSON.stringify(dataEdited)
-            }
-        })
-        const {
-            mutate,
-            onError,
-            onDone,
-        } = useMutation(mutations.updateEmployeeWageDaily);
-        onError(e => {
-            notification('error', e.message)
-        })
-        onDone(() => {
-          store.state.common.checkChangeValueAddPA520 = false
-          dataDefault = JSON.stringify(dataEdited)
-          emit('closePopup', false)
-          notification('success', '업데이트 완료!')
-        })
-        // ============ WATCH ================================ 
-        watch(() => props.idRowEdit, (newVal) => {
-            if (dataDefault === JSON.stringify(dataEdited)) {
-                originDataDetail.value.employeeId = newVal
-                refetchValueDetail()
-            }
-            else {
-                modalStatusChange.value = true
-            }
+  setup(props, { emit }) {
+    const formRefPa520Update = ref()
+    const labelResident = ref('주민등록번호')
+    const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
+    const activeLabel = ref(false)
+    const disabledSelectBox = ref(true)
+    const selectBoxData1 = ref()
+    const selectBoxData2 = ref()
+    let dataEdited: any = reactive({
+      ...DataEdit
+    })
+    const store = useStore();
+    const globalYear: any = computed(() => store.state.settings.globalYear);
+    const originData = ref({
+      companyId: companyId,
+    })
+    const originDataDetail = ref({
+      companyId: companyId,
+      imputedYear: globalYear,
+      employeeId: props.idRowEdit
+    })
+    let dataDefault = ref()
+    const trigger = ref(true)
+    // ============ GRAPQL ===============================
+    const {
+      onResult: resGetDepartments,
+    } = useQuery(queries.getDepartments, originData, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    resGetDepartments(res => {
+      let valArr: any = []
+      res.data.getDepartments.map((v: any) => {
+        // filter empty value
+        if (v.department != '') {
+          valArr.push({
+            id: v.department,
+            value: v.department
+          })
+        }
+      })
+      selectBoxData1.value = valArr
+    })
+    const {
+      onResult: resGetResponsibilities,
+    } = useQuery(queries.getResponsibilities, originData, () => ({
+      fetchPolicy: "no-cache",
+    }))
+    resGetResponsibilities(res => {
+      let valArr: any = []
+      res.data.getResponsibilities.map((v: any) => {
+        // filter empty value
+        if (v.responsibility != '') {
+          valArr.push({
+            id: v.responsibility,
+            value: v.responsibility
+          })
+        }
+      })
+      selectBoxData2.value = valArr
+    })
+    const {
+      refetch: refetchValueDetail,
+      onResult: getValueDefault,
+      loading
+    } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
+      enabled: trigger.value,
+      fetchPolicy: "no-cache"
+    }))
+    getValueDefault(res => {
+      if (res.data) {
+        dataEdited.name = res.data.getEmployeeWageDaily.name
+        dataEdited.foreigner = res.data.getEmployeeWageDaily.foreigner
+        dataEdited.nationality = res.data.getEmployeeWageDaily.nationality
+        dataEdited.nationalityCode = res.data.getEmployeeWageDaily.nationalityCode
+        dataEdited.stayQualification = res.data.getEmployeeWageDaily.stayQualification
+        dataEdited.residentId = res.data.getEmployeeWageDaily.residentId.replace("-", "")
+        dataEdited.zipcode = ''
+        dataEdited.roadAddress = res.data.getEmployeeWageDaily.roadAddress
+        dataEdited.addressExtend = res.data.getEmployeeWageDaily.addressExtend
+        dataEdited.email = res.data.getEmployeeWageDaily.email
+        dataEdited.employeeId = res.data.getEmployeeWageDaily.employeeId
+        dataEdited.joinedAt = res.data.getEmployeeWageDaily.joinedAt
+        dataEdited.leavedAt = res.data.getEmployeeWageDaily.leavedAt
+        dataEdited.retirementIncome = res.data.getEmployeeWageDaily.retirementIncome
+        dataEdited.weeklyWorkingHours = res.data.getEmployeeWageDaily.weeklyWorkingHours
+        dataEdited.department = res.data.getEmployeeWageDaily.department
+        dataEdited.responsibility = res.data.getEmployeeWageDaily.responsibility
+        dataDefault.value = { ...dataEdited }
+        trigger.value = false
+      }
+    })
+    const {
+      mutate,
+      onError,
+      onDone,
+    } = useMutation(mutations.updateEmployeeWageDaily);
+    onError(e => {
+      notification('error', e.message)
+    })
+    onDone(() => {
+        // store.state.common.rowIdSaveDonePa520 = dataEdited.employeeId
+        // store.state.common.checkChangeValueEditTab1PA520 = false
+        // store.state.common.isValidateEditPA520 = false
+        store.commit('common/setCheckEditTab1PA520',false) 
+        dataDefault.value = { ...dataEdited }
+        emit('closePopup', false)
+        notification('success', Message.getCommonMessage('106').message)
+        if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
+    })
+        // ============ WATCH ================================   
+       watch(() => props.idRowEdit, (newVal) => {
+            originDataDetail.value.employeeId = newVal
+            trigger.value = true
+            refetchValueDetail()
         })
         watch(() => dataEdited.foreigner, (value: any) => {
-            if (value == true) {
+          if (value == true) {
                 disabledSelectBox.value = false
                 labelResident.value = '외국인번호 유효성'
                 activeLabel.value = true
-                dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = null
+                dataEdited.nationalityCode = dataEdited.nationalityCode != 'KR' ? dataEdited.nationalityCode : null
+                dataEdited.stayQualification = dataEdited.stayQualification ? dataEdited.stayQualification : null
             } else {
                 labelResident.value = '주민등록번호'
                 disabledSelectBox.value = true
                 activeLabel.value = false
                 dataEdited.nationality = '대한민국'
                 dataEdited.nationalityCode = 'KR'
-                dataEdited.stayQualification = 'C-4'
+                dataEdited.stayQualification =  null
             }
         })
-        watch(() => props.actionSave, () => {
-            document.getElementById('action-update')?.click()
-        })
-        watch(dataEdited, () => {
-            indexChange.value++
+ 
+        watch(dataEdited, (newvl, oldvl) => {
+          // If the corrected data is different from the default data, change the check change status
+          if (JSON.stringify(dataDefault.value) !== JSON.stringify(dataEdited)) {
+            store.commit('common/setCheckEditTab1PA520',true)
+            store.commit('settings/setFormStatus',FormStatus.editing)
+          } else {
+             store.commit('common/setCheckEditTab1PA520',false)
+            store.commit('settings/setFormStatus',FormStatus.none)
+          }
         }, { deep: true })
 
         // convert dataCreated.name to uppercase
@@ -278,16 +281,19 @@ export default defineComponent({
             dataEdited.zipcode = data.zonecode;
             dataEdited.roadAddress = data.roadAddress;
         }
-        const actionUpdated = (e: any) => {
-            var res = e.validationGroup.validate();
+        const actionUpdated = () => {
+            var res = formRefPa520Update.value.validate();
             if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
+              res.brokenRules[0].validator.focus();
+              store.commit('settings/setFormStatus', FormStatus.editing)
+              store.commit('common/setTab1ValidateEditPA520', true)
+              return
             } else {
                 let newValDataEdit = {
                     ...dataEdited,
                     joinedAt: dataEdited.joinedAt,
                     leavedAt: dataEdited.leavedAt,
-                    residentId: dataEdited.residentId.slice(0, 6) + '-' + dataEdited.residentId.slice(6, 14)
+                    residentId: dataEdited.residentId
                 };
                 delete newValDataEdit.employeeId;
                 delete newValDataEdit.zipcode;
@@ -300,18 +306,17 @@ export default defineComponent({
                 mutate(dataCallCreat)
             }
         }
-        const statusComfirm = (res: any) => {
-          if (res == true) {
-            document.getElementById('action-update')?.click()
+
+        watch(() => store.state.common.actionUpdateTab1PA520, () => {
+            actionUpdated()
             originDataDetail.value.employeeId = props.idRowEdit
+            trigger.value = false
             refetchValueDetail()
-            indexChange.value = 1
-          }
-        
-        }
+        })
+
         return {
-            modalStatusChange, activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionUpdated, funcAddress, statusComfirm,Message
+            activeLabel, labelResident, disabledSelectBox, loading, dataEdited, radioCheckForeigner, selectBoxData1, selectBoxData2,
+            actionUpdated, funcAddress,Message,formRefPa520Update,dataDefault,globalYear
         };
     },
 });

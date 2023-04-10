@@ -1,0 +1,90 @@
+import gql from "graphql-tag";
+export default gql`
+  query getTransactionDetails($companyId: Int!, $fiscalYear: Int!, $facilityBusinessId: Int!, $bankbookDetailDate: Int!, $bankbookDetailId: Int!) {
+    getTransactionDetails(companyId: $companyId, fiscalYear: $fiscalYear, facilityBusinessId: $facilityBusinessId, bankbookDetailDate: $bankbookDetailDate, bankbookDetailId: $bankbookDetailId) {
+      bankbookDetailDate
+      bankbookDetailId
+      bankbookId
+      bankbookDetailTime
+      summary
+      content
+      note
+      deposit
+      withdraw
+      balance
+      proofCount
+      transactionDetailsCount
+      normalTransactionDetails
+      documentRegistered
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
+      transactionDetails {
+        transactionDetailDate
+        accountingDocumentId
+        documentOrderByDate
+        bankbookId
+        bankbookDetailId
+        resolutionClassification
+        income
+        spending
+        summary
+        theOrder
+        accountCode
+        relationCode
+        fundingSource
+        clientId
+        letterOfApprovalType
+        causeUsage
+        goodsCount
+        memo
+        goodsId
+        documentRegistered
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        ip
+        active
+        client {
+          clientId
+          name
+          bizNumber
+          presidentName
+          phone
+          use
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          ip
+          active
+          residentId
+        }
+        statementOfGoodsItems {
+          item
+          standard
+          unit
+          quantity
+          unitPrice
+          amount
+          remark
+        }
+      }
+      proofs {
+        name
+        url
+        turl
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        ip
+        active
+      }
+    }
+  }
+`;

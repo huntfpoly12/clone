@@ -15,5 +15,6 @@ mutation updateEmployeeBusiness(
             input:$input
         ){
             type
+            residentId
         }
 }`

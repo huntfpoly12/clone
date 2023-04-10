@@ -3,8 +3,8 @@
     <div class="page-content">
         <a-spin :spinning="loading" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                key-expr="reportId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                :column-auto-width="true">
+                key-expr="reportId" :allow-column-reordering="move_column" :focused-row-enabled="true" :allow-column-resizing="colomn_resize" 
+                :column-auto-width="true"  :focused-row-key="store.state.common.focusedRowKeyPA210" :onRowClick="onRowClick">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxToolbar>
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
@@ -25,14 +25,12 @@
                 </template>
                 <DxColumn caption="마감 현황" cell-template="process-status" width="120" />
                 <template #process-status="{ data }">
-                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" :height="32" :dataRow="data.data"
-                                @dataRow="changeStatus" /> -->
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data"
-                        @checkConfirmRowTable="changeStatusRowTable" />
+                        @checkConfirmRowTable="changeStatusRowTable" :disabled="data.data.status == 40 || data.data.status == 30" />
                 </template>
                 <DxColumn caption="귀속 연월" cell-template="imputed" />
                 <template #imputed="{ data }">
-                    <a-tooltip>
+                    <a-tooltip color="blue">
                         <template #title>
                             귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth,
                                 data.data.imputedFinishYearMonth) }}
@@ -46,8 +44,8 @@
                 </template>
                 <DxColumn caption="지급 연월" cell-template="payment" />
                 <template #payment="{ data }">
-                    <a-tooltip>
-                        <template #title>
+                    <a-tooltip color="blue">
+                        <template #title >
                             지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth,
                                 data.data.paymentFinishYearMonth) }}
                         </template>
@@ -134,8 +132,13 @@
 
                 <DxColumn caption="신고서" cell-template="editIcon" :fixed="true" fixedPosition="right" />
                 <template #editIcon="{ data }">
-                    <DxButton class="ml-3" icon="edit" @click="editRow(data.data, 'iconEdit')"
-                        style="border: none; margin-top: -2px;" />
+                    <DxButton class="ml-3"  @click="editRow(data.data, 'iconEdit')"
+                        style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                          <div v-if="!loading">
+                            <zoom-in-outlined v-if="data.data.status != 10" :style="{fontSize: '20px', color: 'black'}"/>
+                            <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
+                          </div>
+                    </DxButton>
                 </template>
                 <DxColumn caption="수정 신고" css-class="cell-center" cell-template="add" :fixed="true" fixedPosition="right" />
                 <template #add="{ data }">
@@ -149,9 +152,12 @@
                 <DxColumn :width="80" cell-template="pupop" caption="출력 메일" :fixed="true" fixedPosition="right" />
                 <template #pupop="{ data }">
                     <div class="custom-action" style="text-align: center; ">
+                      <a-tooltip>
+                        <template #title>출력 / 저장</template>
                         <img @click="openPopupPrint(data.data)" src="@/assets/images/print.svg" alt=""
                             style="width: 28px;" />
-                        <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
+                    </a-tooltip>
+                    <img @click="openPopupEmail(data.data)" src="@/assets/images/email.svg" alt=""
                             style="width: 28px; margin-left: 10px;" />
                     </div>
                 </template>
@@ -166,7 +172,9 @@
     <ReportGridEdit v-if="statusReportGridEdit" :modalStatus="statusReportGridEdit" @closePopup="closeReportGridEdit" :dataReport="dataReport"
         :key="resetComponentEdit" />
     <ReportGridModify v-if="statusReportGridModify" :modalStatus="statusReportGridModify" @closePopup="closeReportGridModify"
-    :dataReport="dataReport" :key="resetComponentModify" />
+    :dataReport="dataReport" :key="resetComponentModify"/>
+    <ReportGridEditModify v-if="statusReportGridEditModify" :modalStatus="statusReportGridEditModify" @closePopup="closeReportGridEditModify"
+    :dataReport="dataReport" :key="resetComponentModify"/>
 </template>
 <script lang="ts">
 
@@ -184,21 +192,25 @@ import PopupPrint from "./components/PopupPrint.vue";
 import PopupSendEmail from "./components/PopupSendEmail.vue";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxScrolling } from "devextreme-vue/data-grid"
-import { HistoryOutlined } from "@ant-design/icons-vue"
+import { HistoryOutlined ,ZoomInOutlined,EditOutlined} from "@ant-design/icons-vue"
 import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import ReportGridModify from "./components/ReportGrid/ReportGridModify.vue";
+import ReportGridEditModify from "./components/ReportGrid/ReportGridEditModify.vue";
 import { getAfterDeadline, getReportType, showTooltipYearMonth } from "./utils/index"
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
-        ReportGridModify
+        ReportGridModify,ReportGridEditModify,ZoomInOutlined,EditOutlined
     },
     setup() {
         const store = useStore();
+        const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const globalYear = computed(() => store.state.settings.globalYear);
+        
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
@@ -208,6 +220,7 @@ export default defineComponent({
         const modalSendEmailStatus = ref<boolean>(false);
         const statusReportGridEdit = ref<boolean>(false);
         const statusReportGridModify = ref<boolean>(false);
+        const statusReportGridEditModify = ref<boolean>(false);
         const resetComponentEdit = ref(0)
         const resetComponentModify = ref(0)
         const dataReport: any = ref([])
@@ -297,13 +310,47 @@ export default defineComponent({
         }
 
         const closeReportGridEdit = () => {
-          statusReportGridEdit.value = false;
-          refetchData()
+
+          if (hasChangedPopupPA520.value)
+          {
+              comfirmClosePopup(() => {
+                statusReportGridEdit.value = false;
+                refetchData()
+                store.commit('common/setHasChangedPopupPA210',false);
+              })
+          }else{
+            statusReportGridEdit.value = false;
+            refetchData()
+          }
+
         }
 
         const closeReportGridModify = () => {
-          statusReportGridModify.value = false;
-          refetchData()
+          if (hasChangedPopupPA520.value)
+          {
+                comfirmClosePopup(() => {
+                  statusReportGridModify.value = false;
+                  refetchData()
+                  store.commit('common/setHasChangedPopupPA210',false);
+                })
+            }else{
+              statusReportGridModify.value = false;
+              refetchData()
+          }
+        }
+
+        const closeReportGridEditModify = () => {
+          if (hasChangedPopupPA520.value)
+          {
+            comfirmClosePopup(() => {
+                statusReportGridEditModify.value = false;
+                refetchData()
+                store.commit('common/setHasChangedPopupPA210',false);
+            })
+          }else{
+              statusReportGridEditModify.value = false;
+              refetchData()
+          }
         }
 
         const openModalHistory = (data: any) => {
@@ -358,42 +405,47 @@ export default defineComponent({
             if (icon == 'iconEdit' && value.index == 0) {
                 statusReportGridEdit.value = true;
                 resetComponentEdit.value++
-            } else {
+            } else if(icon == 'iconAdd') {
                 // set day to current day if is modify action
                 dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
                 statusReportGridModify.value = true;
                 resetComponentModify.value++
+            } else {
+                // set day to current day if is modify action
+                dataReport.value[0].submissionDate = dayjs().format("YYYYMMDD")
+                statusReportGridEditModify.value = true;
+                resetComponentModify.value++
             }
         };
         const checkModify = (data: any) => {
-            if (data.status == 40) {
-                let reportClassCodes = dataSource.value.filter((value: any) => value.reportClassCode == data.reportClassCode)
-                let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
-                if (indexMax == data.index) {
-                    return true;
-                } else {
-                    return false;
-                }
+          let reportClassCodes = dataSource.value.filter((value: any) => (value.reportClassCode == data.reportClassCode))
+          let indexMax = Math.max(...reportClassCodes.map((dataReportClassCode: any) => dataReportClassCode.index))
+            if (indexMax == data.index && data.status == 40) {
+              return true;
             } else {
-                return false;
-            }
+              return false;
+          }
+        }
+
+        const onRowClick = (data: any) => {
+          store.state.common.focusedRowKeyPA210 = data.reportId
         }
         return {
             globalYear, move_column, colomn_resize, dayjs,
-            dataSource, loading,
+            dataSource, loading,store,
             getReportType,
             dataPopupAdd,
             openAddNewModal, modalAddNewStatus,
             openModalHistory, modalHistoryStatus,
             openPopupEmail, modalSendEmailStatus,
             openPopupPrint, modalPrintStatus,
-            closePopupAddNew,closeReportGridEdit,closeReportGridModify,
-            editRow, statusReportGridEdit, dataReport, statusReportGridModify,
+            closePopupAddNew,closeReportGridEdit,closeReportGridModify,closeReportGridEditModify,
+            editRow, statusReportGridEdit, dataReport, statusReportGridModify,statusReportGridEditModify,
             dataPopup,
             changeStatusRowTable, resetComponentEdit, resetComponentModify,
             getAfterDeadline,
             checkModify, showTooltipYearMonth,
-            
+            onRowClick,   
         };
     },
 });

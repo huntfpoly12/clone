@@ -1,11 +1,11 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
     <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
-    <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
+    <!-- <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
-    </DxButton>
+    </DxButton> -->
     <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
         @click="onItemClick({ itemData: { event: 'History' } })">
         <a-tooltip placement="top">
@@ -23,13 +23,13 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic  :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
         </div>
     </DxButton>
-    <button class="button-open-tab"
+    <button class="button-open-tab" style="pointer-events: all; opacity: 1;"
         @click="openTab({ url: '/dashboard/pa-520', name: '일용직사원등록', id: 'pa-520' })">일용직사원등록</button>
 
     <DxDropDownButton :useItemTextAsTitle="false" class="ml-3 action-select-1" :items="arrDropDownPayrollRegister" text="급여대장" @item-click="onItemClick"
@@ -53,8 +53,11 @@
             </div>
         </template>
     </DxDropDownButton>
+    <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
+        :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmChange" />
+
     <PopupMessage :modalStatus="modalStatusAdd" @closePopup="modalStatusAdd = false" :typeModal="'confirm'"
-        title="처음부터 다시 입력하겠습니까?" content="" okText="네" cancelText="아니요" @checkConfirm="statusComfirmAdd" />
+    :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="statusComfirmAdd" />
 
     <DeletePopup :modalStatus="modalDelete" @closePopup="modalDelete = false" :data="popupDataDelete" />
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
@@ -129,6 +132,7 @@ export default defineComponent({
         const modalEmailSinglePayrollRegister = ref(false)
         const modalEmailMulti = ref(false)
         const modalStatusAdd = ref(false)
+        const modalChangeRow = ref(false)
 
         const originData: any = ref({
             companyId: companyId,
@@ -152,25 +156,30 @@ export default defineComponent({
             }
         };
         const actionAddItem = () => {
-            if (store.state.common.statusRowAdd) {
-                // if (store.state.common.statusChangeFormAdd && store.state.common.actionAddItem) {
-                //     modalStatusAdd.value = true
-                // } else {
-                    store.state.common.statusRowAdd = false;
-                    store.state.common.actionAddItem = true;
-                    store.state.common.incomeId = 'PA510';
-                    store.state.common.focusedRowKey = 'PA510';
-                    // store.state.common.actionResetForm++;
-                // }
-            } else {
+            if (store.state.common.statusChangeFormEdit) {
                 modalStatusAdd.value = true
-                // notification('error', "nhập vàooooo")
+                store.state.common.statusClickButtonAdd = true;
+            } else {
+                if (store.state.common.statusRowAdd) {
+                    store.state.common.addRow++ // add row
+                        store.state.common.statusRowAdd = false;
+                        store.state.common.statusFormAdd = true;
+                } else {
+                    if (store.state.common.statusChangeFormAdd) {
+                        modalStatusAdd.value = true
+                        store.state.common.statusClickButtonAdd = true;
+                    }
+                }
             }
         }
-        const editItem = (value: any) => {
+        const editItem = () => {
             if (props.dataRows.length) {
-                modalEdit.value = true;
-                popupDataEdit.value = props.dataRows
+                if (store.state.common.statusChangeFormEdit) {
+                    modalChangeRow.value = true
+                } else {
+                    modalEdit.value = true;
+                    popupDataEdit.value = props.dataRows
+                }
             } else {
                 notification('error', messageSelectItem)
             }
@@ -221,11 +230,11 @@ export default defineComponent({
                     }
                     break;
                 case 'EmailMultiSalaryStatement':
-                    if (props.dataRows.length) {
+                    if (props.dataRows.length > 1) {
                         popupDataEmailMulti.value = props.dataRows
                         modalEmailMulti.value = true;
                     } else {
-                        notification('error', `항목을 최소 하나 이상 선택해야합니다`)
+                        notification('error', Message.getCommonMessage('601').message)
                     }
                     break;
                 case 'History':
@@ -235,9 +244,6 @@ export default defineComponent({
                 case 'HistoryStatus':
                     modalHistoryStatus.value = true;
                     popupDataHistoryStatus.value = { ...processKey.value }
-                    break;
-                case 'open-tab-520':
-                    openTab({ name: "일용직사원등록", url: "/dashboard/pa-520", id: "pa-520" })
                     break;
             }
         }
@@ -266,14 +272,31 @@ export default defineComponent({
 
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
+                store.state.common.statusClickButtonSave = false
+                store.state.common.checkClickYear = false;
                 store.state.common.actionSubmit++
             } else { // reset form
-                store.state.common.actionResetForm++;
+                if (store.state.common.statusRowAdd) {
+                    store.state.common.addRow++ // add row
+                    store.state.common.statusRowAdd = false;
+                    store.state.common.statusFormAdd = true;
+                } else {
+                    store.state.common.actionResetForm++;
+                }
             }
         }
-        const onSubmit = (e: any) => {
-            store.state.common.actionSubmit++
-        };
+        const statusComfirmChange = async (res: any) => {
+            store.state.common.statusClickEditItem = true
+            if (res) {
+                await store.state.common.actionSubmit++
+            } else {
+                store.state.common.loadingFormData++
+            }
+        }
+        watch(() => store.state.common.onEditItem, (value) => {
+            store.state.common.statusClickEditItem = false
+            editItem()
+        })
 
         return {
             deleteItem,
@@ -300,9 +323,9 @@ export default defineComponent({
             popupDataEdit,
             modalStatusAdd, statusComfirmAdd,
             openTab,
-            onSubmit,
+            // onSubmit,
             store,
-            emailAddress,
+            emailAddress, Message, statusComfirmChange, modalChangeRow,
         };
     },
 });

@@ -55,6 +55,10 @@ export default gql`
         totalTaxfreePay
         totalDeduction
         actualPayment
+        totalNationalPensionDeduction
+        totalHealthDeduction
+        totalLongtermCareDeduction
+        totalEmploymentDeduction
       }
     }
   }

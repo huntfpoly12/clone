@@ -148,7 +148,8 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF2/BF210/index";
 import Field from './components/Field.vue';
 import { dataSearchIndex, productsValue } from "./utils/index";
-import { onExportingCommon } from "@/helpers/commonFunction"
+import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
+import notification from '@/utils/notification';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -196,75 +197,32 @@ export default defineComponent({
         // const originData = ref()
         // let products = ref([...productsValue])
         const dataSource = ref([])
-        const { refetch: refetchData, onResult, loading: loading } = useQuery(queries.searchUsers, { filter: dataSearch.value }, () => ({
+        const { refetch: refetchData, onResult, loading: loading, onError } = useQuery(queries.searchUsers, { filter: dataSearch.value }, () => ({
             enabled: triggerSearching.value,
             fetchPolicy: "no-cache",
         }))
+        onError((e) => {
+            notification("error", e.message);
+        });
         onResult((res) => {
             triggerSearching.value = false;
             rowTable.value = res.data.searchUsers.totalCount
             dataSource.value = res.data.searchUsers.datas
         })
         const changePage = () => {
-            // let dataNew = ref({
-            //     page: dataSearch.value.page,
-            //     rows: per_page,
-            //     type: dataSearch.value.type,
-            //     groupCode: dataSearch.value.groupCode,
-            //     groupName: dataSearch.value.groupName,
-            //     username: dataSearch.value.username,
-            //     name: dataSearch.value.name,
-            //     active: true,
-            // })
+            makeDataClean(dataSearch.value)
             triggerSearching.value = true
-            // if (originData) {
-            //     originData.value = { filter: dataNew.value }
-            //     refetchData()
-            // }
         }
         const searching = () => {
-            // let dataNew = ref()
             if (checkStatus.value.checkBox1 == true && checkStatus.value.checkBox2 == false) {
-                // dataNew.value = {
-                //     page: 1,
-                //     rows: per_page,
-                //     type: dataSearch.value.type,
-                //     groupCode: dataSearch.value.groupCode,
-                //     groupName: dataSearch.value.groupName,
-                //     username: dataSearch.value.username,
-                //     name: dataSearch.value.name,
-                //     active: true,
-                // }
                 dataSearch.value.active = true
             } else if (checkStatus.value.checkBox2 == true && checkStatus.value.checkBox1 == false) {
-                // dataNew.value = {
-                //     page: 1,
-                //     rows: per_page,
-                //     type: dataSearch.value.type,
-                //     groupCode: dataSearch.value.groupCode,
-                //     groupName: dataSearch.value.groupName,
-                //     username: dataSearch.value.username,
-                //     name: dataSearch.value.name,
-                //     active: false,
-                // }
                 dataSearch.value.active = false
             } else {
-                // dataNew.value = {
-                //     page: 1,
-                //     rows: per_page,
-                //     type: dataSearch.value.type,
-                //     groupCode: dataSearch.value.groupCode,
-                //     groupName: dataSearch.value.groupName,
-                //     username: dataSearch.value.username,
-                //     name: dataSearch.value.name,
-                // }
                 delete dataSearch.value.active
             }
+            makeDataClean(dataSearch.value)
             triggerSearching.value = true
-            // if (originData) {
-            //     originData.value = { filter: dataNew.value }
-            //     refetchData()
-            // }
         }
         const changeValueCheckBox = (checkbox: any) => {
             if (checkbox == 'checkBox1')
@@ -309,13 +267,13 @@ export default defineComponent({
         }
 
         const createSuccess = () => {
+            makeDataClean(dataSearch.value)
             triggerSearching.value = true
-            refetchData()
         }
         // Watch
         watch(() => modalEditStatus.value,
             () => {
-                refetchData()
+                // refetchData()
             }
         );
         const closePopupAdd = () => {
@@ -343,8 +301,6 @@ export default defineComponent({
             modalEditStatus,
             dataSource,
             idRowEdit,
-            // refetchData,
-            // originData,
             searching,
             dataSearch,
             rowChoose,

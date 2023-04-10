@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px', padding: '8px'}">
     <a-spin tip="Loading..." :spinning="false">
       <div class="report-grid">
         <div class="header-report">
@@ -85,9 +85,8 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling } from "
 import { HotTable } from "@handsontable/vue3";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css";
-import { useQuery ,useMutation} from "@vue/apollo-composable";
+import { useMutation} from "@vue/apollo-composable";
 import { mergeCells, cellsSetting, dataInit, calculateWithholdingStatusReport, inputPosition, clearAllCellValue } from "./Gridsetting"
-import queries from "@/graphql/queries/PA/PA2/PA210/index";
 import mutations from "@/graphql/mutations/PA/PA2/PA210/index";
 import notification from "@/utils/notification"
 import { useStore } from "vuex";
@@ -95,6 +94,7 @@ import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmDelete from "./ConfirmDelete.vue"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 
 // register Handsontable's modules
 registerAllModules();
@@ -124,10 +124,12 @@ export default defineComponent({
     const confirmLoadNewStatus = ref<boolean>(false)
     // The above code is setting up the hot table.
     const hotSettings = {
-          comments: true,
-          fillHandle: true,
-          colWidths: 100,
-          beforeKeyDown: (e: any) => {
+      comments: true,
+      fillHandle: true,
+      colWidths: 102.5,
+      height: 740,
+      fixedRowsTop: 4,
+      beforeKeyDown: (e: any) => {
               var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (!reg.test(e.key) && e.key != 'Backspace' && e.key != '-') {
           e.preventDefault()
@@ -143,6 +145,7 @@ export default defineComponent({
       afterChange: (changes: any,source : string)=>{
         if(source == 'edit'){
           calculateWithholdingStatusReport(wrapper)
+          store.commit('common/setHasChangedPopupPA210',false);
         }
       },
       hotRef: null,
@@ -151,7 +154,7 @@ export default defineComponent({
       cell: [
         ...cellsSetting,
       ],
-      height: "auto",
+   
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
@@ -160,8 +163,6 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const dataSource = ref<any>(props.dataReport);
-    const originData = ref()
-    const trigger = ref<boolean>(false)
     const setModalVisible = () => {
       emit('closePopup', false)
     }
@@ -232,11 +233,14 @@ export default defineComponent({
             onDone: doneUpdate,
             onError: errUpdate
         } = useMutation(mutations.updateTaxWithholdingStatusReport);
-    doneUpdate(() => {
-        notification('success', `업부상태 변경되었습니다!`)
+    doneUpdate((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.updateTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
+      setModalVisible()
     })
     errUpdate((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
+      setModalVisible()
     })
 
     const updateTaxWithholding = () => {
@@ -245,7 +249,18 @@ export default defineComponent({
       // create data of statementAndAmountOfTaxPaids
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if ( index >= 4 && index <= 32 && (arrData[index][5] != '' || arrData[index][6] != '' || arrData[index][7] != '' || arrData[index][8] != '' || arrData[index][9] != '' || arrData[index][10] != '' || arrData[index][11] != '' ||  arrData[index][12] != '')) {
+        if (
+            index >= 4 && index <= 32 &&
+            (
+              arrData[index][5] != '' ||
+              arrData[index][6] != '' ||
+              arrData[index][7] != '' ||
+              arrData[index][8] != '' ||
+              arrData[index][9] != '' ||
+              arrData[index][10] != '' ||
+              arrData[index][11] != '' ||
+              arrData[index][12] != ''
+            )) {
           statement.push({
             code: arrData[index][4],
             numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
@@ -317,6 +332,7 @@ export default defineComponent({
 
     const actionCloseConfirm = (data: any) => {
       confirmStatus.value = false
+      setModalVisible()
     }
     const {
             mutate: actionChangeStatus,
@@ -359,21 +375,18 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep .ant-modal-body{
-  padding-top: 30px;
-}
 :deep .cell-center {
     text-align: center !important
 }
 .report-grid{
-  padding: 20px 0px 0px 5px;
+  padding: 8px 0px 0px 5px;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
     background-color: #b3b4b3;
   }
   .action-right{
-    margin-bottom: 5px;
+    margin-bottom: 1px;
     display: flex;
     justify-content: flex-end;
   }
@@ -388,11 +401,11 @@ export default defineComponent({
       border-radius: 5px;
       height: 35px;
   }
-  .table-grid{
-    overflow-x: hidden;
-    overflow-y: scroll;
-    max-height: 700px;
-  }
+  // .table-grid{
+  //   overflow-x: hidden;
+  //   overflow-y: scroll;
+  //   max-height: 700px;
+  // }
   :deep .wtHolder {
     width: 100% !important;
    }

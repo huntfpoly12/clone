@@ -2,53 +2,69 @@
     display: flex;
 }
 
+#gridContainerPA630 {
+    max-height: 750px;
+}
+
 .custom-flex {
     align-items: flex-start;
     align-items: center;
 }
-.format-settings{
+
+.format-settings {
     font-size: 14px;
     display: flex;
     align-items: center;
-    .format-settings-text{
+
+    .format-settings-text {
         padding-left: 18px;
     }
 }
-.tax-select{
-    // padding-top: 15px;
-}
 
-.created-date{
+// .custom-mail-group :deep(.dx-button-content) {
+//     padding: 1px;
+// }
+
+// .bt-print-group :deep(.dx-button-content) {
+//     padding: 1px;
+// }
+
+.created-date {
     float: right;
     display: flex;
     align-items: center;
 }
 
-.global-year{
+.global-year {
     margin-top: 6px;
 }
-::v-deep .custom-mail-group {
+
+:deep .custom-mail-group {
     .dx-button-content {
-        padding: 3px;
+        padding: 1px;
     }
 }
 
 .custom-action {
     text-align: center;
 }
+
 .lable-item {
     font-size: 16px;
     font-weight: 600;
-  }
-  .page-content {
+}
+
+.page-content {
     .header-group {
-      align-items: top;
-      margin-top: 5px;
+        align-items: top;
+        margin-top: 5px;
     }
+
     .lable-item {
-      font-size: 14px;
+        font-size: 14px;
     }
+
     ::v-deep .ant-switch-checked {
-      background-color: black ;
+        background-color: black;
     }
-  }
+}

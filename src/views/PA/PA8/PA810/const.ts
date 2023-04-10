@@ -10,7 +10,7 @@ const URL_INSURANCE_REDUCTION_REASON_CODE =
 
 const URL_DISABLED_CODE_DEPENDENT = BASE_URL_SEARCH + "B141"; // 4 of table dependents => disabledCode
 const URL_NATIONALITY_NUMBER_DEPENDENT = BASE_URL_SEARCH + "A151"; // 5 of table dependents => nationalityNumber
-const URL_STAY_QUALIFICATION_CODE_DEPENDENT = BASE_URL_SEARCH + "A151"; // 6 of table dependents => stayQualification
+const URL_STAY_QUALIFICATION_CODE_DEPENDENT = BASE_URL_SEARCH + "A152"; // 6 of table dependents => stayQualification
 
 // export all constants
 export default {

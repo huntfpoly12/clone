@@ -1,11 +1,11 @@
 <template>
   <div style="margin-left: 5px">
-    <a-tooltip title="취득부호조회" placement="top" color="gray">
+    <a-tooltip :title="textTooltip" placement="top" color="gray">
       <div>
         <DxButton
           icon="search"
           :width="width"
-          :text="text"
+          :text="textBtn"
           type="ghost"
           styling-mode="outlined"
           @click="isOpen = true"
@@ -16,7 +16,7 @@
       
     </a-tooltip>
 
-    <a-modal v-model:visible="isOpen" footer="" :mask-closable="false" :width="610" :bodyStyle="{padding: '50px 24px'}">
+    <a-modal v-model:visible="isOpen" footer="" :mask-closable="false" :width="widthModal" :bodyStyle="{padding: '50px 24px'}">
       <iframe
         :src="src"
         type="application/pdf"
@@ -42,13 +42,21 @@ export default defineComponent({
     Tooltip
   },
   props: {
-    text: {
+    textBtn: {
       type: String,
       default: "",
+    },
+    textTooltip: {
+      type: String,
+      default: "취득부호조회",
     },
     width: {
       type: String,
       default: "28",
+    },
+    widthModal: {
+      type: Number,
+      default: 610,
     },
     src: {
       type: String,

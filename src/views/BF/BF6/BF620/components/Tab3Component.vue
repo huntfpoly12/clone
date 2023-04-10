@@ -2,20 +2,24 @@
   <div class="tab-group">
     <div class="search-group tab-3">
       <div>
+        <!-- {{ ElecFilingFileFilter }} ElecFilingFileFilter <br />
+        {{ companiesInElectronic }} companiesInElectronic <br /> -->
         <a-row justify="start" :gutter="[16, 8]">
           <a-col>
             <a-form-item label="신고구분 :">
-              <electronic-filing-type v-model:valueInput="ElecFilingFileFilter.type" width="200px"></electronic-filing-type>
+              <electronic-filing-type v-model:valueInput="ElecFilingFileFilter.type" width="200px"
+                :disabledList="[3, 4, 5, 6, 7, 8, 9]"></electronic-filing-type>
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작요청일(기간)">
-              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"></range-date-time-box>
+              <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작상태">
-              <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses" layout="horizontal" :icon-size="12">
+              <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
+                layout="horizontal" :icon-size="12">
                 <template #radio="{ data }">
                   <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
                   <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
@@ -25,7 +29,7 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="매니저리스트">
+            <a-form-item label="제작요청자">
               <list-manager-dropdown width="150px" v-model:valueInput="ElecFilingFileFilter.manageUserId" />
             </a-form-item>
           </a-col>
@@ -33,51 +37,45 @@
       </div>
     </div>
     <div class="content-grid mt-10">
-      <a-spin :spinning="searchElectronicFilingLoading" size="large">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="companyId"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-        >
-          <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="코드명" data-field="fileStorageId" />
-          <DxColumn caption="신고구분" cell-template="reportType" />
-          <DxColumn caption="제작요청일시" cell-template="productionRequestedAt" />
-          <DxColumn caption="아이디" cell-template="productionRequestUserId" />
-          <DxColumn caption="제작현황" cell-template="productionStatus" />
-          <DxColumn caption="상세보기" cell-template="afterDeadline" />
-          <template #afterDeadline>
-            <div @click="onShow">Kính lúp</div>
-          </template>
-        </DxDataGrid>
-        <!-- <div @click="onShow">Kính lúp</div> -->
-      </a-spin>
+      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering="move_column"
+        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+        <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxLoadPanel :enabled="true" />
+        <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
+        <DxColumn caption="참고사항" data-field="referenceInformation" />
+        <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
+        <DxColumn caption="아이디" data-field="productionRequestUserId" alignment="left" />
+        <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" alignment="left" />
+        <template #productionStatus="{ data }">
+          <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
+          <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
+          <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
+          <production-status :typeTag="5" v-if="data.value == -1" :message="data.data.causeOfProductionFailure"
+            padding="1px 10px" />
+        </template>
+        <DxColumn caption="상세보기" cell-template="afterDeadline" />
+        <template #afterDeadline="{ data }">
+          <DxButton class="custom-action" @click="onShow(data.data.electronicFilingId)"
+            style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+            <zoom-in-outlined :style="{ fontSize: '20px', color: 'black' }" />
+          </DxButton>
+        </template>
+      </DxDataGrid>
+      <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
-    <a-modal :visible="modalStatus" @cancel="modalStatus = false" :mask-closable="false" class="confirm-md" footer="" :width="700">
+    <a-modal :visible="modalStatus" @cancel="modalStatus = false" :mask-closable="false" class="confirm-md" footer=""
+      :width="700">
       <a-spin :spinning="companiesInElectronicLoading">
         <br />
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="companiesInElectronicDataSource"
-          :show-borders="true"
-          key-expr="code"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="companiesInElectronicDataSource"
+          :show-borders="true" key-expr="code" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
-          <DxColumn caption="사업자번호" cell-template="bizNumber" />
-          <DxColumn caption="상호" cell-template="name" />
-          <DxColumn caption="대표자명" cell-template="presidentName" />
+          <DxColumn caption="사업자번호" data-field="bizNumber" />
+          <DxColumn caption="상호" data-field="name" />
+          <DxColumn caption="대표자명" data-field="presidentName" />
           <DxSummary>
             <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
           </DxSummary>
@@ -87,21 +85,21 @@
   </div>
 </template>
   
-  <script lang="ts">
+<script lang="ts">
 import { computed, defineComponent, getCurrentInstance, reactive, ref, watch } from 'vue';
-import SearchArea from './SearchArea.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
-import { DxButton } from 'devextreme-vue/select-box';
-import  { DxDataGrid,DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
 import { SaveOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import DxRadioGroup from 'devextreme-vue/radio-group';
-import filters from '@/helpers/filters';
+import notification from '@/utils/notification';
+import DxButton from "devextreme-vue/button";
+import { ZoomInOutlined } from "@ant-design/icons-vue"
+import GetStatusTable from './GetStatusTable.vue';
 export default defineComponent({
   components: {
-    SearchArea,
     DxButton,
     DxDataGrid,
     DxScrolling,
@@ -111,6 +109,9 @@ export default defineComponent({
     DxRadioGroup,
     DxSummary,
     DxTotalItem,
+    ZoomInOutlined,
+    GetStatusTable,
+    DxLoadPanel
   },
   props: {
     search: {
@@ -119,14 +120,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const rangeDate = ref([filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs())]);
-    const ElecFilingFileFilter = reactive({
-      type: 1,
-      requesteStartDate: rangeDate.value[0],
-      requesteFinishDate: rangeDate.value[1],
-      productionStatuses: [2, -1],
-      manageUserId: 1,
-    });
+    const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const productionStatuses = ref(0);
@@ -139,6 +133,13 @@ export default defineComponent({
 
     const dataSource = ref([]);
     const searchElectronicFilingTrigger = ref(true);
+    const ElecFilingFileFilter = reactive({
+      type: 1,
+      requesteStartDate: rangeDate.value[0],
+      requesteFinishDate: rangeDate.value[1],
+      productionStatuses: [2, -1],
+      manageUserId: null,
+    });
     const {
       result: searchElectronicFilingResult,
       loading: searchElectronicFilingLoading,
@@ -151,18 +152,21 @@ export default defineComponent({
     }));
     watch(searchElectronicFilingResult, (newVal) => {
       let data = newVal.searchElectronicFilingFileProductions;
-      searchElectronicFilingTrigger.value = false;
       dataSource.value = data;
-      companiesInElectronic.electronicFilingId = data.electronicFilingId;
+      // companiesInElectronic.electronicFilingId = data.electronicFilingId;
+      searchElectronicFilingTrigger.value = false;
     });
+    searchElectronicFilingError((res) => {
+      notification('error', res.message)
+    })
 
     // Get Companies detail and data source
 
     const companiesInElectronicDataSource = ref([]);
     const companiesInElectronicTrigger = ref(false);
     const modalStatus = ref<boolean>(false);
-    const companiesInElectronic = reactive({
-      type: 1,
+    const companiesInElectronic = ref({
+      type: ElecFilingFileFilter.type,
       electronicFilingId: 1,
     });
     const {
@@ -176,11 +180,13 @@ export default defineComponent({
     }));
     watch(companiesInElectronicResult, (newVal) => {
       let data = newVal.getCompaniesInElectronicFilingFile;
-      companiesInElectronicTrigger.value = false;
       companiesInElectronicDataSource.value = data;
+      companiesInElectronicTrigger.value = false;
     });
-    const onShow = () => {
+    const onShow = (e: any) => {
       modalStatus.value = true;
+      companiesInElectronic.value.type = ElecFilingFileFilter.type;
+      companiesInElectronic.value.electronicFilingId = e;
       companiesInElectronicTrigger.value = true;
       companiesInElectronicRefetch();
     };
@@ -212,6 +218,17 @@ export default defineComponent({
       ElecFilingFileFilter.requesteStartDate = newVal[0];
       ElecFilingFileFilter.requesteFinishDate = newVal[1];
     });
+    //
+    const productionStatusData = (emitVal: any) => {
+      // productionStatusArr.value = [emitVal];
+      // filteredDataSource.value = filteredDataSource.value.map((item: any) => {
+      //   if (item.companyId == emitVal.companyId) {
+      //     return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
+      //   }
+      //   return { ...item, beforeProduction: false, allowSelection: false };
+      // })
+      // reFreshDataGrid();
+    };
     return {
       ElecFilingFileFilter,
       variables,
@@ -228,10 +245,24 @@ export default defineComponent({
       companiesInElectronicLoading,
       companiesInElectronicDataSource,
       styleCheckBox,
+      productionStatusData,
+      companiesInElectronic
     };
   },
 });
 </script>
 <style scoped lang="scss">
 @import '../style/style.scss';
+
+:deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
+  background: v-bind("styleCheckBox.ColorCheckBox");
+  margin-top: -13px;
+  margin-left: 3px;
+}
+
+:deep .dx-radiobutton-icon::before {
+  border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
+  width: 14px;
+  height: 14px;
+}
 </style>

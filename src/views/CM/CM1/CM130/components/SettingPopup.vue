@@ -6,14 +6,16 @@
 				관할세무서, 지방소득세 납세지 검색
 			</h2>
 			<div style="text-align: center; margin-top: 32px">
-				<search-outlined />
+				<!-- <search-outlined /> -->
 				주소 또는 소재지 ‘읍.면.동’ 이름을 입력하세요
 			</div>
-			<div style="text-align: center; margin-top: 10px">
-				<default-text-box
-					style="width: 350px; display: inline-block; margin-right: 10px;"
-					v-model:valueInput="search">
-				</default-text-box>
+			<div style="margin-top: 10px; display: flex; justify-content: center;">
+				<StandardForm formName="cm-130-search" ref="CM130Search">
+					<default-text-box
+						style="margin-right: 10px;" width="350" :required="true"
+						v-model:valueInput="search">
+					</default-text-box>
+				</StandardForm>
 				<button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'" @onClick="onSearch"/>
 			</div>
 			<a-spin tip="Loading..." :spinning="loading">
@@ -86,10 +88,17 @@ export default defineComponent({
 		const dataSource = ref([]);
 		const search = ref<string>("");
 		let dataEmit = ref()
+		const CM130Search = ref()
 		const onSearch = () => {
-			dataQuery.value = { keyword: search.value };
-			trigger.value = true;
-			refetchSearch();
+			var res = CM130Search.value.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+			} else {
+				dataQuery.value = { keyword: search.value };
+				trigger.value = true;
+			}
+			
+			// refetchSearch();
 		};
 
 		// Search public institution information
@@ -136,6 +145,7 @@ export default defineComponent({
 			changeOption,
 			dataSource,
 			onSubmit,
+			CM130Search,
 		};
 	},
 });

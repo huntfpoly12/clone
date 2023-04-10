@@ -1,52 +1,68 @@
 #pa-610 {
-    margin-top: 10px;
+  margin-top: 10px;
 
-    .total-user {
-        background-color: #17375E;
-        color: white;
-        display: flex;
-        align-items: center;
+  .total-user {
+    background-color: #17375E;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 3px;
 
-        >div {
-            font-size: 16px;
-            width: 50%;
-            text-align: center;
-            line-height: 16px;
-
-            .dx-icon-user {
-                font-size: 55px;
-            }
-        }
+    > span {
+      padding-left: 5px;
     }
 
-    ::v-deep .ant-form-item-label>label {
-        width: 180px;
-        padding-left: 10px;
+    > img {
+      width: 30px;
+      padding-left: 5px;
     }
-    ::v-deep .red .ant-form-item-label>label {
-        color: red;
-    }
+  }
+  .custom-layout {
+    height: 700px;
+    border: 1px solid #d7d7d7;
+    padding: 10px 0 0 10px;
+  }
+  :deep(.dx-datagrid-header-panel) {
+    //border: 1px solid #d7d7d7;
+    border-bottom: none;
+    padding: 5px;
+  }
 
-    ::v-deep .custom-layout {
-        padding: 10px 10px 10px 0;
+  :deep(.ant-form-item-label > label) {
+    width: 180px;
+    padding-left: 10px;
+  }
 
-        >div {
-            border: 1px solid #d7d7d7;
-            padding: 10px;
-            height: 100%;
-        }
-    }
+  :deep(.red .ant-form-item-label > label){
+    color: red;
+  }
 
-    .custom-note {
-        >span {
-            font-size: 11px;
-            color: #666666;
-            padding-left: 5px;
-        }
-    }
+  :deep(.custom-layout) {
+    padding: 10px 10px 10px 0;
 
-    ::v-deep .active-row-key {
-        background-color: #337AB7;
-        color: white;
+    > div {
+      //border: 1px solid #d7d7d7;
+      padding-top: 10px;
+      height: 100%;
     }
+  }
+
+  .custom-note {
+    > span {
+      font-size: 11px;
+      color: #666666;
+      padding-left: 5px;
+    }
+  }
+
+  :deep(.active-row-key) {
+    background-color: #337AB7;
+    color: white;
+  }
+  .ant-tag {
+    text-align: center;
+    align-items: center;
+    width: 35px;
+    height: 25px;
+  }
 }

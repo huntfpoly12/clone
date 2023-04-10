@@ -139,7 +139,6 @@
     .button-open-tab {
         height: 100%;
         // padding-bottom: 7px;
-        width: 100px;
     }
     
     .custom-select-tab {
@@ -184,8 +183,7 @@
         border-radius: 5px;
         margin-left: 3px;
         cursor: pointer;
-        height: 100%;
-        width: 100px;
+        height: 92%;
     }
     
     .custom-button-delete {
@@ -248,5 +246,31 @@
     }
     :deep .dx-datagrid-rowsview .dx-row-focused.dx-data-row>td:not(.dx-focused) {
       color: black;
+    }
+    :deep .column-focus {
+      background-color: #5c95c5;
+      color: black;
+    }
+    :deep .dx-datagrid-headers {
+      .column-focus {
+        color: black;
+      }
+    }
+    .red {
+      :deep label {
+        color: red;
+      }
+    }
+    :deep .btn-container {
+      margin-right: 5px;
+      text-align: center;
+      border: 1px solid rgb(164, 164, 164);
+      border-radius: 5px;
+      padding: 3px 4px;
+      height: 25px;
+      background: white;
+    }
+    :deep .dx-command-expand.dx-datagrid-group-space{
+      padding: 0;
     }
 }

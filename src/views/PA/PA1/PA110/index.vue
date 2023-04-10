@@ -3,10 +3,10 @@
         <action-header title="기타소득자등록" :buttonSave="false" :buttonDelete="false" :buttonSearch="false"
             :buttonPrint="false" />
         <div id="pa-110" class="page-content">
-            <a-row>
+            <a-row :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
                 <a-spin :spinning="loadingIncomeProcessWages" size="large">
                     <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                        key-expr="companyId" :focused-row-enabled="true" :show-borders="true"
+                        key-expr="companyId" :show-borders="true"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                         :column-auto-width="true">
                         <DxScrolling mode="standard" show-scrollbar="always" />
@@ -14,7 +14,7 @@
                         <template #imputed-year="{}">
                             <span>지급연월</span>
                         </template>
-                        <DxColumn width="100px" caption="01" cell-template="imputed-month1" />
+                        <DxColumn width="100px" caption="01" cell-template="imputed-month1" :cssClass="store.state.common.processKeyPA110.imputedMonth == 1 ? 'column-focus' : '' + (hoverColClick == 1 ? 'column-hover' : '') "/>
                         <template #imputed-month1="{ data }">
                             <div v-if="data.data.month1">
                                 <colorful-badge class="hover-underlined" :value="data.data.month1.status"
@@ -24,7 +24,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(1)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="02" cell-template="imputed-month2" />
+                        <DxColumn width="100px" caption="02" cell-template="imputed-month2" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 2 ? 'column-focus' : '' + (hoverColClick == 2 ? 'column-hover' : '')"/>
                         <template #imputed-month2="{ data }">
                             <div v-if="data.data.month2">
                                 <colorful-badge class="hover-underlined" :value="data.data.month2.status"
@@ -34,7 +34,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(2)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="03" cell-template="imputed-month3" />
+                        <DxColumn width="100px" caption="03" cell-template="imputed-month3" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 3 ? 'column-focus' : '' + (hoverColClick == 3 ? 'column-hover' : '')"/>
                         <template #imputed-month3="{ data }">
                             <div v-if="data.data.month3">
                                 <colorful-badge class="hover-underlined" :value="data.data.month3.status"
@@ -44,7 +44,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(3)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="04" cell-template="imputed-month4" />
+                        <DxColumn width="100px" caption="04" cell-template="imputed-month4" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 4 ? 'column-focus' : '' + (hoverColClick == 4 ? 'column-hover' : '')"/>
                         <template #imputed-month4="{ data }">
                             <div v-if="data.data.month4">
                                 <colorful-badge class="hover-underlined" :value="data.data.month4.status"
@@ -54,7 +54,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(4)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="05" cell-template="imputed-month5" />
+                        <DxColumn width="100px" caption="05" cell-template="imputed-month5" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 5 ? 'column-focus' : '' + (hoverColClick == 5 ? 'column-hover' : '')"/>
                         <template #imputed-month5="{ data }">
                             <div v-if="data.data.month5">
                                 <colorful-badge class="hover-underlined" :value="data.data.month5.status"
@@ -64,7 +64,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(5)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="06" cell-template="imputed-month6" />
+                        <DxColumn width="100px" caption="06" cell-template="imputed-month6" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 6 ? 'column-focus' : '' + (hoverColClick == 6 ? 'column-hover' : '')"/>
                         <template #imputed-month6="{ data }">
                             <div v-if="data.data.month6">
                                 <colorful-badge class="hover-underlined" :value="data.data.month6.status"
@@ -74,7 +74,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(6)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="07" cell-template="imputed-month7" />
+                        <DxColumn width="100px" caption="07" cell-template="imputed-month7" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 7 ? 'column-focus' : '' + (hoverColClick == 7 ? 'column-hover' : '')"/>
                         <template #imputed-month7="{ data }">
                             <div v-if="data.data.month7">
                                 <colorful-badge class="hover-underlined" :value="data.data.month7.status"
@@ -84,7 +84,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(7)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="08" cell-template="imputed-month8" />
+                        <DxColumn width="100px" caption="08" cell-template="imputed-month8" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 8 ? 'column-focus' : '' + (hoverColClick == 8 ? 'column-hover' : '')"/>
                         <template #imputed-month8="{ data }">
                             <div v-if="data.data.month8">
                                 <colorful-badge class="hover-underlined" :value="data.data.month8.status"
@@ -94,7 +94,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(8)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="09" cell-template="imputed-month9" />
+                        <DxColumn width="100px" caption="09" cell-template="imputed-month9" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 9 ? 'column-focus' : '' + (hoverColClick == 9 ? 'column-hover' : '')"/>
                         <template #imputed-month9="{ data }">
                             <div v-if="data.data.month9">
                                 <colorful-badge class="hover-underlined" :value="data.data.month9.status"
@@ -104,7 +104,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(9)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="10" cell-template="imputed-month10" />
+                        <DxColumn width="100px" caption="10" cell-template="imputed-month10" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 10 ? 'column-focus' : '' + (hoverColClick == 10 ? 'column-hover' : '')"/>
                         <template #imputed-month10="{ data }">
                             <div v-if="data.data.month10">
                                 <colorful-badge class="hover-underlined" :value="data.data.month10.status"
@@ -114,7 +114,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(10)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="11" cell-template="imputed-month11" />
+                        <DxColumn width="100px" caption="11" cell-template="imputed-month11" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 11 ? 'column-focus' : '' + (hoverColClick == 11 ? 'column-hover' : '')"/>
                         <template #imputed-month11="{ data }">
                             <div v-if="data.data.month11">
                                 <colorful-badge class="hover-underlined" :value="data.data.month11.status"
@@ -124,7 +124,7 @@
                             </div>
                             <div v-else style="width: 100%;text-align: center;" @click="copyMonth(11)">[+]</div>
                         </template>
-                        <DxColumn width="100px" caption="12" cell-template="imputed-month12" />
+                        <DxColumn width="100px" caption="12" cell-template="imputed-month12" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 12 ? 'column-focus' : '' + (hoverColClick == 12 ? 'column-hover' : '')"/>
                         <template #imputed-month12="{ data }">
                             <div v-if="data.data.month12">
                                 <colorful-badge class="hover-underlined" :value="data.data.month12.status"
@@ -142,52 +142,52 @@
                                 <template #col-first="{ data }">
                                     <b>{{ data.data.name }}</b><br>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-1" />
+                                <DxColumn width="100px" cell-template="month-1" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 1 ? 'column-focus' : '' + (hoverColClick == 1 ? 'column-hover' : '')"/>
                                 <template #month-1="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month1)">{{ data.data.month1.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-2" />
+                                <DxColumn width="100px" cell-template="month-2" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 2 ? 'column-focus' : '' + (hoverColClick == 2 ? 'column-hover' : '')"/>
                                 <template #month-2="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month2)">{{ data.data.month2.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-3" />
+                                <DxColumn width="100px" cell-template="month-3" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 3 ? 'column-focus' : '' + (hoverColClick == 3 ? 'column-hover' : '')"/>
                                 <template #month-3="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month3)">{{ data.data.month3.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-4" />
+                                <DxColumn width="100px" cell-template="month-4" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 4 ? 'column-focus' : '' + (hoverColClick == 4 ? 'column-hover' : '')"/>
                                 <template #month-4="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month4)">{{ data.data.month4.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-5" />
+                                <DxColumn width="100px" cell-template="month-5" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 5 ? 'column-focus' : '' + (hoverColClick == 5 ? 'column-hover' : '')"/>
                                 <template #month-5="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month5)">{{ data.data.month5.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-6" />
+                                <DxColumn width="100px" cell-template="month-6" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 6 ? 'column-focus' : '' + (hoverColClick == 6 ? 'column-hover' : '')"/>
                                 <template #month-6="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month6)">{{ data.data.month6.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-7" />
+                                <DxColumn width="100px" cell-template="month-7" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 7 ? 'column-focus' : '' + (hoverColClick == 7 ? 'column-hover' : '')"/>
                                 <template #month-7="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month7)">{{ data.data.month7.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-8" />
+                                <DxColumn width="100px" cell-template="month-8" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 8 ? 'column-focus' : '' + (hoverColClick == 8 ? 'column-hover' : '')"/>
                                 <template #month-8="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month8)">{{ data.data.month8.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-9" />
+                                <DxColumn width="100px" cell-template="month-9" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 9 ? 'column-focus' : '' + (hoverColClick == 9 ? 'column-hover' : '')"/>
                                 <template #month-9="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month9)">{{ data.data.month9.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-10" />
+                                <DxColumn width="100px" cell-template="month-10" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 10 ? 'column-focus' : '' + (hoverColClick == 10 ? 'column-hover' : '')"/>
                                 <template #month-10="{ data }">
                                     <div class="custom-detail" v-if="data.data.month10">{{ data.data.month10.value }}</div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-11" />
+                                <DxColumn width="100px" cell-template="month-11" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 11 ? 'column-focus' : '' + (hoverColClick == 11 ? 'column-hover' : '')"/>
                                 <template #month-11="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month11)">{{ data.data.month11.value }}
                                     </div>
                                 </template>
-                                <DxColumn width="100px" cell-template="month-12" />
+                                <DxColumn width="100px" cell-template="month-12" :cssClass=" store.state.common.processKeyPA110.imputedMonth == 12 ? 'column-focus' : '' + (hoverColClick == 12 ? 'column-hover' : '')"/>
                                 <template #month-12="{ data }">
                                     <div class="custom-detail" v-if="(data.data.month12)">{{ data.data.month12.value }}
                                     </div>
@@ -198,59 +198,72 @@
                     </DxDataGrid>
                 </a-spin>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''"
+            <a-row :class="{
+            'disabledBlock': statusDisabledBlock,
+            'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}"
                 style="border: 1px solid #d7d7d7; padding: 10px; margin-top: 10px;" justify="space-between">
-                <a-col :span="5">
-                    <div style="display: flex;">
-                        <!-- <DxButton :text="'귀' + inputDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'gray' }" :height="'33px'" />
-                        <DxButton :text="'지' + paymentDateTax" :disabled="false"
-                            :style="{ color: 'white', backgroundColor: 'black' }" :height="'33px'" /> -->
+                <a-col>
+                    <div v-if="!statusDisabledBlock">
                         <DxButton
-                            :text="'귀' + processKey.imputedYear + '-' + (processKey.imputedMonth > 9 ? processKey.imputedMonth : '0' + processKey.imputedMonth)"
+                            :text="'귀 ' + processKey.imputedYear + '-' + $filters.formatMonth(processKey.imputedMonth)"
                             :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                         <DxButton
-                            :text="'지' + processKey.paymentYear + '-' + (processKey.paymentMonth > 9 ? processKey.paymentMonth : '0' + processKey.paymentMonth)"
+                            :text="'지 ' + processKey.paymentYear + '-' + $filters.formatMonth(processKey.paymentMonth)"
                             :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                         <ProcessStatus v-model:valueStatus="status" @checkConfirm="statusComfirm"
-                            :disabled="store.state.common.statusDisabledStatus" />
+                            :disabled="status == 30 || status == 40 || (store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)" />
+                    </div>
+                    <div v-else>
+                        <DxButton text='귀' :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                        <DxButton text='지' :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                     </div>
                 </a-col>
-                <a-col :span="9">
+                <a-col>
                     <div style="float: right;display: flex;">
                         <SelectActionComponent :dataRows="dataRows" />
                     </div>
                 </a-col>
             </a-row>
-            <a-row :class="statusDisabledBlock ? 'disabledBlock' : ''">
-                <a-col :span="12" class="custom-layout">
+            <a-row :class="{'disabledBlock': statusDisabledBlock}">
+                <a-col :span="12" class="custom-layout" :class="{'ele-opacity':(store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)}">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="store.state.common.dataTaxPayInfo" :show-borders="true"
                             :allow-column-reordering="move_column" :focused-row-enabled="true"
                             :allow-column-resizing="colomn_resize" :column-auto-width="true"
                             key-expr="incomeId" id="pa-110-gridContainer" :onRowClick="actionEditTaxPay"
+                            @focused-row-changing="onFocusedRowChanging"
+                            ref="gridRefPA110"
                             @selection-changed="selectionChanged" :selection-filter="store.state.common.selectionFilter"
                             v-model:focused-row-key="store.state.common.focusedRowKey">
                             <DxScrolling mode="standard" show-scrollbar="always" />
                             <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple"
                                 width="40" />
-                            <DxColumn alignment="left" width="200" caption="사원" cell-template="tag" />
+                            <DxColumn width="200" caption="사원" cell-template="tag" />
                             <template #tag="{ data }">
                                 <div class="custom-action">
-                                    <EmployeeInfoSettment :idEmployee="data.data.employee.employeeId"
+                                    <employee-info :idEmployee="data.data.employee.employeeId" :idCardNumber="data.data.employee.residentId"
                                         :name="data.data.employee.name" :status="data.data.employee.status"
-                                        :foreigner="data.data.employee.foreigner" :checkStatus="false"
-                                        :midTermSettlement="data.data.midTermSettlement" />
+                                        :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                                 </div>
                             </template>
-                            <DxColumn alignment="left" width="75" caption="급여" data-field="totalPay"
+                            <DxColumn css-class="money-column" width="75" caption="급여" data-field="totalPay"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" width="75" caption="공제" data-field="totalDeduction"
+                            <DxColumn css-class="money-column" width="75" caption="공제" cell-template="total-deduction" data-field="totalDeduction"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" width="120" caption="차인지급액" data-field="actualPayment"
+                            <template #total-deduction="{ data }">
+                                <a-tooltip placement="top">
+                                    <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방소득세
+                                        {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}
+                                    </template>
+                                    <span>
+                                        {{ $filters.formatCurrency(data.data.totalDeduction) }}
+                                    </span>
+                                </a-tooltip>
+                            </template>
+                            <DxColumn css-class="money-column" width="120" caption="차인지급액" data-field="actualPayment"
                                 format="fixedPoint" />
-                            <DxColumn alignment="left" class="min-w-240" caption="비고"
+                            <DxColumn class="min-w-240" caption="비고"
                                 cell-template="four-major-insurance" />
                             <template #four-major-insurance="{ data }">
                                 <div class="custom-action">
@@ -273,9 +286,9 @@
                             <DxColumn alignment="left" width="30" caption="지급일" data-field="paymentDay"
                                 cell-template="paymentDay" />
                             <template #paymentDay="{ data }">
-                                <div class="text-center">{{ data.data.paymentDay }}</div>
+                                <div class="text-center">{{  $filters.formatMonth(data.data.paymentDay) }}</div>
                             </template>
-                            <DxSummary>
+                            <DxSummary v-if="store.state.common.dataTaxPayInfo.length">
                                 <DxTotalItem column="사원" summary-type="count" display-format="사원수: {0}" />
                                 <DxTotalItem column="totalPay" summary-type="sum" display-format="급여합계: {0}"
                                     value-format="#,###" />
@@ -287,18 +300,18 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col :span="12" class="custom-layout" style="padding-right: 0px;">
+                <a-col :span="12" class="custom-layout" style="padding-right: 0px;" :class="{'disabledBlock': !store.state.common.dataTaxPayInfo.length}">
                     <FormDataComponent />
                 </a-col>
                 <PopupMessage :modalStatus="modalChangeRow" @closePopup="modalChangeRow = false" typeModal="confirm"
-                    title="변경 내용을 저장하시겠습니까?" content="" okText="네" cancelText="아니요"
+                :title="Message.getMessage('COMMON', '501').message" content="" :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
                     @checkConfirm="statusComfirmChange" />
                 <!-- <PopupMessage :modalStatus="modalChangeRowPrice" @closePopup="modalChangeRowPrice = false"
                     typeModal="confirm" :title="Message.getMessage('PA110', '001').message" content=""
                     :okText="Message.getMessage('PA110', '001').yes" :cancelText="Message.getMessage('PA110', '001').no"
                     @checkConfirm="statusComfirmChangePrice" /> -->
                 <CopyMonth :modalStatus="modalCopy" :data="dataModalCopy" :arrDataPoint="arrDataPoint"
-                    @closePopup="modalCopy = false" @dataAddIncomeProcess="dataAddIncomeProcess" />
+                    @closePopup="{modalCopy = false; hoverColClick = 0}" @dataAddIncomeProcess="dataAddIncomeProcess" />
             </a-row>
         </div>
     </div>
@@ -319,7 +332,6 @@ import filters from "@/helpers/filters";
 import notification from "@/utils/notification"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import CopyMonth from "./components/Popup/CopyMonth.vue";
-import EmployeeInfoSettment from "@/components/common/EmployeeInfoSettment.vue";
 import { initDataCustomRes } from "./utils/index"
 import { userType } from "@/helpers/commonFunction";
 import { Message } from '@/configs/enum';
@@ -344,7 +356,6 @@ export default defineComponent({
         ProcessStatus,
         FormDataComponent,
         CopyMonth,
-        EmployeeInfoSettment
     },
     setup() {
         const store = useStore()
@@ -359,7 +370,6 @@ export default defineComponent({
             paymentMonth: dayjs().month() + 1,
         }
         const processKey = computed(() => store.state.common.processKeyPA110)
-        const monthClicked = computed(() => store.state.common.processKeyPA110.imputedMonth);
         const dataSource = ref<any>([])
         const dataCustomRes: any = ref<any>([])
         const arrDataPoint = ref<any>([])
@@ -369,23 +379,36 @@ export default defineComponent({
         const dataRows = ref([])
         const actionSaveItem = ref<number>(0)
         const actionUpdateItem = ref<number>(0)
+        const trigger = ref<boolean>(true)
+        const triggerDataTaxPayInfo = ref<boolean>(true)
         let status = ref();
+        const gridRefPA110 = ref(); // ref of grid
+        const dataGridRef = computed(() => gridRefPA110.value?.instance as any); // ref of grid Instance
+        const originData = ref({
+            companyId: companyId,
+            imputedYear: globalYear.value,
+        })
+        const originDataTaxPayInfo = ref({
+            companyId: companyId,
+            processKey: processKey.value,
+        })
+        const hoverColClick = ref<number>(0)
         // const modalChangeRowPrice = ref(false)
         const isRunOnce = ref<boolean>(true);
+        const isRunOnceTaxPayInfo = ref<boolean>(true);
         const statusDisabledBlock = ref<boolean>(true);
         // call api getIncomeProcessWages for first table 
         const {
             refetch: refetchDataProcessIncomeWages,
             result: resIncomeProcessWages,
             loading: loadingIncomeProcessWages
-        } = useQuery(queries.getIncomeProcessWages, {
-            companyId: companyId,
-            imputedYear: globalYear,
-        }, () => ({
+        } = useQuery(queries.getIncomeProcessWages, originData, () => ({
+            enabled: trigger.value,
             fetchPolicy: "no-cache",
         }))
         // get data table detail getIncomeProcessWages
         watch(resIncomeProcessWages, (value) => {
+            trigger.value = false;
             arrDataPoint.value = [];
             if (value) {
                 // set first row in table Income Process Wages
@@ -414,51 +437,46 @@ export default defineComponent({
                     dataSource.value[0]['month' + data.imputedMonth] = data
                     // data table detail
                     dataCustomRes.value[0]['month' + data.imputedMonth] = {
-                        value: data.employeeStat ? `${filters.formatCurrency(data.employeeStat.employeeCount)}(${filters.formatCurrency(data.employeeStat.retireEmployeeCount)})` : 0,
+                        value: `${filters.formatCurrency(data.employeeStat?.employeeCount)}(${filters.formatCurrency(data.employeeStat?.retireEmployeeCount)})`,
                         ...dataAdd
                     }
                     dataCustomRes.value[1]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[2]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalTaxPay),
                         ...dataAdd
                     }
-                    dataCustomRes.value[3]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[2]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalTaxfreePay),
                         ...dataAdd
                     }
+                    dataCustomRes.value[3]['month' + data.imputedMonth] = {
+                        value: filters.formatCurrency(data.incomeStat?.totalPay),
+                        ...dataAdd
+                    }
                     dataCustomRes.value[4]['month' + data.imputedMonth] = {
-
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(data.incomeStat?.totalNationalPensionDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[5]['month' + data.imputedMonth] = {
-                        value: 0,
+                        value: filters.formatCurrency(data.incomeStat?.totalHealthDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[6]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(data.incomeStat?.totalLongtermCareDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[7]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
+                        value: filters.formatCurrency(data.incomeStat?.totalEmploymentDeduction),
                         ...dataAdd
                     }
                     dataCustomRes.value[8]['month' + data.imputedMonth] = {
-                        value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
-                        ...dataAdd
-                    }
-                    dataCustomRes.value[9]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.withholdingIncomeTax),
                         ...dataAdd
                     }
-                    dataCustomRes.value[10]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[9]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.withholdingLocalIncomeTax),
                         ...dataAdd
                     }
-                    dataCustomRes.value[11]['month' + data.imputedMonth] = {
+                    dataCustomRes.value[10]['month' + data.imputedMonth] = {
                         value: filters.formatCurrency(data.incomeStat?.totalDeduction),
                         ...dataAdd
                     }
@@ -468,121 +486,207 @@ export default defineComponent({
                     }
                 });
             }
-            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA510.imputedMonth]
+            const obj = dataSource.value[0]['month' + store.state.common.processKeyPA110.imputedMonth]
             if (obj) {
                 statusDisabledBlock.value = false;
+                if (isRunOnce.value) {
+                    showDetailSelected(obj)
+                } else  {
+                    if (store.state.common.checkClickMonth)
+                        activeNewMonth(dataMonthNew.value)
+                    else
+                        activeNewMonth(obj)
+                }
             } else {
                 status.value = null
                 statusDisabledBlock.value = true;
+                triggerDataTaxPayInfo.value = true; //reset data table 2
             }
-            if (isRunOnce.value) {
-                isRunOnce.value = false;
-                if (obj) {
-                    showDetailSelected(obj)
-                }
-            }
+            
         })
 
         // get getIncomeWages table
         const {
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
+            onError: errorTaxPayInfo,
             loading: loadingTaxPayInfo,
-        } = useQuery(queries.getIncomeWages, {
-            companyId: companyId,
-            processKey: processKey,
-        }, () => ({
+        } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
+            enabled: triggerDataTaxPayInfo.value,
             fetchPolicy: "no-cache",
         }))
+        errorTaxPayInfo(e => {
+            triggerDataTaxPayInfo.value = false;
+            store.state.common.dataTaxPayInfo = []
+            store.state.common.statusFormAdd = true
+            // store.state.common.focusedRowKey = null;
+            store.state.common.incomeId = null;
+            store.state.common.actionResetForm++;
+            notification('error', e.message)
+        })
         watch(resultTaxPayInfo, (value) => {
-            store.state.common.dataTaxPayInfo = value.getIncomeWages;
-            // if (value.getIncomeWages[0] && !store.state.common.actionAddItem) { // if have data
-            if (value.getIncomeWages[0]) { // if have data
-                if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
-                    store.state.common.focusedRowKey = store.state.common.incomeId
-                    // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+            triggerDataTaxPayInfo.value = false;
+            if (value) {
+                // debugger
+                store.state.common.dataTaxPayInfo = value.getIncomeWages;
+                // debugger
+                // if (value.getIncomeWages[0] && !store.state.common.statusFormAdd) { // if have data
+                if (value.getIncomeWages[0]) { // if have data
+                    // if (store.state.common.incomeId && value.getIncomeWages.find((element: any) => element.incomeId == store.state.common.incomeId ?? null)) {
+                    //     store.state.common.focusedRowKey = store.state.common.incomeId
+                    //     // store.state.common.incomeId = value.getIncomeWages.find((element: any) => element.employeeId == store.state.common.employeeId).incomeId
+                    // } else {
+                        store.state.common.statusFormAdd = false
+                        if (store.state.common.onDoneEdit) { // sửa ngày thành công
+                            store.state.common.onDoneEdit = false
+                            store.state.common.loadingFormData++
+                            return
+                        }
+                        if (!store.state.common.dataIncomeIdBackend || store.state.common.checkClickMonth) {
+                            // isRunOnceTaxPayInfo.value = false;
+                            store.state.common.checkClickMonth = false
+                            // store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
+                            store.state.common.incomeId = value.getIncomeWages[0].incomeId
+                            store.state.common.dataRowOnActive = value.getIncomeWages[0]
+                        } else {
+                            if (store.state.common.statusClickButtonSave) { // if click submit
+                                store.state.common.incomeId = store.state.common.dataIncomeIdBackend
+                            } else { // click save modal
+                                store.state.common.incomeId = store.state.common.dataRowOnActive?.incomeId
+                            }
+                            store.state.common.dataIncomeIdBackend = null;
+                        }
+                    // }
                 } else {
-                    store.state.common.focusedRowKey = value.getIncomeWages[0].incomeId
-                    store.state.common.incomeId = value.getIncomeWages[0].incomeId
-                    // store.state.common.employeeId = value.getIncomeWages[0].employeeId
+                    store.state.common.statusFormAdd = true
+                    // store.state.common.focusedRowKey = null;
+                    store.state.common.incomeId = null;
+                    store.state.common.actionResetForm++;
                 }
-                store.state.common.actionAddItem = false
-            } else {
-                store.state.common.actionAddItem = true
-                store.state.common.focusedRowKey = null;
-                store.state.common.incomeId = null;
-                // store.state.common.employeeId = null;
-                store.state.common.actionResetForm++;
+            }
+            store.state.common.focusedRowKey = store.state.common.incomeId
+            if (store.state.common.statusClickButtonAdd && !store.state.common.statusClickButtonSave) { // nếu trước đó ấn button add
+                store.state.common.addRow++ // add row
+                store.state.common.statusRowAdd = false
+            } else { // call api detail
+                if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
+                    store.state.common.loadingFormData++
+                    
+                } else {
+                    if (!store.state.common.statusFormAdd) {
+                        store.state.common.actionResetForm++
+                    }
+                }
             }
             store.state.common.resetArrayEmploySelect++
         })
         watch(() => store.state.common.loadingTableInfo, (newVal) => {
-            refetchDataProcessIncomeWages() //reset data table 1
-            refetchDataTaxPayInfo() //reset data table 2
+            originData.value.imputedYear = globalYear.value
+            originDataTaxPayInfo.value.processKey.imputedYear = globalYear.value
+            // refetchDataProcessIncomeWages() //reset data table 1
+            trigger.value = true; //reset data table 1
+            dataGridRef.value?.refresh();
+            // triggerDataTaxPayInfo.value = true; //reset data table 2
+            // refetchDataTaxPayInfo() 
         })
 
         watch(() => status.value, (newVal) => {
-            if (userType != 'm' && (newVal == 30 || newVal == 40)) {
+            if (userType != 'm' && (newVal == 20 || newVal == 30 || newVal == 40)) {
                 store.state.common.statusDisabledStatus = true;
             } else {
                 store.state.common.statusDisabledStatus = false;
             }
+        })
+        watch(() => store.state.common.addRow, (newVal) => {
+            gridRefPA110.value?.instance.deselectAll()
+            dataRows.value = []
+        })
+        watch(() => store.state.common.activeTab, (newVal) => {
+            if (newVal.id == "pa-110" && !((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd))) {
+                triggerDataTaxPayInfo.value = true; //reset data table 2
+                !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
+            }
+        })
+        watch(() => store.state.common.openModalCopyMonth, (value) => {
+            dataModalCopy.value = monthCopy.value
+            modalCopy.value = true
+        })
+
+        watch(() => store.state.common.refreshDataGridRef, (value) => {
+            dataGridRef.value?.refresh();
         })
         /**
          * action edit employ tax pay
          */
         // let rowEdit = ref()
         const actionEditTaxPay = (data: any) => {
-            store.state.common.dataRowOnActive = data.data
-            if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
-                if (store.state.common.statusChangeFormEdit) {
-                    // if (store.state.common.statusChangeFormPrice) {
-                    //     modalChangeRowPrice.value = true;
-                    // } else {
-                        modalChangeRow.value = true;
-                    // }
-                } else {
-                    if (!store.state.common.statusRowAdd && store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
-                        store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-                        store.state.common.statusRowAdd = true
-                    }
-                    store.state.common.incomeId = data.data.incomeId
-                    // store.state.common.employeeId = data.data.employeeId
-                }
-                if (store.state.common.statusRowAdd) {
-                    store.state.common.actionAddItem = false
-                }
-            }
+            // hiện tại bỏ đi
         }
         const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
-                if ( rowData.length > 1 ) {
-                    // store.state.common.incomeId = rowData[0].
-                    store.state.common.focusedRowKey = store.state.common.incomeId
+                if (rowData.find((element: any) => element.incomeId == "PA110" ?? null)) {
+                    gridRefPA110.value?.instance.deselectAll()
+                    dataRows.value = []
                 }
+                // if ( rowData.length > 1 ) {
+                //     // store.state.common.incomeId = rowData[0].
+                //     store.state.common.focusedRowKey = store.state.common.incomeId
+                // }
             })
         }
-        /**
-         * show detail value of month
-         * @param month 
-         */
+        const dataMonthNew: any = ref()
+        // const checkClickMonth = ref<Boolean>(false)
+        // A function that is called when a user clicks on a month.
         const showDetailSelected = (month: any) => {
+            if (
+                store.state.common.processKeyPA110.imputedYear != month.imputedYear ||
+                store.state.common.processKeyPA110.paymentYear != month.paymentYear ||
+                store.state.common.processKeyPA110.paymentMonth != month.paymentMonth ||
+                store.state.common.processKeyPA110.imputedMonth != month.imputedMonth
+            ) {
+                store.state.common.actionCallGetMonthDetail++
+            }
+            
+            dataMonthNew.value = month
+            store.state.common.checkClickMonth = true
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd) && !isRunOnce.value) {
+                modalChangeRow.value = true
+                hoverColClick.value = month.imputedMonth
+            } else {
+                isRunOnce.value = false
+                activeNewMonth(month)
+            }
+        }
+        // A function that is called when a user clicks on a button.
+        const activeNewMonth = (month: any) => {
             status.value = month.status
+            store.state.common.processKeyPA110.imputedYear = month.imputedYear
             store.state.common.processKeyPA110.paymentYear = month.paymentYear
             store.state.common.processKeyPA110.paymentMonth = month.paymentMonth
             store.state.common.processKeyPA110.imputedMonth = month.imputedMonth
-            store.state.common.processKeyPA110.imputedYear = globalYear.value;
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
             store.state.common.statusRowAdd = true;
+
+            hoverColClick.value = 0
+            // debugger
         }
+        const monthCopy = ref<number>()
         /**
          * copy data from other month
          * @param month 
          */
         const copyMonth = (month: number) => {
-            dataModalCopy.value = month;
-            modalCopy.value = true;
+            monthCopy.value = month
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
+                modalChangeRow.value = true
+                store.state.common.checkClickCopyMonth = true
+                hoverColClick.value = month
+            } else {
+                dataModalCopy.value = monthCopy.value;
+                modalCopy.value = true;
+            }
         }
 
         /**
@@ -597,8 +701,12 @@ export default defineComponent({
             notification('error', e.message)
         })
         successChangeIncomeProcess(e => {
+            dataMonthNew.value.status = status.value
             notification('success', `업데이트 완료!`)
-            refetchDataProcessIncomeWages()
+            originData.value.imputedYear = globalYear.value
+            // isRunOnce.value = true;
+            // refetchDataProcessIncomeWages()
+            trigger.value = true; //reset data table 1
         })
 
         /**
@@ -616,47 +724,92 @@ export default defineComponent({
             dataSource.value[0]['month' + data.imputedMonth] = data
             dataSource.value[0]['month' + data.imputedMonth].status = 10
             status.value = 10
+            triggerDataTaxPayInfo.value = true; //reset data table 2
             statusDisabledBlock.value = false;
         }
-        /**
-         * underlined set of selected month
-         * @param monthInputed 
-         */
-        const setUnderline = (monthInputed: any) => {
-            return monthClicked.value == monthInputed;
-        }
-        const statusComfirmChange = (res: any) => {
-            if (res) {
-                (document.getElementsByClassName("anticon-save")[0] as HTMLInputElement).click();
-            } else {
-                if (!store.state.common.statusRowAdd) {
-                    store.state.common.actionAddItem = false
+
+        const statusComfirmChange = async (res: any) => {
+            if (res) { // action save form
+                store.state.common.actionSubmit++
+            } else { //  no save form
+                store.state.common.statusChangeFormEdit = false;
+                store.state.common.statusChangeFormAdd = false;
+                if (!store.state.common.statusRowAdd) { // nếu đang có row thêm mới thì xóa row mới
+                    store.state.common.statusFormAdd = false
                     store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
                     store.state.common.statusRowAdd = true
+                    store.state.common.focusedRowKey = store.state.common.incomeId
+                }
+                if (store.state.common.checkClickMonth) {
+                    activeNewMonth(dataMonthNew.value)
+                    store.state.common.checkClickMonth = false;
+                    return;
+                }
+                if (store.state.common.checkClickCopyMonth) {
+                    store.state.common.checkClickCopyMonth = false;
+                    dataModalCopy.value = monthCopy.value
+                    modalCopy.value = true
+                    // store.state.common.loadingFormData++
+                    // return;
+                }
+                if (store.state.common.checkClickYear) {
+                    isRunOnce.value = true;
+                    store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
+                    store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
+                    originData.value.imputedYear = store.state.common.dataYearNew
+                    trigger.value = true; //reset data table 1
+                    await (store.state.settings.globalYear = store.state.common.dataYearNew)
+                    await (store.state.common.checkClickYear = false)
+                    return;
                 }
                 store.state.common.incomeId = store.state.common.dataRowOnActive.incomeId
-                // store.state.common.employeeId = rowEdit.value.employeeId
+                store.state.common.loadingFormData++
             }
-            
         }
-        // const statusComfirmChangePrice = (res: any) => {
-        //     if (res) {
-        //         (document.getElementById("button-action-dedution-pa110") as HTMLInputElement).click();
-        //         store.state.common.focusedRowKey = store.state.common.employeeId
-        //     } else {
-        //         if (!store.state.common.statusRowAdd) {
-        //             store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
-        //             store.state.common.statusRowAdd = true
-        //         }
-        //         store.state.common.incomeId = rowEdit.value.incomeId
-        //         store.state.common.employeeId = rowEdit.value.employeeId
-        //     }
-        // }
-        watch(globalYear, (newVal) => {
-            store.state.common.processKeyPA110.imputedYear = newVal
-            store.state.common.processKeyPA110.paymentYear = newVal
-            // IncomeWageDailiesTrigger.value = true;
-            refetchDataTaxPayInfo() //reset data table 2
+        // Preventing the user from selecting a row by clicking on the select button.
+        const onFocusedRowChanging = (e: any) => {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                e.cancel = true;
+            } else {
+                const rowElement = e.rowElement[0]
+                store.state.common.dataRowOnActive = e.rows[e.newRowIndex]?.data
+                if (store.state.common.dataRowOnActive.employeeId) { // if row data (not row add)
+                    if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) { // if change form data
+                            rowElement?.classList.add("dx-state-hover-custom")
+                            modalChangeRow.value = true;
+                            e.cancel = true;
+                    } else { // cho chọn raw mới
+                        if (store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.splice(0, store.state.common.dataTaxPayInfo.length - 1)
+                            store.state.common.statusRowAdd = true
+                        }
+                        store.state.common.incomeId = e.rows[e.newRowIndex]?.data?.incomeId
+                        store.state.common.loadingFormData++
+                        if (store.state.common.statusRowAdd) {
+                            store.state.common.statusFormAdd = false
+                        }
+                    }
+                }
+            }
+        };
+        watch(globalYear, (newVal, oldVal) => {
+            if ((store.state.common.statusChangeFormEdit&&!store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)) {
+                if (!store.state.common.checkClickYear) {
+                    modalChangeRow.value = true
+                    store.state.common.checkClickYear = true
+                    store.state.settings.globalYear = oldVal;
+                    store.state.common.dataYearNew = newVal;
+                    return
+                }
+                return
+            } else {
+                isRunOnce.value = true;
+                store.state.common.processKeyPA110.imputedYear = newVal
+                store.state.common.processKeyPA110.paymentYear = newVal
+                originData.value.imputedYear = newVal
+                originDataTaxPayInfo.value.processKey.imputedYear = newVal
+                trigger.value = true; //reset data table 1
+            }
         })
         return {
             globalYear,
@@ -682,11 +835,11 @@ export default defineComponent({
             arrDataPoint,
             dataAddIncomeProcess,
             status,
-            setUnderline,
             modalChangeRow, statusComfirmChange,
             // modalChangeRowPrice, statusComfirmChangePrice,
-            Message,
-            statusDisabledBlock,
+            Message, gridRefPA110,
+            statusDisabledBlock, onFocusedRowChanging,
+            hoverColClick,
         }
 
     },

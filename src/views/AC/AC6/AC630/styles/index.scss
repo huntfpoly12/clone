@@ -1,0 +1,30 @@
+#ac-630{
+  .top-container{
+    &>div{
+      padding: 5px 0;
+    }
+    border: 1px solid #dddcdc;
+    padding: 10px;
+    border-radius: 10px;
+    .input-text {
+      display: flex;
+      align-items: center;
+  
+      .select-group {
+        display: inline-flex;
+        align-items: center;
+        column-gap: 10px;
+      }
+  
+      .notice {
+        color: #888888;
+        font-size: 12px
+      }
+      & > span {
+        margin-left: 5px;
+      }
+    }
+  
+  }
+  
+}

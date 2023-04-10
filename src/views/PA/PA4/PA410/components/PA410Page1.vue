@@ -2,18 +2,17 @@
  <div class="page-content">
     <a-spin :spinning="false" size="large">
         <div class="content-page1">
-                <div class="select-employee">
-                    <div class="label">
-                        퇴직금 대상 사원
-                    </div>
-                    <div class="input-select">
-                        <employ-select :arrayValue="arrayEmployeeSelect" :required="true" width="300px" v-model:valueEmploy="valueSelected"/>
-                    </div>
-                </div>
-                <div class="button-next">
-                    <button-basic text="다음" type="default" @onClick="nextPage" :disabled="isSelected"/> 
-                </div>
-        
+              <div class="select-employee">
+                  <div class="label">
+                      퇴직금 대상 사원
+                  </div>
+                  <div class="input-select">
+                      <employ-select :arrayValue="arrayEmployeeSelect" :required="true" width="300px" v-model:valueEmploy="valueSelected"/>
+                  </div>
+              </div>
+              <div class="button-next">
+                  <button-basic text="다음" type="default" @onClick="nextPage"/> 
+              </div>
         </div>
     </a-spin>
  </div>
@@ -29,14 +28,10 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const valueSelected = ref(0);
-        const isSelected = ref(true);
         const nextPage = () => {
             store.state.common.currentPagePA410 = 'PA410Page2';
             store.state.common.employeeIdPA410 = valueSelected.value;
         }
-        watch(valueSelected, (newValue) => {
-            isSelected.value = newValue !== 0 ? false : true;
-        })
         const globalYear = computed(() => store.state.settings.globalYear)
         // Getting the token from the session storage and then dispatching the action to get the user
         // information.
@@ -46,13 +41,21 @@ export default defineComponent({
         store.dispatch('common/getListEmployee', {
                   companyId: companyId,
                   imputedYear: globalYear,
-          })
-        const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
+        })
+        // take the employee array and add a null element to test the metric calculation
+        const arrayEmployeeSelect = computed(() => {
+          store.state.common.arrayEmployeePA410.push({
+                                                      "type": null,
+                                                      "employeeId": 0,
+                                                      "name": "익명",
+                                                    })
+          return store.state.common.arrayEmployeePA410
+        })
+        
         return {
             nextPage,
             arrayEmployeeSelect,
             valueSelected,
-            isSelected
         }
     },
 })
@@ -77,6 +80,7 @@ export default defineComponent({
             }
             .input-select{
                 padding-left: 10px;
+              
             }
         }
 

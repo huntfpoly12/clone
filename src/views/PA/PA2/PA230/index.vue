@@ -8,7 +8,7 @@
                         <a-row :gutter="[24, 8]">
                             <a-col>
                                 <div class="d-flex-center">
-                                    <label class="lable-item">서식 설정 :</label>
+                                    <label class="lable-item">구분 :</label>
                                     <radio-group :arrayValue="radioCheckDataSearch"
                                         v-model:valueRadioCheck="checkBoxOption" layoutCustom="horizontal"
                                         class="mt-7" />
@@ -44,13 +44,12 @@
                         </div>
                     </a-col>
                 </a-row>
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                <DxDataGrid ref="dataGrid" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged"
                     @cell-prepared="onCellPrepared"
                     @row-prepared="onRowPrepared"
-                    
                     >
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -58,7 +57,7 @@
                     </DxToolbar>
                     <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 33px;"
+                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
                                 @click="sendMail" />
                         </DxButton>
                     </div>
@@ -67,7 +66,7 @@
                         <div class="custom-mail-group">
                             <DxButton @click="printFunc" id="print">
                                 <img src="@/assets/images/printGroup.png" alt=""
-                                    style="width: 35px; margin-right: 3px; cursor: pointer" />
+                                    style="width: 28px; margin-right: 3px; cursor: pointer" />
                             </DxButton>
                             <Tooltip target="#print" content="출력 / 저장" />
                         </div>
@@ -106,14 +105,14 @@
                         <span class="status-blue" v-if="data.data.employee.status != 0">계속</span>
                         <span class="status-red" v-else>중도</span>
                     </template>
-                    <DxColumn caption="총급여계" data-field="totalPay" format="#,###" data-type="string" width="160"/>
+                    <DxColumn caption="총급여계" alignment="right" data-field="totalPay" format="#,###" data-type="string" width="160"/>
                     <DxColumn caption="" cell-template="pupop" width="100" />
                     <template #pupop="{ data }">
                         <div class="custom-action" style="text-align: center;">
                             <img src="@/assets/images/email.svg" alt=""
                                 style="width: 25px; margin-right: 3px; cursor: pointer;"
                                 @click="sendMail(data.data.employee)" />
-                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/printGroup.png" alt="" style="width: 25px;cursor: pointer"
+                            <img :id="`print-action${data.data.employeeId}`" src="@/assets/images/print.svg" alt="" style="width: 25px;cursor: pointer"
                               @click="printFunc(data.data.employeeId)" />
                             <Tooltip :target="`#print-action${data.data.employeeId}`" content="출력 / 저장" />
                         </div>
@@ -196,7 +195,7 @@ export default defineComponent({
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                "imputedYear": globalYear,
+                "imputedYear": globalYear.value,
                 "leaved": null
             },
         });
@@ -249,6 +248,11 @@ export default defineComponent({
                 trigger.value = false;
             }
         });
+        watch(globalYear, (value) => {
+            originData.value.filter.imputedYear = value
+            trigger.value = true;
+            refetchData()
+        }, { deep: true });
         // QUERY NAME : getUser
         const {
             onResult: onResultUserInf,
@@ -283,6 +287,7 @@ export default defineComponent({
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
+          clearSelection()
             // If the retention style is number, send an email to one person. If it's an object type, send a group. 
             dataSendEmail.value.companyId = companyId
             dataSendEmail.value.input = {
@@ -322,6 +327,7 @@ export default defineComponent({
             modalSendMail.value = true
         }
         const printFunc = (val: any) => {
+            clearSelection()
             triggerPrint.value = true
             dataPrint.value = {
                 ...dataPrint.value,
@@ -368,7 +374,7 @@ export default defineComponent({
             }
         }
         const selectionChanged = (data: any) => {
-            selectedItemKeys.value = data.selectedRowKeys
+          selectedItemKeys.value = data.selectedRowKeys
         }
 
         const customTextSummaryInfo = () => {
@@ -386,10 +392,15 @@ export default defineComponent({
           })
           return '전체: ' + total + " (계속: " + 계속 + ", 중도: " + 중도 + ")"
         }
-
+        const dataGrid = ref()
+        const clearSelection = () => {
+          const dataGridRef = dataGrid.value?.instance;
+          dataGridRef?.clearSelection();
+        }
         return {
             loadingSendEmail, switchTypeSendMail, emailAddress, modalSendMail, loadingPrint, createDate, loading, globalYear, dataSource, move_column, colomn_resize, radioCheckDataSearch, radioCheckData, checkBoxOption, checkBoxOption2,
-            selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo
+            selectionChanged, confirmSendMail, searching, sendMail, printFunc,customTextSummaryInfo,
+            dataGrid
         };
     },
     methods: {
@@ -403,8 +414,7 @@ export default defineComponent({
         if(isRowSummary){
           e.rowElement.removeChild(e.rowElement.lastChild)
         }
-      }
-      
+      },
     }
 });
 </script>

@@ -4,10 +4,9 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month1 > 9 ? month1 : '0' + month1 }}
+                    귀 {{ store.state.settings.globalYear }}-{{ $filters.formatMonth(month1) }}
                 </div>
-                <month-picker-box-custom v-model:valueDate="month2"/>
-           
+                <month-picker-box-custom v-model:valueDate="month2" text="지"/>
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right" class="label-required">
@@ -27,6 +26,7 @@ import queries from "@/graphql/queries/CM/CM130/index"
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
+import filters from "@/helpers/filters";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -67,16 +67,19 @@ export default defineComponent({
         watch(resultConfig, (value) => {
             let paymentMonth = month1.value
             if (value) {
-                paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+              paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+              store.state.common.paymentDayPA420 = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month1.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ? paymentMonth : '0' + paymentMonth)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             trigger.value = false;
         });
 
-
+      watch(()=>paymentDayCopy.value, (newVal) => {
+          store.state.common.paymentDayPA420 = newVal
+        })
         watch(() => props.data, (val) => {
             month1.value = val
         });
@@ -93,7 +96,7 @@ export default defineComponent({
             res.brokenRules[0].validator.focus();
           } else {
             emit("dataAddIncomeProcess", {
-              imputedYear: props.processKey.imputedYear,
+              imputedYear: globalYear.value,
               imputedMonth: month1.value,
               paymentYear: parseInt(month2.value.toString().slice(0, 4)),
               paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
@@ -107,7 +110,7 @@ export default defineComponent({
             paymentDayCopy,
             month1, month2,
             setModalVisible,
-            onSubmit,
+            onSubmit,store
         }
     },
 })

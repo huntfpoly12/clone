@@ -49,7 +49,7 @@ export const initialFormState = {
         employeeId: null,
         employeeType: null,
         retirementType: 1,
-        executive: true,
+        executive: false,
         retirementReason: null,
     },
     incomeCalculationInput: {

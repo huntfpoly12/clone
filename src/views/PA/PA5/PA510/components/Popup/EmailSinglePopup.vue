@@ -1,7 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
-        <standard-form action="" name="email-single-630">
+        <standard-form action="" name="email-single-510">
             <div class="custom-modal-send-email">
                     <img src="@/assets/images/email.svg" alt="" />
                     <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"></mail-text-box>
@@ -24,6 +24,7 @@ import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import { companyId } from '@/helpers/commonFunction';
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -72,7 +73,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {

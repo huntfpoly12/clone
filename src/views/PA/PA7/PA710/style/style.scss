@@ -1,26 +1,23 @@
 #pa-710 {
-    .confirm {
-        color: red;
+    // .confirm {
+    //     color: red;
+    // }
+    #gridContainer {
+        max-height: 750px;
     }
-
-    margin-top: 10px;
-    // padding: 10px 10px 10px 0;
 
     .total-user {
         background-color: #17375E;
         color: white;
         display: flex;
         align-items: center;
-
-        >div {
-            font-size: 16px;
-            width: 50%;
-            text-align: center;
-            line-height: 16px;
-
-            .dx-icon-user {
-                font-size: 55px;
-            }
+        padding: 3px;
+        >span {
+            padding-left: 5px;
+        }
+        >img {
+            width: 30px;
+            padding-left: 5px;
         }
     }
 
@@ -28,19 +25,27 @@
         text-align: center;
     }
 
-    ::v-deep .ant-form-item-label>label {
+    :deep .ant-form-item-label>label {
         width: 180px;
         padding-left: 10px;
 
     }
 
-    ::v-deep .red .ant-form-item-label>label {
-        color: red;
+    // :deep .red .ant-form-item-label>label {
+    //     color: red;
+    // }
+    .data-table {
+        margin-top: 10px;
+    }
+    :deep .dx-datagrid-header-panel {
+        border: 1px solid #d7d7d7;
+        border-bottom: none;
+        padding: 5px;
     }
 
-    ::v-deep .custom-layout {
+    .custom-layout {
         margin-top: 10px;
-        padding: 10px 10px 10px 0;
+        padding-left: 10px;
 
         >div {
             border: 1px solid #d7d7d7;
@@ -57,7 +62,7 @@
         }
     }
 
-    ::v-deep .active-row-key {
+    :deep .active-row-key {
         background-color: #337AB7;
         color: white;
     }
@@ -94,4 +99,8 @@
 
 .button-form-modal {
     margin: 0px 5px;
+}
+.disabledBlock {
+    pointer-events: none;
+    opacity: 0.8;
 }

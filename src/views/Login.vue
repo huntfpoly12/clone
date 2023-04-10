@@ -47,6 +47,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import mutations from '../graphql/mutations/index';
 import { getJwtObject } from '@bankda/jangbuda-common';
+
 export default {
   setup() {
     const store = useStore();

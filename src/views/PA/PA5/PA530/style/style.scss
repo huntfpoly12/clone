@@ -13,7 +13,7 @@
         }
     }
 
-    ::v-deep .custom-mail-group {
+    :deep .custom-mail-group {
         .dx-button-content {
             padding: 3px;
         }
@@ -59,14 +59,7 @@
         }
     }
 
-
-    ::v-deep .ant-form-item-label>label {
-        width: 180px;
-        padding-left: 10px;
-        color: red;
-    }
-
-    ::v-deep .custom-layout {
+    :deep .custom-layout {
         padding: 10px 10px 10px 0;
 
         >div {
@@ -102,6 +95,6 @@
     }
 }
 
-::v-deep .dx-datagrid-text-content {
+:deep .dx-datagrid-text-content {
     white-space: break-spaces; 
 }

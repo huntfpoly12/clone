@@ -1,11 +1,10 @@
 <template>
-    <div class="mytooltip">
-        <div class="mytext" :class="showError ? 'show' : ''">
-            <span>{{  textError }}</span>
-        </div>
-    </div>
-    <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
+    <a-tooltip placement="bottom" :title="textError" color='red' :visible="showError">
+      <div>
+        <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
         :type="statusChange ? 'calculate' : 'default'" :text="text" />
+      </div>
+    </a-tooltip>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
@@ -40,7 +39,7 @@ export default defineComponent({
 
         };
 
-        const clickButton = (e: any) => {
+      const clickButton = (e: any) => {
             emit("onClick", e);
         }
 
@@ -61,25 +60,25 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.mytooltip .mytext {
-    display: none;
-    background-color: #d9534f;
-    color: white;
-    z-index: 1;
-    left: 5px;
-    width: max-content;
-    bottom: -62px;
-    text-align: center;
-    border-radius: 5px;
-    padding: 7px;
-    position: absolute;
-}
+// .mytooltip .mytext {
+//     display: none;
+//     background-color: #d9534f;
+//     color: white;
+   
+//     left: 5px;
+//     width: max-content;
+//     bottom: -62px;
+//     text-align: center;
+//     border-radius: 5px;
+//     padding: 7px;
+//     position: absolute;
+// }
 
-.mytooltip {
-    position: absolute;
-}
+// .mytooltip {
+//     position: absolute;
+// }
 
-.show {
-    display: block !important;
-}
+// .show {
+//     display: block !important;
+// }
 </style>

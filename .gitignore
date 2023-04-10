@@ -21,3 +21,5 @@ yarn.lock
 *.njsproj
 *.sln
 *.sw?
+.fleet
+codegen.yml

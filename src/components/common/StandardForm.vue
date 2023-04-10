@@ -6,7 +6,7 @@
   </form>
 </template>
 <script lang="ts">
-import { computed, defineComponent,ref} from "vue";
+import { computed, defineComponent,ref, watch} from "vue";
 import DxValidationGroup from "devextreme-vue/validation-group";
 export default defineComponent({
   props: {
@@ -28,8 +28,18 @@ export default defineComponent({
     const resetValidate = ()=>{
       $this.value?.instance.reset();
     }
+    const validate = () => {
+      return $this.value?.instance.validate();
+    }
+    // test 
+    // watch(textBoxRefKey, (newValue, oldValue) => {
+    //   if (newValue !== null) {
+    //     console.log("Text box reference set to:", textBoxRefKey.value);
+    //   }
+    // });
     return{
       resetValidate,
+      validate,
       textBoxRefKey
     }
   }

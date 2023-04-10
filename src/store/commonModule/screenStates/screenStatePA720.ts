@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 let statesPA720 = {
   isErrorFormPA720: false,
-  keyActivePA720: 1,
-  actionSavePA720: 0,
-  actionSaveTypePA720: 0,
   isNewRowPA720:false,
+  selectedRowKeysPA720:[],
+  savePA710: 0,
+  paymentDayPA720:1,
   formPA720: {
     input: {
       paymentDay: '',
@@ -12,10 +12,13 @@ let statesPA720 = {
       incomeTypeCode: "",
       paymentAmount: '',
       requiredExpenses: '',
-      taxRate: '',
+      taxRate: 20,
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
+      employee:{
+        key:0
+      }
     },
   },
   formEditPA720: {
@@ -25,24 +28,29 @@ let statesPA720 = {
       incomeTypeCode: "",
       paymentAmount: '',
       requiredExpenses: '',
-      taxRate: '',
+      taxRate: 20,
       withholdingIncomeTax: '',
       withholdingLocalIncomeTax: '',
       incomeId: "99axbzkk",
+      employee:{
+        key:0
+      }
     },
   },
-  paymentDayPA720:4,
   dataActionUtilsPA720 : {
     input: {
         paymentDay: 1,
-        employeeId: '',
+        employeeId: null,
         incomeTypeCode: "",
         paymentAmount: null,
         requiredExpenses: null,
-        taxRate: null,
+        taxRate: 20,
         withholdingIncomeTax: null,
         withholdingLocalIncomeTax: null,
         incomeId: "99axbzkk",
+        employee:{
+          key:0
+        }
     }
   },
   processKeyPA720: {
@@ -53,7 +61,12 @@ let statesPA720 = {
         paymentYear: null,
         paymentMonth: +dayjs().format('MM') ,
     }
-  }
+  },
+  changeDayDataPA720: {
+    employeeId: '',
+    incomeTypeCode: '',
+  },
+  isClickEditDiffPA720: false,
 };
 
 export default statesPA720;

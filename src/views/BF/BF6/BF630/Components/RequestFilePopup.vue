@@ -3,11 +3,11 @@
         :width="644">
         <standard-form action="" name="request-file-630">
             <div>
-              <div class="eamil-input">
-                <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
-                <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
-              </div>
               <div>
+                <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
+              </div>
+              <div class="eamil-input">
+                <mail-text-box width="250px" :required="true" v-model:valueInput="dataRequestFile.emailInput.receiverAddress" placeholder="abc@example.com"></mail-text-box>
                 <span>로 메일을 발송하시겠습니까?</span>
               </div>
                     
@@ -27,6 +27,8 @@ import { defineComponent, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/BF/BF6/BF630/index"
+import { cloneDeep } from 'lodash'; 
+import { makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -81,18 +83,22 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+              const payload = cloneDeep(dataRequestFile.value)
+              payload.filter.beforeProduction = !payload.filter.afterProduction
+              delete payload.filter.afterProduction
+              const payloadClear = makeDataClean(payload)
               switch (props.tabName) {
                 case 'tab1':
-                  sendRequestFileTab1(dataRequestFile.value);
+                  sendRequestFileTab1(payloadClear);
                   break;
                 case 'tab2':
-                  sendRequestFileTab2(dataRequestFile.value);
+                  sendRequestFileTab2(payloadClear);
                   break;
                 case 'tab3':
-                  sendRequestFileTab3(dataRequestFile.value);
+                  sendRequestFileTab3(payloadClear);
                   break;
                 case 'tab4':
-                  sendRequestFileTab4(dataRequestFile.value);
+                  sendRequestFileTab4(payloadClear);
                   break;
                 default:
                   break;
@@ -104,7 +110,7 @@ export default defineComponent({
         // onDone tab 1
         onDoneTab1(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab1((e: any) => {
             notification('error', e.message)
@@ -112,7 +118,7 @@ export default defineComponent({
         // onDone tab 2
         onDoneTab2(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab2((e: any) => {
             notification('error', e.message)
@@ -120,7 +126,7 @@ export default defineComponent({
         // onDone tab 3
         onDoneTab3(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab3((e: any) => {
             notification('error', e.message)
@@ -128,7 +134,7 @@ export default defineComponent({
         // onDone tab 4
         onDoneTab4(() => {
             notification('success', `업데이트 완료!`)
-            emit("closePopup", false)
+            emit("onDoneRequest", false)
         })
         onErrorTab4((e: any) => {
             notification('error', e.message)
@@ -149,9 +155,9 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     span {
-        padding-right: 10px;
+        padding-left: 10px;
     }
 }
 .mt-50 {

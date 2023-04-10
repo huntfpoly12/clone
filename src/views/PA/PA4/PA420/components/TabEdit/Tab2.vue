@@ -73,23 +73,24 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch, reactive } from 'vue'
+import { defineComponent, ref, watch, reactive, onMounted, onUpdated, onUnmounted } from 'vue'
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
 import dayjs from "dayjs";
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
-        dataDetail: Object,
         actionNextStep: Number,
     },
 
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const store = useStore();
         const trigger = ref(false)
         const dataGet: any = ref({
-            ...props.dataDetail
+            ...store.state.common.formStateEditPA420
         })
-
+        
         let requestCallDetail: any = ref()
 
         const calculateIncomeRetirement = () => {
@@ -115,20 +116,18 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }));
 
+        watch(() => store.state.common.formStateEditPA420, (newValue) => {
+          dataGet.value =  newValue;
+        }, { deep: true })
+
         watch(() => resultCalculate, (newValue) => {
             if (newValue.value)
                 dataGet.value.specification.expectedRetirementBenefits = newValue.value.calculateIncomeRetirement
         }, { deep: true })
 
-        watch(() => dataGet, (newValue) => {
-            emit("update:dataDetail", newValue);
-        }, { deep: true })
-
-
-
         return {
             dataGet,
-            calculateIncomeRetirement
+            calculateIncomeRetirement,store
         }
     }
 })

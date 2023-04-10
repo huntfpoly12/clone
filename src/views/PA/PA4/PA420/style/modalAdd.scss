@@ -138,3 +138,21 @@
 ::v-deep .one.dx-radiogroup-horizontal .dx-radiobutton:first-child{
     margin-right: 95px;
 }
+
+
+.validate-caculate {
+  border: 1px #d9534f;
+  border-radius: 5px;
+  border-style: solid;
+  .message-error{
+    position: absolute;
+    border-radius: 5px;
+    background: #d9534f;
+    padding: 5px 20px;
+    color: white;
+    z-index: 999999;
+    width: 184px;
+  }
+}
+
+

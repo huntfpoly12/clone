@@ -1,23 +1,23 @@
 <template>
-  <div class="fileuploader-container mt-20">
-    <span>등본 등 증빙파일</span>
+<!--  <div class="fileuploader-container mt-20">-->
+<!--    <span>등본 등 증빙파일</span>-->
     <a-upload
       v-model:file-list="fileList"
       name="file"
-      action="https://dev-jangbuda-api.bankda.com/api/upload/major-insurance"
       @change="onFileChange"
       :beforeUpload="beforeUpload"
       :headers="headers"
+      :disabled="disabled"
     >
       <div class="d-flex d-flex-center justify-content-center">
-        <div class="btn-upload">
+        <div :class="`btn-upload ${disabled && 'disable'}`">
           <img src="@/assets/images/iconUpload.png" alt="" class="iconUpload" />
-        <span>등본 등 증빙파일</span>
+          <span>{{ label }}</span>
         </div>
       </div>
     </a-upload>
-   
-  </div>
+
+<!--  </div>-->
 </template>
 
 <script src="" lang="ts">
@@ -32,13 +32,10 @@ WarningFilled,
 ZoomInOutlined,
 } from "@ant-design/icons-vue";
 import { Upload, UploadProps } from "ant-design-vue";
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref, watch, watchEffect} from "vue";
+import Repository from "@/repositories";
 
-function getBase64(file: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(file);
-}
+const uploadRepository = Repository.get("upload");
 
 export default defineComponent({
   props: {
@@ -56,6 +53,18 @@ export default defineComponent({
       default: null,
       require: true,
     },
+    label: {
+      type: String,
+      default: '파일 선택'
+    },
+    isFileList: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     UploadOutlined,
@@ -77,10 +86,18 @@ export default defineComponent({
       target: { files: any[] };
     }) => {
       if (info.file.status === 'done') {
-        emit("response-fileId", info.file.response);
+        const status = info.file.status;
+        if (status === 'done') {
+          emit("response-fileId", info.file.response);
+          // show success message
+          notification('success', "Upload successfully!")
+        } else if (status === 'error') {
+          // show error message
+          notification('error', "Upload failed!")
+        }
       }
     };
-    const beforeUpload = (file: File) => {
+    const beforeUpload = async (file: File) => {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         notification('error', "Image must smaller than 2MB!");
@@ -89,16 +106,29 @@ export default defineComponent({
       }
       // Remove previously uploaded files
       fileList.value = [];
-      return new Promise(resolve => {
-          // add company id to payload
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('companyId', '2');
-          console.log('resolve', resolve)
-          resolve(formData);
-      });
-    }
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('companyId', '2');
+      try {
+        const data = await uploadRepository.majorInsurance(formData)
+        const status = data.status;
+        if (status === 201) {
+          emit("response-fileId", data.data);
+          // show success message
+          notification('success', "Upload successfully!")
+        } else if (status === 'error') {
+          // show error message
+          notification('error', "Upload failed!")
+        }
+      } catch (error) {
+        console.log('error', error)
+      }
 
+      return false;
+    }
+    watchEffect(() => {
+      if (props.isFileList) fileList.value = []
+    })
     return {
       loading,
       messageUpload,
@@ -117,39 +147,34 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.fileuploader-container {
+.iconUpload {
+  width: 20px;
+  height: 20px;
+}
+.ant-form-item {
+  margin-bottom: 0;
+}
+.btn-upload {
   display: flex;
   align-items: center;
-  
-  padding: 10px;
-  border: 1px solid #d3d3d3;
-  border-radius: 10px;
-  .iconUpload {
-    width: 20px;
-    height: 20px;
+  justify-content: center;
+  gap: 8px;
+  background: #c0c0c0;
+  border-radius: 5px;
+  padding: 5px 20px;
+  cursor: pointer;
+  &:hover {
+    background: #e5e5e5;
+    transition: all 0.3s ease;
   }
-  .ant-form-item {
-    margin-bottom: 0;
+  &.disable {
+    background: #e5e5e5;
+    cursor: not-allowed;
   }
-  .btn-upload {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f5f5;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    &:hover {
-      background: #e5e5e5;
-      transition: all 0.3s ease;
-    }
-    span {
-      font-size: 14px;
-      font-weight: 500;
-      color: #000;
-    }
-   
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
   }
 }
 

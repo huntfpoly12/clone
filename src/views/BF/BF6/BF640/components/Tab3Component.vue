@@ -3,16 +3,16 @@
         <a-row gutter="24" class="search-form-step-1 mt-10">
             <a-col>
                 <a-form-item label="신고구분" label-align="left">
-                    <electronic-filing-type v-model:valueInput="dataSearch.type" />
+                    <electronic-filing-type v-model:valueInput="dataSearch.type" :disabledList="[1,2,3,4,5,6,9]"/>
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" />
+                <a-form-item label="제작요청일(기간)" label-align="left">
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true"/>
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="신고구분" label-align="left">
+                <a-form-item label="제작상태" label-align="left">
                     <div class="mt-7">
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
@@ -26,7 +26,7 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+                <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
                     <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
@@ -36,21 +36,16 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
-                <DxColumn caption="신고구분"  cell-template="reportType"/>
-                <template #reportType="{ data }">
-                  <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-                  <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
-                  <div v-else></div>
-                </template>
+                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="참고사항"  data-field="referenceInformation"/>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
-                <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
+                <DxColumn caption="아이디" data-field="productionRequestUserId" />
                 <DxColumn caption="제작현황" cell-template="제작현황" />
                 <template #제작현황="{ data }">
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
                   <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
                   <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
-                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" />
+                  <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" :message="data.data.causeOfProductionFailure"/>
                 </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
                 <template #action="{ data }">
@@ -59,6 +54,9 @@
                             @click="openPopupDetail(data.data)" />
                     </div>
                 </template>
+                <DxSummary>
+                        <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />      
+                </DxSummary>
             </DxDataGrid>
           </a-spin>
         </div>
@@ -72,7 +70,7 @@ import { defineComponent, ref, computed, getCurrentInstance, watch } from "vue";
 import { dataSearchStep3Utils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling,DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -86,6 +84,8 @@ export default defineComponent({
     DxToolbar,
     DxSelection,
     DxColumn,
+    DxSummary,
+    DxTotalItem,
     DxItem,
     DxScrolling,
     DxRadioGroup,
@@ -106,7 +106,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')),parseInt( dayjs().format('YYYYMMDD'))]);
         let trigger = ref(true)
         let dataModalDetail = ref();
         // ================== GRAPHQL=================
@@ -116,7 +116,7 @@ export default defineComponent({
             loading: loadingTable,
             onError: errorTable,
             onResult: resTable
-        } = useQuery(queries.searchStep3, { filter: dataSearch.value }, () => ({
+        } = useQuery(queries.searchElectronicFilingFileProductions, { filter: dataSearch.value }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
@@ -136,12 +136,8 @@ export default defineComponent({
                 dataSearch.value.productionStatuses = [newVal]
         })
         watch(() => props.searchStep, (val: any) => {
-            if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [2, -1]
-            else
-                dataSearch.value.productionStatuses = [val]
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+            dataSearch.value.requesteStartDate = rangeDate.value[0]
+            dataSearch.value.requesteFinishDate = rangeDate.value[1]
             if (dataSearch.value) {
                 trigger.value = true
                 refetchTable()

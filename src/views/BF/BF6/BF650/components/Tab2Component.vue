@@ -8,7 +8,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="제작요청일(기간)" label-align="left">
-                    <range-date-time-box v-model:valueDate="rangeDate" width="250px" :maxRange="365"
+                    <range-date-time-box v-model:valueDate="rangeDate" width="250px"
                         :multi-calendars="true" />
                 </a-form-item>
             </a-col>
@@ -28,7 +28,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
             </a-col>
         </a-row>
@@ -36,8 +36,8 @@
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="코드명" data-field="fileStorageId" data-type="string" />
-                <DxColumn caption="신고구분" data-field="reportType" data-type="string" />
+                <DxColumn caption="일련번호" data-field="electronicFilingId" data-type="string" />
+                <DxColumn caption="참고사항" data-field="referenceInformation" data-type="string" />
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
                 <DxColumn caption="아이디" data-field="productionRequestUserId" data-type="string" />
                 <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus"
@@ -97,7 +97,7 @@ export default defineComponent({
         const store = useStore()
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate: any = ref([dayjs().subtract(7, 'day'), dayjs()]);
+        const rangeDate = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMMDD')), parseInt(dayjs().format('YYYYMMDD'))]);
         let trigger = ref(true)
         let dataModalDetail: any = ref({})
         // ================== GRAPHQL=================
@@ -114,22 +114,21 @@ export default defineComponent({
         resTable((val: any) => {
             dataSource.value = val.data.searchElectronicFilingFileProductions
             dataModalDetail.value.type = dataSearch.value.type
-            trigger.value = false
+          trigger.value = false
         })
         errorTable((error: any) => {
             notification('error', error.message)
         })
         // ================= WATHCH ===================
         watch(() => props.searchStep, (val: any) => {
-            if (typeStatus.value == 0)
-                dataSearch.value.productionStatuses = [2, -1]
-            else
-                dataSearch.value.productionStatuses = [typeStatus.value]
-            dataSearch.value.requesteStartDate = parseInt(dayjs(rangeDate.value[0].$d).format('YYYYMMDD'))
-            dataSearch.value.requesteFinishDate = parseInt(dayjs(rangeDate.value[1].$d).format('YYYYMMDD'))
+          typeStatus.value == 0
+            ? dataSearch.value.productionStatuses = [2, -1]
+            : dataSearch.value.productionStatuses = [typeStatus.value]
+          dataSearch.value.requesteStartDate = rangeDate.value[0]
+          dataSearch.value.requesteFinishDate = rangeDate.value[1]
             if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
+              // refetchTable()
+              trigger.value = true
             }
         }, { deep: true })
         // ============== FUNCTION =====================
@@ -145,7 +144,7 @@ export default defineComponent({
         }
     }
 })
-</script> 
+</script>
 <style scoped lang="scss" src="../style/style.scss"></style>
 <style lang="scss" scoped>
 :deep .dx-radiobutton-icon-checked .dx-radiobutton-icon-dot {
@@ -170,4 +169,4 @@ export default defineComponent({
 
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
-}</style> 
+}</style>

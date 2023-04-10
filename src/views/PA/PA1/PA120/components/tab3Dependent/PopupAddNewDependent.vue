@@ -1,33 +1,32 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false"
-      :width="750" :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
+    <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false" :width="750"
+      :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
       <a-spin :spinning="loading" size="large">
-        <!-- {{ itemSelected }} itemSelected <br />
-        {{ formState }} formState <br /> -->
         <div class="page-content" id="add-new-dependent-pa-120">
           <a-row>
             <a-col :span="12">
               <a-form-item label="연말관계" label-align="right" class="red">
-                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation"
-                  :required="true" :itemSelected="itemSelected"></dependants-relation-select-box>
+                <dependants-relation-select-box width="200px" v-model:valueInput="formState.relation" :required="true"
+                  :itemSelected="itemSelected"></dependants-relation-select-box>
               </a-form-item>
               <a-form-item label="성명" label-align="right" class="red">
-                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true"
+                <default-text-box placeholder="한글,영문(대문자) 입력 가능" width="200px" :required="true" @onChange="onChange"
                   v-model:valueInput="formState.name"></default-text-box>
               </a-form-item>
               <a-form-item label="내/외국인" label-align="right" class="switchForeigner">
                 <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
-                <id-number-text-box :required="true" width="150px" v-model:valueInput="residentId"></id-number-text-box>
+                <id-number-text-box :required="true" width="150px"
+                  v-model:valueInput="formState.residentId"></id-number-text-box>
               </a-form-item>
               <a-form-item label="나이" label-align="right">
                 <default-text-box width="200px" :disabled="true" v-model:valueInput="ageCount"></default-text-box>
               </a-form-item>
               <a-form-item label="기본공제" label-align="right" class="red">
-                <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction" :ageCount="ageCount"
-                  :required="true" />
+                <basic-deduction-select-box width="200px" v-model:valueInput="formState.basicDeduction"
+                  :ageCount="ageCount" :required="true" />
               </a-form-item>
               <a-form-item label="부녀자" label-align="right">
                 <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.women" />
@@ -44,7 +43,7 @@
             <a-col :span="12">
               <a-form-item label="경로우대" label-align="right">
                 <div class="input-text">
-                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" :disabled="isDisabledSenior"/>
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="senior" :disabled="isDisabledSenior" />
                   <span style="color: #888888; font-size:11px">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 만 70세 이상
                   </span>
@@ -59,14 +58,15 @@
               </a-form-item>
               <a-form-item label="자녀세액공제" label-align="right" class="d-flex-nowrap">
                 <div class="input-text long-text">
-                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="descendant" />
+                  <switch-basic textCheck="O" textUnCheck="X" v-model:valueSwitch="formState.descendant"
+                    :disabled="consignDisabled" />
                   <span style="color: #888888; font-size:11px">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 7세 이상 20세 이하의 자녀인 경우 공제 대상
                   </span>
                 </div>
               </a-form-item>
               <a-form-item label="위탁관계" label-align="right">
-                <default-text-box placeholder="최대 20자" width="200px" :disabled="consignDisabled" :maxCharacter="20"
+                <default-text-box placeholder="최대 20자" width="200px" :maxCharacter="20"
                   v-model:valueInput="formState.consignmentRelationship"></default-text-box>
               </a-form-item>
               <!-- <a-form-item label="세대주여부" label-align="right">
@@ -86,7 +86,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, computed, watch, onMounted, watchEffect } from 'vue';
+import { defineComponent, reactive, ref, computed, watch, watchEffect } from 'vue';
 import { useMutation } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import mutations from '@/graphql/mutations/PA/PA1/PA120';
@@ -97,6 +97,7 @@ import {
 } from '@/helpers/commonFunction';
 import { taxWaring } from '../../utils';
 import { Message } from '@/configs/enum';
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
 export default defineComponent({
   components: {},
   props: {
@@ -122,7 +123,7 @@ export default defineComponent({
     const labelResidebId = ref('주민등록번호');
     const itemSelected = ref<any>([...props.relationAll]);
     const initialFormState = {
-      relation: null,
+      relation: 1,
       name: '',
       residentId: '',
       basicDeduction: 0,
@@ -131,33 +132,38 @@ export default defineComponent({
       senior: false,
       disabled: 0,
       maternityAdoption: 0,
-      descendant: true,
-      consignmentRelationship: '',
+      descendant: false,
+      consignmentRelationship: null,
       index: itemSelected.value.length + 1,
     };
     const formState = reactive<any>({ ...initialFormState, foreigner: isForeignerPA120.value });
+    let formStateToCompare = ({ ...initialFormState, foreigner: isForeignerPA120.value });
     const messageSave = Message.getMessage('COMMON', '106').message;
     const isDisabledSenior = ref(ageCount.value < 70 ? true : false);
 
     const setModalVisible = () => {
-      emit('closePopup', false);
+      if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
+        emit('closePopup', false);
+      } else {
+        comfirmClosePopup(() => emit("closePopup", false))
+      }
     };
     const notifcationTax = () => {
       notification('warning', taxWaring);
-      setTimeout(()=> {
-          formState.women = false;
+      setTimeout(() => {
+        formState.women = false;
       }, 200)
     }
-    watch(()=>formState.women, (newValue) => {
-        if (newValue == true  && formState.singleParent == true) {
-            notifcationTax();
-        }
-    },{deep:true});
-    watch(()=>formState.singleParent, (newValue) => {
-        if (newValue == true  && formState.women == true) {
-            notifcationTax();
-        }
-    },{deep:true});
+    watch(() => formState.women, (newValue) => {
+      if (newValue == true && formState.singleParent == true) {
+        notifcationTax();
+      }
+    }, { deep: true });
+    watch(() => formState.singleParent, (newValue) => {
+      if (newValue == true && formState.women == true) {
+        notifcationTax();
+      }
+    }, { deep: true });
     const senior = ref(formState.senior == true ? 1 : 0);
     watch(senior, (newValue) => {
       if (newValue == 1) {
@@ -166,40 +172,32 @@ export default defineComponent({
         formState.senior = false;
       }
     });
-    const descendant = ref(formState.descendant == true ? 1 : 0);
-    watch(descendant, (newValue) => {
-      if (newValue == 1) {
-        formState.descendant = true;
-      } else {
-        formState.descendant = false;
-      }
-    });
     const householder = ref(formState.householder == true ? 1 : 0);
     watch(householder, (newValue) => {
-    if (newValue == 1) {
+      if (newValue == 1) {
         formState.householder = true;
-    } else {
+      } else {
         formState.householder = false;
-    }
+      }
     });
     // const foreigner = ref<Number|Boolean>(formState.foreigner == true ? 1 : 0);
-    watch(()=>formState.foreigner, (newValue) => {
+    watch(() => formState.foreigner, (newValue) => {
       if (newValue) {
         formState.foreigner = true;
         labelResidebId.value = '외국인번호 유효성';
-    } else {
+      } else {
         formState.foreigner = false;
         labelResidebId.value = '주민등록번호';
       }
-    },{deep:true});
+    }, { deep: true });
     //residenId
     const residentId = ref('');
-    watch(residentId, (newValue: any) => {
-      formState.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
-      if (newValue.length >= 7) {
-        ageCount.value = convertAge(formState.residentId);
-      }
-    });
+    // watch(residentId, (newValue: any) => {
+    //   formState.residentId = newValue.slice(0, 6) + '-' + newValue.slice(6, 13);
+    //   if (newValue.length >= 7) {
+    //     ageCount.value = convertAge(formState.residentId);
+    //   }
+    // });
 
     watch(
       () => props.modalStatus,
@@ -220,6 +218,7 @@ export default defineComponent({
     onDoneAdd((res) => {
       notification('success', messageSave);
       emit('upDateData');
+      emit('closePopup', false);
     });
 
     onError((error) => {
@@ -242,23 +241,22 @@ export default defineComponent({
             },
           };
           createEmployeeWageDependent(dataNew);
-          setModalVisible();
         }
       }
     };
-    watch(()=>formState.residentId,(newVal)=> {
+    watch(() => formState.residentId, (newVal) => {
       let count;
-      if(newVal.length==13){
-          count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
-          ageCount.value = convertAge(count);
-        }else if(newVal.length<13){
-          count  = newVal.toString();
-          ageCount.value = convertAge(count);
-        }
-        isDisabledSenior.value = ageCount.value < 70 ? true : false;
-    },{deep: true})
-    watch(isForeignerPA120,(newVal: any)=>{
-        formState.foreigner = newVal;
+      if (newVal.length == 13) {
+        count = newVal.slice(0, 6) + "-" + newVal.slice(6, 13);
+        ageCount.value = convertAge(count);
+      } else if (newVal.length < 13) {
+        count = newVal.toString();
+        ageCount.value = convertAge(count);
+      }
+      isDisabledSenior.value = ageCount.value < 70 ? true : false;
+    }, { deep: true })
+    watch(isForeignerPA120, (newVal: any) => {
+      formState.foreigner = newVal;
     })
     // let dpRelation : any =  enum2Entries(DependantsRelation).find((value) => {
     //   const item1 = itemSelected.value.some((item2: any)=>{return item2.value == value[1]});
@@ -266,24 +264,23 @@ export default defineComponent({
     // }) ;
     // check consignment
     const consignDisabled = ref(true);
-    watchEffect(()=>{
-      if((formState.relation == 4 || formState.relation ==8) && (ageCount.value > 7 && ageCount.value < 20)){
+    watchEffect(() => {
+      if ((formState.relation == 4 || formState.relation == 8) && (ageCount.value > 7 && ageCount.value < 20)) {
         consignDisabled.value = false;
-      }else {
+      } else {
         consignDisabled.value = true;
       }
     })
-    onMounted(()=> {
-      formState.relation = 1;
-    })
+    const onChange = (emitVal: any) => {
+      formState.name = emitVal.toUpperCase();
+    }
     return {
       loading,
       householder,
       senior,
-      descendant,
       formState,
       ageCount,
-    //   foreigner,
+      //   foreigner,
       residentId,
       setModalVisible,
       labelResidebId,
@@ -291,6 +288,7 @@ export default defineComponent({
       isDisabledSenior,
       itemSelected,
       consignDisabled,
+      onChange,
     };
   },
 });
@@ -326,18 +324,20 @@ export default defineComponent({
   .roadAddress {
     margin-bottom: 5px;
   }
+
   .switchForeigner {
     :deep .ant-switch {
-        background-color: #1890ff;
+      background-color: #1890ff;
     }
   }
+
   :deep .ant-row.ant-form-item.d-flex-nowrap {
     display: flex !important;
     flex-wrap: nowrap;
+
     .long-text {
       align-items: start;
       padding-top: 3px;
     }
   }
-}
-</style>
+}</style>

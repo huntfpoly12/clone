@@ -37,7 +37,6 @@ export default defineComponent({
     let {
       result: filingsByWithholdingResult,
       loading: filingsByWithholdingLoading,
-      refetch: filingsByWithholdingRefetch,
       onError: filingsByWithholdingError,
     } = useQuery(queries.getElectronicFilingsByWithholdingTax, dataSearch, () => ({
       enabled: filingsBywithholdingTrigger.value,
@@ -48,7 +47,7 @@ export default defineComponent({
       arrStatus.value = data;
       filingsBywithholdingTrigger.value = false;
       if (data) {
-        emit('productionStatusData', data[0]);
+        emit('productionStatusData', {...data[0], companyId: props.dataProcduct?.companyId});
       }
     });
     filingsByWithholdingError((res: any)=> {notification('error', res.message)})

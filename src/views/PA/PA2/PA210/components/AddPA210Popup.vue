@@ -28,7 +28,7 @@
                                 </template>
                                 <div class="text-align-center">
                                     <DxButton
-                                        :text="'귀' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                                 </div>
                             </a-tooltip>
@@ -41,7 +41,7 @@
                                 </template>
                                 <div class="text-align-center">
                                     <DxButton
-                                        :text="'지' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                                 </div>
                             </a-tooltip>
@@ -83,6 +83,7 @@ import DxButton from "devextreme-vue/button";
 import { DxDataGrid, DxColumn,DxScrolling, DxSelection } from "devextreme-vue/data-grid"
 import { useStore } from "vuex";
 import { getReportType, showTooltipYearMonth } from "../utils/index"
+import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -100,7 +101,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+        const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const loading = ref<Boolean>(false)
         const dataReports: any = ref([])
         const dataReport: any = ref([])
@@ -236,7 +237,7 @@ export default defineComponent({
                         if (!value.reportClassCodes.find((item: any) => item == "매익" + i)) {
                             let imputedMonth = i == 0 ? 2 : i
                             let paymentMonth = i == 0 ? 2 : i + 1
-                            paymentMonth = paymentMonth == 13 ? 2 : paymentMonth +1
+                            paymentMonth = paymentMonth == 13 ? 2 : paymentMonth
                             // string concatenation 10th next month of paymentday
                             const yearSub = (paymentMonth == 13 ? year + 1 : year).toString();
                             const monthSub = (paymentMonth < 10 ? '0' + (paymentMonth + 1).toString() : (paymentMonth + 1).toString()) 
@@ -246,7 +247,7 @@ export default defineComponent({
                                 reportId: i,
                                 imputedYear: year,
                                 imputedMonth: imputedMonth,
-                                paymentYear: paymentMonth == 13 ? year + 1 : year,
+                                paymentYear: imputedMonth == 12 ? year + 1 : year,
                                 paymentMonth: paymentMonth,
                                 reportClassCode: "매익" + i,
                                 ...value,
@@ -308,8 +309,17 @@ export default defineComponent({
         };
 
         const closeAllPopupAdd = () => {
-          reportGridStatus.value = false
-          setModalVisible()
+          if (hasChangedPopupPA520.value)
+          {
+            comfirmClosePopup(() => {
+              reportGridStatus.value = false
+              setModalVisible()
+              store.commit('common/setHasChangedPopupPA210',false);
+            })
+          }else{
+            reportGridStatus.value = false
+            setModalVisible()
+          }
         }
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]

@@ -1,9 +1,10 @@
+
 <template>
-    <DxNumberBox @valueChanged="updateValue(value)" :width="width" value-change-event="input"
+    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
-        :show-spin-buttons="spinButtons" @input="onChange" :rtlEnabled="rtlEnabled" :max="max" :min="min"
-        :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="'#,###'" :name="nameInput" :readOnly="readOnly">
-        <DxValidator v-if="required" :name="nameInput">
+        :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled"
+        :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
+        <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
     </DxNumberBox>
@@ -29,6 +30,10 @@ export default defineComponent({
         messRequired: {
             type: String,
             default: "",
+        },
+        format: {
+          type: String,
+          default: "#,###",
         },
         valueInput: {
             type: [String, Number],
@@ -64,8 +69,20 @@ export default defineComponent({
             messageRequired.value = props.messRequired;
         }
         const value = ref(props.valueInput);
-      const updateValue = (value: any) => {
-            emit("update:valueInput", value);
+      const maxNum = ref(props.max??0);
+      const minNum = ref(props.min??0);
+      const updateValue = (e: any) => {
+          if (maxNum.value && e.value >= maxNum.value) {
+              e.component.option('value', maxNum.value);
+              emit("update:valueInput", maxNum.value);
+              return;
+          }
+          if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
+              e.component.option('value', minNum.value);
+              emit("update:valueInput", minNum.value);
+              return;
+          }
+          emit("update:valueInput", e.value);
         };
 
         watch(

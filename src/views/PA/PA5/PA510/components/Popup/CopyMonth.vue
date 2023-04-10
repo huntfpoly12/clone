@@ -4,9 +4,9 @@
         <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
             <div class="d-flex-center">
                 <div class="month-custom-1 d-flex-center">
-                    귀 {{ processKey.imputedYear }}-{{ month > 9 ? month : '0' + month }}
+                    귀 {{ processKey.imputedYear }}-{{ $filters.formatMonth(month) }}
                 </div>
-                    <month-picker-box-custom v-model:valueDate="month2" class="ml-5" />
+                    <month-picker-box-custom text="지" v-model:valueDate="month2" class="ml-5" />
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right">
@@ -23,18 +23,14 @@
 
     <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
         :width="600">
-        <div class="mt-30 d-flex-center">
+        <div class="mt-30 d-flex-center center modal-copy-api">
             <span>과거내역</span>
             <DxSelectBox :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
                 field-template="field-data" @value-changed="updateValue" :disabled="false">
                 <template #field-data="{ data }">
                     <span v-if="data" style="padding: 4px">
-                        귀 {{ data.imputedYear }}-{{
-                            data.imputedMonth > 9 ? data.imputedMonth : '0' + data.imputedMonth
-                        }}
-                        지 {{ data.paymentYear }}-{{
-                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
-                        }}
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }}
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
                         <DxTextBox style="display: none;" />
                     </span>
                     <span v-else style="padding: 4px">
@@ -43,13 +39,10 @@
                     </span>
                 </template>
                 <template #item-data="{ data }">
-                    <span>귀 {{ data.imputedYear }}-{{
-                        data.imputedMonth > 9 ? data.imputedMonth :
-                            '0' + data.imputedMonth
-                    }} 지
-                        {{ data.paymentYear }}-{{
-                            data.paymentMonth > 9 ? data.paymentMonth : '0' + data.paymentMonth
-                        }}</span>
+                    <span>
+                        귀 {{ data.imputedYear }}-{{ $filters.formatMonth(data.imputedMonth) }} 
+                        지 {{ data.paymentYear }}-{{ $filters.formatMonth(data.paymentMonth) }}
+                    </span>
                 </template>
             </DxSelectBox>
             <span>로 부터 복사하여 새로 입력합니다.</span>
@@ -75,6 +68,8 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA510/index"
 import queries from "@/graphql/queries/PA/PA5/PA510/index"
 import dayjs from "dayjs";
+import filters from "@/helpers/filters";
+import { sampleDataIncomeWageDaily } from "../../utils/index"
 export default defineComponent({
     props: {
         modalStatus: {
@@ -117,7 +112,7 @@ export default defineComponent({
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
         const { result: resultConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -126,16 +121,20 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
+        watch(() => store.state.common.actionCallGetMonthDetail, (newVal) => {
+            trigger.value = true;
+        })
         watch(resultConfig, (value) => {
+            trigger.value = false;
             let paymentMonth = month.value
             if (value) {
                 paymentDayCopy.value = value.getWithholdingConfig.paymentDay
+                sampleDataIncomeWageDaily.paymentDay = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : (paymentMonth > 9 ?  paymentMonth : '0'+paymentMonth)}`)
-            trigger.value = false;
+            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
         });
         const originData: any = ref({
             companyId: companyId,
@@ -191,8 +190,10 @@ export default defineComponent({
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),
             })
             emit("closePopup", false)
-            store.state.common.paymentDayCopy = paymentDayCopy.value
-            store.state.common.actionCopy++
+            store.state.common.statusRowAdd = true
+            // store.state.common.paymentDayCopy = paymentDayCopy.value
+            // store.state.common.actionCopy++
+            sampleDataIncomeWageDaily.paymentDay = paymentDayCopy.value
             store.state.common.resetArrayEmploySelect++
         };
 
@@ -252,5 +253,11 @@ export default defineComponent({
     border-radius: 5px;
     color: white;
     height: 28px;
+}
+.modal-copy-api {
+    height: 70px;
+}
+.center {
+    justify-content: center;
 }
 </style>

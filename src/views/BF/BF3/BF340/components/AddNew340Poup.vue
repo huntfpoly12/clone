@@ -39,7 +39,7 @@
                             </a-form-item>
                             <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
                                 :label-col="labelCol">
-                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" />
+                                <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                             </a-form-item>
                             <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
                                 <biz-number-text-box v-model:valueInput="formState.bizNumber" width="150px" />
@@ -75,7 +75,7 @@
                         <a-col :span="8" :md="13" :lg="11">
                             <a-form-item :wrapper-col="{ span: 24 }" class="detail-address" label-align="right"
                                 :label-col="labelCol">
-                                <default-text-box v-model:valueInput="formState.addressExtend" placeholder="상세주소"
+                                <default-text-box v-model:valueInput="formState.addressExtend" placeholder="상세주소" :required="true"
                                     width="438px" />
                             </a-form-item>
                         </a-col>
@@ -159,6 +159,7 @@ import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import { initialFormState } from '../utils';
 import mutations from "@/graphql/mutations/BF/BF3/BF340/index";
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -168,6 +169,7 @@ export default defineComponent({
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>('');
+        const isResidentId =  ref<boolean>(false);
         const formState = reactive<any>({ ...initialFormState });
         const receiptOrNot = ref<boolean>(false);
         // watch event modal popup
@@ -179,6 +181,17 @@ export default defineComponent({
                 }
             }
         );
+
+        watch(
+          () => formState.bizType,
+          (newVal) => {
+            if (newVal == 1) {
+              isResidentId.value = true
+            } else {
+              isResidentId.value = false
+            }
+          },{deep:true}
+        )
         // create saler
         const {
             mutate: createSaleMutate,
@@ -208,7 +221,7 @@ export default defineComponent({
             formState.addressDetail.bcode = data.bcode;
             formState.addressDetail.bname = data.bname;
             formState.addressDetail.buildingCode = data.buildingCode;
-            formState.addressDetail.buildingName = data.buildingName;
+            formState.addressDetail.buildingName = data.buildingName ? data.buildingName : '';
             formState.addressDetail.roadname = data.roadname;
             formState.addressDetail.roadnameCode = data.roadnameCode;
             formState.addressDetail.sido = data.sido;
@@ -229,6 +242,7 @@ export default defineComponent({
                         ...formState
                     }
                 }
+                dataNew = makeDataClean(dataNew)
                 createSaleMutate(dataNew)
             }
         }
@@ -238,7 +252,7 @@ export default defineComponent({
         });
         return {
             labelCol, wrapperCol, formState, visible, confirm, receiptOrNot, loading,
-            createSaleMutate, funcAddress, setModalVisible, createSale,
+            createSaleMutate, funcAddress, setModalVisible, createSale,isResidentId
         }
     }
 })

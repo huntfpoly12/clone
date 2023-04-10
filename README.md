@@ -5,14 +5,31 @@
 npm install or yarn
 ```
 
-### Compiles and hot-reloads for development
+### To run the test under local
 ```
-npm run serve or yarn serve
+npm run serve
+```
+or
+```
+yarn serve
+```
+
+### Compiles and minifies for development
+```
+npm run build
+```
+or
+```
+yarn build
 ```
 
 ### Compiles and minifies for production
 ```
-npm run build or yarn build
+npm run build:prod
+```
+or
+```
+yarn build:prod
 ```
 
 ### Lints and fixes files

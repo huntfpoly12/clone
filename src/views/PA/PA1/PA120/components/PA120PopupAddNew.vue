@@ -2,9 +2,9 @@
     <div>
         <a-spin :spinning="false" size="large">
             <div id="pa-120">
-                <a-tabs v-model:activeKey="activeKey" type="card">
+                <a-tabs v-model:activeKey="activeTabAddKeyPA120" @change="onChangeTab" type="card">
                     <a-tab-pane key="1" tab="기본">
-                        <Tab1Component ref="tab1" :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
+                        <Tab1Component :popupStatus="modalStatus" @employeeId="setEmployeeId" @setTabsStatus="setTabsStatus($event)"></Tab1Component>
                     </a-tab-pane>
                     <a-tab-pane key="2" tab="급여" :disabled="tabStatus">
                         <Tab2Component :employeeId="employeeId"></Tab2Component>
@@ -18,12 +18,13 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch } from "vue";
+import { defineComponent, computed, ref, watch } from "vue";
 import { DxSelectBox } from 'devextreme-vue/select-box';
 import Tab1Component from "./componentAdd/Tab1Component.vue";
 import Tab2Component from "./componentAdd/Tab2Component.vue";
 import Tab3Component from "./componentAdd/Tab3Component.vue";
 import { radioCheckForeigner, radioCheckHouseholder } from "../utils/index";
+import {useStore} from "vuex";
 export default defineComponent({
     components: {
         DxSelectBox,
@@ -36,8 +37,9 @@ export default defineComponent({
         isDestoy: Boolean,
     },
     setup(props, { emit }) {
+        const store = useStore();
         const tabStatus = ref(true);
-        const activeKey = ref("1");
+        const activeTabAddKeyPA120 = ref('1');
         const employeeId = ref();
         const setModalVisible = () => {
             emit('closePopup', false);
@@ -48,12 +50,8 @@ export default defineComponent({
         const setTabsStatus = (data : any) => {
             tabStatus.value = data;
         }
-        const tab1 = ref();
-        const compareData = () => {
-            if(tab1.value.compareData()){
-                return true;
-            }
-            return false;
+        const onChangeTab = (e:any) => {
+            // store.commit('common/activeTabAddKeyPA120', e)
         }
         return {
             setModalVisible,
@@ -61,11 +59,10 @@ export default defineComponent({
             employeeId,
             radioCheckForeigner,
             radioCheckHouseholder,
-            activeKey,
             tabStatus,
             setTabsStatus,
-            tab1,
-            compareData,
+            onChangeTab,
+            activeTabAddKeyPA120
         };
     },
 });

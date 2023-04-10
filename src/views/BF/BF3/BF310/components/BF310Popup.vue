@@ -16,7 +16,7 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.createdAt) ? $filters.formatDate(formState.createdAt) : ''"
+                                                :valueInput="dayjs(formState.createdAt).format('YYYY-MM-DD')"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                     </a-col>
@@ -108,6 +108,7 @@
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
                                             <id-number-text-box :required="true"
+                                                :isResidentId="isResidentId"
                                                 v-model:valueInput="formState.content.company.residentId" width="220"
                                                 messRequired="이항목은 필수 입력사항입니다!" nameInput="residentId" />
                                         </a-form-item>
@@ -427,12 +428,18 @@ export default defineComponent({
         const arrayRadioWithdrawDay = reactive([...initialArrayRadioWithdrawDay])
         var formState = ref<any>({ ...initialFormState });
         const dataSource = ref([]);
+        const dataSourceOld = ref([]);
+        const isResidentId = ref(false);
         // event close popup
         const setModalVisible = () => {
-            if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState.value) == true)
-                emit("closePopup", false)
-            else
+            if (
+                (JSON.stringify(objDataDefault.value) != JSON.stringify(formState.value)) || 
+                (JSON.stringify(dataSource.value) != JSON.stringify(dataSourceOld.value))
+                )
                 comfirmClosePopup(() => emit("closePopup", false))
+            else
+                emit("closePopup", false)
+                
         };
         // watch event modal popup
         watch(() => props.modalStatus, (newValue, old) => {
@@ -501,9 +508,7 @@ export default defineComponent({
                     id: value.getSubscriptionRequest.id,
                     bizNumber: value.getSubscriptionRequest.companyBizNumber,
                 }
-                objDataDefault.value = {
-                    ...value.getSubscriptionRequest
-                }
+                objDataDefault.value = JSON.parse(JSON.stringify(value.getSubscriptionRequest))
                 objDataDefault.value.institutionNumber =
                     value.getSubscriptionRequest.content.accounting.facilityBusinesses.length > 0
                         ? value.getSubscriptionRequest.content.accounting.facilityBusinesses[0].longTermCareInstitutionNumber : "";
@@ -517,14 +522,17 @@ export default defineComponent({
                     dataActiveRow.value = dataSource.value[0]
                     focusedRowKey.value = 0
                 }
+                dataSourceOld.value = JSON.parse(JSON.stringify(dataSource.value))
                 triggerCheckPer.value = true;
             }
         });
         // A function that returns a string based on the value of bizType.
         const changeTypeCompany = (bizType: number) => {
             if (bizType == 2) {
+                isResidentId.value = true
                 return "주민등록번호";
             } else {
+                isResidentId.value = false
                 return "법인등록번호";
             }
         };
@@ -722,6 +730,7 @@ export default defineComponent({
             onInitRow,
             focusedRowKey,
             onFocusedRowChanged,
+            isResidentId,
         };
     },
 });

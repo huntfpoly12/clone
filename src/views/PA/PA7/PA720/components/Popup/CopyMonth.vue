@@ -1,32 +1,32 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="500">
-    <a-form-item label="귀속/지급연월" label-align="right" class="mt-40">
-      <div class="d-flex-center">
-        <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
-          :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
-          class="btn-date mr-2" />
+      <a-form-item label="귀속/지급연월" label-align="right" class="mt-20">
         <div class="d-flex-center">
-          <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
+          <DxButton :text="'귀 ' + globalYear + '-' + formatMonth(month1)"
+            :style="{ cursor: 'context-menu', color: 'white', backgroundColor: 'gray', height: $config_styles.HeightInput }"
+            class="btn-date mr-2" />
+          <div class="d-flex-center">
+            <month-picker-box-custom text="지" v-model:valueDate="month2" bgColor="black"></month-picker-box-custom>
+          </div>
         </div>
-      </div>
-    </a-form-item>
-    <a-form-item label="지급일" :colon="false" label-align="right">
-      <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" />
-    </a-form-item>
+      </a-form-item>
+      <a-form-item label="지급일" :colon="false" label-align="right">
+        <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayPA720" :isFormat="true" />
+      </a-form-item>
 
-    <div class="text-align-center mt-30">
-      <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
-        @onClick="onSubmit" />
-      <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
-        @onClick="openModalCopy" />
-    </div>
+      <div class="text-align-center mt-20">
+        <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
+          @onClick="onSubmit" />
+        <button-basic class="button-form-modal" text="과거 내역 복사" :width="140" type="default" mode="contained"
+          @onClick="openModalCopy" />
+      </div>
   </a-modal>
 
   <a-modal :visible="modalCopy" @cancel="setModalVisibleCopy" :mask-closable="false" class="confirm-md" footer=""
     :width="600">
-    <div class="mt-30 d-flex-center">
-      <span>과거내역</span>
+    <div class="mt-45 d-flex-center">
+      <span class="mr-5">과거내역</span>
       <DxSelectBox class="mx-3" :width="200" :data-source="arrDataPoint" placeholder="선택" item-template="item-data"
         field-template="field-data" @value-changed="updateValue" :disabled="false">
         <template #field-data="{ data }">
@@ -45,7 +45,7 @@
             formatMonth(data.paymentMonth) }}</span>
         </template>
       </DxSelectBox>
-      <span>로 부터 복사하여 새로 입력합니다.</span>
+      <span class="mr-5">로 부터 복사하여 새로 입력합니다.</span>
     </div>
 
     <div class="text-align-center mt-30">
@@ -104,23 +104,46 @@ export default defineComponent({
         store.commit('common/paymentDayPA720', value);
       },
     });
-
+    const trigger = ref(false);
+    //-----------get config to check default date type----------------
+    // const configTrigger = ref(false);
+    // const dateType = ref<number>(1);
+    // const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+    // const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
+    //   enabled: configTrigger.value,
+    //   fetchPolicy: 'no-cache',
+    // }));
+    // watch(resultConfig, (newVal) => {
+    //   if (newVal) {
+    //     const data = newVal.getWithholdingConfig;
+    //     dateType.value = data.paymentType;
+    //     store.commit('common/paymentDayPA720', data.paymentDay);
+    //     configTrigger.value = false;
+    //   }
+    // });
+    // watch(() => props.month, () => {
+    //   dataQuery.value.imputedYear = globalYear.value;
+    //   configTrigger.value = true;
+    //   configRefetch();
+    // })
     // ----------set month source default because dependent on the set up before--------------
 
     const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
     watch(
-      () => props.month,
-      (val) => {
+      () => [props.month, processKeyPA720.value.processKey.paymentYear],
+      ([val], [newYear, oldYear]) => {
         month1.value = val;
         let yearMonth = `${processKeyPA720.value.processKey.paymentYear}${processKeyPA720.value.processKey.imputedMonth}`;
-        if (props.dateType == 2 && props.month) {
-          yearMonth = `${globalYear.value}${props.month + 1}`;
+        if (props.dateType == 2 && val) {
+          yearMonth = val == 12 ? `${globalYear.value + 1}1` : `${globalYear.value}${val + 1}`;
         }
         if (props.dateType == 1) {
-          yearMonth = `${globalYear.value}${props.month}`;
+          yearMonth = `${globalYear.value}${val}`;
         }
         month2.value = yearMonth;
-      }
+        trigger.value = true;
+        findIncomeRefetch();
+      }, { deep: true }
     );
 
     //-------------------------get date source copy--------------------------------
@@ -129,33 +152,25 @@ export default defineComponent({
     const findIncomeProcessExtraStatViewsParam: any = ref({
       companyId: companyId,
       filter: {
-        startImputedYearMonth: parseInt(`${globalYear.value}1`),
+        startImputedYearMonth: parseInt(`${globalYear.value}01`),
         finishImputedYearMonth: parseInt(`${globalYear.value}12`),
       }
     })
-    const { result: resultFindIncomeProcessExtraStatViews, refetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+    const { result: resultFindIncomeProcessExtraStatViews, refetch: findIncomeRefetch } = useQuery(queries.findIncomeProcessExtraStatViews, findIncomeProcessExtraStatViewsParam, () => ({
+      enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(resultFindIncomeProcessExtraStatViews, (value) => {
       arrDataPoint.value = value.findIncomeProcessExtraStatViews;
+      trigger.value = true;
     });
     const messageCopyDone = Message.getMessage('COMMON', '106').message;
-
-    watchEffect(() => {
-      if (props.dateType == 2 && props.month) {
-        month2.value = `${globalYear.value}${props.month + 1}`;
+    watch(modalCopy, (newVal, oldVal) => {
+      if (newVal) {
+        findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${globalYear.value}01`);
+        findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${globalYear.value}12`);
+        trigger.value = true;
       }
-      if (props.dateType == 1) {
-        month2.value = `${globalYear.value}${props.month}`;
-      }
-      // if(globalYear.value) {
-      //   refetch();
-      // }
-    });
-    watch(globalYear, (newVal, oldVal) => {
-      findIncomeProcessExtraStatViewsParam.value.filter.startImputedYearMonth = parseInt(`${newVal}1`);
-      findIncomeProcessExtraStatViewsParam.value.filter.finishImputedYearMonth = parseInt(`${newVal}12`);
-      refetch()
     });
 
     //-------------------------action copy data--------------------------------
@@ -187,7 +202,6 @@ export default defineComponent({
           target: processKeyPA720.value.processKey,
         }
         mutate(param);
-        // emit('loadingTable')
       } else {
         notification('error', '날짜를 선택하세요.')
       }
@@ -232,6 +246,7 @@ export default defineComponent({
       commitDate();
       emit("closePopup", false);
     };
+
     return {
       processKeyPA720,
       modalCopy,
@@ -247,7 +262,7 @@ export default defineComponent({
       formatMonth,
       month1,
       globalYear,
-      paymentDayPA720
+      paymentDayPA720,
     };
   },
 });

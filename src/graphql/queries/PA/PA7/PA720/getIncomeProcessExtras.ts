@@ -10,29 +10,29 @@ export default gql`
       imputedYear: $imputedYear
       imputedMonth: $imputedMonth
     ) {
-      companyId 
-      type 
-      imputedYear 
-      imputedMonth 
-      paymentYear 
-      paymentMonth 
-      status 
-      statusUserId 
-      statusUpdatedAt 
-      createdAt 
-      createdBy 
-      updatedAt 
-      updatedBy 
-      ip 
-      active 
-      statusUpdateUser{
+      companyId
+      type
+      imputedYear
+      imputedMonth
+      paymentYear
+      paymentMonth
+      status
+      statusUserId
+      statusUpdatedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      ip
+      active
+      statusUpdateUser {
         id
         type
         username
         name
         active
-        }
-      employeeStat{
+      }
+      employeeStat {
         type
         imputedYear
         imputedMonth
@@ -40,8 +40,8 @@ export default gql`
         paymentMonth
         employeeCount
         retireEmployeeCount
-        }
-      incomeStat{
+      }
+      incomeStat {
         imputedYear
         imputedMonth
         paymentYear
@@ -50,6 +50,7 @@ export default gql`
         withholdingIncomeTax
         withholdingLocalIncomeTax
         withholdingRuralSpecialTax
+        paymentAmount
         actualPayment
       }
     }

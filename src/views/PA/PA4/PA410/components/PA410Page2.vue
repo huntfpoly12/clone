@@ -29,12 +29,15 @@
                                 </a-form-item>  
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
-                                    <p>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다.</p>
+                                    <p>퇴직소득 정산의 종료일로서, 중간정산지급인 경우 퇴사일과 상이할 수 있습니다.</p>
                                 </span>
                             </div>  
                             <div class="input-employee">
                                 <a-form-item label="제외일수" label-align="right" >
+                                  <div class="d-flex-center">
                                     <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays" > </number-box-money>
+                                    <span class="pl-5 pr-5">일</span>      
+                                  </div>
                                 </a-form-item> 
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
@@ -43,8 +46,12 @@
                             </div>
                             <div class="input-employee">
                                 <a-form-item label="가산일수" label-align="right" >
+                                  <div class="d-flex-center">
                                     <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"> </number-box-money>
+                                    <span class="pl-5 pr-5">일</span>
+                                  </div>
                                 </a-form-item> 
+                              
                                 <span>
                                     <img src="@/assets/images/iconInfo.png" style="width: 14px; height: 14px;" />
                                     <p>정산시작(기산)일 기준 가산일수만큼 앞으로 당겨서 근속일수를 계산합니다.</p>
@@ -55,30 +62,33 @@
                         <div class="header-text-2">급여/상여/수당</div>
                         <div class="salary">
                             <div class="input-salary">
-                                <a-form-item label="퇴직전 3개월 임금 총액 (세전)" label-align="right" >
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalPay3Month"> </number-box-money>
+                                <a-form-item label="퇴직전 3개월 임금 총액 (세전)" label-align="right" class="red">
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalPay3Month" :required="true"> </number-box-money>
                                 </a-form-item>  
                                 <span class="pl-5 pt-4">원</span>
                             </div>
                             <div class="input-salary">
-                                <a-form-item label="연간 상여금 총액" label-align="right" >
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalAnualBonus"> </number-box-money>
+                                <a-form-item label="연간 상여금 총액" label-align="right" class="red">
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalAnualBonus" :required="true"> </number-box-money>
                                 </a-form-item> 
                                 <span class="pl-5 pt-4">원</span>
                             </div>
                             <div class="input-salary">
-                                <a-form-item label="연차수당" label-align="right" >
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.annualLeaveAllowance"> </number-box-money>
+                                <a-form-item label="연차수당" label-align="right" class="red">
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.annualLeaveAllowance" :required="true"> </number-box-money>
                                 </a-form-item> 
                                 <span class="pl-5 pt-4">원</span>
                             </div>
                         </div>
-                
                     </a-col>
                 </a-row>
-                <div class="time-service">근속연수 / 근속월수 / 근속일수: {{yearsService}}년/{{monthsService}}개월/{{workingDays}}일</div>
+                <div class="time-service">근속연수 / 근속월수 / 근속일수: {{dataLastRetiredYearsOfService.yearsOfService}}년/{{dataLastRetiredYearsOfService.monthsOfService}}개월/{{dataLastRetiredYearsOfService.daysOfService}}일</div>
                 <div class="button-calculate">
                     <button-basic text="&#129155; 퇴직금 계산 &#129155;" type="default" @onClick="calculateIncomeRetirement"/> 
+                    <span class="style-note">
+                      <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+                    <span class="pl-5">상기 급여(수당)으로 퇴직금 계산합니다.</span>
+                </span>
                 </div>
             </div>
             <div class="retirement-benefit">
@@ -120,20 +130,18 @@ import { initFormState } from '../utils';
 import EmailSinglePopup from './EmailSinglePopup.vue';
 import dayjs from 'dayjs';
 import filters from '@/helpers/filters';
+import { Formula } from "@bankda/jangbuda-common";
 export default defineComponent({
     components: {
         EmailSinglePopup
     },
     setup(props, { emit }) {
         const store = useStore();
-  
-        const yearsService = ref(0);
-        const monthsService = ref(0);
-        const workingDays = ref(0);
         const caculateValue = ref(0);
         const trigger = ref<boolean>(false)
         const modalMailStatus = ref<boolean>(false)
         const valueSelected = ref(store.state.common.employeeIdPA410)
+        const dataLastRetiredYearsOfService: any = ref({})
         const formState = reactive({
             ...initFormState,
             settlementStartDate: filters.formatDateToInterger(dayjs().format("YYYY-MM-DD")),
@@ -144,16 +152,13 @@ export default defineComponent({
                 input: formState
         }
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
-        watch(()=> formState.settlementFinishDate, (newFinishDate) => {
-            const finishDate = dayjs(newFinishDate)         
-            workingDays.value = finishDate.diff(formState.settlementStartDate, 'day');
-            if (workingDays.value < 0) {
-                formState.settlementFinishDate = filters.formatDateToInterger(dayjs().add(1, 'day').format("YYYY-MM-DD"));
-            } else {
-                monthsService.value = finishDate.diff(formState.settlementStartDate, 'month');
-                yearsService.value = finishDate.diff(formState.settlementStartDate, 'year');
-            }
-                  
+      watch(() => formState.settlementFinishDate, (newFinishDate) => {
+          dataLastRetiredYearsOfService.value = Formula.getDateOfService(
+              new Date(filters.formatDate(formState.settlementStartDate)),
+              new Date(filters.formatDate(newFinishDate)),
+              formState.exclusionDays,
+              formState.additionalDays
+          )
         })
    
         const {
@@ -185,14 +190,12 @@ export default defineComponent({
             loading,
             formState,
             caculateValue,
-            yearsService,
-            monthsService,
-            workingDays,
             calculateIncomeRetirement,
             arrayEmployeeSelect,
             valueSelected,
             openMailPopup,
-            modalMailStatus
+          modalMailStatus,
+          dataLastRetiredYearsOfService
         }
     },
 })
@@ -222,6 +225,11 @@ export default defineComponent({
             }
             .input-employee{
                 display: flex;
+                .d-flex-center{
+                  span{
+                    width: 15px;
+                  }
+                }
                 span{
                     display: flex;
                     align-items: center; 
@@ -240,11 +248,7 @@ export default defineComponent({
                     }
 
                 }
-                ::v-deep .red {
-                    label {
-                    color: red;
-                    }
-                }
+       
           
             }
             .time-service{
@@ -302,6 +306,10 @@ export default defineComponent({
             }
         }
 
-
+        ::v-deep .red {
+              label {
+              color: red;
+              }
+          }
     }
 </style>

@@ -36,6 +36,8 @@ export class Message extends BaseType {
         '601': { "message" : "항목을 2개 이상 선택해야합니다"}, // You must select 2 or more items
       // Check ID Card 
         '701': { "message" : "주민등록번호가 유효하지 않습니다"}, // Social security number is invalid
+      // Email 
+        '801': { "message" : "이메일을 발송했습니다"}, // Email has been sent
     });
 
     /** 여기에 각 화면에 대한 메시지 추가 
@@ -78,15 +80,28 @@ export class Message extends BaseType {
   //근로소득-일용직소득  계산   
   public static PA110 = new Message({
         '001': { "message" : "저장하기전에 공제계산해야합니다"}, // Do you want to deduct the change?
-      
-    });
+      });
+  
+  //퇴직소득자료입력   
+  public static PA420 = new Message({
+        '001': { "message" : "과세대상 퇴직급여가 0원이면 신고 불가합니다."}, // If the taxable retirement benefit is 0 won, it cannot be reported.
+      });
+  
+  //보험사무대행신고
+  public static PA860= new Message({
+        '001': { "message" : "보험사무대행 신청서류의 일괄 자동생성 동의체크 먼저 하세요."}, // Please agree to create Application form for an insurance agent first.
+      });
    
       //기초정보설정
     public static CM110 = new Message({
         '001': { "message" : "비밀번호 설정 이메일",}, // subject modal : Send email to my company user
         '002': { "message" : "비밀번호 설정 링크가 이메일로 발송됩니다. 계속 진행하시겠습니까?", "icon": "iconWarning"}, //Contents modal : Send email to my company user
     });
-
+     
+      //통장관리
+    public static CM121 = new Message({
+        '001': { "message" : "통장별명 중복등록 불가합니다", "icon": "iconError"}, // Bankbook Nickname can not be duplicated. 
+    });
         //원천설정
     public static CM130 = new Message({
         '001': { "message" : "이용 가능한 급여항목은 최대 20개입니다. 기존항목을 삭제한 후 새로 추가하세요", "icon": "iconError"},
@@ -106,6 +121,18 @@ export class Message extends BaseType {
     public static AC120 = new Message({
         '001': { "message" : "결의서 종류를 변경하면 기존 저장된 값들(물품내역 포함)은 모두 삭제 및 초기화됩니다. 그래도 진행하시겠습니까?","yes": "네. 진행합니다","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
     });
+  
+  //과목전용조서
+    public static AC570 = new Message({
+        '001': { "message" : "해당 과목전용조서 삭제시 전용일자 이후 등록된 예산서의 예산액이 틀려질 수도 있습니다. 그래도 삭제하시겠습니까?","yes": "네. 삭제합니","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
+    });
+  
+  //후원자 관리
+    public static AC620 = new Message({
+        '001': { "message" : "주민등록번호 중복체크를 먼저 하세요."}, //Please check the duplicate ID number first
+        '002': { "message" : "사업자(고유)등록번호 중복체크 먼저 하세요."}, //Please check the duplicate Business number first
+    });  
+  
     private static _ = Message.closeEnum();
 
     private constructor(

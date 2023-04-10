@@ -2,8 +2,8 @@
     <div id="step1">
         <a-row gutter="24" class="search-form-step-1">
             <a-col>
-                <a-form-item label="귀속연도" label-align="left">
-                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5" />
+                <a-form-item label="지급연도" label-align="left">
+                    <year-picker-box-custom v-model:valueDate="dataSearch.paymentYear" width="65px" class="mr-5"  text="지"/>
                 </a-form-item>
                 <a-form-item label="제출대상구분" label-align="left">
                     <radio-group :arrayValue="checkBoxSearch" layoutCustom="horizontal"
@@ -11,10 +11,10 @@
                 </a-form-item>
             </a-col>
             <a-col class="ml-30">
-                <a-form-item label="최종제작상태" label-align="left">
+                <a-form-item label="제작요청상태" label-align="left">
                     <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="dataSearch.beforeProduction" textCheck="제작전"
-                            textUnCheck="제작후" />
+                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작요청후"
+                            textUnCheck="제작요청전" />
                         <div class="d-flex-center ml-5 ">
                             <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
                             <span>제작전은 제작요청되지 않은 상태입니다.</span>
@@ -25,41 +25,41 @@
                     <div class="d-flex-center custom-checkbox-search" >
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="2" />
+                            <production-status :typeTag="2" :disabled="dataSearch.beforeProduction" />
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="3" />
+                            <production-status :typeTag="3" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="4" />
+                            <production-status :typeTag="4" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                     <div class="d-flex-center custom-checkbox-search">
                         <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
                             :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="5" />
+                            <production-status :typeTag="5" :disabled="dataSearch.beforeProduction"/>
                         </checkbox-basic>
                     </div>
                 </div>
             </a-col>
             <a-col class="search-company">
                 <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <biz-number-text-box v-model:valueInput="dataSearch.companyCode" />
+                    <default-text-box v-model:valueInput="dataSearch.companyCode" />
                 </a-form-item>
                 <a-form-item label="상호" label-align="left" class="fix-width-label">
                     <default-text-box v-model:valueInput="dataSearch.companyName" />
                 </a-form-item>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
                 </a-form-item>
                 <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown :required="true" v-model:valueInput="dataSearch.salesRepresentativeId" />
+                    <list-sales-dropdown  v-model:valueInput="dataSearch.salesRepresentativeId" />
                 </a-form-item>
             </a-col>
             <a-col class="search-4">
@@ -69,7 +69,7 @@
         <div class="title-table d-flex">
             <a-form-item label="파일 제작 설정" label-align="left">
                 <div class="custom-note d-flex-center">
-                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" />
+                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true"/>
                     <span class="d-flex-center">
                         <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
                         <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
@@ -78,7 +78,7 @@
             </a-form-item>
             <a-form-item label="제출연월일" label-align="left">
                 <div class="d-flex-center">
-                    <date-time-box width="150px" dateFormat="YYYY-MM-DD" />
+                    <date-time-box width="150px" v-model:valueDate="dayReport" />
                     <a-tooltip placement="topLeft" color="black">
                         <template #title>전자신고파일 제작 요청</template>
                         <div class="btn-modal-save" @click="openModalSave">
@@ -96,7 +96,10 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged" id="dataGrid1">
                     <DxSelection mode="multiple" :fixed="true" />
-                    <DxColumn caption="사업자코드" data-field="company.code" />
+                    <DxColumn caption="사업자코드" data-field="company.code" cell-template="company-code"/>
+                    <template #company-code="{ data }">
+                        {{ data.data.company.code }}  {{ !data.data.companyServiceContract.active ? '[해지]': ''}}
+                    </template>
                     <DxColumn caption="상호 주소" cell-template="상호" />
                     <template #상호="{ data }">
                         {{ data.data.company.name }} - {{ data.data.company.address }}
@@ -126,8 +129,12 @@
                 </DxDataGrid>
             </a-spin>
         </div>
-        <PopupConfirmSaveStep1  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
+        <PopupConfirmSave  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
+        <div v-for="data in defaultDataSource" :key="data.id">
+            <GetStatusTableHidden   :data="data" @productionStatusData="productionStatusData" />
+        </div>
+       
     </div>
 </template>
 <script lang="ts">
@@ -136,8 +143,10 @@ import { checkBoxSearchStep1, dataSearchUtils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import PopupConfirmSaveStep1 from "./PopupConfirmSaveStep1.vue";
+import PopupConfirmSave from "./PopupConfirmSave.vue";
 import GetStatusTable from "./GetStatusTable.vue";
+import GetStatusTableHidden from "./GetStatusTableHidden.vue";
+
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
@@ -146,7 +155,7 @@ import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
-        PopupConfirmSaveStep1, GetStatusTable
+        PopupConfirmSave, GetStatusTable,GetStatusTableHidden
     },
     props: {
         searchStep: Number,
@@ -156,58 +165,48 @@ export default defineComponent({
         const userInfor = computed(() => (store.state.auth.userInfor))
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear: any = computed(() => store.state.settings.globalYear);
+        const dayReport = ref(`${globalYear.value}0802`);
         let checkBoxSearch = [...checkBoxSearchStep1]
         let valueDefaultCheckbox = ref(1)
-        let valueDefaultSwitch = ref(false)
+        let valueDefaultSwitch = ref(true)
+        let beforeProduction = ref(true)
         let dataSearch: any = ref({ ...dataSearchUtils })
         let typeCheckbox = ref<any>({
-            checkbox1: false,
-            checkbox2: false,
-            checkbox3: false,
-            checkbox4: false,
+            checkbox1: true,
+            checkbox2: true,
+            checkbox3: true,
+            checkbox4: true,
         })
         let trigger = ref(true)
         let dataSource: any = ref([])
+        let defaultDataSource: any = ref([])
         let modalConfirmMail = ref(false)
-        let dataCallApiGetElectronic = ref()
         let dataModalSave = ref()
         let keySelect = ref([]);
+        
         const messageDelNoItem = Message.getMessage('COMMON', '404').message;
         // ================== GRAPHQL=================
-        //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilings
+        //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
         let {
             refetch: refetchTable,
             loading: loadingTable,
             onError: errorTable,
-            onResult: resTable
-        } = useQuery(queries.searchIncomeWageSimplifiedPaymentStatementElectronicFilings, { filter: dataSearch.value }, () => ({
+            onResult: resTable,
+            result
+        } = useQuery(queries.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear, { paymentYear: globalYear,  paymentHalfYear: dataSearch.value.paymentHalfYear}, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache"
         }));
-        resTable((val: any) => {
-            dayjs().isBefore(dayjs('2011-01-01'))
-            let data = val.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilings;
-            let result = Object.values(data.reduce((acc: any, curr: any) => {
-                if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
-                    acc[curr.companyId] = curr;
-                }
-                return acc;
-            }, {}));
-            dataSource.value = [...result];
-            trigger.value = false
-            // call api get productionStatus
-            if (dataSource.value.length > 0) {
-                dataSource.value.map((val: any) => {
-                    dataCallApiGetElectronic.value = {
-                        input: {
-                            companyId: val.companyId,
-                            paymentYear: val.paymentYear,
-                            paymentHalfYear: dataSearch.value.paymentHalfYear
-                        }
-                    }
-                })
-            }
+
+        resTable(queryResult => {
+        if (queryResult && queryResult.data) {
+          defaultDataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+         // dataSource.value = queryResult.data.searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+          trigger.value = false
+        }
         })
+        
         errorTable((error: any) => {
             notification('error', error.message)
         })
@@ -225,20 +224,20 @@ export default defineComponent({
                 companyIds: keySelect.value
             }
             if (keySelect.value.length > 0) {
-                modalConfirmMail.value = true;
+              modalConfirmMail.value = true;
             }else {
                 notification('warning',messageDelNoItem)
             }
         }
 
-        const closeConfirmMail = () => {
+        const closeConfirmMail = async () => {
           modalConfirmMail.value = false;
           trigger.value = true
           refetchTable()
+          watchFirstRun.value = true;
         }
         //SUM
         // count the number of status
-        
         let productionStatusArr = ref<any>([]);
         const  watchFirstRun = ref(true)
         const countStatus = (arr: any[], type: number) => {
@@ -256,17 +255,31 @@ export default defineComponent({
         }
         // custom summary
         const customTextSummary = () => {
-            return `제작전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
+            return `제작요청전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
         }
         // caculator sum
         const reFreshDataGrid = () => {
             if(watchFirstRun.value) {
-                dataSource.value = dataSource.value.concat([]);
-                dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+                searchTab1()
                 watchFirstRun.value = false;
             }
         }
 
+      const searchTab1 = () => {
+            dataSource.value =  defaultDataSource.value
+            dataSource.value =  dataSource.value.filter((item:any)=>{
+                return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
+            })
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
+            if(dataSearch.value.excludeCancel) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == true)
+            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
+            if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
+            if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
+            if(dataSearch.value.salesRepresentativeId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.salesRepresentativeId == dataSearch.value.salesRepresentativeId) 
+            dataSource.value = dataSource.value.concat([]);
+            dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
+            productionStatusArr.value = dataSource.value.length > 0  ? [dataSource.value[0].productStatus] : [];
+        }
         const actionSaveDone = () => {
             modalConfirmMail.value = false
             trigger.value = true
@@ -274,7 +287,11 @@ export default defineComponent({
             watchFirstRun.value = true;
         }
         // ================= WATHCH ===================
+        watch(beforeProduction, (newVal) => {
+          dataSearch.value.beforeProduction = !newVal
+        })
         watch(() => props.searchStep, (val: any) => {
+            productionStatusArr.value = []
             dataSearch.value.productionStatuses = []
             if (typeCheckbox.value.checkbox1 == true)
                 dataSearch.value.productionStatuses.push(0)
@@ -284,27 +301,38 @@ export default defineComponent({
                 dataSearch.value.productionStatuses.push(2)
             if (typeCheckbox.value.checkbox4 == true)
                 dataSearch.value.productionStatuses.push(-1)
-            if (dataSearch.value) {
-                trigger.value = true;
-                refetchTable();
-                watchFirstRun.value = true;
-            }
+            searchTab1()
         }, { deep: true })
 
         // watch beforeProduction
         watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
-            for (const key in typeCheckbox.value) {
-                if (newVal) {
-                    typeCheckbox.value[key] = false;
-                } else {
-                    typeCheckbox.value[key] = false;
-                    typeCheckbox.value.checkbox1 = true;
-                }
+         for (const key in typeCheckbox.value) {
+             if (!newVal) {
+                 typeCheckbox.value[key] = true;
+             } else {
+                 typeCheckbox.value[key] = false;
+             }
+         }
+        }, { deep: true });
+
+        /**
+         *    If it is the first report of the year, the reporting date will be August 2 of this year. 
+          *   If the report is year - end, the reporting date will be February 1 of the following year
+         */
+        watch(() => dataSearch.value.paymentHalfYear, (newVal) => {
+            if (newVal == 1) {
+              dayReport.value= `${globalYear.value}0802`
+            } else {
+              dayReport.value= `${globalYear.value+1}0201`
             }
         }, { deep: true });
         
         const productionStatusData = (emitVal: any) => {
-            productionStatusArr.value = [emitVal];
+            defaultDataSource.value.map((item : any)=>{
+                if(item.companyId == emitVal.companyId){
+                    item['productStatus'] = emitVal.productStatus
+                }
+            })
             reFreshDataGrid();
         }
         return {
@@ -321,7 +349,8 @@ export default defineComponent({
           colomn_resize,
           move_column,
           modalConfirmMail,
-          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail
+          dayReport,defaultDataSource,
+          actionSaveDone, selectionChanged, openModalSave, customTextSummary, productionStatusData,closeConfirmMail,productionStatusArr,beforeProduction
         }
     }
 })

@@ -1,6 +1,5 @@
 <template>
     <div>
-      <!-- {{ basicDeductionData }} basicDeductionData <br/> -->
       <DxSelectBox
         :width="width"
         :data-source="basicDeductionData"
@@ -13,6 +12,7 @@
         @value-changed="updateValue(value)"
         :height="$config_styles.HeightInput"
         :name="nameInput"
+        :disabled="disabled"
       >
         <DxValidator :name="nameInput">
           <DxRequiredRule v-if="required" :message="messageRequired" />
@@ -98,7 +98,7 @@
       watch(()=> props.ageCount,(newVal)=> {
         if(+newVal == 0) {
           basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
-            return {value: item.value,label: item.label};
+            return item.value == 1 ? {value: item.value,label: item.label, disabled: true} : {value: item.value,label: item.label};
           })
           value.value = 0;
           return;
@@ -120,7 +120,7 @@
         }
         value.value = 0;
         basicDeductionData.value = basicDeductionData.value.map((item:any)=> {
-          return (item.value == 3) || (item.value ==4) ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
+          return (item.value == 3) || (item.value == 4) || (item.value == 1) ? {value: item.value,label: item.label,disabled: true} : {value: item.value,label: item.label};
         })
       }, {immediate: true})
       return {

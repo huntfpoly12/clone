@@ -9,7 +9,7 @@
             <div class="text-align-center mt-30">
                 <button-basic class="button-form-modal" text="아니요" type="default" mode="outlined"
                     @onClick="setModalVisible" />
-                <button-basic class="button-form-modal" text="네. 삭제합F니다" :width="140" type="default" mode="contained"
+                <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
                     @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -21,6 +21,8 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA620/index"
+import { Message } from '@/configs/enum';
+const messageDel = Message.getMessage('COMMON', '402').message;
 export default defineComponent({
     props: {
         modalStatus: {
@@ -52,8 +54,8 @@ export default defineComponent({
         })
         successDelete(e => {
             setModalVisible();
-            notification('success', ` 완료!`);
-            emit('deleteDone');
+            notification('success', messageDel);
+            emit("closePopup", true)
         })
         const onSubmit = (e: any) => {
             actionDelete({

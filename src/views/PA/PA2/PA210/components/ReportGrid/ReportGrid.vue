@@ -1,6 +1,6 @@
 <template>
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" footer=""
-        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px' }">
+        style="top: 20px" width="1368px" :bodyStyle="{ height: '890px', padding: '8px'}">
     <a-spin tip="Loading..." :spinning="loading">
       <div class="report-grid">
         <div class="header-report">
@@ -168,6 +168,7 @@ import { useStore } from "vuex";
 import { companyId } from "@/helpers/commonFunction";
 import { getAfterDeadline, showTooltipYearMonth} from "../../utils/index"
 import ConfirmloadNew from "./ConfirmloadNew.vue"
+import { Message } from "@/configs/enum";
 // register Handsontable's modules
 registerAllModules();
 
@@ -191,16 +192,23 @@ export default defineComponent({
     ConfirmloadNew
   },
   setup(props, { emit }) {
+    const store = useStore();
+    const per_page = computed(() => store.state.settings.per_page);
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+  
     const wrapper =  ref<any>(null);
     const confirmLoadNewStatus = ref<boolean>(false)
 
     // The above code is setting up the hot table.
     const hotSettings =  {
-          comments: true,
-          fillHandle: true,
-          colWidths: 100,
-          beforeKeyDown: (e: any) => {
-              var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
+      comments: true,
+      fillHandle: true,
+      colWidths: 102.5,
+      height: 740,
+      fixedRowsTop: 4,
+      beforeKeyDown: (e: any) => {
+        var reg = /[^\D\p{Hangul}!@#\$%\^\&*\)\(+=._]/g;
         if (!reg.test(e.key) && e.key != 'Backspace' && e.key != '-') {
           e.preventDefault()
         }
@@ -215,23 +223,19 @@ export default defineComponent({
       afterChange: (changes: any,source : string)=>{
         if(source == 'edit'){
           calculateWithholdingStatusReport(wrapper)
+          store.commit('common/setHasChangedPopupPA210',true);
         }
       },
+   
       hotRef: null,
       data: [...dataInit],
       mergeCells: mergeCells,
       cell: [
         ...cellsSetting,
       ],
-      height: "auto",
       width: 'auto',
       licenseKey: "non-commercial-and-evaluation",
     };
-
-    const store = useStore();
-    const per_page = computed(() => store.state.settings.per_page);
-    const move_column = computed(() => store.state.settings.move_column);
-    const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
     const trigger = ref<boolean>(false)
     const dataSource = ref<any>(props.dataReport);
@@ -304,12 +308,13 @@ export default defineComponent({
             onError: errChangeStatus
     } = useMutation(mutations.createTaxWithholdingStatusReport);
         
-    doneChangeStatus(() => {
-        notification('success', `업부상태 변경되었습니다!`)
-        emit('isDoneReport', false)
+    doneChangeStatus((result: any) => {
+      store.state.common.focusedRowKeyPA210 = result.data.createTaxWithholdingStatusReport.reportId
+      notification('success', Message.getMessage('COMMON', '106').message)
+      emit('isDoneReport', false)
     })
     errChangeStatus((error) => {
-        notification('error', error.message)
+      notification('error', error.message)
     })
 
     // The above code is creating a tax withholding report.
@@ -318,7 +323,18 @@ export default defineComponent({
       const arrData = hot.getData()
       let statement = Array()
       for (let index = 0; index < arrData.length; index++) {
-        if ( index >= 4 && index <= 32 && (arrData[index][5] != '' || arrData[index][6] != '' || arrData[index][7] != '' || arrData[index][8] != '' || arrData[index][9] != '' || arrData[index][10] != '' || arrData[index][11] != '' ||  arrData[index][12] != '')) {
+        if (
+          index >= 4 && index <= 32 &&
+          (
+            arrData[index][5] != '' ||
+            arrData[index][6] != '' ||
+            arrData[index][7] != '' ||
+            arrData[index][8] != '' ||
+            arrData[index][9] != '' ||
+            arrData[index][10] != '' ||
+            arrData[index][11] != '' ||
+            arrData[index][12] != ''
+          )) {
           statement.push({
             code: arrData[index][4],
             numberOfPeople: arrData[index][5] != '' ? arrData[index][5] : 0,
@@ -396,21 +412,18 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep .ant-modal-body{
-  padding-top: 30px;
-}
 :deep .cell-center {
     text-align: center !important
 }
 .report-grid{
-  padding: 20px 0px 0px 5px;
+  padding: 8px 0px 0px 5px;
   height: 860px;
   :deep td.disable-cell {
     color: #fff;
     background-color: #b3b4b3;
   }
   .action-right{
-    margin-bottom: 5px;
+    margin-bottom: 1px;
     display: flex;
     justify-content: flex-end;
   }
@@ -425,11 +438,11 @@ export default defineComponent({
       border-radius: 5px;
       height: 35px;
   }
-  .table-grid{
-    overflow-x: hidden;
-    overflow-y: scroll;
-    max-height: 700px;
-  }
+  // .table-grid{
+  //   overflow-x: hidden;
+  //   overflow-y: scroll;
+  //   max-height: 700px;
+  // }
   :deep .wtHolder {
     width: 100% !important;
    }

@@ -21,7 +21,7 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">영업자 :</label>
-                            <list-sales-dropdown v-model:valueInput="originData.salesRepresentativeId" />
+                            <list-sales-dropdown width="150px" v-model:valueInput="originData.salesRepresentativeId" />
                         </div>
                     </a-col>
 
@@ -40,13 +40,16 @@
                     </a-col>
 
                     <a-col>
-                        <label class="lable-item">신청기간 :</label>
-                        <a-range-picker v-model:value="rangeDate" width="50%" :placeholder="['Start', 'End']" />
+                        <div class="dflex custom-flex">
+                            <label class="lable-item">신청기간 :</label>
+                            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :placeholder="['Start', 'End']"/>
+                        </div>
                     </a-col>
                 </a-row>
             </div>
             <div class="page-content">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                    :onRowPrepared="onCellPrepared"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
@@ -74,14 +77,14 @@
                     <template #grid-cell="{ data }">
                         <a-tag :color="getColorTag(data.value)?.name">{{ getColorTag(data.value)?.tag_name }}</a-tag>
                     </template>
-                    <DxColumn data-field="compactSalesRepresentative.code" caption="사업자코드" css-class="cell-center" />
+                    <DxColumn data-field="companyCode" caption="사업자코드" css-class="cell-center" />
                     <DxColumn data-field="companyName" caption="상호" />
                     <DxColumn data-field="companyAddress" caption="주소" />
                     <DxColumn data-field="presidentName" caption="대표자" />
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
                     <DxColumn caption="신청서비스" cell-template="acc-service" />
                     <template #acc-service="{ data }">
-                        <span v-if="data.data.simpleAccountingInfos">회계
+                        <span v-if="data.data.simpleAccountingInfos">
                             <a-popover>
                                 <template #content>
                                     <div v-for="item in data.data.simpleAccountingInfos" :key="item">
@@ -89,20 +92,21 @@
                                         (item.startYearMonth).toString().slice(4, 6) }}</div>
                                     </div>
                                 </template>
-                                <a-tag v-if="data.data.simpleAccountingInfos">{{
+                                <a-tag>회계</a-tag>
+                            </a-popover>
+                            <a-tag style="border-radius: 50%;" v-if="data.data.simpleAccountingInfos">{{
                                     data.data.simpleAccountingInfos.length
                                 }}
                                 </a-tag>
-                            </a-popover>
                         </span>
-                        <span v-if="data.data.simpleWithholdingInfo">원천
+                        <span v-if="data.data.simpleWithholdingInfo">
                             <a-popover>
                                 <template #content>
                                     <div>{{ data.data.simpleWithholdingInfo.name ? data.data.simpleWithholdingInfo.name + ':' : ''}} {{
                                                                         (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(0, 4) + '-' +
                                     (data.data.simpleWithholdingInfo.startYearMonth).toString().slice(4, 6) }}</div>
                                 </template>
-                                <a-tag>1</a-tag>
+                                <a-tag color="black">원천</a-tag>
                             </a-popover>
                         </span>
                     </template>
@@ -143,8 +147,8 @@ import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSearchPanel, DxToolbar, DxI
 import BF310Popup from "./components/BF310Popup.vue";
 import queries from "@/graphql/queries/BF/BF3/BF310/index"
 import { dataSearchIndex } from "./utils/index";
-import { onExportingCommon } from "@/helpers/commonFunction"
-import filters from "@/helpers/filters";
+import { onExportingCommon, makeDataClean } from "@/helpers/commonFunction"
+import notification from '@/utils/notification';
 export default defineComponent({
     components: {
         DxDataGrid,
@@ -163,7 +167,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const rangeDate = ref([dayjs().subtract(1, 'year'), dayjs()]);
+        const rangeDate = ref([parseInt(dayjs().subtract(1, 'year').format('YYYYMMDD')),parseInt( dayjs().format('YYYYMMDD'))]);
         const dataSource = ref([]);
         const modalStatus = ref(false);
         const idSubRequest = ref();
@@ -176,8 +180,8 @@ export default defineComponent({
         const originData = reactive({
             ...dataSearchIndex,
             rows: per_page,
-            startDate: +dayjs().subtract(1, 'year').format('YYYYMMDD'),
-            finishDate: +dayjs().format('YYYYMMDD')
+            startDate: rangeDate.value[0],
+            finishDate: rangeDate.value[1]
         })
 
         const setModalVisible = (data: any,) => {
@@ -186,10 +190,13 @@ export default defineComponent({
             popupData.value = data;
 
         }
-        const { refetch: refetchData, loading, error, result } = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
+        const { refetch: refetchData, loading, error, result ,onError} = useQuery(queries.searchSubscriptionRequests, { filter: originData }, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         }));
+        onError((error) => {
+            notification('error', error.message)
+        });
         const onExporting = (e: { component: any; cancel: boolean; }) => {
             onExportingCommon(e.component, e.cancel, '계약정보관리&심사')
         }
@@ -211,20 +218,20 @@ export default defineComponent({
         }
         const searching = (e: any) => {
             originData.page = 1
-            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
+            originData.startDate = rangeDate.value[0]
+            originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData()
             actionSearch.value = false
         }
         const changePage = (e: any) => {
             actionSearch.value = true
-            originData.startDate = filters.formatDateToInterger(rangeDate.value[0])
-            originData.finishDate = filters.formatDateToInterger(rangeDate.value[1])
+            originData.startDate = rangeDate.value[0]
+            originData.finishDate = rangeDate.value[1]
             originData.statuses = statuses.value == 0 ? [10, 20, 30, 99] : statuses.value
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData()
         }
         watch(result, (value) => {
             trigger.value = false;
@@ -236,8 +243,14 @@ export default defineComponent({
         // Get api when page is changed
         const onChangePage = (page: any, pageSize: any) => {
             originData.page = page;
+            makeDataClean(originData)
             trigger.value = true;
-            // refetchData();
+        }
+        const onCellPrepared = (e: any) => {
+            if (e.data) {
+                e.cells[3].cellElement ? e.cells[3].cellElement.style.color = 'blue' : '';
+                e.cells[5].cellElement ? e.cells[5].cellElement.style.color = 'blue' : '';
+            }
         }
         return {
             loading,
@@ -258,6 +271,7 @@ export default defineComponent({
             onChangePage,
             dayjs,
             trigger,
+            onCellPrepared,
         }
     },
 

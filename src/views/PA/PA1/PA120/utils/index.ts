@@ -27,23 +27,24 @@ export const IncomeTaxAppRate = [
 ];
 
 export const initFormStateTab1 = {
-  name: "",
+  name: null,
   foreigner: false,
-  nationality: "",
+  nationality: null,
   nationalityCode: "KR",
-  stayQualification: "C-4",
-  residentId: "000000-0000000",
-  roadAddress: "",
-  addressExtend: "",
-  email: "",
-  employeeId: 0,
+  stayQualification: null,
+  residentId: "",
+  roadAddress: null,
+  addressExtend: null,
+  email: null,
+  employeeId: '',
   president: false,
   householder: false,
   weeklyWorkingHours: 40,
-  department: "",
-  responsibility: "",
+  department: null,
+  responsibility: null,
   joinedAt: dayjs().format("YYYYMMDD"),
-  leavedAt: "",
+  leavedAt: null,
+  key: "0"
 };
 export const initFormStateTab2 = {
   nationalPensionDeduction: false,
@@ -59,10 +60,10 @@ export const initFormStateTab2 = {
 };
 export const initFormStateTab3 = {
   employeeId: 0,
-  incomeTypeCode: "",
+  incomeTypeCode: null,
   index: 0,
   relation: 0,
-  name: "",
+  name: null,
   foreigner: false,
   residentIdValidity: false,
   basicDeduction: 0,
@@ -72,19 +73,19 @@ export const initFormStateTab3 = {
   disabled: 0,
   maternityAdoption: 0,
   descendant: false,
-  consignmentRelationship: "",
+  consignmentRelationship: null,
   householder: false,
-  residentId: "",
+  residentId: null,
 };
 export const taxWaring = '부녀자공제와 한부모공제 중 하나만 선택할수 있습니다. 공제금액이 더 많은 한부모공제를 적용합니다';
 export const newDataSource = {
   type: 10,
   employeeId: 0,
-  name: "",
-  residentId: "",
-  status: "",
+  name: null,
+  residentId: null,
+  status: null,
   foreigner: false,
-  incomeTypeCode: "",
+  incomeTypeCode: null,
   nationalPensionDeduction: false,
   healthInsuranceDeduction: false,
   longTermCareInsuranceDeduction: false,
@@ -116,6 +117,9 @@ export const basicDeduction = (idRelation: any) => {
   return obj[0].label;
 };
 export const disabledType = (idRelation: any) => {
+  if(!idRelation){
+    return '';
+  }
   let disType: any = enum2Entries(DisabledType).map((value) => ({
     id: value[1],
     text: value[0],
@@ -127,6 +131,9 @@ export const disabledType = (idRelation: any) => {
   return obj[0].text;
 };
 export const maternityAndAdoption = (idRelation: any) => {
+  if(!idRelation){
+    return '';
+  }
   let mtAndAdoption: any = enum2Entries(MaternityAndAdoption).map((value) => ({
     id: value[1],
     text: value[0],

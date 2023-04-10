@@ -3,6 +3,7 @@ export default gql`
 query getElectronicFilingsByIncomeWageSimplifiedPaymentStatement($input: ElectronicFilingCompanyPaymentHalfYearKeyInput!) { 
   getElectronicFilingsByIncomeWageSimplifiedPaymentStatement(input: $input) {
     productionStatus
+    causeOfProductionFailure
   }
 }
 

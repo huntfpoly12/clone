@@ -1,17 +1,17 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
-        <standard-form action="" name="email-single-630">
+        <standard-form action="" name="email-single-register-510">
             <div class="custom-modal-send-email">
                 <img src="@/assets/images/email.svg" alt="" />
-                <span>급여대장을 출력하시겠습니까? </span>
+                <span>급여대장을</span>
                 <DxSelectBox :data-source="dataSelect" :style="{ width: '100px', display: 'inline-block' }"
                     v-model:value="valueSelect" value-expr="value" display-expr="name" :required="true">
                 </DxSelectBox>
             </div>
-            <div class="custom-modal-send-email">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div>
-            <div class="custom-modal-send-email" style="margin-top: 0;">
-                <mail-text-box width="250px" :required="true" v-model:valueInput="emailAddress"
+            <!-- <div class="custom-modal-send-email">개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서</div> -->
+            <div class="custom-modal-send-email">
+                <mail-text-box width="150px" :required="true" v-model:valueInput="emailAddress"
                     placeholder="abc@example.com" />
                 <span>로 메일을 발송하시겠습니까?</span>
             </div>
@@ -33,6 +33,7 @@ import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA//PA5/PA510/index"
 import { companyId } from '@/helpers/commonFunction';
 import DxSelectBox from "devextreme-vue/select-box";
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -43,7 +44,7 @@ export default defineComponent({
             type: Object,
             default: {}
         },
-        emailAddress: String,
+        // emailAddress: String,
     },
     components: {
         DxSelectBox,
@@ -59,9 +60,10 @@ export default defineComponent({
         ])
         const valueSelect = ref('사번')
         watch(() => props.modalStatus, (val) => {
-            if (val) {
-                emailAddress.value = props.emailAddress
-            }
+            valueSelect.value = '사번'
+        });
+        watch(() => props.data, (val) => {
+            emailAddress.value = val?.employee.email
         });
 
         const setModalVisible = () => {
@@ -96,7 +98,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {

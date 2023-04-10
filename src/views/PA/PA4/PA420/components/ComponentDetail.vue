@@ -2,16 +2,16 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{`${dataTableDetail.processKey.imputedYear}-${dataTableDetail.processKey.imputedMonth}`}}</div>
-                <div class="text-box-2">지 {{`${dataTableDetail.processKey.paymentYear}-${dataTableDetail.processKey.paymentMonth}`}}</div>
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" />
+                <div class="text-box-1">귀 {{hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
+                <div class="text-box-2">지 {{hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="hasDataIncRetirements"/>
             </div>
             <div class="table-detail-right">
-                <DxButton @click="deleteItem" :disabled="checkActionValue">
+                <DxButton @click="deleteItem" :disabled="checkActionValue || hasDataIncRetirements" >
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
-                <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || hasDataIncRetirements" />
+                <DxButton @click="onItemClick('history')" :disabled="checkActionValue  && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -19,7 +19,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue">
+                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -28,7 +28,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue">
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || hasDataIncRetirements">
                     <div class="d-flex-center">
                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -66,27 +66,29 @@
                 </template>
                 <DxColumn caption="입사일 (정산시작일)" cell-template="joinedAt" />
                 <template #joinedAt="{ data }">
-                    <div>{{ data.data.employee.joinedAt ? $filters.formatDate(data.data.employee.joinedAt) : '' }}</div>
+                    <div>{{ data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate ?
+                     $filters.formatDate(data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementStartDate) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴사일 (정산종료일)" cell-template="leavedAt" />
                 <template #leavedAt="{ data }">
-                    <div>{{ data.data.employee.leavedAt ? $filters.formatDate(data.data.employee.leavedAt) : '' }}</div>
+                    <div>{{ data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate ?
+                     $filters.formatDate(data.data.specification.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate) : '' }}</div>
                 </template>
                 <DxColumn caption="퇴직급여" data-field="retirementBenefits" data-type="string" format="#,###"
-                    width="120px" css-class="money-column"/>
+                    width="120px" alignment="right"/>
                 <DxColumn width="150px" caption="비과세 퇴직급여" data-field="nonTaxableRetirementBenefits" data-type="string"
-                    format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
                 <DxColumn caption="과세대상 퇴직급여" width="160px" data-field="taxableRetirementBenefits" data-type="string"
-                    format="#,###" css-class="money-column"/>
-                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
+                <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" alignment="right"/>
                 <template #total-deduction="{ data }">
-                  <a-tooltip placement="left">
-                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방<br>소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
+                  <a-tooltip placement="top">
+                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방 소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
                       <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                   </a-tooltip>
                 </template>
                 <DxColumn caption="차인지급액" width="130px" data-field="actualPayment" data-type="string"
-                    format="#,###" css-class="money-column"/>
+                    format="#,###" alignment="right"/>
                 <DxColumn caption="비고" cell-template="note" data-type="string" width="250px" />
                 <template #note="{ data }">
                     <div>
@@ -113,7 +115,7 @@
                 <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
                 <template #action="{ data }">
                     <div class="wf-100 text-center">
-                        <EditOutlined class="fz-18" @click="actionEditRow(data.data.incomeId)" />
+                        <EditOutlined class="fz-18" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
                     </div>
                 </template>
                 <DxSummary v-if="dataSourceDetail.length > 0">
@@ -139,11 +141,11 @@
         title="변경이력" typeHistory="pa-420" />
     <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
-    <EditPopup :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
+    <EditPopup  :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <AddPopup :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
+    <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
@@ -165,6 +167,7 @@ import UpdatePopup from "./UpdatePopup.vue"
 import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import { companyId } from '@/helpers/commonFunction';
+import { Message } from '@/configs/enum';
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
@@ -197,6 +200,7 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
         const rowTable = ref(0);
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
@@ -245,11 +249,10 @@ export default defineComponent({
         })
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
-            dataTableDetail.value = newValue
             if (newValue) {
-                checkActionValue.value = false
-                triggerDetail.value = true
-                refetchTableDetail()
+              dataTableDetail.value = newValue
+              triggerDetail.value = true
+              refetchTableDetail()
             }
         }, { deep: true })
       
@@ -257,7 +260,9 @@ export default defineComponent({
           statusButton.value = newValue
           if (newValue != 10) {
             checkActionValue.value = true
-          } 
+          } else{
+            checkActionValue.value = false
+          }
         })
         // ================FUNCTION============================================   
         const addRow = () => {
@@ -272,6 +277,8 @@ export default defineComponent({
         const deleteItem = () => {
             if (popupDataDelete.value.length > 0) {
                 modalDelete.value = true;
+            }else{
+                notification('warning',Message.getMessage('COMMON', '404').message)
             }
         };
         const actionDeleteSuccess = () => {
@@ -304,6 +311,8 @@ export default defineComponent({
         const editPaymentDate = () => {
             if (popupDataDelete.value.length > 0) {
                 modalEdit.value = true
+            }else{
+                notification('warning',Message.getMessage('COMMON', '404').message)
             }
         }
         const customTextSummary = () => {
@@ -365,7 +374,7 @@ export default defineComponent({
             refetchTableDetail,
             resetFormNum,
             listEmployeeId,
-            closeChangePaymentDay
+            closeChangePaymentDay,store,hasDataIncRetirements
         }
     }
 });

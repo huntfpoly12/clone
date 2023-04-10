@@ -9,7 +9,7 @@
               <a-col>
                 <div class="dflex custom-flex global-year">
                   <label class="lable-item">귀속연도 :</label>
-                  <a-tag color="#a3a2a0">{{ globalYear }}</a-tag>
+                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
                 </div>
               </a-col>
             </a-row>
@@ -19,30 +19,36 @@
       <div class="page-content">
         <a-row class="header-group">
           <a-col :span="12">
-            <div class="format-settings">
-              <strong>서식 설정 : </strong>
-              <div class="format-settings-text"><img src="@/assets/images/iconInfo.png" style="width: 14px" /> 본 설정으로
-                적용된 서식으로 출력 및 메일발송 됩니다.</div>
-            </div>
+            <a-form-item label="서식 설정">
+              <div class="dflex custom-flex">
+                <switch-basic style="width: 120px;" v-model:valueSwitch="valueSwitch" :textCheck="'소득자 보관용'"
+                  :textUnCheck="'발행자 보관용'" />
+                <div style="margin-left: 10px;">
+                  <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+                  <span>
+                    본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                  </span>
+                </div>
+              </div>
+            </a-form-item>
           </a-col>
           <a-col :span="12">
             <div class="created-date">
               <label class="lable-item">영수일 :</label>
-              <date-time-box width="150px"
-                v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"></date-time-box>
+              <date-time-box width="150px" v-model:valueDate="valueDefaultIncomeExtra.input.receiptDate"></date-time-box>
             </div>
           </a-col>
         </a-row>
-        <a-row>
+        <!-- <a-row>
           <a-col :span="24">
             <strong class="lable-item">소득자보관용: </strong>
             <switch-basic style="width: 120px" v-model:valueSwitch="valueSwitch" :textCheck="'소득자보관용'"
-              :textUnCheck="'지급자 보관용'" />
+              :textUnCheck="'발행자보관용'" />
           </a-col>
-        </a-row>
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        </a-row> -->
+        <DxDataGrid id="gridContainerPA730" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           @exporting="onExporting" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true" @selection-changed="onSelectionChanged">
+          ref="gridRef" :column-auto-width="true" @selection-changed="onSelectionChanged">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
           <DxToolbar>
@@ -60,23 +66,26 @@
           <template #send-group-print>
             <div class="custom-mail-group">
               <DxButton @click="onPrintGroup">
-                <img src="@/assets/images/printGroup.png" alt=""
-                  style="width: 28px; margin-right: 3px; cursor: pointer" />
+                <a-tooltip>
+                  <template #title>출력 / 저장</template>
+                  <img src="@/assets/images/printGroup.png" alt=""
+                    style="width: 28px; margin-right: 3px; cursor: pointer" />
+                </a-tooltip>
               </DxButton>
             </div>
           </template>
-          <DxSelection select-all-mode="allPages" show-check-boxes-mode="always" mode="multiple" />
-          <DxColumn caption="성명 (상호)" cell-template="tag" width="150" />
-          <template #tag="{ data }" class="custom-action">
+          <DxSelection select-all-mode="allPages" show-check-boxes-mode="onClick" mode="multiple" />
+          <DxColumn caption="성명 (상호)" cell-template="tag" width="200" />
+          <template #tag="{ data }">
             <div class="custom-action">
               <employee-info :idEmployee="data.data.employee.employeeId" :name="data.data.employee.name"
                 :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
-          <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+          <DxColumn caption="주민등록번호" :width="130" data-field="employee.residentId" />
           <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
-          <template #grade-cell="{ data }" class="custom-action">
+          <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
             </income-type>
           </template>
@@ -93,12 +102,11 @@
           <template #sumWithholding="{ data }">
             {{ $filters.formatCurrency(data.data.withholdingIncomeTax + data.data.withholdingLocalIncomeTax) }}
           </template>
-          <DxSummary>
+          <DxSummary v-if="dataSource.length">
             <DxTotalItem show-in-column="성명 (상호)" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem column="paymentAmount" summary-type="sum" display-format="지급총액합계: {0}" value-format="#,###" />
             <DxTotalItem show-in-column="비과세소득" summary-type="sum" display-format="비과세소득합계: 0" value-format="#,###" />
-            <DxTotalItem column="requiredExpenses" summary-type="sum" display-format="필요경비합계: {0}"
-              value-format="#,###" />
+            <DxTotalItem column="requiredExpenses" summary-type="sum" display-format="필요경비합계: {0}" value-format="#,###" />
             <DxTotalItem column="incomePayment" summary-type="sum" display-format="소득금액합계: {0}" value-format="#,###" />
             <DxTotalItem column="withholdingIncomeTax" summary-type="sum" display-format="원천징수세액 소득세합계: {0}"
               value-format="#,###" />
@@ -109,16 +117,18 @@
             <DxTotalItem column="원천징수세액계합계" :customize-text="customTextSummary" value-format="#,###" />
           </DxSummary>
           <DxColumn :width="80" cell-template="pupop" />
-          <template #pupop="{ data }" class="custom-action">
+          <template #pupop="{ data }">
             <div class="custom-action" style="text-align: center">
               <img @click="actionOpenPopupEmailSingle(data.data)" src="@/assets/images/email.svg" alt=""
                 style="width: 25px; margin-right: 3px; cursor: pointer" />
-              <img @click="onPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px" />
+              <a-tooltip>
+                <template #title>출력 / 저장</template>
+                <img @click="onPrint(data.data)" src="@/assets/images/print.svg" alt="" style="width: 25px" />
+              </a-tooltip>
             </div>
           </template>
         </DxDataGrid>
-        <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
-          :data="popupSingleData" />
+        <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupSingleData" />
         <EmailGroupPopup :modalStatus="modalEmailGroup" :emailUserLogin="emailUserLogin"
           @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
@@ -165,7 +175,7 @@ export default defineComponent({
     const popupGroupData = ref({});
     let dataSelect = ref<any>([]);
     const store = useStore();
-
+    const gridRef = ref(); // ref of grid
     const globalYear = computed(() => store.state.settings.globalYear);
     const trigger = ref<boolean>(true);
     const move_column = computed(() => store.state.settings.move_column);
@@ -201,6 +211,7 @@ export default defineComponent({
       onExportingCommon(e.component, e.cancel, '계약정보관리&심사');
     };
     const actionOpenPopupEmailSingle = (data: any) => {
+      gridRef.value?.instance.deselectAll()
       popupSingleData.value = {
         companyId: companyId,
         input: {
@@ -293,10 +304,11 @@ export default defineComponent({
       fetchPolicy: 'no-cache',
     }));
     const onPrint = (data: any) => {
+      gridRef.value?.instance.deselectAll()
       receiptReportViewUrlParam.employeeKeys = [{ employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }];
       receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
       receiptReportViewUrlTrigger.value = true;
-      refetchReceiptViewUrl();
+      // refetchReceiptViewUrl();
     };
     watch(
       resultReceiptReportViewUrl,
@@ -318,7 +330,7 @@ export default defineComponent({
         receiptReportViewUrlParam.employeeKeys = array
         receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
         receiptReportViewUrlTrigger.value = true;
-        refetchReceiptViewUrl();
+        // refetchReceiptViewUrl();
       } else {
         notification('error', messages.getCommonMessage('601').message)
       }
@@ -348,6 +360,7 @@ export default defineComponent({
       popupSingleData,
       popupGroupData,
       actionOpenPopupEmailSingle,
+      gridRef,
       actionOpenPopupEmailGroup,
       searching,
       globalYear,

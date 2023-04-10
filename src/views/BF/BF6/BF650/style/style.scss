@@ -1,4 +1,8 @@
 #bf-650 {
+  height: 95%;
+  .page-content {
+    height: 100%;
+  }
     .custom-note {
         span {
             font-size: 11px;
@@ -6,7 +10,7 @@
             padding-left: 5px;
         }
     }
-    
+
     #step1 {
         #checkBoxSearchBF650 {
             display: flex;
@@ -79,19 +83,19 @@
                     text-align: center;
                     width: 90px;
                 }
-    
+
                 &:nth-child(1) .dx-checkbox-text {
                     background-color: #93cddd;
                 }
-    
+
                 &:nth-child(2) .dx-checkbox-text {
                     background-color: #0070c0;
                 }
-    
+
                 &:nth-child(3) .dx-checkbox-text {
                     background-color: #9bbb59;
                 }
-    
+
                 &:nth-child(4) .dx-checkbox-text {
                     background-color: #c00000;
                 }
@@ -109,4 +113,11 @@
             font-size: 18px;
         }
     }
+  .status-3 {
+    background-color: #ababab;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 1px 10px;
+  }
 }

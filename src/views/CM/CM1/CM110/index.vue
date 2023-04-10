@@ -118,9 +118,7 @@
                             <div class="dflex">
                                 <a-form-item label="생년월일" class="red" :label-col="labelCol">
                                     <birth-day-box style="width: 150px;"
-                                        v-model:valueInput="formState.extendInfo.president.birthday"
-                                        value-format="YYYY-MM-DD" :required="true" placeholder=""
-                                        dateFormat="YYYY-MM-DD"></birth-day-box>
+                                        v-model:valueInput="formState.extendInfo.president.birthday" :required="true" placeholder=""></birth-day-box>
                                 </a-form-item>
                             </div>
                             <div class="dflex">
@@ -157,7 +155,10 @@
                             <DxItem name="columnChooserButton" />
                         </DxToolbar>
                         <template #button-template>
-                            <DxButton icon="plus" @click="openAddNewModal" />
+                            <a-tooltip color="black" placement="topRight">
+                                <template #title>로그인이력</template>
+                                <span><DxButton icon="plus" @click="openAddNewModal" /></span>
+                            </a-tooltip>
                         </template>
                         <template #pagination-table>
                             <div v-if="rowTable > dataGetListUsers.filter.rows">
@@ -189,7 +190,7 @@
                             </div>
                         </template>
                         <DxColumn :width="80" cell-template="pupop" />
-                        <template #pupop="{ data }" class="custom-action">
+                        <template #pupop="{ data }">
                             <div class="custom-action">
                                 <a-space :size="10">
                                     <a-tooltip color="black" placement="top">

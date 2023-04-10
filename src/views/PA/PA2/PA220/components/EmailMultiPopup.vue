@@ -2,8 +2,8 @@
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="562">
         <standard-form action="" name="email-single-630">
-            <img src="@/assets/images/emailGroup.png" alt="" style="width: 40px;">
             <div class="custom-modal-send-email">
+                <img src="@/assets/images/emailGroup.png" alt="" style="width: 50px;">
                 <div>
                     <span>개별 메일이 발송되며, 개별 메일이 등록되지 않은 경우에 한해서 </span>
                     <div style="display: flex;align-items: center;">
@@ -27,6 +27,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
+import { makeDataClean } from '@/helpers/commonFunction';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -70,7 +71,7 @@ export default defineComponent({
                         value.receiverAddress = emailAddress.value
                     }
                 })
-                let variables = props.data
+                let variables = makeDataClean(props.data)
                 sendEmail(variables);
             }
         };

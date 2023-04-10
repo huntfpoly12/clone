@@ -1,8 +1,9 @@
 <template>
     <div id="tab2-pa520">
+      <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
         <div class="header-text-1">공제</div>
         <a-row :gutter="16">
-            <a-col :span="24">
+            <a-col :span="24"> 
                 <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu">
                     <div class="d-flex-center">
                         <checkbox-basic size="14px" label="국민연금" class="check-box-tab1"
@@ -39,7 +40,7 @@
                 <a-form-item label="국민연금 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.nationalPensionSupportPercent"
-                        layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
+                        layoutCustom="horizontal" :disabled="true" />
                 </a-form-item>
                 <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
@@ -63,9 +64,9 @@
         </a-row>
         <a-row :gutter="16">
             <a-col :span="10">
-                <div class="header-text-0">월급여 x
-                    <span class="fz-14">
-                        {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
+                <div class="header-text-0">
+                    <span>
+                      월급여 {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원
                     </span>
                 </div>
                 <div>
@@ -90,14 +91,14 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
-                            <number-box width="170px" class="mr-5" 
+                            <number-box width="170px" class="mr-3" 
                                 v-model:valueInput="originDataUpdate.input.workingDays"
                                 @changeInput="onChangeWorkingDays" :min="1" :max="31" />
-                            <span class="ml-10">일</span>
+                            <span class="ml-2">일</span>
                         </div>
                     </a-form-item>
                     <div>
-                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b> 원
+                        일급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.dailyWage) }} </b>원
                     </div>
                     <div>
                         월급여: <b> {{ $filters.formatCurrency(originDataUpdate.input.monthlyWage) }} 원</b>
@@ -105,21 +106,21 @@
                 </div>
             </a-col>
             <a-col :span="14">
-                <div class="header-text-0">공제 항목 <span class="fz-14">{{ $filters.formatCurrency(totalDeduction) }}
+                <div class="header-text-0"><span>공제 항목 {{ $filters.formatCurrency(totalDeduction) }}
                         원</span></div>
                 <a-spin :spinning="loading" size="large">
                     <div class="deduction-main">
                         <div v-for="(item, index) in arrDeduction" class="custom-deduction" :key="index">
                             <span>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode != 2"
-                                    :name="item.name" :type="1" subName="과세" width="100px" />
+                                    :name="item.name" :type="1" subName="과세" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode && item.taxPayItemCode == 2"
-                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" />
+                                    :name="item.name" :type="2" subName="상여(과세)" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="!item.taxPayItemCode && item.taxfreePayItemCode"
                                     :name="item.name" :type="3"
-                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" />
+                                    :subName="item.taxfreePayItemCode + ' ' + item.taxfreePayItemName + ' ' + item.taxFreeIncludeSubmission" width="100px" :showTooltip="false"/>
                                 <deduction-items v-if="item.taxPayItemCode == null && item.taxfreePayItemCode == null"
-                                    :name="item.name" :type="4" subName="과세" width="100px" />
+                                    :name="item.name" :type="4" subName="공제" width="100px" :showTooltip="false"/>
                             </span>
                             <div>
                                 <number-box-money :min="0" width="150px" :spinButtons="false"
@@ -131,11 +132,12 @@
                 </a-spin>
             </a-col>
         </a-row>
-        <div class="button-action">
-            <button-basic text="공제계산" :type="typeCalculateColor" mode="contained"  @onClick="callFuncCalculate"/>
-            <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="updateDeduction"
+        <div class="button-action">      
+          <button-tooltip-error :statusChange="isBtnYellow" v-model:showError="validateCalculate" @onClick="callFuncCalculate" text="공제계산"/>
+          <button-basic text="저장" type="default" mode="contained" class="ml-5" @onClick="actionUpdated"
                 id="action-update" />
         </div>
+      </a-spin>
     </div>
 </template>
 <script lang="ts">
@@ -149,10 +151,11 @@ import { companyId, calculateNationalPensionEmployee, calculateHealthInsuranceEm
 import mutations from "@/graphql/mutations/PA/PA5/PA520/index";
 import notification from "@/utils/notification";
 import { Formula } from "@bankda/jangbuda-common";
+import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
-        idRowEdit: Number
+ 
     },
     setup(props, { emit }) {
         let dataReturn = ref()
@@ -160,25 +163,29 @@ export default defineComponent({
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
         const globalYear: any = computed(() => store.state.settings.globalYear);
+        const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
+        const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
+        const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
         const insuranceSupport = ref(false)
-        const typeCalculateColor = ref('default')
+        const isBtnYellow = ref(false)
+        const validateCalculate = ref(false)
         const caculateDone = ref(false)
         
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: globalYear,
         })
         const originDataDetail = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
-            employeeId: props.idRowEdit
+            imputedYear: globalYear,
+            employeeId: idRowEdit,
         })
         let originDataUpdate: any = ref({
             companyId: companyId,
             imputedYear: globalYear.value,
-            employeeId: props.idRowEdit,
+            employeeId: idRowEdit.value,
             input: {
                 ...originDataInputUpdate
             },
@@ -186,7 +193,9 @@ export default defineComponent({
         let trigger = ref(false)
         let dataDefaultGet = ref()
         // ================== GRAPQL ====================================
+        // query get config from screen cm-130
         const {
+          loading: loadingConfig,
           result: resultConfig,
         } = useQuery(
               queriescm130.getWithholdingConfig,
@@ -199,6 +208,8 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
+            // originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
+            // store.dispatch('common/setCheckEditTab2PA520',false)
           }
         })    
           
@@ -217,12 +228,12 @@ export default defineComponent({
                         ...val,
                         price: price
                     })
-                }
-                    
+                }   
             })
         })
 
         const {
+            loading: loadingEmployeeWageDaily,
             refetch: refectchDetail,
             onResult: resApiGetEmployeeWageDaily,
         } = useQuery(queries.getEmployeeWageDaily, originDataDetail, () => ({
@@ -230,22 +241,22 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         }))
 
-        resApiGetEmployeeWageDaily((e: any) => {
+      resApiGetEmployeeWageDaily((dtValue: any) => {
+          
             trigger.value = false
-            if (e.data) {
-                let res = e.data.getEmployeeWageDaily
+            validateCalculate.value = false
+            isBtnYellow.value = false
+            if (dtValue.data) {
+                let res = dtValue.data.getEmployeeWageDaily
                 originDataUpdate.value.employeeId = res.employeeId
                 originDataUpdate.value.input.nationalPensionDeduction = res.nationalPensionDeduction
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
                 originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction 
                 originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
-                setTimeout(() => {
-                    originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
-                    originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
-                }, 100);
-                originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent
+       
+                originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
+                originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
                 originDataUpdate.value.input.monthlyPaycheck = res.monthlyPaycheck
                 originDataUpdate.value.input.workingDays = res.workingDays
                 originDataUpdate.value.input.dailyWage = res.dailyWage
@@ -266,6 +277,7 @@ export default defineComponent({
                 if (dataAddDedution)
                     originDataUpdate.value.input.deductionItems = dataAddDedution
               dataDefaultGet.value = JSON.stringify(originDataUpdate.value)
+            
             }
         })
         const {
@@ -276,50 +288,40 @@ export default defineComponent({
         onError(e => {
             notification('error', e.message)
         })
-        onDone(() => {
+        onDone((result) => {
+            store.state.common.rowIdSaveDonePa520 = result.data.employeeId
+            store.commit('common/setCheckEditTab2PA520',false)
             trigger.value = true
             refectchDetail()
             emit('closePopup', false)
             notification('success', '업그레이드가 완료되었습니다!')
+            if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setCurrentYear')
         })
         // ================== WATCH ====================================
-        watch(() => originDataUpdate.value, (newVal) => {
-            let valueConvert = JSON.parse(dataDefaultGet.value)
-            if (valueConvert.input.nationalPensionSupportPercent == null)
-                valueConvert.input.nationalPensionSupportPercent = 0
-            if (valueConvert.input.employeementInsuranceSupportPercent == null)
-                valueConvert.input.employeementInsuranceSupportPercent = 0
-            if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
-              store.state.common.checkStatusChangeValuePA520 = false
-            } else {   
-              store.state.common.checkStatusChangeValuePA520 = true
-            }
+      watch(() => originDataUpdate.value, (newVal) => {
+        let valueConvert = JSON.parse(dataDefaultGet.value)
+          if (JSON.stringify(newVal) === JSON.stringify(valueConvert)) {
+              store.commit('common/setCheckEditTab2PA520',false)
+              store.commit('settings/setFormStatus',FormStatus.none)
+          } else {   
+              store.commit('common/setCheckEditTab2PA520',true)
+              store.commit('settings/setFormStatus',FormStatus.editing)
+          }
         }, { deep: true })
 
-        // Event change value default
-        watch(() => originDataUpdate.value.input.insuranceSupport, (newVal) => {
-            if (newVal == false) {
-                originDataUpdate.value.input.nationalPensionSupportPercent = null
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = null
-            } else {
-                originDataUpdate.value.input.nationalPensionSupportPercent = 0
-                originDataUpdate.value.input.employeementInsuranceSupportPercent = 0
-            }
-        }, { deep: true })
-        // call api on tab 2 for the first time
+        //call api on tab 2 for the first time
         if (store.state.common.idRowChangePa520 != 0) {
-            originDataDetail.value.employeeId = store.state.common.idRowChangePa520
-            trigger.value = true
-            refectchDetail()
-        }
-        // call api on tab 2 next time
-        watch(() => store.state.common.idRowChangePa520, (res) => {
-          if (!store.state.common.checkStatusChangeValuePA520) {
-              originDataDetail.value.employeeId = store.state.common.idRowChangePa520
               trigger.value = true
               refectchDetail()
-          }
-          store.state.common.checkStatusChangeValuePA520 = false
+        }
+      
+        // call api on tab 2 next time
+        watch(idRowEdit, (res) => {
+          //if (!tab2IsChange.value && !isBtnYellow.value && idRowEdit.value) {
+              trigger.value = true
+              refectchDetail()
+          //}
+          store.commit('common/setCheckEditTab2PA520',false)
         }, { deep: true })
         watch(() => arrDeduction, (res) => {
             let total = 0
@@ -328,17 +330,23 @@ export default defineComponent({
             })
             totalDeduction.value = total
         }, { deep: true })
-        watch(() => store.state.common.actionSavePA520, (res) => {
-            updateDeduction()
-        }, { deep: true })
 
-        // If checkbox 4대보험 공제 여부 change is call calculate function
-        watch([
-          () => originDataUpdate.value.input.nationalPensionDeduction,
-          () => originDataUpdate.value.input.healthInsuranceDeduction,
-          () => originDataUpdate.value.input.employeementInsuranceDeduction,], ([res1, res2, res3]) => {
-            callFuncCalculate()
-          })
+        watch(() => store.state.common.actionUpdateTab2PA520, () => {
+          if (!isBtnYellow.value) {
+            store.commit('common/setTab2ValidateEditPA520', false)
+            actionUpdated()
+            originDataDetail.value.employeeId = idRowEdit
+            trigger.value = true
+            refectchDetail()
+          } else {
+            // If you are filling out the form and haven't calculated it, 
+            // but click on the add button, 
+            // then reset the state of clicking on the add button with false
+            if (store.state.common.addBtOnclickPA520) store.state.common.addBtOnclickPA520 = false
+            store.commit('common/setTab2ValidateEditPA520', true)
+            validateCalculate.value = true
+          }
+        })
         
         // if any change in tab 2 color button is change color orage
         watch([
@@ -349,67 +357,74 @@ export default defineComponent({
           () => originDataUpdate.value.input.workingDays
         ], () => {
           // delete item  no need in object , Just compare item watching
-          let defValue = JSON.parse(dataDefaultGet.value).input;
-          delete defValue.longTermCareInsuranceDeduction
-          delete defValue.insuranceSupport
-          delete defValue.nationalPensionSupportPercent
-          delete defValue.employeementInsuranceSupportPercent
-          delete defValue.monthlyPaycheck
-          delete defValue.workingDays
-          delete defValue.dailyWage
-          delete defValue.deductionItems
-          
-          let originValue = JSON.parse(JSON.stringify(originDataUpdate.value.input));
-          delete originValue.longTermCareInsuranceDeduction
-          delete originValue.insuranceSupport
-          delete originValue.nationalPensionSupportPercent
-          delete originValue.employeementInsuranceSupportPercent
-          delete originValue.monthlyPaycheck
-          delete originValue.workingDays
-          delete originValue.dailyWage
-          delete originValue.deductionItems
+          let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
+          let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
           // Compare two object if different change button color to orange
-          if (JSON.stringify(defValue) !== JSON.stringify(originValue)){
-            typeCalculateColor.value = 'calculate'
+          if (JSON.stringify(defValue) !== JSON.stringify(originValue)) {
+            isBtnYellow.value = true
           } else {
-            typeCalculateColor.value = 'default'
+            isBtnYellow.value = false
+            validateCalculate.value = false
           }
         })
+        // clean but the field is not needed when comparing object
+        const cleanObject = (object :  any) => {
+          delete object.longTermCareInsuranceDeduction
+          delete object.insuranceSupport
+          delete object.nationalPensionSupportPercent
+          delete object.employeementInsuranceSupportPercent
+          delete object.monthlyPaycheck
+          delete object.dailyWage
+          delete object.deductionItems
+          return  object
+        }
         // ================== FUNCTION ==================================
-        const updateDeduction = () => {
+      const actionUpdated = () => {
+          if (isBtnYellow.value) {
+            validateCalculate.value = true
+            store.commit('common/setTab2ValidateEditPA520', true)
+            store.commit('settings/setFormStatus',FormStatus.editing)
+          } else {
             mutate(originDataUpdate.value)
-            store.state.common.checkStatusChangeValuePA520 = false
+            store.commit('common/setCheckEditTab2PA520',false)
+          }
+
         }
         const callFuncCalculate = async () => {
-            let dataDefault = originDataUpdate.value.input
-            let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
-            let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
-            let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
-            let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
-            let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
-            let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
-            let arrCallApi: any = []
-            arrDeduction.value?.map((val: any) => {
-                delete val.__typename
-                if (val.deductionItemCode == 1001)
-                    val.price = total1
-                if (val.deductionItemCode == 1002)
-                    val.price = total2
-                if (val.deductionItemCode == 1003)
-                    val.price = total3
-                if (val.deductionItemCode == 1004)
-                    val.price = total4
-                if (val.deductionItemCode == 1011)
-                    val.price = total5
-                if (val.deductionItemCode == 1012)
-                    val.price = total6
-                arrCallApi.push({
-                    itemCode: val.deductionItemCode,
-                    amount: val.price
-                })
-            })
-            originDataUpdate.value.input.deductionItems = arrCallApi
-           
+          let dataDefault = originDataUpdate.value.input
+          if (dataDefault.workingDays) {
+              let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
+              let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
+              let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
+              let total4 = dataDefault.employeementInsuranceDeduction == true && insuranceSupport.value == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
+              let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
+              let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
+              let arrCallApi: any = []
+              arrDeduction.value?.map((val: any) => {
+                  delete val.__typename
+                  if (val.deductionItemCode == 1001)
+                      val.price = total1
+                  if (val.deductionItemCode == 1002)
+                      val.price = total2
+                  if (val.deductionItemCode == 1003)
+                      val.price = total3
+                  if (val.deductionItemCode == 1004)
+                      val.price = total4
+                  if (val.deductionItemCode == 1011)
+                      val.price = total5
+                  if (val.deductionItemCode == 1012)
+                      val.price = total6
+                  arrCallApi.push({
+                      itemCode: val.deductionItemCode,
+                      amount: val.price
+                  })
+              })
+              originDataUpdate.value.input.deductionItems = arrCallApi
+              isBtnYellow.value = false
+              validateCalculate.value = false
+              store.state.common.isTab2ValidateEditPA520 = false
+                            
+          }
         }
         const funcCheckPrice = (id: any) => {
             let price = 0
@@ -440,7 +455,7 @@ export default defineComponent({
                 originDataUpdate.value.input.workingDays : 0)
             originDataUpdate.value.input.dailyWage = dailyWage;
         }
-      const onChangeWorkingDays = () => {
+        const onChangeWorkingDays = () => {
           if (originDataUpdate.value.input.monthlyPaycheck) {
                 let monthlyWage = Math.floor(originDataUpdate.value.input.dailyWage * (originDataUpdate.value.input.workingDays > 0 ?
                     originDataUpdate.value.input.workingDays : 0));
@@ -451,9 +466,9 @@ export default defineComponent({
                 originDataUpdate.value.input.dailyWage = dailyWage;
             }
         }
-        return {
-            store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading, messageDaylySalary,
-            callFuncCalculate, updateDeduction, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,typeCalculateColor
+        return {dataDefaultGet,
+          originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear,idRowEdit
         };
     },
 });

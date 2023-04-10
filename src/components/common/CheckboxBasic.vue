@@ -1,10 +1,9 @@
-<template> 
-    <DxCheckBox class="mr-5" v-model:value="valueCheck" :disabled="disabled" icon-size="16" :text="label">
-    </DxCheckBox>
-    <slot></slot>
+<template>
+  <DxCheckBox :class="classCheckBox" v-model:value="valueCheck" :disabled="disabled" icon-size="16" :text="label" />
+  <slot></slot>
 </template>
 <script lang="ts">
-import { defineComponent, getCurrentInstance, watch, ref } from "vue";
+import {defineComponent, getCurrentInstance, watch, ref, computed} from "vue";
 import DxCheckBox from 'devextreme-vue/check-box';
 export default defineComponent({
     props: {
@@ -20,7 +19,11 @@ export default defineComponent({
             type: String,
             default: '12'
         },
-        label: String
+        label: String,
+        class: {
+            type: String,
+            default: ''
+        }
     },
     components: {
         DxCheckBox
@@ -42,9 +45,13 @@ export default defineComponent({
                 valueCheck.value = newValue
             }
         );
+        const classCheckBox = computed(() => {
+            return props.class + ' mr-5'
+        })
         return {
             valueCheck,
-            styleCheckBox
+            styleCheckBox,
+            classCheckBox
         }
     },
 });
