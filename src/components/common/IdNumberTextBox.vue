@@ -4,7 +4,7 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator>
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule :validation-callback="checkID" :message="msgError" />
+      <DxCustomRule v-if="isResidentId" :validation-callback="checkID" :message="msgError" />
     </DxValidator>
   </DxTextBox>
 </template>
@@ -47,6 +47,10 @@ export default defineComponent({
     foreigner : {
       type: Boolean,
       default: false,
+    },
+    isResidentId: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
