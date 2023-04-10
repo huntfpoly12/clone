@@ -1,6 +1,6 @@
 <template>
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
-    :visible="isOpenModalCreate" title="취득신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
+    :visible="isOpenModalCreate" title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="false">
       <!-- {{ formState }} formState <br /> -->
       <standard-form ref="formPa820Ref">
@@ -8,7 +8,7 @@
           <div class="form-first pl-15">
             <a-row>
               <a-col :span="10">
-                <a-form-item label="상실신고 신규 등록" label-align="right">
+                <a-form-item label="직원유행" label-align="right">
                   <radio-group :arrayValue="employeeFashionArr" v-model:valueRadioCheck="formState.employeeType"
                     layoutCustom="horizontal" class="mt-1"></radio-group>
                 </a-form-item>

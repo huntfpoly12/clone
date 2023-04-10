@@ -7,9 +7,12 @@
       <div class="ml-30" v-if="dataState.registeredAt">* {{ dayjs(dataState.registeredAt).format('YYYY-MM-DD hh:mm') }} 에
         보험사무대행 동의 및 신청되었습니다.</div>
       <div class="ml-30" v-else>* 보험사무대행 신청이력이 없습니다. 사업장관리번호를 입력하시고, 보험사무대행 신청을 해주시기 바랍니다.</div>
+      <!-- {{ dataState.manageId.length }} -->
+      <!-- {{ checkManageIdLen() }} -->
       <div class="input-form d-flex-center">
         <label class="mr-10" style="font-weight: 600;">사업장관리번호: </label>
-        <text-number-box width="200px" v-model:valueInput="dataState.manageId" />
+        <text-number-box width="200px" v-model:valueInput="dataState.manageId" :ruleCustom="() => checkManageIdLen"
+          :messageRuleCustom="'this field must have 11 digits'" />
       </div>
       <div style="font-weight: 600;">보험사무대행 신청서류 일괄 생성안내:</div>
     </div>
@@ -20,9 +23,9 @@
           :column-auto-width="true" :focused-row-enabled="true" ref="taxPayDataRef">
           <DxPaging :page-size="0" />
           <DxColumn caption="문서명" data-field="documentName" />
-          <DxColumn caption="사업장정보" data-field="businessSite"  />
-          <DxColumn caption="사무대행업체정보" data-field="administrationAgency"  />
-          <DxColumn caption="다운로드" cell-template="downA"  />
+          <DxColumn caption="사업장정보" data-field="businessSite" />
+          <DxColumn caption="사무대행업체정보" data-field="administrationAgency" />
+          <DxColumn caption="다운로드" cell-template="downA" />
           <template #downA="{ data }" class="custom-action">
             <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
               <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.ID)">
@@ -42,7 +45,7 @@
     <a-row class="mt-20">
       <a-col :span="8" :offset="8" style="text-align: center;">
         <button-basic text="신청서류 일괄생성" type="default" mode="contained" :width="140" id="btn-save"
-          @onClick="onSubmit($event)" />
+          @onClick="onSubmit($event)" :disabled="!checkManageIdLen"/>
       </a-col>
     </a-row>
   </div>
@@ -268,12 +271,21 @@ export default defineComponent({
         // renewMajor(formData);
       }
     }
+
+    // ----------------------------------CHECK dataState.manageId LENGTH --------------------------------
+
+    const checkManageIdLen = ref(false);
+    watch(() => dataState.value.manageId, (value) => {
+      // console.log(`output->value`, value)
+      checkManageIdLen.value = value.length == 11;
+    }, { deep: true })
     return {
       per_page, move_column, colomn_resize,
       dataSource, modalHistory,
       openAddNewModal, onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       handleCreate, isOpenModalCreate, isDelete, handleDelete, contentDelete, dataState,
-      onSubmit, dayjs
+      onSubmit, dayjs,
+      checkManageIdLen,
     };
   },
 })
