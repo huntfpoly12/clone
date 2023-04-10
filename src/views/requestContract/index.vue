@@ -81,7 +81,7 @@
                                     <label class="red">주 소 :</label>
                                     <div class="group-label">
                                         <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :disabled="true" />
+                                            placeholder="우편번호" :readOnly="true" />
                                         <post-code-button @dataAddress="funcAddress" />
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend"
+                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
                                         placeholder="상세주소(입력)" width="100%" />
                                 </div>
                                 <div class="form-item">
@@ -297,8 +297,8 @@
                                     v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
                             </div>
                             <div class="form-item">
-                                <label>전달사항 :</label>
-                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
+                                <label class="red">전달사항 :</label>
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment" :required="true"
                                     placeholder="전달사항입력" />
                             </div>
                         </div>
@@ -520,6 +520,7 @@ export default {
                         contractCreacted.mobilePhone != "" &&
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
+                        contractCreacted.addressExtend != "" &&
                         contractCreacted.bizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
