@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div :class="dxFieldLabel" :title="label">{{ label }}:</div>
+    <div :class="dxFieldLabel" title="">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>

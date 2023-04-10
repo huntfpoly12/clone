@@ -62,7 +62,7 @@
         </box-title>
       </a-row>
       <a-row :gutter="[0, 0]" class="item-group mb-10">
-        <div>가입신고 기재항목</div>
+        <div class="mb-10">가입신고 기재항목</div>
         <box-title title="사업장">
           <a-row>
             <a-col span="8">
@@ -94,7 +94,9 @@
               </DxField>
             </a-col>
           </a-row>
-
+          <DxField  label="주소" required>
+            <default-text-box placeholder="성명" required />
+          </DxField> 
           <a-row>
             <a-col span="8">
               <DxField label="사업자등록번호" required>
@@ -230,46 +232,41 @@
         <box-title title="보험료자동이체신청">
           <a-row>
             <a-col span="12">
-              <DxField label="은행명" required>
+              <DxField label="은행명">
                 <default-text-box
                   placeholder="성명"
-                  required
                 />
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="계좌번호" required class="field-custom">
+              <DxField label="계좌번호" class="field-custom">
                 <text-number-box
                   placeholder="성명"
-                  required
                 />
               </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
-              <DxField label="예금주명" required>
+              <DxField label="예금주명">
                 <default-text-box
                   placeholder="성명"
-                  required
                 />
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="예금주주민등록번호" required class="field-custom">
+              <DxField label="예금주주민등록번호" class="field-custom">
                 <id-number-text-box
                   placeholder="성명"
-                  required
                 />
               </DxField>
             </a-col>
           </a-row>
           <a-row>
             <a-col span="12">
-              <DxField label="합산자동이체적용여부" required>
+              <DxField label="합산자동이체적용여부">
                 <a-radio-group
                   class="d-flex items-center"
-                  required
                 >
                   <a-radio :value="1">적용</a-radio>
                   <a-radio :value="2">미적용</a-radio>
@@ -277,10 +274,9 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="이체 희망일" required>
+              <DxField label="이체 희망일">
                 <a-radio-group
                   class="d-flex items-center"
-                  required
                 >
                   <a-radio :value="1">납기일</a-radio>
                   <a-radio :value="2">납기전월말일</a-radio>
@@ -407,17 +403,16 @@
                   <a-radio-group
                     :required="formData.nationalPension"
                   >
-                    <a-radio :value="1">보수 인상</a-radio>
-                    <a-radio :value="2">보수 인하</a-radio>
+                    <a-radio :value="1">해당</a-radio>
+                    <a-radio :value="2">미해당</a-radio>
                   </a-radio-group>
                 </div>
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="본점사업장관리번호" :required="formData.nationalPension" class="field-custom-auto">
+              <DxField label="본점사업장관리번호" class="field-custom-auto">
                 <text-number-box
                   placeholder="성명"
-                  :required="formData.nationalPension"
                 />
               </DxField>
             </a-col>
@@ -445,7 +440,7 @@
               <DxField label="본점사업장관리번호" :required="formData.employmentInsurance" class="field-custom-auto">
                 <text-number-box
                   placeholder="성명"
-                  :required="formData.employmentInsurance"
+
                 />
               </DxField>
             </a-col>
@@ -453,21 +448,19 @@
 
           <a-row>
             <a-col span="12">
-              <DxField label="사업장특성부호" :required="formData.employmentInsurance" class="field-custom-auto">
+              <DxField label="사업장특성부호" class="field-custom-auto">
                 <default-text-box
                   placeholder=""
-                  :required="formData.employmentInsurance"
                 />
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="회계종목" :required="formData.employmentInsurance" class="field-custom-auto">
+              <DxField label="회계종목"  class="field-custom-auto">
                 <div class="d-flex-center justify-content-around">
                   <a-space :size="8">
                     <span>1</span>
                     <default-text-box
                       placeholder=""
-                      :required="formData.employmentInsurance"
                       width="80px"
                     />
                   </a-space>
@@ -475,7 +468,6 @@
                     <span>2</span>
                     <default-text-box
                       placeholder=""
-                      :required="formData.employmentInsurance"
                       width="80px"
                     />
                   </a-space>
@@ -483,7 +475,6 @@
                     <span>3</span>
                     <default-text-box
                       placeholder=""
-                      :required="formData.employmentInsurance"
                       width="80px"
                     />
                   </a-space>
@@ -570,7 +561,7 @@
               </DxField>
             </a-col>
             <a-col span="12">
-              <DxField label="주된사업장여부" :required="formData.workerEligibility">
+              <DxField label="신고일현재 산재발생여부" :required="formData.workerEligibility" class="field-custom-auto">
                 <a-radio-group
                   :value="2"
                   :required="formData.workerEligibility"

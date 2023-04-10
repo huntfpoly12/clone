@@ -29,7 +29,8 @@
         <DxColumn caption="완료일" data-field="completedAt" :format="dateFormat" alignment="center"/>
         <DxColumn caption="접수번호" data-field="accedpedNumber" alignment="center"/>
         <DxColumn caption="메모" data-field="memo" alignment="center"/>
-        <DxColumn caption="연금휴복직신고서다운로드" data-field="fileStorageId" cell-template="fileStorageId" width="80" alignment="center"/>
+        <DxColumn caption="사업장가입신고서다운로드" data-field="fileStorageId" cell-template="fileStorageId" width="80" alignment="center" css-class="label-custom"/>
+        <DxColumn caption="" cell-template="action" alignment="center" width="100"/>
         <template #button-template>
           <a-tooltip placement="top">
             <template #title>신규</template>
@@ -50,15 +51,18 @@
             </DxButton>
           </div>
         </template>
-<!--        <template #action="{ data }" class="custom-action">-->
-<!--          <div class="custom-action" style="text-align: center">-->
-<!--            <a-space>-->
-<!--              <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >-->
-<!--                <HistoryOutlined style="font-size: 16px"/>-->
-<!--              </DxButton>-->
-<!--            </a-space>-->
-<!--          </div>-->
-<!--        </template>-->
+       <template #action="{ data }" class="custom-action">
+         <div class="custom-action" style="text-align: center">
+           <a-space>
+             <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >
+               <EditOutlined style="font-size: 16px"/>
+             </DxButton>
+             <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)" >
+               <DeleteOutlined style="font-size: 16px"/>
+             </DxButton>
+           </a-space>
+         </div>
+       </template>
       </DxDataGrid>
     </a-spin>
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
@@ -78,6 +82,15 @@ import dayjs from "dayjs";
 import {computed, reactive, ref} from "vue";
 import {useStore} from "vuex";
 import {companyId} from "@/helpers/commonFunction";
+import {
+DeleteOutlined,
+EditOutlined,
+PlusSquareOutlined,
+SaveOutlined,
+UploadOutlined,
+WarningFilled,
+ZoomInOutlined,
+} from "@ant-design/icons-vue";
 
 enum MajorInsuranceWorkingStatus {
   등록 = 1,
@@ -116,6 +129,10 @@ const dateFormat = (value: any) => {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+:deep(.label-custom) {
+  .dx-datagrid-text-content {
+    white-space: normal !important;
+  }
+}
 </style>
