@@ -81,7 +81,7 @@
                                     <label class="red">주 소 :</label>
                                     <div class="group-label">
                                         <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :readOnly="true" />
+                                            placeholder="우편번호" :disabled="true" />
                                         <post-code-button @dataAddress="funcAddress" />
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
+                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend"
                                         placeholder="상세주소(입력)" width="100%" />
                                 </div>
                                 <div class="form-item">
@@ -299,8 +299,8 @@
                                     v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" /> -->
                             </div>
                             <div class="form-item">
-                                <label class="red">전달사항 :</label>
-                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment" :required="true"
+                                <label>전달사항 :</label>
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
                                     placeholder="전달사항입력" />
                             </div>
                         </div>
@@ -503,7 +503,6 @@ export default {
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-              console.log(`output->step.value`,step.value)
                 if (step.value == 0) {
                     if (
                         contractCreacted.terms == true &&
@@ -526,14 +525,12 @@ export default {
                         contractCreacted.mobilePhone != "" &&
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
-                        contractCreacted.addressExtend != "" &&
                         contractCreacted.bizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
                         step.value++;
                         window.scrollTo(0, 0);
                     } else {
-                      console.log(`output->contractCreacted`,contractCreacted)
                         notification("error", "계속하려면 모든 조건을 수락하십시오!");
                     }
                 } else if (step.value == 2) {
