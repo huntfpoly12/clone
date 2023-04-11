@@ -115,6 +115,13 @@ const routes = [
         }
       },
       {
+        path: "bf-530",
+        component: () => import("../views/BF/BF5/BF530/index.vue"),
+        meta: {
+          roles: [AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey]
+        }
+      },
+      {
         path: "bf-610",
         component: () => import("../views/BF/BF6/BF610/index.vue"),
         meta: {
