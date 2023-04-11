@@ -24,15 +24,21 @@ if (token) {
   }
 }
 
+
 const openTab = (objTab :  any) => {
-    store.state.common.activeTab = objTab
+  store.state.common.activeTab = objTab
+  Router.push(objTab.url);
+  if(store.state.common.menuTab.some((tab: any) => tab.id === objTab.id)) return
+    store.state.common.menuTab.push(objTab)
     /**
      * If you already have a tab, don't add a new tab
      */
-    if (store.state.common.menuTab.filter((item : any )=> item.id === objTab.id).length == 0) {
-        store.state.common.menuTab.push(objTab)
-    }
-    Router.push(objTab.url);
+    // if (store.state.common.menuTab.filter((item : any )=> item.id === objTab.id).length == 0) {
+    // }
+}
+
+const setMenuTab = (menu: any) => {
+  store.state.common.menuTab = menu
 }
 
 
@@ -181,6 +187,7 @@ const calculateEmployeementInsuranceEmployee = (totalTaxPay: any, insurancesuppo
 export {
     companyId,
     openTab,
+    setMenuTab,
     userType,
     userId,
     managerGrade,
