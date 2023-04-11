@@ -91,9 +91,11 @@
                     </div>
                     <a-form-item label="근무일수">
                         <div class="d-flex-center">
+                          <standard-form ref="workingDayInput">
                             <number-box width="170px" class="mr-3" 
                                 v-model:valueInput="originDataUpdate.input.workingDays"
-                                @changeInput="onChangeWorkingDays" :min="1" :max="31" />
+                                @changeInput="onChangeWorkingDays" :min="1" :max="31" :required="true"/>
+                          </standard-form>
                             <span class="ml-2">일</span>
                         </div>
                     </a-form-item>
@@ -159,6 +161,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         let dataReturn = ref()
+        const workingDayInput = ref()
         const messageMonthlySalary = ref('일급 선택시, 월급 = 일급 x 근무일수');
         const messageDaylySalary = ref('월급 선택시, 일급 = 월급 / 근무일수');
         const store = useStore();
@@ -208,7 +211,7 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
-            // originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
+            originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
             // store.dispatch('common/setCheckEditTab2PA520',false)
           }
         })    
@@ -253,7 +256,7 @@ export default defineComponent({
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
                 originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction 
-                originDataUpdate.value.input.insuranceSupport = res.insuranceSupport
+               
        
                 originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
                 originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
@@ -390,9 +393,13 @@ export default defineComponent({
           }
 
         }
-        const callFuncCalculate = async () => {
-          let dataDefault = originDataUpdate.value.input
-          if (dataDefault.workingDays) {
+      const callFuncCalculate = async () => { 
+        let dataDefault = originDataUpdate.value.input
+        var res = workingDayInput.value.validate();
+        if (!res.isValid) {
+          res.brokenRules[0].validator.focus();
+          return
+        } else {
               let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
               let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
               let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
@@ -468,7 +475,7 @@ export default defineComponent({
         }
         return {dataDefaultGet,
           originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear,idRowEdit
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput
         };
     },
 });

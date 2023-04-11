@@ -18,7 +18,7 @@ const statesPA520 = {
   isClickRowPA520: false,
   isClickDeletePA520: false,
   isClickBtnSavePA520: false,
-  
+  isAddDonePA520: false,
   activeAddRowPA520: false,
 
   actionSaveAddPA520: 0,
