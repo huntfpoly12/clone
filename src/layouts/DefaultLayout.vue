@@ -148,7 +148,7 @@
                   >
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
-                      <span>{{ itemTab.name }}</span>
+                      <span :class="{'color-active-tab': activeTab.id === itemTab.id}">{{ itemTab.name }}</span>
                       <close-circle-filled
                         @click.stop="removeItemTab(itemTab)"
                         :style="{
@@ -733,13 +733,8 @@ export default defineComponent({
 }
 </style>
 <style scoped lang="scss">
-.icon-close-tab {
-  color: red;
-  padding: 3px;
-  &:hover {
-    background-color: #0000002a;
-    border-radius: 50%;
-  }
+.color-active-tab {
+  color: #1890ff;
 }
 :deep .tab-main .dx-tabs-wrapper {
   display: flex;
