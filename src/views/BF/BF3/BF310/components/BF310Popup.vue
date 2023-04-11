@@ -247,6 +247,7 @@
                                                     <a-form-item label="정원수 (명)" style="display: inline-flex"
                                                         :label-col="labelCol">
                                                         <number-box width="160px" :required="true"
+                                                            :min="0" :spinButtons="true"
                                                             v-model:valueInput="dataActiveRow.capacity" />
                                                     </a-form-item>
                                                     <a-form-item label="장기요양기관등록번호" :label-col="labelCol">
