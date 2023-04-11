@@ -11,7 +11,7 @@
                 </a-col>
                 <a-col :span="12">
                     <a-form-item label="지급일" class="red">
-                        <number-box width="100px" :min="1" v-model="dataIW.paymentDay" :max="31" :isFormat="true"
+                        <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
                             :disabled="!store.state.common.statusFormAdd" :spinButtons="true" :required="true" />
                     </a-form-item>
                 </a-col>
