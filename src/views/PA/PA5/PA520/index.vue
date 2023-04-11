@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row>
+  </a-row> -->
   <div id="pa-520" class="page-content">
   
       <a-row>
@@ -367,7 +367,6 @@ export default defineComponent({
 
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
         if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value && !isClickBtnSavePA520.value) {
-          alert(' nếu sau confirm mà trươc đấy click thêm row thì thêm row mới ')
           onAddBtClick()
           store.commit('common/setAddBtOnclickPA520', false);
           store.dispatch('common/resetStatusModal')
@@ -375,13 +374,11 @@ export default defineComponent({
 
         // nếu trước đấy chuyển row thì focus vào row mới vừa chuyển 
         if (isClickRow.value && !isClickBtnSavePA520.value) {
-          alert(' nếu trước đấy chuyển row thì focus vào row mới vừa chuyển ')
           setRowEdit(idRowCurrentClick.value)
           store.dispatch('common/resetStatusModal')
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
         if (isClickBtnSavePA520.value) {
-          alert('nếu chỉ click Save btn -> focus vào row vừa tạo')
           setRowEdit(parseInt(idRowSaveDone.value))
           store.dispatch('common/resetStatusModal')
         }
@@ -392,7 +389,6 @@ export default defineComponent({
           dataSource.value.load()
           let items = dataSource.value.items()
           if (items.length > 0) { // If there is data, focus on the first row
-            
             setRowEdit(dataSource.value.items()[0].employeeId)
             store.commit('common/setComponentPA520',2);
           } else {// If there is no data, add an input box
@@ -512,30 +508,30 @@ export default defineComponent({
         
         // nếu có validate = true không làm gì tiếp theo cả
         if (hasValidator) {
-          await store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetStatusModal')
           return
         }
       } else {
         
         if (addBtOnclick.value && !isClickRow.value && clickYearStatus.value == ClickYearStatus.none) {
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
           funcAddNewRow();
         } 
 
         if (isClickRow.value && !addBtOnclick.value && clickYearStatus.value == ClickYearStatus.none) {
           setRowEdit(idRowCurrentClick.value)
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
         }
 
         if (clickYearStatus.value !== ClickYearStatus.none) {
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
-          await store.commit('settings/setCurrentYear')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
+          store.commit('settings/setCurrentYear')
         }
       }
     };
@@ -548,19 +544,19 @@ export default defineComponent({
     };
 
     const closePopupConfirmEdit = async()=>{
-      await store.commit('common/setModalChangeValueEditPA520',false)
+      store.commit('common/setModalChangeValueEditPA520',false)
     }
     // A function that is called when the user clicks on the save button.
     const comfirmAndSaveEdit = async (res: any) => {
-      //await store.dispatch('settings/resetYearStatus')
+      //store.dispatch('settings/resetYearStatus')
       if (res == true) {
         tab1IsChange.value
           ? await actionUpdate(1) : await actionUpdate(2);
         const hasValidator = await store.dispatch('common/hasValidator')
         if (hasValidator) {
           if(clickYearStatus.value !==  ClickYearStatus.none) store.commit('settings/setClickYearStatus',ClickYearStatus.none)
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetStatusValidate')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetStatusValidate')
           return
         }
         
@@ -579,25 +575,25 @@ export default defineComponent({
       } else {
         if (addBtOnclick.value && !isClickRow.value && clickYearStatus.value == ClickYearStatus.none) {
           funcAddNewRow();
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
           
         }
 
         if (isClickRow.value && !addBtOnclick.value && clickYearStatus.value == ClickYearStatus.none) {
           setRowEdit(idRowCurrentClick.value)
           // for case edit tab2 and click other row
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
         }
 
          if (clickYearStatus.value !== ClickYearStatus.none) {
-          await store.dispatch('common/resetStatusModal')
-          await store.dispatch('common/resetActionStatus')
-          await store.dispatch('common/resetStatusChangeFrom')
-          await store.commit('settings/setCurrentYear')
+          store.dispatch('common/resetStatusModal')
+          store.dispatch('common/resetActionStatus')
+          store.dispatch('common/resetStatusChangeFrom')
+          store.commit('settings/setCurrentYear')
         }
       }
       //store.state.common.checkChangeValueEditTab1PA520 = false;
