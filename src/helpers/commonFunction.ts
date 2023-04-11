@@ -78,16 +78,19 @@ const convertAge = (idCart: any) => {
     }
 }
 
-const makeDataClean = (obj: any) => {
+const makeDataClean = (obj: any, excluded: any=[]) => {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
 
   Object.keys(obj).forEach((key) => {
+    if(excluded.findIndex((item:any) => {return item == key}) > - 1 ){
+      return;
+    }
     if (typeof obj[key] === "string" && obj[key].trim() === "") {
       obj[key] = null;
     } else if (typeof obj[key] === "object") {
-      obj[key] = makeDataClean(obj[key]);
+      obj[key] = makeDataClean(obj[key], excluded);
     }
   });
 
