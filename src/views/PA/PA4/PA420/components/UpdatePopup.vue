@@ -16,7 +16,7 @@
               <template v-if="step === 1">
                   <Tab2  />
               </template>
-          
+
               <template v-if="step === 2">
                   <Tab3  ref="formEditTab3"/>
               </template>
@@ -41,6 +41,7 @@ import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import { useStore } from 'vuex';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import {Message} from "@/configs/enum";
 
 export default defineComponent({
     props: {
@@ -105,7 +106,7 @@ export default defineComponent({
           if (resConfig) {
             store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
           }
-        })  
+        })
 
         const {
             mutate,
@@ -113,7 +114,7 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.updateIncomeRetirement);
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('106').message)
             emit("closePopup", false)
             emit("updateSuccess", true)
         })
@@ -151,7 +152,7 @@ export default defineComponent({
                 ...newValue.data.getIncomeRetirement,
                 "checkBoxCallApi": checkBoxCallApi,
             });
-           
+
             firstLoad.value = 0
             trigger.value = false
             step.value = 0
@@ -160,14 +161,14 @@ export default defineComponent({
         errorGetDetail(res => {
             notification('error', res.message)
         })
-        // ================WATCHING============================================ 
+        // ================WATCHING============================================
         watch(() => store.state.common.formStateEditPA420, (newValue, oldValue) => {
           if (Object.keys(oldValue).length !== 0 && firstLoad.value >0) {
             isDataFormChange.value = true
           }
           firstLoad.value++
          }, { deep: true })
-        
+
         watch(() => props.modalStatus, (newValue) => {
             requestCallDetail.value.incomeId = props.keyRowIndex
             statusModal.value = newValue
@@ -177,7 +178,7 @@ export default defineComponent({
               firstLoad.value = 0
             }
         }, { deep: true })
-        // =========================  FUNCTION =============================================== 
+        // =========================  FUNCTION ===============================================
         const checkStepTwo = computed(() => {
             if (step.value === 0) {
                 return "wait";
@@ -218,7 +219,7 @@ export default defineComponent({
             step.value--
         }
         const updated = () => {
-            let dataDefault = store.state.common.formStateEditPA420.specification 
+            let dataDefault = store.state.common.formStateEditPA420.specification
             // validate datepicker tab 3
             let statements = dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements;
             let dtValidate = true
@@ -239,10 +240,10 @@ export default defineComponent({
             const  validForm3 =   formEditTab3.value.tab3EditForm.validate();
             if (!validForm3.isValid ) {
                 validForm3.brokenRules[0].validator.focus();
-            } else if (!dtValidate) { 
+            } else if (!dtValidate) {
                     dtValidate = true
             } else {
-                
+
                 let dataCallApiUpdate =
                 {
                     "companyId": companyId,
@@ -279,7 +280,7 @@ export default defineComponent({
                 const cleanData = JSON.parse(
                     JSON.stringify(dataCallApiUpdate, (name, val) => {
                     if (
-                        name === "__typename" || 
+                        name === "__typename" ||
                         (!store.state.common.formStateEditPA420.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
                     ) {
                         delete val[name];
@@ -304,7 +305,7 @@ export default defineComponent({
               emit("closePopup", false);
               statusModal.value = false;
               isDataFormChange.value = false;
-            
+
           }
 
         };
@@ -329,4 +330,4 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped src="../style/modalAdd.scss">
 
-</style> 
+</style>

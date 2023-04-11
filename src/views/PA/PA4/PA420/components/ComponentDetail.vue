@@ -2,15 +2,15 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
-                <div class="text-box-2">지 {{hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="hasDataIncRetirements"/>
+                <div class="text-box-1">귀 {{!hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
+                <div class="text-box-2">지 {{!hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="!hasDataIncRetirements"/>
             </div>
             <div class="table-detail-right">
                 <DxButton @click="deleteItem" :disabled="checkActionValue || hasDataIncRetirements" >
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || hasDataIncRetirements" />
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || !hasDataIncRetirements" />
                 <DxButton @click="onItemClick('history')" :disabled="checkActionValue  && (statusButton != 20) && (statusButton != 40)">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
@@ -83,7 +83,7 @@
                 <DxColumn caption="공제" width="100px" cell-template="total-deduction" data-field="totalDeduction" data-type="string" format="#,###" alignment="right"/>
                 <template #total-deduction="{ data }">
                   <a-tooltip placement="top">
-                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방 소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>     
+                      <template #title>소득세 {{ $filters.formatCurrency(data.data.withholdingIncomeTax) }} / 지방 소득세 {{ $filters.formatCurrency(data.data.withholdingLocalIncomeTax) }}</template>
                       <div>{{ $filters.formatCurrency(data.data.totalDeduction) }}</div>
                   </a-tooltip>
                 </template>
@@ -207,29 +207,32 @@ export default defineComponent({
         const modalUpdate = ref(false)
         const modalHistoryStatus = ref<boolean>(false)
         const resetFormNum = ref(1);
+      // console.log('props.statusButton', props.statusButton)
         let checkActionValue = ref(props.statusButton!=10) // disabeld button
+      // console.log('checkActionValue', checkActionValue.value)
         let dataAction: any = reactive({
             ...dataActionUtils
         })
         let dataTableDetail: any = ref({
             ...props.dataCallTableDetail
         })
-        // ================GRAPQL============================================== 
+        // ================GRAPQL==============================================
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorTableDetail, onResult: resTableDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
             enabled: triggerDetail.value,
             fetchPolicy: "no-cache",
         }));
         resTableDetail(res => {
             dataSourceDetail.value = res.data.getIncomeRetirements
+            const listEmployee:any = []
             // create array id already exist
             res.data.getIncomeRetirements.map((item: any) => {
             // The above code is checking if the employeeId is already in the listEmployeeId array. If it is
             // not, then it will push the employeeId into the array.
             if (!listEmployeeId.value.includes(item.employeeId)) {
-                listEmployeeId.value.push(item.employeeId)
+              listEmployee.push(item.employeeId)
               }
             })
-            
+          listEmployeeId.value = listEmployee
             triggerDetail.value = false
         })
         errorTableDetail(res => {
@@ -245,17 +248,18 @@ export default defineComponent({
         })
         onDone(e => {
             actionDeleteSuccess()
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('106').message)
         })
         // ================WATCHING============================================
         watch(() => props.dataCallTableDetail, (newValue) => {
             if (newValue) {
               dataTableDetail.value = newValue
+              console.log('newValue', newValue)
               triggerDetail.value = true
               refetchTableDetail()
             }
         }, { deep: true })
-      
+
         watch(() => props.statusButton, (newValue) => {
           statusButton.value = newValue
           if (newValue != 10) {
@@ -264,7 +268,7 @@ export default defineComponent({
             checkActionValue.value = false
           }
         })
-        // ================FUNCTION============================================   
+        // ================FUNCTION============================================
         const addRow = () => {
             modalAdd.value = true
         }
@@ -300,7 +304,7 @@ export default defineComponent({
           triggerDetail.value = true
           refetchTableDetail()
         }
-        
+
         const onItemClick = (key: String) => {
             if (key == 'history') {
                 modalHistory.value = true
