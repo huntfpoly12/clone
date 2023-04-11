@@ -49,7 +49,6 @@
             </div>
             <div class="page-content">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :onRowPrepared="onCellPrepared"
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
@@ -246,12 +245,7 @@ export default defineComponent({
             makeDataClean(originData)
             trigger.value = true;
         }
-        const onCellPrepared = (e: any) => {
-            if (e.data) {
-                e.cells[3].cellElement ? e.cells[3].cellElement.style.color = 'blue' : '';
-                e.cells[5].cellElement ? e.cells[5].cellElement.style.color = 'blue' : '';
-            }
-        }
+
         return {
             loading,
             move_column,
@@ -271,7 +265,6 @@ export default defineComponent({
             onChangePage,
             dayjs,
             trigger,
-            onCellPrepared,
         }
     },
 
