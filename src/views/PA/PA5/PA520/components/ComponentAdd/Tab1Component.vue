@@ -288,7 +288,6 @@ export default defineComponent({
                 }
               dataCallCreat = await makeDataClean(dataCallCreat)
               mutate(dataCallCreat)
-              store.commit('common/setAddBtOnclickPA520', false);
             }
         }
         return {
