@@ -32,6 +32,7 @@ export class Message extends BaseType {
         '404': { "message" : "항목을 최소 하나 선택해야합니다"}, // You must select at least one item.
       // Popup confirm 
         '501': { "message" : "변경 내용을 저장하시겠습니까?","yes": "네","no":"아니요"}, // Are you sure you want to save your changes?
+        '502': { "message" : "팩스 발송하시겠습니까?", "yes": "네. 발송합니다","no": "아니요"}, //Are you sure want to send fax?
       // Group 
         '601': { "message" : "항목을 2개 이상 선택해야합니다"}, // You must select 2 or more items
       // Check ID Card 

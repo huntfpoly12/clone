@@ -10,7 +10,7 @@
             </div>
         </a-form-item>
         <a-form-item label="지급일" label-align="right" class="label-required">
-            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" :required="true"/>
+            <number-box :max="31" :min="1" width="150px" class="mr-5" v-model:valueInput="paymentDayCopy" :required="true" is-format/>
         </a-form-item>
         <div class="text-align-center mt-30">
             <button-basic class="button-form-modal" text="새로 입력" :width="140" type="default" mode="contained"
@@ -27,6 +27,20 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import filters from "@/helpers/filters";
+function convertToDate({day, month, year}: {day: number, month: number, year: number}): number {
+  // Tính số ngày của tháng đó
+  const daysInMonth = new Date(year, month, 0).getDate();
+  // Nếu ngày nhập vào lớn hơn số ngày của tháng đó thì chuyển thành ngày cuối cùng của tháng
+  if (day > daysInMonth) {
+    day = daysInMonth;
+  }
+  // Định dạng ngày theo dạng DD
+  const formattedDay = String(day).padStart(2, '0');
+  // // Định dạng tháng theo dạng MM
+  // const formattedMonth = String(month).padStart(2, '0');
+  // Kết hợp ngày và tháng thành chuỗi dạng DD/MM
+  return day;
+}
 export default defineComponent({
     props: {
         modalStatus: {
@@ -51,6 +65,7 @@ export default defineComponent({
         let month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
+        // const maxDay = computed(() => convertToDate({day: 31, month: month2.value.toString().slice(-2), year: globalYear.value}))
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -67,6 +82,8 @@ export default defineComponent({
         watch(resultConfig, (value) => {
             let paymentMonth = month1.value
             if (value) {
+              const day = convertToDate({day: value.getWithholdingConfig.paymentDay, month: month1.value, year: globalYear.value})
+              console.log('day', day)
               paymentDayCopy.value = value.getWithholdingConfig.paymentDay
               store.state.common.paymentDayPA420 = value.getWithholdingConfig.paymentDay
                 if (value.getWithholdingConfig.paymentType == 2) {
@@ -110,7 +127,7 @@ export default defineComponent({
             paymentDayCopy,
             month1, month2,
             setModalVisible,
-            onSubmit,store
+            onSubmit,store,
         }
     },
 })

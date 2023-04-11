@@ -26,6 +26,7 @@ import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index"
 import { EditOutlined } from "@ant-design/icons-vue";
+import {Message} from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -54,14 +55,14 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.changeIncomeRetirementPaymentDay);
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('106').message)
             emit("closePopup", false)
         })
         onError((e: any) => {
             notification('error', e.message)
         })
 
-        const onSubmit = () => { 
+        const onSubmit = () => {
             props.data.map((val: any) => {
                 mutate({
                     companyId: companyId,

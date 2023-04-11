@@ -13,6 +13,7 @@ const screenGetterPA520 = {
   isClickRowPA520:(state:any)=> state.isClickRowPA520,
   isClickDeletePA520: (state: any) => state.isClickDeletePA520,
   isClickBtnSavePA520: (state: any) => state.isClickBtnSavePA520,
+  isAddDonePA520: (state: any) => state.isAddDonePA520,
   keyActiveStepPA520: (state: any) => state.keyActiveStepPA520,
   activeAddRowPA520: (state: any) => state.activeAddRowPA520,
   actionSaveAddPA520: (state: any) => state.actionSaveAddPA520,

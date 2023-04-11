@@ -20,7 +20,7 @@ const settingModule: Module<SettingState, any>  = {
     clickYearStatus: ClickYearStatus.none, // trạng thái click button nắm
     newYear: dayjs().year(), // lưu trữ năm mới khi click năm
     // globalFacilityBizId
-    globalFacilityBizId: 1,
+    globalFacilityBizId: null,
     accountSubject: {}
   },
   mutations: mutations,
