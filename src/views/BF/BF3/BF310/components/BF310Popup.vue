@@ -16,14 +16,14 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="신청" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="dayjs(formState.createdAt).format('YYYY-MM-DD')"
+                                                :valueInput="isNumeric(formState.createdAt) ? dayjs(formState.createdAt).format('YYYY-MM-DD'): ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="심사중" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.processedAt) ? $filters.formatDate(formState.processedAt) : ''"
+                                                :valueInput="isNumeric(formState.processedAt) ? dayjs(formState.processedAt).format('YYYY-MM-DD'): ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -34,7 +34,7 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="반려" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.rejectedAt) ? $filters.formatDate(formState.rejectedAt) : ''"
+                                                :valueInput="isNumeric(formState.rejectedAt) ? dayjs(formState.rejectedAt).format('YYYY-MM-DD'): ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
@@ -45,7 +45,7 @@
                                     <a-col :span="24" style="display: flex;">
                                         <a-form-item label="승인" label-align="left" :label-col="labelCol">
                                             <default-text-box
-                                                :valueInput="isNumeric(formState.approvedAt) ? $filters.formatDate(formState.approvedAt ?? '') : ''"
+                                                :valueInput="isNumeric(formState.approvedAt) ? dayjs(formState.approvedAt).format('YYYY-MM-DD'): ''"
                                                 :disabled="true" width="200px" />
                                         </a-form-item>
                                         <a-form-item label-align="left" style="padding-left: 10px;">
