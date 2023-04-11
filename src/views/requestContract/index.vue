@@ -19,7 +19,7 @@
                                         @change="checkAllFunc" :disabled="false" :size="16" />
                                 </div>
                             </div>
-                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <text-area-box placeholder="서비스약관 동의" disabled></text-area-box>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" label="동의함"
                                     :disabled="false" :size="16" />
@@ -27,7 +27,7 @@
                         </div>
                         <div>
                             <label>2. 개인정보제공 및 활용동의</label>
-                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <text-area-box placeholder="개인정보제공 및 활용동의" disabled></text-area-box>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" label="동의함"
                                     :disabled="false" :size="16" />
@@ -35,7 +35,7 @@
                         </div>
                         <div>
                             <label>3. 회계서비스약관 동의</label>
-                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <text-area-box placeholder="회계서비스약관 동의" disabled></text-area-box>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService" label="동의함"
                                     :disabled="false" :size="16" />
@@ -43,7 +43,7 @@
                         </div>
                         <div>
                             <label>4. 원천서비스약관 동의</label>
-                            <text-area-box placeholder="// 주석처리 ( 추후 내용제공 )" disabled></text-area-box>
+                            <text-area-box placeholder="원천서비스약관 동의" disabled></text-area-box>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService" label="동의함"
                                     :disabled="false" :size="16" />
@@ -81,7 +81,7 @@
                                     <label class="red">주 소 :</label>
                                     <div class="group-label">
                                         <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :disabled="true" />
+                                            placeholder="우편번호" :readOnly="true" />
                                         <post-code-button @dataAddress="funcAddress" />
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend"
+                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
                                         placeholder="상세주소(입력)" width="100%" />
                                 </div>
                                 <div class="form-item">
@@ -215,7 +215,7 @@
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
-                                    <div class="pl-12">
+                                    <div>
                                         <imgUpload :title="titleModal2" style="margin-top: 10px"
                                             v-model:imageId="dataActiveRow.registrationCardFileStorageId"
                                             @update-img="(res) => dataActiveRow.dataImg = res" />
@@ -293,12 +293,14 @@
                             <label>4. 기타</label>
                             <div class="form-item">
                                 <label>영업관리담당 :</label>
+                                <!-- <list-sales-dropdown :required="true"
+                                        v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" /> -->
                                 <select-box-common :arrSelect="optionSale" :required="true"
                                     v-model:valueInput="contractCreacted.salesRepresentativeId" placeholder="영업자선택" />
                             </div>
                             <div class="form-item">
-                                <label>전달사항 :</label>
-                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment"
+                                <label class="red">전달사항 :</label>
+                                <text-area-box width="100%" v-model:valueInput="contractCreacted.comment" :required="true"
                                     placeholder="전달사항입력" />
                             </div>
                         </div>
@@ -365,7 +367,6 @@ export default {
         const disableFormVal = ref(false);
         const disableFormVal2 = ref(false);
         const checkAll = ref(false);
-        const optionSale = ref();
         const statusMailValidate = ref(false);
         const contractCreacted: any = reactive({ ...dataDefaultsUtil });
         const dataInputCallApi = reactive({
@@ -386,6 +387,7 @@ export default {
         let valueRadioWithdrawDay = ref("5일");
         const dataActiveRow: any = ref()
         const isResidentId = ref(false);
+        const optionSale = ref();
         // =================================== GRAPQL ============================================
         const {
             mutate: mutateCreated,
@@ -405,6 +407,16 @@ export default {
                 fetchPolicy: "no-cache",
             })
         );
+        watch(resultConfig, (value) => {
+            let dataOption: any = [];
+            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
+                dataOption.push({
+                    label: e.name,
+                    value: e.id,
+                });
+            });
+            optionSale.value = dataOption;
+        });
         // =================================== FUNCTION ============================================
         const disableForm1 = () => {
             if (dataInputCallApi.dossier == 2) disableFormVal2.value = true;
@@ -523,6 +535,7 @@ export default {
                         contractCreacted.mobilePhone != "" &&
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
+                        contractCreacted.addressExtend != "" &&
                         contractCreacted.bizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
@@ -757,19 +770,10 @@ export default {
                 }
             }
         );
-        watch(resultConfig, (value) => {
-            let dataOption: any = [];
-            value.getSalesRepresentativesForPublicScreen.map((e: any) => {
-                dataOption.push({
-                    label: e.name,
-                    value: e.id,
-                });
-            });
-            optionSale.value = dataOption;
-        });
         return {
-            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, optionSale, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
-            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick
+            modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
+            statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
+            optionSale, 
         };
     },
 };

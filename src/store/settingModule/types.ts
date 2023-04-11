@@ -19,7 +19,7 @@ export interface SettingState {
   clickYearStatus: ClickYearStatus
   newYear: number,
   globalYear: number,
-  globalFacilityBizId: number,
+  globalFacilityBizId: number | null,
   accountSubject: any
   
 }

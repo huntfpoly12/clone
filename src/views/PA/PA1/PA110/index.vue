@@ -509,11 +509,21 @@ export default defineComponent({
         const {
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
+            onError: errorTaxPayInfo,
             loading: loadingTaxPayInfo,
         } = useQuery(queries.getIncomeWages, originDataTaxPayInfo, () => ({
             enabled: triggerDataTaxPayInfo.value,
             fetchPolicy: "no-cache",
         }))
+        errorTaxPayInfo(e => {
+            triggerDataTaxPayInfo.value = false;
+            store.state.common.dataTaxPayInfo = []
+            store.state.common.statusFormAdd = true
+            // store.state.common.focusedRowKey = null;
+            store.state.common.incomeId = null;
+            store.state.common.actionResetForm++;
+            notification('error', e.message)
+        })
         watch(resultTaxPayInfo, (value) => {
             triggerDataTaxPayInfo.value = false;
             if (value) {

@@ -82,8 +82,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="전화번호" label-align="right">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
-                    :required="true" />
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -94,8 +93,8 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="우편번호" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                <a-form-item label="우편번호" label-align="right">
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -125,8 +124,8 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="사유발생일" label-align="right" class="red">
-                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt" :required="true"
+                <a-form-item label="사유발생일" label-align="right">
+                  <month-picker-box-custom text="지" v-model:valueDate="formState.joinedAt" 
                     bgColor="white"></month-picker-box-custom>
                 </a-form-item>
               </a-col>
@@ -157,7 +156,7 @@
             <div class="mt-10">통폐합 시 흡수하는 사업장:</div>
             <a-row class="mt-10 ml-40">
               <a-col :span="15">
-                <a-form-item label="상호" label-align="right">
+                <a-form-item label="명칭" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
                 </a-form-item>
               </a-col>
@@ -200,7 +199,7 @@
                 </a-form-item>
               </a-col>
               <a-col :span="9">
-                <a-form-item label="소멸일" label-align="right">
+                <a-form-item label="소멸일" label-align="right" class="red">
                   <date-time-box width="200px" text="지" v-model:valueDate="formState.joinedAt"
                     bgColor="white"></date-time-box>
                 </a-form-item>
@@ -218,9 +217,9 @@
                 </a-form-item>
               </a-col>
               <a-col :span="9">
-                <a-form-item label="소멸일" label-align="right">
+                <a-form-item label="소멸일" label-align="right" class="red">
                   <date-time-box width="200px" text="지" v-model:valueDate="formState.joinedAt"
-                    bgColor="white"></date-time-box>
+                    bgColor="white" :required="true" ></date-time-box>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -332,7 +331,7 @@ export default defineComponent({
       jobTypeCode: 1,
       contractWorker: 'contractWorker',
     })
-    const formStateToCompare = {...formState};
+    const formStateToCompare = { ...formState };
     // ----------------get and refetch data when employeeWageType change---------
 
     const employeeWages = ref([]);

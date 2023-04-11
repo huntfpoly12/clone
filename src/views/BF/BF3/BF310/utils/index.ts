@@ -149,7 +149,7 @@ export const dataSearchIndex = {
 };
 
 export const initialArrayRadioWithdrawDay = [
-  { id: "매월 5일", text: "매월 5일" },
-  { id: "매월 12일", text: "매월 12일" },
-  { id: "매월 19일", text: "매월 19일" },
+  { id: '5일', text: '매월 5일' },
+    { id: '12일', text: '매월 12일' },
+    { id: '19일', text: '매월 19일' },
 ];
