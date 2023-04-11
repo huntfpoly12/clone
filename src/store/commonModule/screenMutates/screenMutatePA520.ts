@@ -41,6 +41,9 @@ const screenMutatePA520 = {
     setIsClickBtnSavePA520(state: any, status: boolean) {
         state.isClickBtnSavePA520 = status
     },
+    setIsAddDonePA520(state: any, status: boolean) {
+        state.isAddDonePA520 = status
+    },
     setKeyActiveStepPA520(state: any, data: string) {
         state.keyActiveStepPA520 = data
     },
