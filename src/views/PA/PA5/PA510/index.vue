@@ -392,11 +392,21 @@ export default defineComponent({
         const {
             refetch: refetchDataTaxPayInfo,
             result: resultTaxPayInfo,
+            onError: errorTaxPayInfo,
             loading: loadingTaxPayInfo,
         } = useQuery(queries.getIncomeWageDailies, originDataTaxPayInfo, () => ({
             enabled: IncomeWageDailiesTrigger.value,
             fetchPolicy: 'no-cache',
         }));
+        errorTaxPayInfo(e => {
+            IncomeWageDailiesTrigger.value = false;
+            store.state.common.dataTaxPayInfo = []
+            store.state.common.statusFormAdd = true
+            store.state.common.focusedRowKey = null;
+            store.state.common.incomeId = null;
+            store.state.common.actionResetForm++;
+            notification('error', e.message)
+        })
         const {
             mutate: actionChangeIncomeProcess,
             onError: errorChangeIncomeProcess,
