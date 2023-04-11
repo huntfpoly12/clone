@@ -1,5 +1,5 @@
 <template>
-    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false"/>
+    <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false" />
     <div class="ac-120">
         <div class="top">
             <div class="grid">
@@ -128,10 +128,143 @@
         </div>
         <div class="main">
             <div class="data-grid" ref="refCssTable" :style="[statusShowFull ? {} : { height: heightTable }]">
-                <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain"
+                <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
                     :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxColumn caption="일자" data-field="fill1" cell-template="fill1" />
+                    <template #fill1="{ data }">
+                        {{ $filters.formatDate(data.value) }}
+                    </template>
+                    <DxColumn caption="순번" cell-template="fill2" css-class="custom-column"/>
+                    <template #fill2="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <a-tooltip placement="left" title="{은행명} {통장번호} ">
+                                <div>{{ item.fill2 }}</div>
+                            </a-tooltip>
+                        </div>
+                    </template>
+                    <DxColumn caption="결의번호" cell-template="fill3" css-class="custom-column"/>
+                    <template #fill3="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill3 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="통장" cell-template="fill4" css-class="custom-column"/>
+                    <template #fill4="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill4 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="결의 구분" cell-template="fill5" css-class="custom-column" />
+                    <template #fill5="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill5 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="수입액" cell-template="fill6" css-class="custom-column" />
+                    <template #fill6="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill6 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="지출액" cell-template="fill7" css-class="custom-column" />
+                    <template #fill7="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill7 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="잔액" cell-template="fill8" css-class="custom-column" />
+                    <template #fill8="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill8 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="통장적요" cell-template="fill9" css-class="custom-column" />
+                    <template #fill9="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill9 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="적요" cell-template="fill10" css-class="custom-column" />
+                    <template #fill10="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill10 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="계정과목" cell-template="fill11" css-class="custom-column" />
+                    <template #fill11="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill11 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="상대계정" cell-template="fill12" css-class="custom-column" />
+                    <template #fill12="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill12 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="자금원천" cell-template="fill13" css-class="custom-column" />
+                    <template #fill13="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill13 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="거래처" cell-template="fill14" css-class="custom-column" />
+                    <template #fill14="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill14 }}</div>
+                        </div>
+                    </template>                    
+                    <DxColumn caption="증빙" cell-template="fill15" css-class="custom-column" />
+                    <template #fill15="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div>{{ item.fill15 }}</div>
+                        </div>
+                    </template>
+                    <DxColumn caption="물품 내역" cell-template="normality" css-class="custom-column"/>
+                    <template #normality="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail" />
+                        </div>
+                    </template>
+                    <DxColumn caption="수기 여부 " cell-template="slipRegistration" css-class="custom-column"/>
+                    <template #slipRegistration="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div class="slipRegistration">
+                                <button-basic :text="item.slipRegistration ? 'O' : 'X'"
+                                    :type="item.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" />
+                            </div>
+                        </div>
+
+                    </template>
+                    <DxColumn caption="정상 여부" cell-template="slipRegistration1" css-class="custom-column"/>
+                    <template #slipRegistration1="{ data }">
+                        <div class="main-row" v-for="(item, index) in data.data.data" :key="index" :class="{ last: index === data.data.data.length - 1 }">
+                            <div class="slipRegistration">
+                                <button-basic :text="item.slipRegistration ? 'O' : 'X'"
+                                    :type="item.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" />
+                            </div>
+                        </div>
+                    </template>
+                    <DxSummary>
+                        <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
+                            display-format="수입액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
+                            display-format="지출액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="count8" />
+                        <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
+                    </DxSummary>
+                </DxDataGrid> -->
+
+                <DxDataGrid id="dataGridAc120" key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataDemoMain2"
+                    :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
+                    :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+                    <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder" :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging"/>
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn caption="일자" data-field="fill1" cell-template="fill1"/>
                     <template #fill1="{ data }">
@@ -239,20 +372,21 @@
                                     </a-col>
                                     <a-col :span="6" class="col-2">
                                         <a-form-item label="결의일자" class="red">
-                                            <date-time-box width="150px" :required="true" disabled="true"/>
+                                            <date-time-box width="150px" :required="true" disabled="true" />
                                         </a-form-item>
 
                                         <a-form-item label="통장" class="red">
                                             <div class="input_info">
-                                                <default-text-box width="70px" style="margin-right: 10px;"
-                                                    :required="true" disabled="true"/>
-                                                <default-text-box width="70px" :required="true" disabled="true"/>
+                                                <default-text-box width="70px" style="margin-right: 10px;" :required="true"
+                                                    disabled="true" />
+                                                <default-text-box width="70px" :required="true" disabled="true" />
                                             </div>
                                         </a-form-item>
                                     </a-col>
                                     <a-col :span="6" class="col-3">
                                         <a-form-item label="금액" class="red">
-                                            <number-box-money width="150px" :required="true" :spinButtons="false" disabled="true"/>
+                                            <number-box-money width="150px" :required="true" :spinButtons="false"
+                                                disabled="true" />
                                         </a-form-item>
 
                                         <a-form-item label="적요" class="red">
@@ -403,7 +537,7 @@ import { defineComponent, ref, reactive, computed, onMounted } from "vue";
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxRowDragging } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons-vue";
-import { dataDemoMain, MAX_UP_LOAD, contentPopupRetrieveStatements } from "./utils/index"
+import { dataDemoMain, dataDemoMain2, MAX_UP_LOAD, contentPopupRetrieveStatements } from "./utils/index"
 import { Message } from "@/configs/enum"
 import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
@@ -527,7 +661,7 @@ export default defineComponent({
 
         const totalDeposits = () => {
             let total = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 total += item.fill6;
             });
             return `입금액 합계: ${total}`
@@ -535,7 +669,7 @@ export default defineComponent({
 
         const totalWithdrawal = () => {
             let total = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 total += item.fill7;
             });
             return `출금액 합계: ${total}`
@@ -544,7 +678,7 @@ export default defineComponent({
         const countSlipRegistration = () => {
             let totalRegistration = 0;
             let totalCancellation = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 if (item.slipRegistration) {
                     totalRegistration++
                 } else {
@@ -554,12 +688,12 @@ export default defineComponent({
             return `정상 내역 건수: ${filters.formatCurrency(totalRegistration)},
              비정상 내역 건: ${filters.formatCurrency(totalCancellation)}`
         };
-        const count8 = () => { 
+        const count8 = () => {
             let total = 0;
             let totalfill8 = 0;
             let totalfill6 = 0;
             let totalfill7 = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 totalfill6 += item.fill6
                 totalfill7 += item.fill7
                 totalfill8 += item.fill8
@@ -597,7 +731,7 @@ export default defineComponent({
 
         const sumOfIncome = () => {
             let total = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 total += item.fill6;
             });
             return `수입액 합계: ${total}`
@@ -605,11 +739,41 @@ export default defineComponent({
 
         const sumOfExpenses = () => {
             let total = 0;
-            dataDemoMain.forEach((item) => {
+            dataDemoMain.forEach((item: any) => {
                 total += item.fill7;
             });
             return `지출액 합계: ${total}`
         }
+
+        const onReorder = (e: any) => {
+            console.log(e);
+            if (e.toIndex >= dataDemoMain2.length) {
+            e.toIndex = dataDemoMain2.length - 1;
+            }
+            if (e.fromIndex !== e.toIndex) {
+            const item = dataDemoMain2[e.fromIndex];
+            dataDemoMain2.splice(e.fromIndex, 1);
+            dataDemoMain2.splice(e.toIndex, 0, item);
+            }
+        }
+
+        const onDragChange = (e: any) => {
+            // console.log(e);
+            
+        }
+
+        const onRowDragging = (e: any) => {
+            console.log(e);
+            
+            if (e.toIndex >= dataDemoMain2.length) {
+            e.toIndex = dataDemoMain2.length - 1;
+            }
+            if (e.fromIndex !== e.toIndex) {
+            const item = dataDemoMain2[e.fromIndex];
+            dataDemoMain2.splice(e.fromIndex, 1);
+            dataDemoMain2.splice(e.toIndex, 0, item);
+            }
+      }
 
 
 
@@ -650,6 +814,8 @@ export default defineComponent({
             actionPopupSlipRegistration,
             arrayRadioCheck,
             count8,
+            dataDemoMain2,
+            onReorder, onDragChange, onRowDragging
         };
     },
 });
