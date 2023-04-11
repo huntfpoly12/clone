@@ -27,55 +27,6 @@
     </a-layout-header>
 
     <a-layout-content>
-      <div class="header-content">
-        <div class="left">
-          <a-button type="primary" @click="() => (collapsed = !collapsed)">
-            <menu-unfold-outlined v-if="collapsed" class="trigger" />
-            <menu-fold-outlined v-else class="trigger" />
-          </a-button>
-
-          <div class="wrap-search">
-            <a-select
-              v-model:value="selectedItems"
-              :options=" menuData.map((item) => ({
-                  value: item.id,
-                  label: item.id + ' | ' + item.name,
-                }))"
-              show-search
-              placeholder="메뉴를 입력해보세요"
-              style="width: 180px"
-              optionFilterProp="label"
-              @change="addMenuTab"
-            />
-          </div>
-        </div>
-        <div class="right">
-          <nav class="nav-tabs" v-if="menuTab.length > 0">
-            <!-- hide or show scroll arrows left when page width is exceeded -->
-            <caret-left-outlined class="arrow-left"  v-if="isArrowScroll"  @click="tabLeft"/>
-            <ul ref="scroll_container" class="list-menu-tab">
-              <li
-                v-for="(item, index) in menuTab"
-                :class="activeTab.id === item.id ? 'active' : ''"
-                :key="index"
-                @click.self="changeActiveTab(item)"
-              >
-                {{ item.name }}
-                <close-circle-filled
-                  @click="removeItemTab(index)"
-                  :style="{
-                    marginLeft: '2px',
-                    color: activeTab.id === item.id ? 'red' : '#888',
-                  }"
-                />
-              </li>
-            </ul>
-            <!-- hide or show scroll arrows right when page width is exceeded -->
-            <caret-right-outlined v-if="isArrowScroll" class="arrow-right"  @click="tabRight" />
-          </nav>
-
-        </div>
-      </div>
       <a-layout>
         <a-layout-sider
           width="250"
@@ -83,6 +34,27 @@
           :trigger="null"
           collapsible
         >
+          <div class="header-content header-content-left">
+            <a-button type="primary" @click="() => (collapsed = !collapsed)">
+              <menu-unfold-outlined v-if="collapsed" class="trigger" />
+              <menu-fold-outlined v-else class="trigger" />
+            </a-button>
+
+            <div v-if="!collapsed" class="wrap-search">
+              <a-select
+                v-model:value="selectedItems"
+                :options=" menuData.map((item) => ({
+                    value: item.id,
+                    label: item.id + ' | ' + item.name,
+                  }))"
+                show-search
+                placeholder="메뉴를 입력해보세요"
+                style="width: 180px"
+                optionFilterProp="label"
+                @change="addMenuTab"
+              />
+            </div>
+          </div>
           <a-menu
             v-model:selectedKeys="selectedKeys"
             theme="dark"
@@ -161,6 +133,34 @@
           <a-layout-content
             :style="{ background: '#fff', margin: 0, minHeight: '280px' }"
           >
+            <div class="tab-main">
+              <DxSortable 
+                filter=".dx-tab"
+                v-model:data="menuTab" 
+                item-orientation="horizontal" 
+                drag-direction="horizontal"
+                @drag-start="onTabDragStart($event)"
+                @reorder="onTabDrop($event)">
+                <DxTabs 
+                  :data-source="menuTab" 
+                  v-model:selected-index="tabIndex"
+                  itemTemplate="titleTab"
+                  >
+                  <template #titleTab="{ data: itemTab }">
+                    <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
+                      <span>{{ itemTab.name }}</span>
+                      <close-circle-filled
+                        @click.stop="removeItemTab(itemTab)"
+                        :style="{
+                          marginLeft: '5px',
+                          color: activeTab.id === itemTab.id ? 'red' : '#888',
+                        }"
+                      />
+                    </div>
+                </template>
+                </DxTabs>
+              </DxSortable>
+            </div>
             <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive :exclude="cachedTab">
@@ -180,8 +180,8 @@
   </a-layout>
 </template>
 <script>
-import { defineComponent, ref, watch, computed, onMounted } from "vue";
-import {  useRouter } from 'vue-router'
+import { defineComponent, ref, watch, computed, onMounted, nextTick } from "vue";
+import {  useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex';
 import menuTree from "./menuTree";
 import menuData from "./menuData";
@@ -258,8 +258,11 @@ import {
   CaretRightOutlined
 } from "@ant-design/icons-vue";
 import {AdminScreenRole, getJwtObject, ScreenRole} from '@bankda/jangbuda-common';
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, openTab, setMenuTab } from "@/helpers/commonFunction";
+import useCheckPermission from "@/helpers/useCheckPermission";
 import dayjs from "dayjs";;
+import DxSortable from "devextreme-vue/sortable";
+import DxTabs from 'devextreme-vue/tabs';
 export default defineComponent({
   name: `LayoutDefault`,
   data() {
@@ -336,7 +339,9 @@ export default defineComponent({
     SaveOutlined,
     CloseCircleFilled,
     CaretLeftOutlined,
-    CaretRightOutlined
+    CaretRightOutlined,
+    DxSortable,
+    DxTabs
   },
   created() {
     menuData.forEach((item) => {
@@ -345,7 +350,6 @@ export default defineComponent({
         this.$store.state.common.cachedTab.push(item.id.toUpperCase().replaceAll('-', ''))
         this.activeTab = item;
         this.$store.state.common.activeTab = item
-        this.menuTab.push(item);
         return;
       } else if (
         this.$route.fullPath === "/dashboard/" ||
@@ -360,7 +364,6 @@ export default defineComponent({
       this.$route.fullPath === "/dashboard"
     ) {
       this.activeTab = { name: "Dashboard", url: "/dashboard", id: "" };
-      this.menuTab.push({ name: "Dashboard", url: "/dashboard", id: "" });
     }
   },
   watch: {
@@ -517,50 +520,46 @@ export default defineComponent({
     let menuItems = menuTree;
     const store = useStore();
     const router = useRouter()
+    const route = useRoute();
     const collapsed = ref(false);
     const selectedItems = ref([]);
     const activeTab = ref();
-    // cachedtab is used to handle exclude in the keep-alive tag
-    const cachedTab = ref([]);
+    let menuTab = ref([]);
+    const tabDashboard = { name: "Dashboard", url: "/dashboard", id: "" }
+    const tabIndex = ref()
+    let isRemoveTab = ref(false);
+    let tabRemove = ref();
     const token = sessionStorage.getItem("token");
     const jwtObject = getJwtObject(token);
+    // cachedtab is used to handle exclude in the keep-alive tag
+    const cachedTab = computed(() => {
+      return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
+    })
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
       let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
       //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
       // store.commit('auth/setTokenInfo',jwtObject)
+      if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
+        openTab(tabDashboard)
+        nextTick(() => {
+          let count = 0
+          menuItems.forEach(item => {
+            const { read } = useCheckPermission(item.roles)
+            if(read && count === 0) {
+              openKeys.value =  [item.id]
+              count++
+            }
+          })
+        })
+      }
+      menuData.forEach(tab => {
+        if(route.fullPath.includes(tab.id)) {
+          openTab(tab)
+        }
+      })
     })
-    /**
-    * Check scroll tab if overflow
-    */
-    const scroll_container = ref(null);
-    const isArrowScroll= ref(false);
-    const checkOverflow = ()=> {
-          isArrowScroll.value =  scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth
-    }
-    const tabLeft = (e)=>{
-       if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
-              scroll_container.value.scrollTo({
-                left: scroll_container.value.scrollLeft -= 200,
-                    behavior: 'smooth',
-          }) ;
-       }
-
-    }
-    const tabRight = (e)=>{
-       if(scroll_container.value.offsetWidth   < scroll_container.value.scrollWidth){
-          scroll_container.value.scrollTo({
-            left: scroll_container.value.scrollLeft += 200,
-            behavior: 'smooth',
-          }) ;
-       }
-    }
-
-    /**
-     * init menuTab from vuex
-     */
-    let menuTab = ref(store.state.common.menuTab);
 
     const logout = ()=>{
       router.push("/login");
@@ -582,79 +581,93 @@ export default defineComponent({
         });
       }
     }
-    const toggleDropdown  = ()=>{
-      state.value = !state.value;
-    }
 
-    const gotoDashboard = () => {
-      activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
-      router.push("/dashboard");
-      menuTab.value.push({ name: "Dashboard", url: "/dashboard", id: "" });
-    }
     const addMenuTab = (itemId) => {
-      if (itemId != '') {
-        let itemNew = [];
-        itemNew = menuData.find(item => item.id === itemId);
-        if (itemNew.url == '#') {
-          return
-        }
-
-        activeTab.value = menuData.find(item => item.id === itemId);
-        store.state.common.activeTab = itemNew
-        store.state.common.cachedTab.push(itemNew.id.toUpperCase().replaceAll('-', ''))
-        //If the number of tabs exceeds 20, new tabs will not be added
-        if (menuTab.value.length < 20 && !menuTab.value.includes(activeTab.value)) {
-          menuTab.value.push(itemNew);
-          selectedItems.value = [];
-          checkOverflow()
-        }
-      // If you select the logo, it will add a dashboard tab object
-      } else if (!menuTab.value.some(item => item.name === 'Dashboard')) {
-        gotoDashboard()
-      } else {
-        activeTab.value = { name: "Dashboard", url: "/dashboard", id: "" };
+      if (menuTab.value.length > 20) {
+        alert("Maximum only 20 tab")
+        return
       }
+      const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
+      if (itemNew.url == '#') {
+        return
+      }
+      const indexActive = menuTab.value.findIndex(tab => tab.id === itemId)
+      if(indexActive >= 0) {
+        tabIndex.value = indexActive
+      }
+      activeTab.value = itemNew
+      openTab(itemNew)
     }
+
+
     /**
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      // clear vuex value cachedTab
-      let tabName = menuTab.value[item].id.toUpperCase().replaceAll('-', '')
-      store.state.common.cachedTab = store.state.common.cachedTab.filter((item) => item != tabName )
-
-      menuTab.value.splice(item, 1);
-      activeTab.value = menuTab.value.slice(-1)[0];
-      store.state.common.activeTab = activeTab.value
-      selectedItems.value = [];
-      if (menuTab.value.length === 0) {
-        gotoDashboard()
-      }
-      checkOverflow()
+      if(menuTab.value.length === 1) return
+      tabRemove.value = item
+      isRemoveTab.value = true
+      const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
+      setMenuTab(newMenuTab)
     }
     const changeActiveTab  = (item)=>{
-      activeTab.value = item;
-      if (menuTab.value.length === 0) {
-        gotoDashboard()
-      }
-      store.state.common.activeTab =  activeTab.value
+      if(activeTab.value.id === item.id) return
+      activeTab.value = {
+        id: item.id,
+        name: item.name, 
+        url: item.url, 
+        roles: item.roles,
+      };
+      store.state.common.activeTab = activeTab.value
     }
 
-    /**
-     * monitor cachedtabs variable on vuex to blow cachedtab variable at component
-     */
-    watch(()=>store.state.common.cachedTab, (newValue)=>{
-        cachedTab.value = newValue;
-    }, { deep: true })
-    const focusInput  = ()=>{
-      state.value = false;
+    const onTabDragStart = (e) => {
+      changeActiveTab(menuTab.value[e.fromIndex])
+      e.itemData = e.fromData[e.fromIndex];
     }
+
+    const onTabDrop = (e) => {
+      const newMenuTab = [...menuTab.value];
+      newMenuTab.splice(e.fromIndex, 1);
+      newMenuTab.splice(e.toIndex, 0, e.itemData);
+      menuTab.value = newMenuTab;
+    }
+
     /**
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
     watch(()=>store.state.common.activeTab, (newValue)=>{
         activeTab.value = newValue;
     }, { deep: true })
+
+    watch(() => store.state.common.menuTab, (value) => {
+      if(isRemoveTab.value) {
+        const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
+        menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
+        const maxInexBeforeRemove =  menuTab.value.length
+        let indexActive = 0
+        if(indexTabRemove === maxInexBeforeRemove){
+          indexActive = indexTabRemove - 1
+        }else {
+          indexActive = indexTabRemove
+        }
+        tabIndex.value = indexActive
+        activeTab.value = {
+          id: menuTab.value[indexActive].id,
+          name: menuTab.value[indexActive].name, 
+          url: menuTab.value[indexActive].url, 
+          roles: menuTab.value[indexActive].roles,
+        };
+        store.state.common.activeTab =  {...activeTab.value}
+        isRemoveTab.value = false
+        return
+      }
+      const newItem = value[value.length - 1]
+      menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
+      tabIndex.value = menuTab.value.length - 1
+    }, {
+      deep: true,
+    })
 
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
@@ -677,11 +690,9 @@ export default defineComponent({
     return {
       logout,
       onSearch,
-      toggleDropdown,
       addMenuTab,
       removeItemTab,
       changeActiveTab,
-      focusInput,
       onOpenChange,
       menuItems,
       menuData,
@@ -691,10 +702,11 @@ export default defineComponent({
       selectedItems,
       selectedKeys,
       openKeys,
-      scrollX,
-      scroll_container,
-      isArrowScroll,
-      tabLeft,tabRight,cachedTab,store,
+      store,
+      cachedTab,
+      tabIndex,
+      onTabDragStart,
+      onTabDrop
     }
   },
 });
@@ -713,5 +725,66 @@ export default defineComponent({
 }
 ::v-deep .dx-datagrid .dx-row>td {
     padding: 5px;
+}
+</style>
+<style>
+.vue3-tabs-chrome {
+  padding-top: 0 !important;
+}
+</style>
+<style scoped lang="scss">
+.icon-close-tab {
+  color: red;
+  padding: 3px;
+  &:hover {
+    background-color: #0000002a;
+    border-radius: 50%;
+  }
+}
+:deep .tab-main .dx-tabs-wrapper {
+  display: flex;
+  align-items: end;
+  background-color: #337ab7;
+  padding-top: 4px;
+}
+:deep .tab-main .dx-tab {
+  background-color: rgb(228, 228, 228);
+  height: 36px;
+  width: auto;
+  margin: 0 1.5px;
+  border-radius: 8px 8px 0 0;
+  padding: 0;
+}
+:deep .tab-main .tab-main-title-tab {
+  padding: 9px;
+}
+:deep .tab-main .dx-tab-selected {
+  background-color: #ffffff !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+:deep .tab-main .dx-tabs {
+  background-color: #337ab7;
+  -webkit-box-shadow: none;
+  border: none;
+  outline: none;
+}
+:deep .dx-tabpanel.dx-state-focused>.dx-tabpanel-tabs .dx-tabs {
+  -webkit-box-shadow: none;
+  border: none;
+  outline: none;
+}
+:deep .dx-tab-selected::after {
+  border: none;
+}
+:deep .tab-main .dx-tabs-nav-button {
+  top: 4px;
+  height: 37px;
+}
+:deep .tab-main .dx-sortable {
+  height: 40px;
+}
+:deep .tab-main .dx-tabs-scrollable .dx-tabs-wrapper {
+  border-left: 0;
+  border-right: 0;
 }
 </style>

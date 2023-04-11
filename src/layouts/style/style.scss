@@ -1,5 +1,5 @@
 .main-content {
-  height: 100%;
+  height: calc(100vh - 90px);
 }
 .list-menu-tab {
 	margin-top: 0px;
@@ -7,7 +7,7 @@
 }
 
 .ant-layout.ant-layout-has-sider {
-	min-height: 90vh;
+	min-height: calc(100vh - 50px);
 }
 
 .components-grid-demo-flex .ant-col {
@@ -40,19 +40,19 @@
 	position: relative;
 	height: 40px;
 
-	.left {
-		width: 250px;
-		float: left;
+	&-left {
+		// width: 250px;
+		// float: left;
 		align-items: center;
 		padding-left: 15px;
 		height: 40px;
 		display: flex;
+    overflow: hidden;
 	}
 
 	.right {
 		// padding-left: 24px;
-		padding-top: 3px;
-		float: left;
+		// float: left;
 		width: calc(100% - 250px);
 
 		.arrow-left{
