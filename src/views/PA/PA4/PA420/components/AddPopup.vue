@@ -110,7 +110,7 @@
         v-if="step < 2"
       />
       <button-basic
- 
+
         text="저장"
         type="default"
         mode="contained"
@@ -134,6 +134,7 @@ import Tab3 from "./TabCreated/Tab3.vue";
 import { initialFormState } from "../utils/index";
 import { useStore } from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import {Message} from "@/configs/enum";
 export default defineComponent({
   props: {
     modalStatus: {
@@ -180,11 +181,11 @@ export default defineComponent({
         JSON.stringify({ ...initialFormState, processKey: props.processKey })
       )
     );
-    // set riêng trường hợp retirementType vì 
-    watch(()=>dataForm.input.retirementType, () => {
-      alert()
-    }, { deep: true })
-    
+    // set riêng trường hợp retirementType vì
+    // watch(()=>dataForm.input.retirementType, () => {
+    //   alert()
+    // }, { deep: true })
+
     const option1 = reactive([
       { id: true, text: "사원" },
       { id: false, text: "일용직사원" },
@@ -230,17 +231,17 @@ export default defineComponent({
         watch(resultConfig,(resConfig)=>{
           if (resConfig) {
             store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
-            dataForm.input.paymentDay = store.state.common.paymentDayPA420 
-            defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420 
+            dataForm.input.paymentDay = store.state.common.paymentDayPA420
+            defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420
           }
-        })    
+        })
     const {
       mutate: mutateCreateIncomeRetirement,
       onDone: onDoneCreateIncomeRetirement,
       onError: onErrorCreateIncomeRetirement,
     } = useMutation(mutations.createIncomeRetirement);
     onDoneCreateIncomeRetirement(() => {
-      notification("success", `업데이트 완료!`);
+      notification("success", Message.getCommonMessage('101').message);
       modalStatusAccept.value = false;
       emit("closePopup", false);
     });
@@ -314,7 +315,7 @@ export default defineComponent({
       const validFrom3 = formAddTab3.value.tab3AddForm.validate();
       if (!validFrom3.isValid ) {
         validFrom3.brokenRules[0].validator.focus();
-      } else if (!dtValidate) { 
+      } else if (!dtValidate) {
             dtValidate = true
       } else {
         const variables: any = reactive({
@@ -332,13 +333,14 @@ export default defineComponent({
         delete variables.checkBoxCallApi;
         mutateCreateIncomeRetirement(variables)
       }
-     
+
     };
 
     const openModalAdd = () => {
       // if is 사원
       if (retirementIncome1.value) {
         // filter 일용 employee
+        // console.log('store.state.common.arrayEmployeePA410' , store.state.common.arrayEmployeePA410)
         arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
           (element: any) =>
             element.type === 10 &&
