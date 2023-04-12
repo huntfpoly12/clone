@@ -266,7 +266,7 @@ export default defineComponent({
                         userId: props.data.userId,
                         input: {
                             name: formState.value.name,
-                            accountingRole: false,
+                            accountingRole: valueFacilyti.value.length ? true : false,
                             facilityBusinessIds: valueFacilyti.value,
                             withholdingRole: formState.value.withholdingRole,
                             mobilePhone: formState.value.mobilePhone,

@@ -1,28 +1,23 @@
 <template>
   <div class="facilityBizType-header">
     <label for="" class="facilityBizType-header-label">시설사업명</label>
-    <select-box-common :arrSelect="listFacilityBizTypeForUser" v-model:valueInput="facilityBiz" displayeExpr="name" valueExpr="facilityBizType"
+    <select-box-common :arrSelect="listFacilityBizTypeForUser" v-model:valueInput="facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId"
       width="170px" placeholder="사업유형 선택" :searchEnabled="false"/>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch,  } from "vue";
 import { useStore } from 'vuex';
-import queries from "@/graphql/queries/BF/BF3/BF310/index";
+import queries from "@/graphql/queries/CM/CM110/index"
 import { useQuery } from "@vue/apollo-composable";
+import { companyId } from "@/helpers/commonFunction";
 // import { FacilityBizType } from "@bankda/jangbuda-common";
 export default defineComponent({
   components: {
   },
   setup() {
     const store = useStore();
-    const token = computed(()=>sessionStorage.getItem("token"))
-    store.dispatch('auth/getUserInfor', token.value);
-    const userInfor = computed(() => store.state.auth.userInfor)
-    const trigger = ref<boolean>(false)
-    let payload = ref({
-      id: userInfor.value.id,
-    })
+    const trigger = ref<boolean>(true)
     const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
     let facilityBiz: any = ref(null)
     let listFacilityBizTypeForUser:any = ref([])
@@ -40,24 +35,18 @@ export default defineComponent({
     })
 
     const { result } = useQuery(
-        queries.getSubscriptionRequest, payload.value,
+        queries.getDataFacilityBusiness, {
+          companyId: companyId
+        },
         () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
         })
     );
-    watch(() => userInfor.value?.id, (value) => {
-      if(value){
-        payload.value.id = value
-        trigger.value = true
-      }
-    },{
-      deep: true
-    })
     watch(result, (value) => {
-      if(value.getSubscriptionRequest) {
-        listFacilityBizTypeForUser.value = value.getSubscriptionRequest.content.accounting.facilityBusinesses
-        facilityBiz.value = listFacilityBizTypeForUser.value[0].facilityBizType
+      if(value.getMyCompanyFacilityBusinesses) {
+        listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
+        facilityBiz.value = value.getMyCompanyFacilityBusinesses[0].facilityBusinessId
       }
       trigger.value = false
     })
