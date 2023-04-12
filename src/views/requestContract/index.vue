@@ -10,7 +10,7 @@
             </a-steps>
             <div class="step-content">
                 <form action="your-action">
-                    <template v-if="step === 0">
+                    <section v-if="step === 0" class="step1">
                         <div class="mt-3">
                             <div class="custom-checkbox-step-1">
                                 <label>1. 서비스약관 동의</label>
@@ -19,7 +19,9 @@
                                         @change="checkAllFunc" :disabled="false" :size="16" />
                                 </div>
                             </div>
-                            <text-area-box placeholder="서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                                {{ regesterInput1 }}
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" label="동의함"
                                     :disabled="false" :size="16" />
@@ -27,7 +29,9 @@
                         </div>
                         <div>
                             <label>2. 개인정보제공 및 활용동의</label>
-                            <text-area-box placeholder="개인정보제공 및 활용동의" disabled></text-area-box>
+                            <div class="register-input">
+                                {{ regesterInput2 }}
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" label="동의함"
                                     :disabled="false" :size="16" />
@@ -35,7 +39,9 @@
                         </div>
                         <div>
                             <label>3. 회계서비스약관 동의</label>
-                            <text-area-box placeholder="회계서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                                {{ regesterInput3 }}
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService" label="동의함"
                                     :disabled="false" :size="16" />
@@ -43,13 +49,15 @@
                         </div>
                         <div>
                             <label>4. 원천서비스약관 동의</label>
-                            <text-area-box placeholder="원천서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                                {{ regesterInput4 }}
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService" label="동의함"
                                     :disabled="false" :size="16" />
                             </div>
                         </div>
-                    </template>
+                    </section>
                     <template v-if="step === 1">
                         <div class="form-group">
                             <label>1. 사업자정보</label>
@@ -105,7 +113,7 @@
                                     <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
                                         v-model:value="contractCreacted.fax" />
                                 </div>
-                                <div class="d-flex mt-10 pl-10">
+                                <div class="d-flex mt-10">
                                     <div>
                                         <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10" />
                                     </div>
@@ -348,7 +356,7 @@ import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
 import { makeDataClean } from "@/helpers/commonFunction"
-import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
+import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3, regesterInput1, regesterInput2, regesterInput3, regesterInput4 } from "./utils";
 import dayjs from 'dayjs';
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
@@ -664,7 +672,7 @@ export default {
                     },
                     president: {
                         name: contractCreacted.namePresident,
-                        birthday: parseInt(dayjs(contractCreacted.birthday).format('YYYYMMDD')),
+                        birthday: contractCreacted.birthday,
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },
@@ -773,7 +781,7 @@ export default {
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, 
+            optionSale, regesterInput1, regesterInput2, regesterInput3, regesterInput4,
         };
     },
 };
