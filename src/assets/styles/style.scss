@@ -57,7 +57,7 @@ table tr td {
 
 $lenght: 50;
 
-@for $i from 1 through $lenght {
+@for $i from 0 through $lenght {
   .pl-#{$i} {
     padding-left: $i+ px;
   }
