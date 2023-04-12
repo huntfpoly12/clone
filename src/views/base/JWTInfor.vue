@@ -14,7 +14,7 @@
         accounting :
         <ul>
         <li v-for="item in infos">
-          id : {{ item.id }} - startYearMonth : {{ item.startYearMonth }} - additionalServiceTypes : {{ item.additionalServiceTypes }}
+          facilityBusinessId : {{ item.id }} - startYearMonth : {{ item.startYearMonth }} - additionalServiceTypes : {{ item.additionalServiceTypes }}
         </li>
         </ul>
         <br/>
