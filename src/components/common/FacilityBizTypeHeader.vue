@@ -46,8 +46,9 @@ export default defineComponent({
         })
     );
     watch(result, (value) => {
-      if(value.getMyCompanyFacilityBusinesses) {
+      if(!!value.getMyCompanyFacilityBusinesses && value.getMyCompanyFacilityBusinesses.length) {
         listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
+        store.commit('settings/setListFacilityBizTypeForUser', value.getMyCompanyFacilityBusinesses)
       }
       trigger.value = false
     })

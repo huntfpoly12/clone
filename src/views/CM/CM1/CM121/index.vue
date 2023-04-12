@@ -48,7 +48,7 @@
               </DxColumn>
               <DxColumn caption="통장별명" data-field="bankbookNickname" />
               <DxColumn caption="사업구분" data-field="facilityBusinessId">
-                <DxLookup :data-source="facilityBizTypeCommon" value-expr="v" display-expr="n" />
+                <DxLookup :data-source="listFacilityBizTypeForUser" display-expr="name" value-expr="facilityBusinessId" />
               </DxColumn>
               <DxColumn caption="스크래핑 이용 여부" data-field="useScrap" />
               <DxColumn caption="최종 스크래핑 현황" width="130px" cell-template="action" />
@@ -75,8 +75,8 @@
               <a-row class="cm-121_detail-infomation-top">
                 <a-col span="12">
                   <a-form-item label="사업구분" class="form-item-top">
-                    <select-box-common :arrSelect="facilityBizTypeCommon" :required="true"
-                      v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="n" valueExpr="v"
+                    <select-box-common :arrSelect="listFacilityBizTypeForUser" :required="true"
+                      v-model:valueInput="dataDetailBankbook.facilityBusinessId" displayeExpr="name" valueExpr="facilityBusinessId"
                       width="150px" :disabled="true" />
                   </a-form-item>
                   <a-form-item label="금융기관" class="form-item-top">
@@ -229,7 +229,7 @@ import PopupRegisterBankbook from './components/PopupRegisterBankbook.vue'
 import PopupDeleteBankbook from './components/PopupDeleteBankbook.vue'
 import PopupLastScrapingStatus from './components/PopupLastScrapingStatus.vue'
 import DxButton from "devextreme-vue/button";
-import { FacilityBizType, BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
+import { BankType, enum2Entries, BankBookUseType } from "@bankda/jangbuda-common";
 import DxSelectBox from "devextreme-vue/select-box";
 import notification from '@/utils/notification';
 import HistoryPopup from "@/components/HistoryPopup.vue";
@@ -258,7 +258,6 @@ export default defineComponent({
     let isUpdate = ref<boolean>(false)
     let isModalLastScrapingStatus = ref<boolean>(false)
     let isNewCreate = ref<boolean>(false)
-    const facilityBizTypeCommon = FacilityBizType.all();
     const bankTypeCommon = BankType.all();
     const focusedRowKey = ref()
     let indexRow = ref(0)
@@ -281,6 +280,7 @@ export default defineComponent({
       facilityBusinessId: null,
       bankbookId: null
     })
+    const listFacilityBizTypeForUser = computed(() => store.state.settings.listFacilityBizTypeForUser)
     const bankbookUseType: any = computed(() => {
       let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
         value: value[1],
@@ -919,7 +919,7 @@ export default defineComponent({
       showPopupRegister,
       dataRegisterBankbook,
       dataDetailBankbook,
-      facilityBizTypeCommon,
+      listFacilityBizTypeForUser,
       bankTypeCommon,
       bankbookUseType,
       isTypeClassification,
