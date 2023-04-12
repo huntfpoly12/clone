@@ -242,7 +242,7 @@ export default defineComponent({
                         ...formState
                     }
                 }
-                dataNew = makeDataClean(dataNew)
+                dataNew = makeDataClean(dataNew, ['buildingName'])
                 createSaleMutate(dataNew)
             }
         }
