@@ -45,7 +45,7 @@
                 v-model:value="selectedItems"
                 :options="menuData.map((item) => ({
                     value: item.id,
-                    label: item.id + ' | ' + item.name,
+                    label: item.id + ' | ' + item.name
                   }))"
                 show-search
                 placeholder="메뉴를 입력해보세요"
@@ -648,7 +648,7 @@ export default defineComponent({
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
     watch(()=>store.state.common.activeTab, (newValue)=>{
-        selectedItems.value = newValue.id || null
+        selectedItems.value = null
         activeTab.value = newValue;
     }, { deep: true })
 
