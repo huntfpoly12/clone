@@ -1,18 +1,23 @@
 <template>
-  <a-modal :visible="true" @cancel="setModalStatus" :mask-closable="false" class="confirm-md" footer="" :width="700">
+  <a-modal title="4대보험 관리지사정보" :visible="true" @cancel="setModalStatus" :mask-closable="false" class="confirm-md"
+    footer="" :width="700">
     <section class="mt-20">
       <a-spin :spinning="false">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="code" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="신고 종류" data-field="code" />
-          <DxColumn caption="업체멍" data-field="bizNumber" />
-          <DxColumn caption="직원명" data-field="name" />
-          <DxColumn caption="발송대상" data-field="presidentName" />
-          <DxColumn caption="발송" data-field="presidentName" />
+          <DxEditing :allow-updating="true" mode="cell" />
+          <DxColumn caption="보험명" data-field="code" :allowEditing="false" />
+          <DxColumn caption="지사명" data-field="bizNumber" />
+          <DxColumn caption="팩스번호" data-field="name" />
         </DxDataGrid>
       </a-spin>
+      <a-row class="mt-15">
+        <a-col :span="8" :offset="8" style="text-align: center">
+          <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save-edit" @onClick="onSubmit" />
+        </a-col>
+      </a-row>
     </section>
   </a-modal>
 </template>
@@ -22,14 +27,19 @@ import { defineComponent, ref } from 'vue';
 import mutations from '@/graphql/mutations/BF/BF6/BF620/index';
 import notification from '@/utils/notification';
 import { useStore } from 'vuex';
-import DxDataGrid, { DxColumn, DxScrolling, DxSummary } from 'devextreme-vue/data-grid';
+import DxDataGrid, { DxColumn, DxEditing, DxScrolling, DxSummary } from 'devextreme-vue/data-grid';
 
 export default defineComponent({
   setup(props, { emit }) {
     console.log(`output-`,)
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const dataSource = ref([]);
+    const dataSource = ref([
+      { code: '국민연금', bizNumber: '', name: '' },
+      { code: '건강보험', bizNumber: '', name: '' },
+      { code: '고용보험', bizNumber: '', name: '' },
+      { code: '산재보험', bizNumber: '', name: '' },
+    ]);
     //
     // const companiesInElectronicDataSource = ref([]);
     // const companiesInElectronicTrigger = ref(false);
@@ -94,6 +104,9 @@ export default defineComponent({
     const setModalStatus = () => {
       emit("closeModal", false)
     };
+    const onAllowUpdate = (e: any) => {
+      console.log(`output->e`, e)
+    }
     return {
       onSubmit,
       setModalStatus,
@@ -101,32 +114,14 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
+      onAllowUpdate,
     };
   },
-  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary }
+  components: { DxDataGrid, DxScrolling, DxColumn, DxSummary, DxEditing }
 });
 </script>
 <style lang="scss" scoped>
-.eamil-input {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 20px;
-
-  span {
-    padding-right: 10px;
-  }
-}
-
-.mt-50 {
-  margin-top: 50px;
-}
-
-.text-align-center {
-  text-align: center;
-}
-
-.button-form-modal {
-  margin: 0px 5px;
+:deep .dx-datagrid-content .dx-datagrid-table .dx-row>td {
+  height: 20px;
 }
 </style>

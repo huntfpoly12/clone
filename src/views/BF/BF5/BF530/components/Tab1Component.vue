@@ -1,7 +1,6 @@
 <template>
   <div class="tab-group">
     <section>
-      {{ modalStatus }}
       <a-row :gutter="[0, 5]">
         <a-rol class="mr-15">
           <a-form-item label="업체명">
@@ -59,64 +58,99 @@
       <button-basic @onClick="handleOkConfirm" mode="contained" type="default" text="팩스발송" />
     </a-row>
     <div class="content-grid">
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
-        key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true"
-        @editor-preparing="onEditorPreparing">
+        @editor-preparing="onEditorPreparing" :repaint-changes-only="true">
         <DxScrolling mode="standard" show-scrollbar="always" />
+        <DxColumnFixing :enabled="true" />
+        <DxEditing :allow-updating="true" mode="row" :use-icons="true" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
-        <DxColumn caption="일련번호" data-field="companyCode" cell-template="companyCode" />
-        <template #companyCode="{ data }">
-          {{ data.data.companyCode }}
-          {{ data.data.active ? '' : '해지' }}
+        <DxColumn caption="일련번호" data-field="companyCode" :allow-editing="false" />
+        <DxColumn caption="업체명" data-field="companyName" :allow-editing="false" />
+        <DxColumn caption="사업자등록번호" data-field="inputYearMonth" :allow-editing="false" />
+        <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" :allow-editing="false" />
+        <DxColumn caption="대표자명" data-field="reportType" width="95px" :allow-editing="false" />
+        <DxColumn caption="직원수" data-field="afterDeadline" width="155px" :allow-editing="false" />
+        <DxColumn data-field="totalCollectedTaxAmount" caption="수임상태"  width="125">
+          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+        </DxColumn>
+        <DxColumn data-field="statusUpdatedAt" caption="상태(처리상태)" width="125">
+          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+        </DxColumn>
+        <DxColumn data-field="lastProductionRequestedAt" caption="수임일" width="125" data-type="date">
+        </DxColumn>
+        <DxColumn data-field="productionStatus" caption="해지일" width="125" data-type="date">
+        </DxColumn>
+        <DxColumn data-field="productionStatus1" caption="메모" width="125">
+          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+        </DxColumn>
+        <DxColumn data-field="productionStatus2" caption="건강EDI 연계상태 " width="125">
+          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+        </DxColumn>
+        <DxColumn data-field="productionStatus3" caption="연금EDI 연계상태 " width="125">
+          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+        </DxColumn>
+        <DxColumn caption="관할지사정보수정" cell-template="productionStatus" :allow-editing="false" />
+        <template #productionStatus>
+          <button-basic @onClick="onOpenPop2" mode="contained" type="default" text="수정" />
         </template>
-        <DxColumn caption="업체명" cell-template="companyName" />
-        <template #companyName="{ data }">
-          {{ data.data.companyName }}
-          {{ data.data.address }}
+        <DxColumn caption="건강보험 EDI 위임장" cell-template="downA" alignment="right" :allow-editing="false" />
+        <template #downA="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
-        <DxColumn caption="사업자등록번호" cell-template="inputYearMonth" width="102px" />
-        <template #inputYearMonth="{ data }">
-          <!-- {{ data.data.imputedYear }} -->
-          <a-tooltip color="black">
-            <template #title>삭제</template>
-            <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
-              color: 'white',
-              backgroundColor: 'gray',
-              height: $config_styles.HeightInput
-            }" class="btn-date" />
-          </a-tooltip>
+        <DxColumn caption="국민연금 EDI 위임장 " cell-template="downB" alignment="right" :allow-editing="false" />
+        <template #downB="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
-        <DxColumn caption="사업장관리번호" cell-template="paymentYearMonth" width="102px" />
-        <template #paymentYearMonth="{ data }">
-          <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
-            color: 'white',
-            backgroundColor: 'black',
-            height: $config_styles.HeightInput
-          }" class="btn-date" />
+        <DxColumn caption="보험사무대행기관 사무위탁서" cell-template="downC" alignment="right" :allow-editing="false" />
+        <template #downC="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
-        <DxColumn caption="대표자명" cell-template="reportType" width="95px" />
-        <template #reportType="{ data }">
-          <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-          <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
-          <div v-else></div>
+        <DxColumn caption="위임장" cell-template="downD" alignment="right" :allow-editing="false" />
+        <template #downD="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
-        <DxColumn caption="직원수" cell-template="afterDeadline" width="155px" />
-        <template #afterDeadline="{ data }">
-          <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
-          <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
-          <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
-            data.data.index }}</div>
+        <DxColumn caption="고용산재 업무대행 수임(해지)신청서" cell-template="downE" alignment="right" :allow-editing="false" />
+        <template #downE="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
-        <DxColumn caption="수임상태(A99)" data-field="totalCollectedTaxAmount" format=",###" />
-        <DxColumn caption="상태(처리상태) " data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="수임일" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="해지일" cell-template="productionStatus" />
-        <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
-            @productionStatusData="productionStatusData" />
-          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+        <DxColumn caption="사무위탁해지통지서" cell-template="downF" alignment="right" :allow-editing="false" />
+        <template #downF="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
+        </template>
+        <DxColumn caption="개인정보제공 동의서" cell-template="downG" alignment="right" :allow-editing="false" />
+        <template #downG="{ data }" class="custom-action">
+          <div class="d-flex justify-content-center">
+            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
+              <DownloadOutlined :size="12" />
+            </DxButton>
+          </div>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -126,7 +160,8 @@
         </DxSummary>
       </DxDataGrid>
     </div>
-    <Tab1PopUp1 v-if="modalStatus" @closeModal="modalStatus = false"/>
+    <Tab1PopUp1 v-if="modalStatus1" @closeModal="modalStatus1 = false" />
+    <Tab1PopUp2 v-if="modalStatus2" @closeModal="modalStatus2 = false" />
   </div>
 </template>
 
@@ -138,15 +173,16 @@ import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
-import { SaveOutlined } from '@ant-design/icons-vue';
+import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel, DxEditing, DxLookup, DxColumnFixing } from 'devextreme-vue/data-grid';
+import { DownloadOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import GetStatusTable from './GetStatusTable.vue';
 import notification from '@/utils/notification';
 import { Message } from '@/configs/enum';
-import { reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, formatMonth } from '../utils/index'
+import { reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, formatMonth, dataTableTab1, states1 } from '../utils/index'
 import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
 import Tab1PopUp1 from './Tab1PopUp1.vue';
+import Tab1PopUp2 from './Tab1PopUp2.vue';
 export default defineComponent({
   components: {
     SearchArea,
@@ -161,8 +197,13 @@ export default defineComponent({
     DxTotalItem,
     GetStatusTable,
     DxLoadPanel,
-    Tab1PopUp1
-},
+    Tab1PopUp1,
+    Tab1PopUp2,
+    DxEditing,
+    DxLookup,
+    DownloadOutlined,
+    DxColumnFixing
+  },
   props: {
     search: {
       type: Number,
@@ -210,7 +251,7 @@ export default defineComponent({
 
     //-----------------------Search with holding and data source----------------
 
-    const dataSource = ref<any[]>([]);
+    const dataSource = ref<any[]>([...dataTableTab1]);
     const filteredDataSource = ref<any[]>([]);
     let searchWithholdingParam = ref({
       paymentMonth: formState.paymentMonth,
@@ -398,15 +439,19 @@ export default defineComponent({
         });
       // requestFileData.value.filter
     };
-    const modalStatus = ref<boolean>(false);
+    const modalStatus1 = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+    //handleOkConfirm
+    const handleOkConfirm = () => {
+      modalStatus1.value = true;
+    }
     const onRequestFile = () => {
       requestFileData.value.emailInput = {
         receiverName: userInfor.value.name,
         receiverAddress: userInfor.value.email,
       };
       if (requestFileData.value.reportKeyInputs.length > 0) {
-        modalStatus.value = true;
+        modalStatus1.value = true;
       } else {
         notification('warning', messageDelNoItem);
       }
@@ -423,17 +468,22 @@ export default defineComponent({
       //   }
       // }
     }
-    //handleOkConfirm
-    const handleOkConfirm = () => {
-      modalStatus.value = true;
+    const modalStatus2 = ref<boolean>(false);
+    const onOpenPop2 = () => {
+      modalStatus2.value = true;
     }
+    const onGetAcquistionRp = (workId: any) => {
+      // actionParam.workId = workId;
+      // fillRpTrigger.value = true;
+      // fillRpRefetch();
+    };
     return {
       formState, rangeDate,
       move_column,
       colomn_resize,
       dataSource,
       onRequestFile,
-      modalStatus,
+      modalStatus1, modalStatus2,
       requestFileData,
       userInfor,
       productionStatusData,
@@ -445,8 +495,9 @@ export default defineComponent({
       searchWithholdingParam,
       filteredDataSource,
       onEditorPreparing,
-      reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox,
-      handleOkConfirm,
+      reportTypeSelectbox, situationSelectbox, acceptanceStatusSelectbox, healthSelectbox, states1,
+      handleOkConfirm, onOpenPop2,
+      onGetAcquistionRp,
     };
   },
 })
