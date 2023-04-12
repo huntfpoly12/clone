@@ -174,7 +174,7 @@ export default defineComponent({
 					input: {
 						username: formState.username,
 						name: formState.name,
-						accountingRole: false,
+						accountingRole: formState.facilityBusinessIds.length ? true : false,
 						facilityBusinessIds: formState.facilityBusinessIds,
 						withholdingRole: formState.withholdingRole,
 						mobilePhone: formState.mobilePhone,
