@@ -288,7 +288,7 @@ export default defineComponent({
                     id: id.value,
                     input: formState
                 };
-                variables = makeDataClean(variables)
+                variables = makeDataClean(variables, ['buildingName'])
                 actionUpdate(variables);
             }
         }
