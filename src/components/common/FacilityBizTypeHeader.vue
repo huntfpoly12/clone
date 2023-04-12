@@ -11,27 +11,26 @@ import { useStore } from 'vuex';
 import queries from "@/graphql/queries/CM/CM110/index"
 import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
-// import { FacilityBizType } from "@bankda/jangbuda-common";
 export default defineComponent({
   components: {
   },
   setup() {
     const store = useStore();
-    const trigger = ref<boolean>(true)
+    const trigger = ref<boolean>(false)
     const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
     let facilityBiz: any = ref(null)
     let listFacilityBizTypeForUser:any = ref([])
-    // let facilityBizTypeCommon = ref()
-    // facilityBizTypeCommon.value = FacilityBizType.all();
     watch(() => facilityBiz.value, (value) => {
       store.commit('settings/setGlobalFacilityBizId', value)
     },{
       deep: true,
-      immediate: true
     })
     watch(() => globalFacilityBizId.value, (value) => {
       if(value === facilityBiz)return
       facilityBiz.value = value
+    },{
+      deep: true,
+      immediate: true,
     })
 
     const { result } = useQuery(
@@ -43,10 +42,18 @@ export default defineComponent({
             fetchPolicy: "no-cache",
         })
     );
+    watch(()=> companyId, (value) => {
+      if(!!value) {
+        trigger.value = true
+      }
+    }, {
+      deep: true,
+      immediate: true
+    })
     watch(result, (value) => {
-      if(value.getMyCompanyFacilityBusinesses) {
+      if(!!value.getMyCompanyFacilityBusinesses && value.getMyCompanyFacilityBusinesses.length) {
         listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
-        facilityBiz.value = value.getMyCompanyFacilityBusinesses[0].facilityBusinessId
+        store.commit('settings/setListFacilityBizTypeForUser', value.getMyCompanyFacilityBusinesses)
       }
       trigger.value = false
     })

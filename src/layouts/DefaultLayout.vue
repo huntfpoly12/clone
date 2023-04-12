@@ -45,7 +45,7 @@
                 v-model:value="selectedItems"
                 :options="menuData.map((item) => ({
                     value: item.id,
-                    label: item.id + ' | ' + item.name,
+                    label: item.id + ' | ' + item.name
                   }))"
                 show-search
                 placeholder="메뉴를 입력해보세요"
@@ -527,7 +527,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute();
     const collapsed = ref(false);
-    const selectedItems = ref([]);
+    const selectedItems = ref(null);
     const activeTab = ref();
     let menuTab = ref([]);
     const tabDashboard = { name: "Dashboard", url: "/dashboard", id: "" }
@@ -540,6 +540,12 @@ export default defineComponent({
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
+
+    const infosAccounting = jwtObject.accounting;
+    if(!!infosAccounting && infosAccounting.length) {
+      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    }
+
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
@@ -642,6 +648,7 @@ export default defineComponent({
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
     watch(()=>store.state.common.activeTab, (newValue)=>{
+        selectedItems.value = null
         activeTab.value = newValue;
     }, { deep: true })
 
