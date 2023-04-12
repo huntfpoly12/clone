@@ -15,7 +15,30 @@ export default gql`
       month: $month
     ) {
       lastBalance
-      accountingDocuments
+      accountingDocuments {
+        transactionDetailDate
+        documentOrderByDate
+        resolutionNumber
+        bankbook {
+          bankbookNickname
+          type
+          bankbookNumber
+        }
+        resolutionClassification
+        income
+        spending
+        summaryOfBankbookDetail
+        summary
+        accountCode
+        relationCode
+        fundingSource
+        clientId
+        proofCount
+        goodsCount
+        handwriting
+        resolutionNormalStatus
+        lastBalance
+      }
     }
   }
 `;
