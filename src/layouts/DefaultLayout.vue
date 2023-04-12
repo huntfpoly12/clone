@@ -615,11 +615,15 @@ export default defineComponent({
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      if(menuTab.value.length === 1) return
+      if(menuTab.value.length === 1 && item.id === '') return
       tabRemove.value = item
       isRemoveTab.value = true
-      const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
-      setMenuTab(newMenuTab)
+      if(menuTab.value.length === 1) {
+        setMenuTab([])
+      }else {
+        const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
+        setMenuTab(newMenuTab)
+      }
     }
     const changeActiveTab  = (item)=>{
       if(activeTab.value.id === item.id) return
@@ -654,31 +658,45 @@ export default defineComponent({
 
     watch(() => store.state.common.menuTab, (value) => {
       if(isRemoveTab.value) {
-        const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
-        menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
-        const maxInexBeforeRemove =  menuTab.value.length
-        let indexActive = 0
-        if(indexTabRemove === maxInexBeforeRemove){
-          indexActive = indexTabRemove - 1
-        }else {
-          indexActive = indexTabRemove
+        if(value.length){
+          const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
+          menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
+          const maxInexBeforeRemove =  menuTab.value.length
+          let indexActive = 0
+
+          if(tabIndex.value === maxInexBeforeRemove && indexTabRemove === maxInexBeforeRemove){
+            indexActive = tabIndex.value - 1
+          }else {
+            if(indexTabRemove < tabIndex.value){
+              indexActive = tabIndex.value - 1
+            }else{
+              indexActive = tabIndex.value
+            }
+          }
+          activeTab.value = {
+            id: menuTab.value[indexActive].id,
+            name: menuTab.value[indexActive].name, 
+            url: menuTab.value[indexActive].url, 
+            roles: menuTab.value[indexActive].roles,
+          };
+          store.state.common.activeTab =  {...activeTab.value}
+          nextTick(() => {
+            tabIndex.value = indexActive
+          })
+        }else{
+          isRemoveTab.value = false
+          menuTab.value = []
+          openTab(tabDashboard)
+          return 
         }
-        activeTab.value = {
-          id: menuTab.value[indexActive].id,
-          name: menuTab.value[indexActive].name, 
-          url: menuTab.value[indexActive].url, 
-          roles: menuTab.value[indexActive].roles,
-        };
-        store.state.common.activeTab =  {...activeTab.value}
-        nextTick(() => {
-          tabIndex.value = indexActive
-        })
         isRemoveTab.value = false
         return
       }
       const newItem = value[value.length - 1]
       menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
-      tabIndex.value = menuTab.value.length - 1
+      nextTick(() => {
+        tabIndex.value = menuTab.value.length - 1
+      })
     }, {
       deep: true,
     })

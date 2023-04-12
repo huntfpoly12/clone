@@ -21,7 +21,7 @@
             </template>
             <DxColumn alignment="left" caption="성명" data-field="name" />
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
-            <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
+            <DxColumn alignment="left" caption="주민등록번호" cell-template="residentId" data-field="residentId" />
             <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
             <DxColumn alignment="left" header-cell-template="basicDeduction-header" data-field="basicDeduction"
               cell-template="basicDeductionChange" />
@@ -52,6 +52,9 @@
             <template #foreignerChange="{ data: cellData }">
               <div v-if="!cellData.value">내</div>
               <div v-else class="tag-foreigner">외 </div>
+            </template>
+            <template #residentId="{ data: cellData }">
+              <div>{{ cellData.value.slice(0, 6) + '-' + cellData.value.slice(6, 13) }}</div>
             </template>
             <template #womenChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />

@@ -35,12 +35,12 @@
                             </div>
                         </div>
                         <div v-if="activeKey == '3'">
-                            <a-tooltip color="black">
+                            <!-- <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
                                 </a-button>
-                            </a-tooltip>
+                            </a-tooltip> -->
                         </div>
                     </div>
                 </template>
@@ -146,7 +146,7 @@
                                     <a-row :gutter="24">
                                         <a-col>
                                             <a-form-item label="사업장주소" :label-col="labelCol">
-                                                <default-text-box style="width: 574px; margin-right: 10px; float: left;"
+                                                <default-text-box style="width: 565px; margin-right: 10px; float: left;"
                                                     :disabled="true"
                                                     v-model:valueInput="formState.companyAddressInfoAddress">
                                                 </default-text-box>
@@ -197,13 +197,13 @@
                                                     </a-form-item>
                                                 </a-col>
                                                 <a-col>
-                                                    <div style="margin-left: 22px;">
-                                                        <span>지방소득세 납세지:</span>
-                                                        <default-text-box
-                                                            style="width: 200px; display: inline-block; margin-left: 10px;"
-                                                            :disabled="true"
-                                                            v-model:valueInput="formState.localIncomeTaxArea">
-                                                        </default-text-box>
+                                                    <div style="margin-left: 20px; margin-right: 3px;">
+                                                        <a-form-item label="지방소득세 납세지" :label-col="labelCol">
+                                                            <default-text-box width="170"
+                                                                :disabled="true"
+                                                                v-model:valueInput="formState.localIncomeTaxArea">
+                                                            </default-text-box>
+                                                        </a-form-item>
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>

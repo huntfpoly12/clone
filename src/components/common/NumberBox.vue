@@ -5,7 +5,7 @@
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
     <DxValidator v-if="required" :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxRangeRule v-if="required" :min="min" :message="messageMin"/>
+      <DxRangeRule v-if="required && min" :min="min" :message="messageMin"/>
     </DxValidator>
   </DxNumberBox>
 </template>
@@ -32,7 +32,10 @@ export default defineComponent({
       type: [String, Number],
       default: 0,
     },
-    min: Number,
+    min: {
+      type: Number,
+      default: null,
+    },
     max: Number,
     readOnly: Boolean,
     rtlEnabled: {
