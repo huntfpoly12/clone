@@ -16,7 +16,7 @@
               <DxButton icon="plus" @click="openAddDependent" />
             </template>
             <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relationChange" />
-            <DxColumn alignment="left" caption="성명" data-field="name" :width="80" />
+            <DxColumn alignment="left" caption="성명" data-field="name"/>
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
