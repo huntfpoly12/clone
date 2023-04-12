@@ -540,6 +540,12 @@ export default defineComponent({
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
+
+    const infosAccounting = jwtObject.accounting;
+    if(!!infosAccounting && infosAccounting.length) {
+      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    }
+
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
      //get and set account subject
