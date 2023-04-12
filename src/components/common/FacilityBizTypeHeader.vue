@@ -27,11 +27,13 @@ export default defineComponent({
       store.commit('settings/setGlobalFacilityBizId', value)
     },{
       deep: true,
-      immediate: true
     })
     watch(() => globalFacilityBizId.value, (value) => {
       if(value === facilityBiz)return
       facilityBiz.value = value
+    },{
+      deep: true,
+      immediate: true,
     })
 
     const { result } = useQuery(
@@ -46,7 +48,6 @@ export default defineComponent({
     watch(result, (value) => {
       if(value.getMyCompanyFacilityBusinesses) {
         listFacilityBizTypeForUser.value = value.getMyCompanyFacilityBusinesses
-        facilityBiz.value = value.getMyCompanyFacilityBusinesses[0].facilityBusinessId
       }
       trigger.value = false
     })
