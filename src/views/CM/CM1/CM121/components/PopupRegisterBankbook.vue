@@ -6,8 +6,8 @@
 
         <div class="cmc121-popup-from-select-data">
           <a-form-item class="mr-10">
-            <select-box-common :arrSelect="facilityBizTypeCommon"
-              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="n" valueExpr="v" width="160px" placeholder="사업유형 선택"/>
+            <select-box-common :arrSelect="listFacilityBizTypeForUser"
+              v-model:valueInput="dataFrom.facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId" width="160px" placeholder="사업유형 선택"/>
           </a-form-item>
           <span class="mr-10">에</span>
           <a-form-item class="clr mr-10" label-align="left">
@@ -24,8 +24,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue'
-import { FacilityBizType, BankType } from "@bankda/jangbuda-common";
+import { defineComponent, ref, reactive, computed } from 'vue'
+import { useStore } from 'vuex';
+import { BankType } from "@bankda/jangbuda-common";
 import notification from "@/utils/notification";
 export default defineComponent({
   props: {
@@ -38,15 +39,14 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
+    const store = useStore();
     const dataFrom = reactive({
       facilityBiz: null,
       type: null,
     })
-    let facilityBizTypeCommon = ref()
     let bankTypeCommon = ref()
-    facilityBizTypeCommon.value = FacilityBizType.all();
     bankTypeCommon.value = BankType.all();
-    
+    const listFacilityBizTypeForUser = computed(() => store.state.settings.listFacilityBizTypeForUser)
 
     const setModalVisible = () => {
       emit("closePopup", false)
@@ -67,7 +67,7 @@ export default defineComponent({
     return {
       setModalVisible,
       submit,
-      facilityBizTypeCommon,
+      listFacilityBizTypeForUser,
       bankTypeCommon,
       dataFrom,
       cancel

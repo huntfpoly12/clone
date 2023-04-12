@@ -101,7 +101,10 @@
         </div>
       </div>
       <div class="ac-110__top-flex">
-        <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+        <div class="ac-110__top-flex-action">
+          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
+        </div>
         <div class="ac-110__top-flex-action">
           <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
             @onClick="openPopupRetrieveStatements" />
@@ -312,7 +315,9 @@
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
-      typeHistory="ac-110" :data="payloadGetTransactionDetails" />
+      typeHistory="ac-110-bankbook" :data="payloadGetTransactionDetails" />
+    <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs" @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" :idRowEdit="idRowEdit"
+      typeHistory="ac-110-accounting" :data="payloadGetAccountingProcessLogs" />
   </div>
 </template>
 <script lang="ts">
@@ -428,9 +433,17 @@ export default defineComponent({
       fiscalYear: globalYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       bankbookDetailDate: null,
-      bankbookDetailId: null
+      bankbookDetailId: null,
+    })
+    const payloadGetAccountingProcessLogs: any = reactive({
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: globalFacilityBizId.value,
+      year: globalYear.value,
+      month: monthSelected.value
     })
     const isModalHistory = ref<boolean>(false);
+    const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value))
@@ -584,6 +597,9 @@ export default defineComponent({
     }
     const modalHistory = () => {
       isModalHistory.value = true
+    }
+    const modalHistoryAccountingProcessLogs = () => {
+      isModalHistoryAccountingProcessLogs.value = true
     }
     const selectedMonth = (month: number) => {
       monthSelected.value = month
@@ -880,7 +896,10 @@ export default defineComponent({
       addNewRowTransactionDetails,
       dataStatementOfGoodsItems,
       monthSelected,
-      selectedMonth
+      selectedMonth,
+      payloadGetAccountingProcessLogs,
+      isModalHistoryAccountingProcessLogs,
+      modalHistoryAccountingProcessLogs
     };
   },
 });

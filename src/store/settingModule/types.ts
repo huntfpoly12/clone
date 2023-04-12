@@ -20,6 +20,7 @@ export interface SettingState {
   newYear: number,
   globalYear: number,
   globalFacilityBizId: number | null,
+  listFacilityBizTypeForUser: any[],
   accountSubject: any
   
 }
