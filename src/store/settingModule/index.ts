@@ -21,6 +21,7 @@ const settingModule: Module<SettingState, any>  = {
     newYear: dayjs().year(), // lưu trữ năm mới khi click năm
     // globalFacilityBizId
     globalFacilityBizId: null,
+    listFacilityBizTypeForUser: [],
     accountSubject: {}
   },
   mutations: mutations,
