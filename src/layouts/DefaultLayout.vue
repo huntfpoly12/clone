@@ -43,7 +43,7 @@
             <div v-if="!collapsed" class="wrap-search">
               <a-select
                 v-model:value="selectedItems"
-                :options=" menuData.map((item) => ({
+                :options="menuData.map((item) => ({
                     value: item.id,
                     label: item.id + ' | ' + item.name,
                   }))"
@@ -51,6 +51,7 @@
                 placeholder="메뉴를 입력해보세요"
                 style="width: 180px"
                 optionFilterProp="label"
+                :disabled="menuTab.length >= MAX_TAB"
                 @change="addMenuTab"
               />
             </div>
@@ -193,6 +194,7 @@ import {
   BF330,
   BF340,
   BF210,
+  BF530,
   BF610,
   BF620,
   BF640,
@@ -280,6 +282,7 @@ export default defineComponent({
     BF330,
     BF340,
     BF210,
+    BF530,
     BF610,
     BF620,
     BF640,
@@ -458,6 +461,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-340") return 'BF340';
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "bf-530") return 'BF530';
       if (this.activeTab.id === "bf-610") return 'BF610';
       if (this.activeTab.id === "bf-620") return 'BF620';
       if (this.activeTab.id === "bf-640") return 'BF640';
@@ -510,6 +514,7 @@ export default defineComponent({
     },
   },
   setup() {
+    const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref([]);
@@ -583,8 +588,8 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      if (menuTab.value.length > 20) {
-        alert("Maximum only 20 tab")
+      if (menuTab.value.length >= MAX_TAB) {
+        alert(`Maximum only ${MAX_TAB} tab`)
         return
       }
       const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
@@ -651,7 +656,6 @@ export default defineComponent({
         }else {
           indexActive = indexTabRemove
         }
-        tabIndex.value = indexActive
         activeTab.value = {
           id: menuTab.value[indexActive].id,
           name: menuTab.value[indexActive].name, 
@@ -659,6 +663,9 @@ export default defineComponent({
           roles: menuTab.value[indexActive].roles,
         };
         store.state.common.activeTab =  {...activeTab.value}
+        nextTick(() => {
+          tabIndex.value = indexActive
+        })
         isRemoveTab.value = false
         return
       }
@@ -706,7 +713,8 @@ export default defineComponent({
       cachedTab,
       tabIndex,
       onTabDragStart,
-      onTabDrop
+      onTabDrop,
+      MAX_TAB
     }
   },
 });
