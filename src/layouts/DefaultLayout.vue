@@ -43,7 +43,7 @@
             <div v-if="!collapsed" class="wrap-search">
               <a-select
                 v-model:value="selectedItems"
-                :options=" menuData.map((item) => ({
+                :options="menuData.map((item) => ({
                     value: item.id,
                     label: item.id + ' | ' + item.name,
                   }))"
@@ -51,6 +51,7 @@
                 placeholder="메뉴를 입력해보세요"
                 style="width: 180px"
                 optionFilterProp="label"
+                :disabled="menuTab.length >= MAX_TAB"
                 @change="addMenuTab"
               />
             </div>
@@ -513,6 +514,7 @@ export default defineComponent({
     },
   },
   setup() {
+    const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref([]);
@@ -586,8 +588,8 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      if (menuTab.value.length > 20) {
-        alert("Maximum only 20 tab")
+      if (menuTab.value.length >= MAX_TAB) {
+        alert(`Maximum only ${MAX_TAB} tab`)
         return
       }
       const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
@@ -654,7 +656,6 @@ export default defineComponent({
         }else {
           indexActive = indexTabRemove
         }
-        tabIndex.value = indexActive
         activeTab.value = {
           id: menuTab.value[indexActive].id,
           name: menuTab.value[indexActive].name, 
@@ -662,6 +663,9 @@ export default defineComponent({
           roles: menuTab.value[indexActive].roles,
         };
         store.state.common.activeTab =  {...activeTab.value}
+        nextTick(() => {
+          tabIndex.value = indexActive
+        })
         isRemoveTab.value = false
         return
       }
@@ -709,7 +713,8 @@ export default defineComponent({
       cachedTab,
       tabIndex,
       onTabDragStart,
-      onTabDrop
+      onTabDrop,
+      MAX_TAB
     }
   },
 });
