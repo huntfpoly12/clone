@@ -59,7 +59,7 @@ export default [
         id: "bf-500",
         subMenus: [
           {title: "회계업무마감", url: "#", id: "bf-510", roles: ROLE_BF500},
-          {title: "4대보험업무관리", url: "#", id: "bf-530", roles: ROLE_BF500},
+          {title: "4대보험업무관리", url: "/dashboard/bf-530", id: "bf-530", roles: ROLE_BF500},
         ],
         roles: ROLE_BF500
       },

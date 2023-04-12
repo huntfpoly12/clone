@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="form-item">
                                     <label class="red">사업자등록번호 :</label>
-                                    <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
+                                    <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber"
                                         :required="true" />
                                 </div>
                                 <div class="form-item">
@@ -451,12 +451,12 @@ export default {
                 step.value = 1
                 window.scrollTo(0, 0);
             }
-            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
             ) {
                 step.value = 2
                 window.scrollTo(0, 0);
             }
-            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
             ) {
                 if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
                     let count = 0
@@ -528,7 +528,7 @@ export default {
                 } else if (step.value == 1) {
                     if (
                         contractCreacted.nameCompany != "" &&
-                        contractCreacted.bizNumber != "" &&
+                        contractCreacted.ownerBizNumber != "" &&
                         contractCreacted.zipcode != "" &&
                         contractCreacted.namePresident != "" &&
                         contractCreacted.birthday != "" &&
@@ -536,7 +536,7 @@ export default {
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
                         contractCreacted.addressExtend != "" &&
-                        contractCreacted.bizNumber.length == 10 &&
+                        contractCreacted.ownerBizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
                         step.value++;
@@ -620,7 +620,7 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
-        const Create = () => {
+        const Create = async () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
                 delete val.__KEY__
@@ -658,7 +658,7 @@ export default {
                         phone: contractCreacted.phone,
                         fax: contractCreacted.fax,
                         licenseFileStorageId: contractCreacted.licenseFileStorageId,
-                        bizNumber: contractCreacted.bizNumber,
+                        bizNumber: contractCreacted.ownerBizNumber,
                         bizType: contractCreacted.bizType,
                         residentId: contractCreacted.residentId,
                     },
@@ -691,8 +691,8 @@ export default {
                 }
             }
           if (dataCallCreated) {
-            dataCallCreated = makeDataClean(dataCallCreated)
-            mutateCreated(dataCallCreated)
+              await makeDataClean(dataCallCreated, ['buildingName']);
+              mutateCreated(dataCallCreated)
           }
                
         }

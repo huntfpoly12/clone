@@ -1,0 +1,101 @@
+.search-group {
+  background: #f1f3f4;
+  padding: 8px 5px;
+  margin-bottom: 10px;
+  .search-date {
+    margin-right: 30px;
+    display: flex;
+    .search-text {
+      margin-right: 20px;
+    }
+    :deep .month-custom {
+      background-color: #a6a6a6;
+      padding-left: 10px;
+      border-radius: 5px;
+      padding-right: 10px;
+      color: white;
+      height: 32px;
+      .dp__theme_light {
+        height: 100% !important;
+      }
+      .dp__input {
+        color: white;
+        padding: 0px;
+        border: none;
+        background-color: #a6a6a6;
+      }
+
+      .dp__icon {
+        display: none;
+      }
+      .dp__input {
+        font-size: 14px;
+      }
+    }
+    :deep .month-black {
+      background-color: black;
+      .dp__input {
+        background-color: black;
+      }
+    }
+    :deep .dx-radiogroup-horizontal {
+      .dx-radiobutton {
+        margin-right: 10px;
+        margin-left: 4px;
+      }
+    }
+    :deep .dx-checkbox-container {
+      margin-left: 10px;
+    }
+    :deep .dx-radiogroup{
+      margin-left: 15px;
+    }
+  }
+  .search-production {
+    margin-right: 30px;
+    :deep .ant-form-item-label > label {
+      height: 26px;
+    }
+    .production-check {
+      display: grid;
+      grid-template-columns: 45% 45%;
+      margin-left: 97px;
+    }
+    :deep .check-box-group {
+      .dx-checkbox-text {
+        margin-left: 10px;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+        width: 90px;
+      }
+      &:nth-child(1) .dx-checkbox-text {
+        background-color: #93cddd;
+      }
+      &:nth-child(2) .dx-checkbox-text {
+        background-color: #0070c0;
+      }
+      &:nth-child(3) .dx-checkbox-text {
+        background-color: #9bbb59;
+      }
+      &:nth-child(4) .dx-checkbox-text {
+        background-color: #c00000;
+      }
+    }
+    :deep .ant-form-item-control-input {
+      min-height: 26px;
+    }
+  }
+  .search-company {
+    margin-right: 30px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    :deep .ant-form-item-label > label {
+      width: 120px;
+      padding-left: 10px;
+    }
+  }
+  .search-4 {
+    align-self: center;
+  }
+}
