@@ -2,9 +2,9 @@
   <action-header title="통장내역" :buttonDelete="false" />
   <div class="ac-110">
     <div class="ac-110__top">
-      <div class="ac-110__top-grid">
+      <div v-if="listAccountingProcesses.length" class="ac-110__top-grid">
         <div v-for="(item, index) in listAccountingProcesses" :key="index" class="ac-110__top-grid-items"
-          :class="{ 'ac-110__top-grid-items-active': monthSelected === 1 }" @click="selectedMonth(1)">
+          :class="{ 'ac-110__top-grid-items-active': monthSelected === item.month }" @click="selectedMonth(item.month)">
           <div class="ac-110__top-grid-items-month">
             <span class="">{{ item.month }}</span>
             <span class="">월</span>
