@@ -1,5 +1,40 @@
-export const initialState = {};
-export const MAX_UP_LOAD = 8;
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
+export const initialStateFormAdd = {
+  bankbookId: null,
+  paymentDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  resolutionType: 1,
+  amount: null,
+  summary: null,
+  fundingSource: 3,
+  letterOfApprovalType: 1,
+};
+export const initialStateFormData = {
+  bankbookId: null,
+  paymentDate: null,
+  resolutionType: null,
+  amount: null,
+  summary: null,
+  fundingSource: null,
+  letterOfApprovalType: null,
+
+  resolutionClassification: null,
+  resolutionDate: null,
+  causeActionDate: null,
+  proposedDate: null,
+  accountingDate: null,
+  registrationDate: null,
+  bankbookNickname: null,
+  bankbookNumber: null,
+  accountCode: null,
+  relationCode: null,
+  clientId: null,
+  source: null,
+  writer: null,
+  memo: null,
+  causeUsage: null,
+  goodsCount: null,
+}
 export const dataDemoMain = [
   {
     fill1: 20230330,

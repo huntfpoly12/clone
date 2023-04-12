@@ -17,7 +17,7 @@
             <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceAC510"
                 :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                 :column-auto-width="true">
-                <DxColumn cell-template="col-first" caption="서식" />
+                <DxColumn :width="1565" cell-template="col-first" caption="서식" />
                 <template #col-first="{ data }">
                     {{ data.data.name }}<br>
                 </template>

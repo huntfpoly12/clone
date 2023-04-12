@@ -1,31 +1,38 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="800">
         <div class="mt-20">
-            <standard-form action="" class="text-align-center mt-20">
+            <standard-form formName="ac-120-form-add" ref="refFormAddAC120" class="text-align-center mt-20">
                 <a-row class="row-1">
                     <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
-                            <select-box-common :arrSelect="arraySelectBox" :required="true" :width="200" />
+                            <select-box-common placeholder="선택" :arrSelect="arraySelectBox"
+                                v-model:valueInput="initialStateFormAdd.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="200" :required="true" />
+                            <number-box :width="200" :required="true" min="0" v-model:valueInput="initialStateFormAdd.amount"
+                                placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <number-box :width="200" :required="true" />
+                            <number-box :width="200" :required="true" min="0" v-model:valueInput="initialStateFormAdd.summary"
+                                placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
-                            <FundingSourceSelect :width="200" :required="true" />
+                            <FundingSourceSelect placeholder="선택" :width="200" :required="true"
+                                v-model:valueInput="initialStateFormAdd.fundingSource" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
-                            <date-time-box width="150px" :required="true"/>
+                            <date-time-box width="150px" :required="true"
+                                v-model:valueDate="initialStateFormAdd.paymentDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
-                            <radio-group :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true"/>
+                            <radio-group :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true"
+                                v-model:valueRadioCheck="initialStateFormAdd.resolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
-                            <radio-group :arrayValue="arrayRadioCheck1" :layoutCustom="'horizontal'" :required="true"/>
+                            <radio-group :arrayValue="arrayRadioCheck1" :layoutCustom="'horizontal'" :required="true"
+                                v-model:valueRadioCheck="initialStateFormAdd.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -33,8 +40,8 @@
                 <div class="mt-20">
                     <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                         @onClick="cancel" />
-                    <button-basic class="button-form-modal" :text="'네. 등록합니다'" :type="'default'"
-                        :mode="'contained'" @onClick="submit" />
+                    <button-basic class="button-form-modal" :text="'네. 등록합니다'" :type="'default'" :mode="'contained'"
+                        @onClick="submit" />
                 </div>
             </standard-form>
         </div>
@@ -42,12 +49,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import queries from "@/graphql/queries/CM/CM120";
 import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
-
+import { initialStateFormAdd } from '../utils/index'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -64,19 +71,25 @@ export default defineComponent({
         const cancel = () => {
             emit("closePopup", false)
         };
-        const submit = () => {
-            emit("submit")
-    }
+        const refFormAddAC120 = ref()
+        
+        const dataQueryGetBankBooks = ref({
+            companyId: companyId,
+            fiscalYear: globalYear.value,
+        })
 
         const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
-        const { result: resBankbooks, loading: loadingGetBankbooks } = useQuery(queries.getBankbooks, {
-            companyId: companyId,
-            fiscalYear: globalYear,
-        }, () => ({
+
+        // =================== GRAPHQL ===================
+        // query getBankbooks
+        const { result: resBankbooks } = useQuery(queries.getBankbooks, dataQueryGetBankBooks.value, () => ({
             enabled: triggerBankbooks.value,
             fetchPolicy: "no-cache",
         }))
+        
+        // ================== WATCH ================
+        // 1. getBankbooks
         watch(resBankbooks, (value) => {
             triggerBankbooks.value = false
             arraySelectBox.value = []
@@ -89,20 +102,32 @@ export default defineComponent({
                 })
             }
         })
+
+        // ================ FUNCTION ============================================
+        const submit = () => {
+            const res = refFormAddAC120.value?.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                emit('submit', initialStateFormAdd)
+            }
+        }
         const arrayRadioCheck = [
-            { id: 0, text: '수입' },
-            { id: 1, text: '지출' },
-            { id: 2, text: '마이너스수입' },
-            { id: 3, text: '여입' }
+            { id: 1, text: '수입' },
+            { id: 2, text: '지출' },
+            { id: 3, text: '마이너스수입' },
+            { id: 4, text: '여입' }
         ]
         const arrayRadioCheck1 = [
-            { id: 0, text: '구입' },
-            { id: 1, text: '운반' },
-            { id: 2, text: '수선' },
-            { id: 3, text: '인쇄' },
-            { id: 3, text: '지출' },
+            { id: 1, text: '구입' },
+            { id: 2, text: '운반' },
+            { id: 3, text: '수선' },
+            { id: 4, text: '인쇄' },
+            { id: 5, text: '지출' },
         ]
         return {
+            refFormAddAC120,
+            initialStateFormAdd,
             submit,
             cancel,
             arraySelectBox,
