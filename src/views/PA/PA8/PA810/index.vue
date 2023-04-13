@@ -22,7 +22,11 @@
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
-          <DxButton icon="plus" @click="openAddNewModal"/>
+          <a-tooltip placement="top" title="신규">
+            <div>
+              <DxButton icon="plus" @click="openAddNewModal"/>
+            </div>
+          </a-tooltip>
         </template>
         <DxColumn caption="일련번호" data-field="workId" width="100" alignment="center"/>
         <DxColumn caption="성명" data-field="name" alignment="center"/>
