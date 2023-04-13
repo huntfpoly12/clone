@@ -3,101 +3,15 @@
   <div class="ac-130">
     <div class="ac-130__top">
       <div class="ac-130__top-grid">
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 1 }"
-          @click="selectedMonth(1)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">01</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusEntering" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 2 }"
-          @click="selectedMonth(2)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">02</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 3 }"
-          @click="selectedMonth(3)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">03</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 4 }"
-          @click="selectedMonth(4)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">04</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 5 }"
-          @click="selectedMonth(5)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">05</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 6 }"
-          @click="selectedMonth(6)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">06</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 7 }"
-          @click="selectedMonth(7)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">07</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 8 }"
-          @click="selectedMonth(8)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">08</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 9 }"
-          @click="selectedMonth(9)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">09</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 10 }"
-          @click="selectedMonth(10)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">10</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusInput" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 11 }"
-          @click="selectedMonth(11)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">11</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" :heightBtn="36" />
-        </div>
-        <div class="ac-130__top-grid-items" :class="{ 'ac-130__top-grid-items-active': monthSelected === 12 }"
-          @click="selectedMonth(12)">
-          <div class="ac-130__top-grid-items-month">
-            <span class="">12</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :valueStatus="statusAdjusted" :disabled="true" :heightBtn="36" />
+        <div 
+          v-for="(month, index) in 12" :key="index" 
+          class="ac-130__top-grid-items" 
+          :class="{ 'ac-130__top-grid-items-active': monthSelected === month }"
+          @click="selectedMonth(month)">
+            <colorful-badge 
+              :value="listAccountingProcesses.find((item: any) => item.month === month)?.status || null" 
+              :year="globalYear" 
+              :month="month"/>
         </div>
       </div>
       <div class="ac-130__top-status">
@@ -174,6 +88,7 @@ import TableBudget from "./components/TableBudget.vue"
 import FormChat from "./components/FormChat.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: {
@@ -216,7 +131,8 @@ export default defineComponent({
     let isModalNoteItemDetail = ref(false);
     let valueAccountSubjectClassification = ref(null)
     let valueFundingSource = ref(null)
-    let monthSelected = ref(3)
+    let monthSelected = ref(dayjs().month() + 1)
+    let listAccountingProcesses = ref<any[]>([])
     // COMPUTED
 
     // METHODS
@@ -290,7 +206,8 @@ export default defineComponent({
       valueFundingSource,
       fileList,
       monthSelected,
-      selectedMonth
+      selectedMonth,
+      listAccountingProcesses
     };
   },
 });
