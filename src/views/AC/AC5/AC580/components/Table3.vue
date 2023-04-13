@@ -25,10 +25,8 @@
         </div>
       </template>
       <DxSummary>
-        <DxTotalItem column="사용일" summary-type="count" display-format="사업소득자[소득구분]수: {0}" />
-        <DxTotalItem class="custom-sumary" column="상당금액" summary-type="sum" display-format="지급액합계: {0}" />
-        <DxTotalItem class="custom-sumary" column="후원금 등록여부" summary-type="sum" value-format="#,###"
-          display-format="필요경비합계: {0}" />
+        <DxTotalItem column="사용일" summary-type="count" display-format="건수: {0}" />
+        <DxTotalItem class="custom-sumary" column="상당금액" summary-type="sum" display-format="금액 합계: {0}" />
       </DxSummary>
     </DxDataGrid>
   </a-spin>
