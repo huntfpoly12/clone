@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <!-- <a-row>
+  <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,9 +32,9 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row> -->
+  </a-row>
   <div id="pa-520" class="page-content">
-  
+  {{ loading }}
       <a-row>
           <a-col :span="13" class="custom-layout" >
               <a-spin :spinning="loading" size="large">
@@ -215,7 +215,7 @@ import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum";
 import DataSource from "devextreme/data/data_source";
 import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
-
+import dayjs, { Dayjs } from "dayjs";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -306,8 +306,8 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
     onError((e) => {
-      store.commit('settings/setCurrentYear')
       notification("error", e.message);
+      store.commit('settings/setCurrentYear',dayjs().year())
     });
     const {
       mutate: actionDelete,
@@ -400,7 +400,6 @@ export default defineComponent({
       store.dispatch('common/resetActionStatus')
     });
 
-
     watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
       dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
     },{ deep: true })
@@ -422,12 +421,16 @@ export default defineComponent({
     );
 
     watch(focusedRowKey, () => {
+  
       let newRow = dataSource.value.items().filter((item: any) => item.key == 0);
+   
+      console.log(newRow.length, isClickRow.value);
       if (newRow.length > 0 && isClickRow.value) {
         removeNewRow()
+        store.dispatch('common/resetActionStatus')
       }
     })
-    const removeNewRow = ()=>{
+    const removeNewRow = () => {
         dataSource.value.store().remove(0).then(() => {dataSource.value.reload()})
     }
     // ======================= FUNCTION ================================
@@ -463,13 +466,13 @@ export default defineComponent({
         store.commit('common/setAddBtOnclickPA520',false);
       
     }
-    const onFocusedRowChanged = (event: any) => {
-      if(focusedRowKey.value == 0 && !isClickRow.value ){
-        store.commit('common/setComponentPA520',1);
-      } else {
-        store.commit('common/setComponentPA520', 2);
-        setRowEdit(event.row.data.employeeId);
-      }
+    const onFocusedRowChanged = async(event: any) => {
+      // if(focusedRowKey.value == 0 && !isClickRow.value ){
+      //   store.commit('common/setComponentPA520',1);
+      // } else {
+      //   store.commit('common/setComponentPA520', 2);
+      //   setRowEdit(event.row.data.employeeId);
+      // }
     }
 
     const actionSave = () => {
@@ -523,11 +526,12 @@ export default defineComponent({
         if (isClickRow.value && !addBtOnclick.value && clickYearStatus.value == ClickYearStatus.none) {
           setRowEdit(idRowCurrentClick.value)
           store.dispatch('common/resetStatusModal')
-          store.dispatch('common/resetActionStatus')
+          //store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')
         }
 
         if (clickYearStatus.value !== ClickYearStatus.none) {
+     
           store.dispatch('common/resetStatusModal')
           store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')
@@ -589,7 +593,7 @@ export default defineComponent({
           store.dispatch('common/resetStatusChangeFrom')
         }
 
-         if (clickYearStatus.value !== ClickYearStatus.none) {
+        if (clickYearStatus.value !== ClickYearStatus.none) {
           store.dispatch('common/resetStatusModal')
           store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')

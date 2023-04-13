@@ -81,8 +81,6 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        console.log(newValue);
-        
         if(newValue) value.value = convertValue(newValue);
       }
     );
