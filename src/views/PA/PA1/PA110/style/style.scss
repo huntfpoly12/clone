@@ -93,7 +93,7 @@
 :deep .dx-datagrid-text-content {
     white-space: pre-wrap;
 }
-.disabledBlock {
+:deep .disabledBlock {
     pointer-events: none;
     opacity: 0.8;
 }

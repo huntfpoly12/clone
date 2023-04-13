@@ -1,20 +1,9 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="actionSave()" :buttonDelete="false" />
+    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false :actionSave()" :buttonDelete="false" />
     <div id="pa-710">
         <div class="page-content">
             <a-row>
-                <!-- <a-col span="2" class="total-user">
-                    <div>
-                        <span>{{ listEmployeeExtra.length }}</span>
-                        <br>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" style="width: 39px;" />
-                    </div>
-                </a-col>
-                <a-col span="22"></a-col> -->
-                <a-col span="16" class="data-table">
+                <a-col span="16" class="data-table" :class="{'disabledBlock': disabledBlockTable}">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
@@ -240,7 +229,7 @@ export default defineComponent({
         const dataYearNew = ref(globalYear.value)
         const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
-
+        const disabledBlockTable = ref<boolean>(false);
         // ================GRAPQL==============================================
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
             mutations.createEmployeeExtra
@@ -248,10 +237,24 @@ export default defineComponent({
         const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
             mutations.updateEmployeeExtra
         );
-        const { refetch: refetchData, loading, result } = useQuery(queries.getEmployeeExtras, originData, () => ({
+        const { loading, result, onError } = useQuery(queries.getEmployeeExtras, originData, () => ({
             fetchPolicy: "no-cache",
             enabled: trigger.value,
         }));
+        onError((e: any) => {
+            notification('error', e.message)
+            trigger.value = false;
+            statusAddRow.value = true;
+            listEmployeeExtra.value = []
+            if (runOne.value) {
+                statusFormUpdate.value = false;
+                resetFormNum.value++;
+                Object.assign(formState.value, initialState);
+                runOne.value = false;
+            }
+            disabledBlock.value = true;
+            disabledBlockTable.value = true;
+        })
         const { refetch: refetchDataDetail, loading: loadingDetail, onResult: resultDetail } = useQuery(queries.getEmployeeExtra, originDataDetail, () => ({
             fetchPolicy: "no-cache",
             enabled: triggerDetail.value,
@@ -569,6 +572,7 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             statusAddRow.value = true;
+            disabledBlockTable.value = false;
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
@@ -637,7 +641,7 @@ export default defineComponent({
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
-            // actionToAddFromEdit, 
+            disabledBlockTable,
             textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock, gridRef,
         };
