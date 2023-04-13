@@ -37,7 +37,6 @@ export default gql`
         goodsCount
         handwriting
         resolutionNormalStatus
-        lastBalance
       }
     }
   }

@@ -80,7 +80,7 @@
                         {{ data.data.manageStartDate ? $filters.formatDate(data.data.manageStartDate) : '' }}
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn caption="서비스" cell-template="used-withholding"/>
+                    <DxColumn :width="150" caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }">
                         <a-tag>회계</a-tag>
                         <a-tag style="border-radius: 50%;" >{{ data.data.usedAccountingCount }}</a-tag>

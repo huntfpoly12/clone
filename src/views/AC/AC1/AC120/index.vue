@@ -264,7 +264,7 @@
                     </div>
                     <div class="column">
                         <a-spin :spinning="false">
-                            <StandardForm formName="pa-510-form" ref="pa510FormRef">
+                            <StandardForm formName="ac-120-form" ref="refFormAC120">
                                 <a-row class="text-align-center">
                                     <a-col :span="8"></a-col>
                                     <a-col :span="8">
@@ -424,7 +424,7 @@
                                                 <span class="pl-5">전표취소</span>
                                             </div>
                                         </DxButton>
-                                        <button-basic style="margin: 0px 5px" mode="contained" type="default" text="저장" />
+                                        <button-basic @onClick="onSubmit()" style="margin: 0px 5px" mode="contained" type="default" text="저장" />
                                     </div>
                                 </div>
                             </StandardForm>
@@ -497,6 +497,7 @@ export default defineComponent({
         DxRowDragging,
     },
     setup() {
+        const refFormAC120 = ref()
 
         const statusShowFull = ref(false)
         const heightForm: any = ref(0)
@@ -795,6 +796,14 @@ export default defineComponent({
             
         }
 
+        const onSubmit = () => {
+            const res = refFormAC120.value?.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+            }
+        }
+
 
 
         return {
@@ -802,6 +811,8 @@ export default defineComponent({
             dataSource,
             onFillDataAdd,
             formData,
+            onSubmit,
+            refFormAC120,
 
             statusShowFull, toggleTransition, heightForm, refCssForm, refCssTable, heightTable,
             statusEntering,
