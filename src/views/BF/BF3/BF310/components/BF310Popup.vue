@@ -70,15 +70,15 @@
                                     </a-col>
                                     <a-col :span="24">
                                         <a-form-item label="약관동의" label-align="left" :label-col="labelCol">
-                                            <a-button type="link" style="padding: 0px">
+                                            <a-button @click="onOpenPopupInfo(1)" type="link" style="padding: 0px">
                                                 서비스약관
                                             </a-button>
                                             |
-                                            <a-button type="link" style="padding: 0px">개인정보제공활용동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(2)" type="link" style="padding: 0px">개인정보제공활용동의</a-button>
                                             |
-                                            <a-button type="link" style="padding: 0px">회계서비스약관동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(3)" type="link" style="padding: 0px">회계서비스약관동의</a-button>
                                             |
-                                            <a-button type="link" style="padding: 0px">원천서비스약관동의</a-button>
+                                            <a-button @click="onOpenPopupInfo(4)" type="link" style="padding: 0px">원천서비스약관동의</a-button>
                                         </a-form-item>
                                     </a-col>
                                 </a-row>
@@ -362,6 +362,7 @@
                     </a-row>
                 </standard-form>
             </a-spin>
+            <PopupInfo :statusPupopInfo="statusPupopInfo" @closePopup="statusPupopInfo = false" :keyText="keyInfo"/>
         </a-modal>
     </div>
 </template>
@@ -379,6 +380,7 @@ import imgUpload from "@/components/UploadImage.vue";
 import notification from '@/utils/notification';
 import comfirmClosePopup from '@/utils/comfirmClosePopup';
 import dayjs from 'dayjs'
+import PopupInfo from './PopupInfo.vue'
 import { DxButton } from "devextreme-vue/button";
 export default defineComponent({
     props: {
@@ -402,7 +404,8 @@ export default defineComponent({
         DxItem,
         DxTexts,
         DxButton,
-        DxScrolling
+        DxScrolling,
+        PopupInfo
     },
     setup(props, { emit }) {
         // config grid
@@ -431,6 +434,8 @@ export default defineComponent({
         const dataSource = ref([]);
         const dataSourceOld = ref([]);
         const isResidentId = ref(false);
+        const statusPupopInfo = ref<boolean>(false);
+        const keyInfo = ref<number>(0)
         // event close popup
         const setModalVisible = () => {
             if (
@@ -692,6 +697,10 @@ export default defineComponent({
             const data = e.row && e.row.data;
             dataActiveRow.value = data;
         }
+        const onOpenPopupInfo = (key: number) => {
+            keyInfo.value = key;
+            statusPupopInfo.value = true
+        }
         return {
             selectionChanged,
             contentReady,
@@ -732,6 +741,7 @@ export default defineComponent({
             focusedRowKey,
             onFocusedRowChanged,
             isResidentId,
+            statusPupopInfo, onOpenPopupInfo, keyInfo,
         };
     },
 });
