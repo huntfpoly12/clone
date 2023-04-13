@@ -45,6 +45,7 @@
                <DxTotalItem cssClass="custom-sumary" column="지출액" :customize-text="sumOfExpenses" /> -->
                 </DxSummary>
             </DxDataGrid>
+            
         </div>
         <div class="btn_submit text-align-center mt-20">
             <button-basic class="button-form-modal" :text="'저장'" :type="'default'"
