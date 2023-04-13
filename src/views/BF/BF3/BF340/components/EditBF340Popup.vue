@@ -38,7 +38,7 @@
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
-                            :label-col="labelCol">{{ formState.residentId }} {{ isResidentId }}
+                            :label-col="labelCol">
                             <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
