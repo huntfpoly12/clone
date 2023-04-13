@@ -16,84 +16,84 @@
             <colorful-badge v-if="data.data.month_1" :value="data.data.month_1?.status"
               :year="data.data.month_1?.paymentYear" :month="data.data.month_1?.paymentMonth"
               @click="showDetailSelected(data.data.month_1)" />
-            <div v-else @click="onAddMonth(1)">[+]</div>
+            <div v-else @click="onAddMonth(1)" :class="{ disabled: disableAddMonth(1) }">[+]</div>
           </template>
           <DxColumn caption="02" width="100px" cell-template="imputed-month2" :cssClass="customColumnClass(2)" />
           <template #imputed-month2="{ data }">
             <colorful-badge v-if="data.data.month_2" :value="data.data.month_2?.status"
               :year="data.data.month_2?.paymentYear" :month="data.data.month_2?.paymentMonth"
               @click="showDetailSelected(data.data.month_2)" />
-            <div v-else @click="onAddMonth(2)">[+]</div>
+            <div v-else @click="onAddMonth(2)" :class="{ disabled: disableAddMonth(2) }">[+]</div>
           </template>
           <DxColumn caption="03" width="100px" cell-template="imputed-month3" :cssClass="customColumnClass(3)" />
           <template #imputed-month3="{ data }">
             <colorful-badge v-if="data.data.month_3" :value="data.data.month_3?.status"
               :year="data.data.month_3?.paymentYear" :month="data.data.month_3?.paymentMonth"
               @click="showDetailSelected(data.data.month_3)" />
-            <div v-else @click="onAddMonth(3)">[+]</div>
+            <div v-else @click="onAddMonth(3)" :class="{ disabled: disableAddMonth(3) }">[+]</div>
           </template>
           <DxColumn caption="04" width="100px" cell-template="imputed-month4" :cssClass="customColumnClass(4)" />
           <template #imputed-month4="{ data }">
             <colorful-badge v-if="data.data.month_4" :value="data.data.month_4?.status"
               :year="data.data.month_4?.paymentYear" :month="data.data.month_4?.paymentMonth"
               @click="showDetailSelected(data.data.month_4)" />
-            <div v-else @click="onAddMonth(4)">[+]</div>
+            <div v-else @click="onAddMonth(4)" :class="{ disabled: disableAddMonth(4) }">[+]</div>
           </template>
           <DxColumn caption="05" width="100px" cell-template="imputed-month5" :cssClass="customColumnClass(5)" />
           <template #imputed-month5="{ data }">
             <colorful-badge v-if="data.data.month_5" :value="data.data.month_5?.status"
               :year="data.data.month_5?.paymentYear" :month="data.data.month_5?.paymentMonth"
               @click="showDetailSelected(data.data.month_5)" />
-            <div v-else @click="onAddMonth(5)">[+]</div>
+            <div v-else @click="onAddMonth(5)" :class="{ disabled: disableAddMonth(5) }">[+]</div>
           </template>
           <DxColumn caption="06" width="100px" cell-template="imputed-month6" :cssClass="customColumnClass(6)" />
           <template #imputed-month6="{ data }">
             <colorful-badge v-if="data.data.month_6" :value="data.data.month_6?.status"
               :year="data.data.month_6?.paymentYear" :month="data.data.month_6?.paymentMonth"
               @click="showDetailSelected(data.data.month_6)" />
-            <div v-else @click="onAddMonth(6)">[+]</div>
+            <div v-else @click="onAddMonth(6)" :class="{ disabled: disableAddMonth(6) }">[+]</div>
           </template>
           <DxColumn caption="07" width="100px" cell-template="imputed-month7" :cssClass="customColumnClass(7)" />
           <template #imputed-month7="{ data }">
             <colorful-badge v-if="data.data.month_7" :value="data.data.month_7?.status"
               :year="data.data.month_7?.paymentYear" :month="data.data.month_7?.paymentMonth"
               @click="showDetailSelected(data.data.month_7)" />
-            <div v-else @click="onAddMonth(7)">[+]</div>
+            <div v-else @click="onAddMonth(7)" :class="{ disabled: disableAddMonth(7) }">[+]</div>
           </template>
           <DxColumn caption="08" width="100px" cell-template="imputed-month8" :cssClass="customColumnClass(8)" />
           <template #imputed-month8="{ data }">
             <colorful-badge v-if="data.data.month_8" :value="data.data.month_8?.status"
               :year="data.data.month_8?.paymentYear" :month="data.data.month_8?.paymentMonth"
               @click="showDetailSelected(data.data.month_8)" />
-            <div v-else @click="onAddMonth(8)">[+]</div>
+            <div v-else @click="onAddMonth(8)" :class="{ disabled: disableAddMonth(8) }">[+]</div>
           </template>
           <DxColumn caption="09" width="100px" cell-template="imputed-month9" :cssClass="customColumnClass(9)" />
           <template #imputed-month9="{ data }">
             <colorful-badge v-if="data.data.month_9" :value="data.data.month_9?.status"
               :year="data.data.month_9?.paymentYear" :month="data.data.month_9?.paymentMonth"
               @click="showDetailSelected(data.data.month_9)" />
-            <div v-else @click="onAddMonth(9)">[+]</div>
+            <div v-else @click="onAddMonth(9)" :class="{ disabled: disableAddMonth(9) }">[+]</div>
           </template>
           <DxColumn caption="10" width="100px" cell-template="imputed-month10" :cssClass="customColumnClass(10)" />
           <template #imputed-month10="{ data }">
             <colorful-badge v-if="data.data.month_10" :value="data.data.month_10?.status"
               :year="data.data.month_10?.paymentYear" :month="data.data.month_10?.paymentMonth"
               @click="showDetailSelected(data.data.month_10)" />
-            <div v-else @click="onAddMonth(10)">[+]</div>
+            <div v-else @click="onAddMonth(10)" :class="{ disabled: disableAddMonth(10) }">[+]</div>
           </template>
           <DxColumn caption="11" width="100px" cell-template="imputed-month11" :cssClass="customColumnClass(11)" />
           <template #imputed-month11="{ data }">
             <colorful-badge v-if="data.data.month_11" :value="data.data.month_11?.status"
               :year="data.data.month_11?.paymentYear" :month="data.data.month_11?.paymentMonth"
               @click="showDetailSelected(data.data.month_11)" />
-            <div v-else @click="onAddMonth(11)">[+]</div>
+            <div v-else @click="onAddMonth(11)" :class="{ disabled: disableAddMonth(11) }">[+]</div>
           </template>
           <DxColumn caption="12" width="100px" cell-template="imputed-month12" :cssClass="customColumnClass(12)" />
           <template #imputed-month12="{ data }">
             <colorful-badge v-if="data.data.month_12" :value="data.data.month_12?.status"
               :year="data.data.month_12?.paymentYear" :month="data.data.month_12?.paymentMonth"
               @click="showDetailSelected(data.data.month_12)" />
-            <div v-else @click="onAddMonth(12)">[+]</div>
+            <div v-else @click="onAddMonth(12)" :class="{ disabled: disableAddMonth(12) }">[+]</div>
           </template>
           <DxMasterDetail :enabled="true" template="row-detail" />
           <template #row-detail>
@@ -270,7 +270,7 @@ import { ref, defineComponent, watch, computed, reactive } from 'vue';
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId, openTab } from '@/helpers/commonFunction';
+import { companyId, openTab, startYearMonth } from '@/helpers/commonFunction';
 import { DxDataGrid, DxColumn, DxScrolling, DxMasterDetail } from 'devextreme-vue/data-grid';
 import queries from '@/graphql/queries/PA/PA7/PA720/index';
 import DeletePopup from './components/Popup/DeletePopup.vue';
@@ -287,6 +287,7 @@ import DxCheckBox from 'devextreme-vue/check-box';
 import { Message } from '@/configs/enum';
 import { formatMonth } from './utils/index';
 import queriesHolding from '@/graphql/queries/CM/CM130/index';
+import dayjs from 'dayjs';
 export default defineComponent({
   components: {
     DxMasterDetail,
@@ -768,6 +769,14 @@ export default defineComponent({
       onEditItem();
     };
     // -------------------Add data in month---------------------
+    const disableAddMonth = (val: any) => {
+      let date = dayjs(globalYear.value + '' + val);
+      let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
+      if (date.isBefore(dateToCompare)) {
+        return true;
+      }
+      return false;
+    }
     const isClickAddMonthDiff = ref(false);
     const addMonth = (val: any) => {
       modalCopy.value = true;
@@ -920,7 +929,8 @@ export default defineComponent({
       changeMonthDataFake,
       onCloseCopy,
       customColumnClass,
-      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff, isClickYearDiff
+      isClickAddMonthDiff, isClickMonthDiff, isClickEditDiff, isClickYearDiff,
+      disableAddMonth,
     };
   },
 });
