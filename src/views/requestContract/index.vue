@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">사업자등록번호 :</label>
-                                        <biz-number-text-box width="100px" v-model:valueInput="contractCreacted.ownerBizNumber"
+                                        <biz-number-text-box width="115px" v-model:valueInput="contractCreacted.ownerBizNumber"
                                             :required="true" />
                                     </div>
                                     <div class="form-item">
@@ -80,13 +80,13 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">{{ textIDNo }} :</label>
-                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="100px"/>
+                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="115px"/>
                                     </div>
                                     <div class="form-item">
                                         <label>주 소 :</label>
                                         <div class="group-label">
                                             <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                                placeholder="우편번호" :readOnly="true"  width="100px" class="mr-5" />
+                                                placeholder="우편번호" :readOnly="true"  width="115px" class="mr-5" />
                                             <post-code-button @dataAddress="funcAddress" width="130px" />
                                         </div>
                                     </div>
