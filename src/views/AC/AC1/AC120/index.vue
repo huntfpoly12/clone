@@ -3,13 +3,16 @@
     <div class="ac-120">
         <div class="top">
             <div class="grid">
-                <div class="items" v-for="(item, index) in dataGetAccountingProcesses" :key="index">
-                    <div class="text">
-                        <span class="">{{ $filters.formatMonth(item.month) }}</span>
-                        <span class="">월</span>
-                    </div>
-                    <ProcessStatus :disabled="true" :valueStatus="item.month" :heightBtn="36" />
-                </div>
+                <div 
+                  v-for="(month, index) in 12" :key="index" 
+                  class="items" 
+                  :class="{ 'items-active': monthSelected === month }"
+                  @click="selectedMonth(month)">
+                  <colorful-badge 
+                    :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null" 
+                    :year="globalYear" 
+                    :month="month"/>
+              </div>
             </div>
             <div class="flex">
                 <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
@@ -567,6 +570,7 @@ export default defineComponent({
             month: dayjs().month() + 1
         })
 
+        const monthSelected = ref(dayjs().month() + 1)
         // =================== GRAPHQL ===================
         // query getAccountingProcesses
         const {
@@ -804,7 +808,9 @@ export default defineComponent({
             }
         }
 
-
+        const selectedMonth = (month: number) => {
+          monthSelected.value = month
+        }
 
         return {
             dataGetAccountingProcesses,
@@ -851,7 +857,10 @@ export default defineComponent({
             arrayRadioCheck,
             customBalance,
             dataDemoMain2,
-            onReorder, onDragChange, onRowDragging
+            onReorder, onDragChange, onRowDragging,
+
+            monthSelected,
+            selectedMonth
         };
     },
 });
