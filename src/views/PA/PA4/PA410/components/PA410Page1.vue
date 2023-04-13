@@ -28,10 +28,6 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const valueSelected = ref(0);
-        const nextPage = () => {
-            store.state.common.currentPagePA410 = 'PA410Page2';
-            store.state.common.employeeIdPA410 = valueSelected.value;
-        }
         const globalYear = computed(() => store.state.settings.globalYear)
         // Getting the token from the session storage and then dispatching the action to get the user
         // information.
@@ -51,7 +47,10 @@ export default defineComponent({
                                                     })
           return store.state.common.arrayEmployeePA410
         })
-        
+        const nextPage = () => {
+          store.state.common.currentPagePA410 = 'PA410Page2';
+          store.state.common.employeeIdPA410 = valueSelected.value;
+        }
         return {
             nextPage,
             arrayEmployeeSelect,
