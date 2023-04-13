@@ -157,6 +157,9 @@ export default defineComponent({
             })
           }
           listChat.value = arr
+          nextTick(() => {
+            formTimeline.value.scrollTop = 10000000
+          })
         }
         // {
         //   onlyOnce: true,
