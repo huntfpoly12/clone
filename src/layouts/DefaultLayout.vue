@@ -548,9 +548,11 @@ export default defineComponent({
 
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
-     //get and set account subject
-      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      //get and set account subject
+      if (jwtObject.userType === 'c') {
+        let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+        await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      }
       // store.commit('auth/setTokenInfo',jwtObject)
       if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         openTab(tabDashboard)
