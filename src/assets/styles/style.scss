@@ -232,3 +232,7 @@ $lenght: 50;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}

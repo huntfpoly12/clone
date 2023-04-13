@@ -338,7 +338,6 @@ export default defineComponent({
       } else { }
     }
     function onOptionRendered(e: any) {
-      console.log(`output->e`, e)
       e.element.dxTooltip({
         target: `.${e.component._$element.attr('class')}`,
         showEvent: 'mouseenter',
