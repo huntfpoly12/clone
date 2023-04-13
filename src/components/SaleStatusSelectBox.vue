@@ -100,6 +100,7 @@ export default defineComponent({
         };
 
         const confirmClose = (val: any) => {
+            visibleConfirm.value = false;
             data.value = oldData.value;
         };
 
