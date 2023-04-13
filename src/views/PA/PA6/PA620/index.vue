@@ -20,7 +20,8 @@
                   <colorful-badge :value="data.data.month1.status" :year="data.data.month1.paymentYear"
                     :month="data.data.month1.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(1)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(1)"
+                  :class="{ disabled: disableAddMonth(1) }" > [+]
                 </div>
               </template>
               <DxColumn caption="02" width="100px" cell-template="month-2" :cssClass="customColumnClass(2)" />
@@ -31,8 +32,8 @@
                   <colorful-badge :value="data.data.month2.status" :year="data.data.month2.paymentYear"
                     :month="data.data.month2.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(2)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(2)"
+                  :class="{ 'disabled': disableAddMonth(2) }" > [+]</div>
               </template>
               <DxColumn caption="03" width="100px" cell-template="month-3" :cssClass="customColumnClass(3)" />
               <template #month-3="{ data }">
@@ -42,8 +43,8 @@
                   <colorful-badge :value="data.data.month3.status" :year="data.data.month3.paymentYear"
                     :month="data.data.month3.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(3)"> [+]
-                </div>
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(3)"
+                :class="[{ 'disabled': disableAddMonth(3) }]" > [+]</div>
               </template>
               <DxColumn caption="04" width="100px" cell-template="month-4" :cssClass="customColumnClass(4)" />
               <template #month-4="{ data }">
@@ -53,7 +54,7 @@
                   <colorful-badge :value="data.data.month4.status" :year="data.data.month4.paymentYear"
                     :month="data.data.month4.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(4)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(4)" :class="{ disabled: disableAddMonth(4) }"> [+]
                 </div>
               </template>
               <DxColumn caption="05" width="100px" cell-template="month-5" :cssClass="customColumnClass(5)" />
@@ -64,7 +65,7 @@
                   <colorful-badge :value="data.data.month5.status" :year="data.data.month5.paymentYear"
                     :month="data.data.month5.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(5)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(5)" :class="{ disabled: disableAddMonth(5) }"> [+]
                 </div>
               </template>
               <DxColumn caption="06" width="100px" cell-template="month-6" :cssClass="customColumnClass(6)" />
@@ -75,7 +76,7 @@
                   <colorful-badge :value="data.data.month6.status" :year="data.data.month6.paymentYear"
                     :month="data.data.month6.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(6)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(6)" :class="{ disabled: disableAddMonth(6) }"> [+]
                 </div>
               </template>
               <DxColumn caption="07" width="100px" cell-template="month-7" :cssClass="customColumnClass(7)" />
@@ -86,7 +87,7 @@
                   <colorful-badge :value="data.data.month7.status" :year="data.data.month7.paymentYear"
                     :month="data.data.month7.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(7)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(7)" :class="{ disabled: disableAddMonth(7) }"> [+]
                 </div>
               </template>
               <DxColumn caption="08" width="100px" cell-template="month-8" :cssClass="customColumnClass(8)" />
@@ -97,7 +98,7 @@
                   <colorful-badge :value="data.data.month8.status" :year="data.data.month8.paymentYear"
                     :month="data.data.month8.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(8)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(8)" :class="{ disabled: disableAddMonth(8) }"> [+]
                 </div>
               </template>
               <DxColumn caption="09" width="100px" cell-template="month-9" :cssClass="customColumnClass(9)" />
@@ -108,7 +109,7 @@
                   <colorful-badge :value="data.data.month9.status" :year="data.data.month9.paymentYear"
                     :month="data.data.month9.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(9)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(9)" :class="{ disabled: disableAddMonth(9) }"> [+]
                 </div>
               </template>
               <DxColumn caption="10" width="100px" cell-template="month-10" :cssClass="customColumnClass(10)" />
@@ -119,7 +120,7 @@
                   <colorful-badge :value="data.data.month10.status" :year="data.data.month10.paymentYear"
                     :month="data.data.month10.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(10)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(10)" :class="{ disabled: disableAddMonth(10) }"> [+]
                 </div>
               </template>
               <DxColumn caption="11" width="100px" cell-template="month-11" :cssClass="customColumnClass(11)" />
@@ -130,7 +131,7 @@
                   <colorful-badge :value="data.data.month11.status" :year="data.data.month11.paymentYear"
                     :month="data.data.month11.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(11)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(11)" :class="{ disabled: disableAddMonth(11) }"> [+]
                 </div>
               </template>
               <DxColumn caption="12" width="100px" cell-template="month-12" :cssClass="customColumnClass(12)" />
@@ -141,7 +142,7 @@
                   <colorful-badge :value="data.data.month12.status" :year="data.data.month12.paymentYear"
                     :month="data.data.month12.paymentMonth" />
                 </div>
-                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(12)"> [+]
+                <div v-else style="width: 100%;text-align: center;" @click="onAddMonth(12)" :class="{ disabled: disableAddMonth(12) }"> [+]
                 </div>
               </template>
               <DxMasterDetail class="table-detail" :enabled="true" template="detailRow" />
@@ -252,12 +253,13 @@ import queries from "@/graphql/queries/PA/PA6/PA620/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { origindata } from "./utils";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, startYearMonth } from "@/helpers/commonFunction";
 import HistoryPopup from '@/components/HistoryPopup.vue';
 import filters from "@/helpers/filters";
 import ComponentDetail from "./components/ComponentDetail.vue";
 import CopyMonth from "./components/CopyMonth.vue";
 import queriesHolding from "@/graphql/queries/CM/CM130/index";
+import dayjs from "dayjs";
 export default defineComponent({
   components: {
     DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxGrouping, DxItem, DxMasterDetail,
@@ -445,6 +447,17 @@ export default defineComponent({
       refetchData();
       statusButton.value = emitVal;
     }
+    const disableAddMonth = (val: any) => {
+      let date = dayjs(globalYear.value + '' + val);
+      let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
+      if (date.isBefore(dateToCompare)) {
+        return true;
+      }
+      return false;
+    }
+    const dateStr = '202304';
+    const date = dayjs(dateStr, 'YYYYMM');
+    // console.log(date); // Kết quả: 01/03/2022
     const addMonth = (val: any) => {
       modalCopy.value = true;
       dataModalCopy.value = val.imputedMonth;
@@ -534,7 +547,7 @@ export default defineComponent({
     return {
       modalCopy, actionSave, statusButton, dataCustomRes, globalYear, loadingGetIncomeProcessBusinesses, rowTable, dataSource, per_page, move_column, colomn_resize, originData, dataModalCopy, isDisabledForm,
       setUnderline, createdDone, onAddMonth, showDetailSelected, loadingTable, dataAddIncomeProcess, processKeyPA620, formRef, changeNoSave, monthClicked,
-      isCompareForm, statusDone, dateType, changeMonthDataFake, onCloseCopy, trigger, customColumnClass, subValidate,
+      isCompareForm, statusDone, dateType, changeMonthDataFake, onCloseCopy, trigger, customColumnClass, subValidate, disableAddMonth,
     };
   },
 });

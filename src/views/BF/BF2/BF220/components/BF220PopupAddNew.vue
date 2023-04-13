@@ -135,7 +135,7 @@ export default defineComponent({
             ...dataRes.value
         })
         const formToCompare = {
-          memo:'',
+          ...dataRes.value,
           readAdminScreenRoles:[],
           writeAdminScreenRoles:[],
         }
@@ -207,7 +207,7 @@ export default defineComponent({
         }
         const setModalVisible = () => { 
             let dataResToCompare = {
-                memo: dataRes.value.memo,
+                ...dataRes.value,
                 readAdminScreenRoles: readAdminScreenRoles.value,
                 writeAdminScreenRoles: writeAdminScreenRoles.value,
             }

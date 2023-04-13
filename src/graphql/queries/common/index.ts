@@ -40,7 +40,9 @@ import getBankbooksLogs from "./getBankbooksLogs";
 import getBankbookDetailLogs from "./getBankbookDetailLogs";
 import getAccoountSubjects from "./getAccoountSubjects";
 import getAccountingProcessLogs from "./getAccountingProcessLogs";
+import getMe from "./getMe";
 const queries = {
+  getMe: getMe,
   getUser: getUser,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
