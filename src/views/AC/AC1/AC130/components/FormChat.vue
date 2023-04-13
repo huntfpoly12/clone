@@ -16,28 +16,32 @@
               alt=""> -->
             <a-badge :dot="true" :offset="[-5, 33]" :status="items.name === userName ? 'success' : 'error'"
               :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }">
-              <a-avatar shape="circle" size="large" :src="items.avatar" />
+              <a-avatar shape="circle" size="large"  :style="`background-color: ${items.name === userName ? '#1890ff' : '#f56a00'}`" >{{ items.name }}</a-avatar>
             </a-badge>
           </div>
+
+
           <div class="form-chat-timeline-content" :class="{
-            'borderRadiusleft10': (index === 0 || listChat[index - 1].name !== items.name) && items.name !== userName,
-            'borderRadiusRight10': (index === 0 || listChat[index - 1].name !== items.name) && items.name === userName,
+            'borderRadiusleft10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name !== userName,
+            'borderRadiusRight10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name === userName,
             'borderEdit': idEditComment === items.id
           }">
             <div class="form-chat-timeline-content-info">
               <div class="form-chat-timeline-content-info-user">
                 <span class="form-chat-timeline-content-info-user-status"
-                  :class="{ 'hidden-avatar': index !== 0 && listChat[index - 1].name === items.name }">{{ items.status
+                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">{{ items.status
                   }}</span>
                 <div class="form-chat-timeline-content-info-user-name"
-                  :class="{ 'hidden-avatar': index !== 0 && listChat[index - 1].name === items.name }">{{ items.name }}
+                  :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">{{ items.name }}
                 </div>
               </div>
-              <div class="form-chat-timeline-content-info-time">{{ items.createdAt }}</div>
+              <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
-            <div class="form-chat-timeline-content-text" v-html="items.content">
+            <div class="form-chat-timeline-content-text" v-html="items.text">
             </div>
           </div>
+
+          
           <div class="form-chat-timeline-common-menu">
             <a-dropdown :placement="items.name === userName ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
@@ -59,12 +63,8 @@
       </div>
     </div>
     <div class="form-chat-bottom">
-      <!-- <img class="form-chat-bottom-avatar"
-        src="https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg"
-        alt="" /> -->
       <a-badge :dot="true" :offset="[-5, 33]" status="success" class="mr-5">
-        <a-avatar shape="circle" size="large"
-          src="https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg" />
+        <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff" >{{ userName }}</a-avatar>
       </a-badge>
       <div class="form-chat-bottom-input">
         <textarea rows="1" ref="inputChat" placeholder="댓글을 입력하세요…" v-model="textChat" @input="changeInput"
@@ -95,6 +95,16 @@ import {
   onValue,
 } from "firebase/database";
 export default defineComponent({
+  props: {
+    idUserTo: {
+      type: Object,
+      default: () => {}
+    },
+    keyChatChannel: {
+      type: String,
+      default: 'keyChatChannelCommon'
+    }
+  },
   components: {
     EllipsisOutlined,
     EditOutlined,
@@ -112,109 +122,15 @@ export default defineComponent({
     let idEditComment = ref<any>(null)
     const payload = {
       name: userName.value,
-      avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
+      avatar: '',
       text: '',
       files: [],
       createdAt: new Date().getTime() ,
       status: '일반',
       uid: userName.value
     }
-    const listChat = ref<any>([
-      {
-        id: 1,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ...Hello Hello Hello Hello ',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 2,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello Hello Hello Hello ...',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 3,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello ffffffff',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 4,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello Hello Hello Hello ',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      }, {
-        id: 5,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello \n...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...Hello Hello Hello Hello ...',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 6,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvnmmmmmmmmmmmmmmmmmmmmmmmHello Hello Hello Hello ...c',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 7,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello Hello Hello Hello :)))))))))))))))))))',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 8,
-        name: 'other users',
-        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/220px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg',
-        content: 'Hello Hello Hello Hello +ggggggggggggggggggggg',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 9,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: ':)))))))))))))))))))',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 10,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: 'Hello\nHello \nHello \nHello  ooooo',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      },
-      {
-        id: 11,
-        name: userName.value,
-        avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-        content: '1\n2\n3\n',
-        createdAt: '2023-03-08  03:00:00',
-        status: '일반'
-      }
-    ])
-
-    onMounted(() => {
-      nextTick(() => {
-        formTimeline.value.scrollTop = 10000000
-      })
-    })
-
+    const listChat = ref<any>([])
+    
     const channelChatSubrights = () => {
       // if (idUserTo.value > id) {
       //   console.log(idUserTo.value + id);
@@ -223,40 +139,72 @@ export default defineComponent({
       //   console.log(id + idUserTo.value);
       //   return id + idUserTo.value;
       // }
-      return 'channelChatSubrights'
+      return props.keyChatChannel
+    };
+
+    let chatListRef = reffb(databaseFirebase, channelChatSubrights());
+
+    const getListContentChat = () => {
+      onValue(
+        chatListRef,
+        (snapshot) => {
+          const objList = snapshot.val()
+          let arr = []
+          for (const key in objList) {
+            arr.push({
+              key: key,
+              ...objList[key]
+            })
+          }
+          listChat.value = arr
+        }
+        // {
+        //   onlyOnce: true,
+        // }
+      );
     };
 
     const sendChat = () => {
-      const postListRef = reffb(databaseFirebase, channelChatSubrights());
-      const newPostRef = push(postListRef);
-      set(newPostRef, { 
-        ...payload, 
-        text: textChat.value })
+      if (!textChat.value.trim()) return
+      if (idEditComment.value === null) {
+        const postListRef = reffb(databaseFirebase, channelChatSubrights());
+        const newPostRef = push(postListRef);
+        set(newPostRef, { 
+          ...payload, 
+          text: textChat.value })
         .then(() => {
           textChat.value = "";
+          nextTick(() => {
+            formTimeline.value.scrollTop = 10000000
+            resetInputChat()
+          })
         })
         .catch((err) => {
           console.log(err);
-        });
+        }).finally(() => {
+          formTimeline.value.scrollTop = 10000000
+        })
+      }else{
+        textChat.value = "";
+        nextTick(() => {
+          formTimeline.value.scrollTop = 10000000
+          resetInputChat()
+        })
+      }
     };
 
-    // const sendChat = () => {
-    //   if (!textChat.value.trim()) return
-    //   if (idEditComment.value !== null) {
-    //     listChat.value.find((items: any) => items.id === idEditComment.value).content = textChat.value
-    //     textChat.value = ''
-    //     idEditComment.value = null
-    //     resetInputChat()
-    //     return
-    //   } else {
-    //     listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
-    //     textChat.value = ''
-    //   }
-    //   nextTick(() => {
-    //     formTimeline.value.scrollTop = 10000000
-    //     resetInputChat()
-    //   })
-    // }
+    watch(channelChatSubrights, (value) => {
+      if(!!value){
+        chatListRef = reffb(databaseFirebase, channelChatSubrights());
+        getListContentChat();
+        nextTick(() => {
+          formTimeline.value.scrollTop = 10000000
+        })
+      }
+    }, {
+      deep: true,
+      immediate: true,
+    })
     const changeInput = (event: any) => {
       const elment = event?.target ? event.target : event
       const style = getComputedStyle(elment, null);
@@ -269,36 +217,43 @@ export default defineComponent({
     }
 
     const editComment = (item: any) => {
-      idEditComment.value = item.id
-      textChat.value = item.content
-      nextTick(() => {
-        changeInput(inputChat.value)
-        inputChat.value.focus()
-      })
+      // idEditComment.value = item.id
+      // textChat.value = item.content
+      // nextTick(() => {
+      //   changeInput(inputChat.value)
+      //   inputChat.value.focus()
+      // })
     }
     const deleteComment = (items: any, index: number) => {
-      if (items.id === idEditComment.value) {
-        textChat.value = ''
-        idEditComment.value = null
-        nextTick(() => {
-          changeInput(inputChat.value)
-          inputChat.value.focus()
-        })
-      }
-      listChat.value.splice(index, 1)
+      // if (items.id === idEditComment.value) {
+      //   textChat.value = ''
+      //   idEditComment.value = null
+      //   nextTick(() => {
+      //     changeInput(inputChat.value)
+      //     inputChat.value.focus()
+      //   })
+      // }
+      // listChat.value.splice(index, 1)
     }
     const removeText = () => {
-      idEditComment.value = null
-      textChat.value = ''
-      nextTick(() => {
-        resetInputChat()
-      })
+      // idEditComment.value = null
+      // textChat.value = ''
+      // nextTick(() => {
+      //   resetInputChat()
+      // })
     }
 
     const resetInputChat = () => {
       inputChat.value.style.overflowY = "hidden"
       inputChat.value.style.height = "40px"
       inputChat.value.focus()
+    }
+
+    const formatDate = (timestamp: number) => {
+      const date = new Date(timestamp)
+      const month = date.getMonth()
+      const day = date.getDate()
+      return `${date.getFullYear()}-${month < 10 ? '0'+ month : month}-${day < 10 ? '0'+ day : day} ${date.getHours()}:${date.getMinutes()}`
     }
 
     return {
@@ -313,6 +268,7 @@ export default defineComponent({
       deleteComment,
       idEditComment,
       removeText,
+      formatDate
     }
   },
 })
