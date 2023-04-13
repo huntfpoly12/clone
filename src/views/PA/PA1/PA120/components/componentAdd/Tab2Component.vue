@@ -254,7 +254,7 @@ export default defineComponent({
     const calculateVariables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
-      totalTaxPay: totalPayItem,
+      totalTaxPay: totalPayItemTax,
       dependentCount: 1,
     });
     /**
@@ -519,7 +519,7 @@ export default defineComponent({
     //  // watch initFormTab2PA120 to check calculate button
     const isAddFormErrorPA120 = computed(() => store.state.common.isAddFormErrorPA120);
     watch(
-      () => totalPayItem,
+      () => totalPayItemTax,
       (newVal) => {
         if (newVal) {
           store.state.common.isCalculateEditPA120 = false;

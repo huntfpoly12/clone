@@ -173,7 +173,7 @@ export default defineComponent({
         const dataQuery = ref({ id: props.idSaleEdit });
         let trigger = ref<boolean>(true);
         let triggerCheckPer = ref<boolean>(false);
-        const isResidentId =  ref<boolean>(false);
+        const isResidentId =  ref<boolean>(true);
         const dataQueryCheckPer = ref({});
         let canChangeCompanyName = ref<boolean>(false);
         const visible = ref<boolean>(false);
@@ -226,6 +226,7 @@ export default defineComponent({
                 formState.name = value.getSalesRepresentative.name;
                 formState.grade = value.getSalesRepresentative.grade;
                 formState.bizType = value.getSalesRepresentative.detail.bizType;
+                formState.bizType == 1 ? isResidentId.value = false : isResidentId.value = true
                 formState.bizNumber = value.getSalesRepresentative.detail.bizNumber;
                 formState.residentId = value.getSalesRepresentative.detail.residentId;
                 formState.email = value.getSalesRepresentative.detail.email;

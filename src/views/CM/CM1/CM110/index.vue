@@ -1,5 +1,5 @@
 <template>
-    <a-spin :spinning="spinning || loadData || loadingSeal" size="large">
+    <a-spin :spinning="loading || loadData || loadingSeal" size="large">
         <div id="cm-110" class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card">
                 <a-tab-pane key="1" tab="사업자">
@@ -215,13 +215,13 @@
                     </div>
                 </a-tab-pane>
             </a-tabs>
-            <AddNewCM110Poup :modalStatus="modalAddNewStatus" :data="popupData" :key="resetFormNum"
+            <AddNewCM110Poup :modalStatus="modalAddNewStatus" :key="resetFormNum" :bizTypeList="bizTypeList"
                 @closePopup="closePopupAdd" />
-            <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :data="popupData" />
-            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"
-                title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyIdPopup" />
-            <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false"
-                :data="popupDataLogin" title="로그인이력" typeHistory="cm-110" :companyId="companyIdPopup" />
+            <EditCM110Popup :modalStatus="modalEditStatus" @closePopup="closePopupEdit" :userId="idRowEdit" :bizTypeList="bizTypeList"/>
+            <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" 
+                title="변경이력" :idRowEdit="idRowEdit" typeHistory="cm-110" :companyId="companyId" />
+            <ListLoginPopup :modalStatus="modalLoginStatus" @closePopup="modalLoginStatus = false" :idRowEdit="idRowEdit"
+                :data="popupDataLogin" title="로그인이력" typeHistory="cm-110" :companyId="companyId" />
         </div>
     </a-spin>
 </template>
@@ -261,7 +261,6 @@ import mutations from "@/graphql/mutations/CM/CM110/index";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/CM/CM110/index"
 import { useMutation } from "@vue/apollo-composable";
-import { getJwtObject } from "@bankda/jangbuda-common";
 import { companyId } from "@/helpers/commonFunction"
 function getBase64(file: File) {
     return new Promise((resolve, reject) => {
@@ -295,7 +294,6 @@ export default defineComponent({
         EditCM110Popup,
         ListLoginPopup,
         inputFormat,
-        getJwtObject,
     },
     
     setup() {
@@ -304,31 +302,27 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const spinning = ref<boolean>(true);
         let modalAddNewStatus = ref(false);
         let modalEditStatus = ref(false);
         let modalHistoryStatus = ref(false);
         let modalLoginStatus = ref(false);
-        let popupData = ref();
         var idRowEdit = ref<number>(0)
-        var companyIdPopup = ref<number>(0)
         const popupDataLogin = ref()
         const resetFormNum = ref(1);
-        setTimeout(() => {
-            spinning.value = !spinning.value;
-        }, 1000);
+        let triggerDataFacilityBusiness = ref<boolean>(true);
+        let bizTypeList = ref([])
+
         const {
             mutate: updateDataCompany,
             loading: loadingUpdate,
-            onDone: onDoneAdd,
+            onDone: onDoneUpdate,
             onError: onErrorUpdate
         } = useMutation(mutations.updateCompany);
-        onDoneAdd((res) => {
-            spinning.value = !spinning.value;
+        onDoneUpdate((res) => {
+            refetchData()
             notification('success', `업데이트 완료되었습니다!`)
         })
         onErrorUpdate((res) => {
-            spinning.value = !spinning.value;
             notification('error', `업데이트 실패되었습니다!`)
         })
         let formState = ref({ ...initialFormState });
@@ -351,39 +345,20 @@ export default defineComponent({
         const stampReview = () => {
             modalStampReviewStatus.value = true;
         };
-        const openAddNewModal = () => {
-            popupData.value = {
-                companyId: companyId
-            };
-            resetFormNum.value++;
+        const openAddNewModal = () => {      
             modalAddNewStatus.value = true;
         }
         const openEditModal = (data: any) => {
             modalEditStatus.value = true;
-            popupData.value = {
-                userId: data.data.id,
-                companyId: companyId
-            };
+            idRowEdit.value = data.data.id;
         }
         const modalHistory = (data: any) => {
             idRowEdit.value = data.data.id
-            companyIdPopup.value = companyId
             modalHistoryStatus.value = true;
         }
         const modalLogin = (data: any) => {
-            popupDataLogin.value = {
-                companyId: companyId,
-                userId: data.data.id
-            }
+            idRowEdit.value = data.data.id
             modalLoginStatus.value = true;
-        }
-        let companyId: any = null
-        const token = sessionStorage.getItem("token");
-        if (token) {
-            const jwtObject = getJwtObject(token);
-            if (jwtObject.userType === 'c') {
-                companyId = jwtObject.companyId
-            }
         }
         //Submit form detail company
         const onSubmit = (e: any) => {
@@ -402,9 +377,7 @@ export default defineComponent({
                         presidentBirthday: formState.value.extendInfo.president.birthday
                     }
                 }
-                spinning.value = !spinning.value;
                 updateDataCompany(dataUpdateCompany)
-
             }
         };
 
@@ -461,8 +434,8 @@ export default defineComponent({
             refetchDataUsers()
         }
         const closePopupAdd = () => {
+            resetFormNum.value++;
             modalAddNewStatus.value = false
-            refetchDataUsers()
         }
         const changeValueRow = (data: any) => {
             let stringConvert = ''
@@ -498,6 +471,22 @@ export default defineComponent({
             });
             e.cancel = true;
         };
+        const { refetch: refetchFacility, onResult: resultFacility } = useQuery(
+            queries.getDataFacilityBusiness,
+            {companyId: companyId},
+            () => ({ enabled: triggerDataFacilityBusiness.value, fetchPolicy: "no-cache" })
+        );
+        resultFacility((e) => {
+            triggerDataFacilityBusiness.value = false;
+            let dataRes: any = [];
+            e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
+                dataRes.push({
+                    name: val.name,
+                    id: val.facilityBusinessId,
+                });
+            });
+            bizTypeList.value = dataRes;
+        });
         return {
             labelCol: { style: { width: "150px" } },
             formState,
@@ -510,10 +499,8 @@ export default defineComponent({
                 authorization: "authorization-text",
             },
             loadData,
-            resultUsers,
-            refetchDataUsers,
             resultDataUsers,
-            spinning,
+            loading,
             handleChange,
             previewImage,
             stampReview,
@@ -527,12 +514,10 @@ export default defineComponent({
             openEditModal,
             modalHistory,
             modalLogin,
-            popupData,
             listDataMyCompanyUser,
             updateDataCompany,
             companyId,
             idRowEdit,
-            companyIdPopup,
             popupDataLogin,
             dataGetListUsers,
             rowTable,
@@ -544,6 +529,7 @@ export default defineComponent({
             changeValueRow,
             resetFormNum,
             onExporting,
+            bizTypeList,
         };
     },
 });
