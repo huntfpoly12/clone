@@ -26,7 +26,6 @@ import DxDataGrid, { DxColumn, DxScrolling, DxSummary } from 'devextreme-vue/dat
 
 export default defineComponent({
   setup(props, { emit }) {
-    console.log(`output-`,)
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const dataSource = ref([]);

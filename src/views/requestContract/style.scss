@@ -99,7 +99,7 @@
 }
 
 .form-item label {
-    min-width: 165px;
+    min-width: 125px;
 }
 
 .red {
@@ -161,7 +161,7 @@
 }
 
 .date-picker label {
-    width: 165px;
+    width: 125px;
     display: inline-block;
 }
 
@@ -281,8 +281,14 @@
   }
 }
 :deep .ant-form-item-label > label {
-  width: 165px;
+  width: 125px;
 }
 :deep .ant-space-align-center {
-  margin-left: 165px;
+  margin-left: 125px;
+}
+:deep .custom-file-input{
+  width: 130px;
+  &::before {
+    width: 130px;
+  }
 }
