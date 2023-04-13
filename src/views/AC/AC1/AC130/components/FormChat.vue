@@ -86,6 +86,14 @@
 import { useStore } from 'vuex';
 import { defineComponent, ref, nextTick, onMounted, reactive, watch, computed } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
+import { databaseFirebase } from "@/firebaseConfig";
+import {
+  ref as reffb,
+  push,
+  set,
+  onChildAdded,
+  onValue,
+} from "firebase/database";
 export default defineComponent({
   components: {
     EllipsisOutlined,
@@ -103,12 +111,13 @@ export default defineComponent({
     const inputChat: any = ref()
     let idEditComment = ref<any>(null)
     const payload = {
-      id: 0,
       name: userName.value,
       avatar: 'https://vtv1.mediacdn.vn/thumb_w/650/2022/12/9/photo-1-16705558997871835381431-crop-1670555912188795621879.jpg',
-      content: '',
-      createdAt: '2023-03-08  03:00:00',
-      status: '일반'
+      text: '',
+      files: [],
+      createdAt: new Date().getTime() ,
+      status: '일반',
+      uid: userName.value
     }
     const listChat = ref<any>([
       {
@@ -205,23 +214,49 @@ export default defineComponent({
         formTimeline.value.scrollTop = 10000000
       })
     })
+
+    const channelChatSubrights = () => {
+      // if (idUserTo.value > id) {
+      //   console.log(idUserTo.value + id);
+      //   return idUserTo.value + id;
+      // } else {
+      //   console.log(id + idUserTo.value);
+      //   return id + idUserTo.value;
+      // }
+      return 'channelChatSubrights'
+    };
+
     const sendChat = () => {
-      if (!textChat.value.trim()) return
-      if (idEditComment.value !== null) {
-        listChat.value.find((items: any) => items.id === idEditComment.value).content = textChat.value
-        textChat.value = ''
-        idEditComment.value = null
-        resetInputChat()
-        return
-      } else {
-        listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
-        textChat.value = ''
-      }
-      nextTick(() => {
-        formTimeline.value.scrollTop = 10000000
-        resetInputChat()
-      })
-    }
+      const postListRef = reffb(databaseFirebase, channelChatSubrights());
+      const newPostRef = push(postListRef);
+      set(newPostRef, { 
+        ...payload, 
+        text: textChat.value })
+        .then(() => {
+          textChat.value = "";
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // const sendChat = () => {
+    //   if (!textChat.value.trim()) return
+    //   if (idEditComment.value !== null) {
+    //     listChat.value.find((items: any) => items.id === idEditComment.value).content = textChat.value
+    //     textChat.value = ''
+    //     idEditComment.value = null
+    //     resetInputChat()
+    //     return
+    //   } else {
+    //     listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
+    //     textChat.value = ''
+    //   }
+    //   nextTick(() => {
+    //     formTimeline.value.scrollTop = 10000000
+    //     resetInputChat()
+    //   })
+    // }
     const changeInput = (event: any) => {
       const elment = event?.target ? event.target : event
       const style = getComputedStyle(elment, null);
@@ -265,6 +300,7 @@ export default defineComponent({
       inputChat.value.style.height = "40px"
       inputChat.value.focus()
     }
+
     return {
       userName,
       listChat,
@@ -276,7 +312,7 @@ export default defineComponent({
       editComment,
       deleteComment,
       idEditComment,
-      removeText
+      removeText,
     }
   },
 })
@@ -516,5 +552,6 @@ export default defineComponent({
 
 .borderEdit {
   border: 1px solid red;
-}</style>
+}
+</style>
 
