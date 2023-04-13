@@ -2,7 +2,7 @@
     <div ref="root">
         <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
             :mask-closable="false" :width="1028" :footer="null">
-            <form action="your-action">
+            <standard-form ref="formEditBF340">
                 <a-row :gutter="24">
                     <a-col :span="9" :md="13" :lg="10">
                         <a-form-item label="영업자코드" label-align="right" :label-col="labelCol">
@@ -38,7 +38,7 @@
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
-                            :label-col="labelCol">
+                            :label-col="labelCol">{{ formState.residentId }} {{ isResidentId }}
                             <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
@@ -55,8 +55,8 @@
                         <a-form-item label="주소" label-align="right" :label-col="{ span: 3 }" :wrapper-col="{ span: 21 }"
                             class="post-code">
                             <div style="display:flex">
-                                <default-text-box v-model:valueInput="formState.zipcode" width="200px" :disabled="true"
-                                    :required="true" />
+                                <default-text-box v-model:valueInput="formState.zipcode" width="200px" 
+                                    :required="true" :readOnly="true"/>
                                 <div style="margin-left: 5px">
                                     <post-code-button @dataAddress="funcAddress" />
                                 </div>
@@ -115,7 +115,7 @@
                         </a-form-item>
                         <a-form-item label="가입일자" class="red" label-align="right" :label-col="labelCol">
                             <div style="width: 150px">
-                                <date-time-box v-model:valueDate="formState.registerDate" />
+                                <date-time-box v-model:valueDate="formState.registerDate" ref="registerDate"/>
                             </div>
                         </a-form-item>
                     </a-col>
@@ -147,7 +147,7 @@
                             :width="150" />
                     </a-col>
                 </a-row>
-            </form>
+            </standard-form>
         </a-modal>
     </div>
 </template>
@@ -166,10 +166,12 @@ export default defineComponent({
     props: ['modalStatus', 'data', 'idSaleEdit']
     ,
     setup(props, { emit }) {
+        const formEditBF340 = ref();
+        const registerDate = ref();
         const code = ref();
         const id = ref();
-        const dataQuery = ref();
-        let trigger = ref<boolean>(false);
+        const dataQuery = ref({ id: props.idSaleEdit });
+        let trigger = ref<boolean>(true);
         let triggerCheckPer = ref<boolean>(false);
         const isResidentId =  ref<boolean>(false);
         const dataQueryCheckPer = ref({});
@@ -184,12 +186,8 @@ export default defineComponent({
             (newValue) => {
                 if (newValue) {
                     visible.value = newValue;
-                    dataQuery.value = { id: props.idSaleEdit };
-                    trigger.value = true;
-                    refetch();
                 } else {
                     visible.value = newValue;
-                    trigger.value = false;
                 }
             }
         );
@@ -279,7 +277,11 @@ export default defineComponent({
             emit('updateSuccess', true)
         });
         const updateSale = (e: any) => {
-            var res = e.validationGroup.validate();
+            if (!formState.registerDate) {
+              registerDate.value.validate(true)
+              return
+            }
+            var res = formEditBF340.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             }
@@ -318,9 +320,9 @@ export default defineComponent({
           () => formState.bizType,
           (newVal) => {
             if (newVal == 1) {
-              isResidentId.value = true
-            } else {
               isResidentId.value = false
+            } else {
+              isResidentId.value = true
             }
           },{deep:true}
         )
@@ -338,6 +340,7 @@ export default defineComponent({
         });
         return {
             code,
+            formEditBF340,
             labelCol,
             formState,
             visible,
@@ -348,7 +351,8 @@ export default defineComponent({
             funcAddress,
             updateSale,
             setModalVisible,
-            isResidentId
+            isResidentId,
+            registerDate
         }
     }
 })
