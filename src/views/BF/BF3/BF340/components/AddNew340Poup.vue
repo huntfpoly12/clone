@@ -171,7 +171,7 @@ export default defineComponent({
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
         let confirm = ref<string>("");
-        const isResidentId = ref<boolean>(false);
+        const isResidentId = ref<boolean>(true);
         const formState = reactive<any>({ ...initialFormState });
         const receiptOrNot = ref<boolean>(false);
         // watch event modal popup
