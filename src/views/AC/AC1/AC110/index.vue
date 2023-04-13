@@ -2,102 +2,14 @@
   <action-header title="통장내역" :buttonDelete="false" />
   <div class="ac-110">
     <div class="ac-110__top">
-      <div class="ac-110__top-grid">
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 1 }"
-          @click="selectedMonth(1)">
+      <div v-if="listAccountingProcesses.length" class="ac-110__top-grid">
+        <div v-for="(item, index) in listAccountingProcesses" :key="index" class="ac-110__top-grid-items"
+          :class="{ 'ac-110__top-grid-items-active': monthSelected === item.month }" @click="selectedMonth(item.month)">
           <div class="ac-110__top-grid-items-month">
-            <span class="">01</span>
+            <span class="">{{ item.month }}</span>
             <span class="">월</span>
           </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusEntering" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 2 }"
-          @click="selectedMonth(2)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">02</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 3 }"
-          @click="selectedMonth(3)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">03</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 4 }"
-          @click="selectedMonth(4)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">04</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 5 }"
-          @click="selectedMonth(5)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">05</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 6 }"
-          @click="selectedMonth(6)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">06</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 7 }"
-          @click="selectedMonth(7)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">07</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 8 }"
-          @click="selectedMonth(8)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">08</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 9 }"
-          @click="selectedMonth(9)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">09</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 10 }"
-          @click="selectedMonth(10)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">10</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 11 }"
-          @click="selectedMonth(11)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">11</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 12 }"
-          @click="selectedMonth(12)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">12</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
+          <ProcessStatus :disabled="true" :valueStatus="item.status" :heightBtn="36" />
         </div>
       </div>
       <div class="ac-110__top-flex">
@@ -198,7 +110,7 @@
                   <div class="ac-110__main-detail-detail1-summary">
                     <div class="ac-110__main-detail-detail1-summary-quantity">
                       <p class="ac-110__main-detail-detail1-summary-label">거래내역수:</p>
-                      <p class="ac-110__main-detail-detail1-summary-value">{{ dataSourceTransactionDetails.length }}</p>
+                      <p class="ac-110__main-detail-detail1-summary-value">{{ totalTransactions() }}</p>
                     </div>
                     <div class="ac-110__main-detail-detail1-summary-income">
                       <p class="ac-110__main-detail-detail1-summary-label">수입액 합계:</p>
@@ -316,7 +228,8 @@
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
       typeHistory="ac-110-bankbook" :data="payloadGetTransactionDetails" />
-    <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs" @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" :idRowEdit="idRowEdit"
+    <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
+      @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" :idRowEdit="idRowEdit"
       typeHistory="ac-110-accounting" :data="payloadGetAccountingProcessLogs" />
   </div>
 </template>
@@ -330,7 +243,7 @@ import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup } from "devextreme-vue/data-grid";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
-import { dataDemoMain, demTableMain, contentPopupRetrieveStatements, demoTableTransactionDetails, InitTransactionDetails } from "./utils/index"
+import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
 import DxButton from "devextreme-vue/button";
@@ -402,6 +315,7 @@ export default defineComponent({
     let triggerBankbookDetails = ref<boolean>(true)
     let triggerTransactionDetails = ref<boolean>(false)
 
+    let listAccountingProcesses = ref<any>([])
     let statusEntering = ref(10);
     let statusInput = ref(20);
     let statusAdjusting = ref(30);
@@ -497,7 +411,6 @@ export default defineComponent({
       }))
     errorTransactionDetails(e => {
       notification('error', e.message)
-      dataSourceTransactionDetails.value = demoTableTransactionDetails
     })
     // mutations
     const {
@@ -562,19 +475,19 @@ export default defineComponent({
     })
     // WATCH
     watch(resAccountingProcesses, (value) => {
+      if (!!value.getAccountingProcesses && value.getAccountingProcesses.length) {
+        listAccountingProcesses.value = value.getAccountingProcesses
+      }
       triggerAccountingProcesses.value = false
     })
 
     watch(resBankbookDetails, (value) => {
-      // if(value.getBankbookDetails.length){
-      //   dataSource.value = value.getBankbookDetails
-      // }
-      if (demTableMain.length) {
-        dataSource.value = demTableMain
+      if (!!value.getBankbookDetails && value.getBankbookDetails.length) {
+        dataSource.value = value.getBankbookDetails
         if (firstLoad.value) {
-          rowKeyfocused.value = demTableMain[0].bankbookId
-          payloadGetTransactionDetails.bankbookDetailDate = demTableMain[0].bankbookDetailDate
-          payloadGetTransactionDetails.bankbookDetailId = demTableMain[0].bankbookDetailId
+          rowKeyfocused.value = value.getBankbookDetails[0].bankbookId
+          payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
+          payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
           triggerTransactionDetails.value = true
         }
       }
@@ -582,7 +495,9 @@ export default defineComponent({
     })
 
     watch(resTransactionDetails, (value) => {
-      dataSourceTransactionDetails.value = demoTableTransactionDetails
+      if (!!value.getTransactionDetails && value.getTransactionDetails.length) {
+        dataSourceTransactionDetails.value = value.getTransactionDetails
+      }
       triggerTransactionDetails.value = false
     })
     // MOUNTED
@@ -670,10 +585,20 @@ export default defineComponent({
       return `전표등록 여부 (O: ${totalRegistration}, X: ${totalCancellation})`
     };
     // ---------------Grid detail----------------
+    const totalTransactions = () => {
+      let total = 0;
+      dataSourceTransactionDetails.value.forEach((item) => {
+        if(item.bankbookDetailId !== null){
+          total++
+        }
+      });
+      return formatNumber(total)
+    }
+
     const sumOfIncome = () => {
       let total = 0;
       dataSourceTransactionDetails.value.forEach((item) => {
-        total += item.transactionDetails.income
+        total += item.transactionDetails.income || 0
       });
       return formatNumber(total)
     }
@@ -681,7 +606,7 @@ export default defineComponent({
     const sumOfExpenses = () => {
       let total = 0;
       dataSourceTransactionDetails.value.forEach((item) => {
-        total += item.transactionDetails.spending
+        total += item.transactionDetails.spending || 0
       });
       return formatNumber(total)
     }
@@ -845,7 +770,6 @@ export default defineComponent({
       selectedRowKeys,
       selectionChanged,
       onFocusedRowChanging,
-      dataDemoMain,
       dataSource,
       totalDeposits,
       totalWithdrawal,
@@ -864,6 +788,7 @@ export default defineComponent({
       isModalSlipRegistrationSelected,
       isModalItemDetail,
       openPopupSlipRegistrationSelected,
+      totalTransactions,
       sumOfIncome,
       sumOfExpenses,
       resolutionClassification,
@@ -899,7 +824,8 @@ export default defineComponent({
       selectedMonth,
       payloadGetAccountingProcessLogs,
       isModalHistoryAccountingProcessLogs,
-      modalHistoryAccountingProcessLogs
+      modalHistoryAccountingProcessLogs,
+      listAccountingProcesses
     };
   },
 });

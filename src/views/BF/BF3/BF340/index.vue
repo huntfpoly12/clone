@@ -105,9 +105,9 @@
                     <a-pagination v-model:current="originData.page" v-model:page-size="originData.rows"
                         :total="rowTable" show-less-items style="margin-top: 10px" @change="searching" />
                 </div>
-                <AddNew340Poup :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="keyAdd"
+                <AddNew340Poup v-if="modalAddNewStatus"  :modalStatus="modalAddNewStatus" @closePopup="modalAddNewStatus = false" :key="keyAdd"
                     @createSuccess="createSuccess" />
-                <EditBF340Popup :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
+                <EditBF340Popup v-if="modalEditStatus"  :modalStatus="modalEditStatus" @closePopup="modalEditStatus = false" :data="popupData"
                     :idSaleEdit="idRowEdit" @updateSuccess="updateDone" />
                 <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false"
                     :data="popupData" title="변경이력" :idRowEdit="idRowEdit" typeHistory="bf-340" />

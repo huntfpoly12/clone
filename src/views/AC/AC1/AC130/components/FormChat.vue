@@ -211,6 +211,8 @@ export default defineComponent({
         listChat.value.find((items: any) => items.id === idEditComment.value).content = textChat.value
         textChat.value = ''
         idEditComment.value = null
+        resetInputChat()
+        return
       } else {
         listChat.value.push({ ...payload, id: listChat.value.length ? listChat.value[listChat.value.length - 1].id + 1 : 0, content: textChat.value })
         textChat.value = ''

@@ -1,9 +1,9 @@
 export const initFormState = {
-  settlementStartDate: '',
-  settlementFinishDate: '',
+  settlementStartDate: null,
+  settlementFinishDate: null,
   exclusionDays: 0,
   additionalDays: 0,
-  totalPay3Month: 0,
-  totalAnualBonus: 0,
-  annualLeaveAllowance: 0,
+  totalPay3Month: null,
+  totalAnualBonus: null,
+  annualLeaveAllowance: null,
 };
