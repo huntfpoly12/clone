@@ -42,6 +42,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        store.dispatch('auth/getUserInfor', sessionStorage.getItem('token'));
         const userInfor = reactive(store.state.auth.userInfor)
         const empployeeDetail = reactive(
             store.state.common.arrayEmployeePA410.filter(function(item : any) { 
@@ -59,7 +60,7 @@ export default defineComponent({
             error,
         } = useMutation(mutations.sendCalculateIncomeRetirementEmail);
 
-        const onSubmit = (e: any) => {
+      const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();

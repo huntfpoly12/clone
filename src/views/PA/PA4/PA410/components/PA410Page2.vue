@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, reactive } from 'vue'
+import { defineComponent, watch, ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -140,6 +140,9 @@ export default defineComponent({
     },
   setup(props, { emit }) {
         onMounted(() => {
+          let employeeInfor = store.state.common.arrayEmployeePA410.find((item: any) => item.employeeId == store.state.common.employeeIdPA410)
+          formState.settlementStartDate = employeeInfor && employeeInfor.joinedAt ? employeeInfor.joinedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
+          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
           dataLastRetiredYearsOfService.value = Formula.getDateOfService(
               new Date(filters.formatDate(formState.settlementStartDate)),
               new Date(filters.formatDate(formState.settlementFinishDate)),
@@ -164,12 +167,17 @@ export default defineComponent({
                 input: formState
         }
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
-        watch(() => formState.settlementFinishDate, (newFinishDate) => {
+        watch(() => [
+          formState.settlementStartDate,
+          formState.settlementFinishDate,
+          formState.exclusionDays,
+          formState.additionalDays
+        ], ([ newStartDate,newFinishDate,newExclusionDays,newAdditionalDays]) => {
           dataLastRetiredYearsOfService.value = Formula.getDateOfService(
-              new Date(filters.formatDate(formState.settlementStartDate)),
+              new Date(filters.formatDate(newStartDate)),
               new Date(filters.formatDate(newFinishDate)),
-              formState.exclusionDays,
-              formState.additionalDays
+              newExclusionDays,
+              newAdditionalDays
           )
         })
    
@@ -185,8 +193,9 @@ export default defineComponent({
       
         watch(result, (value) => {
             if (value && value.calculateIncomeRetirement) {
-                caculateValue.value = value.calculateIncomeRetirement;
-             }
+              caculateValue.value = value.calculateIncomeRetirement;
+              trigger.value = false;
+            }
         })
 
         const calculateIncomeRetirement = () => {
@@ -200,7 +209,12 @@ export default defineComponent({
         }
 
         const openMailPopup = () => {
+          var res = formPA410.value.validate();
+          if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+          } else {
             modalMailStatus.value = true
+          }
         }
 
           return {
