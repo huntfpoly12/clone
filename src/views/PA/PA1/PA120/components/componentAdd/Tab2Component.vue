@@ -176,7 +176,7 @@
         </a-spin>
       </a-col>
       <a-col class="col-3">
-        <div class="header-text-2">공제 {{ $filters.formatCurrency(totalDeduction) }}원</div>
+        <div class="header-text-2">공제 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span></div>
         <a-spin :spinning="loading1 || loading3" size="large">
           <div class="deduction-main">
             <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
@@ -599,25 +599,6 @@ export default defineComponent({
       store.state.common.isCalculateEditPA120 = true;
       store.state.common.isAddFormErrorPA120 = false;
     });
-
-    // get config
-    const yearPA120 = computed(()=> store.state.common.yearPA120);
-    const withholdingTrigger = ref(true);
-    const dataQuery = ref({ companyId: companyId, imputedYear: yearPA120 });
-    const { result: resultConfig } = useQuery(
-      queryCM130.getWithholdingConfig,
-      dataQuery,
-      () => ({
-        enabled: withholdingTrigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
-    watch(resultConfig, (newVal) => {
-      if (newVal) {
-        store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
-        withholdingTrigger.value = false;
-      }
-    })
 
     return {
       formStateTab2,

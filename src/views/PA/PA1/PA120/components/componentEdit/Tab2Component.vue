@@ -2,6 +2,7 @@
   <div id="tab2-pa120">
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loadingEmployeeWage" size="large">
+      {{ isDisableInsuranceSupport }} isDisableInsuranceSupport <br/>
       <a-row :gutter="16" class="mb-7">
         <a-col span="24" style="display: flex; flex-wrap: wrap">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
@@ -404,13 +405,14 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
+        console.log(`output->value`,data)
         store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction = data.longTermCareInsuranceDeduction;
         editRowData.employeementInsuranceDeduction = presidentEditPA120.value ? false : data.employeementInsuranceDeduction;
-        editRowData.insuranceSupport = data.insuranceSupport;
+        editRowData.insuranceSupport = data.length == 0 ? isDisableInsuranceSupport.value : data.insuranceSupport;
         if (data?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
           editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent ?? 0;
         }
