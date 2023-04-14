@@ -14,6 +14,7 @@ export default gql`
       year: $year
       month: $month
     ) {
+      ts
       loggedAt
       remark
       createdAt

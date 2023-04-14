@@ -9,11 +9,11 @@
                                 v-model:valueInput="initialStateFormAdd.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="200" :required="true" min="0" v-model:valueInput="initialStateFormAdd.amount"
+                            <number-box :width="200" :required="true" v-model:valueInput="initialStateFormAdd.amount"
                                 placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <number-box :width="200" :required="true" min="0" v-model:valueInput="initialStateFormAdd.summary"
+                            <default-text-box :width="200" :required="true" v-model:valueInput="initialStateFormAdd.summary"
                                 placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
@@ -27,11 +27,11 @@
                                 v-model:valueDate="initialStateFormAdd.paymentDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
-                            <radio-group :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true"
+                            <radio-group :arrayValue="arrResolutionType" :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="initialStateFormAdd.resolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
-                            <radio-group :arrayValue="arrayRadioCheck1" :layoutCustom="'horizontal'" :required="true"
+                            <radio-group :arrayValue="arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="initialStateFormAdd.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
@@ -55,6 +55,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import { initialStateFormAdd } from '../utils/index'
+import { ResolutionType, LetterOfApprovalType, enum2Entries  } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -112,27 +113,28 @@ export default defineComponent({
                 emit('submit', initialStateFormAdd)
             }
         }
-        const arrayRadioCheck = [
-            { id: 1, text: '수입' },
-            { id: 2, text: '지출' },
-            { id: 3, text: '마이너스수입' },
-            { id: 4, text: '여입' }
-        ]
-        const arrayRadioCheck1 = [
-            { id: 1, text: '구입' },
-            { id: 2, text: '운반' },
-            { id: 3, text: '수선' },
-            { id: 4, text: '인쇄' },
-            { id: 5, text: '지출' },
-        ]
+        const arrResolutionType: any = computed(() => {
+            let item: any = enum2Entries(ResolutionType).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
+        const arrLetterOfApprovalType: any = computed(() => {
+            let item: any = enum2Entries(LetterOfApprovalType).map((value) => ({
+                id: value[1],
+                text: value[0],
+            }));
+            return item;
+        });
         return {
             refFormAddAC120,
             initialStateFormAdd,
             submit,
             cancel,
             arraySelectBox,
-            arrayRadioCheck,
-            arrayRadioCheck1
+            arrResolutionType,
+            arrLetterOfApprovalType
         }
     },
 })

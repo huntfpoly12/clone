@@ -40,6 +40,7 @@ import getBankbooksLogs from "./getBankbooksLogs";
 import getBankbookDetailLogs from "./getBankbookDetailLogs";
 import getAccoountSubjects from "./getAccoountSubjects";
 import getAccountingProcessLogs from "./getAccountingProcessLogs";
+import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
 import getMe from "./getMe";
 const queries = {
   getMe: getMe,
@@ -86,7 +87,8 @@ const queries = {
   getBackerLogs: getBackerLogs,
   getBankbookDetailLogs: getBankbookDetailLogs,
   getAccoountSubjects:getAccoountSubjects,
-  getAccountingProcessLogs: getAccountingProcessLogs
+  getAccountingProcessLogs: getAccountingProcessLogs,
+  getAccountingDocumentsLogs: getAccountingDocumentsLogs,
 };
 
 export default queries;
