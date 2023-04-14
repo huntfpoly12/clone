@@ -46,7 +46,7 @@
           </template>
 
           <DxSummary>
-            <DxTotalItem column="품목" summary-type="count" display-format="통장내역수: {0}" />
+            <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
             <DxTotalItem cssClass="custom-sumary" column="비고" :customize-text="totalDifference" />
@@ -142,17 +142,20 @@ export default defineComponent({
       dataSource.value.statementOfGoodsItems.forEach((item: any) => {
         total += item.amount
       });
-      return `금액합계: ${total}`
+      return `금액합계: ${formatNumber(total)}`
     }
     const totalExpenditure = () => {
-      return `지출액: ${dataSource.value.spending || 0}`
+      const spending = dataSource.value.spending || 0
+      return `지출액: ${formatNumber(spending)}`
     }
     const totalDifference = () => {
       let total = 0;
+      const spending = dataSource.value.spending || 0
       dataSource.value.statementOfGoodsItems.forEach((item: any) => {
         total += item.amount
       });
-      return `차액: ${dataSource.value.spending || 0}-${total}`
+      const result = spending - total
+      return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
       isModalDelete.value = true
@@ -184,6 +187,14 @@ export default defineComponent({
         dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, InitStatementOfGoods]
       } else {
         dataSource.value.statementOfGoodsItems = [InitStatementOfGoods]
+      }
+    }
+
+    const formatNumber = (value: number) => {
+      if (Number.isInteger(value)) {
+        return new Intl.NumberFormat().format(value)
+      } else {
+        return 0
       }
     }
     return {
