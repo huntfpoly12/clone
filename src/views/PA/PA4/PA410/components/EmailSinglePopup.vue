@@ -60,7 +60,7 @@ export default defineComponent({
             error,
         } = useMutation(mutations.sendCalculateIncomeRetirementEmail);
 
-      const onSubmit = (e: any) => {
+        const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -71,7 +71,7 @@ export default defineComponent({
                     emailInput: {
                         senderName: userInfor.username,
                         receiverName: empployeeDetail[0].name,
-                        receiverAddress: empployeeDetail[0].email
+                        receiverAddress: emailAddress.value
                     }
                 }
                 // variables.employeeInputs.receiverAddress = emailAddress.value
