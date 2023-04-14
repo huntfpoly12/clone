@@ -43,7 +43,7 @@ export default {
         disabled: Boolean,
         valueInput: {
             type: [Number, String],
-            default: "",
+            default: null,
         },
         readOnly: Boolean,
         nameInput: {
@@ -78,7 +78,7 @@ export default {
             messageRequired.value = props.messRequired;
         }
         const resetSelect = ref(0)
-        const value = ref(props.valueInput);
+        let value: any = ref(null);
         const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
         let accountSubjects: any = ref([])
         onMounted(() => {
@@ -108,10 +108,10 @@ export default {
                     }
                 })
             }
-            if (!accountSubjects.value.find((row: any) => row.code == value.value)) {
-                emit("update:valueInput", '');
-                resetSelect.value++
-            }
+            // if (!accountSubjects.value.find((row: any) => row.code == value.value)) {
+            //     emit("update:valueInput", '');
+            //     resetSelect.value++
+            // }
         }
         const fillRow = (row: any) => {
             const filteredArr = ref(row.codes)
@@ -137,7 +137,10 @@ export default {
         };
 
         watch(() => props.valueInput, (newValue) => {
-            value.value = newValue;
+            value.value = !!newValue ? newValue : null;
+        },{
+          deep: true,
+          immediate: true,
         });
         const onOpened = (e: any) => {
             e.component._popup.option('width', props.width);
