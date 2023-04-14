@@ -289,7 +289,7 @@ export default defineComponent({
             }
         });
         watch(resultCompany, (value) => {
-            let data = value.getCompany;
+            let data = value.getMyCompany;
             if (data) {
                 dataPopupAdd.value.withholdingDutyName = data.name;
                 dataPopupAdd.value.withholdingDutyPresidentName = data.presidentName;
