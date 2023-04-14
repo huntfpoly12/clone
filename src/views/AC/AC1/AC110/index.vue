@@ -28,11 +28,11 @@
     <div class="ac-110__main">
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails" size="large">
-          <DxDataGrid id="DxDataGridMainAc110" key-expr="bankbookId" :show-row-lines="true" :hoverStateEnabled="true"
-            :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys" :show-borders="true"
-            :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true"
-            :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-            @focused-row-changing="onFocusedRowChanging">
+          <DxDataGrid id="DxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
+            :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
+            :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
+            :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+            @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging">
             <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
@@ -46,8 +46,8 @@
             <DxColumn caption="통장용도" cell-template="useType" />
             <template #useType="{ data }">
               <DxSelectBox :search-enabled="false" width="100" display-expr="label" value-expr="value"
-                        :data-source="bankbookUseType" v-model:value="data.data.bankbook.useType"
-                        placeholder="통장용도" :readOnly="true"/>
+                :data-source="bankbookUseType" v-model:value="data.data.bankbook.useType" placeholder="통장용도"
+                :readOnly="true" />
             </template>
             <DxColumn caption="일자" data-field="bankbookDetailDate" data-type="date" format="yyyy-MM-dd HH:mm" />
             <DxColumn caption="통장적요" data-field="summary" />
@@ -62,7 +62,9 @@
             <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
             <DxColumn caption="증빙" cell-template="proofCount" />
             <template #proofCount="{ data }">
-              {{ data.data.proofCount ? data.data.proofCount : '' }}
+              <div style="text-align: end;">
+                {{ data.data.proofCount ? data.data.proofCount : '' }}
+              </div>
             </template>
             <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
             <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" />
@@ -151,7 +153,7 @@
                 </template>
                 <DxColumn caption="결의구분" cell-template="resolutionClassification" />
                 <template #resolutionClassification="{ data }">
-                  {{ data.data.bankbookId !== null ? resolutionClassification.find((item: any) =>
+                  {{ data.data.bankbookDetailId !== null ? resolutionClassification.find((item: any) =>
                     item.value ==
                     data.data.resolutionClassification).label : '' }}
                 </template>
@@ -212,7 +214,8 @@
         <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage v-model:list-image-file="fileList" width="400"
-              :payLoadProofs="payloadGetTransactionDetails" />
+              :payLoadProofs="payloadGetTransactionDetails" @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" />
           </div>
         </div>
       </div>
@@ -372,7 +375,7 @@ export default defineComponent({
     const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
     // COMPUTED
-    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value))
+    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -475,6 +478,7 @@ export default defineComponent({
       loading: loadingSaveTransactionDetails,
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
+      triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveTransactionDetails(e => {
@@ -491,10 +495,12 @@ export default defineComponent({
     watch(resBankbookDetails, (value) => {
       if (!!value.getBankbookDetails && value.getBankbookDetails.length) {
         dataSource.value = value.getBankbookDetails
-        rowKeyfocused.value = value.getBankbookDetails[0].bankbookId
-        payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
-        payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
-        triggerTransactionDetails.value = true
+        if (firstLoad.value) {
+          rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
+          payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
+          payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
+          triggerTransactionDetails.value = true
+        }
       } else {
         dataSource.value = []
         rowKeyfocused.value = null
@@ -502,6 +508,7 @@ export default defineComponent({
         payloadGetTransactionDetails.bankbookDetailId = null
         dataSourceTransactionDetails.value = {}
       }
+      firstLoad.value = false
       triggerBankbookDetails.value = false
     })
 
@@ -510,6 +517,12 @@ export default defineComponent({
         dataSourceTransactionDetails.value = value.getTransactionDetails
       }
       triggerTransactionDetails.value = false
+    })
+
+    watch(() => payloadGetTransactionDetails, () => {
+      fileList.value = []
+    }, {
+      deep: true
     })
     // MOUNTED
     // METHODS
@@ -528,6 +541,7 @@ export default defineComponent({
       isModalHistoryAccountingProcessLogs.value = true
     }
     const selectedMonth = (month: number) => {
+      firstLoad.value = true
       monthSelected.value = month
       payloadGetAccountingProcessLogs.month = month
       triggerBankbookDetails.value = true
@@ -539,7 +553,7 @@ export default defineComponent({
       const listItemDisable: any = []
       dataSource.value.forEach((items: any) => {
         if (items.normalTransactionDetails && !items.documentRegistered) { }
-        else { listItemDisable.push(items.bankbookId) }
+        else { listItemDisable.push(items.bankbookDetailId) }
       })
       const indexItemDisable = selectedRowKeys.value.findIndex((items: any) => listItemDisable.includes(items))
       if (indexItemDisable >= 0) {
@@ -549,6 +563,7 @@ export default defineComponent({
     const onFocusedRowChanging = (event: any) => {
       const item = event.rows[event.newRowIndex].data
       if (payloadGetTransactionDetails.bankbookDetailId === item.bankbookDetailId) return
+      rowKeyfocused.value = item.bankbookDetailId
       payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
       payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
       triggerTransactionDetails.value = true
@@ -559,7 +574,7 @@ export default defineComponent({
     }
     const openPopupSlipRegistrationSelected = () => {
       propListSlipRegistrationSelected.value.count = selectedRowKeys.value.length
-      propListSlipRegistrationSelected.value.selectedRowKeys = dataSource.value.filter((items) => selectedRowKeys.value.includes(items.bankbookId)).map(e => e.transactionDetailsCount)
+      propListSlipRegistrationSelected.value.selectedRowKeys = dataSource.value.filter((items) => selectedRowKeys.value.includes(items.bankbookDetailId)).map(e => e.transactionDetailsCount)
       isModalSlipRegistrationSelected.value = true
     }
     const openPopupRegistration = (value: any) => {
@@ -643,7 +658,7 @@ export default defineComponent({
       let bankbookDetailDate: number = 0
       const bankbookDetailIds: number[] = []
       dataSource.value.forEach(items => {
-        if (selectedRowKeys.value.includes(items.bankbookId)) {
+        if (selectedRowKeys.value.includes(items.bankbookDetailId)) {
           bankbookDetailDate = items.bankbookDetailDate
           bankbookDetailIds.push(items.bankbookDetailId)
         }
@@ -771,6 +786,15 @@ export default defineComponent({
       }
     }
 
+    const updateAddBankbookDetailProof = () => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+      dataSource.value[indexSelected].proofCount++
+    }
+
+    const updateremoveBankbookDetailProof = () => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+      dataSource.value[indexSelected].proofCount--
+    }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
       if (Number.isInteger(value)) {
@@ -845,7 +869,9 @@ export default defineComponent({
       payloadGetAccountingProcessLogs,
       isModalHistoryAccountingProcessLogs,
       modalHistoryAccountingProcessLogs,
-      listAccountingProcesses
+      listAccountingProcesses,
+      updateremoveBankbookDetailProof,
+      updateAddBankbookDetailProof
     };
   },
 });

@@ -83,7 +83,10 @@
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
-          <DxColumn caption="주민등록번호" :width="130" data-field="employee.residentId" />
+          <DxColumn caption="주민등록번호" :width="130" cell-template="residentId" data-field="employee.residentId" />
+            <template #residentId="{ data }">
+              <resident-id :residentId="data.data.employee?.residentId"></resident-id>
+            </template>
           <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
           <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
