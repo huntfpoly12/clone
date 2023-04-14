@@ -11,7 +11,9 @@
       </div>
       <div class="ac-110__top-flex">
         <div class="ac-110__top-flex-action">
-          <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+          <ProcessStatus
+            :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+            :disabled="true" />
           <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
         </div>
         <div class="ac-110__top-flex-action">
@@ -41,10 +43,13 @@
                 <div>{{ data.data.bankbook.bankbookNickname }}</div>
               </a-tooltip>
             </template>
-            <DxColumn caption="통장용도" data-field="bankbook.useType">
-              <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
-            </DxColumn>
-            <DxColumn caption="일자" data-field="bankbookDetailDate" />
+            <DxColumn caption="통장용도" cell-template="useType" />
+            <template #useType="{ data }">
+              <DxSelectBox :search-enabled="false" width="100" display-expr="label" value-expr="value"
+                        :data-source="bankbookUseType" v-model:value="data.data.bankbook.useType"
+                        placeholder="통장용도" :readOnly="true"/>
+            </template>
+            <DxColumn caption="일자" data-field="bankbookDetailDate" data-type="date" format="yyyy-MM-dd HH:mm" />
             <DxColumn caption="통장적요" data-field="summary" />
             <DxColumn caption="내용|비고" cell-template="content" />
             <template #content="{ data }">
@@ -55,7 +60,10 @@
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
             <DxColumn caption="출금액" data-field="withdraw" format="fixedPoint" />
             <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
-            <DxColumn caption="증빙" data-field="proofCount" />
+            <DxColumn caption="증빙" cell-template="proofCount" />
+            <template #proofCount="{ data }">
+              {{ data.data.proofCount ? data.data.proofCount : '' }}
+            </template>
             <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
             <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" />
             <template #normalTransactionDetails="{ data }">
@@ -93,10 +101,9 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="theOrder" :show-row-lines="true"
-                :hoverStateEnabled="true" :data-source="dataSourceTransactionDetails.transactionDetails"
-                :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                :column-auto-width="true">
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="theOrder" :show-row-lines="true" :hoverStateEnabled="true"
+                :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
@@ -176,22 +183,25 @@
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length" style="font-size: 12px"
-                      @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                    <EditOutlined
+                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
+                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <PlusOutlined v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length" style="font-size: 12px"
-                    @click="openPopupItemDetail(data.data)" />
+                  <PlusOutlined
+                    v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
+                    style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   <div v-else>{{ data.data.goodsCount }}</div>
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length" style="font-size: 12px"
-                      @click="openPopupNoteItemDetail(data, 'memo')" />
+                    <EditOutlined
+                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
+                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>
@@ -240,6 +250,7 @@ import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
+import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
@@ -282,7 +293,8 @@ export default defineComponent({
     DxLookup,
     HistoryPopup,
     SaveFilled,
-    DxPaging
+    DxPaging,
+    DxSelectBox
   },
   setup() {
     const store = useStore();
@@ -414,6 +426,7 @@ export default defineComponent({
       loading: loadingSyncBankbookDetails,
     } = useMutation(mutations.syncBankbookDetails);
     doneSyncBankbookDetails((e) => {
+      triggerAccountingProcesses.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSyncBankbookDetails(e => {
@@ -482,7 +495,7 @@ export default defineComponent({
         payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
         payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
         triggerTransactionDetails.value = true
-      }else {
+      } else {
         dataSource.value = []
         rowKeyfocused.value = null
         payloadGetTransactionDetails.bankbookDetailDate = null
@@ -707,7 +720,7 @@ export default defineComponent({
       isModalNoteItemDetail.value = false
     }
     const addNewRowTransactionDetails = () => {
-      if(rowKeyfocused.value === null) return
+      if (rowKeyfocused.value === null) return
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
@@ -718,7 +731,7 @@ export default defineComponent({
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
     const submitTransactionDetails = (event: any) => {
-      if(rowKeyfocused.value === null) return
+      if (rowKeyfocused.value === null) return
       const res = event.validationGroup.validate();
       if (!res.isValid) return
       let payloadCreate: any = {}
