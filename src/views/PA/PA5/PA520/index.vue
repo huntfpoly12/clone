@@ -34,7 +34,6 @@
         </a-col>
   </a-row>
   <div id="pa-520" class="page-content">
-  {{ loading }}
       <a-row>
           <a-col :span="13" class="custom-layout" >
               <a-spin :spinning="loading" size="large">
@@ -280,7 +279,7 @@ export default defineComponent({
     const modalChangeValueAdd = computed(() => store.getters['common/modalChangeValueAddPA520'])
     const actionChangeComponent = computed(() => store.getters['common/setComponentPA520'])
     const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
-    const activeAddRowPA520  = computed(() => store.getters['common/activeAddRowPA520'])
+    //const activeAddRowPA520  = computed(() => store.getters['common/activeAddRowPA520'])
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -364,7 +363,6 @@ export default defineComponent({
         ).length;
         totalUser.value = result.value.getEmployeeWageDailies.length;
 
-
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
         if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value && !isClickBtnSavePA520.value) {
           onAddBtClick()
@@ -379,7 +377,9 @@ export default defineComponent({
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
         if (isClickBtnSavePA520.value) {
+          store.commit('common/setFocusedRowKeyPA520', 0)
           setRowEdit(parseInt(idRowSaveDone.value))
+          store.commit('common/setComponentPA520',2);
           store.dispatch('common/resetStatusModal')
         }
 
@@ -421,10 +421,7 @@ export default defineComponent({
     );
 
     watch(focusedRowKey, () => {
-  
       let newRow = dataSource.value.items().filter((item: any) => item.key == 0);
-   
-      console.log(newRow.length, isClickRow.value);
       if (newRow.length > 0 && isClickRow.value) {
         removeNewRow()
         store.dispatch('common/resetActionStatus')
@@ -466,13 +463,16 @@ export default defineComponent({
         store.commit('common/setAddBtOnclickPA520',false);
       
     }
-    const onFocusedRowChanged = async(event: any) => {
-      // if(focusedRowKey.value == 0 && !isClickRow.value ){
-      //   store.commit('common/setComponentPA520',1);
-      // } else {
-      //   store.commit('common/setComponentPA520', 2);
-      //   setRowEdit(event.row.data.employeeId);
-      // }
+    const onFocusedRowChanged = async (event: any) => {
+
+      if (focusedRowKey.value == 0 && !isClickRow.value) {
+        store.commit('common/setComponentPA520',1);
+      } else {
+        console.log(focusedRowKey.value)
+        console.log(event.row.data.employeeId)
+        store.commit('common/setComponentPA520', 2);
+        setRowEdit(event.row.data.employeeId);
+      }
     }
 
     const actionSave = () => {
@@ -570,7 +570,6 @@ export default defineComponent({
           if (tab1IsChange.value) {
             store.commit('common/setTabActivePA520','1')
           }
-
           if (tab2IsChange.value) {
             store.commit('common/setTabActivePA520','2')
           }
