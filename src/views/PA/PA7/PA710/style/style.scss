@@ -36,7 +36,7 @@
     // }
     .data-table {
         margin-top: 10px;
-        height: 810px;
+        height: calc(100vh - 150px);
         border: 1px solid #d7d7d7;
     }
     :deep .dx-datagrid-header-panel {

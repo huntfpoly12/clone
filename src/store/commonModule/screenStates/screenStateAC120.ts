@@ -2,7 +2,8 @@ let statesAC120 = {
     ac120: {
         statusShowFull: false,
         formData: null,
-        heightForm: 0,
+        onDoneAdd: 0,
+        // heightForm: 0,
     }
 };
 

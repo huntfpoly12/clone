@@ -18,12 +18,15 @@
         <a-row class="mt-10">
             <a-col :span="18">
                 <a-form-item class="red" label="대상월">
-                    <radio-group :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'" :required="true" />
+                    <radio-group :arrayValue="arrayRadioMonth"
+                        v-model:valueRadioCheck="dataQuerySearchSpendingAccountingDocuments.month"
+                        :layoutCustom="'horizontal'" :required="true" />
                 </a-form-item>
             </a-col>
             <a-col :span="6">
                 <a-form-item label="결의번호">
-                    <default-text-box width="150px" />
+                    <default-text-box width="150px"
+                        v-model:valueInput="dataQuerySearchSpendingAccountingDocuments.resolutionNumber" />
                 </a-form-item>
             </a-col>
         </a-row>
@@ -31,32 +34,52 @@
             <button-basic class="button-form-modal" :text="'검색'" :type="'default'" :mode="'contained'"
                 @onClick="onSearch" />
         </div>
-        <a-spin tip="Loading..." :spinning="false">
+        <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
             <div style="margin: 48px 0">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="bcode" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
                     :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxColumn data-field="taxOfficeName" caption="선택" />
-                    <DxColumn data-field="taxOfficeName" caption="결의번호" />
-                    <DxColumn data-field="taxOfficeName" caption="통장" />
-                    <DxColumn data-field="taxOfficeName" caption="일자" />
-                    <DxColumn data-field="taxOfficeName" caption="결의 구분" />
-                    <DxColumn data-field="taxOfficeName" caption="수입액" />
-                    <DxColumn data-field="taxOfficeName" caption="지출액" />
-                    <DxColumn data-field="taxOfficeName" caption="통장적요" />
-                    <DxColumn data-field="taxOfficeName" caption="적요" />
-                    <DxColumn data-field="taxOfficeName" caption="계정과목" />
-                    <DxColumn data-field="localIncomeTaxArea" caption="상대계정" />
-                    <DxColumn data-field="localIncomeTaxArea" caption="자금원천" />
-                    <DxColumn data-field="localIncomeTaxArea" caption="거래처" />
-                    
+                    <DxColumn caption="선택" cell-template="radioCheck" />
+                        <template #radioCheck="{ data }">
+                            <div class="text-align-center pt-8">
+                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.reportId ? true : false"/>
+                            </div>
+                        </template>
+                    <DxColumn data-field="resolutionNumber" caption="결의번호" />
+                    <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
+                    <template #bankbook="{ data }">
+                        <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
+                            <div>{{ data.bankbook?.bankbookNickname }}</div>
+                        </a-tooltip>
+                    </template>
+                    <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
+                    <template #transactionDetailDate="{ data }">
+                        {{ $filters.formatDate(data.value) }}
+                    </template>
+                    <DxColumn data-field="resolutionClassification" caption="결의 구분" />
+                    <DxColumn data-field="income" caption="수입액" />
+                    <DxColumn data-field="spending" caption="지출액" format="fixedPoint" />
+                    <DxColumn data-field="summaryOfBankbookDetail" caption="통장적요" />
+                    <DxColumn data-field="summary" caption="적요" />
+                    <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
+                    <template #accountCode="{ data }">
+                        <account-code-select :valueInput="data.accountCode" :disabled="true" />
+                    </template>
+                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
+                    <template #relationCode="{ data }">
+                        <account-code-select :valueInput="data.relationCode" :disabled="true" />
+                    </template>
+                    <DxColumn data-field="fundingSource" caption="자금원천" />
+                    <DxColumn data-field="clientId" caption="거래처" />
+
                 </DxDataGrid>
             </div>
         </a-spin>
         <div class="btn_submit">
-            <button-basic class="button-form-modal" :text="'여입결의서 반영'" :type="'default'"
-                :mode="'contained'" @onClick="onSubmit" />
+            <button-basic class="button-form-modal" :text="'여입결의서 반영'" :type="'default'" :mode="'contained'"
+                @onClick="onSubmit" />
         </div>
     </a-modal>
 </template>
@@ -65,8 +88,10 @@
 import { ref, defineComponent, watch, computed } from "vue";
 import { useStore } from 'vuex';
 import { DxSelectBox } from "devextreme-vue/select-box";
-import queries from "@/graphql/queries/common/index";
+import queries from "@/graphql/queries/AC/AC1/AC120";
 import { useQuery } from "@vue/apollo-composable";
+import { companyId, makeDataClean } from "@/helpers/commonFunction"
+import { initialArrayRadioMonth } from '../utils'
 import {
     DxDataGrid,
     DxColumn, DxScrolling,
@@ -81,35 +106,55 @@ export default defineComponent({
         DxSelectBox,
     },
     setup(props, { emit }) {
-        const arrayRadioCheck = [
-            { id: 1, text: '01' },
-            { id: 2, text: '02' },
-            { id: 3, text: '03' },
-            { id: 4, text: '04' },
-            { id: 5, text: '05' },
-            { id: 6, text: '06' },
-            { id: 7, text: '07' },
-            { id: 8, text: '08' },
-            { id: 9, text: '09' },
-            { id: 10, text: '10' },
-            { id: 11, text: '11' },
-            { id: 12, text: '12' },
-
-        ]
+        const arrayRadioMonth = initialArrayRadioMonth
         // config grid
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
         // let showEmployeeInfo = ref(false);
         const dataSource = ref([]);
         const search = ref<string>("");
         let dataEmit = ref()
+        const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(false)
+        const dataQuerySearchSpendingAccountingDocuments = ref({
+            companyId: companyId,
+            fiscalYear: globalYear.value,
+            facilityBusinessId: globalFacilityBizId.value,
+            year: globalYear.value,
+            month: 1,
+            resolutionNumber: null
+        })
+
+        const focusedRowKey = ref<Number>(1);
+
+        // =================== GRAPHQL ===================
+        // query searchSpendingAccountingDocuments
+        const {
+            result: resSearchSpendingAccountingDocuments, loading: loadingSearchSpendingAccountingDocuments, onError: errorSearchSpendingAccountingDocuments
+        } = useQuery(queries.searchSpendingAccountingDocuments, dataQuerySearchSpendingAccountingDocuments.value, () => ({
+            enabled: triggerQuerySearchSpendingAccountingDocuments.value,
+            fetchPolicy: "no-cache",
+        }))
+
+        // ================== WATCH ================
+        // 1. searchSpendingAccountingDocuments
+        watch(resSearchSpendingAccountingDocuments, (value) => {
+            triggerQuerySearchSpendingAccountingDocuments.value = false
+            console.log(value.searchSpendingAccountingDocuments);
+            dataSource.value = value.searchSpendingAccountingDocuments
+        })
+
+
+
+
         const onSearch = () => {
-            
+            makeDataClean(dataQuerySearchSpendingAccountingDocuments.value)
+            triggerQuerySearchSpendingAccountingDocuments.value = true;
         };
 
-        
+
 
         const setModalVisible = () => {
             emit("closePopup", false);
@@ -120,6 +165,9 @@ export default defineComponent({
             emit("dataEmit", dataEmit.value);
             setModalVisible()
         }
+        const onSelectionChanged = (data: any) => {
+            // dataReport.value = [data.data]
+        };
 
 
         return {
@@ -128,11 +176,15 @@ export default defineComponent({
             search,
             onSearch,
             setModalVisible,
+            focusedRowKey,
+            onSelectionChanged,
             // showEmployeeInfo,
             dataSource,
             onSubmit,
+            loadingSearchSpendingAccountingDocuments,
 
-            arrayRadioCheck,
+            arrayRadioMonth,
+            dataQuerySearchSpendingAccountingDocuments,
         };
     },
 });
@@ -150,5 +202,4 @@ export default defineComponent({
     left: 0;
     right: 0;
     text-align: center;
-}
-</style>
+}</style>

@@ -87,7 +87,7 @@ let menuData = [
 
   { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710", roles: ROLE_PA000 },
   { name: "기타소득자료입력", url: "/dashboard/pa-720", id: "pa-720", roles: ROLE_PA000 },
-  { name: "기타소득원천징수영수증", url: "/dashboard/bf-730", id: "pa-730", roles: ROLE_PA000 },
+  { name: "기타소득원천징수영수증", url: "/dashboard/pa-730", id: "pa-730", roles: ROLE_PA000 },
 
   { name: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810", roles: ROLE_PA000 },
   { name: "상실신고", url: "/dashboard/pa-820", id: "pa-820", roles: ROLE_PA000 },
