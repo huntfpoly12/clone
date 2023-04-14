@@ -1,8 +1,8 @@
 export const employeeFashionArr = [
-  { id: 0, text: "폐업" },
-  { id: 1, text: "통폐합" },
-  { id: 1, text: "사업종료" },
-  { id: 1, text: "기타" },
+  { id: 1, text: "폐업" },
+  { id: 2, text: "통폐합" },
+  { id: 3, text: "사업종료" },
+  { id: 4, text: "기타" },
 ];
 export const employeeFashionArr2 = [
   { id: 0, text: "휴업" },

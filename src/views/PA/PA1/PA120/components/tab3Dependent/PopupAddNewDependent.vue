@@ -18,7 +18,7 @@
                 <switch-basic textCheck="외국인" textUnCheck="내국인" v-model:valueSwitch="formState.foreigner" />
               </a-form-item>
               <a-form-item :label="labelResidebId" label-align="right" class="red">
-                <id-number-text-box :required="true" width="150px"
+                <id-number-text-box :required="true" width="150px" :foreigner=formState.foreigner
                   v-model:valueInput="formState.residentId"></id-number-text-box>
               </a-form-item>
               <a-form-item label="나이" label-align="right">
