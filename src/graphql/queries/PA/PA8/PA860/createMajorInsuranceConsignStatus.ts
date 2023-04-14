@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation renewMajorInsuranceConsignStatus(
+  query createMajorInsuranceConsignStatus(
     $companyId: Int!
     $manageId: String!
   ) {
-    renewMajorInsuranceConsignStatus(
+    createMajorInsuranceConsignStatus(
       companyId: $companyId
       manageId: $manageId
     ) {

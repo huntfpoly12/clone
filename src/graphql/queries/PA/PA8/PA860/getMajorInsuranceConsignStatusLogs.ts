@@ -1,14 +1,9 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation renewMajorInsuranceConsignStatus(
-    $companyId: Int!
-    $manageId: String!
-  ) {
-    renewMajorInsuranceConsignStatus(
-      companyId: $companyId
-      manageId: $manageId
-    ) {
+  query getMajorInsuranceConsignStatusLogs($companyId: Int!) {
+    getMajorInsuranceConsignStatusLogs(companyId: $companyId) {
       companyId
+      ts
       manageId
       partnerId
       companyConsignStatus
@@ -31,6 +26,8 @@ export default gql`
       updatedBy
       ip
       active
+      loggedAt
+      remark
     }
   }
 `;
