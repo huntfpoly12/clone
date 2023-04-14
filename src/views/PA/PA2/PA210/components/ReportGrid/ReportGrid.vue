@@ -259,11 +259,14 @@ export default defineComponent({
             refetch: refetchData,
             result,
             loading,
+            onError
         } = useQuery(queries.getIncomesForTaxWithholdingStatusReport, originData, () => ({
             enabled: trigger.value,
             fetchPolicy: "no-cache",
     }));
-
+    onError((error) => {
+      notification('error', error.message)
+    })
     watch(result, (data) => {
       if (data) {
         // make new format for data

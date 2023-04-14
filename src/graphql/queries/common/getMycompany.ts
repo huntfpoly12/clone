@@ -1,9 +1,7 @@
 import gql from "graphql-tag";
 export default gql`
-  query getMycompany($companyId: Int!) {
-    getMycompany(
-      companyId: $companyId
-    ) {
+  query getMyCompany($companyId: Int!) {
+    getMyCompany(companyId: $companyId) {
       id
       code
       name
@@ -13,7 +11,54 @@ export default gql`
       phone
       presidentName
       presidentMobilePhone
-      extendInfo
+      extendInfo {
+        detail{
+          name
+          zipcode
+          roadAddress
+          jibunAddress
+          addressExtend
+          addressDetail{
+            bcode
+            bname
+            buildingCode
+            buildingName
+            roadname
+            roadnameCode
+            sido
+            sigungu
+            sigunguCode
+            zonecode
+          }
+          phone
+          fax
+          licenseFileStorageId
+          license{
+            name
+            url
+            turl
+            createdAt
+            createdBy
+            updatedAt
+            updatedBy
+            ip
+            active
+          }
+        }
+        president {
+          name
+          birthday
+          mobilePhone
+          email
+        }
+        cmsBank{
+          bankType
+          accountNumber
+          ownerBizNumber
+          ownerName
+          withdrawDay
+        }
+      }
       sealFileStorageId
       createdAt
       createdBy
@@ -22,7 +67,17 @@ export default gql`
       ip
       active
       residentId
-      seal
+      seal {
+        name
+        url
+        turl
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        ip
+        active
+      }
       canceledAt
       unpaidMonths
     }
