@@ -12,7 +12,7 @@
                             <default-text-box v-model:valueInput="formState.name" width="200px"
                                 :disabled="!canChangeCompanyName" placeholder="중복불가(2~20자)" :maxCharacter="20"
                                 :minCharacter="2" :required="true" />
-                        </a-form-item>
+                        </a-form-item>{{ formState.bizType }}
                         <a-form-item label="사업자유형" class="red" label-align="right" :label-col="labelCol">
                             <biz-type-select-box v-model:valueInput="formState.bizType" width="200px"
                                 :required="true" />
@@ -38,7 +38,7 @@
                                 :required="true" />
                         </a-form-item>
                         <a-form-item label="법인(주민)등록번호" :wrapper-col="{ span: 14 }" label-align="right"
-                            :label-col="labelCol">
+                            :label-col="labelCol">{{ isResidentId }} {{ formState.residentId }}
                             <id-number-text-box v-model:valueInput="formState.residentId" width="150px" :isResidentId="isResidentId"/>
                         </a-form-item>
                         <a-form-item label="사업자등록번호" label-align="right" :label-col="labelCol">
