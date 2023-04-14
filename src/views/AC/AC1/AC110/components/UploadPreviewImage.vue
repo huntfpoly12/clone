@@ -1,10 +1,9 @@
 <template>
   <div style="margin-right: -10px;
-      overflow-x: hidden;" 
-      :style="[
-        heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
-        !!width ? `min-width: ${width}px; width: 100%` : ''
-      ]">
+        overflow-x: hidden;" :style="[
+          heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
+          !!width ? `min-width: ${width}px; width: 100%` : ''
+        ]">
     <div ref="elementUpload" class="upload-pewview-img">
       <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
         @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
@@ -73,7 +72,7 @@ export default defineComponent({
     },
     payLoadProofs: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   setup(props, { emit }) {
@@ -178,25 +177,25 @@ export default defineComponent({
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
-    
+
     watch(() => listFileStorageId.value, (value) => {
       emit("update:listImageFile", value)
     }, { deep: true });
 
     watch(() => fileList.value, (value) => {
       nextTick(() => {
-        if(value.length){
+        if (value.length) {
           value.forEach(items => {
-            if(items.status === 'error') {
+            if (items.status === 'error') {
               items.response = '업로드 오류'
             }
           })
           const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
           const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
-          elementsIconPreview.forEach((el:any) => {
+          elementsIconPreview.forEach((el: any) => {
             el.setAttribute("title", "원본 보기");
           })
-          elementsIconDelete.forEach((el:any) => {
+          elementsIconDelete.forEach((el: any) => {
             el.setAttribute("title", "삭제");
           })
         }
@@ -213,14 +212,14 @@ export default defineComponent({
       const formData = new FormData();
       formData.append('file', e.file);
       formData.append('companyId', props.payLoadProofs.companyId);
-      formData.append('fiscalYear ', props.payLoadProofs.fiscalYear);
-      formData.append('facilityBusinessId ', props.payLoadProofs.facilityBusinessId);
-      uploadRepository.accountingProof(formData).then((res:any) => {
+      formData.append('fiscalYear', props.payLoadProofs.fiscalYear);
+      formData.append('facilityBusinessId', props.payLoadProofs.facilityBusinessId);
+      uploadRepository.accountingProof(formData).then((res: any) => {
         e.onSuccess("ok");
         listFileStorageId.value.push({
           ...fileList.value[fileList.value.length - 1], fileStorageId: res.data.id
         })
-      }).catch((error:any) => {
+      }).catch((error: any) => {
         e.onError(error.message);
         listFileStorageId.value.push({
           ...fileList.value[fileList.value.length - 1], fileStorageId: null
@@ -229,11 +228,11 @@ export default defineComponent({
     }
     const remove = (e: any) => {
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
-      if(!!listFileStorageId.value[index].fileStorageId && Number.isInteger(listFileStorageId.value[index].fileStorageId)) {
+      if (!!listFileStorageId.value[index].fileStorageId && Number.isInteger(listFileStorageId.value[index].fileStorageId)) {
         removeBankbookDetailProof({
-        ...props.payLoadProofs,
-        fileStorageId: listFileStorageId.value[index].fileStorageId
-      })
+          ...props.payLoadProofs,
+          fileStorageId: listFileStorageId.value[index].fileStorageId
+        })
       }
       listFileStorageId.value.splice(index, 1)
       emit("update:listImageFile", listFileStorageId.value)
