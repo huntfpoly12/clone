@@ -893,6 +893,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+@import './../styles/index.scss';
 :deep(.label-custom) {
   .dx-field-label {
     width: 250px !important;

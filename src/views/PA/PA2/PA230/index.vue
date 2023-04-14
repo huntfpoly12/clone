@@ -57,8 +57,8 @@
                     </DxToolbar>
                     <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
-                                @click="sendMail" />
+                        <DxButton @click="sendMail">
+                          <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
                         </DxButton>
                     </div>
                     </template>
@@ -267,7 +267,7 @@ export default defineComponent({
             mutations.sendIncomeWageWithholdingTaxByEmployeeReportEmail
         );
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('801').message)
         })
         onError(e => {
             notification('error', e.message)
@@ -287,7 +287,7 @@ export default defineComponent({
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
-          clearSelection()
+            clearSelection()
             // If the retention style is number, send an email to one person. If it's an object type, send a group. 
             dataSendEmail.value.companyId = companyId
             dataSendEmail.value.input = {
@@ -307,12 +307,13 @@ export default defineComponent({
                 ]
                 switchTypeSendMail.value = true
             } else {
+                if (selectedItemKeys.value.length < 2) {
+                  notification('error', Message.getCommonMessage('601').message)
+                  return;
+                }
                 emailAddress.value = resultUserInf.value.getUser.email
                 switchTypeSendMail.value = false
-                if (selectedItemKeys.value.length < 2) {
-                    notification('error', Message.getCommonMessage('601').message)
-                    return;
-                } else {
+                
                   dataSendEmail.value.employeeInputs = selectedItemKeys.value.map((val: any) => {
                     let dataChecked = dataSource.value.find((data: any) => data.employeeId === val)
                     return  {
@@ -322,7 +323,7 @@ export default defineComponent({
                       "employeeId": dataChecked.employeeId
                     }
                   })
-                }
+                
             }
             modalSendMail.value = true
         }

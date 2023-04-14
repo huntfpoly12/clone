@@ -130,7 +130,7 @@
 
         </a-col>
         <!-- section right -->
-        <a-col :span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
+        <a-col :span="8" class="custom-layout" :style="storeDataSourceCount === 0 && !isNewRow && 'pointer-events: none;'">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
@@ -261,7 +261,7 @@
                     :width="90"
                     id="btn-save"
                     @onClick="saving()"
-                    :disabled="storeDataSourceCount === 0"
+                    :disabled="storeDataSourceCount === 0 && !isNewRow"
                   />
                 </a-col>
               </a-row>
