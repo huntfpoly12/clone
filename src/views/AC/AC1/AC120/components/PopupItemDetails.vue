@@ -171,6 +171,7 @@ export default defineComponent({
             onRowInserted,
             addRow, dataGridRef, onInitRow,
             focusedRowKey,
+            onSubmit,
         }
     },
 })
