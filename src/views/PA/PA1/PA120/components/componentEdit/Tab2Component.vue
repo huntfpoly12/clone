@@ -117,7 +117,7 @@
             }}</span> 원</a-col>
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
-              $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
+              $filters.formatCurrency(totalPayItemTaxAll) }}</span> 원</a-col>
             <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
               $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
@@ -140,8 +140,8 @@
         </a-col>
         <a-col class="col-2" style="display: flex; flex-direction: column">
           <div class="header-text-2">
-            급여 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
-            과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
+            급여 {{ $filters.formatCurrency(totalPayItemTaxAll) }} 원 =
+            과세 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 + 비과세
             {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
           <a-spin :spinning="loading1" size="large" style="height: 100%">
@@ -246,9 +246,9 @@ export default defineComponent({
       }
     );
     const totalPayItemTaxFree = ref(0);
-    const totalPayItemTax = ref(0);
+    const totalPayItemTaxAll = ref(0);
     const totalDeduction = ref(0);
-    const subPayment = computed(() => calculateVariables.totalTaxPay - totalDeduction.value);
+    const subPayment = computed(() => totalPayItemTaxAll.value - totalDeduction.value);
 
     const rangeDate = ref<RangeValue>();
     const store = useStore();
@@ -320,10 +320,10 @@ export default defineComponent({
       }
     });
     const onChangePayItem = (emitVal: any) => {
-      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTaxAll.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
-      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (object.tax) {
           accumulator += object.value;
         }
@@ -461,7 +461,10 @@ export default defineComponent({
         }
         calculateVariables.dependentCount = data.dependents.length > 0 ? data.dependents.length : 1;
         calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
-          return accumulator + object.value;
+          if (object.tax) {
+            accumulator += object.value;
+          }
+          return accumulator;
         }, 0);
         isBtnYellow.value = false;
         triggerDetail.value = false;
@@ -526,8 +529,14 @@ export default defineComponent({
      * */
 
     const calcSum = () => {
-      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTaxAll.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
+      }, 0);
+      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+        if (object.tax) {
+          accumulator += object.value;
+        }
+        return accumulator;
       }, 0);
       dataConfigDeduction.value?.map((item: any) => {
         if (item.itemCode == 1001) {
@@ -563,12 +572,6 @@ export default defineComponent({
           };
         }
       });
-      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
-        if (object.tax) {
-          accumulator += object.value;
-        }
-        return accumulator;
-      }, 0);
       totalPayItemTaxFree.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (!object.tax) {
           accumulator += object.value;
@@ -743,7 +746,7 @@ export default defineComponent({
       loadingEmployeeWage,
       rangeDate,
       totalPayItemTaxFree,
-      totalPayItemTax,
+      totalPayItemTaxAll,
       totalDeduction,
       subPayment,
       calculateTax,

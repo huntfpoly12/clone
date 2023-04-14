@@ -33,7 +33,7 @@
           <a-form-item label="기간" label-align="right" class="red">
             <div class="input-text">
               <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataStateAC580.imputedYear" />
-              <ProcessStatus :valueStatus="30" />
+              <ProcessStatus :disabled="true" :valueStatus="30" />
             </div>
           </a-form-item>
         </a-col>
@@ -41,7 +41,7 @@
           <div class="input-text">
             <span class="mx-5">~</span>
             <OnlyMonthPickerBox class="mr-5" v-model:valueMonth="dataStateAC580.monthEnd" />
-            <ProcessStatus :valueStatus="10" />
+            <ProcessStatus :disabled="true" :valueStatus="10" />
             <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="ml-10">
             <span class="custom-waring">
               후원금의 경우 조정마감된 결의서 기준으로 후원금 수입/사용내역 조회합니다

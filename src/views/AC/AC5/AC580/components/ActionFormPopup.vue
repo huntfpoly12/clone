@@ -8,8 +8,7 @@
         </h3>
         <a-col span="24">
           <div class="input-group">
-            <div class="input-label mt-10">후원자: </div>
-            <div class="input-text">
+            <div class="input-text ml-25">
               <div class="d-flex-center mt-10" v-for="(item, index) in inputArr">
                 <default-text-box width="130px" v-model:valueInput="item.type" :required="true" />
                 <default-text-box width="130px" v-model:valueInput="item.bankbookNumber" :required="true" />
@@ -21,7 +20,7 @@
                     </div>
                   </template>
                   <div style="text-align: center;">
-                    <DxButton icon="plus" @click="onAddnewBtn(index)" />
+                    <DxButton icon="plus" @click="onAddnewBtn(index)"/>
                   </div>
                 </a-tooltip>
               </div>
@@ -30,7 +29,7 @@
         </a-col>
       </a-row>
       <a-row justify="center" class="mt-20">
-        <button-basic class="button-form-modal" text="네. 삭제합니다" :width="140" type="default" mode="contained"
+        <button-basic class="button-form-modal" text="저장" :width="140" type="default" mode="contained"
           @onClick="onSubmit" />
       </a-row>
     </standard-form>

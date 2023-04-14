@@ -61,66 +61,67 @@
                     <template v-if="step === 1">
                         <div class="form-group">
                             <label>1. 사업자정보</label>
-                            <div class="info-box">
-                                <div class="form-item">
-                                    <label class="red">상 호 :</label>
-                                    <default-text-box width="400px" :required="true"
-                                        v-model:valueInput="contractCreacted.nameCompany" />
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">사업자등록번호 :</label>
-                                    <biz-number-text-box v-model:valueInput="contractCreacted.ownerBizNumber"
-                                        :required="true" />
-                                </div>
-                                <div class="form-item">
-                                    <a-row style="width: 100%">
-                                        <a-col :span="12" class="d-flex">
-                                            <label class="red">사업자유형 :</label>
-                                            <radio-group :arrayValue="arrayRadioCheck"
-                                                v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
-                                        </a-col>
-                                        <a-col :span="12" class="d-flex">
-                                            <div style="margin-right: 5px;width: 90px;">{{ textIDNo }} :</div>
-                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId" width="365px"/>
-                                        </a-col>
-                                    </a-row>
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">주 소 :</label>
-                                    <div class="group-label">
-                                        <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :readOnly="true" />
-                                        <post-code-button @dataAddress="funcAddress" />
+                            <div class="info-box d-flex">
+                                <div class="left-group">
+                                    <div class="form-item">
+                                        <label class="red">상 호 :</label>
+                                        <default-text-box :required="true"
+                                            v-model:valueInput="contractCreacted.nameCompany" width="70%" />
                                     </div>
-                                </div>
-                                <div class="form-item">
-                                    <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
-                                        placeholder="주소" :disabled="true" width="100%" />
-                                </div>
-                                <div class="form-item">
-                                    <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
-                                        placeholder="상세주소(입력)" width="100%" />
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">연락처 :</label>
-                                    <tel-text-box width="100%" placeholder="‘-’ 없이 슷자입력"
-                                        v-model:value="contractCreacted.phone" :required="true" />
-                                </div>
-                                <div class="form-item">
-                                    <label>팩 스 :</label>
-                                    <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
-                                        v-model:value="contractCreacted.fax" />
-                                </div>
-                                <div class="d-flex mt-10">
-                                    <div>
-                                        <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10" />
+                                    <div class="form-item">
+                                        <label class="red">사업자등록번호 :</label>
+                                        <biz-number-text-box width="115px" v-model:valueInput="contractCreacted.ownerBizNumber"
+                                            :required="true" />
                                     </div>
-                                    <div>
-                                        <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                    <div class="form-item">
+                                        <label class="red">사업자유형 :</label>
+                                        <radio-group :arrayValue="arrayRadioCheck"
+                                            v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                     </div>
+                                    <div class="form-item">
+                                        <label class="red">{{ textIDNo }} :</label>
+                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="115px"/>
+                                    </div>
+                                    <div class="form-item">
+                                        <label>주 소 :</label>
+                                        <div class="group-label">
+                                            <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
+                                                placeholder="우편번호" :readOnly="true"  width="115px" class="mr-5" />
+                                            <post-code-button @dataAddress="funcAddress" width="130px" />
+                                        </div>
+                                    </div>
+                                    <div class="form-item">
+                                        <label></label>
+                                        <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
+                                            placeholder="주소" :disabled="true"  class="mr-10" width="70%" />
+                                        
+                                    </div>
+                                    <div class="form-item">
+                                        <label></label>
+                                        <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
+                                            placeholder="상세주소(입력)" width="70%" />
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="red">연락처 :</label>
+                                        <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
+                                            v-model:value="contractCreacted.phone" :required="true" />
+                                    </div>
+                                    <div class="form-item">
+                                        <label>팩 스 :</label>
+                                        <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
+                                            v-model:value="contractCreacted.fax" />
+                                    </div>
+                                    <div class="d-flex mt-10">
+                                        <div>
+                                            <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10"  width="130px"/>
+                                        </div>
+                                    </div>
+                                  </div>
+                              <div class="right-group">
+                                <div>
+                                    <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                 </div>
+                              </div>
                             </div>
                         </div>
                         <div class="form-group">

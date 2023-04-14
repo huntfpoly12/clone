@@ -8,6 +8,7 @@ import store from "@/store";
 import Router from '../router';
 
 let companyId: any = null
+let startYearMonth: any = null
 let userType: any = null
 let userId: any = null
 let managerGrade: any = null
@@ -21,6 +22,7 @@ if (token) {
     screenRoleInfo = jwtObject.screenRoleInfo
   if (userType === 'c') {
       companyId = jwtObject.companyId
+      startYearMonth = jwtObject.withholding?.startYearMonth
   }
 }
 
@@ -202,6 +204,7 @@ export {
     calculateLongTermCareInsurance,
     calculateEmployeementInsuranceEmployee,
     convertBirthDayKorea,
-    makeDataClean
+    makeDataClean,
+    startYearMonth,
 }
 

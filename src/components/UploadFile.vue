@@ -15,6 +15,14 @@
           <span>{{ label }}</span>
         </div>
       </div>
+      <template #removeIcon>
+        <a-tooltip placement="bottom" title="삭제">
+          <div>
+            <DeleteOutlined />
+          </div>
+        </a-tooltip>
+      </template>
+
     </a-upload>
 
 <!--  </div>-->
@@ -34,6 +42,7 @@ ZoomInOutlined,
 import { Upload, UploadProps } from "ant-design-vue";
 import {defineComponent, ref, watch, watchEffect} from "vue";
 import Repository from "@/repositories";
+import { Message } from "@/configs/enum";
 
 const uploadRepository = Repository.get("upload");
 
@@ -90,10 +99,10 @@ export default defineComponent({
         if (status === 'done') {
           emit("response-fileId", info.file.response);
           // show success message
-          notification('success', "Upload successfully!")
+          notification('success', Message.getCommonMessage('101').message)
         } else if (status === 'error') {
           // show error message
-          notification('error', "Upload failed!")
+          notification('error', Message.getCommonMessage('109').message)
         }
       }
     };
@@ -115,10 +124,10 @@ export default defineComponent({
         if (status === 201) {
           emit("response-fileId", data.data);
           // show success message
-          notification('success', "Upload successfully!")
+          notification('success', Message.getCommonMessage('101').message)
         } else if (status === 'error') {
           // show error message
-          notification('error', "Upload failed!")
+          notification('error', Message.getCommonMessage('109').message)
         }
       } catch (error) {
         console.log('error', error)
@@ -177,6 +186,4 @@ export default defineComponent({
     color: #000;
   }
 }
-
-
 </style>

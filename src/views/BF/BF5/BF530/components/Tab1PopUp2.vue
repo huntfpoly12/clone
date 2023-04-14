@@ -31,7 +31,6 @@ import DxDataGrid, { DxColumn, DxEditing, DxScrolling, DxSummary } from 'devextr
 
 export default defineComponent({
   setup(props, { emit }) {
-    console.log(`output-`,)
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const dataSource = ref([

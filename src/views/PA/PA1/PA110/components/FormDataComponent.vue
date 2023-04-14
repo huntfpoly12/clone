@@ -790,7 +790,7 @@ export default defineComponent({
                     let total4 = dataIW.value.employee.employeementInsuranceDeduction ? calculateEmployeementInsuranceEmployee(totalPayItem.value, dataIW.value.employee.employeementInsuranceSupportPercent) : 0
                     item.amountNew = total4
                 }
-                calculateVariables.totalTaxPay = totalPayItemTax.value
+                calculateVariables.totalTaxPay = totalPayItemTaxFree.value
                 triggerCalcIncome.value = true
             })
             modalDeductions.value = true

@@ -73,7 +73,7 @@ export default defineComponent({
     },
     payLoadProofs: {
       type: Object,
-      default: () => { }
+      default: () => {}
     }
   },
   setup(props, { emit }) {

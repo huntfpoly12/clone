@@ -42,9 +42,9 @@ import {
 import queries from "../../src/graphql/queries/common/index";
 import { useQuery } from "@vue/apollo-composable";
 import dayjs from 'dayjs';
-
+import { companyId } from "@/helpers/commonFunction"
 export default defineComponent({
-    props: ['modalStatus', 'data', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
+    props: ['modalStatus', 'title', 'idRowEdit', 'typeHistory', 'companyId'],
     components: {
         DxDataGrid,
         DxColumn,
@@ -64,23 +64,22 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
 
-        watch(() => props.modalStatus, (newValue, old) => {
-            if (props.data && props.data.companyId && props.data.userId) {
-                dataQuery.value = {
-                    companyId: props.data.companyId,
-                    userId: props.data.userId,
+        watch(() => props.modalStatus, async (newValue, old) => {
+            if (props.idRowEdit && newValue) {
+                await (dataQuery.value = {
+                    companyId: companyId,
+                    userId: props.idRowEdit,
                     filter: {
                         page: 1,
                         rows: per_page
                     }
-                }
-                refetchCM110();
-                trigger110.value = true
+                })
+                await (trigger110.value = true)
             }
         })
 
         // get getUserLogs  110
-        const { result: resultCM110, loading: loadingCM110, refetch: refetchCM110 } = useQuery(
+        const { result: resultCM110, loading: loadingCM110 } = useQuery(
             queries.getMyCompanyAuthentications,
             dataQuery,
             () => ({
@@ -90,6 +89,7 @@ export default defineComponent({
         );
 
         watch(resultCM110, (value) => {
+            trigger110.value = false;
             let data: any = []
             value.getMyCompanyAuthentications.datas.map((val: any, index: any) => {
                 data.push({
@@ -97,7 +97,6 @@ export default defineComponent({
                     index: index
                 })
             })
-
             dataTableShow.value = data;
 
         });

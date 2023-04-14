@@ -3,12 +3,11 @@
     <div class="ac-120">
         <div class="top">
             <div class="grid">
-                <div class="items" v-for="(item, index) in dataGetAccountingProcesses" :key="index">
-                    <div class="text">
-                        <span class="">{{ $filters.formatMonth(item.month) }}</span>
-                        <span class="">월</span>
-                    </div>
-                    <ProcessStatus :disabled="true" :valueStatus="item.month" :heightBtn="36" />
+                <div v-for="(month, index) in 12" :key="index" class="items"
+                    :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
+                    <colorful-badge
+                        :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
+                        :year="globalYear" :month="month" />
                 </div>
             </div>
             <div class="flex">
@@ -50,7 +49,7 @@
             </div>
         </div>
         <div class="main">
-            <div class="data-grid" ref="refCssTable" :style="[statusShowFull ? {} : { height: heightTable }]">
+            <div class="data-grid" ref="refCssTable" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
                     :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
@@ -183,8 +182,8 @@
                         <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
                     </DxSummary>
                 </DxDataGrid> -->
-
-                <DxDataGrid id="dataGridAc120" key-expr="id" :show-row-lines="true" :hoverStateEnabled="true"
+{{ dataSource }}
+                <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true" :hoverStateEnabled="true"
                     :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
                     v-model:focused-row-key="focusedRowKey" :allow-column-resizing="colomn_resize" :column-auto-width="true"
                     @selection-changed="selectionChanged">
@@ -197,34 +196,36 @@
                     </template>
                     <DxColumn caption="순번" data-field="documentOrderByDate" />
                     <DxColumn caption="결의번호" data-field="resolutionNumber" />
-                    <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook"/>
+                    <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
                     <template #bankbook="{ data }">
-                        <a-tooltip placement="left" :title="data.bankbook.type + ' ' + data.bankbook.bankbookNumber ">
-                            <div>{{ data.bankbook.bankbookNickname }}</div>
-                        </a-tooltip>
+                        <!-- <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
+                            <div>{{ data.bankbook?.bankbookNickname }}</div>
+                        </a-tooltip> -->
                     </template>
 
                     <DxColumn caption="결의 구분" data-field="resolutionClassification" />
                     <DxColumn caption="수입액" data-field="income" />
-                    <DxColumn caption="지출액" data-field="spending" format="fixedPoint"/>
-                    <DxColumn caption="잔액" cell-template="balance" format="fixedPoint"/>
+                    <DxColumn caption="지출액" data-field="spending" format="fixedPoint" />
+                    <DxColumn caption="잔액" cell-template="balance" format="fixedPoint" />
                     <template #balance="{ data }">
                         {{ $filters.formatCurrency(data.lastBalance + data.spending - data.balance) }}
                     </template>
-                    <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint"/>
-                    <DxColumn caption="적요" data-field="summary" format="fixedPoint"/>
-                    <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode"/>
+                    <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint" />
+                    <DxColumn caption="적요" data-field="summary" format="fixedPoint" />
+                    <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                     <template #accountCode="{ data }">
-                        <account-code-select v-model:valueInput="data.accountCode" :disabled="true" />
+                        <!-- <account-code-select :valueInput="data.accountCode" :disabled="true" /> -->
+                        <account-code-select :disabled="true" />
                     </template>
-                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode"/>
+                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
                     <template #relationCode="{ data }">
-                        <account-code-select v-model:valueInput="data.relationCode" :disabled="true" />
+                        <!-- <account-code-select :valueInput="data.relationCode" :disabled="true" /> -->
+                        <account-code-select :disabled="true" />
                     </template>
 
                     <DxColumn caption="자금원천" data-field="fundingSource" />
                     <DxColumn caption="거래처" data-field="clientId" />
-                    <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint"/>
+                    <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" />
 
                     <DxColumn caption="물품 내역" cell-template="normality" />
                     <template #normality="{ data }">
@@ -248,196 +249,19 @@
                     </template>
                     <DxSummary>
                         <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum" display-format="수입액 합계: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum" display-format="지출액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
+                            display-format="수입액 합계: {0}" />
+                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
+                            display-format="지출액 합계: {0}" />
                         <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="customBalance" />
-                        <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countResolutionNormalStatus" />
+                        <DxTotalItem cssClass="custom-sumary" column="정상 여부"
+                            :customize-text="countResolutionNormalStatus" />
                     </DxSummary>
                 </DxDataGrid>
             </div>
 
-
-            <a-row class="detail">
-                <a-col class="detail1">
-                    <div class="text-align-center button-arrow" :class="statusShowFull ? 'rotate' : ''">
-                        <img @click="toggleTransition" src="@/assets/images/iconArrowUp.png" alt="">
-                    </div>
-                    <div class="column">
-                        <a-spin :spinning="false">
-                            <StandardForm formName="ac-120-form" ref="refFormAC120">
-                                <a-row class="text-align-center">
-                                    <a-col :span="8"></a-col>
-                                    <a-col :span="8">
-                                        <div style="display: flex; justify-content: center;">
-                                            <h2>결의서</h2>
-                                            <button-basic style="margin: 0 10px;" text="O" type="success"
-                                                :mode="'contained'" />
-                                            <button-basic text="X" type="danger" :mode="'contained'" />
-                                        </div>
-                                    </a-col>
-                                    <a-col :span="8">
-                                        <div style="display: flex; justify-content: flex-end;">
-                                            <a-form-item label="결의번호">
-                                                <button-basic text="수기" type="danger" :mode="'contained'" />
-                                            </a-form-item>
-                                        </div>
-                                    </a-col>
-                                </a-row>
-                                <a-row class="mt-20">
-                                    <a-col :span="6" class="col-1">
-                                        <a-form-item label="결의구분">
-                                            <default-text-box v-model:valueInput="formData.resolutionClassification" width="70px" placeholder="지출" disabled="true" />
-                                        </a-form-item>
-                                        <div class="input_info">
-                                            <a-form-item label="결의서 종류">
-                                                <default-text-box v-model:valueInput="formData.resolutionType" width="70px" placeholder="여입" disabled="true" />
-                                            </a-form-item>
-                                            <button-basic @onClick="actionPopupCopyData" style="margin: -5px 0px 0px 5px"
-                                                mode="contained" type="default" text="{} 로 변경" />
-                                        </div>
-                                    </a-col>
-                                    <a-col :span="6" class="col-2">
-                                        <a-form-item label="결의일자" class="red">
-                                            <date-time-box v-model:valueDate="formData.resolutionDate" width="150px" :required="true" disabled="true" />
-                                        </a-form-item>
-
-                                        <a-form-item label="통장" class="red">
-                                            <div class="input_info">
-                                                <default-text-box v-model:valueInput="formData.bankbookNickname" width="70px" style="margin-right: 10px;" :required="true"
-                                                    disabled="true" />
-                                                <default-text-box v-model:valueInput="formData.bankbookNumber" width="70px" :required="true" disabled="true" />
-                                            </div>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="6" class="col-3">
-                                        <a-form-item label="금액" class="red">
-                                            <number-box-money v-model:valueInput="formData.amount" width="150px" :required="true" :spinButtons="false"
-                                                disabled="true" />
-                                        </a-form-item>
-
-                                        <a-form-item label="적요" class="red">
-                                            <default-text-box v-model:valueInput="formData.summary" width="150px" :required="true" />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :span="6" class="col-4">
-                                        <a-form-item label="계정과목" class="red">
-                                            <account-code-select v-model:valueInput="formData.accountCode" width="240px" :required="true" />
-                                        </a-form-item>
-                                        <a-form-item label="자금원천" class="red">
-                                            <account-code-select v-model:valueInput="formData.fundingSource" width="240px" :required="true" />
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                                <div class="hidden-show" ref="refCssForm"
-                                    :style="[statusShowFull ? { height: heightForm } : {}]">
-                                    <a-row>
-                                        <a-col :span="6" class="col-1">
-                                            <a-form-item label="원인행위일자" class="red">
-                                                <date-time-box v-model:valueDate="formData.causeActionDate" width="150px" :required="true" />
-                                            </a-form-item>
-                                            <a-form-item label="결재일자">
-                                                <date-time-box v-model:valueDate="formData.paymentDate" width="150px" />
-                                            </a-form-item>
-                                        </a-col>
-                                        <a-col :span="6" class="col-2">
-                                            <a-form-item label="발의일자">
-                                                <date-time-box v-model:valueDate="formData.proposedDate" width="150px" />
-                                            </a-form-item>
-                                            <a-form-item label="출납일자">
-                                                <date-time-box v-model:valueDate="formData.accountingDate" width="150px" />
-                                            </a-form-item>
-                                            <a-form-item label="등기일자">
-                                                <date-time-box v-model:valueDate="formData.registrationDate" width="150px" />
-                                            </a-form-item>
-                                        </a-col>
-                                        <a-col :span="6" class="col-3">
-                                            <div class="input_info">
-                                                <a-form-item label="거래처">
-                                                    <customer-select v-model:valueInput="formData.clientId" width="150px" />
-                                                </a-form-item>
-                                                <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
-                                                    <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 ${수입원/지출원}을
-                                                        참조합니다.</template>
-                                                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                        class="mr-5">
-                                                </a-tooltip>
-                                            </div>
-                                            <a-form-item label="수입원/지출원">
-                                                <default-text-box v-model:valueInput="formData.source" width="150px" />
-                                            </a-form-item>
-                                            <div class="input_info">
-                                                <a-form-item label="작성자">
-                                                    <default-text-box v-model:valueInput="formData.writer" width="150px" />
-                                                </a-form-item>
-                                                <a-tooltip placement="top" color="black" class="fz-10 ml-10 mb-5">
-                                                    <template #title>기본값은 [회계설정 > 회계기타] 메뉴에서 입력된 결의서 작성자를 참조합니다.</template>
-                                                    <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;"
-                                                        class="mr-5">
-                                                </a-tooltip>
-                                            </div>
-                                        </a-col>
-                                        <a-col :span="6" class="col-4">
-                                            <a-form-item label="상대계정">
-                                                <account-code-select v-model:valueInput="formData.relationCode" width="240px" />
-                                            </a-form-item>
-                                            <a-form-item label="메모">
-                                                <default-text-box v-model:valueInput="formData.memo" width="240px" />
-                                            </a-form-item>
-                                        </a-col>
-                                    </a-row>
-                                    <a-row>
-                                        <a-col :span="24">
-                                            <div class="top-content">
-                                                <a-typography-title :level="5" style="margin-bottom: 0;">품의서
-                                                    <span class="fz-10 ml-10"
-                                                        style="color: gray; font-weight: 300; width: 40%;">
-                                                        <img src="@/assets/images/iconInfoGray.png" alt=""
-                                                            style="width: 15px;" class="mr-5">
-                                                        지출결의서 기재 사항
-                                                    </span>
-                                                </a-typography-title>
-                                            </div>
-                                        </a-col>
-                                    </a-row>
-                                    <a-row>
-                                        <a-col :span="12">
-                                            <a-form-item class="red" label="품의종류">
-                                                <radio-group v-model:valueRadioCheck="formData.letterOfApprovalType" :arrayValue="arrayRadioCheck" :layoutCustom="'horizontal'"
-                                                    :required="true" />
-                                            </a-form-item>
-                                        </a-col>
-                                        <a-col :span="12">
-                                            <a-form-item label="물품내역수">
-                                                <default-text-box v-model:valueInput="formData.goodsCount" width="150px" />
-                                            </a-form-item>
-                                        </a-col>
-                                    </a-row>
-                                    <a-row>
-                                        <p style="width: 100%;">품의 원인 및 용도:</p>
-                                        <text-area-box v-model:valueInput="formData.causeUsage" :width="'100%'" :height="100"/>
-                                    </a-row>
-                                    <div class="text-align-center mt-20">
-                                        <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
-                                            :height="$config_styles.HeightInput">
-                                            <div class="d-flex-center">
-                                                <checkbox-basic :valueCheckbox="true" disabled="true" />
-                                                <span class="pl-5">전표취소</span>
-                                            </div>
-                                        </DxButton>
-                                        <button-basic @onClick="onSubmit()" style="margin: 0px 5px" mode="contained" type="default" text="저장" />
-                                    </div>
-                                </div>
-                            </StandardForm>
-                        </a-spin>
-                    </div>
-                </a-col>
-                <a-col class="detail2">
-                    <div class="upload">
-                        <UploadPreviewImage v-model:list-image-file="fileList" width="387"
-                            :heightHidden="statusShowFull ? '' : '130px'" />
-                    </div>
-                </a-col>
-            </a-row>
+{{ store.state.common.ac120.formData }}
+            <DetailComponent/>
         </div>
 
     </div>
@@ -449,10 +273,9 @@
         @submit="statusModalSlipCancellation = false" />
 
     <PopupSlipRegistration :modalStatus="statusModalSlipRegistrantion" @closePopup="statusModalSlipRegistrantion = false"
-        @submit="onFillDataAdd"/>
+        @submit="onFillDataAdd" />
 
-    <PopupCopyData :modalStatus="statusPopupCopyData" @closePopup="statusPopupCopyData = false"
-        @submit="statusPopupCopyData = false" />
+    
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false"
         @submit="statusModalItemDetail = false" />
 </template>
@@ -467,7 +290,7 @@ import { dataDemoMain, dataDemoMain2, contentPopupRetrieveStatements, initialSta
 import { Message } from "@/configs/enum"
 import PopupSlipCancellation from "./components/PopupSlipCancellation.vue"
 import PopupSlipRegistration from "./components/PopupSlipRegistration.vue"
-import PopupCopyData from "./components/PopupCopyData.vue"
+import DetailComponent from "./components/DetailComponent.vue"
 import PopupItemDetails from "./components/PopupItemDetails.vue"
 import filters from "@/helpers/filters";
 import { useQuery, useMutation } from '@vue/apollo-composable';
@@ -489,23 +312,25 @@ export default defineComponent({
         DxTotalItem,
         PopupSlipCancellation,
         PopupSlipRegistration,
-        PopupCopyData,
+        // PopupCopyData,
         EditOutlined,
         PlusOutlined,
         PopupItemDetails,
         DxButton,
         DxRowDragging,
+        DetailComponent,
     },
     setup() {
-        const refFormAC120 = ref()
+        
 
-        const statusShowFull = ref(false)
-        const heightForm: any = ref(0)
+       
+        // const heightForm: any = ref(0)
         const heightTable: any = ref(0)
-        const refCssForm: any = ref(null);
+        
         const refCssTable: any = ref(null);
 
         const store = useStore();
+        // const statusShowFull = computed(() => store.state.common.ac120.statusShowFull)
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const globalYear = computed(() => store.state.settings.globalYear)
@@ -516,11 +341,11 @@ export default defineComponent({
         let statusAdjusting = ref(30);
         let statusAdjusted = ref(40);
         let focusedRowKey = ref()
-        let fileList = ref<any[]>([])
+        
         let isModalRetrieveStatements = ref(false);
         let statusModalSlipCancellation = ref(false);
         let statusModalSlipRegistrantion = ref(false);
-        let statusPopupCopyData = ref(false);
+        
         let statusModalItemDetail = ref(false);
         let arraySelectBox = reactive([
             {
@@ -540,14 +365,8 @@ export default defineComponent({
                 label: '후원듬'
             }
         ])
-        const arrayRadioCheck = [
-            { id: 0, text: '구입' },
-            { id: 1, text: '운반' },
-            { id: 2, text: '수선' },
-            { id: 3, text: '인쇄' },
-            { id: 4, text: '지출' }
-        ]
-        const formData = reactive({...initialStateFormData})
+        
+        store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
         const dataSource = ref<any>([])
@@ -567,6 +386,7 @@ export default defineComponent({
             month: dayjs().month() + 1
         })
 
+        const monthSelected = ref(dayjs().month() + 1)
         // =================== GRAPHQL ===================
         // query getAccountingProcesses
         const {
@@ -577,7 +397,7 @@ export default defineComponent({
         }))
         errorGetAccountingProcesses(e => {
             notification('error', e.message)
-        })  
+        })
         // query getAccountingDocuments
         const {
             result: resGetAccountingDocuments, loading: loadingGetAccountingDocuments, onError: errorGetAccountingDocuments
@@ -587,7 +407,7 @@ export default defineComponent({
         }))
         errorGetAccountingDocuments(e => {
             notification('error', e.message)
-        }) 
+        })
 
         // mutation reorderAccountingDocuments
         const {
@@ -635,38 +455,36 @@ export default defineComponent({
 
 
         // ================ FUNCTION ============================================
-        const toggleTransition = () => {
-            statusShowFull.value = !statusShowFull.value
-        }
+        
         const initHeight = () => {
-            refCssForm.value.style.height = 'auto';
-            refCssForm.value.style.position = 'absolute';
-            refCssForm.value.style.visibility = 'hidden';
-            refCssForm.value.style.display = 'block';
+            // refCssForm.value.style.height = 'auto';
+            // refCssForm.value.style.position = 'absolute';
+            // refCssForm.value.style.visibility = 'hidden';
+            // refCssForm.value.style.display = 'block';
 
             refCssTable.value.style.height = 'auto';
             refCssTable.value.style.position = 'absolute';
             refCssTable.value.style.visibility = 'hidden';
             refCssTable.value.style.display = 'block';
 
-            const height = getComputedStyle(refCssForm.value).height;
+            // const height = getComputedStyle(refCssForm.value).height;
             const height2 = getComputedStyle(refCssTable.value).height;
 
             // heightForm.value = height;
-            heightForm.value = '352px';
+            // store.state.common.ac120.heightForm = '352px';
             heightTable.value = height2;
 
-            refCssForm.value.style.position = null;
-            refCssForm.value.style.visibility = null;
-            refCssForm.value.style.display = null;
-            refCssForm.value.style.height = 0;
+            // refCssForm.value.style.position = null;
+            // refCssForm.value.style.visibility = null;
+            // refCssForm.value.style.display = null;
+            // refCssForm.value.style.height = 0;
 
             refCssTable.value.style.position = null;
             refCssTable.value.style.visibility = null;
             refCssTable.value.style.display = null;
             refCssTable.value.style.height = 0;
         }
-        
+
         onMounted(() => {
             setTimeout(() => {
                 initHeight()
@@ -725,9 +543,7 @@ export default defineComponent({
             statusModalSlipRegistrantion.value = true
         }
 
-        const actionPopupCopyData = () => {
-            statusPopupCopyData.value = true
-        }
+        
 
         const actionPopupItemDetail = (data: any) => {
             statusModalItemDetail.value = true
@@ -792,29 +608,37 @@ export default defineComponent({
         const onFillDataAdd = (dataAdd: any) => {
             statusModalSlipRegistrantion.value = false
             console.log(dataAdd);
-            Object.assign(formData, dataAdd);
-            
+            Object.assign(store.state.common.ac120.formData, dataAdd);
+            addNewRow(store.state.common.ac120.formData)
+
         }
 
-        const onSubmit = () => {
-            const res = refFormAC120.value?.validate();
-            if (!res.isValid) {
-                res.brokenRules[0].validator.focus();
-            } else {
-            }
+        
+        // handle add row
+        const addRow = () => {
+
+        };
+
+        const addNewRow = (formData: any) => {
+            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...formData })
         }
 
 
+
+        const selectedMonth = (month: number) => {
+            monthSelected.value = month
+        }
 
         return {
             dataGetAccountingProcesses,
             dataSource,
             onFillDataAdd,
-            formData,
-            onSubmit,
-            refFormAC120,
+            // onSubmit,
+            // refFormAC120,
 
-            statusShowFull, toggleTransition, heightForm, refCssForm, refCssTable, heightTable,
+            store, 
+            // refCssForm,
+             refCssTable, heightTable,
             statusEntering,
             statusInput,
             statusAdjusting,
@@ -825,7 +649,7 @@ export default defineComponent({
             focusedRowKey,
             selectionChanged,
             dataDemoMain,
-            fileList,
+            // fileList,
             totalDeposits,
             totalWithdrawal,
             countResolutionNormalStatus,
@@ -837,9 +661,9 @@ export default defineComponent({
             contentPopupRetrieveStatements,
             statusModalSlipCancellation,
             statusModalSlipRegistrantion,
-            statusPopupCopyData,
+            // statusPopupCopyData,
             statusModalItemDetail,
-            actionPopupCopyData,
+            // actionPopupCopyData,
             sumOfIncome,
             sumOfExpenses,
             arraySelectBox,
@@ -848,10 +672,13 @@ export default defineComponent({
 
             actionPopupSlipCancellation,
             actionPopupSlipRegistration,
-            arrayRadioCheck,
+            // arrayRadioCheck,
             customBalance,
             dataDemoMain2,
-            onReorder, onDragChange, onRowDragging
+            onReorder, onDragChange, onRowDragging,
+
+            monthSelected,
+            selectedMonth
         };
     },
 });

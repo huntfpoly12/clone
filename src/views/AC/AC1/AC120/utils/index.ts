@@ -1,5 +1,12 @@
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
+export const initialArrayRadioCheck = [
+  { id: 0, text: '구입' },
+  { id: 1, text: '운반' },
+  { id: 2, text: '수선' },
+  { id: 3, text: '인쇄' },
+  { id: 4, text: '지출' }
+]
 export const initialStateFormAdd = {
   bankbookId: null,
   paymentDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
@@ -34,6 +41,8 @@ export const initialStateFormData = {
   memo: null,
   causeUsage: null,
   goodsCount: null,
+
+  accountingDocumentId: 'AC120',
 }
 export const dataDemoMain = [
   {
