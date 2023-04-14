@@ -6,7 +6,7 @@
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs">
+                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -93,6 +93,7 @@ export default defineComponent({
         let triggerBf310 = ref<boolean>(false);
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
+        let triggerPA880 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
         let triggerAC620 = ref<boolean>(false);
@@ -377,6 +378,15 @@ export default defineComponent({
                             dataQuery.value = props.data;
                             triggerPA810.value = true;
                             refetchPA810();
+                            break;
+                        case 'pa-880':
+                            dataQuery.value = {
+                              companyId: companyId,
+                              imputedYear: globalYear,
+                              workId: props.data,
+                            };
+                            triggerPA880.value = true;
+                            refetchPA880();
                             break;
                         case 'ac-110-bankbook':
                             dataQuery.value = props.data;
@@ -819,8 +829,21 @@ export default defineComponent({
             })
         );
         watch(resultPA810, (value) => {
+          if (value) {
+            dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
+          }
+        });
+        const { result: resultPA880, loading: loadingPA880, refetch: refetchPA880 } = useQuery(
+            queries.getMajorInsuranceCompanyOutLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA880.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA880, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
+                dataTableShow.value = value.getMajorInsuranceCompanyOutLogs;
             }
         });
         // get getClientLogs ac-610
@@ -925,6 +948,7 @@ export default defineComponent({
             loadingStatusPA720,
             loadingPA210,
             loadingPA810,
+            loadingPA880,
             loadingAC610,
             loadingCM121,
             loadingAC620,
