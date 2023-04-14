@@ -1,11 +1,11 @@
 import getTaxWithholdingStatusReports from "./getTaxWithholdingStatusReports"
 import getIncomesForTaxWithholdingStatusReport from "./getIncomesForTaxWithholdingStatusReport"
 import getWithholdingConfig from "../../../CM/CM130/getWithholdingConfig"
-import getCompany from "../../../BF/BF3/BF320/getCompany"
+import getMyCompany from "@/graphql/queries/common/getMycompany";
 const queries = {
     getIncomesForTaxWithholdingStatusReport:getIncomesForTaxWithholdingStatusReport,
     getTaxWithholdingStatusReports: getTaxWithholdingStatusReports,
     getWithholdingConfig: getWithholdingConfig,
-    getCompany: getCompany,
+    getMyCompany: getMyCompany,
 };
 export default queries;

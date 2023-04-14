@@ -1,7 +1,7 @@
-import renewMajorInsuranceConsignStatus from "./renewMajorInsuranceConsignStatus";
+import cancelMajorInsuranceCompanyOut from "./cancelMajorInsuranceCompanyOut";
 import createMajorInsuranceCompanyOut from "./createMajorInsuranceCompanyOut";
 const mutations = {
-    renewMajorInsuranceConsignStatus,
+    cancelMajorInsuranceCompanyOut,
     createMajorInsuranceCompanyOut,
 };
 

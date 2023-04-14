@@ -62,8 +62,7 @@
               </DxToolbar>
 
               <template #button-template>
-                <a-tooltip placement="top">
-                  <template #title>거래처 등록</template>
+                <a-tooltip placement="top" title="신규">
                   <div>
                     <DxButton icon="plus" @click="addRow" />
                   </div>

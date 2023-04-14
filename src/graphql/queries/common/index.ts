@@ -42,6 +42,7 @@ import getAccoountSubjects from "./getAccoountSubjects";
 import getAccountingProcessLogs from "./getAccountingProcessLogs";
 import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
 import getMe from "./getMe";
+import getMajorInsuranceCompanyOutLogs from "./getMajorInsuranceCompanyOutLogs";
 const queries = {
   getMe: getMe,
   getUser: getUser,
@@ -89,6 +90,7 @@ const queries = {
   getAccoountSubjects:getAccoountSubjects,
   getAccountingProcessLogs: getAccountingProcessLogs,
   getAccountingDocumentsLogs: getAccountingDocumentsLogs,
+  getMajorInsuranceCompanyOutLogs: getMajorInsuranceCompanyOutLogs,
 };
 
 export default queries;

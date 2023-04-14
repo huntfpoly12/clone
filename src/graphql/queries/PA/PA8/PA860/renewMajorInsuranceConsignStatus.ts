@@ -1,9 +1,6 @@
 import gql from "graphql-tag";
 export default gql`
-  mutation renewMajorInsuranceConsignStatus(
-    $companyId: Int!
-    $manageId: String!
-  ) {
+  query renewMajorInsuranceConsignStatus($companyId: Int!, $manageId: String!) {
     renewMajorInsuranceConsignStatus(
       companyId: $companyId
       manageId: $manageId

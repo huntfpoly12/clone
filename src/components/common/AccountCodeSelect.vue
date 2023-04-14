@@ -116,7 +116,7 @@ export default {
         const fillRow = (row: any) => {
             const filteredArr = ref(row.codes)
             if (props.classification) {
-                filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
+              filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
             }
             filteredArr.value?.map((val: any) => {
                 accountSubjects.value.push({
@@ -140,7 +140,7 @@ export default {
             value.value = newValue;
         });
         const onOpened = (e: any) => {
-            e.component._popup.option('width', 250);
+            e.component._popup.option('width', props.width);
         }
         return {
             messageRequired, arrAllCallApi, resetSelect, onOpened,
@@ -155,6 +155,10 @@ export default {
 <style scoped>
 .form-group {
     margin-top: 30px;
+}
+.custom-value {
+  white-space: normal !important;
+  word-break: break-all !important;
 }
 </style>
   

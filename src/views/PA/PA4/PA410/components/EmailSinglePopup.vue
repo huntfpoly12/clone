@@ -13,7 +13,7 @@
             <div class="text-align-center mt-50">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="Message.getCommonMessage('801').message" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -27,6 +27,7 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA410/index"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -60,7 +61,7 @@ export default defineComponent({
             error,
         } = useMutation(mutations.sendCalculateIncomeRetirementEmail);
 
-      const onSubmit = (e: any) => {
+        const onSubmit = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
@@ -71,7 +72,7 @@ export default defineComponent({
                     emailInput: {
                         senderName: userInfor.username,
                         receiverName: empployeeDetail[0].name,
-                        receiverAddress: empployeeDetail[0].email
+                        receiverAddress: emailAddress.value
                     }
                 }
                 // variables.employeeInputs.receiverAddress = emailAddress.value
@@ -94,7 +95,8 @@ export default defineComponent({
             onSubmit,
             emailAddress,
             empployeeDetail,
-            userInfor
+            userInfor,
+            Message
         }
     },
 })

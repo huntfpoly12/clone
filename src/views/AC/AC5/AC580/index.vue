@@ -381,15 +381,15 @@ export default defineComponent({
     //-----------------------------------CREATE MAJOR--------------------------------
 
     const messageCreate = Message.getMessage('COMMON', '101').message;
-    const { mutate: createMajor, onDone: createMajorDone, onError: createMajorError } = useMutation(mutations.createMajorInsuranceConsignStatus);
-    createMajorDone((res: any) => {
-      notification('success', messageCreate);
-      let data = res.data.createMajorInsuranceConsignStatus;
-      dataStateAC580.value.registeredAt = data.registeredAt;
-    })
-    createMajorError((res: any) => {
-      notification('error', res.message);
-    })
+    // const { mutate: createMajor, onDone: createMajorDone, onError: createMajorError } = useMutation(mutations.createMajorInsuranceConsignStatus);
+    // createMajorDone((res: any) => {
+    //   notification('success', messageCreate);
+    //   let data = res.data.createMajorInsuranceConsignStatus;
+    //   dataStateAC580.value.registeredAt = data.registeredAt;
+    // })
+    // createMajorError((res: any) => {
+    //   notification('error', res.message);
+    // })
 
     //-----------------------------------RE CREATE MAJOR--------------------------------
 
@@ -411,7 +411,7 @@ export default defineComponent({
           manageId: dataStateAC580.value.manageId,
           companyId: dataStateAC580.value.companyId,
         }
-        createMajor(formData);
+        // createMajor(formData);
         // renewMajor(formData);
       }
     }

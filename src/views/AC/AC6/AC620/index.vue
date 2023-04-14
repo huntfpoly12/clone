@@ -54,8 +54,7 @@
               </DxToolbar>
 
               <template #button-template>
-                <a-tooltip placement="top">
-                  <template #title>거래처 등록</template>
+                <a-tooltip placement="top" title="신규">
                   <div>
                     <DxButton icon="plus" @click="addRow" />
                   </div>
@@ -410,7 +409,7 @@ export default defineComponent({
       page: 1,
       rows: per_page,
       name: null,
-      phone: '',
+      phone: '0',
       type: null,
       includeNonUse: true,
     });

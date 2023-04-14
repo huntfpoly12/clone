@@ -81,12 +81,13 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        console.log(newValue);
-        
         if(newValue) value.value = convertValue(newValue);
       }
     );
     const checkID = (e: any) => {
+      if (!value.value) {
+        return true
+      }
       const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
       if (props.foreigner && fNumber > 4 && fNumber < 9) {
           return validResidentId(value.value);

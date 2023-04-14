@@ -96,14 +96,16 @@ import {
 } from "firebase/database";
 export default defineComponent({
   props: {
+    // Message only 2 people
     idUserTo: {
-      type: Object,
-      default: () => {}
+      type: [String, Number],
+      default: ''
     },
+    // message to the group
     keyChatChannel: {
-      type: String,
+      type: [String, Number],
       default: 'keyChatChannelCommon'
-    }
+    },
   },
   components: {
     EllipsisOutlined,
@@ -132,14 +134,19 @@ export default defineComponent({
     const listChat = ref<any>([])
     
     const channelChatSubrights = () => {
-      // if (idUserTo.value > id) {
-      //   console.log(idUserTo.value + id);
-      //   return idUserTo.value + id;
-      // } else {
-      //   console.log(id + idUserTo.value);
-      //   return id + idUserTo.value;
-      // }
-      return props.keyChatChannel
+      if(!!props.idUserTo){
+        const idUser = userName.value?.toString() || ''
+        if (props.idUserTo > idUser) {
+          console.log(props.idUserTo + idUser);
+          return props.idUserTo + idUser;
+        } else {
+          console.log(idUser + props.idUserTo);
+          return idUser + props.idUserTo;
+        }
+      }else{
+        console.log(props.keyChatChannel);
+        return props.keyChatChannel.toString()
+      }
     };
 
     let chatListRef = reffb(databaseFirebase, channelChatSubrights());
@@ -157,6 +164,9 @@ export default defineComponent({
             })
           }
           listChat.value = arr
+          nextTick(() => {
+            formTimeline.value.scrollTop = 10000000
+          })
         }
         // {
         //   onlyOnce: true,
@@ -193,7 +203,7 @@ export default defineComponent({
       }
     };
 
-    watch(channelChatSubrights, (value) => {
+    watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
       if(!!value){
         chatListRef = reffb(databaseFirebase, channelChatSubrights());
         getListContentChat();

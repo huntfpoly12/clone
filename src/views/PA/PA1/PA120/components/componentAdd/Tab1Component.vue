@@ -57,9 +57,8 @@
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"></id-number-text-box>
+          <id-number-text-box :required="true" :disabled="notDatasourcePA120" v-model:valueInput="initFormStateTabPA120.residentId" width="150px" :foreigner="initFormStateTabPA120.foreigner"></id-number-text-box>
         </a-form-item>
-
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
           <div class="input-text">
