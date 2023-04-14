@@ -3,7 +3,7 @@
     footer="" :width="1000">
     <text-area-box v-model="valueInput" placeholder="Note....." height="300" style="margin-top: 20px;"/>
     <div class="ac-110-popup-detail-btn">
-      <button-basic text="초기화" type="default" :mode="'contained'" @onClick="submit" />
+      <button-basic text="저장" type="default" :mode="'contained'" @onClick="submit" />
     </div>
   </a-modal>
 </template>
