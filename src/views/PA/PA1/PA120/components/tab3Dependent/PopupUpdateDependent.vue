@@ -21,7 +21,7 @@
             </a-form-item>
             <a-form-item :label="labelResidebId" label-align="right" class="red">
               <id-number-text-box :required="true" width="150px" :disabled="disabledButton || formState.relation == 0"
-                v-model:valueInput="formState.residentId">
+                v-model:valueInput="formState.residentId" :foreigner=formState.foreigner>
               </id-number-text-box>
             </a-form-item>
             <a-form-item label="나이" label-align="right">

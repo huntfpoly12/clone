@@ -54,7 +54,7 @@
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px">
+          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px" :foreigner="initFormStateTabPA120.foreigner">
           </id-number-text-box>
         </a-form-item>
 
