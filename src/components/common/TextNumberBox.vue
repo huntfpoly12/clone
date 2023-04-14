@@ -1,7 +1,7 @@
 <template>
   <DxTextBox :ref="numberTextBox" :width="width" value-change-event="input" :show-clear-button="clearButton"
     :placeholder="placeholder" v-model:value="value" mode="text" :disabled="disabled" :readOnly="readOnly"
-    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength">
+    :on-input="onInputValue" :height="$config_styles.HeightInput" :name="nameInput" :maxLength="maxLength" :rtlEnabled="rtlEnabled">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
@@ -50,6 +50,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    rtlEnabled: {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     DxTextBox,
