@@ -251,7 +251,7 @@ export default defineComponent({
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
         const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData, () => ({ fetchPolicy: "no-cache" }));
-        const { result: resultCompany } = useQuery(queries.getCompany, { id: companyId }, () => ({ fetchPolicy: "no-cache" }));
+        const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
