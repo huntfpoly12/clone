@@ -5,7 +5,9 @@
           @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
           :multi-calendars="multiCalendars" 
-          :teleport="teleport" :disabled="disabled" >
+          :teleport="teleport" :disabled="disabled"
+          :clearable="clearable"
+          >
       </Datepicker>
       <div v-if="isValid" class="message-error">
         <span>{{ Message.getCommonMessage('102').message }}</span>
@@ -64,6 +66,10 @@ export default defineComponent({
         teleport: {
           default: false,
           type: [Boolean,String]
+        },
+        clearable: {
+          type: Boolean,
+          default: true,
         }
     },
     components: {
