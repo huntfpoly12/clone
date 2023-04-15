@@ -41,11 +41,12 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA5/PA530/index"; 
 import { Message } from "@/configs/enum"
+import { useStore } from 'vuex';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -78,6 +79,10 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
+      const store = useStore();
+      const token = computed(() => sessionStorage.getItem('token'));
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfor = computed(() => store.state.auth.userInfor);
         const modalStatus = ref()
         const email = ref()
         const setModalVisible = () => {
@@ -89,7 +94,7 @@ export default defineComponent({
             if (props.groupSendMail == false)
                 email.value = val?.receiverAddress
             else
-                email.value = props.emailUserLogin
+                email.value = userInfor.value?.email
         });
         const {
             mutate,
@@ -122,7 +127,6 @@ export default defineComponent({
                             val.receiverAddress = email.value
                     })
                 }
-                console.log(props.receiptDate);
                 let dataSendEmail = {
                     companyId: props.companyId,
                     input: {

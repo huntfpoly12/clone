@@ -136,7 +136,7 @@
             <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                 :data="popupDataEmailSingle" />
             <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
+                :data="popupDataEmailMulti" />
         </div>
     </div>
 </template>
@@ -146,20 +146,20 @@ import { useStore } from 'vuex';
 import notification from "@/utils/notification";
 import dayjs, { Dayjs } from 'dayjs';
 import { useQuery } from "@vue/apollo-composable";
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxSelection, DxToolbar, DxScrolling, DxItem } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { radioLeaved, radioType } from "./utils/index"
 import {
     companyId,
     onExportingCommon,
-    userId,
-    makeDataClean
+    makeDataClean,
 } from "@/helpers/commonFunction";
+import EmailSinglePopup from "./components/EmailSinglePopup.vue"
+import EmailMultiPopup from "./components/EmailMultiPopup.vue"
 import queries from "@/graphql/queries/PA/PA2/PA220/index";
 export default defineComponent({
     components: {
-        DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton,
+        DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, EmailSinglePopup, EmailMultiPopup
     },
     setup() {
         const globalYear = computed(() => store.state.settings.globalYear);
@@ -185,17 +185,6 @@ export default defineComponent({
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-
-        // QUERY NAME : getUser
-        const emailUserLogin = ref()
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailUserLogin.value = e.data.getUser.email
-        })
 
         const onExporting = (e: any) => {
             onExportingCommon(e.component, e.cancel, '영업자관리')
@@ -329,7 +318,6 @@ export default defineComponent({
             modalEmailMulti,
             onOpenPopupEmailSingle,
             sendMailGroup,
-            emailUserLogin,
             onExporting,
             searchData,
             viewUrlParam,
