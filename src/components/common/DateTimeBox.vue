@@ -4,7 +4,7 @@
       <Datepicker v-model="date" :textInput="textInput" locale="ko" autoApply format="yyyy-MM-dd" :format-locale="ko"
           @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput }"
           :max-date="birthDay ? new Date() : ''" :placeholder="placeholder" :range="range"
-          :multi-calendars="multiCalendars" 
+          :multi-calendars="multiCalendars"
           :teleport="teleport" :disabled="disabled"
           :clearable="clearable"
           >
@@ -29,7 +29,7 @@ export default defineComponent({
             type: String,
         },
         valueDate: {
-            type: [Number, String, Array],
+            type: Object as () => string | number | Array<any> | null,
             default: parseInt(dayjs().format("YYYYMMDD")),
         },
         id: {
@@ -81,10 +81,10 @@ export default defineComponent({
           const regex2 = /px/gm;
           if ((regex1.exec(props.width))) {
             return String(parseInt(props.width.replace("px", "")) + 2) + '%'
-          } 
+          }
           if ((regex2.exec(props.width))) {
             return String(parseInt(props.width.replace("px", "")) + 2) + 'px'
-          } 
+          }
         })
         const date: any = ref(filters.formatDate(props.valueDate))
         const isValid = ref(false)
@@ -99,7 +99,7 @@ export default defineComponent({
                     else
                         date.value = newValue;
                 } else {
-                    if (newValue.constructor == Array) {
+                    if (newValue?.constructor == Array) {
                         date.value = newValue.map((item: any) => {
 
                             return filters.formatDate(item);
@@ -138,7 +138,7 @@ export default defineComponent({
         };
     },
 });
-</script> 
+</script>
 
 
 <style lang="scss" scoped>
