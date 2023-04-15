@@ -69,12 +69,16 @@
         <DxColumn cell-template="action" width="150" alignment="center"/>
         <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="text-align: center">
-            <a-space>
+            <a-space :size="4">
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
+              <DxButton type="ghost" >
+                  <img src="@/assets/images/searchPlus.png"
+                       style="width: 16px; height: 16px; margin-top: 0px;" />
+              </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
-                <DeleteOutlined/>
+                <DeleteOutlined style="font-size: 16px"/>
               </DxButton>
             </a-space>
           </div>

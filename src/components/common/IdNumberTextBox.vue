@@ -2,7 +2,7 @@
   <DxTextBox :width="width" value-change-event="input" :show-clear-button="clearButton" v-model:value="value"
     :disabled="disabled" :readOnly="readOnly" @input="updateValue(value)" :mask="mask" :mask-invalid-message="maskMess"
     :height="$config_styles.HeightInput" :name="nameInput">
-    <DxValidator>
+    <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxCustomRule v-if="isResidentId" :validation-callback="checkID" :message="msgError" />
     </DxValidator>

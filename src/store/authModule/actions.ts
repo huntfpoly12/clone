@@ -18,7 +18,7 @@ const actions: ActionTree<AuthState, any> = {
     watch(result, value => {
       if (value && value.me) {
         dataInfor.value = value.me;
-        context.commit('loadUserInfo', dataInfor)
+        context.commit('loadUserInfo', dataInfor.value)
       }
     })
   }

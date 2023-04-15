@@ -326,19 +326,19 @@ import DataSource from "devextreme/data/data_source";
 import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
 import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
-import { initBackerCreateInput } from "./utils/index";
+import {checkAndAddKeyToObject, initBackerCreateInput} from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import {isEqual, cloneDeep} from "lodash";
 
-type SearchType = {
-  page: number
-  rows: number
-  name: string | null
-  phone: string
-  type: null | number
-  includeNonUse: boolean
-};
+// type SearchType = {
+//   page: number
+//   rows: number
+//   name: string | null
+//   phone: string | undefined
+//   type: null | number
+//   includeNonUse: boolean
+// };
 enum BeckerType {
   개인 = 1,
   영리법인 = 2,
@@ -387,7 +387,7 @@ export default defineComponent({
     const focusedRowKey = ref<number>(0); // focused row key
     const previousRowData = ref({...initBackerCreateInput}); // save previous row data when focus row change
 
-    const formState = ref({...initBackerCreateInput}); // data show in form when click row or add new row
+    const formState: any = ref({...initBackerCreateInput}); // data show in form when click row or add new row
     const selectRowKeyAction = ref<number>(0); // key of row selected in gridData
     const dataSource = ref<DataSource>(); // data source of grid
     const originDataDetail: any = ref({
@@ -405,11 +405,11 @@ export default defineComponent({
     const actionSearch: any = ref<boolean>(true);
     const type = ref(0);
 
-    const dataSearch = ref<SearchType>({
+    const dataSearch: any = ref({
       page: 1,
       rows: per_page,
       name: null,
-      phone: '0',
+      phone: undefined,
       type: null,
       includeNonUse: true,
     });
@@ -438,7 +438,11 @@ export default defineComponent({
     } = useQuery(
       queries.searchBackers,{
         companyId: companyId,
-        filter: {...dataSearch.value},
+        filter: {
+          page: 1,
+          rows: per_page,
+          includeNonUse: true,
+        },
       },() => ({
         fetchPolicy: "no-cache",
         enabled: trigger.value,
@@ -624,13 +628,26 @@ export default defineComponent({
             await updateBacker(dataUpdate.value);
           }
         } else {
-          const {backerCode, ...newData} = formState.value
+          const newData = {
+            type: formState.value.type,
+            year: globalYear.value,
+            use: formState.value.use,
+            name: formState.value.name
+          }
+          checkAndAddKeyToObject({obj: newData, key: 'fundrasingInstitution', value: formState.value.fundrasingInstitution})
+          checkAndAddKeyToObject({obj: newData, key: 'donationOrganization', value: formState.value.donationOrganization})
+          checkAndAddKeyToObject({obj: newData, key: 'residentId', value: formState.value.residentId})
+          checkAndAddKeyToObject({obj: newData, key: 'bizNumber', value: formState.value.bizNumber})
+          checkAndAddKeyToObject({obj: newData, key: 'roadAddress', value: formState.value.roadAddress})
+          checkAndAddKeyToObject({obj: newData, key: 'addressExtend', value: formState.value.addressExtend})
+          checkAndAddKeyToObject({obj: newData, key: 'phone', value: formState.value.phone})
+          checkAndAddKeyToObject({obj: newData, key: 'nonProfitCorpType', value: formState.value.nonProfitCorpType})
+          checkAndAddKeyToObject({obj: newData, key: 'otherContents', value: formState.value.otherContents})
           // if form disabled => action add isCheckedBizNumber
           const newDataCreate = {
             companyId: companyId,
             input: {
               ...newData,
-              year: globalYear.value,
             },
           };
           if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
@@ -822,11 +839,19 @@ export default defineComponent({
     };
 
     const searching = (e: any) => {
-      dataSearch.value.type = type.value === 0 ? null : type.value;
+      // dataSearch.value.type = type.value === 0 ? null : type.value;
       dataSearch.value.page = listBackers.value.page;
+      const dataFilter = {
+        page: 1,
+        rows: per_page,
+        includeNonUse: true,
+      };
+      checkAndAddKeyToObject({obj: dataFilter, key: 'name', value: dataSearch.value.name})
+      checkAndAddKeyToObject({obj: dataFilter, key: 'phone', value: dataSearch.value.phone})
+      checkAndAddKeyToObject({obj: dataFilter, key: 'type', value: dataSearch.value.type})
       refetchData({
         companyId: companyId,
-        filter: {...dataSearch.value},
+        filter: {...dataFilter},
       })
     };
 
