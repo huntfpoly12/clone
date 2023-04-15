@@ -586,6 +586,7 @@ export default defineComponent({
             if (!res.isValid) {
                 // open collapse 
                 res.brokenRules[0].validator.focus();
+                activeKey.value = 2;     
                 inputInCollapse.map((value: any) => {
                     if (value.input_name.indexOf(res.brokenRules[0].validator._validationInfo.result.name) != -1) {
                         activeKey.value = value.key;
