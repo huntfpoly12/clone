@@ -357,8 +357,11 @@ export default defineComponent({
           () => originDataUpdate.value.input.healthInsuranceDeduction,
           () => originDataUpdate.value.input.employeementInsuranceDeduction,
           () => originDataUpdate.value.input.monthlyWage,
-          () => originDataUpdate.value.input.workingDays
+          () => originDataUpdate.value.input.workingDays,
+          () => originDataUpdate.value.input.nationalPensionSupportPercent,
+          () => originDataUpdate.value.input.employeementInsuranceSupportPercent
         ], () => {
+        
           // delete item  no need in object , Just compare item watching
           let defValue = cleanObject(JSON.parse(dataDefaultGet.value).input);
           let originValue = cleanObject(JSON.parse(JSON.stringify(originDataUpdate.value.input)));
@@ -374,8 +377,6 @@ export default defineComponent({
         const cleanObject = (object :  any) => {
           delete object.longTermCareInsuranceDeduction
           delete object.insuranceSupport
-          delete object.nationalPensionSupportPercent
-          delete object.employeementInsuranceSupportPercent
           delete object.monthlyPaycheck
           delete object.dailyWage
           delete object.deductionItems

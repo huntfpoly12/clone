@@ -7,7 +7,10 @@
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-					{{ data.value }}
+          <a-tooltip>
+            <template #title>{{ data.value }}</template>
+            <p class="contry-name">{{ data.value }}</p>
+          </a-tooltip>
 				</div>
 			</div>
 			<div v-else class="select-content" style="padding: 1px 0px; height: 30px;">
@@ -22,7 +25,10 @@
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-					{{ data.value }}
+          <a-tooltip>
+            <template #title>{{ data.value }}</template>
+            <p class="contry-name">{{ data.value }}ee</p>
+          </a-tooltip>
 				</div>
 			</div>
 		</template>
@@ -164,5 +170,9 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	padding: 3px 4px !important;
+}
+
+.contry-name{
+  margin: 0;
 }
 </style>
