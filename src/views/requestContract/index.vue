@@ -19,8 +19,7 @@
                                         @change="checkAllFunc" :disabled="false" :size="16" />
                                 </div>
                             </div>
-                            <div class="register-input">
-                                {{ regesterInput1 }}
+                            <div class="register-input" v-html="regesterInput1">
                             </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" label="동의함"
@@ -29,8 +28,7 @@
                         </div>
                         <div>
                             <label>2. 개인정보제공 및 활용동의</label>
-                            <div class="register-input">
-                                {{ regesterInput2 }}
+                            <div class="register-input" v-html="regesterInput2">
                             </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" label="동의함"
@@ -39,8 +37,7 @@
                         </div>
                         <div>
                             <label>3. 회계서비스약관 동의</label>
-                            <div class="register-input">
-                                {{ regesterInput3 }}
+                            <div class="register-input" v-html="regesterInput3">
                             </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService" label="동의함"
@@ -49,8 +46,7 @@
                         </div>
                         <div>
                             <label>4. 원천서비스약관 동의</label>
-                            <div class="register-input">
-                                {{ regesterInput4 }}
+                            <div class="register-input" v-html="regesterInput4">
                             </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService" label="동의함"
@@ -70,7 +66,7 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">사업자등록번호 :</label>
-                                        <biz-number-text-box width="115px" v-model:valueInput="contractCreacted.ownerBizNumber"
+                                        <biz-number-text-box width="135px" v-model:valueInput="contractCreacted.ownerBizNumber"
                                             :required="true" />
                                     </div>
                                     <div class="form-item">
@@ -80,13 +76,13 @@
                                     </div>
                                     <div class="form-item">
                                         <label class="red">{{ textIDNo }} :</label>
-                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="115px"/>
+                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="135px"/>
                                     </div>
                                     <div class="form-item">
-                                        <label>주 소 :</label>
+                                        <label class="red">주 소 :</label>
                                         <div class="group-label">
                                             <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                                placeholder="우편번호" :readOnly="true"  width="115px" class="mr-5" />
+                                                placeholder="우편번호" :readOnly="true"  width="135px" class="mr-5" />
                                             <post-code-button @dataAddress="funcAddress" width="130px" />
                                         </div>
                                     </div>
@@ -177,7 +173,7 @@
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                                 </DxToolbar>
                                 <template #button-template>
-                                    <DxButton icon="plus" @click="addRow" text="추가" />
+                                    <DxButton icon="plus" @click="addRow" text="추가" :disabled="valueRadioBox == 2" />
                                 </template>
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />

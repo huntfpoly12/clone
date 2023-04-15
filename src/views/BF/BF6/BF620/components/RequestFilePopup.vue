@@ -27,6 +27,7 @@ import { useMutation } from '@vue/apollo-composable';
 import { defineComponent, ref } from 'vue';
 import mutations from '@/graphql/mutations/BF/BF6/BF620/index';
 import notification from '@/utils/notification';
+import { makeDataClean } from '@/helpers/commonFunction';
 
 export default defineComponent({
   props: {
@@ -63,6 +64,8 @@ export default defineComponent({
       } else {
         switch (props.tabName) {
           case 'tab1':
+            makeDataClean(dataRequestFile.value);
+            dataRequestFile.value.filter.productionStatuses =  dataRequestFile.value.filter.beforeProduction && null;
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
           case 'tab2':

@@ -2,7 +2,6 @@
   <div id="tab2-pa120">
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
     <a-spin :spinning="loadingEmployeeWage" size="large">
-      {{ isDisableInsuranceSupport }} isDisableInsuranceSupport <br/>
       <a-row :gutter="16" class="mb-7">
         <a-col span="24" style="display: flex; flex-wrap: wrap">
           <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
@@ -41,13 +40,13 @@
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.nationalPensionSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport || !initFormTab2PA120.nationalPensionDeduction"></radio-group>
             </a-col>
             <a-col span="7"> 고용보험 적용율: </a-col>
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport || !initFormTab2PA120.employeementInsuranceDeduction"></radio-group>
             </a-col>
             <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
             <a-col span="17" class="income-tax-app-rate">
@@ -405,7 +404,7 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
-        console.log(`output->value`,data)
+        console.log(`output->value`, data)
         store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
@@ -604,13 +603,31 @@ export default defineComponent({
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
       if (e) {
-        initFormTab2PA120.value.nationalPensionSupportPercent = 0;
-        initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+        if (initFormTab2PA120.value.nationalPensionDeduction) {
+          initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+        }
+        if (initFormTab2PA120.value.employeementInsuranceDeduction) {
+          initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+        }
       } else {
         delete initFormTab2PA120.value.nationalPensionSupportPercent;
         delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
       }
     };
+    watch(() => initFormTab2PA120.value.nationalPensionDeduction, (newVal) => {
+      if (newVal && initFormTab2PA120.value.insuranceSupport) {
+        initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+      } else {
+        delete initFormTab2PA120.value.nationalPensionSupportPercent;
+      }
+    }, { deep: true })
+    watch(() => initFormTab2PA120.value.employeementInsuranceDeduction, (newVal) => {
+      if (newVal && initFormTab2PA120.value.insuranceSupport) {
+        initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+      } else {
+        delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
+      }
+    }, { deep: true })
     const onChangeSwitch2 = (e: any) => {
       if (e) {
         initFormTab2PA120.value.employeementReductionRatePercent = 50;

@@ -40,7 +40,7 @@
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
               v-model:valueRadioCheck="formStateTab2.nationalPensionSupportPercent" layoutCustom="horizontal"
-              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.nationalPensionDeduction"></radio-group>
           </a-col>
           <a-col span="7">
             고용보험 적용율:
@@ -48,7 +48,7 @@
           <a-col span="12">
             <radio-group :arrayValue="radioCheckPersenPension"
               v-model:valueRadioCheck="formStateTab2.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+              :disabled="!formStateTab2.insuranceSupport || !isDisableInsuranceSupport || !formStateTab2.employeementInsuranceDeduction"></radio-group>
           </a-col>
           <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
           <a-col span="17" class="income-tax-app-rate">
@@ -176,7 +176,8 @@
         </a-spin>
       </a-col>
       <a-col class="col-3">
-        <div class="header-text-2">공제 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span></div>
+        <div class="header-text-2">공제 <span style="float: right">{{ $filters.formatCurrency(totalDeduction) }} 원</span>
+        </div>
         <a-spin :spinning="loading1 || loading3" size="large">
           <div class="deduction-main">
             <div v-for="item in dataConfigDeduction" :key="item.name" class="custom-deduction">
@@ -482,13 +483,31 @@ export default defineComponent({
     // });
     watch(() => formStateTab2.insuranceSupport, (newVal) => {
       if (newVal) {
-        formStateTab2.nationalPensionSupportPercent = 0;
-        formStateTab2.employeementInsuranceSupportPercent = 0
+        if (formStateTab2.nationalPensionDeduction) {
+          formStateTab2.nationalPensionSupportPercent = 0;
+        }
+        if (formStateTab2.employeementInsuranceDeduction) {
+          formStateTab2.employeementInsuranceSupportPercent = 0;
+        }
       } else {
         delete formStateTab2.nationalPensionSupportPercent;
         delete formStateTab2.employeementInsuranceSupportPercent
       }
     }, { immediate: true })
+    watch(() => formStateTab2.nationalPensionDeduction, (newVal) => {
+      if (newVal && formStateTab2.insuranceSupport) {
+        formStateTab2.nationalPensionSupportPercent = 0;
+      } else {
+        delete formStateTab2.nationalPensionSupportPercent;
+      }
+    }, { deep: true })
+    watch(() => formStateTab2.employeementInsuranceDeduction, (newVal) => {
+      if (newVal && formStateTab2.insuranceSupport) {
+        formStateTab2.employeementInsuranceSupportPercent = 0;
+      } else {
+        delete formStateTab2.employeementInsuranceSupportPercent;
+      }
+    }, { deep: true })
     watch(() => formStateTab2.employeementReduction, (newVal) => {
       if (newVal) {
         formStateTab2.employeementReductionRatePercent = 50;
