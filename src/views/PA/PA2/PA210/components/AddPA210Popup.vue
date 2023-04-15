@@ -22,7 +22,7 @@
                         </template>
                         <DxColumn caption="귀속 연월" cell-template="imputed" />
                         <template #imputed="{ data }">
-                            <a-tooltip>
+                            <a-tooltip v-if="data.data.imputedFinishYearMonth">
                                 <template #title>
                                     귀속기간{{ showTooltipYearMonth(data.data.reportType, data.data.imputedStartYearMonth, data.data.imputedFinishYearMonth) }}
                                 </template>
@@ -32,10 +32,15 @@
                                         :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
                                 </div>
                             </a-tooltip>
+                            <div class="text-align-center" v-else>
+                                  <DxButton
+                                        :text="'귀 ' + data.data.imputedYear + '-' + (data.data.imputedMonth > 9 ? data.data.imputedMonth : '0' + data.data.imputedMonth)"
+                                        :style="{ color: 'white', backgroundColor: 'gray' }" :height="$config_styles.HeightInput" />
+                              </div>
                         </template>
                         <DxColumn caption="지급 연월" cell-template="payment" />
                         <template #payment="{ data }">
-                            <a-tooltip>
+                            <a-tooltip v-if="data.data.paymentFinishYearMonth">
                                 <template #title>
                                     지급기간{{ showTooltipYearMonth(data.data.reportType, data.data.paymentStartYearMonth, data.data.paymentFinishYearMonth) }}
                                 </template>
@@ -45,6 +50,11 @@
                                         :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
                                 </div>
                             </a-tooltip>
+                            <div class="text-align-center" v-else>
+                                    <DxButton
+                                        :text="'지 ' + data.data.paymentYear + '-' + (data.data.paymentMonth > 9 ? data.data.paymentMonth : '0' + data.data.paymentMonth)"
+                                        :style="{ color: 'white', backgroundColor: 'black' }" :height="$config_styles.HeightInput" />
+                              </div>
                         </template>
                         <DxColumn caption="신고 주기" cell-template="reportType" />
                         <template #reportType="{ data }">
@@ -70,7 +80,7 @@
                 </div>
             </standard-form>
         </a-modal>
-        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="closeAllPopupAdd" @isDoneReport="closeAllPopupAdd"
+        <report-grid v-if="reportGridStatus" :modalStatus="reportGridStatus" @closePopup="closeAllPopupAdd" @isDoneReport="closeAllPopupAddWhenDone"
             :dataReport="dataReport" :key="resetComponent"></report-grid>
     </div>
 </template>
@@ -84,6 +94,7 @@ import { DxDataGrid, DxColumn,DxScrolling, DxSelection } from "devextreme-vue/da
 import { useStore } from "vuex";
 import { getReportType, showTooltipYearMonth } from "../utils/index"
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import notification from "@/utils/notification";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -311,6 +322,7 @@ export default defineComponent({
         const closeAllPopupAdd = () => {
           if (hasChangedPopupPA520.value)
           {
+            notification('destroy', '')
             comfirmClosePopup(() => {
               reportGridStatus.value = false
               setModalVisible()
@@ -320,6 +332,11 @@ export default defineComponent({
             reportGridStatus.value = false
             setModalVisible()
           }
+        }
+
+        const closeAllPopupAddWhenDone = () => {
+            reportGridStatus.value = false
+            setModalVisible()
         }
         const onSelectionChanged = (data: any) => {
             dataReport.value = [data.data]
@@ -334,7 +351,7 @@ export default defineComponent({
             setModalVisible,
             reportGridStatus,
             arrayRadioCheck, afterDeadline,
-            focusedRowKey,resetComponent, showTooltipYearMonth,closeAllPopupAdd
+            focusedRowKey,resetComponent, showTooltipYearMonth,closeAllPopupAdd,closeAllPopupAddWhenDone
         };
     },
 });
