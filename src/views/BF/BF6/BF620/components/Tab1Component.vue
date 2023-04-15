@@ -78,7 +78,7 @@
         <template #productionStatus="{ data }">
           <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
             @productionStatusData="productionStatusData" />
-          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -193,7 +193,7 @@ export default defineComponent({
             paymentMonth: item.paymentMonth,
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
-            beforeProduction: item.lastProductionRequestedAt ? true : false,
+            beforeProduction: item.lastProductionRequestedAt ? false : true,
             allowSelection: true,
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
@@ -317,8 +317,8 @@ export default defineComponent({
       reportKeyInputs: [],
       filter: filterBF620.value,
       emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
       },
     });
     const selectionChanged = (event: any) => {
@@ -338,15 +338,20 @@ export default defineComponent({
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
           return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
         });
+        console.log(`output->event`,event)
+      const {active, ...customFilter} = filterBF620.value;
+      // customFilter.beforeProduction = beforeProduction
       // requestFileData.value.filter
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
       requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
       };
+      const {active, ...customFilter} = filterBF620.value;
+      requestFileData.value.filter = customFilter;
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
       } else {
