@@ -105,33 +105,27 @@
         </div>
         <div class="page-content">
             <div class="title-body">
-                <a-row>
-                    <a-col :span="12">
-                        <div class="title-body-left-1">
-                            <div>
-                                서식 설정 :
-                                <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
-                                    textUnCheck="지급자보관용" />
-                            </div>
-                            <div>
-                                <img src="@/assets/images/iconInfo.png" alt="">
-                            </div>
-                            <span>
-                                본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
-                            </span>
-                        </div>
-                    </a-col>
-                    <a-col :span="12">
-                        <div class="title-body-right">
-                            <a-form-item label="영수일">
-                                <div style="width: 150px">
-                                    <date-time-box width="160px" v-model:valueDate="dateSendEmail" />
-                                </div>
-                            </a-form-item>
-                            <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
-                        </div>
-                    </a-col>
-                </a-row>
+                  <div class="title-body-left-1">
+                      <div>
+                          서식 설정 :
+                          <switch-basic v-model:valueSwitch="valueSwitchChange" textCheck="소득자보관용"
+                              textUnCheck="지급자보관용" />
+                      </div>
+                      <div>
+                          <img src="@/assets/images/iconInfo.png" alt="">
+                      </div>
+                      <span>
+                          본 설정으로 적용된 서식으로 출력 및 메일발송 됩니다.
+                      </span>
+                  </div>
+                  <div class="title-body-right">
+                      <a-form-item label="영수일">
+                          <div>
+                              <date-time-box width="150px" v-model:valueDate="dateSendEmail" />
+                          </div>
+                      </a-form-item>
+                      <!-- <date-time-box width="160px" v-model:valueDate="dateSendEmail" /> -->
+                  </div>
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
@@ -173,7 +167,10 @@
                             {{ data.data.employee.summary }}
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150px" />
+                    <DxColumn caption="주민등록번호" cell-template="residentId" width="150px" />
+                    <template #residentId="{ data }">
+                      {{ data.data.employee.residentId.slice(0, 6) + '-' + data.data.employee.residentId.slice(6, 13) }}
+                    </template>
                     <DxColumn caption="비고" cell-template="four-major" width="300px" />
                     <template #four-major="{ data }">
                         <div  class="custom-grade-cell">
@@ -222,8 +219,7 @@
             </a-spin>
             <PA530Popup :groupSendMail="actionSendEmailGroup" :modalStatus="modalStatus" :dataPopup="dataCallModal"
                 :imputedYear="globalYear" :paymentYearMonths="paymentYearMonthsModal" :type="valueSwitchChange"
-                :receiptDate="dateSendEmail" @closePopup="modalStatus == false" :companyId="companyId"
-                :emailUserLogin="emailUserLogin" />
+                :receiptDate="dateSendEmail" @closePopup="modalStatus == false" :companyId="companyId" />
         </div>
     </div>
 </template>
@@ -233,7 +229,6 @@ import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA5/PA530/index";
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
@@ -252,7 +247,6 @@ export default defineComponent({
         let dataCallModal: any = ref()
         let checkAllValue = ref(true)
         let selectedItemKeys = ref([])
-        const emailUserLogin = ref()
         const actionSendEmailGroup = ref(false)
         const dateSendEmail = ref(filters.formatDateToInterger(dayjs().format('YYYYMMDD')))
         const valueSwitchChange = ref(true)
@@ -419,15 +413,6 @@ export default defineComponent({
         })
         errorPrint(res => {
             notification('error', res.message)
-        })
-        // QUERY NAME : getUser
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailUserLogin.value = e.data.getUser.email
         })
         // ================WATCHING============================================
         watch(globalYear, (value) => {
@@ -699,7 +684,7 @@ export default defineComponent({
                 notification('error', Message.getCommonMessage('601').message)
         }
         return {
-            emailUserLogin, actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
+            actionSendEmailGroup, companyId, paymentYearMonthsModal, dataCallModal, modalStatus, valueSwitchChange, dateSendEmail, year1, year2, checkAllValue, arrCheckBoxSearch, loadingGetEmployeeBusinesses, dataSource, move_column, colomn_resize, globalYear, loadingPrint,
             printGroup, checkAll, selectionChanged, sendMailGroup, actionPrint, openPopup, searching, customizeTotal, customizeIncomeTax, customizeDateLocalIncomeTax, customizeTotalTaxPay, customizeTotalTaxfreePay,
             clickQuarter1, clickQuarter2, clickQuarter3, clickQuarter4, vModalSelectedRowKeys
         };

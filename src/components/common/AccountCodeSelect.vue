@@ -1,14 +1,14 @@
 <template>
-    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="true" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
+    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
         placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
-        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled"
+        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled" :read-only="readOnly"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <DxTextBox v-if="data" :value="data.name + ' ' + data.shortCode"></DxTextBox>
-            <DxTextBox v-else placeholder="선택" />
+            <DxTextBox :read-only="readOnly" v-if="data" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            <DxTextBox :read-only="readOnly" v-else placeholder="선택" height="26" />
         </template>
         <template #item="{ data }">
-            <div class="custom-value">
+            <div class="custom-value-account-code">
                 <a-tooltip zIndex="9999" placement="top" color="black">
                     <template #title>{{ data.name1 }} > {{ data.name2 }}</template>
                     <div>
@@ -155,7 +155,7 @@ export default {
 };
 </script>
   
-<style scoped>
+<style scoped lang="scss">
 .form-group {
     margin-top: 30px;
 }
