@@ -258,6 +258,12 @@ import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
 
+const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
+  if (value) {
+    obj[key] = value;
+  }
+  return obj;
+};
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -509,19 +515,18 @@ export default defineComponent({
             updateClient(dataUpdate.value);
           } else {
             // if form disabled => action add
-            const newDataCreate = {
+            const newDataCreate: any = {
               companyId: companyId,
               input: {
                 name: formState.value.name,
-                bizNumber: formState.value.bizNumber,
-                residentId: formState.value.residentId?.replace("-", ""),
-                presidentName: formState.value.presidentName,
-                phone: formState.value.phone,
                 use: formState.value.use,
               },
             };
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'bizNumber', value: formState.value.bizNumber})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'residentId', value: formState.value.residentId})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'presidentName', value: formState.value.presidentName})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'phone', value: formState.value.phone})
             await createClient(newDataCreate);
-
           }
         }
     }
@@ -571,16 +576,18 @@ export default defineComponent({
 
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
+      const newDataUpdate :any ={}
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'bizNumber', value: formState.value.bizNumber})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'residentId', value: formState.value.residentId})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'presidentName', value: formState.value.presidentName})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'phone', value: formState.value.phone})
       return {
         companyId: companyId,
         clientId: formState.value.clientId,
         input: {
           name: formState.value.name,
-          bizNumber: formState.value.bizNumber,
-          residentId: formState.value.residentId?.replace("-", ""),
-          presidentName: formState.value.presidentName,
-          phone: formState.value.phone,
           use: formState.value.use,
+          ...newDataUpdate
         },
       };
     });

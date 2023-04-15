@@ -103,9 +103,13 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="theOrder" :show-row-lines="true" :hoverStateEnabled="true"
-                :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" :show-row-lines="true"
+                :hoverStateEnabled="true" :data-source="dataSourceTransactionDetails.transactionDetails"
+                :show-borders="true" v-model:focused-row-key="rowKeyDetailfocused" :allow-column-reordering="move_column"
+                :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true">
+                <DxEditing :allow-updating="true" :select-text-on-edit-start="true" :start-edit-action="'click'"
+                  mode="row" />
+                <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
@@ -151,36 +155,38 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" cell-template="resolutionClassification" />
+                <DxColumn caption="결의구분" cell-template="resolutionClassification" :allow-editing="false" />
                 <template #resolutionClassification="{ data }">
                   {{ data.data.bankbookDetailId !== null ? resolutionClassification.find((item: any) =>
                     item.value ==
                     data.data.resolutionClassification).label : '' }}
                 </template>
-                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end" />
-                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end" />
+                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end"  
+                :allow-editing="Object.keys(dataSourceTransactionDetails).length && dataSourceTransactionDetails.transactionDetails.find((item: any) => item.accountingDocumentId === rowKeyDetailfocused).spending === 0" />
+                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end" 
+                :allow-editing="Object.keys(dataSourceTransactionDetails).length && dataSourceTransactionDetails.transactionDetails.find((item: any) => item.accountingDocumentId === rowKeyDetailfocused).income === 0"/>
                 <DxColumn caption="적요" data-field="summary" width="200" />
-                <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
+                <DxColumn caption="계정과목" cell-template="accountCode" width="200" :allow-editing="false" />
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
-                    :classification="data.data.income !== 0 ? [4] : [5]" />
+                    :classification="data.data.income !== 0 ? [4] : [5]" :readOnly="!data.row.isEditing"/>
                 </template>
-                <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
+                <DxColumn caption="상대계정" cell-template="relationCode" width="200" :allow-editing="false" />
                 <template #relationCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.relationCode"
                     :classification="data.data.resolutionClassification === 2 ? [4] : []"
-                    :disabled="data.data.resolutionClassification === 1" />
+                    :disabled="data.data.resolutionClassification === 1" :readOnly="!data.row.isEditing"/>
                 </template>
-                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
+                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" :allow-editing="false" />
                 <template #fundingSource="{ data }">
-                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
+                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true"  :readOnly="!data.row.isEditing"/>
                 </template>
-                <DxColumn caption="거래처" data-field="clientId" alignment="start" />
-                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
+                <DxColumn caption="거래처" data-field="clientId" alignment="start" :allow-editing="false" />
+                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" :allow-editing="false" />
                 <template #letterOfApprovalType="{ data }">
                   <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
                     :disabled="data.data.resolutionClassification === 1"
-                    :required="data.data.resolutionClassification === 2" />
+                    :required="data.data.resolutionClassification === 2"  :readOnly="!data.row.isEditing"/>
                 </template>
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
@@ -252,7 +258,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
@@ -297,7 +303,8 @@ export default defineComponent({
     HistoryPopup,
     SaveFilled,
     DxPaging,
-    DxSelectBox
+    DxSelectBox,
+    DxEditing
   },
   setup() {
     const store = useStore();
@@ -350,6 +357,7 @@ export default defineComponent({
     let transactionSelected: any = ref()
     let dataStatementOfGoodsItems: any = ref()
     let monthSelected: any = ref(dayjs().month() + 1)
+    let rowKeyDetailfocused = ref()
     watch(() => fileList.value, (value) => {
     }, {
       deep: true,
@@ -507,6 +515,7 @@ export default defineComponent({
         payloadGetTransactionDetails.bankbookDetailDate = null
         payloadGetTransactionDetails.bankbookDetailId = null
         dataSourceTransactionDetails.value = {}
+        rowKeyDetailfocused.value = null
       }
       firstLoad.value = false
       triggerBankbookDetails.value = false
@@ -515,6 +524,7 @@ export default defineComponent({
     watch(resTransactionDetails, (value) => {
       if (!!value.getTransactionDetails && value.getTransactionDetails) {
         dataSourceTransactionDetails.value = value.getTransactionDetails
+        rowKeyDetailfocused.value = dataSourceTransactionDetails.value.transactionDetails[0].accountingDocumentId
       }
       triggerTransactionDetails.value = false
     })
@@ -871,7 +881,8 @@ export default defineComponent({
       modalHistoryAccountingProcessLogs,
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
-      updateAddBankbookDetailProof
+      updateAddBankbookDetailProof,
+      rowKeyDetailfocused
     };
   },
 });

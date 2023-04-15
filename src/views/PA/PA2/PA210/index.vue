@@ -205,9 +205,10 @@ export default defineComponent({
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
         ReportGridModify,ReportGridEditModify,ZoomInOutlined,EditOutlined
-    },
-    setup() {
+      },
+      setup() {
         const store = useStore();
+        store.dispatch('auth/getUserInfor', sessionStorage.getItem('token'));
         const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const globalYear = computed(() => store.state.settings.globalYear);
         
@@ -310,9 +311,9 @@ export default defineComponent({
         }
 
         const closeReportGridEdit = () => {
-
           if (hasChangedPopupPA520.value)
           {
+              notification('destroy', '')
               comfirmClosePopup(() => {
                 statusReportGridEdit.value = false;
                 refetchData()
@@ -327,7 +328,7 @@ export default defineComponent({
 
         const closeReportGridModify = () => {
           if (hasChangedPopupPA520.value)
-          {
+          {     notification('destroy', '')
                 comfirmClosePopup(() => {
                   statusReportGridModify.value = false;
                   refetchData()
@@ -342,6 +343,7 @@ export default defineComponent({
         const closeReportGridEditModify = () => {
           if (hasChangedPopupPA520.value)
           {
+            notification('destroy', '')
             comfirmClosePopup(() => {
                 statusReportGridEditModify.value = false;
                 refetchData()
