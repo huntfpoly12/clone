@@ -146,7 +146,7 @@ export default defineComponent({
         onDone(res => {
             setModalVisible()
             setModalVisibleCopy()
-            notification('success', ` 완료!`)
+            notification('success', `완료!`)
             store.state.common.processKeyPA110.imputedMonth = month.value
             store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
             store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))

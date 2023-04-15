@@ -22,6 +22,7 @@ import notification from "@/utils/notification";
 import { companyId } from '@/helpers/commonFunction';
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
+import {Message} from "@/configs/enum";
 import { useStore } from 'vuex'
 export default defineComponent({
     props: {
@@ -44,7 +45,7 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.deleteMidTermSettlement);
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '402').message)
             emit("closePopup", false)
         })
         onError((e: any) => {
