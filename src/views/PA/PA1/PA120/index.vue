@@ -64,13 +64,13 @@
                   신규
                 </template>
                 <div style="text-align: center;">
-                  <DxButton icon="plus" @click="openAddNewModal" />
+                  <DxButton icon="plus" @click="openAddNewModal" :disabled="disableAddMonth()" />
                 </div>
               </a-tooltip>
             </template>
             <template #button-history>
               <DxButton icon="plus">
-                <HistoryOutlined style="font-size: 18px" @click="modalHistory" />
+                <HistoryOutlined style="font-size: 18px" @click="modalHistory" :disabled="disableAddMonth()" />
               </DxButton>
             </template>
             <DxColumn caption="성명" width="180" cell-template="company-name" data-field="name" />
@@ -135,7 +135,7 @@ import { DxDataGrid, DxColumn, DxToolbar, DxItem, DxPaging, DxScrolling, DxSearc
 import DxButton from 'devextreme-vue/button';
 import { useStore } from 'vuex';
 import { useQuery, useMutation } from '@vue/apollo-composable';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, startYearMonth } from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
 import queries from '@/graphql/queries/PA/PA1/PA120/index';
 import mutations from '@/graphql/mutations/PA/PA1/PA120/index';
@@ -146,6 +146,7 @@ import { DxTooltip } from 'devextreme-vue/tooltip';
 import { initFormStateTab1 } from './utils/index';
 import { EditOutlined, HistoryOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import queryCM130 from "@/graphql/queries/CM/CM130/index";
+import dayjs from 'dayjs';
 
 export default defineComponent({
   components: {
@@ -229,10 +230,19 @@ export default defineComponent({
     const {
       result,
       loading,
+      onError,
     } = useQuery(queries.getEmployeeWages, originData, () => ({
       enabled: trigger.value,
       fetchPolicy: 'no-cache',
     }));
+    onError((res: any) => {
+      notification('error', res.message);
+      dataSource.value = [];
+      actionChangeComponent.value = 1;
+      store.commit('common/initFormStateTabPA120', initFormStateTab1);
+      store.commit('common/editRowPA120', initFormStateTab1);
+      store.state.common.notDatasourcePA120 = true;
+    })
     watch(result, (value) => {
       const data = value.getEmployeeWages;
       dataSource.value = data.map((item: any) => ({ ...item, key: item.employeeId.toString() }));
@@ -530,6 +540,33 @@ export default defineComponent({
       if (element)
         dataGridRef.value?.refresh();
     }
+    const disableAddMonth = (val: any = 1) => {
+      let date = dayjs(globalYear.value + 1 + '' + val);
+      let dateToCompare = dayjs(`${startYearMonth}`, 'YYYYMM')
+      if (dateToCompare.isBefore(date)) {
+        return false;
+      }
+      return true;
+    }
+
+    // get config
+    const yearPA120 = computed(()=> store.state.common.yearPA120);
+    const withholdingTrigger = ref(true);
+    const dataQueryCm130 = ref({ companyId: companyId, imputedYear: yearPA120 });
+    const { result: resultConfigCm130 } = useQuery(
+      queryCM130.getWithholdingConfig,
+      dataQueryCm130,
+      () => ({
+        enabled: withholdingTrigger.value,
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(resultConfigCm130, (newVal) => {
+      if (newVal) {
+        store.state.common.isDisableInsuranceSupport = newVal.getWithholdingConfig.insuranceSupport;
+        withholdingTrigger.value = false;
+      }
+    })
     return {
       loading,
       idRowEdit,
@@ -573,6 +610,7 @@ export default defineComponent({
       calculateIncomeTypeCodeAndName,
       isCalculateEditPA120,
       onFocusedRowChanging,
+      disableAddMonth,
     };
   },
 });
