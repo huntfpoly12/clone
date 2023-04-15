@@ -120,14 +120,14 @@
                     <DxSummary >
                         <DxTotalItem :customize-text="customTextSummaryInfo" show-in-column="성명"/>
                         <DxTotalItem column="totalPay" name="total_summary" summary-type="sum" display-format="총급여계합계: {0}"
-                            value-format="#,###" />        
+                            value-format="#,###" />
                     </DxSummary>
                 </DxDataGrid>
-                
+
             </div>
         </div>
     </a-spin>
-    <a-modal  v-if="modalSendMail == true" :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
+    <a-modal v-if="modalSendMail" :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
         <standard-form>
             <div class="d-flex-center mt-20" v-if="switchTypeSendMail == true">
                 <img src="@/assets/images/email.svg" alt="" style="width: 50px;">
@@ -160,7 +160,7 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
+import {ref, defineComponent, watch, computed, watchEffect} from "vue";
 import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
@@ -176,6 +176,7 @@ import notification from "@/utils/notification";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
 import Tooltip from '@/components/common/Tooltip.vue';
+import {UserInfo} from "@/store/authModule/types";
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem,DxButton,DxTooltip,Tooltip
@@ -185,6 +186,10 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
+        const token = computed(()=>sessionStorage.getItem("token"))
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfo = computed<UserInfo>(() => store.state.auth.userInfor as UserInfo);
 
         const checkBoxOption = ref(1);
         const checkBoxOption2 = ref(1);
@@ -221,7 +226,7 @@ export default defineComponent({
             },
             "employeeIds": []
         })
-        
+
         // =========================== GRAPHQL =======================================
         const {
             refetch: refetchPrint,
@@ -254,19 +259,23 @@ export default defineComponent({
             refetchData()
         }, { deep: true });
         // QUERY NAME : getUser
-        const {
-            onResult: onResultUserInf,
-            result: resultUserInf,
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser.email
+        // const {
+        //     onResult: onResultUserInf,
+        //     result: resultUserInf,
+        // } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+        //     fetchPolicy: "no-cache",
+        // }));
+        // onResultUserInf(e => {
+        //     emailAddress.value = e.data.getUser.email
+        // })
+        watchEffect(() => {
+          emailAddress.value = userInfo.value?.email
         })
         const { mutate: callSendEmail, onDone, onError, loading: loadingSendEmail } = useMutation(
             mutations.sendIncomeWageWithholdingTaxByEmployeeReportEmail
         );
         onDone(() => {
+            clearSelection()
             notification('success', Message.getCommonMessage('801').message)
         })
         onError(e => {
@@ -287,8 +296,7 @@ export default defineComponent({
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
-            clearSelection()
-            // If the retention style is number, send an email to one person. If it's an object type, send a group. 
+            // If the retention style is number, send an email to one person. If it's an object type, send a group.
             dataSendEmail.value.companyId = companyId
             dataSendEmail.value.input = {
                 "imputedYear": globalYear.value,
@@ -311,9 +319,9 @@ export default defineComponent({
                   notification('error', Message.getCommonMessage('601').message)
                   return;
                 }
-                emailAddress.value = resultUserInf.value.getUser.email
+                // emailAddress.value = resultUserInf.value.getUser.email
                 switchTypeSendMail.value = false
-                
+
                   dataSendEmail.value.employeeInputs = selectedItemKeys.value.map((val: any) => {
                     let dataChecked = dataSource.value.find((data: any) => data.employeeId === val)
                     return  {
@@ -323,7 +331,6 @@ export default defineComponent({
                       "employeeId": dataChecked.employeeId
                     }
                   })
-                
             }
             modalSendMail.value = true
         }
