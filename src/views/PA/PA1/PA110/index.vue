@@ -644,9 +644,14 @@ export default defineComponent({
             dataRows.value = []
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-110" && !((store.state.common.statusChangeFormEdit && !store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd && store.state.common.statusFormAdd))) {
-                triggerDataTaxPayInfo.value = true; //reset data table 2
-                !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
+            if (newVal.id == "pa-110") {
+                if (store.state.common.statusFormAdd) {
+                    return
+                }
+                if (!(store.state.common.statusChangeFormEdit && !store.state.common.statusFormAdd)) {
+                    triggerDataTaxPayInfo.value = true; //reset data table 2
+                    !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
+                }
             }
         })
         watch(() => store.state.common.openModalCopyMonth, (value) => {
@@ -744,7 +749,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             dataMonthNew.value.status = status.value
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             originData.value.imputedYear = globalYear.value
             // isRunOnce.value = true;
             // refetchDataProcessIncomeWages()

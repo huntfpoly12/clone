@@ -458,7 +458,7 @@ export default defineComponent({
         })
         successChangeIncomeProcess(e => {
             dataMonthNew.value.status = status.value
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             originData.value.imputedYear = globalYear.value
             // refetchData() 
             // isRunOnce.value = true;
@@ -586,9 +586,14 @@ export default defineComponent({
             // IncomeWageDailiesTrigger.value = true; //reset data table 2
         })
         watch(() => store.state.common.activeTab, (newVal) => {
-            if (newVal.id == "pa-510" && !((store.state.common.statusChangeFormEdit && !store.state.common.statusFormAdd) || (store.state.common.statusChangeFormAdd && store.state.common.statusFormAdd))) {
-                IncomeWageDailiesTrigger.value = true; //reset data table 2
-                !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
+            if (newVal.id == "pa-510") {
+                if (store.state.common.statusFormAdd) {
+                    return
+                }
+                if (!(store.state.common.statusChangeFormEdit && !store.state.common.statusFormAdd)) {
+                    IncomeWageDailiesTrigger.value = true; //reset data table 2
+                    !store.state.common.statusRowAdd ? store.state.common.statusRowAdd = true : ''
+                }
             }
         })
         watch(() => status.value, (newVal) => {
