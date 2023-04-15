@@ -226,6 +226,7 @@
                   placeholder="숫자 13자리"
                   :required="true"
                   :disabled="!isNewRow && !dataShow.deletable"
+                  :foreigner="dataShow.foreigner"
                 />
               </a-form-item>
               <a-form-item label="소득구분" label-align="right" class="red">

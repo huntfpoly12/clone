@@ -13,7 +13,7 @@
             <div class="text-align-center mt-50">
                 <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
                     @onClick="setModalVisible()" />
-                <button-basic class="button-form-modal" :text="Message.getCommonMessage('801').message" :width="140" :type="'default'"
+                <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'"
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
@@ -80,7 +80,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {

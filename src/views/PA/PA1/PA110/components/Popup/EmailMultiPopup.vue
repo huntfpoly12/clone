@@ -26,11 +26,9 @@
 import { defineComponent, watch, ref, computed } from 'vue'
 import notification from "@/utils/notification";
 import { useStore } from 'vuex'
-import { userId } from "@/helpers/commonFunction";
 import { companyId } from '@/helpers/commonFunction';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA1/PA110/index"
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
@@ -48,19 +46,18 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
+        const token = computed(() => sessionStorage.getItem('token'));
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfor = computed(() => store.state.auth.userInfor);
         let emailAddress = ref('');
-
+        watch(() => props.modalStatus, (val) => {
+            if (val) {
+                emailAddress.value = userInfor.value?.email
+            }
+        });
         const setModalVisible = () => {
             emit("closePopup", false)
         };
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser.email
-        })
 
         const {
             mutate: sendEmail,

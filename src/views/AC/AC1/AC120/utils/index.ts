@@ -7,10 +7,25 @@ export const initialArrayRadioCheck = [
   { id: 3, text: '인쇄' },
   { id: 4, text: '지출' }
 ]
+export const initialArrayRadioMonth = [
+  { id: 1, text: '01' },
+  { id: 2, text: '02' },
+  { id: 3, text: '03' },
+  { id: 4, text: '04' },
+  { id: 5, text: '05' },
+  { id: 6, text: '06' },
+  { id: 7, text: '07' },
+  { id: 8, text: '08' },
+  { id: 9, text: '09' },
+  { id: 10, text: '10' },
+  { id: 11, text: '11' },
+  { id: 12, text: '12' },
+
+]
 export const initialStateFormAdd = {
   bankbookId: null,
   paymentDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
-  resolutionType: 1,
+  resolutionType: 11,
   amount: null,
   summary: null,
   fundingSource: 3,
@@ -24,25 +39,25 @@ export const initialStateFormData = {
   summary: null,
   fundingSource: null,
   letterOfApprovalType: null,
-
-  resolutionClassification: null,
-  resolutionDate: null,
+  theOrder: 1,
+  // resolutionClassification: null,
+  // resolutionDate: null,
   causeActionDate: null,
   proposedDate: null,
   accountingDate: null,
   registrationDate: null,
-  bankbookNickname: null,
-  bankbookNumber: null,
+  // bankbookNickname: null,
+  // bankbookNumber: null,
   accountCode: null,
   relationCode: null,
-  clientId: null,
+  // clientId: null,
   source: null,
   writer: null,
   memo: null,
   causeUsage: null,
-  goodsCount: null,
+  // goodsCount: null,
 
-  accountingDocumentId: 'AC120',
+  // accountingDocumentId: 'AC120',
 }
 export const dataDemoMain = [
   {

@@ -30,3 +30,9 @@ export const initBackerCreateInput: BackerCreateInput = {
   use: true,
   residentId: "",
 };
+export const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
+  if (value) {
+    obj[key] = value;
+  }
+  return obj;
+};

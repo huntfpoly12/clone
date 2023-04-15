@@ -83,7 +83,10 @@
                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
             </div>
           </template>
-          <DxColumn caption="주민등록번호" :width="130" data-field="employee.residentId" />
+          <DxColumn caption="주민등록번호" :width="130" cell-template="residentId" data-field="employee.residentId" />
+            <template #residentId="{ data }">
+              <resident-id :residentId="data.data.employee?.residentId"></resident-id>
+            </template>
           <DxColumn caption="소득구분" cell-template="grade-cell" width="160" />
           <template #grade-cell="{ data }">
             <income-type :typeCode="data.data.employee.incomeTypeCode" :typeName="data.data.employee.incomeTypeName">
@@ -129,7 +132,7 @@
           </template>
         </DxDataGrid>
         <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal" :data="popupSingleData" />
-        <EmailGroupPopup :modalStatus="modalEmailGroup" :emailUserLogin="emailUserLogin"
+        <EmailGroupPopup :modalStatus="modalEmailGroup"
           @closePopup="onCloseEmailGroupModal" :data="popupGroupData" />
       </div>
       <!-- <PopupMessage :modalStatus="popupMailGroup" @closePopup="popupMailGroup = false" :typeModal="'warning'"
@@ -143,13 +146,12 @@ import { useStore } from 'vuex';
 import notification from "@/utils/notification";
 import { useQuery } from '@vue/apollo-composable';
 import DxButton from 'devextreme-vue/button';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { DxDataGrid, DxColumn, DxPaging, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary, DxScrolling, DxTotalItem } from 'devextreme-vue/data-grid';
-import { companyId, onExportingCommon, userId } from "@/helpers/commonFunction";
+import { companyId, onExportingCommon } from "@/helpers/commonFunction";
 import queries from '../../../../graphql/queries/PA/PA7/PA730/index';
 import EmailSinglePopup from './components/PA730PopupSendSingleEmail.vue';
 import EmailGroupPopup from './components/PA730PopupSendGroupEmail.vue';
-import queriesGetUser from '@/graphql/queries/BF/BF2/BF210/index';
 import filters from "@/helpers/filters";
 export default defineComponent({
   components: {
@@ -335,14 +337,6 @@ export default defineComponent({
         notification('error', messages.getCommonMessage('601').message)
       }
     };
-    // group mail
-    const { onResult: onResultUserInf } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-      fetchPolicy: 'no-cache',
-    }));
-    const emailUserLogin = ref('');
-    onResultUserInf((e) => {
-      emailUserLogin.value = e.data.getUser.email;
-    });
     const customTextSummary = () => {
       let total = 0
       dataSource.value.map((val: any) => {
@@ -374,7 +368,6 @@ export default defineComponent({
       onCloseEmailGroupModal,
       onSelectionChanged,
       onPrint, onPrintGroup,
-      emailUserLogin,
       receiptReportViewUrlParam,
       customTextSummary,
     };

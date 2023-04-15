@@ -8,7 +8,7 @@
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="onSelectionClick"
+                            :column-auto-width="true"
                             @focused-row-changing="onFocusedRowChanging"
                             ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
@@ -113,7 +113,7 @@
                         <a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
                             class="red">
                             <id-number-text-box :width="200" v-model:valueInput="formState.residentId"
-                                :required="true"></id-number-text-box>
+                                :required="true" :foreigner="formState.foreigner"/>
                         </a-form-item>
                         <a-form-item label="소득구분" :label-col="labelCol" class="red">
                             <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
@@ -288,7 +288,7 @@ export default defineComponent({
             notification('error', error.message)
         });
         onDoneAdd(async (data) => {
-            notification('success', `업데이트 완료되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '101').message)
             if (checkClickYear.value) {
                 originData.imputedYear = dataYearNew.value
                 runOne.value = true;
@@ -332,7 +332,7 @@ export default defineComponent({
             store.state.common.savePA710++;
         });
         onDoneUpdate(async (data) => {
-            notification('success', `업데이트 완료되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             if (checkClickYear.value) {
                 originData.imputedYear = dataYearNew.value
                 runOne.value = true;
@@ -422,42 +422,7 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.value.incomeTypeName = e
         }
-        
 
-        // When changing the value in the input form then moving to another row, check the valid form and display the popup
-        // const actionToAddFromEdit = (e: any) => {
-        //     var res = e.validationGroup.validate();
-        //     //remove active row edit
-        //     const element = document.querySelector('.dx-row-focused');
-        //     if (element)
-        //         (element as HTMLInputElement).classList.remove("dx-row-focused");
-
-        //     if (!res.isValid) {
-        //         res.brokenRules[0].validator.focus();
-        //     } else
-        //         confirmSave.value = true
-        // }
-        const onSelectionClick = (data: any) => {
-            // dataRow = data.data
-            // if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
-            //     originDataDetail.value.employeeId = data.data.employeeId
-            //     originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
-            //     if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
-            //         modalStatus.value = true;
-            //     } else {
-            //         if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
-            //             modalStatus.value = true;
-            //         } else {
-            //             if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
-            //                 listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-            //                 statusAddRow.value = true
-            //             }
-            //             triggerDetail.value = true;
-            //         }
-            //         statusFormUpdate.value = true;
-            //     }
-            // }
-        }
         const onFocusedRowChanging = (e: any) => {
             statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
@@ -497,12 +462,6 @@ export default defineComponent({
                     statusClickButtonAdd.value = true
                 } else if(statusAddRow.value) {
                     addRow()
-                    // statusAddRow.value = false;
-                    // listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                    // formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    // resetFormNum.value++;
-                    // focusedRowKey.value = 'PA710';
-                    // statusFormUpdate.value = false;
                 }
             }
         }
@@ -598,7 +557,6 @@ export default defineComponent({
                 } else {
                     disabledBlock.value = true;
                 }
-                // listEmployeeExtra.value = value.getEmployeeExtras
                 
             }
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
@@ -642,7 +600,7 @@ export default defineComponent({
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
             disabledBlockTable,
-            textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            textCountry, actionCreate, textTypeCode, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock, gridRef,
         };
     },

@@ -10,11 +10,11 @@ let statesPA720 = {
       paymentDay: '',
       employeeId: 0,
       incomeTypeCode: "",
-      paymentAmount: '',
-      requiredExpenses: '',
+      paymentAmount: 0,
+      requiredExpenses: 0,
       taxRate: 20,
-      withholdingIncomeTax: '',
-      withholdingLocalIncomeTax: '',
+      withholdingIncomeTax: 0,
+      withholdingLocalIncomeTax: 0,
       incomeId: "99axbzkk",
       employee:{
         key:0
@@ -26,11 +26,11 @@ let statesPA720 = {
       paymentDay: '',
       employeeId: 0,
       incomeTypeCode: "",
-      paymentAmount: '',
-      requiredExpenses: '',
+      paymentAmount: 0,
+      requiredExpenses: 0,
       taxRate: 20,
-      withholdingIncomeTax: '',
-      withholdingLocalIncomeTax: '',
+      withholdingIncomeTax: 0,
+      withholdingLocalIncomeTax: 0,
       incomeId: "99axbzkk",
       employee:{
         key:0
@@ -42,11 +42,11 @@ let statesPA720 = {
         paymentDay: 1,
         employeeId: null,
         incomeTypeCode: "",
-        paymentAmount: null,
-        requiredExpenses: null,
+        paymentAmount: 0,
+        requiredExpenses: 0,
         taxRate: 20,
-        withholdingIncomeTax: null,
-        withholdingLocalIncomeTax: null,
+        withholdingIncomeTax: 0,
+        withholdingLocalIncomeTax: 0,
         incomeId: "99axbzkk",
         employee:{
           key:0

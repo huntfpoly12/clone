@@ -2,16 +2,24 @@
     <action-header :buttonDelete="false" :buttonSearch="false" :buttonSave="false" :buttonPrint="false" />
     <div class="ac-120">
         <div class="top">
-            <div class="grid">
-                <div v-for="(month, index) in 12" :key="index" class="items"
-                    :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
-                    <colorful-badge
-                        :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
-                        :year="globalYear" :month="month" />
+            <a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
+                <div class="grid">
+                    <div v-for="(month, index) in 12" :key="index" class="items"
+                        :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
+                        <colorful-badge
+                            :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
+                            :year="globalYear" :month="month" />
+                    </div>
                 </div>
-            </div>
+            </a-spin>
             <div class="flex">
-                <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+                <div class="action">
+                    {{ statusAdjusting }}
+                    <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+                    <DxButton icon="plus" class="ml-4">
+                        <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
+                    </DxButton>
+                </div>
                 <div class="action">
                     <a-tooltip placement="top" color="black">
                         <template #title>전표 신규 건별 등록</template>
@@ -37,20 +45,24 @@
                             </DxButton>
                         </span>
                     </a-tooltip>
-                    <DxButton class="ml-4 custom-button-checkbox custom-button" type="default"
+                    <DxButton class="ml-4 mr-4 custom-button-checkbox custom-button" type="default"
                         :height="$config_styles.HeightInput" @click="actionPopupSlipCancellation">
                         <div class="d-flex-center">
                             <checkbox-basic :valueCheckbox="true" disabled="true" />
                             <span class="pl-5">전표취소</span>
                         </div>
                     </DxButton>
-                    <HistoryOutlined style="font-size: 18px; margin-left: 5px;" />
+                    <DxButton icon="plus">
+                        <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingDocuments" />
+                    </DxButton>
+                    <!-- <HistoryOutlined style="font-size: 18px; margin-left: 5px;" /> -->
                 </div>
             </div>
         </div>
         <div class="main">
-            <div class="data-grid" ref="refCssTable" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
-                <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
+            <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
+                <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
+                    <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
                     :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
                     <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
@@ -182,86 +194,86 @@
                         <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
                     </DxSummary>
                 </DxDataGrid> -->
-{{ dataSource }}
-                <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true" :hoverStateEnabled="true"
-                    :data-source="dataSource" :show-borders="true" :allow-column-reordering="move_column"
-                    v-model:focused-row-key="focusedRowKey" :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
-                    <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
-                        :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging" />
-                    <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
-                    <template #transactionDetailDate="{ data }">
-                        {{ $filters.formatDate(data.value) }}
-                    </template>
-                    <DxColumn caption="순번" data-field="documentOrderByDate" />
-                    <DxColumn caption="결의번호" data-field="resolutionNumber" />
-                    <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
-                    <template #bankbook="{ data }">
-                        <!-- <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
-                            <div>{{ data.bankbook?.bankbookNickname }}</div>
-                        </a-tooltip> -->
-                    </template>
+                    <!-- {{ dataSource }} -->
+                    <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
+                        :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                        :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        @selection-changed="selectionChanged">
+                        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
+                            :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging" />
+                        <DxScrolling mode="standard" show-scrollbar="always" />
+                        <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
+                        <template #transactionDetailDate="{ data }">
+                            {{ $filters.formatDate(data.value) }}
+                        </template>
+                        <DxColumn caption="순번" data-field="documentOrderByDate" />
+                        <DxColumn caption="결의번호" data-field="resolutionNumber" />
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
+                        <template #bankbook="{ data }">
+                            <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
+                                <div>{{ data.bankbook?.bankbookNickname }}</div>
+                            </a-tooltip>
+                        </template>
 
-                    <DxColumn caption="결의 구분" data-field="resolutionClassification" />
-                    <DxColumn caption="수입액" data-field="income" />
-                    <DxColumn caption="지출액" data-field="spending" format="fixedPoint" />
-                    <DxColumn caption="잔액" cell-template="balance" format="fixedPoint" />
-                    <template #balance="{ data }">
-                        {{ $filters.formatCurrency(data.lastBalance + data.spending - data.balance) }}
-                    </template>
-                    <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint" />
-                    <DxColumn caption="적요" data-field="summary" format="fixedPoint" />
-                    <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
-                    <template #accountCode="{ data }">
-                        <!-- <account-code-select :valueInput="data.accountCode" :disabled="true" /> -->
-                        <account-code-select :disabled="true" />
-                    </template>
-                    <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
-                    <template #relationCode="{ data }">
-                        <!-- <account-code-select :valueInput="data.relationCode" :disabled="true" /> -->
-                        <account-code-select :disabled="true" />
-                    </template>
+                        <DxColumn caption="결의 구분" data-field="resolutionClassification" />
+                        <DxColumn caption="수입액" data-field="income" />
+                        <DxColumn caption="지출액" data-field="spending" format="fixedPoint" />
+                        <DxColumn caption="잔액" cell-template="balance" format="fixedPoint" />
+                        <template #balance="{ data }">
+                            {{ $filters.formatCurrency(data.lastBalance + data.spending - data.balance) }}
+                        </template>
+                        <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint" />
+                        <DxColumn caption="적요" data-field="summary" format="fixedPoint" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
+                        <template #accountCode="{ data }">
+                            <account-code-select :valueInput="data.accountCode" :disabled="true" />
+                            <!-- <account-code-select :disabled="true" /> -->
+                        </template>
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
+                        <template #relationCode="{ data }">
+                            <account-code-select :valueInput="data.relationCode" :disabled="true" />
+                            <!-- <account-code-select :disabled="true" /> -->
+                        </template>
 
-                    <DxColumn caption="자금원천" data-field="fundingSource" />
-                    <DxColumn caption="거래처" data-field="clientId" />
-                    <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" />
+                        <DxColumn caption="자금원천" data-field="fundingSource" />
+                        <DxColumn caption="거래처" data-field="clientId" />
+                        <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" />
 
-                    <DxColumn caption="물품 내역" cell-template="normality" />
-                    <template #normality="{ data }">
-                        <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail(data.goodsCount)" />
-                    </template>
-                    <DxColumn caption="수기 여부" cell-template="slipRegistration" />
-                    <template #slipRegistration="{ data }">
-                        <div class="slipRegistration">
-                            <button-basic :text="data.handwriting ? 'O' : 'X'"
-                                :type="data.handwriting ? 'success' : 'danger'" :mode="'contained'"
-                                style="margin-right: 5px;" />
-                        </div>
-                    </template>
-                    <DxColumn caption="정상 여부" cell-template="slipRegistration1" />
-                    <template #slipRegistration1="{ data }">
-                        <div class="slipRegistration">
-                            <button-basic :text="data.resolutionNormalStatus ? 'O' : 'X'"
-                                :type="data.resolutionNormalStatus ? 'success' : 'danger'" :mode="'contained'"
-                                style="margin-right: 5px;" />
-                        </div>
-                    </template>
-                    <DxSummary>
-                        <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
-                            display-format="수입액 합계: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
-                            display-format="지출액 합계: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="customBalance" />
-                        <DxTotalItem cssClass="custom-sumary" column="정상 여부"
-                            :customize-text="countResolutionNormalStatus" />
-                    </DxSummary>
-                </DxDataGrid>
+                        <DxColumn caption="물품 내역" cell-template="normality" />
+                        <template #normality="{ data }">
+                            <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail(data.goodsCount)" />
+                        </template>
+                        <DxColumn caption="수기 여부" cell-template="slipRegistration" />
+                        <template #slipRegistration="{ data }">
+                            <div class="slipRegistration">
+                                <button-basic :text="data.handwriting ? 'O' : 'X'"
+                                    :type="data.handwriting ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" />
+                            </div>
+                        </template>
+                        <DxColumn caption="정상 여부" cell-template="slipRegistration1" />
+                        <template #slipRegistration1="{ data }">
+                            <div class="slipRegistration">
+                                <button-basic :text="data.resolutionNormalStatus ? 'O' : 'X'"
+                                    :type="data.resolutionNormalStatus ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" />
+                            </div>
+                        </template>
+                        <DxSummary>
+                            <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
+                            <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
+                                display-format="수입액 합계: {0}" />
+                            <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
+                                display-format="지출액 합계: {0}" />
+                            <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="customBalance" />
+                            <DxTotalItem cssClass="custom-sumary" column="정상 여부"
+                                :customize-text="countResolutionNormalStatus" />
+                        </DxSummary>
+                    </DxDataGrid>
+                </a-spin>
             </div>
-
-{{ store.state.common.ac120.formData }}
-            <DetailComponent/>
+            <DetailComponent />
         </div>
 
     </div>
@@ -275,9 +287,16 @@
     <PopupSlipRegistration :modalStatus="statusModalSlipRegistrantion" @closePopup="statusModalSlipRegistrantion = false"
         @submit="onFillDataAdd" />
 
-    
+
     <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false"
         @submit="statusModalItemDetail = false" />
+
+    <HistoryPopup :modalStatus="modalHistoryStatusAccountingProcess"
+        @closePopup="modalHistoryStatusAccountingProcess = false" :data="popupData" title="변경이력"
+        typeHistory="ac-120-accounting-process" />
+    <HistoryPopup :modalStatus="modalHistoryStatuAccountingDocuments"
+        @closePopup="modalHistoryStatuAccountingDocuments = false" :data="popupData" title="변경이력"
+        typeHistory="ac-120-accounting-documents" />
 </template>
 <script lang="ts">
 import { useStore } from 'vuex';
@@ -321,32 +340,26 @@ export default defineComponent({
         DetailComponent,
     },
     setup() {
-        
-
-       
-        // const heightForm: any = ref(0)
-        const heightTable: any = ref(0)
-        
-        const refCssTable: any = ref(null);
+        const heightTable: any = ref('520px')
 
         const store = useStore();
-        // const statusShowFull = computed(() => store.state.common.ac120.statusShowFull)
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const globalYear = computed(() => store.state.settings.globalYear)
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
 
-        let statusEntering = ref(10);
-        let statusInput = ref(20);
         let statusAdjusting = ref(30);
-        let statusAdjusted = ref(40);
         let focusedRowKey = ref()
-        
+
         let isModalRetrieveStatements = ref(false);
         let statusModalSlipCancellation = ref(false);
         let statusModalSlipRegistrantion = ref(false);
-        
+
         let statusModalItemDetail = ref(false);
+
+        const popupData = ref({});
+        const modalHistoryStatusAccountingProcess = ref<boolean>(false);
+        const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
         let arraySelectBox = reactive([
             {
                 value: 1,
@@ -365,7 +378,7 @@ export default defineComponent({
                 label: '후원듬'
             }
         ])
-        
+
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
@@ -414,10 +427,7 @@ export default defineComponent({
             mutate: rorderAccountingDocuments, onDone: doneRorderAccountingDocuments, onError: errorRorderAccountingDocuments,
         } = useMutation(mutations.reorderAccountingDocuments);
 
-        // mutation createAccountingDocument
-        const {
-            mutate: mutateCreateAccountingDocument, onDone: doneCreateAccountingDocument, onError: errorCreateAccountingDocument,
-        } = useMutation(mutations.createAccountingDocument);
+
 
         // ============== ON DONE MUTATION GRAPHQL ===============
         // reorderAccountingDocuments
@@ -428,68 +438,33 @@ export default defineComponent({
             notification('error', e.message)
         })
 
-        // createAccountingDocument
-        doneCreateAccountingDocument((e) => {
-            notification('success', Message.getMessage('COMMON', '106').message)
-        })
-        errorCreateAccountingDocument(e => {
-            notification('error', e.message)
-        })
+
 
 
         // ================== WATCH ================
         // 1. getAccountingProcesses
         watch(resGetAccountingProcesses, (value) => {
             triggerGetAccountingProcesses.value = false
-            console.log(value.getAccountingProcesses);
             dataGetAccountingProcesses.value = value.getAccountingProcesses
         })
         // 2. getAccountingDocuments
         watch(resGetAccountingDocuments, (value) => {
             triggerGetAccountingDocuments.value = false
-            console.log(value.getAccountingDocuments);
             dataSource.value = value.getAccountingDocuments?.accountingDocuments
             lastBalance.value = value.getAccountingDocuments?.lastBalance
         })
 
+        // On Done CreateAccountingDocument
+        watch(() => store.state.common.ac120.onDoneAdd, (value) => {
+            triggerGetAccountingProcesses.value = true
+            triggerGetAccountingDocuments.value = true
+        })
+
+
+
 
 
         // ================ FUNCTION ============================================
-        
-        const initHeight = () => {
-            // refCssForm.value.style.height = 'auto';
-            // refCssForm.value.style.position = 'absolute';
-            // refCssForm.value.style.visibility = 'hidden';
-            // refCssForm.value.style.display = 'block';
-
-            refCssTable.value.style.height = 'auto';
-            refCssTable.value.style.position = 'absolute';
-            refCssTable.value.style.visibility = 'hidden';
-            refCssTable.value.style.display = 'block';
-
-            // const height = getComputedStyle(refCssForm.value).height;
-            const height2 = getComputedStyle(refCssTable.value).height;
-
-            // heightForm.value = height;
-            // store.state.common.ac120.heightForm = '352px';
-            heightTable.value = height2;
-
-            // refCssForm.value.style.position = null;
-            // refCssForm.value.style.visibility = null;
-            // refCssForm.value.style.display = null;
-            // refCssForm.value.style.height = 0;
-
-            refCssTable.value.style.position = null;
-            refCssTable.value.style.visibility = null;
-            refCssTable.value.style.display = null;
-            refCssTable.value.style.height = 0;
-        }
-
-        onMounted(() => {
-            setTimeout(() => {
-                initHeight()
-            }, 500);
-        });
 
         const selectionChanged = () => { }
 
@@ -543,7 +518,7 @@ export default defineComponent({
             statusModalSlipRegistrantion.value = true
         }
 
-        
+
 
         const actionPopupItemDetail = (data: any) => {
             statusModalItemDetail.value = true
@@ -613,7 +588,7 @@ export default defineComponent({
 
         }
 
-        
+
         // handle add row
         const addRow = () => {
 
@@ -629,20 +604,35 @@ export default defineComponent({
             monthSelected.value = month
         }
 
+        const modalHistoryAccountingProcess = () => {
+            popupData.value = { ...dataQueryGetAccountingDocuments.value }
+            console.log(popupData.value);
+            
+            modalHistoryStatusAccountingProcess.value = true
+        }
+
+        const modalHistoryAccountingDocuments = () => {
+            popupData.value = { ...dataQueryGetAccountingDocuments.value }
+            modalHistoryStatuAccountingDocuments.value = true
+        }
+
         return {
             dataGetAccountingProcesses,
             dataSource,
             onFillDataAdd,
+            loadingGetAccountingProcesses,
+            loadingGetAccountingDocuments,
             // onSubmit,
             // refFormAC120,
 
-            store, 
+            store,
             // refCssForm,
-             refCssTable, heightTable,
-            statusEntering,
-            statusInput,
+            //  refCssTable,
+            heightTable,
+            // statusEntering,
+            // statusInput,
             statusAdjusting,
-            statusAdjusted,
+            // statusAdjusted,
             move_column,
             colomn_resize,
             globalYear,
@@ -678,7 +668,11 @@ export default defineComponent({
             onReorder, onDragChange, onRowDragging,
 
             monthSelected,
-            selectedMonth
+            selectedMonth,
+            modalHistoryAccountingProcess, modalHistoryAccountingDocuments,
+            modalHistoryStatusAccountingProcess,
+            modalHistoryStatuAccountingDocuments,
+            popupData,
         };
     },
 });

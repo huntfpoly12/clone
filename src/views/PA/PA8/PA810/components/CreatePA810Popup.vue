@@ -563,7 +563,6 @@
 <script lang="ts">
 import mutations from "@/graphql/mutations/PA/PA8/PA810/index";
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
-import getCompany from "@/graphql/queries/common/getCompany";
 import { companyId } from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
@@ -679,26 +678,14 @@ export default defineComponent({
     };
     // Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
     const dataSource = ref([]);
+    const { result: dataCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
 
-    // get Company
-    const {
-      result: dataCompany,
-      loading,
-      refetch,
-    } = useQuery<{ getCompany: Company }>(
-      getCompany,
-      {id: companyId},
-      () => ({
-        // enabled: trigger.value,
-        fetchPolicy: "no-cache",
-      })
-    );
     watch(dataCompany, (value) => {
       if (value) {
-        infoCompany.name = value.getCompany.name;
-        infoCompany.bizNumber = value.getCompany.bizNumber;
-        infoCompany.presidentName = value.getCompany.presidentName;
-        infoCompany.adding = value.getCompany.address;
+        infoCompany.name = value.getMyCompany.name;
+        infoCompany.bizNumber = value.getMyCompany.bizNumber;
+        infoCompany.presidentName = value.getMyCompany.presidentName;
+        infoCompany.adding = value.getMyCompany.address;
       }
     });
     // get and refetch data when employeeWageType change
@@ -799,6 +786,12 @@ export default defineComponent({
           bizNumber,
           ...newFormData
         } = formData.value;
+        const newDataFix:any = newFormData
+        // if data.nationalityNumber is null => delete data.nationalityNumber
+        if (!newDataFix?.nationalityNumber){
+          delete newDataFix?.nationalityNumber
+        }
+        if (!newDataFix?.stayQualification ) delete newDataFix?.stayQualification
         const dependents = employeeWage.value?.dependents
           ? employeeWage.value.dependents.map((item: any) => {
             return {
@@ -822,7 +815,7 @@ export default defineComponent({
           })
           : [];
         const input = {
-          ...newFormData,
+          ...newDataFix,
           employeeId: Number(employeeWageSelected.value),
           employeeType: stateSelectQuery.selectedRadioValue,
           dependents,

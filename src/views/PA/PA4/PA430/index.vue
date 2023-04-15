@@ -184,7 +184,7 @@
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false"
-                    :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin"/>
+                    :data="popupDataEmailMulti"/>
             </div>
         </div>
     </a-spin>
@@ -237,7 +237,6 @@ export default defineComponent({
         const emplRetirementType1 = ref(0)
         const emplRetirementType2 = ref(0)
         const totalEmployee = ref(0)
-        const emailUserLogin = ref('')
         // const valSwitch = ref(false)
         const dataSource = ref([]);
         const arrayRadioCheck = ref([
@@ -407,16 +406,6 @@ export default defineComponent({
                 incomeIds.value.push(data.incomeId)
             })
         }
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-
-        onResultUserInf(e => {
-            emailUserLogin.value = e.data.getUser.email
-            
-        })
 
         watch(result, (value) => {
             trigger.value = false;
@@ -478,7 +467,6 @@ export default defineComponent({
             // onCloseEmailSingleModal,
             // onCloseEmailMultiModal,
             selectionChanged,
-            emailUserLogin,
             rangeDate,
             valueRadioBox,
             arrayRadioCheck,
