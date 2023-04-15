@@ -26,7 +26,7 @@
                             width="180px" :required="true" />
                     </a-form-item>
                     <a-form-item label="공제합계">
-                        <number-box-money :disabled="true" v-model:valueInput="totalDeduction"
+                        <number-box-money :disabled="true" v-model:valueInput="dataIncomeWageDaily.totalDeduction"
                             width="180px" :required="true" />
                     </a-form-item>
                     <a-form-item label="차인지급액">
@@ -91,7 +91,7 @@
                 </a-col>
                 <a-col :span="14" style="padding-leftt: 5px;">
                     <div class="top-content">
-                        <a-typography-title :level="5" style="margin-bottom: 0;">공제 항목 {{ $filters.formatCurrency(totalDeduction) }}
+                        <a-typography-title :level="5" style="margin-bottom: 0;">공제 항목 {{ $filters.formatCurrency(dataIncomeWageDaily.totalDeduction) }}
                             원</a-typography-title>
                     </div>
                     <a-spin :spinning="loadingDeductionItem" size="large">
@@ -181,7 +181,7 @@ export default defineComponent({
         const arrayEmploySelect: any = ref([])
         const dataEmployeeWageDailies: any = ref([])
         const arrDeduction: any = ref([])
-        const totalDeduction = ref(0)
+        // const totalDeduction = ref(0)
         // const triggerCalculateIncome = ref<boolean>(false)
         const triggerWithholdingConfigDeductionItems = ref<boolean>(true)
         const triggerEmployeeWageDailies = ref<boolean>(true)
@@ -518,6 +518,10 @@ export default defineComponent({
             onResetForm()
         })
 
+        watch(() => dataIncomeWageDaily.value.totalDeduction, (res) => {
+            dataIncomeWageDaily.value.actualPayment = dataIncomeWageDaily.value.monthlyWage - res
+        }, { deep: true })
+
         // Watching the array arrDeduction and updating the totalDeduction.value whenever the array is
         // changed.
         watch(() => arrDeduction.value, (res) => {
@@ -525,7 +529,7 @@ export default defineComponent({
             arrDeduction.value?.map((val: any) => {
                 total += val.price
             })
-            totalDeduction.value = total
+            dataIncomeWageDaily.value.totalDeduction = total
         }, { deep: true })
 
         // Watching the resultEmployeeWageDaily and when it changes, it will update the
@@ -539,7 +543,11 @@ export default defineComponent({
                 await (dataIncomeWageDaily.value.monthlyWage = data.monthlyWage)
                 await (dataIncomeWageDaily.value.dailyWage = data.dailyWage)
                 await (dataIncomeWageDaily.value.workingDays = data.workingDays)
-                await (totalDeduction.value = data.totalDeduction)
+                // await (totalDeduction.value = data.totalDeduction)
+
+                await (dataIncomeWageDaily.value.totalDeduction = data.totalDeduction)
+                await (dataIncomeWageDaily.value.actualPayment = data.monthlyWage - data.totalDeduction)
+                
                 await (dataIncomeWageDaily.value.employee.monthlyPaycheck = data.monthlyPaycheck)
                 await (dataIncomeWageDaily.value.employee.employeeId = data.employeeId)
                 await (dataIncomeWageDaily.value.employee.name = data.name)
@@ -637,7 +645,7 @@ export default defineComponent({
                     val.price = val.priceNew
                     total += val.priceNew
             })
-            totalDeduction.value = total
+            dataIncomeWageDaily.value.totalDeduction = total
             store.state.common.statusChangeFormPrice = false;
             showErrorButton.value = false;
         }
@@ -761,7 +769,7 @@ export default defineComponent({
             actionDedution,
             actionInsurance,
             updateDataDeduction,
-            totalDeduction,
+            // totalDeduction,
             onChange,
             loading,
             loadingIncomeWageDaily,
