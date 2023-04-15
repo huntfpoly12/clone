@@ -45,13 +45,14 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, reactive, ref, watch , computed} from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF6/BF610/index";
 import notification from "@/utils/notification"
 import { dataFormAction } from "./../utils/index"
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
+import { useStore } from "vuex";
 export default defineComponent({
     components: {},
     props: {
@@ -61,6 +62,8 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
+        const store = useStore();
+        const userInfor = computed(()=>store.state.auth.userInfor)
         let dataForm: any = ref(JSON.parse(JSON.stringify({ ...dataFormAction })))
         let trigger = ref(false)
         let dataSendEmail: any = ref({})
@@ -92,7 +95,7 @@ export default defineComponent({
          */
         watch(() => props.modalStatus, (newVal: any) => {
             dataForm.value = JSON.parse(JSON.stringify({ ...dataFormAction }))
-            emailAddress.value = ''
+            emailAddress.value = userInfor.value.email
         }, { deep: true })
 
         watch(() => dataForm.value, (newVal: any) => {

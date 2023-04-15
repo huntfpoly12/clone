@@ -1,6 +1,6 @@
 import { message } from "ant-design-vue";
 
-export default (typeMessage: string, text: string) => {
+export default (typeMessage: string, text = '') => {
 
     switch (typeMessage) {
         case 'success':
@@ -32,7 +32,9 @@ export default (typeMessage: string, text: string) => {
                 },
             }, 2);
             break;
-
+        case 'destroy':
+              message.destroy()
+              break;
         default:
             message.success({
                 content: () => text,
