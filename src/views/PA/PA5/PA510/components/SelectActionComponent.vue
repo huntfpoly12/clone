@@ -63,8 +63,8 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
-    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" :emailAddress="emailAddress"/>
-    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister" :emailAddress="emailAddress"
+    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
+    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
     <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
         :data="popupDataEmailSingle" />
@@ -90,8 +90,6 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
-import { userId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxButton,
@@ -259,17 +257,6 @@ export default defineComponent({
             }
         })
 
-        // Using the useQuery hook to fetch data from the server.
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        let emailAddress = ref('')
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser?.email
-        })
-
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
                 store.state.common.statusClickButtonSave = false
@@ -323,9 +310,8 @@ export default defineComponent({
             popupDataEdit,
             modalStatusAdd, statusComfirmAdd,
             openTab,
-            // onSubmit,
-            store,
-            emailAddress, Message, statusComfirmChange, modalChangeRow,
+            store, 
+            Message, statusComfirmChange, modalChangeRow,
         };
     },
 });

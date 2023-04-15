@@ -14,6 +14,7 @@
             </a-spin>
             <div class="flex">
                 <div class="action">
+                    {{ statusAdjusting }}
                     <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
                     <DxButton icon="plus" class="ml-4">
                         <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
