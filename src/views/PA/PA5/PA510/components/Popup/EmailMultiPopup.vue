@@ -40,20 +40,22 @@ export default defineComponent({
             type: Object,
             default: {}
         },
-        emailAddress: String,
     },
     components: {
     },
     setup(props, { emit }) {
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
+        const token = computed(() => sessionStorage.getItem('token'));
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfor = computed(() => store.state.auth.userInfor);
         let emailAddress: any = ref('');
         const setModalVisible = () => {
             emit("closePopup", false)
         };
         watch(() => props.modalStatus, (val) => {
             if (val) {
-                emailAddress.value = props.emailAddress
+                emailAddress.value = userInfor.value?.email
             }
         });
 
