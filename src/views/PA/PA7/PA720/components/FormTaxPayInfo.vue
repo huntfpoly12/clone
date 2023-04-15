@@ -31,7 +31,7 @@
             <a-form-item label="지급액" class="red mt-10">
               <number-box-money width="150px" :min="0" :max="2147483647" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.paymentAmount" :required="true"
-                :disabled="idDisableInput"></number-box-money>
+                :disabled="idDisableInput" format="0,###" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
@@ -39,7 +39,7 @@
             <a-form-item label="필요경비" class="red">
               <number-box-money width="150px" :min="0" max="2147483647" :required="true" @changeInput="onChangeInput"
                 v-model:valueInput="formPA720.input.requiredExpenses" :disabled="idDisableInput"
-                class="red"></number-box-money>
+                class="red" format="0,###" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
@@ -72,14 +72,14 @@
           <div class="input-text">
             <a-form-item label="소득세(공제)">
               <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
-                v-model:valueInput="formPA720.input.withholdingIncomeTax" />
+                v-model:valueInput="formPA720.input.withholdingIncomeTax" format="0,###" :min="0" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>
           <div class="input-text">
             <a-form-item label="지방소득세(공제)">
               <number-box-money :disabled="true" style="margin-left: 20px; width: 150px"
-                v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" />
+                v-model:valueInput="formPA720.input.withholdingLocalIncomeTax" format="0,###" :min="0" />
               <span class="ml-3">원</span>
             </a-form-item>
           </div>

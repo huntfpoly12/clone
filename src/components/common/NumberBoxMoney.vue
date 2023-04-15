@@ -6,6 +6,7 @@
         :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
+            <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
         </DxValidator>
     </DxNumberBox>
 </template>
@@ -13,7 +14,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, getCurrentInstance } from "vue";
 import DxNumberBox from "devextreme-vue/number-box";
-import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import {DxValidator, DxRequiredRule, DxCustomRule} from "devextreme-vue/validator";
 export default defineComponent({
     props: {
         width: String,
@@ -55,8 +56,17 @@ export default defineComponent({
             type: String,
             default: '',
         },
+      ruleCustom: {
+        type: Function,
+        default: () => true,
+      },
+      messageRuleCustom: {
+        type: String,
+        default: "",
+      },
     },
     components: {
+      DxCustomRule,
         DxNumberBox,
         DxValidator,
         DxRequiredRule,
@@ -70,14 +80,14 @@ export default defineComponent({
         }
         const value = ref(props.valueInput);
       const maxNum = ref(props.max??0);
-      const minNum = ref(props.min??0);
+      const minNum = ref(props.min);
       const updateValue = (e: any) => {
           if (maxNum.value && e.value >= maxNum.value) {
               e.component.option('value', maxNum.value);
               emit("update:valueInput", maxNum.value);
               return;
           }
-          if (typeof minNum.value == "number" && e.value <= minNum.value && e.value != null) {
+          if (typeof minNum.value == "number" && minNum.value && e.value <= minNum.value && e.value != null) {
               e.component.option('value', minNum.value);
               emit("update:valueInput", minNum.value);
               return;
@@ -105,7 +115,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep.dx-numberbox .dx-texteditor-input{  
-  text-align: right;  
-}  
+:deep.dx-numberbox .dx-texteditor-input{
+  text-align: right;
+}
 </style>

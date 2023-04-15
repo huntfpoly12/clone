@@ -19,6 +19,8 @@ export default gql`
         transactionDetailDate
         documentOrderByDate
         resolutionNumber
+        accountingDocumentId
+        bankbookId
         bankbook {
           bankbookNickname
           type

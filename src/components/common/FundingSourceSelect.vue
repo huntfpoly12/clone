@@ -57,7 +57,7 @@ export default {
             return bsDeduction;
         });
         const updateValue = (value: any) => {
-            emit("update:valueInput", value);
+            emit("update:valueInput", parseInt(value));
         };
 
         watch(
