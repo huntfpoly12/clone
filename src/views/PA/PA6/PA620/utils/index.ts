@@ -38,7 +38,7 @@ export const dataActionUtils = {
   input: {
     employeeId: null,
     incomeTypeCode: null,
-    paymentAmount: null,
+    paymentAmount: 0,
     taxRate: 3,
     withholdingIncomeTax: 0,
     withholdingLocalIncomeTax: 0,
@@ -87,7 +87,7 @@ export const DataAddNew = {
   withholdingLocalIncomeTax: null,
   withholdingRuralSpecialTax: null,
   prevPaymentDay: null,
-  paymentAmount: null,
+  paymentAmount: 0,
   taxRate: null,
   actualPayment: null,
   employee: {
