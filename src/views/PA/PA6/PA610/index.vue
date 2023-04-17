@@ -48,7 +48,7 @@
                     location="after"
                     css-class="cell-button-add"
                   >
-                    <DxButton icon="plus" @click="addRow">
+                    <DxButton icon="plus" @click="!isDataInvalidAttributionYear && addRow()">
                       <a-tooltip color="black" placement="top">
                         <template #title>신규</template>
                         <PlusOutlined style="font-size: 16px" />
@@ -130,7 +130,7 @@
 
         </a-col>
         <!-- section right -->
-        <a-col :span="8" class="custom-layout" :style="storeDataSourceCount === 0 && !isNewRow && 'pointer-events: none;'">
+        <a-col :span="8" class="custom-layout" :style="(storeDataSourceCount === 0 && !isNewRow || isDataInvalidAttributionYear) && 'pointer-events: none;'">
           <a-spin :spinning="loadingUpdate || loadingCreated" size="large">
             <standard-form formName="pa-610" ref="formRef">
               <a-form-item label="코드" label-align="right" class="red">
@@ -220,12 +220,12 @@
                 label-align="right"
                 class="red"
               >
+              <!-- :disabled="!isNewRow && !dataShow.deletable" -->
                 <id-number-text-box
                   v-model:valueInput="dataShow.residentId"
                   width="200px"
                   placeholder="숫자 13자리"
                   :required="true"
-                  :disabled="!isNewRow && !dataShow.deletable"
                   :foreigner="dataShow.foreigner"
                 />
               </a-form-item>
@@ -406,6 +406,7 @@ export default defineComponent({
     const modalHistoryStatus = ref<boolean>(false); // status of history popup
     const trigger = ref<boolean>(true); // trigger for call api
     const storeDataSourceCount = ref(0) // count of store data source
+    const isDataInvalidAttributionYear = ref(false) // check if data invalid attribution year
 
     let valueCallApiGetEmployeeBusiness: any = reactive({
       companyId: companyId,
@@ -466,6 +467,11 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear,
     });
+    const resetForm = () => {
+      formRef.value.resetValidate();
+      previousRowData.value = {...valueDefaultAction};
+      dataShow.value = valueDefaultAction;
+    }
     const {
       refetch: refetchData,
       loading: loadingGetEmployeeBusinesses,
@@ -484,6 +490,10 @@ export default defineComponent({
       }
     }, {deep: true});
     resEmployeeBusinesses((res) => {
+      if (isDataInvalidAttributionYear.value) {
+        focusedRowKey.value = 0;
+        isDataInvalidAttributionYear.value = false
+      }
       // because key is number, so i create new key from residentId
       const data = res.data.getEmployeeBusinesses?.map((i: any) => ({
         ...i,
@@ -498,9 +508,7 @@ export default defineComponent({
       });
       storeDataSourceCount.value = data.length;
       if (data.length === 0) {
-        formRef.value.resetValidate();
-        previousRowData.value = {...valueDefaultAction};
-        dataShow.value = valueDefaultAction;
+        resetForm()
       }
       isNewRow.value = false
     });
@@ -617,6 +625,16 @@ export default defineComponent({
     };
 
     errorGetEmployeeBusinesses((res) => {
+      resetForm()
+      storeDataSourceCount.value = 0;
+      dataSource.value = new DataSource({
+        store: {
+          type: "array",
+          data: [],
+          key: "key",
+        },
+      });
+      isDataInvalidAttributionYear.value = true
       notification("error", res.message);
     });
 
@@ -885,7 +903,8 @@ export default defineComponent({
       calculateIncomeTypeCodeAndName,
       isPopupVisible,
       hidePopup,
-      confirmPopup
+      confirmPopup,
+      isDataInvalidAttributionYear
     };
   },
 });
