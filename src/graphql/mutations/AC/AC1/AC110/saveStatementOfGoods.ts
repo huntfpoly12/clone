@@ -5,9 +5,8 @@ export default gql`
     $fiscalYear: Int!,
     $facilityBusinessId: Int!,
     $transactionDetailDate: Int!,
-    $accountingDocumentId: [Int!]!,
+    $accountingDocumentId: Float!,
     $items: [StatementOfGoodsItemInput!]!
-
   ) {
     saveStatementOfGoods(
       companyId: $companyId,
@@ -16,6 +15,8 @@ export default gql`
       transactionDetailDate: $transactionDetailDate,
       accountingDocumentId: $accountingDocumentId,
       items: $items
-    )
+    ){
+      bankbookDetailId
+    }
   }
 `;
