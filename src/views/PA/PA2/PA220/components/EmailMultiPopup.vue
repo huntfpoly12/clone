@@ -68,7 +68,7 @@ export default defineComponent({
                 res.brokenRules[0].validator.focus();
             } else {
                 props.data.employeeInputs.map((value: any) => {
-                    if (value.receiverAddress == "") {
+                    if (value.receiverAddress == "" || value.receiverAddress == null) {
                         value.receiverAddress = emailAddress.value
                     }
                 })

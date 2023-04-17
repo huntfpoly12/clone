@@ -232,3 +232,8 @@
 .not-done > span > a{
   color: red !important;
 }
+.ant-message {
+	&:not(:first-child) {
+		padding-top: 60px !important;
+	}
+}
