@@ -1,7 +1,4 @@
 <template>
-  <p class=MsoNormal align=center style='text-align:center'><span
-style='font-size:14.0pt;line-height:107%;font-family:"Malgun Gothic",sans-serif;'>2. <span lang=KO>개인정보제공 및 활용동의</span></span></p>
-
 <p class=MsoNormal style='line-height:normal'><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>㈜장부다</span><span lang=KO
 style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> </span><span
 lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>개인정보취급방침</span></p>
