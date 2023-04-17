@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass" :style="style">
-    <div :class="dxFieldLabel" title="">{{ label }}:</div>
+    <div :class="dxFieldLabel" :title="showTitle ? label : ``">{{ label }}:</div>
     <div class="dx-field-value">
       <slot />
     </div>
@@ -10,7 +10,7 @@
 import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
-  name: 'FormInput',
+  name: 'FormDxField',
   props: {
     label: {
       type: String,
@@ -31,6 +31,10 @@ export default defineComponent({
     class: {
       type: String,
       default: ''
+    },
+    showTitle: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {

@@ -28,8 +28,6 @@
                 <DxColumn caption="마감현황" cell-template="status" alignment="center"/>
                 <template #status="{ data }">
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
-                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
-                        :dataRow="data.data" @dataRow="changeStatus" /> -->
                 </template>
                 <DxColumn caption="마감일" cell-template="마감일" alignment="center"/>
                 <template #마감일="{ data }">
@@ -196,7 +194,7 @@ export default defineComponent({
   margin-right: 0px;
 }
 :deep .buttonModal {
-    margin-top: -5px;
-    height: 27px !important;
+    //margin-top: -5px;
+    //height: 27px !important;
 }
 </style>
