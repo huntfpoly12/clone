@@ -437,6 +437,7 @@ export default defineComponent({
         getCompanyOutTrigger.value = true;
       }
     },{immediate: true})
+    
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
     const messageCreate = messages.getCommonMessage('101').message;

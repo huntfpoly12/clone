@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchAreaTab2/>
+    <SearchArea :tab1="false" />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -23,7 +23,6 @@
         </a-tooltip>
       </a-col>
     </a-row>
-    <!-- {{ dataSource }} dataSource <br/> -->
     <div class="content-grid">
       <DxDataGrid :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
         :data-source="filteredDataSource" :show-borders="true" key-expr="companyId" class="mt-10"
@@ -58,13 +57,13 @@
             height: $config_styles.HeightInput
           }" class="btn-date" />
         </template>
-        <DxColumn caption="신고 주기" cell-template="reportType" />
+        <DxColumn caption="신고 주기" cell-template="reportType" width="95px"/>
         <template #reportType="{ data }">
           <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
         <template #afterDeadline="{ data }">
           <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
@@ -75,9 +74,9 @@
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="제작현황" cell-template="productionStatus" />
         <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
+          <GetStatusTableTab2 :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
             @productionStatusData="productionStatusData" />
-          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -94,7 +93,7 @@
   
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import SearchAreaTab2 from './SearchAreaTab2.vue';
+import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
@@ -108,10 +107,11 @@ import dayjs from 'dayjs';
 import { formatMonth } from '../utils/index'
 import { isNumber } from 'lodash';
 import { Message } from '@/configs/enum';
+import GetStatusTableTab2 from './GetStatusTableTab2.vue';
 
 export default defineComponent({
   components: {
-    SearchAreaTab2,
+    SearchArea,
     RequestFilePopup,
     DxButton,
     DxDataGrid,
@@ -121,7 +121,8 @@ export default defineComponent({
     SaveOutlined,
     DxSummary,
     DxTotalItem,
-    DxLoadPanel
+    DxLoadPanel,
+    GetStatusTableTab2,
   },
   props: {
     search: {
@@ -139,6 +140,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
+    console.log(`22222222222222`,)
 
     //-----------------------Fcn common-----------------------------------------
 
@@ -148,33 +150,6 @@ export default defineComponent({
       }
       return 2;
     }
-
-    //produtionStatus
-
-    const eletroFillingParam = reactive({
-      input: {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        reportId: 2,
-      },
-    });
-    const productionStatus = ref();
-    // const {
-    //   result: eletroFillingResult,
-    //   refetch: eletroFillingRefetch,
-    //   loading: eletroFillingLoading,
-    //   onError: searchWithholdingError,
-    // } = useQuery(queries.getElectronicFilingsByLocalIncomeTax, eletroFillingParam, () => ({
-    //   enabled: eletroFillingTrigger.value,
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(eletroFillingResult, (newVal) => {
-    //   let data = newVal.getElectronicFilingsByLocalIncomeTax;
-    //   productionStatus.value = data;
-    // });
-
-    //Search with holding and data source
-
     const dataSource = ref<any[]>([]);
     const filteredDataSource = ref<any[]>([]);
     let searchLocalIncomeParam = ref({
@@ -188,8 +163,10 @@ export default defineComponent({
     } = useQuery(queries.searchLocalIncomeTaxElectronicFilingsByYearMonth, searchLocalIncomeParam, () => ({
       fetchPolicy: 'no-cache',
     }));
+    const productionCount = ref(0);
     watch(searchLocalIncomeResult, (newVal) => {
       let data = newVal.searchLocalIncomeTaxElectronicFilingsByYearMonth.map((item: any) => {
+        productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
         let arrData = {};
         if (item) {
           arrData = {
@@ -210,7 +187,7 @@ export default defineComponent({
             paymentMonth: item.paymentMonth,
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
-            beforeProduction: item.lastProductionRequestedAt ? true : false,
+            beforeProduction: item.lastProductionRequestedAt ? false : true,
             allowSelection: false,
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
@@ -225,7 +202,7 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       filteredDataSource.value = [...result];
-      if (props.onSearch) {
+      if (props.onSearch && productionCount.value == 0) {
         props.onSearch();
       }
     });
@@ -240,6 +217,23 @@ export default defineComponent({
         }
       }
     })
+    // caculator sum
+    const productionStatusData = (emitVal: any) => {
+      productionStatusArr.value = [emitVal];
+      productionCount.value--;
+      if (emitVal?.companyId != 'undefined') {
+        filteredDataSource.value = filteredDataSource.value.map((item: any) => {
+          if (item.companyId == emitVal.companyId) {
+            return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: false, allowSelection: false }
+          }
+          return { ...item, beforeProduction: true, allowSelection: false };
+        })
+      }
+      if (props.onSearch && productionCount.value == 0) {
+        props.onSearch();
+      }
+      // reFreshDataGrid();
+    };
 
     //------------------------SUM AREA------------------------------ 
 
@@ -251,13 +245,13 @@ export default defineComponent({
       }
       let typeCustom: number = 0;
       if (typeof type === 'boolean') {
-        typeCustom = type ? 1 : 0;
+        typeCustom = 0;
       }
       if (isNumber(type)) {
         typeCustom = type;
       }
       let count = arr.reduce((acc: any, crr: any) => {
-        let item = crr[propertyCompare] === false ? 0 : crr[propertyCompare];
+        let item = typeof (crr[propertyCompare]) == 'boolean' ? 0 : crr[propertyCompare];
         acc[item] = acc[item] ? acc[item] + 1 : 1;
         return acc;
       }, {});
@@ -275,21 +269,10 @@ export default defineComponent({
         filteredDataSource.value, 3, 'withholdingTaxType')}`;
     };
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, false, 'beforeProduction')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
+      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
         productionStatusArr.value,
         1, 'productionStatus'
       )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
-    };
-    // caculator sum
-    const productionStatusData = (emitVal: any) => {
-      productionStatusArr.value = [emitVal];
-      filteredDataSource.value = filteredDataSource.value.map((item: any) => {
-        if (item.companyId == emitVal.companyId) {
-          return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
-        }
-        return { ...item, beforeProduction: false, allowSelection: false };
-      })
-      // reFreshDataGrid();
     };
 
 
@@ -307,7 +290,7 @@ export default defineComponent({
         let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, withholdingTaxType, ...compareObj } = filterBF620.value;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(compareObj).every((key: any) => {
-            if (key === 'productionStatuses') {  //error search main reason is 
+            if (key === 'productionStatuses') {
               return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
             }
             if (compareObj[key]) {
@@ -327,8 +310,8 @@ export default defineComponent({
       reportKeyInputs: [],
       filter: filterBF620.value,
       emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor.value?.name,
+        receiverAddress: userInfor.value?.email,
       },
     });
     const selectionChanged = (event: any) => {
@@ -350,8 +333,8 @@ export default defineComponent({
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
       requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor.value?.name,
+        receiverAddress: userInfor.value?.email,
       };
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
@@ -365,7 +348,6 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      productionStatus,
       onRequestFile,
       modalStatus,
       requestFileData,
