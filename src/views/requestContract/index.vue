@@ -204,23 +204,23 @@
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
                                 :key="dataActiveRow.rowIndex">
                                 <a-col :span="12">
-                                    <a-form-item label="사업분류">
+                                    <a-form-item label="사업분류" class="red">
                                         <select-box-common :arrSelect="facilityBizTypeCommon"
                                             v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
                                             valueExpr="v" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="사업명 (중복불가)">
+                                    <a-form-item label="사업명 (중복불가)" class="red">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월">
+                                    <a-form-item label="서비스 시작년월" class="red">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="정원수">
+                                    <a-form-item label="정원수" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.capacity" />
                                     </a-form-item>
-                                    <a-form-item label="장기요양기관등록번호">
+                                    <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
