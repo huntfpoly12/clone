@@ -24,6 +24,7 @@ export default defineComponent({
         }));
       onError((error: any) => {
             notification('error', error.message)
+            emit('productionStatusData',{})
         })
       onResult((res: any) => {
         if (res && res.data) {

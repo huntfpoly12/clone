@@ -129,7 +129,6 @@
                 </DxDataGrid>
             </a-spin>
         </div>
-        <pre style="height: 200px;">{{defaultDataSource}}</pre>
         <PopupConfirmSave  :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail"
             :data="dataModalSave" :step="1" @sendActionSaveDone="actionSaveDone" />
         <div v-for="data in defaultDataSource" :key="data.id">
