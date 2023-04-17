@@ -103,10 +103,10 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" :show-row-lines="true"
-                :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxEditing :allow-updating="true" :start-edit-action="'click'" mode="batch" />
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" :repaint-changes-only="true">
+                <DxEditing :allow-updating="true" :allow-adding="true" :start-edit-action="'click'" mode="batch" />
                 <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
@@ -159,8 +159,12 @@
                     item.value ==
                     data.data.resolutionClassification).label : '' }}
                 </template>
-                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end" />
-                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end" />
+                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end">
+                  <DxRequiredRule />
+                </DxColumn>
+                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end">
+                  <DxRequiredRule/>
+                </DxColumn>
                 <DxColumn caption="적요" data-field="summary" width="200" />
                 <DxColumn caption="계정과목" cell-template="accountCode" width="200" :allow-editing="false" />
                 <template #accountCode="{ data }">
@@ -254,7 +258,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing, DxRequiredRule } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
@@ -300,7 +304,8 @@ export default defineComponent({
     SaveFilled,
     DxPaging,
     DxSelectBox,
-    DxEditing
+    DxEditing,
+    DxRequiredRule
   },
   setup() {
     const store = useStore();
@@ -377,6 +382,7 @@ export default defineComponent({
     const isModalHistory = ref<boolean>(false);
     const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
+    const refGridDetailAc110: any = ref()
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     // -------------- GRAPHQL --------------
@@ -750,9 +756,10 @@ export default defineComponent({
       }
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
-    const submitTransactionDetails = (event: any) => {
+    const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null) return
-      const res = event.validationGroup.validate();
+      await refGridDetailAc110.value.instance.saveEditData()
+      const res = await event.validationGroup.validate();
       if (!res.isValid) return
       const payLoadUpdate: any = []
       const payloadCreate: any = []
@@ -771,9 +778,9 @@ export default defineComponent({
           memo: item.memo,
           clientId: item.clientId,
         }
-        if(item.accountingDocumentId.toString().includes('create')){
+        if (item.accountingDocumentId.toString().includes('create')) {
           payloadCreate.push(objPayload)
-        }else{
+        } else {
           payLoadUpdate.push({
             ...objPayload,
             accountingDocumentId: item.accountingDocumentId
@@ -786,13 +793,15 @@ export default defineComponent({
           updates: payLoadUpdate,
           creates: payloadCreate
         })
-        saveTransactionDetails(payloadClear)
+        console.log('create:', payloadClear);
+        // saveTransactionDetails(payloadClear)
       } else {
         const payloadClear = makeDataClean({
           ...payloadGetTransactionDetails,
           updates: payLoadUpdate
         })
-        saveTransactionDetails(payloadClear)
+        console.log('update:', payloadClear);
+        // saveTransactionDetails(payloadClear)
       }
     }
 
@@ -882,6 +891,7 @@ export default defineComponent({
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
       updateAddBankbookDetailProof,
+      refGridDetailAc110
     };
   },
 });
