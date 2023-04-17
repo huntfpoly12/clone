@@ -26,7 +26,8 @@ const statesPA520 = {
   actionUpdateTab2PA520: 0,
 
   isChangeYearPA520: false,
-  
+  isErrorPA520: false,
+
   setTabActivePA520: '1',
   modalChangeValueEditPA520:false,
   modalChangeValueAddPA520: false,

@@ -1,6 +1,6 @@
 <template>
   <action-header title="일용직사원등록" @actionSave="actionSave" :buttonSave="actionChangeComponent != 2"/>
-  <a-row>
+  <!-- <a-row>
         <a-col :span="6" >{{globalYear}}
           formStatus :{{ store.state.settings.formStatus }}<br>
           clickYearStatus :{{ store.state.settings.clickYearStatus }} - {{clickYearStatus}}<br>
@@ -32,7 +32,7 @@
           idRowCurrentClick: {{ idRowCurrentClick }}<br>
           isClickRow {{ store.state.common.isClickRowPA520 }} <br>
         </a-col>
-  </a-row>
+  </a-row> -->
   <div id="pa-520" class="page-content">
       <a-row>
           <a-col :span="13" class="custom-layout" >
@@ -58,7 +58,7 @@
                   >
                       <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
-                      <DxExport :enabled="true"/>
+                      <DxExport :enabled="true" />
                       <DxPaging :enabled="false" />
                       <DxToolbar>
                           <DxItem location="before">
@@ -107,12 +107,12 @@
                               신규
                             </template>
                             <div style="text-align: center;" >
-                              <DxButton icon="plus" @click="onAddBtClick" />
+                              <DxButton icon="plus" @click="onAddBtClick"  :disabled="isError"/>
                             </div>
                         </a-tooltip>
                       </template>
                       <template #button-history>
-                          <DxButton>
+                          <DxButton  :disabled="isError">
                               <HistoryOutlined @click="modalHistory" class="fz-18" />
                           </DxButton>
                       </template>
@@ -214,7 +214,6 @@ import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum";
 import DataSource from "devextreme/data/data_source";
 import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
-import dayjs, { Dayjs } from "dayjs";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -271,6 +270,7 @@ export default defineComponent({
     // const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
     const isClickRow = computed(() => store.getters['common/isClickRowPA520']); // determine when action click row
     const isClickBtnSavePA520 = computed(() => store.getters['common/isClickBtnSavePA520']); 
+    const isError  = computed(() => store.getters['common/isErrorPA520'])
     // const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
     const tab1IsChange = computed(() => store.getters['common/checkChangeValueEditTab1PA520']);
     const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
@@ -306,9 +306,10 @@ export default defineComponent({
     }));
     onError((e) => {
       notification("error", e.message);
-      console.log(dataSource.value.store().clear());
+      dataSource.value.store().clear();
       dataSource.value.reload()
-      store.commit('common/setComponentPA520',1);
+      store.commit('common/setComponentPA520', 1);
+      store.commit('common/setIsErrorPA520',true)
     });
     const {
       mutate: actionDelete,
@@ -344,6 +345,7 @@ export default defineComponent({
 
     watch(result,() => {
       if (result && result.value) {
+        store.commit('common/setIsErrorPA520',false)
         const data = result.value.getEmployeeWageDailies.map((item: any) => ({
           ...item,
           key: item.employeeId
@@ -705,7 +707,8 @@ export default defineComponent({
       idRowCurrentClick,
       idRowSaveDone,
       globalYear,
-      clickYearStatus
+      clickYearStatus,
+      isError
     };
   },
 });

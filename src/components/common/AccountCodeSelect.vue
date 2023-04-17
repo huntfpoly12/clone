@@ -159,9 +159,14 @@ export default {
 .form-group {
     margin-top: 30px;
 }
-.custom-value {
-  white-space: normal !important;
-  word-break: break-all !important;
+.custom-value-account-code {
+  div{
+    max-width: 100%;
+    display:inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
   

@@ -62,6 +62,9 @@ const screenMutatePA520 = {
     setIsChangeYearPA520(state: any, status: boolean) {
         state.isChangeYearPA520 = status
     },
+    setIsErrorPA520(state: any, status: boolean) {
+        state.isErrorPA520 = status
+    },
     setModalChangeValueEditPA520(state: any, status: boolean) {
         state.modalChangeValueEditPA520 = status
     },
