@@ -5,16 +5,16 @@
             <div class="custom-modal mt-20">
                 <div class="custom-center">
                     <a-form-item label="전용일자" class="red">
-                        <date-time-box width="150px" dateFormat="YYYY-MM-DD" :required="true" />
+                        <date-time-box width="230px" dateFormat="YYYY-MM-DD" :required="true" />
                     </a-form-item>
                     <a-form-item label="원천계정과목" class="red">
-                        <account-code-select width="150px" :required="true" />
+                        <account-code-select width="230px" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용계정과목" class="red">
-                        <account-code-select width="150px" :required="true" />
+                        <account-code-select width="230px" :required="true" />
                     </a-form-item>
                     <a-form-item label="전용액" class="red">
-                        <number-box-money width="150px" :required="true" placeholder="음수가능"/>
+                        <number-box-money width="230px" :required="true" placeholder="음수가능"/>
                     </a-form-item>
                     <div class="text-align-center mt-20"><span>과목전용조서를 등록하시겠습니까?</span></div>
                 </div>
@@ -27,6 +27,7 @@
             </div>
         </standard-form>
     </a-modal>
+    <detail-popup :modalStatus="modalStatusDetail" @closePopup="modalStatusDetail = false"/>
 </template>
 
 <script lang="ts">
@@ -34,6 +35,7 @@ import { defineComponent, watch, ref } from 'vue'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import { Message } from "@/configs/enum";
+import DetailPopup from './DetailPopup.vue';
 export default defineComponent({
     props: {
         modalStatus: {
@@ -46,9 +48,10 @@ export default defineComponent({
         }
     },
     components: {
+        DetailPopup
     },
     setup(props, { emit }) {
-
+        const modalStatusDetail = ref<boolean>(false)
 
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -59,8 +62,9 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-
+                
             }
+            modalStatusDetail.value = true;
         };
 
         watch(() => props.modalStatus, (value) => {
@@ -71,6 +75,7 @@ export default defineComponent({
             setModalVisible,
             onSubmit,
             labelCol: { style: { width: "150px" } },
+            modalStatusDetail,
         }
     },
 })

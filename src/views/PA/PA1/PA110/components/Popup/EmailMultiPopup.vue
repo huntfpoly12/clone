@@ -76,7 +76,7 @@ export default defineComponent({
                     variables.push({
                         senderName: sessionStorage.getItem("username"),
                         receiverName: value.employee.name,
-                        receiverAddress: emailAddress.value,
+                        receiverAddress: value.employee.email ? value.employee.email : emailAddress.value,
                         incomeId: value.incomeId
                     })
                 })
