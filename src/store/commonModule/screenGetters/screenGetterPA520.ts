@@ -20,6 +20,7 @@ const screenGetterPA520 = {
   actionUpdateTab1PA520:(state:any)=> state.actionUpdateTab1PA520,
   actionUpdateTab2PA520: (state: any) => state.actionUpdateTab2PA520,
   isChangeYearPA520: (state: any) => state.isChangeYearPA520,
+  isErrorPA520: (state: any) => state.isErrorPA520,
   setTabActivePA520:(state:any)=> state.setTabActivePA520,
   modalChangeValueEditPA520:(state:any)=> state.modalChangeValueEditPA520,
   modalChangeValueAddPA520: (state: any) => state.modalChangeValueAddPA520,

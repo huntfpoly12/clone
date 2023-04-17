@@ -1,13 +1,26 @@
 <template>
     <a-modal :mask-closable="false" :visible="statusPupopInfo" title="" centered @cancel="setModalVisible()"
-        width="1200px" footer="">
-        <pre>{{ contentText }}</pre>
+        width="1200px" footer="" :bodyStyle="{ height: '800px' }">
+        <div style="overflow: scroll;height: 770px;">
+          <component v-bind:is="contentText"/>
+        </div>
     </a-modal>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, reactive, watch, computed } from "vue";
-import { regesterInput1, regesterInput2, regesterInput3, regesterInput4 } from '@/views/requestContract/utils/index'
+import { ref, defineComponent, reactive, watch, computed, defineAsyncComponent } from "vue";
+const Policy1 = defineAsyncComponent(() =>
+  import("@/components/common/Policy1.vue")
+);
+const Policy2 = defineAsyncComponent(() =>
+  import("@/components/common/Policy2.vue")
+);
+const Policy3 = defineAsyncComponent(() =>
+  import("@/components/common/Policy3.vue")
+);
+const Policy4 = defineAsyncComponent(() =>
+  import("@/components/common/Policy4.vue")
+);
 export default defineComponent({
     props: {
         statusPupopInfo: {
@@ -25,16 +38,16 @@ export default defineComponent({
             if (newValue && props.keyText) {
                 switch (props.keyText) {
                     case 1:
-                        contentText.value = regesterInput1
+                        contentText.value = 'Policy1'
                         break;
                     case 2:
-                        contentText.value = regesterInput2
+                        contentText.value = 'Policy2'
                         break;
                     case 3:
-                        contentText.value = regesterInput3
+                        contentText.value = 'Policy3'
                         break;
                     case 4:
-                        contentText.value = regesterInput4
+                        contentText.value = 'Policy4'
                         break;
                 }
             }
@@ -44,7 +57,7 @@ export default defineComponent({
         };
         return {
             setModalVisible, contentText,
-            regesterInput1, regesterInput2, regesterInput3, regesterInput4
+            
         }
     }
 })
