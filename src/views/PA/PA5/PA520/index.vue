@@ -306,7 +306,9 @@ export default defineComponent({
     }));
     onError((e) => {
       notification("error", e.message);
-      store.commit('settings/setCurrentYear',dayjs().year())
+      console.log(dataSource.value.store().clear());
+      dataSource.value.reload()
+      store.commit('common/setComponentPA520',1);
     });
     const {
       mutate: actionDelete,
@@ -468,8 +470,6 @@ export default defineComponent({
       if (focusedRowKey.value == 0 && !isClickRow.value) {
         store.commit('common/setComponentPA520',1);
       } else {
-        console.log(focusedRowKey.value)
-        console.log(event.row.data.employeeId)
         store.commit('common/setComponentPA520', 2);
         setRowEdit(event.row.data.employeeId);
       }
