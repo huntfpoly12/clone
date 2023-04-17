@@ -265,7 +265,7 @@ export default defineComponent({
             }
         }
 
-      const searchTab1 = () => {
+      const searchTab1 = () => {      
             dataSource.value =  defaultDataSource.value
             dataSource.value =  dataSource.value.filter((item:any)=>{
                 return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
