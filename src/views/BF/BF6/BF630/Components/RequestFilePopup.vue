@@ -87,6 +87,9 @@ export default defineComponent({
               payload.filter.beforeProduction = !payload.filter.afterProduction
               delete payload.filter.afterProduction
               const payloadClear = makeDataClean(payload)
+              if(!payloadClear.filter.productionStatuses.length) {
+                payloadClear.filter.productionStatuses = null
+              }
               switch (props.tabName) {
                 case 'tab1':
                   sendRequestFileTab1(payloadClear);

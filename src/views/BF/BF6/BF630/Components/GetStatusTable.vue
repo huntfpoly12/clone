@@ -1,9 +1,12 @@
 <template>
   <a-spin :spinning="loadingTab1 || loadingTab2 || loadingTab3 || loadingTab4">
+  <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="beforeProductionRequest">제작요청전</span>
+  <template v-else>
     <production-status :typeTag="2" v-if="checkStatus(0)" padding="1px 10px" />
     <production-status :typeTag="3" v-if="checkStatus(1)" padding="1px 10px" />
     <production-status :typeTag="4" v-if="checkStatus(2)" padding="1px 10px" />
     <production-status :typeTag="5" v-if="checkStatus(-1)" padding="1px 10px" />
+  </template>
   </a-spin>
 </template>
 <script lang="ts">
@@ -20,6 +23,10 @@ export default defineComponent({
     tabName: {
       type: String,
       default: ''
+    },
+    beforeProductionRequest: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -36,7 +43,7 @@ export default defineComponent({
     })
 
     watch(dataSearch, (newVal) => {
-      if (newVal) {
+      if (newVal && !props.beforeProductionRequest) {
         if (props.tabName == 'tab1') {
           triggerTab1.value = true
         }
@@ -160,3 +167,13 @@ export default defineComponent({
   }
 })
 </script>
+<style scoped>
+.tag-status-null {
+  background-color: #A6A6A6;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  margin-right: 5px;
+  width: 80px;
+}
+</style>
