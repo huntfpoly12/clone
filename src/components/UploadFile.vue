@@ -4,7 +4,6 @@
     <a-upload
       v-model:file-list="fileList"
       name="file"
-      @change="onFileChange"
       :beforeUpload="beforeUpload"
       :headers="headers"
       :disabled="disabled"
@@ -90,22 +89,6 @@ export default defineComponent({
     let messageUpload = ref<any>("");
     const file = ref<any>("");
     const fileName = ref<any>("");
-    const onFileChange = async (info: {
-      [x: string]: any;
-      target: { files: any[] };
-    }) => {
-      if (info.file.status === 'done') {
-        const status = info.file.status;
-        if (status === 'done') {
-          emit("response-fileId", info.file.response);
-          // show success message
-          notification('success', Message.getCommonMessage('101').message)
-        } else if (status === 'error') {
-          // show error message
-          notification('error', Message.getCommonMessage('109').message)
-        }
-      }
-    };
     const beforeUpload = async (file: File) => {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
@@ -124,7 +107,7 @@ export default defineComponent({
         if (status === 201) {
           emit("response-fileId", data.data);
           // show success message
-          notification('success', Message.getCommonMessage('101').message)
+          notification('success', '업데이트 완료')
         } else if (status === 'error') {
           // show error message
           notification('error', Message.getCommonMessage('109').message)
@@ -145,7 +128,6 @@ export default defineComponent({
       Upload,
       file,
       fileName,
-      onFileChange,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('token')
       },

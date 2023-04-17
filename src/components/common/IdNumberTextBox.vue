@@ -4,7 +4,7 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule v-if="isResidentId" :validation-callback="checkID" :message="msgError" />
+      <DxCustomRule v-if="isResidentId" :validation-callback="foreigner ? checkID : checkIdNotForeigner" :message="msgError" />
     </DxValidator>
   </DxTextBox>
 </template>
@@ -81,7 +81,7 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        if(newValue) value.value = convertValue(newValue);
+        if(newValue !== undefined) value.value = convertValue(newValue);
       }
     );
     const checkID = (e: any) => {
@@ -93,10 +93,10 @@ export default defineComponent({
           return validResidentId(value.value);
       } else if (props.foreigner && (fNumber < 4 || fNumber > 9)) {
           return false
-      } else {
-          return validResidentId(value.value);
-      };
+      }
     }
+    const checkIdNotForeigner = () => !!value.value ?? validResidentId(value.value)
+
     return {
       updateValue,
       value,
@@ -105,7 +105,8 @@ export default defineComponent({
       messageRequired,
       msgError,
       validResidentId,
-      checkID
+      checkID,
+      checkIdNotForeigner
     };
   },
 });

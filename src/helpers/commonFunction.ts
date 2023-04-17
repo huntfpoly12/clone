@@ -189,6 +189,10 @@ const calculateEmployeementInsuranceEmployee = (totalTaxPay: any, insurancesuppo
     return employeementinsuranceemployee
 }
 
+const convertResidentId = (residentId: string) => {
+  // add - to index 6
+  return residentId.slice(0, 6) + '-' + residentId.slice(6);
+}
 export {
     companyId,
     openTab,
@@ -206,5 +210,6 @@ export {
     convertBirthDayKorea,
     makeDataClean,
     startYearMonth,
+    convertResidentId
 }
 
