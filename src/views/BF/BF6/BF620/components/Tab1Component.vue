@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchArea :tab1="true" />
+    <SearchArea/>
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>

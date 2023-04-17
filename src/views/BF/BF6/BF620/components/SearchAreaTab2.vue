@@ -1,7 +1,6 @@
 <template>
   <div class="search-group">
     <a-row>
-      {{ filterBF620 }}
       <a-col>
         <div class="search-date">
           <span class="search-text mt-5 ml-10">지급연월:</span>
@@ -12,22 +11,18 @@
       </a-col>
       <a-col>
         <div class="search-date" style="flex-direction: column;">
-          <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10">
-            <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1"
-              @change="onChangeCheckbox1" />
-            <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
-            <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
-          </a-form-item>
-          <a-form-item label="신고구분" label-align="right" class=" ml-10">
-            <radio-group :arrayValue="reportTypeCheckbox" v-model:valueRadioCheck="filterBF620.withholdingTaxType"
+          <a-form-item label="신고주기" label-align="right" class="ml-10 mt-5">
+            <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
+
         </div>
       </a-col>
       <a-col>
         <div class="search-production">
           <a-form-item label="제작요청상태">
-            <switch-basic :onChange="onChangeSwitch" :textCheck="'제작요청후'" :textUnCheck="'제작요청전'" />
+            <switch-basic :onChange="onChangeSwitch" :textCheck="'제작요청후'"
+              :textUnCheck="'제작요청전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
@@ -83,59 +78,43 @@ export default defineComponent({
       checkbox3: filterBF620.value.reportType == 6 || filterBF620.value.reportType == 6,
     });
     const searchWithholdingTrigger = ref(true);
-    const check1Type = ref(0);
     // watch filterBF620.reportType to change value
     watch(
       () => reportType.checkbox1, (newVal: any) => {
-        // if (!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
-        //   return;
-        // }
-        if (check1Type.value == 0) {
-          reportType.checkbox2 = newVal;
-          reportType.checkbox3 = newVal;
-          // delete filterBF620.value.reportType;
-          filterBF620.value.reportType = null;
+        if (!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
+          return;
         }
+        reportType.checkbox2 = newVal;
+        reportType.checkbox3 = newVal;
+        // delete filterBF620.value.reportType;
+        filterBF620.value.reportType = null;
+
       },
       { deep: true }
     );
-    const onChangeCheckbox1 = (emitVal: any) => {
-      console.log(`output->emitVal`, emitVal)
-    }
     watch(
       () => reportType,
       (newVal: any) => {
-        if (newVal.checkbox2 && newVal.checkbox3) {
-          reportType.checkbox1 = true;
+        if (newVal.checkbox2 == true && newVal.checkbox3 == true) {
+          newVal.checkbox1 = true;
+          // delete filterBF620.value.reportType;
           filterBF620.value.reportType = null;
           return;
         }
-        if (!newVal.checkbox2 && !newVal.checkbox3) {
-          reportType.checkbox1 = false;
-          filterBF620.value.reportType = null;
-          return;
-        }
-        console.log(`output-`,)
-        // reportType.checkbox1 = false;
+        newVal.checkbox1 = false;
         if (newVal.checkbox2) {
           filterBF620.value.reportType = 1;
           return;
-        } else {
-          check1Type.value = 1;
-          reportType.checkbox1 = false;
         }
         if (newVal.checkbox3) {
           filterBF620.value.reportType = 6;
           return;
-        } else {
-          check1Type.value = 1;
-          reportType.checkbox1 = false;
         }
       },
       { deep: true }
     );
     watchEffect(() => {
-      reportType.checkbox1 = filterBF620.value.reportType == null;
+      reportType.checkbox1 = filterBF620.value.reportType == 0 || filterBF620.value.reportType == null;
       reportType.checkbox2 = filterBF620.value.reportType == 1 || filterBF620.value.reportType == null;
       reportType.checkbox3 = filterBF620.value.reportType == 6 || filterBF620.value.reportType == null;
     });
@@ -187,7 +166,7 @@ export default defineComponent({
       reportType,
       // afterDeadLineIndex,
       reportTypeTab2,
-      onChange, onChangeSwitch, onChangeCheckbox1,
+      onChange, onChangeSwitch,
     };
   },
 });

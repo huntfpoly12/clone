@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchArea :tab1="false" />
+    <SearchAreaTab2/>
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -94,7 +94,7 @@
   
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
-import SearchArea from './SearchArea.vue';
+import SearchAreaTab2 from './SearchAreaTab2.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
 import { useQuery } from '@vue/apollo-composable';
@@ -111,7 +111,7 @@ import { Message } from '@/configs/enum';
 
 export default defineComponent({
   components: {
-    SearchArea,
+    SearchAreaTab2,
     RequestFilePopup,
     DxButton,
     DxDataGrid,
