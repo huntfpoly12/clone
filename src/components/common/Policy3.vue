@@ -1,16 +1,7 @@
 <template>
-  <p class=MsoNormal align=center style='text-align:center;line-height:normal'><span
-style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;background:yellow'>3.
-</span><span lang=KO style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;
-background:yellow'>회계서비스약관</span><span lang=KO style='font-size:14.0pt;
-font-family:"Malgun Gothic",sans-serif;background:yellow'> </span><span
-lang=KO style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;
-background:yellow'>동의</span></p>
-
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
-3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:
-12.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
-style='font-size:12.0pt;font-family:"Malgun Gothic",sans-serif'> 1<span
+3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
+style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 1<span
 lang=KO>조</span> (<span lang=KO>목적</span>) </span></b></p>
 
 <p><span lang=KO style='font-family:"Malgun Gothic",sans-serif'>이</span><span
@@ -77,9 +68,8 @@ style='font-family:"Malgun Gothic",sans-serif'>합니다</span><span
 style='font-family:"Malgun Gothic",sans-serif'>.</span></p>
 
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
-3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:
-12.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
-style='font-size:12.0pt;font-family:"Malgun Gothic",sans-serif'> 2<span
+3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
+style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 2<span
 lang=KO>조</span> (<span lang=KO>회계서비스의 진행</span>) </span></b></p>
 
 <p><span style='font-family:"Malgun Gothic",sans-serif'>①</span><span
@@ -137,9 +127,8 @@ style='font-family:"Malgun Gothic",sans-serif'>없습니다</span><span
 style='font-family:"Malgun Gothic",sans-serif'>.</span></p>
 
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
-3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:
-12.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
-style='font-size:12.0pt;font-family:"Malgun Gothic",sans-serif'> 2<span
+3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
+style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 2<span
 lang=KO>조</span> (<span lang=KO>입력대행서비스의 진행</span>) </span></b></p>
 
 <p><span style='font-family:"Malgun Gothic",sans-serif'>①</span><span
@@ -470,9 +459,8 @@ style='font-family:"Malgun Gothic",sans-serif'>없습니다</span><span
 style='font-family:"Malgun Gothic",sans-serif'>.</span></p>
 
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
-3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:
-12.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
-style='font-size:12.0pt;font-family:"Malgun Gothic",sans-serif'> 3<span
+3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
+style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 3<span
 lang=KO>조</span> (<span lang=KO>서비스 이용 중지 또는 계약의 해지</span>) </span></b></p>
 
 <p><span style='font-family:"Malgun Gothic",sans-serif'>①</span><span
@@ -505,9 +493,8 @@ style='font-family:"Malgun Gothic",sans-serif'>있습니다</span><span
 style='font-family:"Malgun Gothic",sans-serif'>.</span></p>
 
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
-3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:
-12.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
-style='font-size:12.0pt;font-family:"Malgun Gothic",sans-serif'> 4<span
+3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
+style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 4<span
 lang=KO>조 서비스 취소</span>(<span lang=KO>환급</span>) </span></b></p>
 
 <p><span style='font-family:"Malgun Gothic",sans-serif'>①</span><span

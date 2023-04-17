@@ -3,14 +3,14 @@
     class="form-modal"
     width="60%"
     :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
-    :visible="isOpenModalCreate"
-    title="취득신고 신규 등록"
+    :visible="isViewDetail"
+    title="상세 전환 보고서"
     centered
     @cancel="closePopup"
     :footer="null"
-    :mask-closable="false"
+    v-if="isViewDetail"
   >
-    <standard-form ref="formRef">
+    <standard-form style="pointer-events: none">
       <div class="form">
         <a-row>
           <a-col span="12">
@@ -21,15 +21,11 @@
               >
                 <a-radio
                   :value="EmployeeWageType.WAGE"
-                  @change="handleRadioChange"
-                  v-model="stateSelectQuery.selectedRadioValue"
                 >
                   사원
                 </a-radio>
                 <a-radio
                   :value="EmployeeWageType.WAGEDaily"
-                  @change="handleRadioChange"
-                  v-model="stateSelectQuery.selectedRadioValue"
                 >
                   일용직사원
                 </a-radio>
@@ -40,7 +36,6 @@
             <DxField label="직원선택">
               <employ-select
                 :arrayValue="employeeWages"
-                :required="true"
                 v-model:valueEmploy="employeeWageSelected"
                 width=""
               />
@@ -147,9 +142,8 @@
                   <DxField label="국적코드">
                     <div class="d-flex items-center gap-4">
                       <text-number-box
-                        v-model:valueInput="formData.nationalityNumber"
+                        v-model:valueInput="dataDetail.nationalityNumber"
                         placeholder=""
-                        :required="employeeWage.foreigner"
                         :disabled="!employeeWage.foreigner"
                       />
                       <SearchCodeButton
@@ -164,8 +158,7 @@
                   <DxField label="체류자격">
                     <div class="d-flex items-center gap-4">
                       <default-text-box
-                        v-model:valueInput="formData.stayQualification"
-                        :required="employeeWage.foreigner"
+                        v-model:valueInput="dataDetail.stayQualification"
                         placeholder=""
                         :disabled="!employeeWage.foreigner"
                       />
@@ -187,26 +180,26 @@
                 <span class="check-box-tab1">
                   <checkbox-basic
                     label="국민연금"
-                    v-model:valueCheckbox="formData.nationalPensionReport"
+                    v-model:valueCheckbox="dataDetail.nationalPensionReport"
                   ></checkbox-basic>
                 </span>
                 <span class="check-box-tab1">
                   <checkbox-basic
                     label="건강보험"
-                    v-model:valueCheckbox="formData.healthInsuranceReport"
+                    v-model:valueCheckbox="dataDetail.healthInsuranceReport"
                   ></checkbox-basic>
                 </span>
                 <span class="check-box-tab1 mb-4 ml-15">
                   <checkbox-basic
                     label="고용보험"
-                    v-model:valueCheckbox="formData.employeementInsuranceReport"
+                    v-model:valueCheckbox="dataDetail.employeementInsuranceReport"
                   ></checkbox-basic>
                 </span>
                 <span class="check-box-tab1 mb-4 ml-15">
                   <checkbox-basic
                     label="산재보험"
                     v-model:valueCheckbox="
-                      formData.industrialAccidentInsuranceReport
+                      dataDetail.industrialAccidentInsuranceReport
                     "
                   ></checkbox-basic>
                 </span>
@@ -222,9 +215,9 @@
                     <div class="flex items-center">
                       <text-number-box
                         v-model:valueInput="
-                          formData.nationalPensionAcquisitionCode
+                          dataDetail.nationalPensionAcquisitionCode
                         "
-                        :required="true"
+
                         placeholder=""
                         :disabled="isChooseNationalPensionReport"
                       />
@@ -239,7 +232,7 @@
                   <div class="h-full d-flex justify-content-start items-center">
                     <checkbox-basic
                       label="취득월 납부 희망여부"
-                      v-model:valueCheckbox="formData.acquisitionMonthPayment"
+                      v-model:valueCheckbox="dataDetail.acquisitionMonthPayment"
                       :disabled="isChooseNationalPensionReport"
                     />
                   </div>
@@ -256,10 +249,10 @@
                   <DxField label="취득부호">
                     <div class="d-flex items-center">
                       <text-number-box
-                        :required="true"
+
                         placeholder="00"
                         v-model:valueInput="
-                          formData.healthInsuranceAcquisitionCode
+                          dataDetail.healthInsuranceAcquisitionCode
                         "
                         :disabled="isChooseHealthInsuranceReport"
                       />
@@ -286,7 +279,7 @@
                   <div class="h-full d-flex items-center">
                     <checkbox-basic
                       label="피부양자신청"
-                      v-model:valueCheckbox="formData.includeDependents"
+                      v-model:valueCheckbox="dataDetail.includeDependents"
                       :disabled="isChooseHealthInsuranceReport"
                     />
                   </div>
@@ -304,7 +297,7 @@
                     <div class="flex items-start">
                       <text-number-box
                         placeholder="232"
-                        v-model:valueInput="formData.jobTypeCode"
+                        v-model:valueInput="dataDetail.jobTypeCode"
                         :disabled="
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                         "
@@ -322,7 +315,7 @@
                   >
                     <checkbox-basic
                       label="계약직여부"
-                      v-model:valueCheckbox="formData.contractWorker"
+                      v-model:valueCheckbox="dataDetail.contractWorker"
                       :disabled="
                         !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                       "
@@ -335,9 +328,9 @@
                       <date-time-box
                         default="2022-12-12"
                         dateFormat="YYYY-MM-DD"
-                        v-model="formData.contractExpiredDate"
+                        v-model="dataDetail.contractExpiredDate"
                         :disabled="
-                          !formData.contractWorker ||
+                          !dataDetail.contractWorker ||
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                         "
                       />
@@ -354,7 +347,7 @@
                     <checkbox-basic
                       label="일자리안정자금지원 신청                        "
                       v-model:valueCheckbox="
-                        formData.jobSecurityFundSupportApplication
+                        dataDetail.jobSecurityFundSupportApplication
                       "
                       :disabled="
                         !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
@@ -366,9 +359,9 @@
                   <DxField label="주소정근로시간">
                     <div class="flex justify-content-start">
                       <number-box
-                        :required="true"
+
                         :spinButtons="true"
-                        v-model:valueInput="formData.weeklyWorkingHours"
+                        v-model:valueInput="dataDetail.weeklyWorkingHours"
                         :disabled="
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                         "
@@ -385,7 +378,7 @@
                     <div class="w-full flex flex-col gap-1">
                       <text-number-box
                         :spinButtons="true"
-                        v-model:valueInput="formData.insuranceReductionCode"
+                        v-model:valueInput="dataDetail.insuranceReductionCode"
                         :disabled="
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
                         "
@@ -395,7 +388,7 @@
                       <text-number-box
                         :spinButtons="true"
                         v-model:valueInput="
-                          formData.insuranceReductionReasonCode
+                          dataDetail.insuranceReductionReasonCode
                         "
                         :disabled="
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
@@ -424,7 +417,7 @@
         <span>등본 등 증빙파일</span>
         <UploadFile @response-fileId="getFileId" :isFileList="isFileList"/>
       </div>
-      <div class="mt-20 table-container" >
+      <div class="mt-20 table-container">
         <div class="d-flex-center">
           <div class="header">피부양자</div>
           <table>
@@ -538,7 +531,7 @@
               </template>
             </template>
             <template v-else>
-              <tr  class="">
+              <tr class="">
                 <td colspan="9" style="height: 50px;color: #999; font-size: 17px;">No data</td>
               </tr>
             </template>
@@ -546,52 +539,23 @@
           </table>
         </div>
       </div>
-      <div class="d-flex justify-center mt-20">
-        <button-basic
-          :width="90"
-          id="btn-save"
-          @onClick="onSubmit($event)"
-          style="margin: auto"
-          mode="contained"
-          type="default"
-          text="저장"
-        />
-      </div>
     </standard-form>
   </a-modal>
 </template>
 
-<script lang="ts">
-import mutations from "@/graphql/mutations/PA/PA8/PA810/index";
+<script lang="ts" setup>
 import queries from "@/graphql/queries/PA/PA8/PA810/index";
 import {companyId, convertResidentId} from "@/helpers/commonFunction";
 import filters from "@/helpers/filters";
-import comfirmClosePopup from "@/utils/comfirmClosePopup";
-import notification from "@/utils/notification";
-import {
-DeleteOutlined,
-HistoryOutlined,
-SearchOutlined,
-} from "@ant-design/icons-vue";
-import { DependantsRelation, enum2Entries } from "@bankda/jangbuda-common";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import {DependantsRelation, enum2Entries} from "@bankda/jangbuda-common";
+import {useQuery} from "@vue/apollo-composable";
 import dayjs from "dayjs";
-import DxButton from "devextreme-vue/button";
-import { DxColumn, DxScrolling } from "devextreme-vue/data-grid";
-import { DxFileUploader } from "devextreme-vue/file-uploader";
-import { cloneDeep, isEqual } from "lodash";
-import {
-computed,
-defineComponent,
-reactive,
-ref,
-watch
-} from "vue";
-import { useStore } from "vuex";
+import {cloneDeep} from "lodash";
+import {computed, reactive, ref, watch} from "vue";
+import {useStore} from "vuex";
 import URL_CONST from "./../const";
-import INITIAL_DATA, { Company } from "./../utils";
+import INITIAL_DATA from "./../utils";
 import SearchCodeButton from "./SearchCodeButton.vue";
-import TableEmployeeWage from "./TableEmployeeWage.vue";
 
 let dpRelation = enum2Entries(DependantsRelation);
 const getCodeOrLabel = (id: number) => {
@@ -614,284 +578,129 @@ const getQuery = (type: EmployeeWageType) => {
       return queries.getEmployeeWageDailies;
   }
 };
-export default defineComponent({
-  name: 'create-pa-810',
-  methods: {convertResidentId},
-  components: {
-    DxColumn,
-    DxButton,
-    DxScrolling,
-    HistoryOutlined,
-    DeleteOutlined,
-    SearchOutlined,
-    DxFileUploader,
-    TableEmployeeWage,
-    SearchCodeButton,
-  },
-  props: {
-    isOpenModalCreate: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props, {emit}) {
-    const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
-    const {per_page, move_column, colomn_resize} = store.state.settings;
-    const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
-    const employeeWage = ref(INITIAL_DATA.initialEmployeeWage);
-    const employeeWages = ref();
-    const employeeWageSelected = ref();
-    const formRef = ref();
-    const isFileList = ref(false);
-    const formData = ref({...INITIAL_DATA.InitialFormCreate});
-    const infoCompany = reactive({
-      name: "",
-      adding: "",
-      presidentName: "",
-      bizNumber: "",
-    });
-    const stateSelectQuery = reactive({
-      selectedRadioValue: EmployeeWageType.WAGE,
-      query: queries.getEmployeeWages,
-    });
-
-    const isChooseNationalPensionReport = computed(
-      () => !formData.value.nationalPensionReport
-    );
-    const isChooseHealthInsuranceReport = computed(
-      () => !formData.value.healthInsuranceReport
-    );
-    const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance =
-      computed(
-        () =>
-          formData.value.employeementInsuranceReport ||
-          formData.value.industrialAccidentInsuranceReport
-      );
-    const isFormChange = computed(() => {
-      return !isEqual(cloneDeep(INITIAL_DATA.InitialFormCreate), cloneDeep(formData.value))
-        || Boolean(employeeWageSelected.value)
-        || employeeWageType.value !== EmployeeWageType.WAGE;
-    });
-    const handleRadioChange = (event: Event) => {
-      stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement)
-        .value;
-      employeeWageSelected.value = null;
-      employeeWage.value = {...INITIAL_DATA.initialEmployeeWage};
-    };
-    // Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
-    const dataSource = ref([]);
-    const { result: dataCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
-
-    watch(dataCompany, (value) => {
-      if (value) {
-        infoCompany.name = value.getMyCompany.name;
-        infoCompany.bizNumber = value.getMyCompany.bizNumber;
-        infoCompany.presidentName = value.getMyCompany.presidentName;
-        infoCompany.adding = value.getMyCompany.address;
-      }
-    });
-    // get and refetch data when employeeWageType change
-    const variables = reactive({
-      companyId: companyId,
-      imputedYear: globalYear.value,
-    });
-    const query = ref(queries.getEmployeeWages);
-    const {result: dataEmployeeWages, refetch: refetchDataEmployeeWages} =
-      useQuery(query, variables, () => ({
-        fetchPolicy: "no-cache",
-      }));
-    watch(
-      dataEmployeeWages,
-      (value) => {
-        if (value) {
-          if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
-            employeeWages.value = value.getEmployeeWages;
-          } else {
-            employeeWages.value = value.getEmployeeWageDailies;
-          }
-        }
-      },
-      {deep: true}
-    );
-    watch(
-      () => stateSelectQuery.selectedRadioValue,
-      (newValue) => {
-        query.value = getQuery(newValue);
-      }
-    );
-
-    //  get Employee Wage
-    watch(
-      employeeWageSelected,
-      (value) => {
-        if (value) {
-          const emp = employeeWages.value.find((item: any) => item.employeeId === value)
-          if (emp && emp?.dependents) emp.dependents.sort((a: any, b: any) => a.relation - b.relation);
-
-          employeeWage.value = cloneDeep(emp);
-        }
-      },
-      {deep: true}
-    );
-    const resetForm = () => {
-      formData.value = cloneDeep(INITIAL_DATA.InitialFormCreate)
-      employeeWage.value = cloneDeep(INITIAL_DATA.initialEmployeeWage)
-      employeeWageSelected.value = null;
-      employeeWageType.value = EmployeeWageType.WAGE;
-      stateSelectQuery.selectedRadioValue = EmployeeWageType.WAGE;
-
-    };
-    watch(() => props.isOpenModalCreate, (newVal) => {
-      if (newVal) {
-        stateSelectQuery.selectedRadioValue = EmployeeWageType.WAGE;
-        isFileList.value = true;
-      } else {
-        isFileList.value = false;
-        resetForm();
-      }
-    }, { deep: true});
-    // Mutation
-    const {
-      mutate,
-      onDone: onDoneCreateMajor,
-      loading: loadingCreateMajor,
-      onError: errorCreateMajor,
-    } = useMutation(
-      mutations.createMajorInsuranceCompanyEmployeeAcquisition,
-      () => ({
-        fetchPolicy: "no-cache",
-      })
-    );
-    onDoneCreateMajor(() => {
-      notification("success", "저장되었습니다.");
-      resetForm();
-      emit("handleCreate");
-    });
-    errorCreateMajor((error) => {
-      console.log("error", error);
-      notification("error", error.message);
-    });
-    /// Submit form
-    const onSubmit = async (e: any) => {
-      const res = e.validationGroup.validate();
-      // !res.isValid
-      if (!res.isValid) {
-        res.brokenRules[0].validator.focus();
-      } else {
-        const {
-          adding,
-          joinedAt,
-          name,
-          president,
-          presidentName,
-          residentId,
-          totalPay,
-          bizNumber,
-          ...newFormData
-        } = formData.value;
-        const newDataFix:any = newFormData
-        // if data.nationalityNumber is null => delete data.nationalityNumber
-        if (!newDataFix?.nationalityNumber){
-          delete newDataFix?.nationalityNumber
-        }
-        if (!newDataFix?.stayQualification ) delete newDataFix?.stayQualification
-        const dependents = employeeWage.value?.dependents
-          ? employeeWage.value.dependents.map((item: any) => {
-            return {
-              name: employeeWage.value.name,
-              residentId: employeeWage.value.residentId,
-              relationCode: getCodeOrLabel(item.relation).number,
-              nationalityNumber: item.nationalityNumber,
-              stayQualification: item.stayQualification,
-              stayPeriodFrom: item?.contractExpiredDate
-                ? item.contractExpiredDate[0]
-                : filters.formatDateToInterger(new Date().getTime()),
-              stayPeriodTo: item?.contractExpiredDate
-                ? item.contractExpiredDate[1]
-                : filters.formatDateToInterger(
-                  new Date().setDate(new Date().getDate() + 7)
-                ),
-              disabledRegisteredDate: item.disabledRegisteredDate
-                ? filters.formatDateToInterger(item.disabledRegisteredDate)
-                : 0,
-            };
-          })
-          : [];
-        const input = {
-          ...newDataFix,
-          employeeId: Number(employeeWageSelected.value),
-          employeeType: stateSelectQuery.selectedRadioValue,
-          dependents,
-        };
-        if (dependents.length === 0) delete input.dependents
-        input.insuranceReductionCode &&= Number(
-          formData.value.insuranceReductionCode
-        );
-        input.insuranceReductionReasonCode &&= Number(
-          formData.value.insuranceReductionReasonCode
-        );
-        input.contractExpiredDate &&= filters.formatDateToInterger(newFormData.contractExpiredDate);
-        mutate({
-          ...variables,
-          input: input,
-        });
-      }
-    };
-    const closePopup = () => {
-      if (isFormChange.value) {
-        comfirmClosePopup(() => {
-          emit('closeModal')
-        })
-      } else {
-        emit('closeModal')
-      }
-    }
-    const getFileId = (fileId: { id: Number }) => {
-      formData.value.dependentsEvidenceFileStorageId = fileId.id;
-    };
-    const formatDate = (date: any) => {
-      return dayjs(date).format("YYYY/MM/DD");
-    };
-    return {
-      globalYear,
-      per_page,
-      move_column,
-      colomn_resize,
-      dataSource,
-      onSubmit,
-      formData,
-      styleDisable: {opacity: 0.4},
-      employeeWages,
-      employeeWageSelected,
-      employeeWageType,
-      EmployeeWageType,
-      formatDate,
-      stateSelectQuery,
-      handleRadioChange,
-      infoCompany,
-      employeeWage,
-      isChooseNationalPensionReport,
-      isChooseHealthInsuranceReport,
-      isChooseEmployeementInsuranceAndIndustrialAccidentInsurance,
-      URL_CONST,
-      getFileId,
-      dpRelation,
-      getCodeOrLabel,
-      filters,
-      col: {
-        item: 9,
-        space: 3,
-      },
-      formRef,
-      isFileList,
-      closePopup
-    };
-  },
+const props = withDefaults(defineProps<{
+  isViewDetail: boolean,
+  infoDetail: { workId: number, employeeType: EmployeeWageType, employeeId: number }
+}>(), {
+  isViewDetail: false,
+})
+const col = {
+  item: 9,
+  space: 3,
+}
+const emit = defineEmits(['closeModal'])
+const store = useStore();
+const globalYear = computed(() => store.state.settings.globalYear);
+const {per_page, move_column, colomn_resize} = store.state.settings;
+const employeeWageType = ref<EmployeeWageType>(props.infoDetail.employeeType);
+const employeeWage = ref(INITIAL_DATA.initialEmployeeWage);
+const employeeWages = ref();
+const employeeWageSelected = ref();
+const formRef = ref();
+const isFileList = ref(false);
+const dataDetail = ref({...INITIAL_DATA.InitialFormCreate});
+const infoCompany = reactive({
+  name: "",
+  adding: "",
+  presidentName: "",
+  bizNumber: "",
 });
+const stateSelectQuery = reactive({
+  selectedRadioValue: props.infoDetail.employeeType,
+  query: queries.getEmployeeWages,
+});
+
+const isChooseNationalPensionReport = computed(
+  () => !dataDetail.value.nationalPensionReport
+);
+const isChooseHealthInsuranceReport = computed(
+  () => !dataDetail.value.healthInsuranceReport
+);
+const isChooseEmployeementInsuranceAndIndustrialAccidentInsurance =
+  computed(
+    () =>
+      dataDetail.value.employeementInsuranceReport ||
+      dataDetail.value.industrialAccidentInsuranceReport
+  );
+
+// get Detail
+const {
+  onResult, loading
+} = useQuery(queries.getMajorInsuranceCompanyEmployeeAcquisition, {
+  companyId: companyId,
+  imputedYear: globalYear.value,
+  workId: props.infoDetail.workId
+}, () => ({
+  fetchPolicy: 'no-cache',
+}));
+onResult(({data}) => {
+  dataDetail.value = data.getMajorInsuranceCompanyEmployeeAcquisition;
+})
+// Get DataSource getMajorInsuranceCompanyEmployeeAcquisitions
+const dataSource = ref([]);
+const {result: dataCompany} = useQuery(queries.getMyCompany, {companyId: companyId}, () => ({fetchPolicy: "no-cache"}));
+
+watch(dataCompany, (value) => {
+  if (value) {
+    infoCompany.name = value.getMyCompany.name;
+    infoCompany.bizNumber = value.getMyCompany.bizNumber;
+    infoCompany.presidentName = value.getMyCompany.presidentName;
+    infoCompany.adding = value.getMyCompany.address;
+  }
+});
+// get and refetch data when employeeWageType change
+const variables = reactive({
+  companyId: companyId,
+  imputedYear: globalYear.value,
+});
+const query = getQuery(props.infoDetail.employeeType);
+const {result: dataEmployeeWages, onResult: onResultEmployee, refetch: refetchDataEmployeeWages} =
+  useQuery(query, variables, () => ({
+    fetchPolicy: "no-cache",
+  }));
+onResultEmployee(({data}) => {
+  if (data) {
+    let emp;
+    if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
+      employeeWages.value = data.getEmployeeWages;
+      emp = data.getEmployeeWages.find((item: any) => item.employeeId === props.infoDetail.employeeId)
+    } else {
+      employeeWages.value = data.getEmployeeWageDailies;
+      emp = data.getEmployeeWageDailies.find((item: any) => item.employeeId === props.infoDetail.employeeId)
+    }
+    employeeWageSelected.value = emp?.employeeId;
+  }
+})
+//  get Employee Wage
+watch(
+  employeeWageSelected,
+  (value) => {
+    if (value) {
+      const emp = employeeWages.value.find((item: any) => item.employeeId === value)
+      if (emp && emp?.dependents) emp.dependents.sort((a: any, b: any) => a.relation - b.relation);
+
+      employeeWage.value = cloneDeep(emp);
+    }
+  },
+  {deep: true}
+);
+
+watch(() => props.isViewDetail, (newVal) => {
+  isFileList.value = newVal;
+}, {deep: true});
+const closePopup = () => {
+  emit('closeModal')
+}
+const getFileId = (fileId: { id: Number }) => {
+  dataDetail.value.dependentsEvidenceFileStorageId = fileId.id;
+};
+const formatDate = (date: any) => {
+  return dayjs(date).format("YYYY/MM/DD");
+};
 </script>
 <style lang="scss" scoped>
 @import './../styles/index.scss';
+
 :deep(.label-custom) {
   .dx-field-label {
     width: 250px !important;
@@ -909,10 +718,12 @@ export default defineComponent({
     width: 100%;
     min-width: 1000px;
     background-color: #5b80b9;
+
     .header {
       min-width: 70px;
       text-align: center;
     }
+
     table {
       width: calc(100% - 70px);
       border-collapse: collapse;

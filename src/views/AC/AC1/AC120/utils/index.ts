@@ -57,7 +57,7 @@ export const initialStateFormData = {
   causeUsage: null,
   // goodsCount: null,
 
-  // accountingDocumentId: 'AC120',
+  accountingDocumentId: 'AC120',
 }
 export const dataDemoMain = [
   {

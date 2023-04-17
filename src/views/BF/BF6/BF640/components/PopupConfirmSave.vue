@@ -29,6 +29,7 @@ import { useMutation } from "@vue/apollo-composable"
 import mutations from "@/graphql/mutations/BF/BF6/BF640/index";
 import notification from "@/utils/notification";
 import { Message } from '@/configs/enum';
+import { makeDataClean } from "@/helpers/commonFunction";
 export default defineComponent({
     props: {
         modalStatus: Boolean,
@@ -87,7 +88,9 @@ export default defineComponent({
                 }
                 dataCallApi.value.emailInput.receiverAddress = mailAction.value
                 if (dataCallApi) {
-                    if (props.step == 1)
+                  dataCallApi.value = makeDataClean(dataCallApi.value)
+                  if (props.step == 1)
+                        
                         sendRequestFileTab1(dataCallApi.value)
                     else if (props.step == 2)
                         sendRequestFileTab2(dataCallApi.value)

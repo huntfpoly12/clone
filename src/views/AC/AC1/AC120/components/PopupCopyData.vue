@@ -123,7 +123,7 @@ export default defineComponent({
             fiscalYear: globalYear.value,
             facilityBusinessId: globalFacilityBizId.value,
             year: globalYear.value,
-            month: 1,
+            month: 4,
             resolutionNumber: null
         })
 

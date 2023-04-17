@@ -30,13 +30,20 @@
       <p v-if="errors && errors.error" class="invalid">
         {{ isSignup ? errors.error : 'Invalid credentials' }}
       </p>
-      <button class="primary" type="submit">
-        {{ signinLoading ? '로그인중입니다..' : '로그인' }}
-      </button>
+      <div class="activate">
+        <button class="primary" type="submit">
+          {{ signinLoading ? '로그인중입니다..' : '로그인' }}
+        </button>
+        <div style="float: right;padding: 6px 0px 6px 0px;">
+          <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openForgotPassword"> 비밀번호 찾기</a>
+        </div>
+      </div>
+      <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
     </form>
     <div class="request-contract">
-      <router-link to="/request-contract"> 신규고객 서비스가입신청!!! </router-link>
+      
     </div>
+
   </div>
 </template>
 
@@ -47,57 +54,58 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import mutations from '../graphql/mutations/index';
 import { getJwtObject } from '@bankda/jangbuda-common';
+import ForgetPassword from './ForgetPassword.vue';
 
 export default {
-  setup() {
-    const store = useStore();
-    const router = useRouter();
-    const form = reactive({
-      username: '',
-      password: '',
-    });
-    const errors = ref(null);
-
-    const submitForm = (e) => {
-      e.preventDefault();
-      signinData();
-      sessionStorage.setItem('username', form.username);
-    };
-
-    // signin mutation
-    const {
-      mutate: signinData,
-      loading: signinLoading,
-      onDone: signinDone,
-      onError,
-    } = useMutation(mutations.SIGN_IN, () => ({
-      variables: {
-        username: form.username,
-        password: form.password,
-      },
-    }));
-    signinDone((res) => {
-      const jwtObject = getJwtObject(res.data.login.accessToken);
-      if (!jwtObject.isExpired()) {
-        store.commit('auth/setAuthData', res.data.login.accessToken);
-      } else {
-        store.commit('auth/setAuthData', res.data.login.refreshToken);
-      }
-      const url = new URL('/dashboard', window.location.origin)
-      window.location.href = url.toString()
-      //router.push({ path: '/dashboard' });
-    });
-    onError((error) => {
-      errors.value = error.message;
-    });
-
-    return {
-      form,
-      submitForm,
-      errors,
-      signinLoading,
-    };
-  },
+    components: { ForgetPassword },
+    setup() {
+        const store = useStore();
+        const router = useRouter();
+        const modalForgotPassword= ref(false)
+        const form = reactive({
+            username: "",
+            password: "",
+        });
+        const errors = ref(null);
+        const submitForm = (e) => {
+            e.preventDefault();
+            signinData();
+            sessionStorage.setItem("username", form.username);
+        };
+        // signin mutation
+        const { mutate: signinData, loading: signinLoading, onDone: signinDone, onError, } = useMutation(mutations.SIGN_IN, () => ({
+            variables: {
+                username: form.username,
+                password: form.password,
+            },
+        }));
+        signinDone((res) => {
+            const jwtObject = getJwtObject(res.data.login.accessToken);
+            if (!jwtObject.isExpired()) {
+                store.commit("auth/setAuthData", res.data.login.accessToken);
+            }
+            else {
+                store.commit("auth/setAuthData", res.data.login.refreshToken);
+            }
+            const url = new URL("/dashboard", window.location.origin);
+            window.location.href = url.toString();
+            //router.push({ path: '/dashboard' });
+        });
+        onError((error) => {
+            errors.value = error.message;
+        });
+        const openForgotPassword = () => {
+          modalForgotPassword.value = true;
+        };
+        return {
+            form,
+            submitForm,
+            openForgotPassword,modalForgotPassword,
+            errors,
+            signinLoading,
+        };
+    },
+    
 };
 </script>
 
@@ -111,6 +119,9 @@ export default {
   display: flex;
   align-items: center;
   margin-left: -50px;
+}
+.activate{
+  display: flex;
 }
 .flex label {
   width: 100px;
@@ -160,6 +171,7 @@ input {
   padding: 4px 15px;
   font-size: 14px;
   cursor: pointer;
+  margin-right: 85px;
 }
 .primary:hover {
   background-color: #40a9ff;

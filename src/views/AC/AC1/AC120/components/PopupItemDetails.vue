@@ -5,42 +5,70 @@
                 <h2><b>물품내역</b></h2>
             </div>
             {{ dataSource }}
-            <DxDataGrid key-expr="id" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                :focused-row-key="focusedRowKey" @init-new-row="onInitRow" :column-auto-width="true" ref="dataGridRef">
+            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" @row-inserted="onRowInserted"
+                :focused-row-key="focusedRowKey" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxEditing :use-icons="true" :allow-adding="true" :allow-updating="true" template="button-template" new-row-position="pageBottom"
+                <DxEditing :use-icons="true" :allow-adding="true" :allow-updating="true" new-row-position="pageBottom"
                     :allow-deleting="true" mode="cell">
                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                 </DxEditing>
-                <DxToolbar>
+                <!-- <DxEditing :allow-updating="true" :allow-adding="true" mode="cell" /> -->
+                <!-- <DxToolbar>
                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                </DxToolbar>
-                <template #button-template>
+                </DxToolbar> -->
+                <!-- <template #button-template>
                     <DxButton icon="plus" @click="addRow" />
-                </template>
-                <DxColumn caption="품목" data-field="item">
-                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label"/>
+                </template> -->
+                <DxColumn caption="품목" edit-cell-template="itemCustom" data-field="item">
+                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label" />
+                    <DxRequiredRule />
                 </DxColumn>
-                <template #item="{ data }">
-                    <!-- <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.item" :required="true" /> -->
+                <template #itemCustom="{ data }">
+                    <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.data.item" :required="true" />
                 </template>
-                <DxColumn caption="규격" data-field="standard">
-                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label"/>
+                <DxColumn caption="규격" data-field="standard" edit-cell-template="standard">
+                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label" />
+                    <DxRequiredRule />
                 </DxColumn>
                 <template #standard="{ data }">
-                    <!-- <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.standard" :required="true" /> -->
+                    <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.data.standard"
+                        :required="true" />
                 </template>
-                <DxColumn caption="단위" data-field="unit">
-                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label"/>
+                <DxColumn caption="단위" data-field="unit" edit-cell-template="unit">
+                    <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label" />
+                    <DxRequiredRule />
                 </DxColumn>
                 <template #unit="{ data }">
-                    <!-- <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.unit" :required="true" /> -->
+                    <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.data.unit" :required="true" />
                 </template>
-                <DxColumn caption="수량" data-field="quantity" />
-                <DxColumn caption="단가" data-field="unitPrice" />
-                <DxColumn caption="금액" data-field="amount" />
+                <DxColumn caption="수량" data-field="quantity" edit-cell-template="quantity">
+                    <DxRequiredRule />
+                </DxColumn>
+                <template #quantity="{ data }">
+                    <DxNumberBox v-model:value="data.data.quantity" min="0" />
+                </template>
+
+                <DxColumn caption="단가" data-field="unitPrice" edit-cell-template="unitPrice">
+                    <DxRequiredRule />
+                </DxColumn>
+                <template #unitPrice="{ data }">
+                    <DxNumberBox v-model:value="data.data.unitPrice" min="0" />
+                </template>
+
+                <DxColumn caption="금액" data-field="amount" edit-cell-template="amount">
+                    <DxRequiredRule />
+                </DxColumn>
+                <template #amount="{ data }">
+                    <DxNumberBox v-model:value="data.data.amount" min="0" />
+                </template>
                 <DxColumn caption="비고" data-field="remark" />
+                <!-- <DxColumn caption="비고" data-field="remark" edit-cell-template="remark">
+                    <DxRequiredRule />
+                </DxColumn>
+                <template #remark="{ data }">
+                    <DxNumberBox v-model:value="data.data.remark" min="0" />
+                </template> -->
                 <DxColumn caption="삭제" cell-template="action" />
                 <template #action="{ data }">
                     <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
@@ -84,7 +112,8 @@
 
         </div>
         <div class="btn_submit text-align-center mt-20">
-            <button-basic @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'" :mode="'contained'" />
+            <button-basic @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
+                :mode="'contained'" />
         </div>
     </a-modal>
 </template>
@@ -96,14 +125,26 @@ import { dataDemoMain } from '../utils/index'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxEditing, DxPaging, DxTexts, DxLookup } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
+import { useMutation } from '@vue/apollo-composable';
+import mutations from "@/graphql/mutations/AC/AC1/AC120";
+import DxNumberBox from "devextreme-vue/number-box";
+import { companyId } from "@/helpers/commonFunction";
+import notification from '@/utils/notification';
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: {
         modalStatus: {
             type: Boolean,
             default: false,
         },
+        dataRowFocus: {
+            type: Object,
+            default: {},
+        }
     },
     components: {
+        DxRequiredRule, DxNumberBox,
         DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxButton, DxToolbar, DxEditing, DxPaging, DxTexts, DxLookup,
     },
 
@@ -111,33 +152,36 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
         // const gridRef = ref(); // ref of grid
         const dataGridRef: any = ref("grid"); // ref of grid Instance
         const focusedRowKey = ref(0)
         let arraySelectBox = reactive([
             {
-                value: 1,
+                value: '1',
                 label: '수익사업'
             },
             {
-                value: 2,
+                value: '2',
                 label: '자부담'
             },
             {
-                value: 3,
+                value: '3',
                 label: '보조금'
             },
             {
-                value: 4,
+                value: '4',
                 label: '후원듬'
             }
         ])
-        const dataSource = ref([])
+        const dataSource = ref<any>([])
         const addRow = () => {
             // dataGridRef.value.instance.addRow();
             // dataGridRef.value.instance.deselectAll();
             dataGridRef.value.instance.addRow()
             dataGridRef.value.instance.closeEditCell()
+
             setTimeout(() => {
                 let keyNew = dataGridRef.value.instance.getKeyByRowIndex(dataSource.value.length - 1);
                 focusedRowKey.value = keyNew;
@@ -148,6 +192,33 @@ export default defineComponent({
             // dataActiveRow.value = e.data
         }
 
+        // =================== GRAPHQL ===================
+        // mutation deleteStatementOfGoods    
+        const {
+            mutate: mutateDeleteStatementOfGoods, onDone: doneDeleteStatementOfGoods, onError: errorDeleteStatementOfGoods,
+        } = useMutation(mutations.deleteStatementOfGoods);
+        // mutation deleteStatementOfGoods    
+        const {
+            mutate: mutateSaveStatementOfGoods, onDone: doneSaveStatementOfGoods, onError: errorSaveStatementOfGoods,
+        } = useMutation(mutations.saveStatementOfGoods);
+
+        // ============== ON DONE MUTATION GRAPHQL ===============
+        // DeleteStatementOfGoods
+        doneDeleteStatementOfGoods((e) => {
+            notification('success', Message.getMessage('COMMON', '106').message)
+        })
+        errorDeleteStatementOfGoods(e => {
+            notification('error', e.message)
+        })
+
+        // SaveStatementOfGoods
+        doneSaveStatementOfGoods((e) => {
+            notification('success', Message.getMessage('COMMON', '106').message)
+        })
+        errorSaveStatementOfGoods(e => {
+            notification('error', e.message)
+        })
+
         const cancel = () => {
             emit("closePopup", false)
         };
@@ -156,9 +227,35 @@ export default defineComponent({
         }
 
         const deleteItem = (data: any) => {
+            console.log(data);
+
+            if (!store.state.common.formDataAC120 && dataSource.length == 1) { // status update = true and 1 data left
+                mutateDeleteStatementOfGoods({
+
+                })
+            }
+
         }
         const onSubmit = (e: any) => {
-
+            // if (!store.state.common.formDataAC120) { // status update = true
+                let dataSave = {
+                    companyId: companyId,
+                    fiscalYear: globalYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transactionDetailDate: props.dataRowFocus.transactionDetailDate,
+                    accountingDocumentId: props.dataRowFocus.accountingDocumentId,
+                    items: JSON.parse(JSON.stringify(dataSource.value, (name, val) => {
+                        if (
+                            name === "__KEY__"
+                        ) {
+                            delete val[name];
+                        } else {
+                            return val;
+                        }
+                    }))
+                }
+                mutateSaveStatementOfGoods(dataSave)
+            // }
         }
         return {
             move_column,

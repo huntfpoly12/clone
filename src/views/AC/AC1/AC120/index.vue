@@ -14,7 +14,6 @@
             </a-spin>
             <div class="flex">
                 <div class="action">
-                    {{ statusAdjusting }}
                     <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
                     <DxButton icon="plus" class="ml-4">
                         <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
@@ -60,7 +59,8 @@
             </div>
         </div>
         <div class="main">
-            <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
+            {{ dataSource }}
+            <div class="data-grid" :style="[store.state.common.statusShowFullAC120 ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
                     :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
@@ -202,6 +202,8 @@
                         @selection-changed="selectionChanged">
                         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
                             :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging" />
+                        <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
+                            mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
                         <template #transactionDetailDate="{ data }">
@@ -242,7 +244,7 @@
 
                         <DxColumn caption="물품 내역" cell-template="normality" />
                         <template #normality="{ data }">
-                            <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail(data.goodsCount)" />
+                            <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail(data.data)" />
                         </template>
                         <DxColumn caption="수기 여부" cell-template="slipRegistration" />
                         <template #slipRegistration="{ data }">
@@ -273,6 +275,7 @@
                     </DxDataGrid>
                 </a-spin>
             </div>
+            {{ dataRowFocus }}
             <DetailComponent />
         </div>
 
@@ -281,15 +284,13 @@
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
         :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
 
-    <PopupSlipCancellation :modalStatus="statusModalSlipCancellation" @closePopup="statusModalSlipCancellation = false"
-        @submit="statusModalSlipCancellation = false" />
+    <PopupSlipCancellation :modalStatus="statusModalSlipCancellation" @closePopup="statusModalSlipCancellation = false" :dataRows='dataRows'/>
 
     <PopupSlipRegistration :modalStatus="statusModalSlipRegistrantion" @closePopup="statusModalSlipRegistrantion = false"
         @submit="onFillDataAdd" />
 
 
-    <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false"
-        @submit="statusModalItemDetail = false" />
+    <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" :dataRowFocus='dataRowFocus' />
 
     <HistoryPopup :modalStatus="modalHistoryStatusAccountingProcess"
         @closePopup="modalHistoryStatusAccountingProcess = false" :data="popupData" title="변경이력"
@@ -360,6 +361,10 @@ export default defineComponent({
         const popupData = ref({});
         const modalHistoryStatusAccountingProcess = ref<boolean>(false);
         const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
+
+        const dataRows: any = ref([])
+        const dataRowFocus: any = ref([])
+
         let arraySelectBox = reactive([
             {
                 value: 1,
@@ -379,7 +384,7 @@ export default defineComponent({
             }
         ])
 
-        store.state.common.ac120.formData = reactive({ ...initialStateFormData })
+        store.state.common.formDataAC120 = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
         const dataSource = ref<any>([])
@@ -455,7 +460,7 @@ export default defineComponent({
         })
 
         // On Done CreateAccountingDocument
-        watch(() => store.state.common.ac120.onDoneAdd, (value) => {
+        watch(() => store.state.common.onDoneAddAC120, (value) => {
             triggerGetAccountingProcesses.value = true
             triggerGetAccountingDocuments.value = true
         })
@@ -466,7 +471,15 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
 
-        const selectionChanged = () => { }
+        const selectionChanged = (data: any) => { 
+            data.component.getSelectedRowsData().then((rowData: any) => {
+                dataRows.value = rowData
+                // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
+                //     gridRefPA510.value?.instance.deselectAll()
+                //     dataRows.value = []
+                // }
+            })
+        }
 
         const totalDeposits = () => {
             let total = 0;
@@ -521,6 +534,9 @@ export default defineComponent({
 
 
         const actionPopupItemDetail = (data: any) => {
+            console.log(data);
+            
+            dataRowFocus.value = data
             statusModalItemDetail.value = true
         }
 
@@ -583,9 +599,8 @@ export default defineComponent({
         const onFillDataAdd = (dataAdd: any) => {
             statusModalSlipRegistrantion.value = false
             console.log(dataAdd);
-            Object.assign(store.state.common.ac120.formData, dataAdd);
-            addNewRow(store.state.common.ac120.formData)
-
+            Object.assign(store.state.common.formDataAC120, dataAdd);
+            addNewRow(store.state.common.formDataAC120)
         }
 
 
@@ -622,6 +637,7 @@ export default defineComponent({
             onFillDataAdd,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,
+            dataRows, dataRowFocus,
             // onSubmit,
             // refFormAC120,
 
