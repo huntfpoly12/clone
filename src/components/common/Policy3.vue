@@ -1,12 +1,4 @@
 <template>
-  <p class=MsoNormal align=center style='text-align:center;line-height:normal'><span
-style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;'>3.
-</span><span lang=KO style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;
-'>회계서비스약관</span><span lang=KO style='font-size:14.0pt;
-font-family:"Malgun Gothic",sans-serif;'> </span><span
-lang=KO style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif;
-'>동의</span></p>
-
 <p class=MsoNormal style='margin-top:12.0pt;margin-right:0in;margin-bottom:
 3.0pt;margin-left:0in;line-height:normal'><b><span lang=KO style='font-size:13px;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
 style='font-size:13px;font-family:"Malgun Gothic",sans-serif'> 1<span

@@ -1,8 +1,4 @@
 <template>
-  
-<p class=MsoNormal align=center style='text-align:center'><b><span
-style='font-size:13px;line-height:107%;font-family:"Malgun Gothic",sans-serif;'>1. <span lang=KO>서비스약관 동의</span></span></b></p>
-
 <p class=MsoNormal align=center style='text-align:center;line-height:normal'><b><span
 lang=KO style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif'>제</span></b><b><span
 style='font-size:14.0pt;font-family:"Malgun Gothic",sans-serif'> 1 </span></b><b><span
