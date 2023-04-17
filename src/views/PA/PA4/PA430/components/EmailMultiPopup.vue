@@ -23,7 +23,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref } from 'vue'
+import { defineComponent, watch, ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA6/PA630/index"
@@ -38,17 +39,19 @@ export default defineComponent({
             type: Object,
             default: {}
         },
-        emailUserLogin: {
-            type: String,
-            default: ""
-        }
     },
     components: {
     },
     setup(props, { emit }) {
+        const store = useStore()
+        const token = computed(() => sessionStorage.getItem('token'));
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfor = computed(() => store.state.auth.userInfor);
         let emailAddress = ref('');
         watch(() => props.data, (val) => {
-            emailAddress.value = props.emailUserLogin
+            if (val) {
+                emailAddress.value = userInfor.value?.email
+            }
         });
 
         const setModalVisible = () => {

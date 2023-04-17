@@ -30,13 +30,13 @@
       <a-col>
         <div class="search-production">
           <a-form-item label="제작요청상태">
-            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작요청후'"
+            <switch-basic :onChange="onChangeSwitch" :textCheck="'제작요청후'"
               :textUnCheck="'제작요청전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
           <div class="mt-5 production-check">
-            <CheckboxGroup :disabled="!filterBF620.beforeProduction" :options="productionStatusesCheckbox"
+            <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
               v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default defineComponent({
     });
     // watch beforeProduction
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
-      if (!newVal) {
+      if (newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
         filterBF620.value.productionStatuses = [0, 1, 2, -1];
@@ -168,6 +168,9 @@ export default defineComponent({
     const onChange = () => {
       filterBF620.value.companyCode = filterBF620.value.companyCode.toUpperCase();
     }
+    const onChangeSwitch = (e: any) => {
+      filterBF620.value.beforeProduction = !e;
+    }
     return {
       radioCheckForeigner,
       foreigner,
@@ -178,7 +181,7 @@ export default defineComponent({
       reportType,
       // afterDeadLineIndex,
       reportTypeTab2,
-      onChange
+      onChange, onChangeSwitch,
     };
   },
 });

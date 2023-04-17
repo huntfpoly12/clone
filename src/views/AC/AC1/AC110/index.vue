@@ -103,9 +103,11 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="theOrder" :show-row-lines="true" :hoverStateEnabled="true"
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" :show-row-lines="true"
                 :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxEditing :allow-updating="true" :start-edit-action="'click'" mode="batch" />
+                <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
@@ -151,7 +153,7 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" cell-template="resolutionClassification" />
+                <DxColumn caption="결의구분" cell-template="resolutionClassification" :allow-editing="false" />
                 <template #resolutionClassification="{ data }">
                   {{ data.data.bankbookDetailId !== null ? resolutionClassification.find((item: any) =>
                     item.value ==
@@ -160,23 +162,23 @@
                 <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end" />
                 <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end" />
                 <DxColumn caption="적요" data-field="summary" width="200" />
-                <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
+                <DxColumn caption="계정과목" cell-template="accountCode" width="200" :allow-editing="false" />
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
                     :classification="data.data.income !== 0 ? [4] : [5]" />
                 </template>
-                <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
+                <DxColumn caption="상대계정" cell-template="relationCode" width="200" :allow-editing="false" />
                 <template #relationCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.relationCode"
                     :classification="data.data.resolutionClassification === 2 ? [4] : []"
                     :disabled="data.data.resolutionClassification === 1" />
                 </template>
-                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
+                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" :allow-editing="false" />
                 <template #fundingSource="{ data }">
                   <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
                 </template>
-                <DxColumn caption="거래처" data-field="clientId" alignment="start" />
-                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
+                <DxColumn caption="거래처" data-field="clientId" alignment="start" :allow-editing="false" />
+                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" :allow-editing="false" />
                 <template #letterOfApprovalType="{ data }">
                   <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
                     :disabled="data.data.resolutionClassification === 1"
@@ -252,7 +254,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
@@ -297,7 +299,8 @@ export default defineComponent({
     HistoryPopup,
     SaveFilled,
     DxPaging,
-    DxSelectBox
+    DxSelectBox,
+    DxEditing
   },
   setup() {
     const store = useStore();
@@ -740,8 +743,10 @@ export default defineComponent({
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
         initTransactionDetails.theOrder = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].theOrder + 1 || 1
+        initTransactionDetails.accountingDocumentId = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].accountingDocumentId + 1 + 'create' || 1
       } else {
         initTransactionDetails.theOrder = 0
+        initTransactionDetails.accountingDocumentId = 'create'
       }
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
@@ -749,10 +754,10 @@ export default defineComponent({
       if (rowKeyfocused.value === null) return
       const res = event.validationGroup.validate();
       if (!res.isValid) return
-      let payloadCreate: any = {}
-      const isCreate = !dataSourceTransactionDetails.value.transactionDetails[dataSourceTransactionDetails.value.transactionDetails.length - 1].accountingDocumentId
-      const payLoadUpdate = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
-        return {
+      const payLoadUpdate: any = []
+      const payloadCreate: any = []
+      dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
+        const objPayload = {
           resolutionClassification: item.resolutionClassification,
           income: item.income,
           spending: item.spending,
@@ -765,12 +770,17 @@ export default defineComponent({
           causeUsage: item.causeUsage,
           memo: item.memo,
           clientId: item.clientId,
-          accountingDocumentId: item.accountingDocumentId,
+        }
+        if(item.accountingDocumentId.toString().includes('create')){
+          payloadCreate.push(objPayload)
+        }else{
+          payLoadUpdate.push({
+            ...objPayload,
+            accountingDocumentId: item.accountingDocumentId
+          })
         }
       })
-      if (isCreate) {
-        payloadCreate = payLoadUpdate.splice(payLoadUpdate.length - 1, 1)
-        delete payloadCreate.accountingDocumentId
+      if (payloadCreate.length) {
         const payloadClear = makeDataClean({
           ...payloadGetTransactionDetails,
           updates: payLoadUpdate,
@@ -871,7 +881,7 @@ export default defineComponent({
       modalHistoryAccountingProcessLogs,
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
-      updateAddBankbookDetailProof
+      updateAddBankbookDetailProof,
     };
   },
 });

@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 let statesBF620 = {
   filterBF620: {
-    beforeProduction: true,
+    beforeProduction: false,
     productionStatuses: [1,0,-1,2],
     companyCode: "",
     companyName: "",
-    manageUserId: 0,
-    salesRepresentativeId: 0,
+    manageUserId: null,
+    salesRepresentativeId: null,
     active: true,
     paymentYear: +dayjs().format("YYYY"),
     paymentMonth: +dayjs().format("MM"),
