@@ -241,6 +241,7 @@ export default defineComponent({
     PA520PopupEdit,
   },
   setup() {
+
     const pa520Grid = ref<any>(null);
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
