@@ -359,12 +359,8 @@ import { useRouter } from "vue-router";
 import { makeDataClean } from "@/helpers/commonFunction"
 import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3} from "./utils";
 import dayjs from 'dayjs';
-import Policy1 from "./components/Policy1.vue"
-import Policy2 from "./components/Policy2.vue"
-import Policy3 from "./components/Policy3.vue"
-import Policy4 from "./components/Policy4.vue"
 export default {
-    components: { Policy1,Policy2,Policy3,Policy4,CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
+    components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
     setup() {
         let modalStatus = ref(false)
         const store = useStore();
