@@ -45,7 +45,7 @@
                 <a-form-item label="고용보험 적용율" label-align="right" class="custom-style-label">
                     <radio-group :arrayValue="radioCheckPersenPension"
                         v-model:valueRadioCheck="originDataUpdate.input.employeementInsuranceSupportPercent"
-                        layoutCustom="horizontal" :disabled="!originDataUpdate.input.insuranceSupport || !insuranceSupport" />
+                        layoutCustom="horizontal" :disabled="!originDataUpdate.input.employeementInsuranceDeduction || !originDataUpdate.input.insuranceSupport" />
                 </a-form-item>
             </a-col>
         </a-row>

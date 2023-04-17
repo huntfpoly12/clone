@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loadingCreated">
-        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add">
+        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add" :disabled="true">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
