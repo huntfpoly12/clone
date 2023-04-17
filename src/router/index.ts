@@ -4,6 +4,7 @@ import LoginLayout from "../layouts/LoginLayout.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import RquestContract from "../views/requestContract/index.vue";
 import ResetPassword from "../views/ResetPassword.vue";
+import ForgetPassword from "../views/ForgetPassword.vue";
 import ChangePassword from "../views/ChangePassword.vue";
 import NotFound from "../views/NotFound.vue";
 import { AdminScreenRole, WorkScreenRole } from "@bankda/jangbuda-common";
@@ -48,6 +49,16 @@ const routes = [
       {
         path: "",
         component: ChangePassword,
+      },
+    ],
+  },
+  {
+    path: "/forget-password",
+    component: LoginLayout,
+    children: [
+      {
+        path: "",
+        component: ForgetPassword,
       },
     ],
   },

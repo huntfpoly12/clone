@@ -30,12 +30,16 @@
       <p v-if="errors && errors.error" class="invalid">
         {{ isSignup ? errors.error : 'Invalid credentials' }}
       </p>
-      <button class="primary" type="submit">
-        {{ signinLoading ? '로그인중입니다..' : '로그인' }}
-      </button>
+      <div>
+        <button class="primary" type="submit">
+          {{ signinLoading ? '로그인중입니다..' : '로그인' }}
+        </button>
+        <router-link to="/forget-password"> 비밀번호 분실!</router-link>
+      </div>
+
     </form>
     <div class="request-contract">
-      <router-link to="/request-contract"> 신규고객 서비스가입신청!!! </router-link>
+      <router-link to="/request-contract"> 신규고객 서비스가입신청 ! </router-link>
     </div>
   </div>
 </template>
@@ -160,6 +164,7 @@ input {
   padding: 4px 15px;
   font-size: 14px;
   cursor: pointer;
+  margin-right: 40px;
 }
 .primary:hover {
   background-color: #40a9ff;
