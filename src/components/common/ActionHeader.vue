@@ -4,38 +4,18 @@
       {{tabTitle.name}} [{{tabTitle.id}}]
     </a-typography-title>
     <div class="list-action">
-      <a-tooltip v-if="buttonSearch">
-        <template #title>검색</template>
-        <span>
-          <DxButton @click="actionHeader($event, 'Search')" width="70px">
-          <SearchOutlined :style="{fontSize: '17px', color: 'black'}"/>
+        <DxButton @click="actionHeader($event, 'Search')"  :disabled="!buttonSearch">
+          <SearchOutlined :style="{fontSize: '17px', color: 'black'}"/> 조회
         </DxButton>
-        </span>
-      </a-tooltip>
-      <a-tooltip v-if="buttonSave">
-        <template #title>저장</template>
-        <span>
-        <DxButton @click="actionHeader($event, 'Save')" size="large" width="70px">
-          <SaveOutlined :style="{fontSize: '17px', color: 'black'}"/>
+        <DxButton @click="actionHeader($event, 'Save')" size="large" :disabled="!buttonSave">
+          <SaveOutlined :style="{fontSize: '17px', color: 'black'}"/> 저장
         </DxButton>
-        </span>
-      </a-tooltip>
-      <a-tooltip v-if="buttonDelete">
-        <template #title>삭제</template>
-        <span>
-        <DxButton @click="actionHeader($event, 'Delete')" size="large" width="70px">
-          <DeleteOutlined :style="{fontSize: '17px', color: 'black'}"/>
+        <DxButton @click="actionHeader($event, 'Delete')" size="large"  :disabled="!buttonDelete">
+          <DeleteOutlined :style="{fontSize: '17px', color: 'black'}"/> 삭제
         </DxButton>
-        </span>
-      </a-tooltip>
-      <a-tooltip v-if="buttonPrint">
-        <template #title>출력</template>
-        <span>
-        <DxButton @click="actionHeader($event, 'Print')" size="large" width="70px">
-          <PrinterOutlined :style="{fontSize: '17px', color: 'black'}"/>
+        <DxButton @click="actionHeader($event, 'Print')" size="large" :disabled="!buttonPrint">
+          <PrinterOutlined :style="{fontSize: '17px', color: 'black'}"/> 인쇄
         </DxButton>
-        </span>
-      </a-tooltip>
     </div>
   </div>
 </template>
