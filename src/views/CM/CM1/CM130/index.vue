@@ -1,8 +1,9 @@
 <template>
+  <action-header title="통장 관리" @actionSave="onSubmitConfig" :buttonSave="true"/>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <!-- <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction"> -->
             <a-tabs v-model:activeKey="activeKey" type="card">
-                <template #rightExtra>
+                <!-- <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
                             <a-tooltip color="black">
@@ -34,16 +35,16 @@
                                 </a-tooltip>
                             </div>
                         </div>
-                        <div v-if="activeKey == '3'">
+                        <div v-if="activeKey == '3'"> -->
                             <!-- <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
                                 </a-button>
                             </a-tooltip> -->
-                        </div>
+                        <!-- </div>
                     </div>
-                </template>
+                </template> -->
                 <a-tab-pane key="1" tab="기본">
                     <a-spin tip="Loading..." :spinning="loading">
                     <a-row>

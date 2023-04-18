@@ -3,7 +3,8 @@
     title="후원자 관리"
     @actionSave="actionSave($event)"
     @actionSearch="actionSearch && searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-620">
     <div class="search-form dflex">
