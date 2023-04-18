@@ -160,7 +160,7 @@
                             </label>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                            </div>
+                            </div>{{ valueFacilityBusinesses }}
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -747,6 +747,10 @@ export default {
             (newVal) => {
                 contractCreacted.bizType = newVal;
                 changeTypeCompany(newVal);
+                if (newVal == 2) {
+                  valueFacilityBusinesses.value = Array()
+                  dataActiveRow.value = null
+                }
             }
         );
         watch(() => valueAccountingService.value,
