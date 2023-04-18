@@ -1,11 +1,11 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.statusDisabledStatus" />
-    <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.statusDisabledStatus"/> -->
+    <DxButton class="ml-3" icon="plus" @click="onActionAddItem" :disabled="store.state.common.pa110.statusDisabledStatus" />
+    <!-- <DxButton class="ml-3" icon="edit" @click="editItem" :disabled="store.state.common.pa110.statusDisabledStatus"/> -->
     <!-- <DxButton @click="onSubmit($event)" size="large"
-        class="ml-4" :disabled="store.state.common.statusDisabledStatus">
+        class="ml-4" :disabled="store.state.common.pa110.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
     </DxButton> -->
     <DxButton class="ml-4 d-flex" style="cursor: pointer" @click="showHistory">
@@ -24,7 +24,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.pa110.statusDisabledStatus || (store.state.common.pa110.statusChangeFormAdd&&store.state.common.pa110.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -113,7 +113,7 @@ export default defineComponent({
         const messages = app.appContext.config.globalProperties.$messages;
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
-        const processKey = computed(() => store.state.common.processKeyPA110)
+        const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const trigger = ref<boolean>(false)
 
         const popupDataHistory: any = ref({})
@@ -157,26 +157,26 @@ export default defineComponent({
             }
         };
         const onActionAddItem = (value: any) => {
-            if (store.state.common.statusChangeFormEdit) {
+            if (store.state.common.pa110.statusChangeFormEdit) {
                 modalStatusAdd.value = true
-                store.state.common.statusClickButtonAdd = true;
+                store.state.common.pa110.statusClickButtonAdd = true;
             } else {
-                if (store.state.common.statusRowAdd) {
-                    store.state.common.addRow++ // add row
-                    store.state.common.statusRowAdd = false;
-                    store.state.common.statusFormAdd = true;
+                if (store.state.common.pa110.statusRowAdd) {
+                    store.state.common.pa110.addRow++ // add row
+                    store.state.common.pa110.statusRowAdd = false;
+                    store.state.common.pa110.statusFormAdd = true;
                 }
                 else {
-                    if (store.state.common.statusChangeFormAdd) {
+                    if (store.state.common.pa110.statusChangeFormAdd) {
                         modalStatusAdd.value = true
-                        store.state.common.statusClickButtonAdd = true;
+                        store.state.common.pa110.statusClickButtonAdd = true;
                     }
                 }
             }
         }
         const editItem = () => {
             if (props.dataRows.length) {
-                if (store.state.common.statusChangeFormEdit) {
+                if (store.state.common.pa110.statusChangeFormEdit) {
                     modalChangeRow.value = true
                 } else {
                     modalEdit.value = true;
@@ -259,33 +259,33 @@ export default defineComponent({
             popupDataHistoryStatus.value = { ...processKey.value }
         }
         const onSubmit = (e: any) => {
-            store.state.common.actionSubmit++
+            store.state.common.pa110.actionSubmit++
         }
 
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
-                store.state.common.checkClickYear = false;
-                store.state.common.actionSubmit++
+                store.state.common.pa110.checkClickYear = false;
+                store.state.common.pa110.actionSubmit++
             } else { 
-                if (store.state.common.statusRowAdd) { // add row
-                    store.state.common.addRow++ // add row
-                    store.state.common.statusRowAdd = false;
-                    store.state.common.statusFormAdd = true;
+                if (store.state.common.pa110.statusRowAdd) { // add row
+                    store.state.common.pa110.addRow++ // add row
+                    store.state.common.pa110.statusRowAdd = false;
+                    store.state.common.pa110.statusFormAdd = true;
                 } else { // reset form
-                    store.state.common.actionResetForm++;
+                    store.state.common.pa110.actionResetForm++;
                 }
             }
         }
         const statusComfirmChange = (res: any) => {
-            store.state.common.statusClickEditItem = true
+            store.state.common.pa110.statusClickEditItem = true
             if (res) {
-                store.state.common.actionSubmit++
+                store.state.common.pa110.actionSubmit++
             } else {
-                store.state.common.loadingFormData++
+                store.state.common.pa110.loadingFormData++
             }
         }
-        watch(() => store.state.common.onEditItem, (value) => {
-            store.state.common.statusClickEditItem = false
+        watch(() => store.state.common.pa110.onEditItem, (value) => {
+            store.state.common.pa110.statusClickEditItem = false
             editItem()
         })
         return {

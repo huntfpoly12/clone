@@ -233,7 +233,10 @@
   color: red !important;
 }
 .ant-message {
-	&:not(:first-child) {
-		padding-top: 60px !important;
+	$child-count: 100;
+	@for $i from 1 through $child-count {
+		&:nth-child(#{$i}) {
+			padding-top:  $i * 60px !important;
+		  }
 	}
 }
