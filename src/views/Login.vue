@@ -30,14 +30,18 @@
       <p v-if="errors && errors.error" class="invalid">
         {{ isSignup ? errors.error : 'Invalid credentials' }}
       </p>
-      <div class="activate">
-        <button class="primary" type="submit">
-          {{ signinLoading ? '로그인중입니다..' : '로그인' }}
-        </button>
-        <div style="float: right;padding: 6px 0px 6px 0px;">
-          <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openForgotPassword"> 비밀번호 찾기</a>
-        </div>
-      </div>
+      <a-row>
+          <a-col :span="9">
+            <button class="primary" type="submit">
+              {{ signinLoading ? '로그인중입니다..' : '로그인' }}
+            </button>
+          </a-col>
+          <a-col :span="15">
+            <div style="float: right;padding: 6px 0px 6px 0px;">
+              <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openForgotPassword"> 비밀번호 찾기</a>
+            </div>
+          </a-col>
+        </a-row>
       <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
     </form>
     <div class="request-contract">
@@ -171,7 +175,6 @@ input {
   padding: 4px 15px;
   font-size: 14px;
   cursor: pointer;
-  margin-right: 85px;
 }
 .primary:hover {
   background-color: #40a9ff;
