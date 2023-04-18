@@ -1,5 +1,5 @@
 <template>
-  <action-header title="퇴직소득자료입력" @actionSave="saving"/>
+  <action-header title="퇴직소득자료입력" @actionSave="saving"  :buttonSave="true"/>
   <div id="pa-420">
     <div class="page-content">
       <a-row>

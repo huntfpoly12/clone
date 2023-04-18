@@ -326,6 +326,7 @@ export default defineComponent({
 }
 
 .ac110-disable-form-upload {
+  opacity: .7;
   pointer-events: none;
 }
 </style>
