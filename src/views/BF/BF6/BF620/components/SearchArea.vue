@@ -112,7 +112,7 @@ export default defineComponent({
     watch(
       () => [reportType.value.checkbox2, reportType.value.checkbox3],
       ([newVal2, newVal3]) => {
-        if (newVal2 && newVal3) {
+        if (newVal2 && newVal3 && props.tab1) {
           reportType.value.checkbox1 = true;
           filterBF620.value.reportType = null;
           return;
@@ -135,18 +135,18 @@ export default defineComponent({
       },
       { immediate: true }
     );
-    // watchEffect(() => {
-    //   reportType.checkbox2 = filterBF620.value.reportType == 1;
-    //   reportType.checkbox3 = filterBF620.value.reportType == 6;
-    // });
+
     //watch date
+
     watch(month2, (newVal: any) => {
       if (newVal) {
         filterBF620.value.paymentYear = +month2.value.toString().slice(0, 4);
         filterBF620.value.paymentMonth = +month2.value.toString().slice(4, 6);
       }
     });
+
     // watch beforeProduction
+
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
       if (newVal) {
         filterBF620.value.productionStatuses = [];
@@ -154,23 +154,9 @@ export default defineComponent({
         filterBF620.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
-    // afterDeadLineIndex
-    // const afterDeadLineIndex = ref(1);
-    // watch(afterDeadLineIndex,(newVal: any)=> {
-    //   if(newVal === 1) {
-    //     filterBF620.value.index = 0;
-    //     filterBF620.value.afterDeadline = false;
-    //   }
-    //   if(newVal === 2) {
-    //     filterBF620.value.index = 1;
-    //     filterBF620.value.afterDeadline = false;
-    //   }
-    //   if(newVal === 3) {
-    //     filterBF620.value.index = 0;
-    //     filterBF620.value.afterDeadline = true;
-    //   }
-    // })
+
     // ----------------convert companyCode to upper case------------
+
     const onChange = () => {
       filterBF620.value.companyCode = filterBF620.value.companyCode.toUpperCase();
     }
@@ -185,6 +171,7 @@ export default defineComponent({
         filterBF620.value.beforeProduction = !val;
       }
     }))
+
     return {
       radioCheckForeigner,
       foreigner,
