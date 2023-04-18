@@ -13,8 +13,6 @@ export default gql`
       facilityBusinessId: $facilityBusinessId
       transactionDetailDate: $transactionDetailDate
       accountingDocumentId: $accountingDocumentId
-    ) {
-      scalar
-    }
+    )
   }
 `;

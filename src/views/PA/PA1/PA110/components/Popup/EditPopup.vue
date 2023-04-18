@@ -43,7 +43,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA110)
+        const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const dayValue = ref(1)
         const setModalVisible = () => {
             emit("closePopup", false)
@@ -56,9 +56,9 @@ export default defineComponent({
         onDone(() => {
             notification('success', Message.getMessage('COMMON', '106').message)
             emit("closePopup", false)
-            store.state.common.onDoneEdit = true;
-            store.state.common.loadingTableInfo++
-            // store.state.common.loadingFormData++
+            store.state.common.pa110.onDoneEdit = true;
+            store.state.common.pa110.loadingTableInfo++
+            // store.state.common.pa110.loadingFormData++
         })
         onError((e: any) => {
             notification('error', e.message)

@@ -28,8 +28,6 @@
                 <DxColumn caption="마감현황" cell-template="status" alignment="center"/>
                 <template #status="{ data }">
                     <process-status v-model:valueStatus="data.data.status" :dataRow="data.data" @checkConfirmRowTable="changeStatusRowTable" />
-                    <!-- <process-status-tooltip v-model:valueStatus="data.data.status" style="width: 100px;"
-                        :dataRow="data.data" @dataRow="changeStatus" /> -->
                 </template>
                 <DxColumn caption="마감일" cell-template="마감일" alignment="center"/>
                 <template #마감일="{ data }">
@@ -102,6 +100,7 @@ export default defineComponent({
             onError: errChangeStatus
         } = useMutation(mutations.changeIncomeProcessStatus);
         doneChangeStatus(() => {
+            refetchTable()
             notification('success', `업부상태 변경되었습니다!`)
         })
         errChangeStatus((error) => {
@@ -196,7 +195,7 @@ export default defineComponent({
   margin-right: 0px;
 }
 :deep .buttonModal {
-    margin-top: -5px;
-    height: 27px !important;
+    //margin-top: -5px;
+    //height: 27px !important;
 }
 </style>

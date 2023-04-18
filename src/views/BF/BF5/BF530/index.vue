@@ -12,7 +12,7 @@
         <tab-3-component :search="search3" :onSearch="onSearch"></tab-3-component>
       </a-tab-pane>
       <a-tab-pane key="4" tab="보수총액신고 신청현황 관리">
-        <tab-3-component :search="search3" :onSearch="onSearch"></tab-3-component>
+        <tab-4-component :search="search3" :onSearch="onSearch"></tab-4-component>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -24,12 +24,14 @@ import { SearchOutlined } from '@ant-design/icons-vue';
 import Tab1Component from './components/Tab1Component.vue';
 import Tab2Component from './components/Tab2Component.vue';
 import Tab3Component from './components/Tab3Component.vue';
+import Tab4Component from './components/Tab4Component.vue';
 import { useStore } from 'vuex';
 export default defineComponent({
   components: {
     Tab1Component,
     Tab2Component,
     Tab3Component,
+    Tab4Component,
     SearchOutlined,
   },
   setup() {
@@ -51,7 +53,7 @@ export default defineComponent({
         search3.value++;
       }
     };
-    onMounted(()=>{
+    onMounted(() => {
       // onSearch();
     })
     return {
@@ -64,5 +66,4 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss" src="./style/style.scss">
-</style>
+<style scoped lang="scss" src="./style/style.scss"></style>

@@ -12,8 +12,11 @@
       <div class="ac-110__top-flex">
         <div class="ac-110__top-flex-action">
           <ProcessStatus
+            v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
             :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
             :disabled="true" />
+            <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
+            </button-basic>
           <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
         </div>
         <div class="ac-110__top-flex-action">
@@ -103,10 +106,10 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" :show-row-lines="true"
-                :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxEditing :allow-updating="true" :start-edit-action="'click'" mode="batch" />
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" >
+                <DxEditing :allow-updating="true" :allow-adding="true" :start-edit-action="'click'" mode="batch" />
                 <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
@@ -153,32 +156,67 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" cell-template="resolutionClassification" :allow-editing="false" />
+                <DxColumn caption="결의구분" edit-cell-template="resolutionClassification" data-field="resolutionClassification" >
+                  <DxLookup
+                    :data-source="resolutionClassification"
+                    display-expr="label"
+                    value-expr="value"
+                  />
+                </DxColumn>
                 <template #resolutionClassification="{ data }">
-                  {{ data.data.bankbookDetailId !== null ? resolutionClassification.find((item: any) =>
-                    item.value ==
-                    data.data.resolutionClassification).label : '' }}
+                  <ResolutionClassificationSelect v-model:valueInput="data.data.resolutionClassification"/>
                 </template>
-                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end" />
-                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end" />
+                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end">
+                  <DxRequiredRule />
+                </DxColumn>
+                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end">
+                  <DxRequiredRule/>
+                </DxColumn>
                 <DxColumn caption="적요" data-field="summary" width="200" />
-                <DxColumn caption="계정과목" cell-template="accountCode" width="200" :allow-editing="false" />
+                <DxColumn caption="계정과목" edit-cell-template="accountCode" data-field="accountCode" width="200">
+                  <DxLookup
+                    :data-source="arrAccoountSubjects"
+                    display-expr="name"
+                    value-expr="code"
+                  />
+                  <DxRequiredRule/>
+                </DxColumn>
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
                     :classification="data.data.income !== 0 ? [4] : [5]" />
                 </template>
-                <DxColumn caption="상대계정" cell-template="relationCode" width="200" :allow-editing="false" />
+                <DxColumn caption="상대계정" edit-cell-template="relationCode" data-field="relationCode" width="200">
+                  <DxLookup
+                    :data-source="arrAccoountSubjects"
+                    display-expr="name"
+                    value-expr="code"
+                  />
+                </DxColumn>
                 <template #relationCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.relationCode"
-                    :classification="data.data.resolutionClassification === 2 ? [4] : []"
+                    :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                     :disabled="data.data.resolutionClassification === 1" />
                 </template>
-                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" :allow-editing="false" />
+                <DxColumn caption="자금원천" edit-cell-template="fundingSource" data-field="fundingSource" width="120">
+                  <DxLookup
+                    :data-source="fundingSource"
+                    display-expr="label"
+                    value-expr="value"
+                  />
+                  <!-- <DxRequiredRule/> -->
+                </DxColumn>
                 <template #fundingSource="{ data }">
                   <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
                 </template>
                 <DxColumn caption="거래처" data-field="clientId" alignment="start" :allow-editing="false" />
-                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" :allow-editing="false" />
+                <DxColumn caption="품의종류" edit-cell-template="letterOfApprovalType" data-field="letterOfApprovalType" width="100">
+                  <DxLookup
+                    :data-source="letterOfApprovalType"
+                    display-expr="label"
+                    value-expr="value"
+                  />
+                  <!-- <DxRequiredRule/> -->
+                </DxColumn>
                 <template #letterOfApprovalType="{ data }">
                   <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
                     :disabled="data.data.resolutionClassification === 1"
@@ -254,7 +292,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing, DxRequiredRule } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
@@ -268,7 +306,7 @@ import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from './components/UploadPreviewImage.vue'
-import { BankType, enum2Entries, BankBookUseType, ResolutionClassification } from "@bankda/jangbuda-common";
+import { BankType, enum2Entries, BankBookUseType, ResolutionClassification, FundingSource, LetterOfApprovalType } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
 import dayjs from "dayjs";
 
@@ -300,7 +338,8 @@ export default defineComponent({
     SaveFilled,
     DxPaging,
     DxSelectBox,
-    DxEditing
+    DxEditing,
+    DxRequiredRule
   },
   setup() {
     const store = useStore();
@@ -323,6 +362,35 @@ export default defineComponent({
       }));
       return bsDeduction;
     });
+
+    // data select
+    const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
+    let arrAccoountSubjects = ref([])
+    watch(() => arrAllCallApi.value, (value) => {
+      const arrAll:any = []
+      if(value.length){
+        value.forEach((items: any) => {
+          items.codes.forEach((x: any) => {
+            arrAll.push(x)
+          })
+        })
+      }
+      arrAccoountSubjects.value = arrAll
+    })
+    const fundingSource: any = computed(() => {
+      let bsDeduction: any = enum2Entries(FundingSource).map((value) => ({
+          value: value[1],
+          label: value[0],
+      }));
+      return bsDeduction;
+    });
+    const letterOfApprovalType: any = computed(() => {
+          let bsDeduction: any = enum2Entries(LetterOfApprovalType).map((value) => ({
+              value: value[1],
+              label: value[0],
+          }));
+          return bsDeduction;
+      });
     const propListSlipRegistrationSelected: any = ref({
       count: 0,
       selectedRowKeys: []
@@ -377,6 +445,7 @@ export default defineComponent({
     const isModalHistory = ref<boolean>(false);
     const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
+    const refGridDetailAc110: any = ref()
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     // -------------- GRAPHQL --------------
@@ -739,6 +808,7 @@ export default defineComponent({
     }
     const addNewRowTransactionDetails = () => {
       if (rowKeyfocused.value === null) return
+      
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
@@ -748,12 +818,24 @@ export default defineComponent({
         initTransactionDetails.theOrder = 0
         initTransactionDetails.accountingDocumentId = 'create'
       }
-      dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
+      refGridDetailAc110.value.instance.addRow(initTransactionDetails)
+      // dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
-    const submitTransactionDetails = (event: any) => {
+    const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null) return
-      const res = event.validationGroup.validate();
-      if (!res.isValid) return
+      await refGridDetailAc110.value.instance.saveEditData()
+      const res = await refGridDetailAc110.value.instance.hasEditData()
+      if (res) return
+      dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
+        if (Number.isInteger(item.accountingDocumentId)) {
+          return item
+        } else {
+          return {
+            ...InitTransactionDetails,
+            ...item
+          }
+        }
+      })
       const payLoadUpdate: any = []
       const payloadCreate: any = []
       dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
@@ -771,13 +853,13 @@ export default defineComponent({
           memo: item.memo,
           clientId: item.clientId,
         }
-        if(item.accountingDocumentId.toString().includes('create')){
-          payloadCreate.push(objPayload)
-        }else{
+        if (Number.isInteger(item.accountingDocumentId)) {
           payLoadUpdate.push({
             ...objPayload,
             accountingDocumentId: item.accountingDocumentId
           })
+        } else {
+          payloadCreate.push(objPayload)
         }
       })
       if (payloadCreate.length) {
@@ -882,6 +964,10 @@ export default defineComponent({
       listAccountingProcesses,
       updateremoveBankbookDetailProof,
       updateAddBankbookDetailProof,
+      refGridDetailAc110,
+      arrAccoountSubjects,
+      fundingSource,
+      letterOfApprovalType
     };
   },
 });

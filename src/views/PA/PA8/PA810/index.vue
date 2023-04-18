@@ -73,7 +73,7 @@
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
-              <DxButton type="ghost" >
+              <DxButton type="ghost" @click="showViewDetail(data.data)">
                   <img src="@/assets/images/searchPlus.png"
                        style="width: 16px; height: 16px; margin-top: 0px;" />
               </DxButton>
@@ -88,7 +88,12 @@
     </a-spin>
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
                   typeHistory="pa-810"/>
-    <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    <div v-if="isOpenModalCreate">
+      <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    </div>
+    <div v-if="isViewDetail">
+      <ViewPA810Popup  :isViewDetail="isViewDetail" :infoDetail="infoDetail" @closeModal="isViewDetail = false" />
+    </div>
     <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
   </div>
 </template>
@@ -115,6 +120,7 @@ import {DxItem} from 'devextreme-vue/select-box';
 import {computed, defineComponent, reactive, ref, watch, watchEffect} from 'vue';
 import {useStore} from 'vuex';
 import CreatePA810Popup from './components/CreatePA810Popup.vue';
+import ViewPA810Popup from './components/ViewPA810Popup.vue';
 import {Message} from "@/configs/enum";
 
 enum MajorInsuranceWorkingStatus {
@@ -127,7 +133,7 @@ enum MajorInsuranceWorkingStatus {
 export default defineComponent({
   methods: {convertBirthDayKorea},
   components: {
-    // ViewPA810Popup,
+    ViewPA810Popup,
     DxDataGrid,
     DxColumn,
     DxButton,
@@ -245,6 +251,18 @@ export default defineComponent({
       mutateCancelAcquistion(actionParam);
     }
   }
+  // view detail
+  const isViewDetail = ref(false);
+  const infoDetail = ref();
+  const showViewDetail = (info: any) => {
+    console.log(info.employeeId)
+    isViewDetail.value = true;
+    infoDetail.value = {
+      workId: info.workId,
+      employeeType: info.employeeType,
+      employeeId: info.employeeId
+    };
+  }
     return {
       globalYear,
       per_page,
@@ -271,7 +289,10 @@ export default defineComponent({
       contentDelete,
       handleCreate,
       MajorInsuranceWorkingStatus,
-      onGetFileStorageId
+      onGetFileStorageId,
+      showViewDetail,
+      isViewDetail,
+      infoDetail
     };
   },
 });

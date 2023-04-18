@@ -1,6 +1,6 @@
 <template>
-    <div style="display: flex; align-items: center;" :class="{'text_under':isUnder, 'hover_text': true}">
-        <span style="margin-right: 5px;">{{year}}-{{ $filters.formatMonth(month) }}</span>
+    <div style="display: flex; align-items: center; justify-content: center;" :class="{'text_under':isUnder, 'hover_text': true}">
+        <span style="margin-right: 10px;">{{year}}-<b>{{ $filters.formatMonth(month) }}</b></span>
         <div v-if="value == 10" class="badge entering"></div>
         <div v-if="value == 20" class="badge input closing"></div>
         <div v-if="value == 30" class="badge adjusting"></div>

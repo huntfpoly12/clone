@@ -313,18 +313,15 @@ export default defineComponent({
     // ================== FUNCTION ==================
     const openModalSave = () => {
       modalConfirmMail.value = true
+      let dataFilter: any = {
+        beforeProduction: !filter.beforeProduction,
+        excludeCancel: filter.companyServiceContractActive,
+        paymentYear: paramSearch.value.paymentYear,
+        paymentMonth: paramSearch.value.paymentMonth
+      }
+      if(!filter.beforeProduction) dataFilter.productionStatuses = filter.productionStatuses
       dataModalSave.value = {
-        filter: {
-          beforeProduction: !filter.beforeProduction,
-          productionStatuses: filter.productionStatuses,
-          // companyCode: String
-          // companyName: String
-          // manageUserId: Int
-          // salesRepresentativeId: Int
-          excludeCancel: filter.companyServiceContractActive,
-          paymentYear: paramSearch.value.paymentYear,
-          paymentMonth: paramSearch.value.paymentMonth
-        },
+        filter: dataFilter,
         emailInput: {
           receiverName: userInfor.value.name,
           receiverAddress: userInfor.value.email

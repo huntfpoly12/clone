@@ -3,7 +3,7 @@
     <div id="ac-570">
         <div class="page-content">
             <a-row>
-                <a-col span="17" class="data-table">
+                <a-col span="24" class="data-table">
                     <a-spin :spinning="false" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
@@ -38,7 +38,7 @@
                                 </DxButton>
                             </template>
                             <template #button-template>
-                                <a-tooltip placement="top">
+                                <a-tooltip placement="topLeft">
                                     <template #title>과목전용조서 등록</template>
                                     <div>
                                         <DxButton icon="plus" @click="actionCreate" />
@@ -71,75 +71,9 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col span="7" class="custom-layout">
-                    <a-spin :spinning="false" size="large">
-                        <StandardForm class="ac-570-form" formName="ac-570-form" ref="ac570FormRef">
-                            <h2 class="text-align-center">과목전용조서</h2>
-                            <a-row>
-                                <a-col :span="11"></a-col>
-                                <a-col :span="13">
-                                    <a-form-item label="전용일자" :label-col="{ span: 9 }" class="red">
-                                        <date-time-box width="145px" dateFormat="YYYY-MM-DD" disabled="true" />
-                                    </a-form-item>
-                                </a-col>
-                            </a-row>
-                            <div class="top-content">
-                                <a-typography-title :level="5" style="margin-bottom: 0;">원천계정과목</a-typography-title>
-                            </div>
-                            <div class="custom-center">
-                                <a-form-item label="원천계정과목" :label-col="labelCol" class="red">
-                                    <select-box-common width="150px" :required="true" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="예산액" :label-col="labelCol">
-                                    <default-text-box width="150px" />
-                                </a-form-item>
-                                <a-form-item label="전용액" :label-col="labelCol" class="red">
-                                    <number-box-money width="150px" disabled="true" :required="true" placeholder="" />
-                                </a-form-item>
-                                <a-form-item label="예산현액" :label-col="labelCol">
-                                    <default-text-box width="150px" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="지출액" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" />
-                                </a-form-item>
-                                <a-form-item label="불용액" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" disabled="true" />
-                                </a-form-item>
-                            </div>
-
-                            <div class="top-content">
-                                <a-typography-title :level="5" style="margin-bottom: 0;">전용계정과목</a-typography-title>
-                            </div>
-                            <div class="custom-center">
-                                <a-form-item label="전용계정과목" :label-col="labelCol" class="red">
-                                    <select-box-common width="150px" :required="true" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="예산액" :label-col="labelCol">
-                                    <default-text-box width="150px" />
-                                </a-form-item>
-                                <a-form-item label="전용액" :label-col="labelCol" class="red">
-                                    <number-box-money width="150px" :required="true" placeholder="" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="예산현액" :label-col="labelCol">
-                                    <default-text-box width="150px" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="지출액" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" />
-                                </a-form-item>
-                                <a-form-item label="불용액" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" disabled="true" />
-                                </a-form-item>
-                                <a-form-item label="전용사유" :label-col="labelCol">
-                                    <number-box width="150px" placeholder="" />
-                                </a-form-item>
-                            </div>
-                            <div class="text-align-center mt-20" style="display: flex; justify-content: center;">
-                                <button-basic mode="contained" type="default" text="저장" />
-                            </div>
-
-                        </StandardForm>
-                    </a-spin>
-                </a-col>
+                <!-- <a-col span="7" class="custom-layout">
+                    
+                </a-col> -->
             </a-row>
         </div>
         <HistoryPopup :modalStatus="modalHistoryStatus" @closePopup="modalHistoryStatus = false" :data="popupData"

@@ -126,7 +126,7 @@
             format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="제작현황" cell-template="imputed" width="430"/>
           <template #imputed="{ data }">
-            <GetStatusTable v-if="data.data.lastProductionRequestedAt" :data="data.data" tabName="tab4"
+            <GetStatusTable :beforeProductionRequest="!data.data.lastProductionRequestedAt" :data="data.data" tabName="tab4"
               @productionStatusData="(value: any) => productionStatusData(value, data.rowIndex)" />
           </template>
 
@@ -190,8 +190,8 @@ export default defineComponent({
       productionStatuses: Array(),
       companyCode: '',
       companyName: '',
-      manageUserId: 0,
-      salesRepresentativeId: 0,
+      manageUserId: null,
+      salesRepresentativeId: null,
       excludeCancel: true,
       imputedYear: dayjs().year(),
     }
@@ -480,6 +480,7 @@ export default defineComponent({
     const doneRequestFile = () => {
       modalRequestFile.value = false
       trigger.value = true
+      searchByFilter()
     }
     return {
       globalYear,

@@ -21,6 +21,7 @@ export default gql`
         resolutionNumber
         accountingDocumentId
         bankbookId
+        bankbookDetailId
         bankbook {
           bankbookNickname
           type

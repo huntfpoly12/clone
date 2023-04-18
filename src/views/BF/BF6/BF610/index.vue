@@ -50,8 +50,8 @@
                   </div>
                 </div>
               </a-col>
-              <a-col>
-                  <a-form-item label="사업자코드" label-align="left" class="mb-0 label-select">
+              <a-col >
+                  <a-form-item label="사업자코드" label-align="left" class="mb-6 label-select">
                       <default-text-box width="150px" v-model:valueInput="filter.companyCode" text-uppercase />
                   </a-form-item>
                   <a-form-item label="상호" label-align="left" class="mb-0 label-select">
@@ -59,14 +59,14 @@
                   </a-form-item>
               </a-col>
               <a-col>
-                  <a-form-item label="매니저리스트" label-align="left" class="mb-0 label-select">
+                  <a-form-item label="매니저리스트" label-align="left" class="mb- label-select">
                       <!-- <list-manager-dropdown v-model:valueInput="filter.manageUserId" width="150px" /> -->
                       <select-box-common
                         :arrSelect="managerCompactUserList"
                         v-model:valueInput="filter.manageCompactUserId"
                         displayeExpr="name" valueExpr="id" width="150px" />
                   </a-form-item>
-                  <a-form-item label="영업자명" label-align="left" class="mb-0 label-select">
+                  <a-form-item label="영업자리스트" label-align="left" class="mb-0 label-select">
                       <!-- <list-sales-dropdown v-model:valueInput="filter.salesRepresentativeId"
                           width="150px" /> -->
                       <select-box-common
