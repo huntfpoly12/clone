@@ -1,10 +1,10 @@
 <template>
-    <div id="pa-110" :class="store.state.common.statusDisabledStatus ? 'disabledBlock' : ''">
+    <div id="pa-110" :class="store.state.common.pa110.statusDisabledStatus ? 'disabledBlock' : ''">
         <a-spin :key="countKey" :spinning="loading || loadingGetEmployeeWage" size="large"><StandardForm formName="pa-110-form" ref="pa110FormRef">
             <a-row class="row-1" >
                 <a-col :span="12">
                     <a-form-item label="사원" class="red">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.statusFormAdd"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa110.statusFormAdd"
                             :required="true" v-model:valueEmploy="dataIW.employee.employeeId" width="316px"
                             @onChange="onUpdateValue" />
                     </a-form-item>
@@ -12,7 +12,7 @@
                 <a-col :span="12">
                     <a-form-item label="지급일" class="red">
                         <number-box width="100px" :min="1" v-model:valueInput="dataIW.paymentDay" :max="31" :isFormat="true"
-                            :disabled="!store.state.common.statusFormAdd" :spinButtons="true" :required="true" />
+                            :disabled="!store.state.common.pa110.statusFormAdd" :spinButtons="true" :required="true" />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -167,7 +167,7 @@
                         <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                             <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                             <div>
-                                <button-tooltip-error :statusChange="store.state.common.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
+                                <button-tooltip-error :statusChange="store.state.common.pa110.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
@@ -185,7 +185,7 @@
                         <a-tooltip placement="top">
                             <template #title>중도퇴사자 연말정산 반영분 삭제</template>
                             <div>
-                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
+                                <button-basic style="margin: 0px 5px" @onClick="!store.state.common.pa110.statusFormAdd ? modalDeteleMidTerm = true : ''" mode="contained" type="default" text="중도정산 삭제" />
                             </div>
                         </a-tooltip>
                         <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
@@ -233,7 +233,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const processKey = computed(() => store.state.common.processKeyPA110)
+        const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const globalYear = computed(() => store.state.settings.globalYear);
         const arrayEmploySelect: any = ref([])
         let modalDeductions = ref<boolean>(false)
@@ -340,9 +340,9 @@ export default defineComponent({
             triggerEmployeeWages.value = false;
             dataEmployeeWageDailies.value = value.data.getEmployeeWages
             arrayEmploySelect.value = []
-            if (store.state.common.statusFormAdd) {
+            if (store.state.common.pa110.statusFormAdd) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
@@ -388,88 +388,88 @@ export default defineComponent({
         })
         actionUpdateErr(async e => {
             notification('error', e.message)
-            if (store.state.common.checkClickYear) {
-                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
-                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.dataYearNew)
-                await (store.state.common.checkClickYear = false);
+            if (store.state.common.pa110.checkClickYear) {
+                store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.loadingTableInfo++
+                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
         })
         actionUpdateDone(async res => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            store.state.common.dataIncomeIdBackend = res.data.updateIncomeWage?.incomeId
-            if (store.state.common.checkClickYear) {
-                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
-                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.dataYearNew)
-                await (store.state.common.checkClickYear = false);
+            store.state.common.pa110.dataIncomeIdBackend = res.data.updateIncomeWage?.incomeId
+            if (store.state.common.pa110.checkClickYear) {
+                store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.loadingTableInfo++
+                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
-            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
-                store.state.common.checkClickCopyMonth = false;
-                store.state.common.openModalCopyMonth++
+            if (store.state.common.pa110.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.pa110.checkClickCopyMonth = false;
+                store.state.common.pa110.openModalCopyMonth++
                 // return
             }
-            await store.state.common.loadingTableInfo++
+            await store.state.common.pa110.loadingTableInfo++
             
         })
         doneCreated(async res => {
             notification('success', Message.getMessage('COMMON', '101').message)
-            store.state.common.dataIncomeIdBackend = res.data.createIncomeWage?.incomeId
-            if (store.state.common.checkClickYear) {
-                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
-                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.dataYearNew)
-                await (store.state.common.checkClickYear = false);
+            store.state.common.pa110.dataIncomeIdBackend = res.data.createIncomeWage?.incomeId
+            if (store.state.common.pa110.checkClickYear) {
+                store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.loadingTableInfo++
+                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
-            if (store.state.common.checkClickCopyMonth) { // nếu trước đó ấn button copy month
-                store.state.common.checkClickCopyMonth = false;
-                store.state.common.openModalCopyMonth++
+            if (store.state.common.pa110.checkClickCopyMonth) { // nếu trước đó ấn button copy month
+                store.state.common.pa110.checkClickCopyMonth = false;
+                store.state.common.pa110.openModalCopyMonth++
                 // return
             }
-            await store.state.common.loadingTableInfo++
+            await store.state.common.pa110.loadingTableInfo++
             
             
         })
 
         errorCreated(async res => {
             notification('error', res.message)
-            if (store.state.common.checkClickYear) {
-                store.state.common.processKeyPA510.imputedYear = store.state.common.dataYearNew
-                store.state.common.processKeyPA510.paymentYear = store.state.common.dataYearNew
-                store.state.common.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.dataYearNew)
-                await (store.state.common.checkClickYear = false);
+            if (store.state.common.pa110.checkClickYear) {
+                store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
+                store.state.common.pa110.loadingTableInfo++
+                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
         })
 
         // ===================WATCH==================================
-        watch(() => store.state.common.loadingFormData, (value) => {
+        watch(() => store.state.common.pa110.loadingFormData, (value) => {
             // triggerDetail.value = true;
-            if (store.state.common.incomeId && store.state.common.incomeId != 'PA110') {
-                incomeWageParams.incomeId = store.state.common.incomeId
+            if (store.state.common.pa110.incomeId && store.state.common.pa110.incomeId != 'PA110') {
+                incomeWageParams.incomeId = store.state.common.pa110.incomeId
                 triggerDetail.value = true;
             } else {
-                if (!store.state.common.statusFormAdd) {
+                if (!store.state.common.pa110.statusFormAdd) {
                     onResetForm()
                 }
             }
         })
 
         watch(() => dataConfigDeductions.value, (value) => {
-            // store.state.common.statusChangeFormEdit = true;
+            // store.state.common.pa110.statusChangeFormEdit = true;
             calculateTax();
         }, { deep: true })
 
         watch(() => dataConfigPayItems.value, (value) => {
-            // store.state.common.statusChangeFormEdit = true;
-            // store.state.common.statusChangeFormPrice = true;
+            // store.state.common.pa110.statusChangeFormEdit = true;
+            // store.state.common.pa110.statusChangeFormPrice = true;
             calculateTax();
         }, { deep: true })
 
@@ -480,19 +480,19 @@ export default defineComponent({
         })
         
         // reset form data
-        watch(() => store.state.common.actionResetForm, (value) => {
+        watch(() => store.state.common.pa110.actionResetForm, (value) => {
             onResetForm()
         })
 
-        watch(() => store.state.common.addRow, (newVal) => {
-            store.state.common.statusClickButtonAdd = false;
-            store.state.common.dataTaxPayInfo = store.state.common.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
-            dataIW.value = store.state.common.dataTaxPayInfo[store.state.common.dataTaxPayInfo.length - 1]
-            store.state.common.focusedRowKey = 'PA110'
+        watch(() => store.state.common.pa110.addRow, (newVal) => {
+            store.state.common.pa110.statusClickButtonAdd = false;
+            store.state.common.pa110.dataTaxPayInfo = store.state.common.pa110.dataTaxPayInfo.concat(JSON.parse(JSON.stringify({ ...sampleDataIncomeWage })))
+            dataIW.value = store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1]
+            store.state.common.pa110.focusedRowKey = 'PA110'
             onResetForm()
         })
 
-        watch(() => store.state.common.statusFormAdd, (value) => {
+        watch(() => store.state.common.pa110.statusFormAdd, (value) => {
             if (value) {
                 countKey.value++;
                 // dataIW.value = JSON.parse(JSON.stringify({ ...sampleDataIncomeWage }))
@@ -504,41 +504,41 @@ export default defineComponent({
                 })
                 arrayEmploySelect.value = []
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
                 setTimeout(() => {
-                    store.state.common.statusChangeFormPrice = false;
-                    store.state.common.statusChangeFormAdd = false;
+                    store.state.common.pa110.statusChangeFormPrice = false;
+                    store.state.common.pa110.statusChangeFormAdd = false;
                 }, 500);
             } else {
                 arrayEmploySelect.value = dataEmployeeWageDailies.value
             }
         })
         watch(() => dataIW.value, (value, oldVal) => {
-            if (store.state.common.statusFormAdd) {
+            if (store.state.common.pa110.statusFormAdd) {
                 if (JSON.stringify({ ...sampleDataIncomeWage }) !== JSON.stringify(dataIW.value)) {
-                    store.state.common.statusChangeFormAdd = true
-                    // if (!store.state.common.statusRowAdd) {
-                    //     store.state.common.statusChangeFormEdit = true
+                    store.state.common.pa110.statusChangeFormAdd = true
+                    // if (!store.state.common.pa110.statusRowAdd) {
+                    //     store.state.common.pa110.statusChangeFormEdit = true
                     // }
                 } else {
-                    store.state.common.statusChangeFormAdd = false
+                    store.state.common.pa110.statusChangeFormAdd = false
                 }
             } else {
-                if (JSON.stringify(store.state.common.dataRowOld) !== JSON.stringify(dataIW.value) && store.state.common.dataRowOld) {
-                    store.state.common.statusChangeFormEdit = true
+                if (JSON.stringify(store.state.common.pa110.dataRowOld) !== JSON.stringify(dataIW.value) && store.state.common.pa110.dataRowOld) {
+                    store.state.common.pa110.statusChangeFormEdit = true
                 } else {
-                    store.state.common.statusChangeFormEdit = false
+                    store.state.common.pa110.statusChangeFormEdit = false
                 }
             }
         }, { deep: true })
-        watch(() => store.state.common.resetArrayEmploySelect, (newVal) => {
+        watch(() => store.state.common.pa110.resetArrayEmploySelect, (newVal) => {
             arrayEmploySelect.value = []
-            if (store.state.common.statusFormAdd) {
+            if (store.state.common.pa110.statusFormAdd) {
                 dataEmployeeWageDailies.value.map((dataEmployee: any) => {
-                    if (!store.state.common.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
+                    if (!store.state.common.pa110.dataTaxPayInfo.find((dataTaxPay: any) => dataTaxPay.employeeId == dataEmployee.employeeId)) {
                         arrayEmploySelect.value.push(dataEmployee)
                     }
                 })
@@ -547,8 +547,8 @@ export default defineComponent({
             }
         })
 
-        watch(() => store.state.common.actionSubmit, () => {
-            store.state.common.statusClickButtonSave = false;
+        watch(() => store.state.common.pa110.actionSubmit, () => {
+            store.state.common.pa110.statusClickButtonSave = false;
             submitForm()
         })
 
@@ -589,21 +589,20 @@ export default defineComponent({
                 dataIW.value.employee.nationalPensionSupportPercent = data.employee.nationalPensionSupportPercent
                 dataIW.value.employee.employeementInsuranceSupportPercent = data.employee.employeementInsuranceSupportPercent
 
-                store.state.common.dataRowOld = { ...dataIW.value }
-                store.state.common.selectionFilter = ['incomeId', '=', data.incomeId]
-                store.state.common.focusedRowKey = data.incomeId
+                store.state.common.pa110.dataRowOld = { ...dataIW.value }
+                store.state.common.pa110.focusedRowKey = data.incomeId
                 
             }
-            store.state.common.statusChangeFormAdd = false;
-            store.state.common.statusChangeFormEdit = false;
-            store.state.common.statusChangeFormPrice = false;
-            if (store.state.common.statusClickEditItem) {
-                store.state.common.onEditItem++
+            store.state.common.pa110.statusChangeFormAdd = false;
+            store.state.common.pa110.statusChangeFormEdit = false;
+            store.state.common.pa110.statusChangeFormPrice = false;
+            if (store.state.common.pa110.statusClickEditItem) {
+                store.state.common.pa110.onEditItem++
             }
-            store.state.common.refreshDataGridRef++
+            store.state.common.pa110.refreshDataGridRef++
             // setTimeout(() => {
-            //     store.state.common.statusChangeFormEdit = false;
-            //     store.state.common.statusChangeFormPrice = false;
+            //     store.state.common.pa110.statusChangeFormEdit = false;
+            //     store.state.common.pa110.statusChangeFormPrice = false;
             // }, 200);
             
         })
@@ -617,7 +616,7 @@ export default defineComponent({
 
         watch(resultEmployeeWage, async (newVal: any) => {
             employeeWageTrigger.value = false;
-            if (store.state.common.statusFormAdd) {
+            if (store.state.common.pa110.statusFormAdd) {
                 await (dataIW.value.employee.name = newVal.getEmployeeWage.name);
                 await (dataIW.value.employee.status = newVal.getEmployeeWage.status);
                 await (dataIW.value.employee.foreigner = newVal.getEmployeeWage.foreigner);
@@ -650,9 +649,9 @@ export default defineComponent({
                 await calculateTax();
             }
             calculateVariables.dependentCount = newVal.getEmployeeWage.deductionDependentCount
-            await (store.state.common.statusChangeFormPrice = false)
+            await (store.state.common.pa110.statusChangeFormPrice = false)
         })
-        watch(() => store.state.common.statusChangeFormPrice, (value) => {
+        watch(() => store.state.common.pa110.statusChangeFormPrice, (value) => {
             if (!value) {
                 showErrorButton.value = false
             }
@@ -666,45 +665,45 @@ export default defineComponent({
         })
         // ======================= FUNCTION ================================
         const onChangeInputDeduction = () => {
-            if (store.state.common.statusFormAdd) {
-                store.state.common.statusChangeFormAdd = true
+            if (store.state.common.pa110.statusFormAdd) {
+                store.state.common.pa110.statusChangeFormAdd = true
             } else {
-                store.state.common.statusChangeFormEdit = true
+                store.state.common.pa110.statusChangeFormEdit = true
             }
         }
         const onChangeInputPayItem = () => {
-            store.state.common.statusChangeFormPrice = true
-            if (store.state.common.statusFormAdd) {
-                store.state.common.statusChangeFormAdd = true
+            store.state.common.pa110.statusChangeFormPrice = true
+            if (store.state.common.pa110.statusFormAdd) {
+                store.state.common.pa110.statusChangeFormAdd = true
             } else {
-                store.state.common.statusChangeFormEdit = true
+                store.state.common.pa110.statusChangeFormEdit = true
             }
         }
         const pa110FormRef = ref()
         const onSubmitForm = () => {
-            store.state.common.statusClickButtonSave = true;
-            store.state.common.checkClickYear = false;
+            store.state.common.pa110.statusClickButtonSave = true;
+            store.state.common.pa110.checkClickYear = false;
             submitForm()
         }
         const submitForm = () => {
             var res = pa110FormRef.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-                store.state.common.refreshDataGridRef++
-                store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
-                store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
-                store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
-                store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
-                store.state.common.dataRowOnActive = dataIW.value
+                store.state.common.pa110.refreshDataGridRef++
+                store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
+                store.state.common.pa110.statusClickEditItem ? store.state.common.pa110.statusClickEditItem = false : '';
+                store.state.common.pa110.checkClickCopyMonth ? store.state.common.pa110.checkClickCopyMonth = false : '';
+                store.state.common.pa110.checkClickMonth ? store.state.common.pa110.checkClickMonth = false : '';
+                store.state.common.pa110.dataRowOnActive = dataIW.value
             } else {
-                if (store.state.common.statusChangeFormPrice) {
-                    store.state.common.refreshDataGridRef++
-                    store.state.common.checkClickYear ? store.state.common.checkClickYear = false : '';
-                    store.state.common.statusClickEditItem ? store.state.common.statusClickEditItem = false : '';
-                    store.state.common.checkClickCopyMonth ? store.state.common.checkClickCopyMonth = false : '';
-                    store.state.common.checkClickMonth ? store.state.common.checkClickMonth = false : '';
+                if (store.state.common.pa110.statusChangeFormPrice) {
+                    store.state.common.pa110.refreshDataGridRef++
+                    store.state.common.pa110.checkClickYear ? store.state.common.pa110.checkClickYear = false : '';
+                    store.state.common.pa110.statusClickEditItem ? store.state.common.pa110.statusClickEditItem = false : '';
+                    store.state.common.pa110.checkClickCopyMonth ? store.state.common.pa110.checkClickCopyMonth = false : '';
+                    store.state.common.pa110.checkClickMonth ? store.state.common.pa110.checkClickMonth = false : '';
                     showErrorButton.value = true;
-                    store.state.common.dataRowOnActive = dataIW.value
+                    store.state.common.pa110.dataRowOnActive = dataIW.value
                 } else {
                     let payItems = dataConfigPayItems.value?.map((item: any) => {
                         return {
@@ -721,7 +720,7 @@ export default defineComponent({
                     const variables: any = {
                         companyId: companyId,
                         processKey: { ...processKey.value },
-                        incomeId: store.state.common.incomeId,
+                        incomeId: store.state.common.pa110.incomeId,
                         input: {
                             workingDays: dataIW.value.workingDays,
                             totalWorkingHours: dataIW.value.totalWorkingHours,
@@ -732,7 +731,7 @@ export default defineComponent({
                             deductionItems: deductionItems,
                         }
                     };
-                    if (store.state.common.statusFormAdd) {
+                    if (store.state.common.pa110.statusFormAdd) {
                         variables.input.employeeId = dataIW.value.employee.employeeId,
                         variables.input.paymentDay = dataIW.value.paymentDay,
                         actionCreated(variables)
@@ -764,7 +763,7 @@ export default defineComponent({
                 return accumulator + object.amount;
             }, 0));
             await (subPayment.value = totalPayItem.value - totalDeduction.value)
-            if (store.state.common.statusFormAdd) {
+            if (store.state.common.pa110.statusFormAdd) {
                 await (dataIW.value.totalPay = totalPayItem.value);
                 await (dataIW.value.totalDeduction = totalDeduction.value);
                 await (dataIW.value.actualPayment = subPayment.value);
@@ -801,7 +800,7 @@ export default defineComponent({
                     val.amount = val.amountNew
             })
             setTimeout(() => {
-                store.state.common.statusChangeFormPrice = false;
+                store.state.common.pa110.statusChangeFormPrice = false;
                 showErrorButton.value = false;
             }, 500);
         }
@@ -821,10 +820,10 @@ export default defineComponent({
             await dataConfigPayItems.value.map((data: any) => {
                 data.amount = 0
             })
-            await (store.state.common.statusChangeFormEdit = false);
-            await (store.state.common.statusChangeFormAdd = false);
-            await (store.state.common.statusFormAdd = true); // trạng thái form add
-            await (store.state.common.statusChangeFormPrice = false)
+            await (store.state.common.pa110.statusChangeFormEdit = false);
+            await (store.state.common.pa110.statusChangeFormAdd = false);
+            await (store.state.common.pa110.statusFormAdd = true); // trạng thái form add
+            await (store.state.common.pa110.statusChangeFormPrice = false)
         }
         
 

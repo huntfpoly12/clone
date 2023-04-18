@@ -39,7 +39,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA510)
+        const processKey = computed(() => store.state.common.pa510.processKeyPA510)
         const trigger = ref<boolean>(false)
         const setModalVisible = () => {
             emit("closePopup", false)

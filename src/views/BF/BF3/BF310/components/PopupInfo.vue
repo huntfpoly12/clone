@@ -64,10 +64,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-pre {
-    width: 100%;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-height: 600px;
-}
+
 </style>
