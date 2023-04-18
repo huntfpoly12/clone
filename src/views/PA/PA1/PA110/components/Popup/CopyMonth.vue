@@ -94,7 +94,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA110)
+        const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const globalYear = computed(() => store.state.settings.globalYear)
         const month: any = ref<number>()
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
@@ -115,7 +115,7 @@ export default defineComponent({
                 fetchPolicy: "no-cache",
             })
         );
-        watch(() => store.state.common.actionCallGetMonthDetail, (newVal) => {
+        watch(() => store.state.common.pa110.actionCallGetMonthDetail, (newVal) => {
             trigger.value = true;
         })
         watch(resultConfig, (value) => {
@@ -147,10 +147,10 @@ export default defineComponent({
             setModalVisible()
             setModalVisibleCopy()
             notification('success', `완료!`)
-            store.state.common.processKeyPA110.imputedMonth = month.value
-            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
-            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
-            store.state.common.loadingTableInfo++
+            store.state.common.pa110.processKeyPA110.imputedMonth = month.value
+            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.pa110.loadingTableInfo++
         })
 
         const setModalVisible = () => {
@@ -161,10 +161,10 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
-            store.state.common.processKeyPA110.imputedYear = globalYear.value
-            store.state.common.processKeyPA110.imputedMonth = month.value
-            store.state.common.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
-            store.state.common.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
+            store.state.common.pa110.processKeyPA110.imputedYear = globalYear.value
+            store.state.common.pa110.processKeyPA110.imputedMonth = month.value
+            store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
+            store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
                 imputedYear: processKey.value.imputedYear,
                 imputedMonth: month.value,
@@ -173,9 +173,9 @@ export default defineComponent({
             })
             emit("closePopup", false)
             sampleDataIncomeWage.paymentDay = paymentDayCopy.value
-            // store.state.common.paymentDayCopy = paymentDayCopy.value
-            // store.state.common.actionCopy++
-            store.state.common.resetArrayEmploySelect++
+            // store.state.common.pa110.paymentDayCopy = paymentDayCopy.value
+            // store.state.common.pa110.actionCopy++
+            store.state.common.pa110.resetArrayEmploySelect++
         };
 
         const openModalCopy = () => {

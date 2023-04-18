@@ -40,7 +40,7 @@ export default defineComponent({
     setup(props, { emit }) {
 
         const store = useStore()
-        const processKey = computed(() => store.state.common.processKeyPA110)
+        const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -67,7 +67,7 @@ export default defineComponent({
         successDelete(e => {
             notification('success', Message.getMessage('COMMON', '402').message)
             emit("closePopup", false)
-            store.state.common.loadingTableInfo++
+            store.state.common.pa110.loadingTableInfo++
         })
 
         return {
