@@ -2,7 +2,6 @@
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="사업장탈퇴신규신청" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="myCompanyLoading">
-      {{ workId }} workId <br/>
       <standard-form>
         <div class="form-container">
           <div class="item-wrap">
@@ -45,7 +44,7 @@
             <a-row class="mt-10">
               <a-col :span="24">
                 <a-form-item label="주소" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.companyAddress"
+                  <default-text-box width="550px" :disabled="true" v-model:valueInput="formState.companyAddress"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -438,6 +437,7 @@ export default defineComponent({
         getCompanyOutTrigger.value = true;
       }
     },{immediate: true})
+    
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
     const messageCreate = messages.getCommonMessage('101').message;

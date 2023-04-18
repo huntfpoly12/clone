@@ -1,4 +1,8 @@
 #ac-610 {
+  form {
+    border: 1px solid #d7d7d7;
+    height: 100%;
+  }
     .confirm {
         color: red;
     }
@@ -64,7 +68,7 @@
     #active-save{
         display: none;
     }
-    
+
 }
 .custom-modal-delete {
     display: flex;
@@ -98,7 +102,7 @@
     display: flex;
 }
 .search-form > div {
-    width: auto; 
+    width: auto;
 }
 td {
     text-align: center;
