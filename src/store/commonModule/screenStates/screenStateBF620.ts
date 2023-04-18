@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 let statesBF620 = {
   filterBF620: {
     beforeProduction: false,
-    productionStatuses: [1,0,-1,2],
+    productionStatuses: [1, 0, -1, 2],
     companyCode: "",
     companyName: "",
     manageUserId: null,
@@ -17,6 +17,11 @@ let statesBF620 = {
     imputedYear: +dayjs().format("YYYY"),
     imputedMonth: +dayjs().format("MM"),
     withholdingTaxType: 1,
+  },
+  reportType: {
+    checkbox1: true,
+    checkbox2: true,
+    checkbox3: true,
   },
 };
 
