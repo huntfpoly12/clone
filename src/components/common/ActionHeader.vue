@@ -36,19 +36,19 @@ export default defineComponent({
     },
     buttonDelete: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     buttonSearch: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     buttonSave: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     buttonPrint: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   components: {

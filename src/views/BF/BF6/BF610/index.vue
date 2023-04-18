@@ -1,5 +1,5 @@
 <template>
-  <action-header @actionSearch="searching" />
+  <action-header @actionSearch="searching" :buttonSearch="true"/>
   <div id="bf-610">
       <div class="search-form">
           <a-row :gutter="[24, 8]">
