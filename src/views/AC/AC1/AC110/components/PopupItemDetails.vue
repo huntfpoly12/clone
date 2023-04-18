@@ -6,6 +6,7 @@
         <DxDataGrid class="mt-20" :show-row-lines="true" :hoverStateEnabled="true"
           :data-source="dataSource.statementOfGoodsItems" :show-borders="true" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true">
+          <DxEditing :allow-updating="true" :allow-adding="true" :start-edit-action="'click'" mode="batch" />
           <DxToolbar>
             <DxItem location="after" template="button-add" css-class="cell-button-add" />
           </DxToolbar>
@@ -18,13 +19,26 @@
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <DxColumn caption="품목" cell-template="item" width="100" />
+          <!-- <DxColumn caption="품목" cell-template="item" width="100" />
           <template #item="{ data }">
             <select-box-common v-model:valueInput="data.data.item"
               :arrSelect="[{ value: data.data.item, id: data.data.item }]" displayeExpr="id" valueExpr="value"
               :required="true" />
-          </template>
-          <DxColumn caption="규격" cell-template="standard" width="100" />
+          </template> -->
+          <DxColumn caption="품목" edit-cell-template="dropDownBoxEditor" width="100"  data-field="item">
+            <DxLookup
+              :data-source="[{value: '3432423423', id:1}]"
+              display-expr="id"
+              value-expr="value"
+            />
+            <DxRequiredRule/>
+          </DxColumn>
+          <template #dropDownBoxEditor="{ data }">
+            <select-box-common v-model:valueInput="data.data.item"
+              :arrSelect="[{ value: data.data.item, id: data.data.item }]" displayeExpr="id" valueExpr="value"
+              :required="true" />
+          </template> 
+          <!-- <DxColumn caption="규격" cell-template="standard" width="100" />
           <template #standard="{ data }">
             <select-box-common v-model:valueInput="data.data.standard"
               :arrSelect="[{ value: data.data.standard, id: data.data.standard }]" displayeExpr="id" valueExpr="value"
@@ -35,10 +49,10 @@
             <select-box-common v-model:valueInput="data.data.unit"
               :arrSelect="[{ value: data.data.unit, id: data.data.unit }]" displayeExpr="id" valueExpr="value"
               :required="true" />
-          </template>
-          <DxColumn caption="수량" data-field="quantity"></DxColumn>
-          <DxColumn caption="단가" data-field="unitPrice" format="fixedPoint" alignment="end"></DxColumn>
-          <DxColumn caption="금액" data-field="amount" format="fixedPoint" alignment="end"></DxColumn>
+          </template> -->
+          <DxColumn caption="수량" data-field="quantity"><DxRequiredRule /></DxColumn>
+          <DxColumn caption="단가" data-field="unitPrice" format="fixedPoint" alignment="end"><DxRequiredRule /></DxColumn>
+          <DxColumn caption="금액" data-field="amount" format="fixedPoint" alignment="end"><DxRequiredRule /></DxColumn>
           <DxColumn caption="비고" data-field="remark"></DxColumn>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
@@ -68,7 +82,7 @@ import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxEditing, DxLookup } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
@@ -94,7 +108,7 @@ export default defineComponent({
     }
   },
   components: {
-    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton, DxValidator, DxRequiredRule, DxSelectBox
+    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton, DxValidator, DxRequiredRule, DxSelectBox, DxEditing, DxLookup
   },
 
   setup(props, { emit }) {
@@ -130,6 +144,7 @@ export default defineComponent({
     })
     watch(() => props.data, (value) => {
       dataSource.value = cloneDeep(value)
+      dataSource.value.statementOfGoodsItems = !!dataSource.value.statementOfGoodsItems ? dataSource.value.statementOfGoodsItems : []
     })
     const cancel = () => {
       emit("closePopup", false)
