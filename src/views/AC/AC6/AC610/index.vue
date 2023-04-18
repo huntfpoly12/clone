@@ -3,7 +3,8 @@
     title="거래처 관리"
     @actionSave="actionSave($event)"
     @actionSearch="searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-610">
     <div class="search-form dflex">

@@ -3,10 +3,9 @@
     footer="" :width="1000">
     <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large">
       <standard-form>
-        <DxDataGrid class="mt-20" :show-row-lines="true" :hoverStateEnabled="true"
-          :data-source="dataSource.statementOfGoodsItems" :show-borders="true" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true">
-          <DxEditing :allow-updating="true" :allow-adding="true" :start-edit-action="'click'" mode="batch" />
+        <DxDataGrid class="mt-20" :show-row-lines="true" :data-source="dataSource.statementOfGoodsItems"
+          :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true">
           <DxToolbar>
             <DxItem location="after" template="button-add" css-class="cell-button-add" />
           </DxToolbar>
@@ -19,41 +18,37 @@
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
-          <!-- <DxColumn caption="품목" cell-template="item" width="100" />
+          <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <select-box-common v-model:valueInput="data.data.item"
-              :arrSelect="[{ value: data.data.item, id: data.data.item }]" displayeExpr="id" valueExpr="value"
-              :required="true" />
-          </template> -->
-          <DxColumn caption="품목" edit-cell-template="dropDownBoxEditor" width="100"  data-field="item">
-            <DxLookup
-              :data-source="[{value: '3432423423', id:1}]"
-              display-expr="id"
-              value-expr="value"
-            />
-            <DxRequiredRule/>
-          </DxColumn>
-          <template #dropDownBoxEditor="{ data }">
-            <select-box-common v-model:valueInput="data.data.item"
-              :arrSelect="[{ value: data.data.item, id: data.data.item }]" displayeExpr="id" valueExpr="value"
-              :required="true" />
-          </template> 
-          <!-- <DxColumn caption="규격" cell-template="standard" width="100" />
-          <template #standard="{ data }">
-            <select-box-common v-model:valueInput="data.data.standard"
-              :arrSelect="[{ value: data.data.standard, id: data.data.standard }]" displayeExpr="id" valueExpr="value"
-              :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.item"
+              :arrSelect="arrSelectItem" :required="true" />
           </template>
-          <DxColumn caption="단위" cell-template="unit" width="100" />
+          <DxColumn caption="규격" cell-template="standard" width="150" />
+          <template #standard="{ data }">
+            <custom-item-select-box v-model:valueInput="data.data.standard"
+              :arrSelect="arrSelectStandard" :required="true" />
+          </template>
+          <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <select-box-common v-model:valueInput="data.data.unit"
-              :arrSelect="[{ value: data.data.unit, id: data.data.unit }]" displayeExpr="id" valueExpr="value"
-              :required="true" />
-          </template> -->
-          <DxColumn caption="수량" data-field="quantity"><DxRequiredRule /></DxColumn>
-          <DxColumn caption="단가" data-field="unitPrice" format="fixedPoint" alignment="end"><DxRequiredRule /></DxColumn>
-          <DxColumn caption="금액" data-field="amount" format="fixedPoint" alignment="end"><DxRequiredRule /></DxColumn>
-          <DxColumn caption="비고" data-field="remark"></DxColumn>
+            <custom-item-select-box v-model:valueInput="data.data.unit"
+              :arrSelect="arrSelectUnit" :required="true" />
+          </template>
+          <DxColumn caption="수량" cell-template="quantity" />
+          <template #quantity="{ data }">
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" />
+          </template>
+          <DxColumn caption="수량" cell-template="unitPrice" />
+          <template #unitPrice="{ data }">
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" />
+          </template>
+          <DxColumn caption="수량" cell-template="amount" />
+          <template #amount="{ data }">
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" />
+          </template>
+          <DxColumn caption="수량" cell-template="remark" />
+          <template #remark="{ data }">
+            <default-text-box v-model:valueInput="data.data.remark" />
+          </template>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
             <DeleteOutlined style="font-size: 12px" @click="openPopupDeleteItem(data.data)" />
@@ -82,7 +77,7 @@ import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxEditing, DxLookup } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
 import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
@@ -108,7 +103,7 @@ export default defineComponent({
     }
   },
   components: {
-    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton, DxValidator, DxRequiredRule, DxSelectBox, DxEditing, DxLookup
+    DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DeleteOutlined, DxToolbar, DxButton, DxValidator, DxRequiredRule, DxSelectBox,
   },
 
   setup(props, { emit }) {
@@ -117,6 +112,9 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     let isModalDelete = ref(false)
     let dataSource: any = ref([])
+    let arrSelectItem: any = ref([])
+    let arrSelectStandard: any = ref([])
+    let arrSelectUnit: any = ref([])
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -144,7 +142,16 @@ export default defineComponent({
     })
     watch(() => props.data, (value) => {
       dataSource.value = cloneDeep(value)
-      dataSource.value.statementOfGoodsItems = !!dataSource.value.statementOfGoodsItems ? dataSource.value.statementOfGoodsItems : []
+      if (!!dataSource.value.statementOfGoodsItems) {
+        dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
+          return {
+            ...item,
+            id: index
+          }
+        })
+      } else {
+        dataSource.value.statementOfGoodsItems = []
+      }
     })
     const cancel = () => {
       emit("closePopup", false)
@@ -173,6 +180,7 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
+      if (data.id.includes('create')) return
       isModalDelete.value = true
     }
     const handleDelete = () => {
@@ -189,19 +197,23 @@ export default defineComponent({
       const res = event.validationGroup.validate();
       if (!res.isValid) return
       const payloadRequest = { ...props.payload }
+      const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
+        delete item.id
+        return item
+      })
       const payloadClear = makeDataClean({
         ...payloadRequest,
         transactionDetailDate: dataSource.value.transactionDetailDate,
         accountingDocumentId: dataSource.value.accountingDocumentId,
-        items: dataSource.value.statementOfGoodsItems
+        items: dataTable
       })
       saveStatementOfGoods(payloadClear)
     }
     const addNewRow = () => {
-      if (dataSource.value.statementOfGoodsItems) {
-        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, InitStatementOfGoods]
+      if (!!dataSource.value.statementOfGoodsItems && dataSource.value.statementOfGoodsItems.length) {
+        dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }, ...dataSource.value.statementOfGoodsItems]
       } else {
-        dataSource.value.statementOfGoodsItems = [InitStatementOfGoods]
+        dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: 'create' }]
       }
     }
 
@@ -228,7 +240,10 @@ export default defineComponent({
       loadingSaveStatementOfGoods,
       loadingDeleteStatementOfGoods,
       addNewRow,
-      dataSource
+      dataSource,
+      arrSelectItem,
+      arrSelectStandard,
+      arrSelectUnit
     }
   },
 })

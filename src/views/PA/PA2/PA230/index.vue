@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading || loadingPrint || loadingSendEmail" size="large">
-        <action-header title="" @actionSearch="searching" />
+        <action-header title="" @actionSearch="searching" :buttonSearch="true"/>
         <div id="pa-230">
             <div class="search-form">
                 <a-row>
