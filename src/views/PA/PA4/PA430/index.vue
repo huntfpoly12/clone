@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading || loadingReport" size="large">
-        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" />
+        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching"  :buttonSearch="true"/>
         <div id="pa-430">
             <div class="search-form">
                 <a-row :gutter="20">

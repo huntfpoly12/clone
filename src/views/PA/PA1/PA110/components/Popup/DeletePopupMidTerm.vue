@@ -59,7 +59,7 @@ export default defineComponent({
         const onSubmit = (e: any) => {
             mutate({
                 companyId: companyId,
-                processKey: store.state.common.processKeyPA110,
+                processKey: store.state.common.pa110.processKeyPA110,
                 paymentDay: props.data.paymentDay,
                 employeeId: props.data.employee.employeeId,
             })

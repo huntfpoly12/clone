@@ -3,7 +3,8 @@
     title="후원자 관리"
     @actionSave="actionSave($event)"
     @actionSearch="actionSearch && searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-620">
     <div class="search-form dflex">
@@ -204,8 +205,8 @@
               <span v-else>해당사항없음</span>
             </a-form-item>
 
-            <a-form-item label="주민등록번호" :label-col="labelCol">
-              <div class="d-flex gap-6">
+            <a-form-item label="주민등록번호" :label-col="labelCol" v-if="formState.type === 1">
+              <div class="d-flex gap-6" >
                 <id-number-text-box
                   :required="formState.type === 1"
                   :width="200"
@@ -223,7 +224,7 @@
               </div>
             </a-form-item>
 
-            <a-form-item label="사업자(고유)등록번호" :label-col="labelCol">
+            <a-form-item label="사업자(고유)등록번호" :label-col="labelCol" v-else>
               <div class="d-flex gap-6">
                 <biz-number-text-box
                   :required="formState.type !== 1"
@@ -330,7 +331,7 @@ import {checkAndAddKeyToObject, initBackerCreateInput} from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import {isEqual, cloneDeep} from "lodash";
-
+import {message} from "ant-design-vue";
 // type SearchType = {
 //   page: number
 //   rows: number
@@ -517,11 +518,30 @@ export default defineComponent({
       isCheckedBizNumber.value = false;
       isCheckedResidentId.value = false;
       isDiscard.value = false;
-      notification("success", Message.getCommonMessage('106').message);
+      // notification("success", Message.getCommonMessage('106').message);
+      message.success({
+        content: () =>  Message.getCommonMessage('106').message,
+        class: 'ant-message',
+        style: {
+          marginTop: '20vh',
+          display: "flex",
+          justifyContent: "end",
+          paddingRight: "100px",
+        },
+      }, 2);
     });
     onErrorUpdate((e) => {
       triggerDetail.value = true;
-      notification("error", e.message);
+      message.error({
+        content: () =>  e.message,
+        class: 'ant-message',
+        style: {
+          marginTop: '20vh',
+          display: "flex",
+          justifyContent: "end",
+          paddingRight: "100px",
+        },
+      }, 2);
     });
 
     // handle add row
@@ -800,20 +820,21 @@ export default defineComponent({
     })
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
+      const input:any = {
+        name: formState.value.name,
+        use: formState.value.use,
+      }
+      if (formState.value.residentId) input.residentId = formState.value.residentId?.replace("-", "");
+      if (formState.value.bizNumber) input.bizNumber = formState.value.bizNumber;
+      if (formState.value.phone) input.phone = formState.value.phone;
+      if (formState.value.fundrasingInstitution) input.fundrasingInstitution = formState.value.fundrasingInstitution;
+      if (formState.value.donationOrganization) input.donationOrganization = formState.value.donationOrganization;
+      if (formState.value.roadAddress) input.roadAddress = formState.value.roadAddress;
+      if (formState.value.addressExtend) input.addressExtend = formState.value.addressExtend;
       return {
         companyId: companyId,
         backerCode: formState.value.backerCode,
-        input: {
-          name: formState.value.name,
-          bizNumber: formState.value.bizNumber,
-          residentId: formState.value.residentId?.replace("-", ""),
-          phone: formState.value.phone,
-          use: formState.value.use,
-          fundrasingInstitution: formState.value.fundrasingInstitution,
-          donationOrganization: formState.value.donationOrganization,
-          roadAddress: formState.value.roadAddress,
-          addressExtend: formState.value.addressExtend,
-        },
+        input: input,
       };
     });
     const actionSave = (e: any) => {
@@ -848,7 +869,7 @@ export default defineComponent({
       };
       checkAndAddKeyToObject({obj: dataFilter, key: 'name', value: dataSearch.value.name})
       checkAndAddKeyToObject({obj: dataFilter, key: 'phone', value: dataSearch.value.phone})
-      checkAndAddKeyToObject({obj: dataFilter, key: 'type', value: dataSearch.value.type})
+      checkAndAddKeyToObject({obj: dataFilter, key: 'type', value: type.value})
       refetchData({
         companyId: companyId,
         filter: {...dataFilter},

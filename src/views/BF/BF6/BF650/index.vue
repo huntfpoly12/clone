@@ -1,5 +1,5 @@
 <template>
-    <action-header title="계약정보관리&심사" @actionSearch="searching" />
+    <action-header title="계약정보관리&심사" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-650">
         <div class="page-content">
             <a-tabs v-model:activeKey="activeKey" type="card" style="min-height: 70%">

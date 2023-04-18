@@ -3,7 +3,8 @@
     title="거래처 관리"
     @actionSave="actionSave($event)"
     @actionSearch="searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-610">
     <div class="search-form dflex">
@@ -29,7 +30,7 @@
     </div>
     <div class="page-content">
       <a-row gutter="24">
-        <a-col span="16" class="custom-layout">
+        <a-col span="16" class="" style="height: 700px">
           <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
@@ -142,8 +143,8 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <a-col span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
-          <standard-form formName="ac-610" ref="formRef">
+        <a-col span="8" class="" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
+          <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
             <a-form-item label="거래처명" :label-col="labelCol" class="red">
               <default-text-box
                 :required="true"
@@ -615,6 +616,7 @@ export default defineComponent({
 
     const searching = (e: any) => {
       trigger.value = true;
+      console.log('dataSearch.value', dataSearch.value)
       Object.assign(dataFilter.value, dataSearch.value)
       dataSearch.value.page = listClient.value.page;
       refetchData()

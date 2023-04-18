@@ -38,12 +38,12 @@ export default defineComponent({
       result: filingsByWithholdingResult,
       loading: filingsByWithholdingLoading,
       onError: filingsByWithholdingError,
-    } = useQuery(queries.getElectronicFilingsByWithholdingTax, dataSearch, () => ({
+    } = useQuery(queries.getElectronicFilingsByLocalIncomeTax, dataSearch, () => ({
       enabled: filingsBywithholdingTrigger.value,
       fetchPolicy: 'no-cache',
     }));
     watch(filingsByWithholdingResult, (newVal) => {
-      let data = newVal.getElectronicFilingsByWithholdingTax;
+      let data = newVal.getElectronicFilingsByLocalIncomeTax;
       arrStatus.value = data;
       filingsBywithholdingTrigger.value = false;
       if (data) {
@@ -53,7 +53,6 @@ export default defineComponent({
     filingsByWithholdingError((res: any) => {
       notification('error', res.message);
       emit('productionStatusData', {});
-      filingsBywithholdingTrigger.value = false;
     })
     const checkStatus = (status: any) => {
       if (arrStatus.value.filter((val: any) => val.productionStatus == status).length != 0) return true;

@@ -1,5 +1,5 @@
 <template>
-  <action-header title="기부금영수증" :buttonDelete="false" :buttonSearch="true" @actionSearch="onSearch()" :buttonPrint="false"
+  <action-header title="기부금영수증" :buttonSearch="true" @actionSearch="onSearch()"
     :buttonSave="false" />
   <div id="ac-580" class="p-20">
     <!-- {{ dataStateAC580 }} dataStateAC580 <br /> -->

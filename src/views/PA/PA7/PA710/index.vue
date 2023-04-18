@@ -1,5 +1,5 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false :actionSave()" :buttonDelete="false" />
+    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false :actionSave()" :buttonSave="disabledBlock ? false : true" />
     <div id="pa-710">
         <div class="page-content">
             <a-row>

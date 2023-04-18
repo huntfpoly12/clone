@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading || loadingPrint || loadingSendEmail" size="large">
-        <action-header title="" @actionSearch="searching" />
+        <action-header title="" @actionSearch="searching" :buttonSearch="true"/>
         <div id="pa-230">
             <div class="search-form">
                 <a-row>
@@ -80,7 +80,10 @@
                             :foreigner="data.data.employee.foreigner" :checkStatus="false"
                             :employeeId="data.data.employeeId" />
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150"/>
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" cell-template="employee-residentId" width="150"/>
+                    <template #employee-residentId="{ data }">
+                        <div>{{ convertResidentId(data.data.employee.residentId)}}</div>
+                    </template>
                     <DxColumn caption="비고" cell-template="four-major-insurance"  />
                     <template #four-major-insurance="{ data }">
                         <div>
@@ -166,7 +169,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { DxTooltip } from 'devextreme-vue/tooltip';
-import { companyId, userId } from "@/helpers/commonFunction";
+import {companyId, convertResidentId, userId} from "@/helpers/commonFunction";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
@@ -177,7 +180,13 @@ import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
 import Tooltip from '@/components/common/Tooltip.vue';
 import {UserInfo} from "@/store/authModule/types";
+import {converter} from "protobufjs";
 export default defineComponent({
+  computed: {
+    converter() {
+      return converter
+    }
+  },
     components: {
         DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem,DxButton,DxTooltip,Tooltip
     },
@@ -304,6 +313,7 @@ export default defineComponent({
                 "createDate": createDate.value
             }
             if (e.employeeId) {
+                clearSelection()
                 emailAddress.value = e.email
                 dataSendEmail.value.employeeInputs = [
                     {
@@ -319,7 +329,7 @@ export default defineComponent({
                   notification('error', Message.getCommonMessage('601').message)
                   return;
                 }
-                // emailAddress.value = resultUserInf.value.getUser.email
+                emailAddress.value = userInfo.value.email
                 switchTypeSendMail.value = false
 
                   dataSendEmail.value.employeeInputs = selectedItemKeys.value.map((val: any) => {
@@ -412,6 +422,7 @@ export default defineComponent({
         };
     },
     methods: {
+      convertResidentId,
       onCellPrepared(e: any) {
         if(!e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' &&  e.cellElement.getAttribute('aria-colindex') === '6'){
           e.cellElement.colSpan = 2
