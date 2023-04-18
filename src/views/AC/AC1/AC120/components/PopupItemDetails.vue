@@ -7,10 +7,10 @@
             {{ dataSource }}
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" @row-inserted="onRowInserted"
+                ref="dataGridRef"
                 :focused-row-key="focusedRowKey" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
-                <DxEditing :use-icons="true" :allow-adding="true" :allow-updating="true" new-row-position="pageBottom"
-                    :allow-deleting="true" mode="cell">
+                <DxEditing :allow-adding="true" :allow-updating="true" new-row-position="pageBottom" mode="cell">
                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                 </DxEditing>
                 <!-- <DxEditing :allow-updating="true" :allow-adding="true" mode="cell" /> -->
@@ -138,10 +138,6 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        dataRowFocus: {
-            type: Object,
-            default: {},
-        }
     },
     components: {
         DxRequiredRule, DxNumberBox,
@@ -155,7 +151,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
         // const gridRef = ref(); // ref of grid
-        const dataGridRef: any = ref("grid"); // ref of grid Instance
+        const dataGridRef: any = ref(); // ref of grid Instance
         const focusedRowKey = ref(0)
         let arraySelectBox = reactive([
             {
@@ -227,35 +223,37 @@ export default defineComponent({
         }
 
         const deleteItem = (data: any) => {
-            console.log(data);
-
-            if (!store.state.common.formDataAC120 && dataSource.length == 1) { // status update = true and 1 data left
+            dataSource.value = dataSource.value.filter((item: any) => item.__KEY__ !== data.__KEY__)
+            // console.log(data);
+            // dataGridRef.value.instance.deleteRow(data.__KEY__)
+            if (!store.state.common.ac120.formData && dataSource.length == 1) { // status update = true and 1 data left
                 mutateDeleteStatementOfGoods({
 
                 })
             }
-
         }
         const onSubmit = (e: any) => {
-            // if (!store.state.common.formDataAC120) { // status update = true
-                let dataSave = {
-                    companyId: companyId,
-                    fiscalYear: globalYear.value,
-                    facilityBusinessId: globalFacilityBizId.value,
-                    transactionDetailDate: props.dataRowFocus.transactionDetailDate,
-                    accountingDocumentId: props.dataRowFocus.accountingDocumentId,
-                    items: JSON.parse(JSON.stringify(dataSource.value, (name, val) => {
-                        if (
-                            name === "__KEY__"
-                        ) {
-                            delete val[name];
-                        } else {
-                            return val;
-                        }
-                    }))
+            if (!store.state.common.ac120.statusFormAdd) { // status update = true
+                if (dataSource.value.length) {
+                    let dataSave = {
+                        companyId: companyId,
+                        fiscalYear: globalYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                        items: JSON.parse(JSON.stringify(dataSource.value, (name, val) => {
+                            if (
+                                name === "__KEY__"
+                            ) {
+                                delete val[name];
+                            } else {
+                                return val;
+                            }
+                        }))
+                    }
+                    mutateSaveStatementOfGoods(dataSave)
                 }
-                mutateSaveStatementOfGoods(dataSave)
-            // }
+            }
         }
         return {
             move_column,

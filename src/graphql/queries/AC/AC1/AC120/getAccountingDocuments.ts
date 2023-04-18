@@ -17,29 +17,64 @@ export default gql`
       lastBalance
       accountingDocuments {
         transactionDetailDate
-        documentOrderByDate
-        resolutionNumber
         accountingDocumentId
+        documentOrderByDate
         bankbookId
         bankbookDetailId
-        bankbook {
-          bankbookNickname
-          type
-          bankbookNumber
-        }
         resolutionClassification
         income
         spending
-        summaryOfBankbookDetail
         summary
+        theOrder
         accountCode
         relationCode
         fundingSource
         clientId
-        proofCount
+        letterOfApprovalType
+        causeUsage
         goodsCount
+        memo
+        goodsId
+        documentRegistered
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        ip
+        active
+        client{
+          clientId
+        }
+        statementOfGoodsItems {
+          item
+          standard
+          unit
+          quantity
+          unitPrice
+          amount
+          remark
+        }
+        proofCount
         handwriting
         resolutionNormalStatus
+        resolutionNumber
+        resolutionDate
+        resolutionType
+        causeActionDate
+        amount
+        proposedDate
+        accountingDate
+        registrationDate
+        paymentDate
+        source
+        writer
+        bankbook{
+          bankbookNickname
+          type
+          bankbookNumber
+          bankbookId
+        }
+        summaryOfBankbookDetail
       }
     }
   }

@@ -92,8 +92,8 @@ export default defineComponent({
         // unregisterAccountingDocument
         doneUnregisterAccountingDocument((e) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            store.state.common.resetDataTableAC120++
-            store.state.common.resetDataAccountingProcessesAC120++
+            store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.resetDataAccountingProcesses++
         })
         errorUnregisterAccountingDocument(e => {
             notification('error', e.message)
@@ -102,8 +102,8 @@ export default defineComponent({
         // initializeTransactionDetails
          doneInitializeTransactionDetails((e) => {
             notification('success', Message.getMessage('COMMON', '106').message)
-            store.state.common.resetDataTableAC120++
-            store.state.common.resetDataAccountingProcessesAC120++
+            store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.resetDataAccountingProcesses++
         })
         errorInitializeTransactionDetails(e => {
             notification('error', e.message)
