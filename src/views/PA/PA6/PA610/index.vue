@@ -2,7 +2,7 @@
   <action-header
     title="사업소득자등록"
     @actionSave="saving()"
-    :buttonDelete="false"
+    :buttonSave="true"
   />
   <div id="pa-610">
     <div class="page-content">
