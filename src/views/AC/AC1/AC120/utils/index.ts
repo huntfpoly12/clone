@@ -24,7 +24,7 @@ export const initialArrayRadioMonth = [
 ]
 export const initialStateFormAdd = {
   bankbookId: null,
-  paymentDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  resolutionDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
   resolutionType: 11,
   amount: null,
   summary: null,

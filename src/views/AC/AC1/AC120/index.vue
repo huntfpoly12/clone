@@ -59,8 +59,8 @@
             </div>
         </div>
         <div class="main">
-            {{ dataSource }}
-            <div class="data-grid" :style="[store.state.common.statusShowFullAC120 ? {} : { height: heightTable }]">
+            <!-- {{ dataSource }} -->
+            <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataDemoMain"
                     :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
@@ -197,6 +197,8 @@
                     <!-- {{ dataSource }} -->
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+                        :focused-row-enabled="true"
+                        @focused-row-changing="onFocusedRowChanging" ref="gridRefAC120"
                         :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
                         @selection-changed="selectionChanged">
@@ -275,7 +277,7 @@
                     </DxDataGrid>
                 </a-spin>
             </div>
-            {{ dataRowFocus }}
+            <!-- {{ store.state.common.ac120.dataRowFocus }} -->
             <DetailComponent />
         </div>
 
@@ -290,7 +292,7 @@
         @submit="onFillDataAdd" />
 
 
-    <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" :dataRowFocus='dataRowFocus' />
+    <PopupItemDetails :modalStatus="statusModalItemDetail" @closePopup="statusModalItemDetail = false" />
 
     <HistoryPopup :modalStatus="modalHistoryStatusAccountingProcess"
         @closePopup="modalHistoryStatusAccountingProcess = false" :data="popupData" title="변경이력"
@@ -363,7 +365,6 @@ export default defineComponent({
         const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
 
         const dataRows: any = ref([])
-        const dataRowFocus: any = ref([])
 
         let arraySelectBox = reactive([
             {
@@ -384,7 +385,7 @@ export default defineComponent({
             }
         ])
 
-        store.state.common.formDataAC120 = reactive({ ...initialStateFormData })
+        store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
         const dataGetAccountingProcesses = ref<any>([])
         const dataSource = ref<any>([])
@@ -432,8 +433,6 @@ export default defineComponent({
             mutate: rorderAccountingDocuments, onDone: doneRorderAccountingDocuments, onError: errorRorderAccountingDocuments,
         } = useMutation(mutations.reorderAccountingDocuments);
 
-
-
         // ============== ON DONE MUTATION GRAPHQL ===============
         // reorderAccountingDocuments
         doneRorderAccountingDocuments((e) => {
@@ -442,9 +441,6 @@ export default defineComponent({
         errorRorderAccountingDocuments(e => {
             notification('error', e.message)
         })
-
-
-
 
         // ================== WATCH ================
         // 1. getAccountingProcesses
@@ -456,21 +452,24 @@ export default defineComponent({
         watch(resGetAccountingDocuments, (value) => {
             triggerGetAccountingDocuments.value = false
             dataSource.value = value.getAccountingDocuments?.accountingDocuments
+            if (dataSource.value[0]){ // if table has data source
+                focusedRowKey.value = dataSource.value[0].accountingDocumentId
+                Object.assign(store.state.common.ac120.formData, dataSource.value[0])
+                store.state.common.ac120.statusFormAdd = false
+            }
             lastBalance.value = value.getAccountingDocuments?.lastBalance
         })
-
-        // On Done CreateAccountingDocument
-        watch(() => store.state.common.onDoneAddAC120, (value) => {
-            triggerGetAccountingProcesses.value = true
+        
+        // call api GetAccountingDocuments
+        watch(() => store.state.common.ac120.resetDataTable, (value) => {
             triggerGetAccountingDocuments.value = true
         })
-
-
-
-
+        // call api GetAccountingProcesses
+        watch(() => store.state.common.ac120.resetDataAccountingProcesses, (value) => {
+            triggerGetAccountingProcesses.value = true
+        })
 
         // ================ FUNCTION ============================================
-
         const selectionChanged = (data: any) => { 
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
@@ -480,6 +479,36 @@ export default defineComponent({
                 // }
             })
         }
+
+        const onFocusedRowChanging = (e: any) => {
+            if (!(e.event.currentTarget.outerHTML.search("dx-command-select") == -1)) {
+                e.cancel = true;
+            } else {
+                // store.state.common.ac120.dataRowFocus = e.rows[e.newRowIndex]?.data
+                Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                const rowElement = e.rowElement[0]
+                // store.state.common.pa110.dataRowOnActive = e.rows[e.newRowIndex]?.data
+                // if (store.state.common.pa110.dataRowOnActive.employeeId) { // if row data (not row add)
+                //     if ((store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd)) { // if change form data
+                //         rowElement?.classList.add("dx-state-hover-custom")
+                //         modalChangeRow.value = true;
+                //         e.cancel = true;
+                //     } else { // cho chọn raw mới
+                //         if (store.state.common.pa110.dataTaxPayInfo[store.state.common.pa110.dataTaxPayInfo.length - 1]?.employee.employeeId == null) {
+                //             store.state.common.pa110.dataTaxPayInfo = store.state.common.pa110.dataTaxPayInfo.splice(0, store.state.common.pa110.dataTaxPayInfo.length - 1)
+                //             store.state.common.pa110.statusRowAdd = true
+                //         }
+                //         store.state.common.pa110.incomeId = e.rows[e.newRowIndex]?.data?.incomeId
+                //         store.state.common.pa110.selectedRowKeys = [e.rows[e.newRowIndex]?.data.incomeId]
+                //         dataGridRef.value?.refresh();
+                //         store.state.common.pa110.loadingFormData++
+                //         if (store.state.common.pa110.statusRowAdd) {
+                //             store.state.common.pa110.statusFormAdd = false
+                //         }
+                //     }
+                // }
+            }
+        };
 
         const totalDeposits = () => {
             let total = 0;
@@ -536,7 +565,7 @@ export default defineComponent({
         const actionPopupItemDetail = (data: any) => {
             console.log(data);
             
-            dataRowFocus.value = data
+            // store.state.common.ac120.dataRowFocus = data
             statusModalItemDetail.value = true
         }
 
@@ -597,10 +626,15 @@ export default defineComponent({
         }
 
         const onFillDataAdd = (dataAdd: any) => {
-            statusModalSlipRegistrantion.value = false
-            console.log(dataAdd);
-            Object.assign(store.state.common.formDataAC120, dataAdd);
-            addNewRow(store.state.common.formDataAC120)
+            statusModalSlipRegistrantion.value = false; // close popup
+            // store.state.common.ac120.formData = reactive({ ...initialStateFormData })
+            Object.assign(store.state.common.ac120.formData, initialStateFormData);
+            Object.assign(store.state.common.ac120.formData, dataAdd);
+            if (!store.state.common.ac120.statusFormAdd) {
+                store.state.common.ac120.statusFormAdd = true;
+                
+                addNewRow(store.state.common.ac120.formData)
+            }
         }
 
 
@@ -611,6 +645,8 @@ export default defineComponent({
 
         const addNewRow = (formData: any) => {
             dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...formData })
+            store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
+            focusedRowKey.value = 'AC120';
         }
 
 
@@ -637,7 +673,8 @@ export default defineComponent({
             onFillDataAdd,
             loadingGetAccountingProcesses,
             loadingGetAccountingDocuments,
-            dataRows, dataRowFocus,
+            dataRows,
+            onFocusedRowChanging,
             // onSubmit,
             // refFormAC120,
 

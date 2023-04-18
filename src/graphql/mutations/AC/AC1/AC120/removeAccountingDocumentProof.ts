@@ -15,8 +15,6 @@ export default gql`
       transactionDetailDate: $transactionDetailDate
       accountingDocumentId: $accountingDocumentId
       fileStorageId: $fileStorageId
-    ) {
-        scalar
-    }
+    )
   }
 `;

@@ -1,6 +1,6 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="cancel" :mask-closable="false" class="confirm-md" footer="" :width="800">
-        <div class="mt-20">
+        <div class="mt-20" :key="countKey">
             <standard-form formName="ac-120-form-add" ref="refFormAddAC120" class="text-align-center mt-20">
                 <a-row class="row-1">
                     <a-col :span="10" class="col-1">
@@ -24,10 +24,10 @@
                     <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
                             <date-time-box width="150px" :required="true"
-                                v-model:valueDate="initialStateFormAdd.paymentDate" />
+                                v-model:valueDate="initialStateFormAdd.resolutionDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
-                            <radio-group :arrayValue="arrResolutionType" :layoutCustom="'horizontal'" :required="true"
+                            <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="initialStateFormAdd.resolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
@@ -69,9 +69,8 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const globalYear = computed(() => store.state.settings.globalYear)
-        const cancel = () => {
-            emit("closePopup", false)
-        };
+        const countKey = ref<number>(0)
+        
         const refFormAddAC120 = ref()
         
         const dataQueryGetBankBooks = ref({
@@ -104,6 +103,12 @@ export default defineComponent({
             }
         })
 
+        watch(() => props.modalStatus, (newValue, old) => {
+            if (newValue) {
+                countKey.value++
+            }
+        })
+
         // ================ FUNCTION ============================================
         const submit = () => {
             const res = refFormAddAC120.value?.validate();
@@ -113,7 +118,11 @@ export default defineComponent({
                 emit('submit', initialStateFormAdd)
             }
         }
-        const arrResolutionType: any = computed(() => {
+        const cancel = () => {
+            emit("closePopup", false)
+        };
+
+        store.state.common.ac120.arrResolutionType = computed(() => {
             let item: any = enum2Entries(ResolutionType).map((value) => ({
                 id: value[1],
                 text: value[0],
@@ -133,8 +142,9 @@ export default defineComponent({
             submit,
             cancel,
             arraySelectBox,
-            arrResolutionType,
-            arrLetterOfApprovalType
+            arrLetterOfApprovalType,
+            countKey,
+            store,
         }
     },
 })
