@@ -786,10 +786,6 @@ export default defineComponent({
   padding: 0;
 }
 :deep .tab-main .dx-tab-content {
-    // width: 180px;
-    // display: flex;
-    // align-items: center;
-    // justify-content: space-between;
     span:first-child {
       width: 150px;
       display:inline-block;

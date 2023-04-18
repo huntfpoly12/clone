@@ -33,15 +33,15 @@
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" />
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26"/>
           </template>
           <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" />
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26"/>
           </template>
           <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" />
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" height="26"/>
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
@@ -144,22 +144,19 @@ export default defineComponent({
       setData()
     })
     const setData = () => {
-      let listItem:any = []
-      let listStandard:any = []
-      let listUnit:any = []
+      arrSelectItem.value = []
+      arrSelectStandard.value = []
+      arrSelectUnit.value = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
-          listItem = [...listItem, {id: index, value: item.item}]
-          listStandard = [...listStandard, {id: index, value: item.standard}]
-          listUnit = [...listUnit,{id: index,value: item.unit}]
+          arrSelectItem.value = [...arrSelectItem.value, {id: index, value: item.item}]
+          arrSelectStandard.value = [...arrSelectStandard.value, {id: index, value: item.standard}]
+          arrSelectUnit.value = [...arrSelectUnit.value, {id: index,value: item.unit}]
           return {
             ...item,
             id: index
           }
         })
-        arrSelectItem.value = [...listItem]
-        arrSelectStandard.value = [...listStandard]
-        arrSelectUnit.value = [...listUnit]
       } else {
         dataSource.value.statementOfGoodsItems = []
       }
