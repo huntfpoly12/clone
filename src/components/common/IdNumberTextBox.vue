@@ -81,7 +81,7 @@ export default defineComponent({
     watch(
       () => props.valueInput,
       (newValue) => {
-        if(newValue !== undefined) value.value = convertValue(newValue);
+        value.value = convertValue(newValue || "");
       }
     );
     const checkID = (e: any) => {
@@ -90,12 +90,12 @@ export default defineComponent({
       }
       const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
       if (props.foreigner && fNumber > 4 && fNumber < 9) {
-          return validResidentId(value.value);
+          return validResidentId(value.value || "");
       } else if (props.foreigner && (fNumber < 4 || fNumber > 9)) {
           return false
       }
     }
-    const checkIdNotForeigner = () => !!value.value ?? validResidentId(value.value)
+    const checkIdNotForeigner = () => validResidentId(value.value || "")
 
     return {
       updateValue,
