@@ -100,6 +100,7 @@ export default defineComponent({
             onError: errChangeStatus
         } = useMutation(mutations.changeIncomeProcessStatus);
         doneChangeStatus(() => {
+            refetchTable()
             notification('success', `업부상태 변경되었습니다!`)
         })
         errChangeStatus((error) => {
