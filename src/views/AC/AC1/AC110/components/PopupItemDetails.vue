@@ -20,32 +20,30 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item"
-              :arrSelect="arrSelectItem" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.standard"
-              :arrSelect="arrSelectStandard" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+              :required="true" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit"
-              :arrSelect="arrSelectUnit" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" />
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
             <number-box-money v-model:valueInput="data.data.quantity" :required="true" />
           </template>
-          <DxColumn caption="수량" cell-template="unitPrice" />
+          <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
             <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" />
           </template>
-          <DxColumn caption="수량" cell-template="amount" />
+          <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" />
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" />
           </template>
-          <DxColumn caption="수량" cell-template="remark" />
+          <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
             <default-text-box v-model:valueInput="data.data.remark" />
           </template>
@@ -135,6 +133,7 @@ export default defineComponent({
       loading: loadingSaveStatementOfGoods,
     } = useMutation(mutations.saveStatementOfGoods);
     doneSaveStatementOfGoods((e) => {
+      setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveStatementOfGoods(e => {
@@ -142,17 +141,29 @@ export default defineComponent({
     })
     watch(() => props.data, (value) => {
       dataSource.value = cloneDeep(value)
+      setData()
+    })
+    const setData = () => {
+      let listItem:any = []
+      let listStandard:any = []
+      let listUnit:any = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
+          listItem = [...listItem, {id: index, value: item.item}]
+          listStandard = [...listStandard, {id: index, value: item.standard}]
+          listUnit = [...listUnit,{id: index,value: item.unit}]
           return {
             ...item,
             id: index
           }
         })
+        arrSelectItem.value = [...listItem]
+        arrSelectStandard.value = [...listStandard]
+        arrSelectUnit.value = [...listUnit]
       } else {
         dataSource.value.statementOfGoodsItems = []
       }
-    })
+    }
     const cancel = () => {
       emit("closePopup", false)
     };
@@ -180,10 +191,11 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
-      if (data.id.includes('create')) return
+      if (data.id.toString().includes('create')) return
       isModalDelete.value = true
     }
-    const handleDelete = () => {
+    const handleDelete = (status: Boolean) => {
+      if (!status) return
       const payloadRequest = { ...props.payload }
       delete payloadRequest.bankbookDetailDate
       delete payloadRequest.bankbookDetailId
@@ -198,8 +210,15 @@ export default defineComponent({
       if (!res.isValid) return
       const payloadRequest = { ...props.payload }
       const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
-        delete item.id
-        return item
+        return {
+          amount: item.amount,
+          item: item.item,
+          quantity: item.quantity,
+          remark: item.remark,
+          standard: item.standard,
+          unit: item.unit,
+          unitPrice: item.unitPrice
+        }
       })
       const payloadClear = makeDataClean({
         ...payloadRequest,

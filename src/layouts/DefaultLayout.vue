@@ -785,6 +785,25 @@ export default defineComponent({
   border-radius: 8px 8px 0 0;
   padding: 0;
 }
+:deep .tab-main .dx-tab-content {
+    // width: 180px;
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
+    span:first-child {
+      width: 150px;
+      display:inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+    span:last-child {
+      svg {
+        margin-bottom: 3px;
+      }
+    }
+}
 :deep .tab-main .tab-main-title-tab {
   padding: 9px;
 }
