@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" />
+        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" :buttonSearch="true"/>
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">

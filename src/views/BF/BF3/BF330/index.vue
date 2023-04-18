@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <div id="bf-330">
-            <action-header title="서비스관리"  @actionSearch="searching"/>
+            <action-header title="서비스관리"  @actionSearch="searching" :buttonSearch="true"/>
             <div class="search-form">
                 <div class="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
