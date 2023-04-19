@@ -388,7 +388,7 @@ export default defineComponent({
         else focusedRowKey.value = selectRowKeyAction.value;
         previousRowData.value = { ...formState.value };
       }
-      notification("success", Message.getCommonMessage('106').message);
+      notification("success", Message.getCommonMessage('101').message);
     });
     onErrorAdd((e) => {
       notification("error", e.message);
@@ -616,7 +616,6 @@ export default defineComponent({
 
     const searching = (e: any) => {
       trigger.value = true;
-      console.log('dataSearch.value', dataSearch.value)
       Object.assign(dataFilter.value, dataSearch.value)
       dataSearch.value.page = listClient.value.page;
       refetchData()

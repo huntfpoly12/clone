@@ -34,7 +34,10 @@
         <template #convertBirthday="{ data }" class="">
           <div class="d-flex justify-content-center">{{ convertBirthDayKorea(data.data.residentId) }}</div>
         </template>
-        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>
+        <DxColumn caption="주민등록증" data-field="residentId" cell-template="residentId" width="150" alignment="center"/>
+        <template #residentId="{ data }">
+          <div>{{ convertResidentId(data.data.residentId)}}</div>
+        </template>
         <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center" cell-template="workingStatus"/>
         <template #workingStatus="{ data }">
           <div>
@@ -68,7 +71,6 @@
         <DxScrolling column-rendering-mode="virtual" />
         <DxColumn cell-template="action" width="150" alignment="center"/>
         <template #action="{ data }" class="custom-action">
-          <div class="custom-action" style="text-align: center">
             <a-space :size="4">
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px"/>
@@ -77,11 +79,10 @@
                   <img src="@/assets/images/searchPlus.png"
                        style="width: 16px; height: 16px; margin-top: 0px;" />
               </DxButton>
-              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
+              <DxButton :disabled="data.data.workingStatus === 0" type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
                 <DeleteOutlined style="font-size: 16px"/>
               </DxButton>
             </a-space>
-          </div>
         </template>
         <DxScrolling column-rendering-mode="virtual"/>
       </DxDataGrid>
@@ -101,7 +102,7 @@
 <script lang="ts">
 import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
-import {companyId, convertBirthDayKorea} from '@/helpers/commonFunction';
+import {companyId, convertBirthDayKorea, convertResidentId} from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
 import {DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined} from '@ant-design/icons-vue';
 import {useMutation, useQuery} from '@vue/apollo-composable';
@@ -131,7 +132,7 @@ enum MajorInsuranceWorkingStatus {
     취소 = 0
 }
 export default defineComponent({
-  methods: {convertBirthDayKorea},
+  methods: {convertResidentId, convertBirthDayKorea},
   components: {
     ViewPA810Popup,
     DxDataGrid,

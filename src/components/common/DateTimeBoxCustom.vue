@@ -40,8 +40,12 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        startDate: Date,
-        finishDate: Date,
+        startDate: {
+          type: Object as () => any,
+        },
+        finishDate: {
+          type: Object as () => any,
+        },
         teleport: {
           default: false,
           type: [Boolean,String]
@@ -54,17 +58,17 @@ export default defineComponent({
     components: {
         Datepicker,
     },
-    setup(props, { emit }) { 
+    setup(props, { emit }) {
         const isValid = ref(false)
         const widthBoder = computed(() => {
           const regex1 = /\%/gm;
           const regex2 = /px/gm;
           if ((regex1.exec(props.width))) {
             return String(parseInt(props.width.replace("px", "")) + 2) + '%'
-          } 
+          }
           if ((regex2.exec(props.width))) {
             return String(parseInt(props.width.replace("px", "")) + 2) + 'px'
-          } 
+          }
         })
         const date: any = ref(filters.formatDate(props.valueDate))
         watch(
@@ -77,7 +81,7 @@ export default defineComponent({
                 date.value = newValue;
               }
             }
-        ); 
+        );
         const updateValue = () => {
             isValid.value  = false
             if (date.value)
@@ -97,7 +101,7 @@ export default defineComponent({
         };
     },
 });
-</script> 
+</script>
 
 
 <style lang="scss" scoped>
