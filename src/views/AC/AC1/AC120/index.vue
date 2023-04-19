@@ -468,6 +468,10 @@ export default defineComponent({
         watch(() => store.state.common.ac120.resetDataAccountingProcesses, (value) => {
             triggerGetAccountingProcesses.value = true
         })
+        
+        watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
+            deleteRowAdd()
+        })
 
         // ================ FUNCTION ============================================
         const selectionChanged = (data: any) => { 
@@ -486,6 +490,9 @@ export default defineComponent({
             } else {
                 // store.state.common.ac120.dataRowFocus = e.rows[e.newRowIndex]?.data
                 Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
+                if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
+                    deleteRowAdd()
+                }
                 const rowElement = e.rowElement[0]
                 // store.state.common.pa110.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 // if (store.state.common.pa110.dataRowOnActive.employeeId) { // if row data (not row add)
@@ -509,6 +516,11 @@ export default defineComponent({
                 // }
             }
         };
+
+        const deleteRowAdd = () => {
+            store.state.common.ac120.statusFormAdd = false;
+            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1)
+        }
 
         const totalDeposits = () => {
             let total = 0;
@@ -558,6 +570,9 @@ export default defineComponent({
 
         const actionPopupSlipRegistration = (value: any) => {
             statusModalSlipRegistrantion.value = true
+            if (!store.state.common.ac120.statusFormAdd) {
+                addNewRow()
+            }
         }
 
 
@@ -627,14 +642,17 @@ export default defineComponent({
 
         const onFillDataAdd = (dataAdd: any) => {
             statusModalSlipRegistrantion.value = false; // close popup
-            // store.state.common.ac120.formData = reactive({ ...initialStateFormData })
-            Object.assign(store.state.common.ac120.formData, initialStateFormData);
-            Object.assign(store.state.common.ac120.formData, dataAdd);
-            if (!store.state.common.ac120.statusFormAdd) {
-                store.state.common.ac120.statusFormAdd = true;
-                
-                addNewRow(store.state.common.ac120.formData)
-            }
+            
+            // Object.assign(store.state.common.ac120.formData, initialStateFormData);
+            
+            // if (!store.state.common.ac120.statusFormAdd) {
+            //     store.state.common.ac120.formData = reactive({ ...initialStateFormData })
+            //     // Object.assign(store.state.common.ac120.formData, dataAdd);
+            //     store.state.common.ac120.statusFormAdd = true;
+            //     addNewRow(store.state.common.ac120.formData)
+            // } else {
+            //     // Object.assign(store.state.common.ac120.formData, dataAdd);
+            // }
         }
 
 
@@ -643,10 +661,12 @@ export default defineComponent({
 
         };
 
-        const addNewRow = (formData: any) => {
-            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...formData })
+        const addNewRow = () => {
+            store.state.common.ac120.statusFormAdd = true
+            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...initialStateFormData })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
             focusedRowKey.value = 'AC120';
+            store.state.common.ac120.onAddRow++
         }
 
 

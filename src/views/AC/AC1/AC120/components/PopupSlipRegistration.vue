@@ -6,33 +6,33 @@
                     <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
                             <select-box-common placeholder="선택" :arrSelect="arraySelectBox"
-                                v-model:valueInput="initialStateFormAdd.bankbookId" :required="true" :width="200" />
+                                v-model:valueInput="store.state.common.ac120.formData.bankbookId" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="200" :required="true" v-model:valueInput="initialStateFormAdd.amount"
+                            <number-box :width="200" :required="true" v-model:valueInput="store.state.common.ac120.formData.amount"
                                 placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <default-text-box :width="200" :required="true" v-model:valueInput="initialStateFormAdd.summary"
+                            <default-text-box :width="200" :required="true" v-model:valueInput="store.state.common.ac120.formData.summary"
                                 placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
                             <FundingSourceSelect placeholder="선택" :width="200" :required="true"
-                                v-model:valueInput="initialStateFormAdd.fundingSource" />
+                                v-model:valueInput="store.state.common.ac120.formData.fundingSource" />
                         </a-form-item>
                     </a-col>
                     <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
                             <date-time-box width="150px" :required="true"
-                                v-model:valueDate="initialStateFormAdd.resolutionDate" />
+                                v-model:valueDate="store.state.common.ac120.formData.resolutionDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="initialStateFormAdd.resolutionType" />
+                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
                             <radio-group :arrayValue="arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="initialStateFormAdd.letterOfApprovalType" />
+                                v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -54,7 +54,7 @@ import queries from "@/graphql/queries/CM/CM120";
 import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
-import { initialStateFormAdd } from '../utils/index'
+// import { initialStateFormAdd } from '../utils/index'
 import { ResolutionType, LetterOfApprovalType, enum2Entries  } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
@@ -115,11 +115,17 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
-                emit('submit', initialStateFormAdd)
+                emit('submit', true)
             }
         }
         const cancel = () => {
             emit("closePopup", false)
+            if (!store.state.common.ac120.statusFormAdd) {
+                console.log(111);
+                
+                store.state.common.ac120.onDeleteRowAdd
+            }
+            
         };
 
         store.state.common.ac120.arrResolutionType = computed(() => {
@@ -138,7 +144,7 @@ export default defineComponent({
         });
         return {
             refFormAddAC120,
-            initialStateFormAdd,
+            // initialStateFormAdd,
             submit,
             cancel,
             arraySelectBox,

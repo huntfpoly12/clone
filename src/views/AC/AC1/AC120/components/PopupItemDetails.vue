@@ -5,27 +5,19 @@
                 <h2><b>물품내역</b></h2>
             </div>
             {{ dataSource }}
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            <!-- <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" @row-inserted="onRowInserted"
-                ref="dataGridRef"
-                :focused-row-key="focusedRowKey" :column-auto-width="true">
+                ref="dataGridRef" :focused-row-key="focusedRowKey" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxEditing :allow-adding="true" :allow-updating="true" new-row-position="pageBottom" mode="cell">
                     <DxTexts confirmDeleteMessage="삭제하겠습니까?" />
                 </DxEditing>
-                <!-- <DxEditing :allow-updating="true" :allow-adding="true" mode="cell" /> -->
-                <!-- <DxToolbar>
-                    <DxItem location="after" template="button-template" css-class="cell-button-add" />
-                </DxToolbar> -->
-                <!-- <template #button-template>
-                    <DxButton icon="plus" @click="addRow" />
-                </template> -->
                 <DxColumn caption="품목" edit-cell-template="itemCustom" data-field="item">
                     <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label" />
                     <DxRequiredRule />
                 </DxColumn>
                 <template #itemCustom="{ data }">
-                    <select-box-common :arrSelect="arraySelectBox" v-model:valueInput="data.data.item" :required="true" />
+                    <custom-item-select-box width="200px" v-model:valueInput="data.data.item" :arrSelect="arraySelectBox" />
                 </template>
                 <DxColumn caption="규격" data-field="standard" edit-cell-template="standard">
                     <DxLookup :data-source="arraySelectBox" value-expr="value" display-expr="label" />
@@ -63,12 +55,6 @@
                     <DxNumberBox v-model:value="data.data.amount" min="0" />
                 </template>
                 <DxColumn caption="비고" data-field="remark" />
-                <!-- <DxColumn caption="비고" data-field="remark" edit-cell-template="remark">
-                    <DxRequiredRule />
-                </DxColumn>
-                <template #remark="{ data }">
-                    <DxNumberBox v-model:value="data.data.remark" min="0" />
-                </template> -->
                 <DxColumn caption="삭제" cell-template="action" />
                 <template #action="{ data }">
                     <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
@@ -79,37 +65,65 @@
                     <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
                     <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" />
                 </DxSummary>
-            </DxDataGrid>
-
-            <!-- <DxDataGrid :data-source="dataSource" :show-borders="true" key-expr="ID">
-                <DxEditing :use-icons="true"
-                    :select-text-on-edit-start="true" :start-edit-action="'click'" mode="batch" />
-                <DxPaging :enabled="false" />
-                <DxColumn caption="품목" cell-template="item" />
-                <template #item="{ data }">
-                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
-                </template>
-
-
-                <DxColumn caption="규격" cell-template="standard" />
-                <template #standard="{ data }">
-                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
-                </template>
-                <DxColumn caption="단위" cell-template="unit" />
-                <template #unit="{ data }">
-                    <select-box-common :arrSelect="arraySelectBox" :required="true" />
-                </template>
-                <DxColumn caption="수량" data-field="quantity"/>
-                <DxColumn caption="단가" data-field="unitPrice"/>
-                <DxColumn caption="금액" data-field="amount"/>
-                <DxColumn caption="비고" data-field="remark"/>
-                <DxColumn caption="삭제" cell-template="action" />
-                <template #action="{ data }">
-                    <DeleteOutlined style="font-size: 16px; width: 100%; height: 30px; line-height: 30px;"
-                        @click="deleteItem(data.data)" />
-                </template>
             </DxDataGrid> -->
+            <standard-form ref="refFormItemAC120">
+                <DxDataGrid class="mt-20" ref="dataGridRef" :show-row-lines="true" :data-source="dataSource"
+                    :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    :column-auto-width="true">
+                    <DxToolbar>
+                        <DxItem location="after" template="button-add" css-class="cell-button-add" />
+                    </DxToolbar>
+                    <template #button-add>
+                        <a-tooltip placement="top">
+                            <template #title>신규</template>
+                            <div>
+                                <DxButton icon="plus" @click="addNewRow" />
+                            </div>
+                        </a-tooltip>
+                    </template>
+                    <DxScrolling mode="standard" show-scrollbar="always" />
+                    <DxColumn caption="품목" cell-template="item" width="150" />
+                    <template #item="{ data }">
+                        <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem"
+                            :required="true" />
+                    </template>
+                    <DxColumn caption="규격" cell-template="standard" width="150" />
+                    <template #standard="{ data }">
+                        <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+                            :required="true" />
+                    </template>
+                    <DxColumn caption="단위" cell-template="unit" width="150" />
+                    <template #unit="{ data }">
+                        <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit"
+                            :required="true" />
+                    </template>
+                    <DxColumn caption="수량" cell-template="quantity" width="100" />
+                    <template #quantity="{ data }">
+                        <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" />
+                    </template>
+                    <DxColumn caption="단가" cell-template="unitPrice" width="100" />
+                    <template #unitPrice="{ data }">
+                        <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" />
+                    </template>
+                    <DxColumn caption="금액" cell-template="amount" width="100" />
+                    <template #amount="{ data }">
+                        <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" />
+                    </template>
+                    <DxColumn caption="비고" cell-template="remark" />
+                    <template #remark="{ data }">
+                        <default-text-box v-model:valueInput="data.data.remark" />
+                    </template>
+                    <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
+                    <template #action="{ data }">
+                        <DeleteOutlined style="font-size: 12px" @click="deleteItem(data.data)" />
+                    </template>
 
+                    <DxSummary>
+                        <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}건" />
+                        <DxTotalItem column="금액" summary-type="sum" display-format="금액합계: {0}원" />
+                    </DxSummary>
+                </DxDataGrid>
+            </standard-form>
         </div>
         <div class="btn_submit text-align-center mt-20">
             <button-basic @onClick="onSubmit" class="button-form-modal" :text="'저장'" :type="'default'"
@@ -132,6 +146,7 @@ import DxNumberBox from "devextreme-vue/number-box";
 import { companyId } from "@/helpers/commonFunction";
 import notification from '@/utils/notification';
 import { Message } from "@/configs/enum"
+import { initStatementOfGoods } from '../utils/index'
 export default defineComponent({
     props: {
         modalStatus: {
@@ -153,6 +168,9 @@ export default defineComponent({
         // const gridRef = ref(); // ref of grid
         const dataGridRef: any = ref(); // ref of grid Instance
         const focusedRowKey = ref(0)
+        let arrSelectItem: any = ref([])
+        let arrSelectStandard: any = ref([])
+        let arrSelectUnit: any = ref([])
         let arraySelectBox = reactive([
             {
                 value: '1',
@@ -172,16 +190,24 @@ export default defineComponent({
             }
         ])
         const dataSource = ref<any>([])
-        const addRow = () => {
-            // dataGridRef.value.instance.addRow();
-            // dataGridRef.value.instance.deselectAll();
-            dataGridRef.value.instance.addRow()
-            dataGridRef.value.instance.closeEditCell()
+        const refFormItemAC120 = ref()
+        // const addRow = () => {
+        //     // dataGridRef.value.instance.addRow();
+        //     // dataGridRef.value.instance.deselectAll();
+        //     dataGridRef.value.instance.addRow()
+        //     dataGridRef.value.instance.closeEditCell()
 
-            setTimeout(() => {
-                let keyNew = dataGridRef.value.instance.getKeyByRowIndex(dataSource.value.length - 1);
-                focusedRowKey.value = keyNew;
-            }, 100);
+        //     setTimeout(() => {
+        //         let keyNew = dataGridRef.value.instance.getKeyByRowIndex(dataSource.value.length - 1);
+        //         focusedRowKey.value = keyNew;
+        //     }, 100);
+        // }
+        const addNewRow = () => {
+            if (dataSource.value.length) {
+                dataSource.value = [...dataSource.value, { ...initStatementOfGoods, id: dataSource.value[dataSource.value.length - 1].id + 'create' }]
+            } else {
+                dataSource.value = [{ ...initStatementOfGoods, id: 'create' }]
+            }
         }
         const onInitRow = (e: any) => {
             // e.data = JSON.parse(JSON.stringify({ ... }));
@@ -210,11 +236,20 @@ export default defineComponent({
         // SaveStatementOfGoods
         doneSaveStatementOfGoods((e) => {
             notification('success', Message.getMessage('COMMON', '106').message)
+            emit("closePopup", false)
         })
         errorSaveStatementOfGoods(e => {
             notification('error', e.message)
         })
 
+        // ================== WATCH ================
+        watch(() => props.modalStatus, (newValue, old) => {
+            if (newValue) {
+                dataSource.value = store.state.common.ac120.formData?.statementOfGoodsItems
+            }
+        })
+
+        // ================ FUNCTION ============================================
         const cancel = () => {
             emit("closePopup", false)
         };
@@ -223,37 +258,46 @@ export default defineComponent({
         }
 
         const deleteItem = (data: any) => {
-            dataSource.value = dataSource.value.filter((item: any) => item.__KEY__ !== data.__KEY__)
-            // console.log(data);
-            // dataGridRef.value.instance.deleteRow(data.__KEY__)
-            if (!store.state.common.ac120.formData && dataSource.length == 1) { // status update = true and 1 data left
+            dataSource.value = dataSource.value.filter((item: any) => item.id !== data.id)
+            if (!store.state.common.ac120.statusFormAdd && dataSource.length == 1) { // status update = true and 1 data left
                 mutateDeleteStatementOfGoods({
 
                 })
             }
         }
         const onSubmit = (e: any) => {
-            if (!store.state.common.ac120.statusFormAdd) { // status update = true
-                if (dataSource.value.length) {
-                    let dataSave = {
-                        companyId: companyId,
-                        fiscalYear: globalYear.value,
-                        facilityBusinessId: globalFacilityBizId.value,
-                        transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
-                        accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
-                        items: JSON.parse(JSON.stringify(dataSource.value, (name, val) => {
-                            if (
-                                name === "__KEY__"
-                            ) {
-                                delete val[name];
-                            } else {
-                                return val;
-                            }
-                        }))
+            const res = refFormItemAC120.value?.validate();
+            if (!res.isValid) {
+                res.brokenRules[0].validator.focus();
+            } else {
+                let dataItem = dataSource.value
+                dataItem.map((value: any) => {
+                    if (!value.remark) {
+                        delete value.remark;
                     }
-                    mutateSaveStatementOfGoods(dataSave)
+                    delete value.id;
+                    delete value.__typename;
+                    return value;
+                })
+                if (!store.state.common.ac120.statusFormAdd) { // status update = true
+                    if (dataSource.value.length) {
+                        let dataSave = {
+                            companyId: companyId,
+                            fiscalYear: globalYear.value,
+                            facilityBusinessId: globalFacilityBizId.value,
+                            transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                            accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
+                            items: dataItem
+                        }
+                        mutateSaveStatementOfGoods(dataSave)
+                    }
+                } else {
+                    store.state.common.ac120.formData.statementOfGoodsItems = dataItem
+                    emit("closePopup", false)
                 }
             }
+
+
         }
         return {
             move_column,
@@ -264,9 +308,13 @@ export default defineComponent({
             deleteItem,
             dataSource,
             onRowInserted,
-            addRow, dataGridRef, onInitRow,
+            addNewRow, dataGridRef, onInitRow,
             focusedRowKey,
             onSubmit,
+            arrSelectItem,
+            arrSelectStandard,
+            arrSelectUnit,
+            refFormItemAC120,
         }
     },
 })
