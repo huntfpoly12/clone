@@ -1,16 +1,16 @@
 <template>
-    <standard-form action="" name="add-page-210" class="formPA510" :class="store.state.common.pa510.statusDisabledStatus ? 'disabledBlock' : ''">
+    <standard-form action="" name="add-page-210" class="formPA510">
         <a-spin :spinning="loading || loadingIncomeWageDaily" ><StandardForm formName="pa-510-form" ref="pa510FormRef">
             <a-row :key="countKey">
                 <a-col :span="14">
                     <a-form-item label="일용직사원" class="red">
-                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa510.statusFormAdd"
+                        <EmploySelect :arrayValue="arrayEmploySelect" :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus"
                             v-model:valueEmploy="dataIncomeWageDaily.employee.employeeId" :required="true"
                             @onChange="onChange" :activeType20="false" width="270px"/>
                     </a-form-item>
                     <a-form-item label="지급일" class="red">
                         <number-box :required="true" :min="1" v-model:valueInput="dataIncomeWageDaily.paymentDay" :max="31"
-                            :spinButtons="true" :disabled="!store.state.common.pa510.statusFormAdd" :isFormat="true" width="270px"/>
+                            :spinButtons="true" :disabled="!store.state.common.pa510.statusFormAdd || store.state.common.pa510.statusDisabledStatus" :isFormat="true" width="270px"/>
                     </a-form-item>
                 </a-col>
                 <a-col :span="10">
@@ -55,11 +55,11 @@
                     </div>
                     <div class="input-text red">
                         <label>일급/월급:</label>
-                        <switch-basic v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textUnCheck="'월급'"
+                        <switch-basic :disabled="store.state.common.pa510.statusDisabledStatus" v-model:valueSwitch="dataIncomeWageDaily.employee.monthlyPaycheck" :textUnCheck="'월급'"
                             :textCheck="'일급'" />
-                        <number-box-money  @changeInput="onChangePrice" v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
+                        <number-box-money :disabled="store.state.common.pa510.statusDisabledStatus"  @changeInput="onChangePrice" v-if="dataIncomeWageDaily.employee.monthlyPaycheck" width="110px" :required="true"
                             placeholder='일급여' :spinButtons="false" v-model:valueInput="dataIncomeWageDaily.dailyWage" />
-                        <number-box-money  @changeInput="onChangePrice" v-else width="110px" :required="true" placeholder='월급여' :spinButtons="false"
+                        <number-box-money :disabled="store.state.common.pa510.statusDisabledStatus"  @changeInput="onChangePrice" v-else width="110px" :required="true" placeholder='월급여' :spinButtons="false"
                             v-model:valueInput="dataIncomeWageDaily.monthlyWage" />
                     </div>
                     <div style="margin-bottom: 10px;">
@@ -68,7 +68,7 @@
                         <span class="style-note" v-else>월급 선택시, 일급 = 월급 / 근무일수</span>
                     </div>
                     <a-form-item label="근무일수" class="red">
-                        <number-box @changeInput="onChangePrice" width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
+                        <number-box :disabled="store.state.common.pa510.statusDisabledStatus" @changeInput="onChangePrice" width="150px" v-model:valueInput="dataIncomeWageDaily.workingDays"
                              min="1" :max="31" :required="true"/>
                     </a-form-item>
                     <div style="font-weight: bold;">
@@ -110,7 +110,7 @@
                                 </span>
                                 <div>
                                     <number-box-money min="0" width="130px" :spinButtons="false" @changeInput="onChangeInputDeduction"
-                                        v-model:valueInput="item.price" :disabled="[1001, 1002, 1003].find(element => element == item.deductionItemCode)"/>
+                                        v-model:valueInput="item.price" :disabled="[1001, 1002, 1003].find(element => element == item.deductionItemCode) || store.state.common.pa510.statusDisabledStatus"/>
                                     <span class="pl-5">원</span>
                                 </div>
                             </div>
@@ -123,16 +123,16 @@
             <a-tooltip placement="top" :overlayStyle="{maxWidth: '500px'}">
                 <template #title>입력된 급여 금액으로 공제 재계산합니다.</template>
                 <div>
-                    <button-tooltip-error :statusChange="store.state.common.pa510.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
+                    <button-tooltip-error :disabled="store.state.common.pa510.statusDisabledStatus" :statusChange="store.state.common.pa510.statusChangeFormPrice" :showError="showErrorButton" @onClick="actionDedution"/>  
                 </div>
             </a-tooltip>
             <a-tooltip placement="top">
                 <template #title>4대보험 EDI 의 공제 금액이 있는 경우, 조회 후 적용합니다</template>
                 <div>
-                    <button-basic style="margin: 0px 5px" @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
+                    <button-basic :disabled="store.state.common.pa510.statusDisabledStatus" style="margin: 0px 5px" @onClick="actionInsurance" mode="contained" type="default" text="4대보험 EDI 조회/적용" />
                 </div>
             </a-tooltip>
-            <button-basic style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
+            <button-basic :disabled="store.state.common.pa510.statusDisabledStatus" style="margin: 0px 5px" @onClick="onSubmitForm" mode="contained" type="default" text="저장" />
         </div>
     </standard-form>
 

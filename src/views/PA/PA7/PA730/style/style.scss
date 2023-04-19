@@ -1,6 +1,9 @@
 #pa-730 {
   #gridContainerPA730 {
-    max-height: 730px;
+    height: calc(100vh - 220px);
+  }
+  :deep .dx-freespace-row {
+    display: none !important;
   }
   .dflex {
     display: flex;

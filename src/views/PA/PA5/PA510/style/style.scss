@@ -132,6 +132,7 @@
 .formPA510 {
     border: 1px solid #d7d7d7;
     padding: 10px;
+    height: calc(100vh - 300px);
 }
 .custom-detail {
     text-align: right;
@@ -139,3 +140,10 @@
 :deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
     padding-top: 4px;
 }
+#data-tax-pay-info {
+    height: calc(100vh - 330px);
+    :deep .dx-freespace-row {
+        display: none !important;
+    }
+}
+

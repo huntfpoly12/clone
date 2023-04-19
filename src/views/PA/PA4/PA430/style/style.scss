@@ -1,6 +1,9 @@
 #pa-430 {
     #gridContainerPA430 {
-        max-height: 750px;
+        height: calc(100vh - 220px);
+    }
+    :deep .dx-freespace-row {
+        display: none !important;
     }
     // .custom-flex {
     //     display: flex;
