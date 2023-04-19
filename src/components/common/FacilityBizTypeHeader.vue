@@ -1,4 +1,4 @@
-<template>
+<template>{{ facilityBiz }} {{ facilityBizOld }}
   <div class="facilityBizType-header">
     <label for="" class="facilityBizType-header-label">시설사업명</label>
     <select-box-common :arrSelect="listFacilityBizTypeForUser" v-model:valueInput="facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId"
@@ -50,7 +50,14 @@ export default defineComponent({
     let listFacilityBizTypeForUser:any = ref([])
     let firstLoad = ref(true)
     watch(facilityBiz, (newVal, oldVal) => {
-      facilityBizOld.value = oldVal;
+      console.log(newVal, oldVal,'from watch');
+      if (firstLoad.value) {
+        facilityBizOld.value = newVal;
+      } else {
+        facilityBizOld.value = oldVal;
+      }
+      console.log(facilityBiz.value, facilityBizOld.value,'from watch 2');
+      firstLoad.value = false
     })
     watch(() => globalFacilityBizId.value, (value) => {
       if(value === facilityBiz)return
@@ -87,6 +94,7 @@ export default defineComponent({
     const handleCancel = () => {
       modalConfirm.value = false
       facilityBiz.value = facilityBizOld.value
+      store.commit('settings/setGlobalFacilityBizId', facilityBizOld.value)
     }
     const handleOk = () => {
         store.commit('settings/setGlobalFacilityBizId', facilityBiz.value)
@@ -94,8 +102,12 @@ export default defineComponent({
         modalConfirm.value = false
     }
 
-    const itemClick = async (e: any) => {
-      modalConfirm.value = true
+    const itemClick = async (data: any) => {
+      console.log(data ,facilityBiz.value,facilityBizOld.value);
+      facilityBizOld.value = data
+      if (facilityBiz.value != facilityBizOld.value) {
+        modalConfirm.value = true
+      }
     }
     return {
       facilityBiz,
@@ -103,7 +115,7 @@ export default defineComponent({
       handleCancel,
       handleOk,
       modalConfirm,
-      itemClick
+      itemClick,facilityBizOld
       // facilityBizTypeCommon
     }
   },
