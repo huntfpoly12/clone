@@ -3,7 +3,6 @@
         <div class="mt-20">
             <span>선택된 전표외 동일 통장내역의 전표가 있다면, 함께 전표취소됩니다. (내역원천 = 수기인 전표는 삭제)</span>
             <standard-form action="" class="text-align-center mt-20">
-                {{ dataRows }}
                 <a-row class="row-1">
                     <a-col :span="12" class="col-1">
                         <div class="input_info">
