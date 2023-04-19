@@ -50,6 +50,7 @@
                     @selection-changed="selectionChanged"
                     @cell-prepared="onCellPrepared"
                     @row-prepared="onRowPrepared"
+                    style="max-height: 600px;"
                     >
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />

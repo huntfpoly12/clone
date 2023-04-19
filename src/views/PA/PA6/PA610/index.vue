@@ -6,7 +6,7 @@
   />
   <div id="pa-610">
     <div class="page-content">
-      <a-row :gutter="[24, 0]" style="margin: 0px">
+      <a-row :gutter="[24, 0]" style="margin: 0; ">
         <a-col :span="16">
           <div style="height: 100%; border: 1px solid #d7d7d7">
             <a-spin
@@ -29,7 +29,7 @@
                 @focused-row-changed="onFocusedRowChanged"
                 v-model:focused-row-key="focusedRowKey"
                 :focusedRowIndex="0"
-                style="max-height: 700px;"
+                style="max-height: 750px;"
               >
                 <DxPaging :page-size="0"/>
                 <DxScrolling mode="standard" show-scrollbar="always"/>
