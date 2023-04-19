@@ -6,9 +6,9 @@
             </div>
             <div class="column">
                 {{ store.state.common.ac120.formData }}
-                {{  store.state.common.ac120.arrResolutionType }}
+                <!-- {{  store.state.common.ac120.arrResolutionType }} -->
                 <a-spin :spinning="false">
-                    <StandardForm formName="ac-120-form" ref="refFormAC120">
+                    <StandardForm formName="ac-120-form" ref="refFormAC120" :key='keyRefreshForm'>
                         <a-row class="text-align-center">
                             <a-col :span="8"></a-col>
                             <a-col :span="8">
@@ -240,6 +240,7 @@ export default defineComponent({
         let statusPopupCopyData = ref<boolean>(false);
         let fileList = ref<any[]>([])
         const textButton = ref<string>('')
+        const keyRefreshForm = ref<number>(0)
         const arrayRadioCheck = initialArrayRadioCheck
 
         // =================== GRAPHQL ===================
@@ -299,6 +300,10 @@ export default defineComponent({
                     // code block
             }
         })
+        
+        watch(() => store.state.common.ac120.onAddRow, (newValue, oldValue) => {
+            keyRefreshForm.value++
+        })
 
         // ================ FUNCTION ============================================
         const toggleTransition = () => {
@@ -322,11 +327,14 @@ export default defineComponent({
                     transactionDetailDate: filters.formatDateToInterger(dayjs()),
                     input: { ...store.state.common.ac120.formData }
                 }
+                delete dataSubmit.input.resolutionClassification
+                delete dataSubmit.input.resolutionDate
                 if (store.state.common.ac120.statusFormAdd) {
                     delete (dataSubmit.input.accountingDocumentId)
                     mutateCreateAccountingDocument(dataSubmit)
                 } else {
-
+                    // delete dataSubmit.input.
+                    mutateUpdateAccountingDocument(dataSubmit)
                 }
                 
             }
@@ -347,6 +355,7 @@ export default defineComponent({
             // refCssForm,
             heightForm,
             textButton,
+            keyRefreshForm,
         }
     }
 })
