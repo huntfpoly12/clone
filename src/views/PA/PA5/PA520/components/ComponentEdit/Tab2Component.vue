@@ -1,6 +1,6 @@
 <template>
     <div id="tab2-pa520">
-      <a-spin :spinning="loadingEmployeeWageDaily || loadingConfig" size="large">
+      <a-spin :spinning="loadingEmployeeWageDaily" size="large">
         <div class="header-text-1">공제</div>
         <a-row :gutter="16">
             <a-col :span="24"> 
@@ -32,7 +32,7 @@
                   <a-col :span="10" class="switch-bg">
                     <span>두루누리사회보험 공제 여부 :</span>
                     <switch-basic textCheck="Y" textUnCheck="N"
-                        v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance"  :disabled="!insuranceSupport"/>
+                        v-model:valueSwitch="originDataUpdate.input.insuranceSupport" class="switch-insurance"/>
                   </a-col>
                 </a-row>
               </div>
@@ -171,7 +171,6 @@ export default defineComponent({
         const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
         const totalDeduction = ref(0)
         const arrDeduction: any = ref()
-        const insuranceSupport = ref(false)
         const isBtnYellow = ref(false)
         const validateCalculate = ref(false)
         const caculateDone = ref(false)
@@ -196,25 +195,14 @@ export default defineComponent({
         let trigger = ref(false)
         let dataDefaultGet = ref()
         // ================== GRAPQL ====================================
-        // query get config from screen cm-130
-        const {
-          loading: loadingConfig,
-          result: resultConfig,
-        } = useQuery(
-              queriescm130.getWithholdingConfig,
-              originData,
-              () => ({
-                  fetchPolicy: "no-cache",
-              })
-        );
 
-        watch(resultConfig,(resConfig)=>{
-          if (resConfig) {
-            insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
-            originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
-            // store.dispatch('common/setCheckEditTab2PA520',false)
-          }
-        })    
+        // watch(resultConfig,(resConfig)=>{
+        //   if (resConfig) {
+        //     insuranceSupport.value = resConfig.getWithholdingConfig.insuranceSupport;
+        //     originDataUpdate.value.input.insuranceSupport = resConfig.getWithholdingConfig.insuranceSupport;
+        //     // store.dispatch('common/setCheckEditTab2PA520',false)
+        //   }
+        // })    
           
         const {
             loading: loading,
@@ -256,7 +244,7 @@ export default defineComponent({
                 originDataUpdate.value.input.healthInsuranceDeduction = res.healthInsuranceDeduction
                 originDataUpdate.value.input.longTermCareInsuranceDeduction = res.longTermCareInsuranceDeduction
                 originDataUpdate.value.input.employeementInsuranceDeduction = res.employeementInsuranceDeduction 
-               
+                originDataUpdate.value.input.insuranceSupport  = res.insuranceSupport 
        
                 originDataUpdate.value.input.nationalPensionSupportPercent = res.nationalPensionSupportPercent == null ? 0 : res.nationalPensionSupportPercent
                 originDataUpdate.value.input.employeementInsuranceSupportPercent = res.employeementInsuranceSupportPercent == null ? 0 : res.employeementInsuranceSupportPercent
@@ -404,7 +392,7 @@ export default defineComponent({
               let total1 = dataDefault.nationalPensionDeduction == true ? calculateNationalPensionEmployee(dataDefault.monthlyWage, dataDefault.nationalPensionSupportPercent) : 0
               let total2 = dataDefault.healthInsuranceDeduction == true ? calculateHealthInsuranceEmployee(dataDefault.monthlyWage) : 0
               let total3 = dataDefault.healthInsuranceDeduction == true ? calculateLongTermCareInsurance(dataDefault.monthlyWage) : 0
-              let total4 = dataDefault.employeementInsuranceDeduction == true && insuranceSupport.value == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
+              let total4 = dataDefault.employeementInsuranceDeduction == true ? calculateEmployeementInsuranceEmployee(dataDefault.monthlyWage, dataDefault.employeementInsuranceSupportPercent) : 0
               let total5 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).incomeAmount
               let total6 = await Formula.getDailyEmployeeTax(202210, dataDefault.workingDays, dataDefault.dailyWage, dataDefault.monthlyWage).localIncomeTax
               let arrCallApi: any = []
@@ -475,8 +463,8 @@ export default defineComponent({
             }
         }
         return {dataDefaultGet,
-          originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily,loadingConfig, messageDaylySalary,
-            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,insuranceSupport,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput
+          originDataDetail,store, originDataUpdate, messageMonthlySalary, totalDeduction, arrDeduction, radioCheckPersenPension, loading,loadingEmployeeWageDaily, messageDaylySalary,
+            callFuncCalculate, actionUpdated, onChangeDailyWage, onChangeMonthlyWage, onChangeWorkingDays,caculateDone,isBtnYellow,validateCalculate,globalYear,idRowEdit,workingDayInput
         };
     },
 });
