@@ -10,7 +10,7 @@ import { defineComponent, ref, computed, watch,  } from "vue";
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/CM/CM110/index"
 import { useQuery } from "@vue/apollo-composable";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, setMenuTab } from "@/helpers/commonFunction";
 export default defineComponent({
   components: {
   },
@@ -22,8 +22,7 @@ export default defineComponent({
     let listFacilityBizTypeForUser:any = ref([])
     watch(() => facilityBiz.value, (value) => {
       store.commit('settings/setGlobalFacilityBizId', value)
-    },{
-      deep: true,
+      setMenuTab([])
     })
     watch(() => globalFacilityBizId.value, (value) => {
       if(value === facilityBiz)return

@@ -41,6 +41,8 @@ const openTab = (objTab :  any) => {
 
 const setMenuTab = (menu: any) => {
   store.state.common.menuTab = menu
+  console.log(' store.state.common.menuTab',  store.state.common.menuTab);
+  
 }
 
 
