@@ -52,7 +52,7 @@ export const dataTableTab1 = [
     inputYearMonth: "2",
     paymentYearMonth: "2",
     reportType: "2",
-    afterDeadline: "2",
+    afterDeadline: "20230202",
     totalCollectedTaxAmount: 2,
     statusUpdatedAt: 2,
     lastProductionRequestedAt: '2023/02/02',
