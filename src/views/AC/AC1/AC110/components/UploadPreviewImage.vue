@@ -4,7 +4,7 @@
       style="margin-right: -10px; overflow-x: hidden;" 
       :style="[
         heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
-        !!width ? `min-width: ${width}px; width: 100%` : ''
+        !!width ? `min-width: ${width}px; width: ${width}` : ''
       ]" 
       :class="{ 'ac110-disable-form-upload': !payload.bankbookDetailId }">
       <div ref="elementUpload" class="upload-pewview-img">
@@ -115,6 +115,13 @@ export default defineComponent({
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorAddBankbookDetailProof(e => {
+      const index = listFileStorageId.value.length-1
+      listFileStorageId.value[index].status = 'error'
+      listFileStorageId.value[index].error = e.message
+      listFileStorageId.value[index].response = undefined
+      fileList.value[index].status = 'error'
+      fileList.value[index].error = e.message
+      fileList.value[index].response = undefined
       notification('error', e.message)
     })
 
