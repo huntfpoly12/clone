@@ -1,5 +1,6 @@
 @import "../../../../../assets/styles/settingStyle.scss";
 #pa-110 {
+    height: calc(100vh - 290px);
     :deep .ant-form-item-label>label {
         width: 130px;
         padding-left: 10px;
