@@ -276,6 +276,8 @@ const created = (e: any) => {
       delete dataForm.taxCalculationInput.prevRetiredYearsOfService
       delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
     }
+    if (!dataForm.taxCalculationInput?.prevRetirementBenefitStatus?.retirementBenefits)
+      delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
     const variables: any = reactive({
       companyId: companyId,
       ...dataForm
@@ -292,7 +294,7 @@ const openModalAdd = () => {
     arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
       (element: any) =>
         element.type === 10 &&
-        !props.listEmployeeexist.includes(element.employeeId)
+        !props.listEmployeeexist.includes(element.employeaeId)
     );
     // if it is 일용직사원
   } else {

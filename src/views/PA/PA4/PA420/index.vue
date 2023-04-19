@@ -21,7 +21,7 @@
                      @click="showDetailSelected(data.data.month1.imputedMonth, data.data.month1.imputedYear, data.data.month1.paymentYear, data.data.month1.paymentMonth,data.data.month1.status)">
                   <colorful-badge :value="data.data.month1.status"
                                   :year="data.data.month1.paymentYear" :month="data.data.month1.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 1"
+                                  :isUnder="selectMonthColumn.imputedMonth == 1"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(1)"> [+]
@@ -34,7 +34,7 @@
                      @click="showDetailSelected(data.data.month2.imputedMonth, data.data.month2.imputedYear, data.data.month2.paymentYear, data.data.month2.paymentMonth,data.data.month2.status)">
                   <colorful-badge :value="data.data.month2.status"
                                   :year="data.data.month2.paymentYear" :month="data.data.month2.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 2"
+                                  :isUnder="selectMonthColumn.imputedMonth == 2"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(2)"> [+]
@@ -47,7 +47,7 @@
                      @click="showDetailSelected(data.data.month3.imputedMonth, data.data.month3.imputedYear, data.data.month3.paymentYear, data.data.month3.paymentMonth,data.data.month3.status)">
                   <colorful-badge :value="data.data.month3.status"
                                   :year="data.data.month3.paymentYear" :month="data.data.month3.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 3"
+                                  :isUnder="selectMonthColumn.imputedMonth == 3"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(3)"> [+]
@@ -60,7 +60,7 @@
                      @click="showDetailSelected(data.data.month4.imputedMonth, data.data.month4.imputedYear, data.data.month4.paymentYear, data.data.month4.paymentMonth,data.data.month4.status)">
                   <colorful-badge :value="data.data.month4.status"
                                   :year="data.data.month4.paymentYear" :month="data.data.month4.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 4"
+                                  :isUnder="selectMonthColumn.imputedMonth == 4"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(4)"> [+]
@@ -73,7 +73,7 @@
                      @click="showDetailSelected(data.data.month5.imputedMonth, data.data.month5.imputedYear, data.data.month5.paymentYear, data.data.month5.paymentMonth,data.data.month5.status)">
                   <colorful-badge :value="data.data.month5.status"
                                   :year="data.data.month5.paymentYear" :month="data.data.month5.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 5"
+                                  :isUnder="selectMonthColumn.imputedMonth == 5"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(5)"> [+]
@@ -86,7 +86,7 @@
                      @click="showDetailSelected(data.data.month6.imputedMonth, data.data.month6.imputedYear, data.data.month6.paymentYear, data.data.month6.paymentMonth,data.data.month6.status)">
                   <colorful-badge :value="data.data.month6.status"
                                   :year="data.data.month6.paymentYear" :month="data.data.month6.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 6"
+                                  :isUnder="selectMonthColumn.imputedMonth == 6"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(6)"> [+]
@@ -99,7 +99,7 @@
                      @click="showDetailSelected(data.data.month7.imputedMonth, data.data.month7.imputedYear, data.data.month7.paymentYear, data.data.month7.paymentMonth,data.data.month7.status)">
                   <colorful-badge :value="data.data.month7.status"
                                   :year="data.data.month7.paymentYear" :month="data.data.month7.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 7"
+                                  :isUnder="selectMonthColumn.imputedMonth == 7"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(7)"> [+]
@@ -112,7 +112,7 @@
                      @click="showDetailSelected(data.data.month8.imputedMonth, data.data.month8.imputedYear, data.data.month8.paymentYear, data.data.month8.paymentMonth,data.data.month8.status)">
                   <colorful-badge :value="data.data.month8.status"
                                   :year="data.data.month8.paymentYear" :month="data.data.month8.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 8"
+                                  :isUnder="selectMonthColumn.imputedMonth == 8"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(8)"> [+]
@@ -125,7 +125,7 @@
                      @click="showDetailSelected(data.data.month9.imputedMonth, data.data.month9.imputedYear, data.data.month9.paymentYear, data.data.month9.paymentMonth,data.data.month9.status)">
                   <colorful-badge :value="data.data.month9.status"
                                   :year="data.data.month9.paymentYear" :month="data.data.month9.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 9"
+                                  :isUnder="selectMonthColumn.imputedMonth == 9"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(9)"> [+]
@@ -138,7 +138,7 @@
                      @click="showDetailSelected(data.data.month10.imputedMonth, data.data.month10.imputedYear, data.data.month10.paymentYear, data.data.month10.paymentMonth,data.data.month10.status)">
                   <colorful-badge :value="data.data.month10.status"
                                   :year="data.data.month10.paymentYear" :month="data.data.month10.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 10"
+                                  :isUnder="selectMonthColumn.imputedMonth == 10"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(10)"> [+]
@@ -151,7 +151,7 @@
                      @click="showDetailSelected(data.data.month11.imputedMonth, data.data.month11.imputedYear, data.data.month11.paymentYear, data.data.month11.paymentMonth,data.data.month11.status)">
                   <colorful-badge :value="data.data.month11.status"
                                   :year="data.data.month11.paymentYear" :month="data.data.month11.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 11"
+                                  :isUnder="selectMonthColumn.imputedMonth == 11"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(11)"> [+]
@@ -164,7 +164,7 @@
                      @click="showDetailSelected(data.data.month12.imputedMonth, data.data.month12.imputedYear, data.data.month12.paymentYear, data.data.month12.paymentMonth,data.data.month12.status)">
                   <colorful-badge :value="data.data.month12.status"
                                   :year="data.data.month12.paymentYear" :month="data.data.month12.paymentMonth"
-                                  :isUnder="valueCallApiGetEmployeeBusiness.processKey.imputedMonth == 12"
+                                  :isUnder="selectMonthColumn.imputedMonth == 12"
                   />
                 </div>
                 <div v-else style="width: 100%;text-align: center;" @click="addMonth(12)"> [+]
@@ -286,10 +286,10 @@
             </DxDataGrid>
           </a-spin>
         </a-col>
-        <ComponentDetail v-model:dataCallTableDetail="valueCallApiGetEmployeeBusiness" :statusButton="statusButton"
+        <ComponentDetail :statusButton="statusButton"
                          :actionSave="actionSave" @createdDone="createdDone"/>
         <CopyMonth :modalStatus="modalCopy" @closePopup="actionCopySuccess"
-                   :processKey="valueCallApiGetEmployeeBusiness.processKey" :data="dataModalCopy"
+                   :processKey="selectMonthColumn" :data="dataModalCopy"
                    @dataAddIncomeProcess="dataAddIncomeProcess"/>
       </a-row>
     </div>
@@ -326,22 +326,6 @@ const dataModalCopy: any = ref()
 
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const paymentDate = computed(() => store.getters['common/getPaymentDay'])
-
-const valueCallApiGetEmployeeBusiness = ref({
-  companyId: companyId,
-  processKey: {
-    imputedYear: globalYear.value,
-    imputedMonth: dayjs().month() + 1,
-    paymentYear: globalYear.value,
-    paymentMonth: dayjs().month() + 1
-  }
-})
-
-// Watching the globalYear variable and when it changes, it updates the value
-watch(globalYear, (newVal) => {
-  valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = newVal
-  valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = newVal
-})
 let dataCustomRes: any = ref([])
 // ================GRAPQL==============================================
 
@@ -415,10 +399,6 @@ resIncomeProcessBusinesses(res => {
       }
       if (val.imputedMonth == selectMonthColumn.value.imputedMonth) {
         store.commit('common/setPaymentDay', val.paymentMonth)
-        valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = val.imputedMonth
-        valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = val.imputedYear
-        valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = val.paymentMonth
-        valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = val.paymentYear
         //If there is data, then assign the status with the status of the month in focus
         statusButton.value = val.status
       }
@@ -434,13 +414,14 @@ errorGetIncomeProcessBusinesses(res => {
 })
 // ================FUNCTION============================================
 const showDetailSelected = (imputedMonth: any, imputedYear: any, paymentYear: any, paymentMonth: any, status: any) => {
-  valueCallApiGetEmployeeBusiness.value.processKey.imputedMonth = imputedMonth
-  valueCallApiGetEmployeeBusiness.value.processKey.imputedYear = imputedYear
-  valueCallApiGetEmployeeBusiness.value.processKey.paymentYear = paymentYear
-  valueCallApiGetEmployeeBusiness.value.processKey.paymentMonth = paymentMonth
   //assign status with the status of the selected month
   statusButton.value = status
-  store.state.common.monthSelectedPA420 = imputedMonth
+  store.commit('common/setSelectMonthColumn', {
+    imputedMonth: imputedMonth,
+    imputedYear: imputedYear,
+    paymentYear: paymentYear,
+    paymentMonth: paymentMonth,
+  })
 }
 const saving = () => {
   actionSave.value++;
@@ -450,7 +431,6 @@ const createdDone = () => {
   refetchData()
 }
 const addMonth = (month: number) => {
-  store.state.common.monthSelectedPA420 = month
   store.commit('common/setSelectMonthColumn', {
     imputedMonth: month,
     imputedYear: globalYear.value,
@@ -461,12 +441,6 @@ const addMonth = (month: number) => {
   modalCopy.value = true
 }
 const dataAddIncomeProcess = (data: any) => {
-  valueCallApiGetEmployeeBusiness.value.processKey = {
-    imputedMonth: data.imputedMonth,
-    imputedYear: data.imputedYear,
-    paymentMonth: data.paymentMonth,
-    paymentYear: data.paymentYear,
-  }
   dataSource.value[0]['month' + data.imputedMonth] = data
   dataSource.value[0]['month' + data.imputedMonth].status = 10
 }

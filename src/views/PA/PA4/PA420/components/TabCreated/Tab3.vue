@@ -6,7 +6,7 @@
           <a-form-item label="퇴직급여(확정)">
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px"
-                                v-model:valueInput="retirementBenefits" format="#0,###"/>
+                                v-model:valueInput="retirementBenefits" format="#0,###" :min="1"/>
               <span class="pl-5 mr-5">원</span>
               <a-tooltip placement="top">
                 <template #title>실제 지급된 퇴직급여를 입력합니다.</template>
@@ -24,13 +24,13 @@
               <span class="pl-5">원</span>
             </div>
           </a-form-item>
-          <a-form-item label="과세대상 퇴직급여(확정)">
+          <a-form-item label="과세대상 퇴직급여(확정) 1">
             <div class="d-flex-center">
-              <div :class="validateRetiTaxBenefits ? 'validate-caculate':''">
+              <div :class="taxableRetirementBenefitsRef <= 0 ? 'validate-caculate':''">
                 <number-box-money :required="false" width="150px"
                                   v-model:valueInput="taxableRetirementBenefitsRef" :disabled="true" format="#0,###"
                                   />
-                <div v-if="validateRetiTaxBenefits" class="message-error">
+                <div v-if="taxableRetirementBenefitsRef <= 0" class="message-error">
                   <span style="word-wrap: break-word;hyphens: auto;">{{
                       Message.getMessage('PA420', '001').message
                     }}</span>
@@ -365,7 +365,6 @@ const statements1 = ref({...initialIncomeRetirementTax.calculationOfDeferredReti
 const statements2 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const statementsAfterCal1 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const statementsAfterCal2 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
-const validateRetiTaxBenefits = ref<boolean>(false)
 const disableBtn = ref(true)
 
 const isChangeRetirementBenefits = computed(() => {
@@ -423,7 +422,6 @@ onResult((value) => {
     prePaidDelayedTaxPaymentTaxAmount: taxCalculationInput.value.prePaidDelayedTaxPaymentTaxAmount
   })
   // notification calculation success
-  notification('success', Message.getCommonMessage('106').message)
   trigger.value = false;
 })
 const handleCalculateIncomeRetirementTax = () => {
@@ -435,11 +433,14 @@ const handleCalculateIncomeRetirementTax = () => {
       retirementBenefits: retirementBenefits.value
     }
   }
+
   if (interimPaymentTab1.value) {
     result = {
       ...result,
       prevRetiredYearsOfService: {...taxCalculationInputStore.value.prevRetiredYearsOfService, paymentDate: taxCalculationInputStore.value.prevRetiredYearsOfService.paymentDate || 0},
-      prevRetirementBenefitStatus: taxCalculationInputStore.value.prevRetirementBenefitStatus,
+    }
+    if (result.prevRetirementBenefitStatus.nonTaxableRetirementBenefits) {
+      result.prevRetirementBenefitStatus =  taxCalculationInputStore.value.prevRetirementBenefitStatus
     }
   } else {
     // delete key prevRetiredYearsOfService, prevRetirementBenefitStatus

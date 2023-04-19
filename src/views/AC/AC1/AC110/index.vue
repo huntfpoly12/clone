@@ -11,12 +11,11 @@
       </div>
       <div class="ac-110__top-flex">
         <div class="ac-110__top-flex-action">
-          <ProcessStatus
-            v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+          <ProcessStatus v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
             :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
             :disabled="true" />
-            <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
-            </button-basic>
+          <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
+          </button-basic>
           <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
         </div>
         <div class="ac-110__top-flex-action">
@@ -46,13 +45,17 @@
                 <div>{{ data.data.bankbook.bankbookNickname }}</div>
               </a-tooltip>
             </template>
-            <DxColumn caption="통장용도" cell-template="useType" />
-            <template #useType="{ data }">
-              <DxSelectBox :search-enabled="false" width="100" display-expr="label" value-expr="value"
-                :data-source="bankbookUseType" v-model:value="data.data.bankbook.useType" placeholder="통장용도"
-                :readOnly="true" />
+            <DxColumn caption="통장용도" data-field="bankbook.useType" alignment="center">
+              <DxLookup :data-source="bankbookUseType" display-expr="label" value-expr="value" />
+            </DxColumn>
+            <DxColumn caption="일자" cell-template="bankbookDetailDate" />
+            <template #bankbookDetailDate="{ data }">
+              <div>
+                {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)
+  }}
+              </div>
             </template>
-            <DxColumn caption="일자" data-field="bankbookDetailDate" data-type="date" format="yyyy-MM-dd HH:mm" />
             <DxColumn caption="통장적요" data-field="summary" />
             <DxColumn caption="내용|비고" cell-template="content" />
             <template #content="{ data }">
@@ -108,8 +111,7 @@
             <standard-form>
               <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
                 :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
-                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true" >
-                <DxEditing :allow-updating="true" :allow-adding="true" :start-edit-action="'click'" mode="batch" />
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
@@ -156,67 +158,46 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" edit-cell-template="resolutionClassification" data-field="resolutionClassification" >
-                  <DxLookup
-                    :data-source="resolutionClassification"
-                    display-expr="label"
-                    value-expr="value"
-                  />
+                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center">
+                  <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
                 </DxColumn>
-                <template #resolutionClassification="{ data }">
-                  <ResolutionClassificationSelect v-model:valueInput="data.data.resolutionClassification"/>
+                <DxColumn caption="수입액" cell-template="income" width="150" />
+                <template #income="{ data }">
+                  <div :key="data.data.spending">
+                    <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
+                      :disabled="!!data.data.spending" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
+                  </div>
                 </template>
-                <DxColumn caption="수입액" data-field="income" format="fixedPoint" alignment="end">
-                  <DxRequiredRule />
-                </DxColumn>
-                <DxColumn caption="지출액" data-field="spending" format="fixedPoint" alignment="end">
-                  <DxRequiredRule/>
-                </DxColumn>
-                <DxColumn caption="적요" data-field="summary" width="200" />
-                <DxColumn caption="계정과목" edit-cell-template="accountCode" data-field="accountCode" width="200">
-                  <DxLookup
-                    :data-source="arrAccoountSubjects"
-                    display-expr="name"
-                    value-expr="code"
-                  />
-                  <DxRequiredRule/>
-                </DxColumn>
+                <DxColumn caption="지출액" cell-template="spending" width="150" />
+                <template #spending="{ data }">
+                  <div :key="data.data.income">
+                    <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
+                      :disabled="!!data.data.income" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
+                  </div>
+                </template>
+                <DxColumn caption="적요" cell-template="summary" width="200" />
+                <template #summary="{ data }">
+                  <default-text-box v-model:valueInput="data.data.summary" :required="true" />
+                </template>
+                <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
-                    :classification="data.data.income !== 0 ? [4] : [5]" />
+                    :classification="!!data.data.income ? [4] : [5]" />
                 </template>
-                <DxColumn caption="상대계정" edit-cell-template="relationCode" data-field="relationCode" width="200">
-                  <DxLookup
-                    :data-source="arrAccoountSubjects"
-                    display-expr="name"
-                    value-expr="code"
-                  />
-                </DxColumn>
+                <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
                 <template #relationCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.relationCode"
                     :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                     :disabled="data.data.resolutionClassification === 1" />
                 </template>
-                <DxColumn caption="자금원천" edit-cell-template="fundingSource" data-field="fundingSource" width="120">
-                  <DxLookup
-                    :data-source="fundingSource"
-                    display-expr="label"
-                    value-expr="value"
-                  />
-                  <!-- <DxRequiredRule/> -->
-                </DxColumn>
+                <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                 <template #fundingSource="{ data }">
                   <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
                 </template>
-                <DxColumn caption="거래처" data-field="clientId" alignment="start" :allow-editing="false" />
-                <DxColumn caption="품의종류" edit-cell-template="letterOfApprovalType" data-field="letterOfApprovalType" width="100">
-                  <DxLookup
-                    :data-source="letterOfApprovalType"
-                    display-expr="label"
-                    value-expr="value"
-                  />
-                  <!-- <DxRequiredRule/> -->
-                </DxColumn>
+                <DxColumn caption="거래처" data-field="clientId" alignment="start" />
+                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                 <template #letterOfApprovalType="{ data }">
                   <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
                     :disabled="data.data.resolutionClassification === 1"
@@ -225,26 +206,24 @@
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined
-                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <EditOutlined v-if="!!data.data.causeUsage && data.data.causeUsage.length" style="font-size: 12px"
+                      @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
                   </div>
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <PlusOutlined
-                    v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                    style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                  <div v-else>{{ data.data.goodsCount }}</div>
+                  <a-badge v-if="!data.data.goodsCount" :count="data.data.goodsCount || 0" :offset="[6, 0]">
+                    <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                  </a-badge>
+                  <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined
-                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <EditOutlined v-if="!!data.data.memo && data.data.memo.length" style="font-size: 12px"
+                      @click="openPopupNoteItemDetail(data, 'memo')" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
                   </div>
                 </template>
               </DxDataGrid>
@@ -292,7 +271,7 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging, DxEditing, DxRequiredRule } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
 import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
 import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
@@ -337,9 +316,7 @@ export default defineComponent({
     HistoryPopup,
     SaveFilled,
     DxPaging,
-    DxSelectBox,
-    DxEditing,
-    DxRequiredRule
+    DxSelectBox
   },
   setup() {
     const store = useStore();
@@ -367,8 +344,8 @@ export default defineComponent({
     const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
     let arrAccoountSubjects = ref([])
     watch(() => arrAllCallApi.value, (value) => {
-      const arrAll:any = []
-      if(value.length){
+      const arrAll: any = []
+      if (value.length) {
         value.forEach((items: any) => {
           items.codes.forEach((x: any) => {
             arrAll.push(x)
@@ -379,18 +356,18 @@ export default defineComponent({
     })
     const fundingSource: any = computed(() => {
       let bsDeduction: any = enum2Entries(FundingSource).map((value) => ({
-          value: value[1],
-          label: value[0],
+        value: value[1],
+        label: value[0],
       }));
       return bsDeduction;
     });
     const letterOfApprovalType: any = computed(() => {
-          let bsDeduction: any = enum2Entries(LetterOfApprovalType).map((value) => ({
-              value: value[1],
-              label: value[0],
-          }));
-          return bsDeduction;
-      });
+      let bsDeduction: any = enum2Entries(LetterOfApprovalType).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
     const propListSlipRegistrationSelected: any = ref({
       count: 0,
       selectedRowKeys: []
@@ -781,11 +758,13 @@ export default defineComponent({
       })
     }
     const handleInitializeTransactionDetails = () => {
-      initializeTransactionDetails({
-        ...payloadGetTransactionDetails,
-        bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
-        bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
-      })
+      if (rowKeyfocused.value === null) return
+      triggerTransactionDetails.value = true
+      // initializeTransactionDetails({
+      //   ...payloadGetTransactionDetails,
+      //   bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
+      //   bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
+      // })
     }
     const openPopupItemDetail = (data: any) => {
       if (data.resolutionClassification === 1) return
@@ -808,24 +787,24 @@ export default defineComponent({
     }
     const addNewRowTransactionDetails = () => {
       if (rowKeyfocused.value === null) return
-      
+
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
         initTransactionDetails.theOrder = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].theOrder + 1 || 1
-        initTransactionDetails.accountingDocumentId = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].accountingDocumentId + 1 + 'create' || 1
+        initTransactionDetails.accountingDocumentId = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].accountingDocumentId + 1 + 'create' || 'create'
       } else {
         initTransactionDetails.theOrder = 0
         initTransactionDetails.accountingDocumentId = 'create'
       }
-      refGridDetailAc110.value.instance.addRow(initTransactionDetails)
-      // dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
+      // refGridDetailAc110.value.instance.addRow(initTransactionDetails)
+      dataSourceTransactionDetails.value.transactionDetails = [initTransactionDetails, ...dataSourceTransactionDetails.value.transactionDetails]
     }
     const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null) return
-      await refGridDetailAc110.value.instance.saveEditData()
-      const res = await refGridDetailAc110.value.instance.hasEditData()
-      if (res) return
+      const res = await event.validationGroup.validate();
+      if (!res.isValid) return
+      // await refGridDetailAc110.value.instance.saveEditData()
       dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
         if (Number.isInteger(item.accountingDocumentId)) {
           return item
@@ -841,8 +820,8 @@ export default defineComponent({
       dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
         const objPayload = {
           resolutionClassification: item.resolutionClassification,
-          income: item.income,
-          spending: item.spending,
+          income: !!item.income ? item.income : 0,
+          spending: !!item.spending ? item.spending : 0,
           summary: item.summary,
           theOrder: item.theOrder,
           accountCode: item.accountCode,
@@ -853,13 +832,13 @@ export default defineComponent({
           memo: item.memo,
           clientId: item.clientId,
         }
-        if (Number.isInteger(item.accountingDocumentId)) {
+        if (item.accountingDocumentId.toString().includes('create')) {
+          payloadCreate.push(objPayload)
+        } else {
           payLoadUpdate.push({
             ...objPayload,
             accountingDocumentId: item.accountingDocumentId
           })
-        } else {
-          payloadCreate.push(objPayload)
         }
       })
       if (payloadCreate.length) {
@@ -886,6 +865,20 @@ export default defineComponent({
     const updateremoveBankbookDetailProof = () => {
       const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
       dataSource.value[indexSelected].proofCount--
+    }
+    const changeInputIncomeSpending = (data:any) => {
+      if(!data.income && !data.spending) {
+        data.resolutionClassification = null
+      }else {
+        if(!!data.income) {
+          data.resolutionClassification = 1
+          data.spending = 0
+        }
+        if(!!data.spending) {
+          data.resolutionClassification = 2
+          data.income = 0
+        }
+      }
     }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
@@ -967,7 +960,8 @@ export default defineComponent({
       refGridDetailAc110,
       arrAccoountSubjects,
       fundingSource,
-      letterOfApprovalType
+      letterOfApprovalType,
+      changeInputIncomeSpending
     };
   },
 });

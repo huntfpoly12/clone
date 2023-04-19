@@ -7,7 +7,6 @@ const statesPA420 = {
     paymentYear: dayjs().year(),
     paymentMonth: dayjs().month() + 1,
   },
-  monthSelectedPA420: dayjs().month() + 1,
   formStateEditPA420: {},
 
   // tab 1
@@ -22,9 +21,9 @@ const statesPA420 = {
   },
   taxCalculationInput: {
     prevRetirementBenefitStatus: {
-      retirementBenefits: 0,
-      nonTaxableRetirementBenefits: 0,
-      taxableRetirementBenefits: 0,
+      retirementBenefits: null,
+      nonTaxableRetirementBenefits: null,
+      taxableRetirementBenefits: null,
     },
     lastRetirementBenefitStatus: {
       retirementBenefits: 0,
@@ -85,12 +84,12 @@ const statesPA420 = {
     paymentMonth: dayjs().month() + 1,
   },
   paymentDate: 1,
-  isDisableBtnTab2: false,
+  isDisableBtnTab2: true,
   definedRetirementBenefits: 0,
 
   // tab 3: create variable enable button form when tab 3 validation done
-  isDisableBtnTab3: false,
-  isDisableBtnTab1: false,
+  isDisableBtnTab3: true,
+  isDisableBtnTab1: true,
 
   // check form change
   isChangeForm: {

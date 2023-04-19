@@ -40,11 +40,11 @@
     <a-col :span="24">
         <a-spin :spinning="loadingTableDetail" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-                :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+                :show-borders="true" key-expr="incomeId" class="mt-10"
+                :allow-column-resizing="colomn_resize"  @selection-changed="selectionChanged">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사원" cell-template="tag" width="300px" header-cell-template="title-header-사원"/>
+                <DxColumn caption="사원" cell-template="tag" width="200" header-cell-template="title-header-사원"/>
                 <template #tag="{ data }">
                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
                         :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -112,10 +112,10 @@
                 <template #payment-day="{ data }">
                     {{ data.data.paymentDay < 10 ? "0"+ data.data.paymentDay :  data.data.paymentDay}}
                 </template>
-                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
+                <DxColumn caption="" cell-template="action" width="50px" fixedPosition="right"/>
                 <template #action="{ data }">
-                    <div class="wf-100 text-center">
-                        <EditOutlined class="fz-18" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
+                    <div class=" text-center">
+                        <EditOutlined class="" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
                     </div>
                 </template>
                 <DxSummary v-if="dataSourceDetail.length > 0">
@@ -202,9 +202,6 @@ export default defineComponent({
         DeletePopup, EditPopup, AddPopup, UpdatePopup
     },
     props: {
-        dataCallTableDetail: {
-            type: Object
-        },
         statusButton: {
             type: Number,
             default: 0,
@@ -230,6 +227,8 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
+        const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+
         const rowTable = ref(0);
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
@@ -242,8 +241,9 @@ export default defineComponent({
         let dataAction: any = reactive({
             ...dataActionUtils
         })
-        let dataTableDetail: any = ref({
-            ...props.dataCallTableDetail
+        let dataTableDetail = ref({
+          companyId: companyId,
+          processKey: {...selectMonthColumn.value}
         })
         // ================GRAPQL==============================================
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorTableDetail, onResult: resTableDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
@@ -280,9 +280,9 @@ export default defineComponent({
             notification('success', Message.getCommonMessage('106').message)
         })
         // ================WATCHING============================================
-        watch(() => props.dataCallTableDetail, (newValue) => {
+        watch(selectMonthColumn, (newValue) => {
             if (newValue) {
-              dataTableDetail.value = newValue
+              dataTableDetail.value.processKey = newValue
               triggerDetail.value = true
               refetchTableDetail()
             }

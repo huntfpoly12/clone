@@ -28,7 +28,7 @@
             </a-col>
             <a-col>
                 <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="200" />
                 </a-form-item>
             </a-col>
         </a-row>

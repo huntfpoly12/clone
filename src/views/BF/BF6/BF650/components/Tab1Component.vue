@@ -319,7 +319,7 @@ export default defineComponent({
         paymentYear: paramSearch.value.paymentYear,
         paymentMonth: paramSearch.value.paymentMonth
       }
-      if(!filter.beforeProduction) dataFilter.productionStatuses = filter.productionStatuses
+      if(filter.beforeProduction) dataFilter.productionStatuses = filter.productionStatuses
       dataModalSave.value = {
         filter: dataFilter,
         emailInput: {
