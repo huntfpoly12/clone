@@ -27,8 +27,9 @@
 
     :deep .custom-layout {
         padding: 10px 10px 10px 0;
- 
+        
         >div {
+            // height: calc(100vh - 312px);
             border: 1px solid #d7d7d7;
             padding: 10px;
         }
@@ -83,6 +84,10 @@
     width: 40px !important;
 }
 #pa-110-gridContainer {
+    height: calc(100vh - 312px);
+    :deep .dx-freespace-row {
+        display: none !important;
+    }
     :deep td {
       vertical-align: middle;
     }
