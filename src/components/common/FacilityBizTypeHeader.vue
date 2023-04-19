@@ -20,9 +20,13 @@ export default defineComponent({
     const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
     let facilityBiz: any = ref(null)
     let listFacilityBizTypeForUser:any = ref([])
+    let firstLoad = ref(true)
     watch(() => facilityBiz.value, (value) => {
       store.commit('settings/setGlobalFacilityBizId', value)
-      setMenuTab([])
+      if(!firstLoad.value){
+        setMenuTab([])
+      }
+      firstLoad.value = false
     })
     watch(() => globalFacilityBizId.value, (value) => {
       if(value === facilityBiz)return
