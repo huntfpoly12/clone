@@ -128,7 +128,7 @@
                   </div>
             </div>
             <a-spin :spinning="loadingGetEmployeeBusinesses || loadingPrint" size="large">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
+                <DxDataGrid id="DxDataGrid-pa530" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
                     :show-borders="true" key-expr="employee.employeeId" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" v-model:selected-row-keys="vModalSelectedRowKeys" @selection-changed="selectionChanged">
                     <DxScrolling mode="standard" show-scrollbar="always" />

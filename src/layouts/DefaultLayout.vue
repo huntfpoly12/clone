@@ -694,11 +694,17 @@ export default defineComponent({
         isRemoveTab.value = false
         return
       }
-      const newItem = value[value.length - 1]
-      menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
-      nextTick(() => {
-        tabIndex.value = menuTab.value.length - 1
-      })
+      if(value.length){
+        const newItem = value[value.length - 1]
+        menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
+        nextTick(() => {
+          tabIndex.value = menuTab.value.length - 1
+        })
+      }else {
+        menuTab.value = []
+        openTab(tabDashboard)
+      }
+      
     }, {
       deep: true,
     })
@@ -795,6 +801,7 @@ export default defineComponent({
       text-align: left;
     }
     span:last-child {
+      margin-left: 0 !important;
       svg {
         margin-bottom: 3px;
       }

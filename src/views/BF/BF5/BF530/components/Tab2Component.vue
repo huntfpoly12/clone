@@ -49,15 +49,15 @@
         <DxColumn caption="사업자등록번호" data-field="paymentYearMonth" :allow-editing="false" />
         <DxColumn caption="사업장관리번호" data-field="reportType" width="95px" :allow-editing="false" />
         <DxColumn caption="신고구분" data-field="afterDeadline" width="155px" :allow-editing="false" />
-        <DxColumn data-field="totalCollectedTaxAmount" caption="법인/개인"  width="125"/>
+        <DxColumn data-field="totalCollectedTaxAmount" caption="법인/개인"  width="125" :allow-editing="false"/>
         <DxColumn data-field="statusUpdatedAt" caption="상태" width="125">
           <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
         </DxColumn>
         <DxColumn data-field="lastProductionRequestedAt" caption="접수일" width="125"/>
         <DxColumn data-field="productionStatus" caption="완료일" width="125" data-type="date"/>
-        <DxColumn caption="접수번호" data-field="afterDeadline" width="155px" :allow-editing="false" />
-        <DxColumn caption="메모" data-field="afterDeadline" width="155px" :allow-editing="false" />
-        <DxColumn caption="오류메모" data-field="afterDeadline" width="155px" :allow-editing="false" />
+        <DxColumn caption="접수번호" data-field="afterDeadline" width="155px" />
+        <DxColumn caption="메모" data-field="afterDeadline" width="155px" />
+        <DxColumn caption="오류메모" data-field="afterDeadline" width="155px" />
         <DxColumn caption="신고서다운로드" cell-template="downA" alignment="right" :allow-editing="false" />
         <template #downA="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
@@ -320,31 +320,31 @@ export default defineComponent({
 
     // ----------------request file withholding---------
 
-    const requestFileData = ref<any>({
-      reportKeyInputs: [],
-      filter: formState,
-      emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
-      },
-    });
+    // const requestFileData = ref<any>({
+    //   reportKeyInputs: [],
+    //   filter: formState,
+    //   emailInput: {
+    //     receiverName: userInfor.value.name,
+    //     receiverAddress: userInfor.value.email,
+    //   },
+    // });
     const selectionChanged = (event: any) => {
-      let deselectRowKeys: any = [];
-      event.selectedRowsData.forEach((item: any) => {
-        if (!item.allowSelection)
-          deselectRowKeys.push(event.component.keyOf(item));
-      });
-      if (deselectRowKeys.length) {
-        event.component.deselectRows(deselectRowKeys);
-        return;
-      }
-      // checkBoxUpdating = true;
-      // selectAllCheckBox.option("value", true);
-      // checkBoxUpdating = false;
-      if (event.selectedRowsData)
-        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
-        });
+      // let deselectRowKeys: any = [];
+      // event.selectedRowsData.forEach((item: any) => {
+      //   if (!item.allowSelection)
+      //     deselectRowKeys.push(event.component.keyOf(item));
+      // });
+      // if (deselectRowKeys.length) {
+      //   event.component.deselectRows(deselectRowKeys);
+      //   return;
+      // }
+      // // checkBoxUpdating = true;
+      // // selectAllCheckBox.option("value", true);
+      // // checkBoxUpdating = false;
+      // if (event.selectedRowsData)
+      //   requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
+      //     return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+      //   });
       // requestFileData.value.filter
     };
     const modalStatus1 = ref<boolean>(false);
@@ -353,17 +353,17 @@ export default defineComponent({
     const handleOkConfirm = () => {
       modalStatus1.value = true;
     }
-    const onRequestFile = () => {
-      requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
-      };
-      if (requestFileData.value.reportKeyInputs.length > 0) {
-        modalStatus1.value = true;
-      } else {
-        notification('warning', messageDelNoItem);
-      }
-    };
+    // const onRequestFile = () => {
+    //   requestFileData.value.emailInput = {
+    //     receiverName: userInfor.value.name,
+    //     receiverAddress: userInfor.value.email,
+    //   };
+    //   if (requestFileData.value.reportKeyInputs.length > 0) {
+    //     modalStatus1.value = true;
+    //   } else {
+    //     notification('warning', messageDelNoItem);
+    //   }
+    // };
 
     //------------------------disable selection row--------------------------------
 
@@ -390,9 +390,7 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      onRequestFile,
       modalStatus1, modalStatus2,
-      requestFileData,
       userInfor,
       productionStatusData,
       reportTypeSummary,
