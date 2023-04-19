@@ -146,6 +146,7 @@
                   :data-source="menuTab" 
                   v-model:selected-index="tabIndex"
                   itemTemplate="titleTab"
+                  :scrollByContent="true"
                   >
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
