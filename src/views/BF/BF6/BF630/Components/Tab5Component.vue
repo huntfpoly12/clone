@@ -181,7 +181,6 @@ export default defineComponent({
     })
 
     const openPopupDetail = (data: any) => {
-      console.log('datadatadata', data);
       dataPopup.value = data
       modalCompanies.value = true
     }
