@@ -101,12 +101,11 @@
         }
       }
       &-detail2 {
+        width: 100%;
         &-upload {
           border: 1px solid #ddd;
           height: 100%;
-          padding: 15px;
           display: flex;
-          justify-content: center;
           overflow-y: auto;
         }
       }
