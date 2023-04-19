@@ -1,10 +1,12 @@
-<template>{{ facilityBiz }} {{ facilityBizOld }}
+<template>
   <div class="facilityBizType-header">
     <label for="" class="facilityBizType-header-label">시설사업명</label>
-    <select-box-common :arrSelect="listFacilityBizTypeForUser" v-model:valueInput="facilityBiz" displayeExpr="name" valueExpr="facilityBusinessId"
-      width="170px" placeholder="사업유형 선택" :searchEnabled="false" :itemClick="itemClick"/>
+      <DxSelectBox  :width="'170px'" :data-source="listFacilityBizTypeForUser" 
+        v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
+       :height="$config_styles.HeightInput"  placeholder="사업유형 선택"  :onItemClick="itemClick">
+    </DxSelectBox>
   </div>
-  <a-modal :visible="modalConfirm" title="시설사업변경에 따른 주의 안내" :closable="false" :width="500" footer="">
+  <a-modal :visible="modalConfirm" title="시설사업변경에 따른 주의 안내" :closable="false" :width="500" footer="" :bodyStyle="{padding: '15px'}">
     <a-row>
       <a-col :span="4">
           <warning-outlined :style="{ fontSize: '70px', color: '#faad14' }" />
@@ -18,7 +20,7 @@
     </a-row>
     <a-row>
     <a-col :span="6" :offset="6"></a-col>
-    <a-col :span="6" :offset="6">
+    <a-col :span="6" :offset="4">
       <div style="display: flex;">
         <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
         <button-basic class="button-form-modal" :text="'네'" :width="140" :type="'default'"
@@ -31,32 +33,30 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch,  } from "vue";
 import { useStore } from 'vuex';
-import { Modal } from 'ant-design-vue';
+import DxSelectBox from "devextreme-vue/select-box";
 import queries from "@/graphql/queries/CM/CM110/index"
 import { useQuery } from "@vue/apollo-composable";
 import { companyId, setMenuTab } from "@/helpers/commonFunction";
 import { WarningOutlined } from "@ant-design/icons-vue";
 export default defineComponent({
   components: {
-    WarningOutlined
+    WarningOutlined,DxSelectBox
   },
   setup() {
     const store = useStore();
     const trigger = ref<boolean>(false)
     const modalConfirm = ref<boolean>(false)
     const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
-    let facilityBizOld: any = ref(null)
-    let facilityBiz: any = ref(null)
+    const facilityBiz: any = ref(null)
+    const prevFacilityBiz: any = ref(null)
+    const facilityBizOld: any = ref(facilityBiz.value)
     let listFacilityBizTypeForUser:any = ref([])
     let firstLoad = ref(true)
-    watch(facilityBiz, (newVal, oldVal) => {
-      console.log(newVal, oldVal,'from watch');
-      if (firstLoad.value) {
-        facilityBizOld.value = newVal;
-      } else {
-        facilityBizOld.value = oldVal;
+    watch(facilityBiz,(newVal)=>{
+      if(firstLoad.value){
+        facilityBiz.value = newVal
+        facilityBizOld.value = newVal
       }
-      console.log(facilityBiz.value, facilityBizOld.value,'from watch 2');
       firstLoad.value = false
     })
     watch(() => globalFacilityBizId.value, (value) => {
@@ -93,8 +93,9 @@ export default defineComponent({
     })
     const handleCancel = () => {
       modalConfirm.value = false
-      facilityBiz.value = facilityBizOld.value
-      store.commit('settings/setGlobalFacilityBizId', facilityBizOld.value)
+      facilityBiz.value = prevFacilityBiz.value
+      facilityBizOld.value = prevFacilityBiz.value
+      store.commit('settings/setGlobalFacilityBizId', prevFacilityBiz.value)
     }
     const handleOk = () => {
         store.commit('settings/setGlobalFacilityBizId', facilityBiz.value)
@@ -102,12 +103,12 @@ export default defineComponent({
         modalConfirm.value = false
     }
 
-    const itemClick = async (data: any) => {
-      console.log(data ,facilityBiz.value,facilityBizOld.value);
-      facilityBizOld.value = data
-      if (facilityBiz.value != facilityBizOld.value) {
+    const itemClick =  (event: any) => {
+      if (facilityBizOld.value != null  && facilityBizOld.value !== event.itemData.facilityBusinessId) {
         modalConfirm.value = true
+        prevFacilityBiz.value = facilityBizOld.value
       }
+      facilityBizOld.value = facilityBiz.value;
     }
     return {
       facilityBiz,
@@ -116,7 +117,6 @@ export default defineComponent({
       handleOk,
       modalConfirm,
       itemClick,facilityBizOld
-      // facilityBizTypeCommon
     }
   },
 });
