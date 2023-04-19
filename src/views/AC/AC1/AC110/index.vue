@@ -45,13 +45,17 @@
                 <div>{{ data.data.bankbook.bankbookNickname }}</div>
               </a-tooltip>
             </template>
-            <DxColumn caption="통장용도" cell-template="useType" />
-            <template #useType="{ data }">
-              <DxSelectBox :search-enabled="false" width="100" display-expr="label" value-expr="value"
-                :data-source="bankbookUseType" v-model:value="data.data.bankbook.useType" placeholder="통장용도"
-                :readOnly="true" />
+            <DxColumn caption="통장용도" data-field="bankbook.useType" alignment="center">
+              <DxLookup :data-source="bankbookUseType" display-expr="label" value-expr="value" />
+            </DxColumn>
+            <DxColumn caption="일자" cell-template="bankbookDetailDate" />
+            <template #bankbookDetailDate="{ data }">
+              <div>
+                {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)
+  }}
+              </div>
             </template>
-            <DxColumn caption="일자" data-field="bankbookDetailDate" data-type="date" format="yyyy-MM-dd HH:mm" />
             <DxColumn caption="통장적요" data-field="summary" />
             <DxColumn caption="내용|비고" cell-template="content" />
             <template #content="{ data }">
@@ -154,23 +158,23 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" cell-template="resolutionClassification" />
-                <template #resolutionClassification="{ data }">
-                  <ResolutionClassificationSelect v-model:valueInput="data.data.resolutionClassification"
-                    :readOnly="!data.data?.accountingDocumentId.toString().includes('create')" />
-                </template>
+                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center">
+                  <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
+                </DxColumn>
                 <DxColumn caption="수입액" cell-template="income" width="150" />
                 <template #income="{ data }">
                   <div :key="data.data.spending">
                     <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.spending" />
+                      :disabled="!!data.data.spending" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
                   </div>
                 </template>
                 <DxColumn caption="지출액" cell-template="spending" width="150" />
                 <template #spending="{ data }">
                   <div :key="data.data.income">
                     <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.income" />
+                      :disabled="!!data.data.income" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
                   </div>
                 </template>
                 <DxColumn caption="적요" cell-template="summary" width="200" />
@@ -202,26 +206,24 @@
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined
-                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <EditOutlined v-if="!!data.data.causeUsage && data.data.causeUsage.length" style="font-size: 12px"
+                      @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
                   </div>
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <PlusOutlined
-                    v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                    style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                  <div v-else>{{ data.data.goodsCount }}</div>
+                  <a-badge v-if="!data.data.goodsCount" :count="data.data.goodsCount || 0" :offset="[6, 0]">
+                    <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                  </a-badge>
+                  <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined
-                      v-if="!!dataSourceTransactionDetails?.content && dataSourceTransactionDetails.content.length"
-                      style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <EditOutlined v-if="!!data.data.memo && data.data.memo.length" style="font-size: 12px"
+                      @click="openPopupNoteItemDetail(data, 'memo')" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
                   </div>
                 </template>
               </DxDataGrid>
@@ -250,8 +252,7 @@
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
     <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
-      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false"
-      @submit="isModalItemDetail = false" />
+      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
@@ -756,11 +757,13 @@ export default defineComponent({
       })
     }
     const handleInitializeTransactionDetails = () => {
-      initializeTransactionDetails({
-        ...payloadGetTransactionDetails,
-        bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
-        bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
-      })
+      if (rowKeyfocused.value === null) return
+      triggerTransactionDetails.value = true
+      // initializeTransactionDetails({
+      //   ...payloadGetTransactionDetails,
+      //   bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
+      //   bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
+      // })
     }
     const openPopupItemDetail = (data: any) => {
       if (data.resolutionClassification === 1) return
@@ -816,8 +819,8 @@ export default defineComponent({
       dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
         const objPayload = {
           resolutionClassification: item.resolutionClassification,
-          income: item.income,
-          spending: item.spending,
+          income: !!item.income ? item.income : 0,
+          spending: !!item.spending ? item.spending : 0,
           summary: item.summary,
           theOrder: item.theOrder,
           accountCode: item.accountCode,
@@ -861,6 +864,20 @@ export default defineComponent({
     const updateremoveBankbookDetailProof = () => {
       const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
       dataSource.value[indexSelected].proofCount--
+    }
+    const changeInputIncomeSpending = (data:any) => {
+      if(!data.income && !data.spending) {
+        data.resolutionClassification = null
+      }else {
+        if(!!data.income) {
+          data.resolutionClassification = 1
+          data.spending = 0
+        }
+        if(!!data.spending) {
+          data.resolutionClassification = 2
+          data.income = 0
+        }
+      }
     }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
@@ -943,6 +960,7 @@ export default defineComponent({
       arrAccoountSubjects,
       fundingSource,
       letterOfApprovalType,
+      changeInputIncomeSpending
     };
   },
 });

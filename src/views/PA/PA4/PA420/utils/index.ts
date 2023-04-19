@@ -63,9 +63,9 @@ export const initialFormState = {
   },
   taxCalculationInput: {
     prevRetirementBenefitStatus: {
-      retirementBenefits: 0,
-      nonTaxableRetirementBenefits: 0,
-      taxableRetirementBenefits: 0,
+      retirementBenefits: '',
+      nonTaxableRetirementBenefits: '',
+      taxableRetirementBenefits: '',
     },
     lastRetirementBenefitStatus: {
       retirementBenefits: 0,
@@ -140,21 +140,21 @@ export const INPUT_FORM_TAB_1 = {
 // state taxCalculationInput
 export const TAX_CALCULATION_INPUT = {
   prevRetirementBenefitStatus: {
-    retirementBenefits: 0,
-    nonTaxableRetirementBenefits: 0,
-    taxableRetirementBenefits: 0,
+    retirementBenefits: null,
+    nonTaxableRetirementBenefits: null,
+    taxableRetirementBenefits: null,
   },
   lastRetirementBenefitStatus: {
-    retirementBenefits: 0,
-    nonTaxableRetirementBenefits: 0,
-    taxableRetirementBenefits: 0,
+    retirementBenefits: null,
+    nonTaxableRetirementBenefits: null,
+    taxableRetirementBenefits: null,
   },
   prevRetiredYearsOfService: {
     settlementStartDate: null,
     settlementFinishDate: null,
     paymentDate: null,
-    exclusionDays: 0,
-    additionalDays: 0,
+    exclusionDays: null,
+    additionalDays: null,
   },
   lastRetiredYearsOfService: {
     settlementStartDate: null,

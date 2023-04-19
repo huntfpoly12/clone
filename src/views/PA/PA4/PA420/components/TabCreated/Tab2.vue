@@ -54,8 +54,8 @@
         </a-form-item>
         <a-form-item label="퇴직급여(확정)">
           <div class="d-flex-center"
-               :class="definedRetirementBenefits != dataIncomeRetirement ? 'custom-input-number' : ''">
-            <number-box-money :required="false" width="200px" :disabled="isDisableBtnCalculate"
+               :class="definedRetirementBenefits != Number(dataIncomeRetirement) ? 'custom-input-number' : ''">
+            <number-box-money :required="false" width="200px"
                               v-model:valueInput="definedRetirementBenefits" format="#0,###"/>
             <span class="pl-5 mr-5">원</span>
             <a-tooltip placement="top" class="custom-tooltip">
@@ -144,10 +144,9 @@ onError(e => {
 })
 onResult(({data}) => {
   if (data) {
-    dataIncomeRetirement.value = data.calculateIncomeRetirement.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    dataIncomeRetirement.value = data.calculateIncomeRetirement;
     store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
     store.commit('common/setIsDisableBtnTab2', false)
-    notification('success', Message.getCommonMessage('101').message)
     trigger.value = false;
 
   }

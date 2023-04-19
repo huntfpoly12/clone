@@ -20,11 +20,9 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import {defineComponent, ref, watch, computed, watchEffect} from 'vue'
-import notification from "@/utils/notification";
-import dayjs from "dayjs";
+import {computed, ref, watch, watchEffect} from 'vue'
 import queries from "@/graphql/queries/CM/CM130/index"
-import {useQuery, useMutation} from "@vue/apollo-composable";
+import {useQuery} from "@vue/apollo-composable";
 import {companyId} from "@/helpers/commonFunction";
 import {useStore} from 'vuex';
 import filters from "@/helpers/filters";
@@ -60,10 +58,11 @@ const paymentYearMonthChoose = ref(0)
 
 const dataQuery = ref({companyId: companyId, imputedYear: globalYear.value});
 
- watchEffect(() => {
-   paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
-   attributionMonth.value = selectMonthColumn.value.imputedMonth
- })
+watchEffect(() => {
+  attributionMonth.value = selectMonthColumn.value.imputedMonth
+  paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
+
+})
 const paymentDayConfig = ref()
 // const maxDay = computed(() => convertToDate({day: 31, month: paymentYearMonthChoose.value.toString().slice(-2), year: globalYear.value}))
 const setModalVisible = () => {
@@ -81,12 +80,16 @@ const {result: resultConfig, refetch} = useQuery(
 );
 watch(resultConfig, (value) => {
   if (value) {
-    // const day = convertToDate({
-    //   day: value.getWithholdingConfig.paymentDay,
-    //   month: attributionMonth.value,
-    //   year: globalYear.value
-    // })
     paymentDayConfig.value = value.getWithholdingConfig.paymentDay
+    if (value.getWithholdingConfig.paymentType === 1) {
+      paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth)}`)
+    } else {
+      if (filters.formatMonth(selectMonthColumn.value.paymentMonth) !== 12) {
+        paymentYearMonthChoose.value = Number(`${globalYear.value}${filters.formatMonth(selectMonthColumn.value.paymentMonth + 1)}`)
+        return
+      }
+      paymentYearMonthChoose.value = Number(`${globalYear.value + 1}01`)
+    }
     store.commit('common/setPaymentDay', value.getWithholdingConfig.paymentDay)
   }
   trigger.value = false;
@@ -117,7 +120,6 @@ const onSubmit = (e: any) => {
       paymentMonth: parseInt(paymentYearMonthChoose.value.toString().slice(4, 6)),
     })
     store.commit('common/sethasIncProcRetirements', true)
-    notification('success', `완료!`)
   }
 };
 

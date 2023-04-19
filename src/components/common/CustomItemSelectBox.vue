@@ -125,6 +125,9 @@ export default defineComponent({
                     newValue.map(v => {
                         selectBoxData.store().insert(v)
                 });
+            },{
+              deep: true,
+              immediate: true,
             }
         );
         const isRunOnce = ref(true);

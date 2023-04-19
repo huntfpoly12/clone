@@ -20,32 +20,30 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item"
-              :arrSelect="arrSelectItem" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.standard"
-              :arrSelect="arrSelectStandard" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
+              :required="true" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit"
-              :arrSelect="arrSelectUnit" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" />
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" />
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26"/>
           </template>
-          <DxColumn caption="수량" cell-template="unitPrice" />
+          <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" />
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26"/>
           </template>
-          <DxColumn caption="수량" cell-template="amount" />
+          <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" />
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" height="26"/>
           </template>
-          <DxColumn caption="수량" cell-template="remark" />
+          <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
             <default-text-box v-model:valueInput="data.data.remark" />
           </template>
@@ -70,22 +68,26 @@
   <PopupMessage :modalStatus="isModalDelete" @closePopup="isModalDelete = false" :typeModal="'confirm'"
     title="물품내역을 삭제하시겠습니까?" content="" okText="네. 삭제합니다" :cancelText="Message.getMessage('COMMON', '501').no"
     @checkConfirm="handleDelete" />
+  <PopupMessage :modalStatus="isModalConfirmSaveChange" @closePopup="isModalConfirmSaveChange = false"
+      :typeModal="'confirm'" title="정보가 저장되지 않았습니다. 닫으시겠습니까?" content=""
+      :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
+      @checkConfirm="handleConfirmChange" />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, reactive, watch, computed } from 'vue'
 import { useStore } from 'vuex';
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
 import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar } from "devextreme-vue/data-grid";
 import DxButton from "devextreme-vue/button";
-import { EditOutlined, HistoryOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import { DeleteOutlined } from "@ant-design/icons-vue";
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { DxValidator, DxRequiredRule } from "devextreme-vue/validator";
 import DxSelectBox from "devextreme-vue/select-box";
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { makeDataClean } from "@/helpers/commonFunction"
 export default defineComponent({
   props: {
@@ -111,10 +113,12 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     let isModalDelete = ref(false)
+    let isModalConfirmSaveChange = ref(false)
     let dataSource: any = ref([])
     let arrSelectItem: any = ref([])
     let arrSelectStandard: any = ref([])
     let arrSelectUnit: any = ref([])
+    let dataSourceCopy: any = ref()
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -135,6 +139,7 @@ export default defineComponent({
       loading: loadingSaveStatementOfGoods,
     } = useMutation(mutations.saveStatementOfGoods);
     doneSaveStatementOfGoods((e) => {
+      setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveStatementOfGoods(e => {
@@ -142,8 +147,17 @@ export default defineComponent({
     })
     watch(() => props.data, (value) => {
       dataSource.value = cloneDeep(value)
+      setData()
+    })
+    const setData = () => {
+      arrSelectItem.value = []
+      arrSelectStandard.value = []
+      arrSelectUnit.value = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
+          arrSelectItem.value = [...arrSelectItem.value, {id: index, value: item.item}]
+          arrSelectStandard.value = [...arrSelectStandard.value, {id: index, value: item.standard}]
+          arrSelectUnit.value = [...arrSelectUnit.value, {id: index,value: item.unit}]
           return {
             ...item,
             id: index
@@ -152,12 +166,22 @@ export default defineComponent({
       } else {
         dataSource.value.statementOfGoodsItems = []
       }
-    })
+      dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
+    }
     const cancel = () => {
-      emit("closePopup", false)
+      if(!isEqual(dataSourceCopy.value, dataSource.value.statementOfGoodsItems)){
+        isModalConfirmSaveChange.value = true
+      }else {
+        emit("closePopup", false)
+      }
     };
-    const submit = () => {
-      emit("submit")
+    const handleConfirmChange = (status: Boolean) => {
+      if(status){
+        isModalConfirmSaveChange.value = false
+        emit("closePopup", false)
+      }else {
+        isModalConfirmSaveChange.value = false
+      }
     }
     const totalValue = () => {
       let total = 0;
@@ -180,10 +204,11 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
-      if (data.id.includes('create')) return
+      if (data.id.toString().includes('create')) return
       isModalDelete.value = true
     }
-    const handleDelete = () => {
+    const handleDelete = (status: Boolean) => {
+      if (!status) return
       const payloadRequest = { ...props.payload }
       delete payloadRequest.bankbookDetailDate
       delete payloadRequest.bankbookDetailId
@@ -198,8 +223,15 @@ export default defineComponent({
       if (!res.isValid) return
       const payloadRequest = { ...props.payload }
       const dataTable = dataSource.value.statementOfGoodsItems.map((item: any) => {
-        delete item.id
-        return item
+        return {
+          amount: item.amount,
+          item: item.item,
+          quantity: item.quantity,
+          remark: item.remark,
+          standard: item.standard,
+          unit: item.unit,
+          unitPrice: item.unitPrice
+        }
       })
       const payloadClear = makeDataClean({
         ...payloadRequest,
@@ -227,13 +259,13 @@ export default defineComponent({
     return {
       move_column,
       colomn_resize,
-      submit,
       cancel,
       openPopupDeleteItem,
       totalValue,
       totalExpenditure,
       totalDifference,
       isModalDelete,
+      isModalConfirmSaveChange,
       Message,
       handleDelete,
       submitFormDetail,
@@ -243,7 +275,8 @@ export default defineComponent({
       dataSource,
       arrSelectItem,
       arrSelectStandard,
-      arrSelectUnit
+      arrSelectUnit,
+      handleConfirmChange
     }
   },
 })

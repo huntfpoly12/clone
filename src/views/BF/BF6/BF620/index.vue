@@ -1,12 +1,12 @@
 <template>
   <action-header title="계약정보관리&심사" @actionSearch="onSearch()" :buttonSearch="true" :buttonSave="activeKey == '5'" />
   <div id="bf-620" class="px-10">
-    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10" @change="onSearch" :destroyInactiveTabPane="true">
+    <a-tabs v-model:activeKey="activeKey" type="card" class="tab-group mt-10" @change="onSearch">
       <a-tab-pane key="1" tab="원천세" >
-        <tab-1-component :search="search1" :onSearch="onSearch" ref="tab1Ref"></tab-1-component>
+        <tab-1-component :search="search1" v-if="activeKey==1" :onSearch="onSearch" ref="tab1Ref"></tab-1-component>
       </a-tab-pane>
       <a-tab-pane key="2" tab="지방소득세">
-        <tab-2-component :search="search2" :onSearch="onSearch"></tab-2-component>
+        <tab-2-component :search="search2" v-if="activeKey==2" :onSearch="onSearch"></tab-2-component>
       </a-tab-pane>
       <a-tab-pane key="3" tab="전자신고파일제작내역">
         <tab-3-component :search="search3" :onSearch="onSearch"></tab-3-component>

@@ -1,12 +1,6 @@
 <template>
   <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
-    <div 
-      style="margin-right: -10px; overflow-x: hidden;" 
-      :style="[
-        heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
-        !!width ? `min-width: ${width}px; width: 100%` : ''
-      ]" 
-      :class="{ 'ac110-disable-form-upload': !payload.bankbookDetailId }">
+    <div class="form-upload-ac110" :class="{ 'ac110-disable-form-upload': !payload.bankbookDetailId }">
       <div ref="elementUpload" class="upload-pewview-img">
         <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
           @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
@@ -115,6 +109,13 @@ export default defineComponent({
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorAddBankbookDetailProof(e => {
+      const index = listFileStorageId.value.length-1
+      listFileStorageId.value[index].status = 'error'
+      listFileStorageId.value[index].error = e.message
+      listFileStorageId.value[index].response = undefined
+      fileList.value[index].status = 'error'
+      fileList.value[index].error = e.message
+      fileList.value[index].response = undefined
       notification('error', e.message)
     })
 
@@ -144,6 +145,7 @@ export default defineComponent({
     })
 
     watch(resGetBankbookDetailProofs, (value) => {
+      listFileStorageId.value = []
       if (value.getBankbookDetailProofs.length) {
         listFileStorageId.value = value.getBankbookDetailProofs.map((file: any) => ({
           ...file,
@@ -282,9 +284,19 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .upload-pewview-img {
+  padding: 15px;
+  .ant-upload-list  {
+    display: grid !important;
+    grid-template-columns: auto auto auto !important;
+    gap: 8px;
+    &::before {
+      display: none;
+    }
+  }
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
+    margin: 0;
   }
 
   .ant-upload-list-item {

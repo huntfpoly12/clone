@@ -146,6 +146,7 @@
                   :data-source="menuTab" 
                   v-model:selected-index="tabIndex"
                   itemTemplate="titleTab"
+                  :scrollByContent="true"
                   >
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
@@ -694,11 +695,17 @@ export default defineComponent({
         isRemoveTab.value = false
         return
       }
-      const newItem = value[value.length - 1]
-      menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
-      nextTick(() => {
-        tabIndex.value = menuTab.value.length - 1
-      })
+      if(value.length){
+        const newItem = value[value.length - 1]
+        menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
+        nextTick(() => {
+          tabIndex.value = menuTab.value.length - 1
+        })
+      }else {
+        menuTab.value = []
+        openTab(tabDashboard)
+      }
+      
     }, {
       deep: true,
     })
@@ -784,6 +791,22 @@ export default defineComponent({
   margin: 0 1.5px;
   border-radius: 8px 8px 0 0;
   padding: 0;
+}
+:deep .tab-main .dx-tab-content {
+    span:first-child {
+      width: 150px;
+      display:inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+    span:last-child {
+      margin-left: 0 !important;
+      svg {
+        margin-bottom: 3px;
+      }
+    }
 }
 :deep .tab-main .tab-main-title-tab {
   padding: 9px;

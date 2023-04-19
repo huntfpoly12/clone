@@ -4,20 +4,18 @@
       <div>
         <div class="eamil-input">
           <span>선택된 내역들의 전자신고파일 제작요청하고, 결과를</span>
-          <mail-text-box
-            width="250px"
-            :required="true"
-            v-model:valueInput="dataRequestFile.emailInput.receiverAddress"
-            placeholder="abc@example.com"
-          ></mail-text-box>
+          <mail-text-box width="250px" :required="true" placeholder="abc@example.com"
+            v-model:valueInput="dataRequestFile.emailInput.receiverAddress"></mail-text-box>
         </div>
         <div>
           <span>로 메일을 발송하시겠습니까?</span>
         </div>
       </div>
       <div class="text-align-center mt-10">
-        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'" @onClick="$emit('cancel')" />
-        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'" @onClick="onSubmit" />
+        <button-basic class="button-form-modal" :text="'아니요'" :type="'default'" :mode="'outlined'"
+          @onClick="$emit('cancel')" />
+        <button-basic class="button-form-modal" :text="'네. 발송합니다'" :width="140" :type="'default'" :mode="'contained'"
+          @onClick="onSubmit" />
       </div>
     </standard-form>
   </a-modal>
@@ -65,10 +63,12 @@ export default defineComponent({
         switch (props.tabName) {
           case 'tab1':
             makeDataClean(dataRequestFile.value);
-            dataRequestFile.value.filter.productionStatuses =  dataRequestFile.value.filter.beforeProduction && null;
+            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction && null;
             creationWithholdingTaxTab1(dataRequestFile.value);
             break;
           case 'tab2':
+            makeDataClean(dataRequestFile.value);
+            dataRequestFile.value.filter.productionStatuses = dataRequestFile.value.filter.beforeProduction && null;
             creationLocalTab2(dataRequestFile.value);
             break;
           default:
@@ -88,7 +88,7 @@ export default defineComponent({
     // onDone tab 2
     onDoneTab2(() => {
       notification('success', `업데이트 완료!`);
-      emit('closePopup', false);
+      emit('cancel', false);
     });
     onErrorTab2((e: any) => {
       notification('error', e.message);
@@ -107,10 +107,12 @@ export default defineComponent({
   align-items: center;
   width: 100%;
   margin-top: 20px;
+
   span {
     padding-right: 10px;
   }
 }
+
 .mt-50 {
   margin-top: 50px;
 }
