@@ -20,9 +20,9 @@
     <a-col :span="6" :offset="6"></a-col>
     <a-col :span="6" :offset="6">
       <div style="display: flex;">
-        <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleOk" style="margin-right: 10px;"/>
+        <button-basic class="button-form-modal" :text="'아니오'" :type="'normal'" :mode="'contained'" @onClick="handleCancel" style="margin-right: 10px;"/>
         <button-basic class="button-form-modal" :text="'네'" :width="140" :type="'default'"
-                        :mode="'contained'" @onClick="handleCancel" />
+                        :mode="'contained'" @onClick="handleOk" />
       </div>         
     </a-col>
   </a-row>

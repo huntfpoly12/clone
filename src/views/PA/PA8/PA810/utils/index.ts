@@ -1,4 +1,5 @@
 import filters from "@/helpers/filters";
+import dayjs from "dayjs";
 export type InitialFormCreateType = {
   name: string;
   bizNumber: string;
@@ -20,7 +21,7 @@ export type InitialFormCreateType = {
   includeDependents: boolean;
   jobTypeCode: string;
   contractWorker: boolean;
-  contractExpiredDate?: Number;
+  contractExpiredDate?: Number | null;
   jobSecurityFundSupportApplication: boolean;
   weeklyWorkingHours: number;
   insuranceReductionCode?: number;
@@ -48,7 +49,7 @@ const InitialFormCreate: InitialFormCreateType = {
   includeDependents: true, // 21
   jobTypeCode: "232", // 22
   contractWorker: false, // 23
-  // contractExpiredDate: "", // 24
+  contractExpiredDate: filters.formatDateToInterger(dayjs()), // 24
   jobSecurityFundSupportApplication: false, // 25
   weeklyWorkingHours: 40, // 26
   // insuranceReductionCode: "", // 27

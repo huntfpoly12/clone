@@ -95,7 +95,7 @@ export default defineComponent({
           return false
       }
     }
-    const checkIdNotForeigner = () => validResidentId(value.value || "")
+    const checkIdNotForeigner = () => value.value ? validResidentId(value.value || "") : false
 
     return {
       updateValue,

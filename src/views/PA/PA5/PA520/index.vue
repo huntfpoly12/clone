@@ -51,7 +51,7 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
-                  style="max-height: 700px;"
+                  style="max-height: 768px;"
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
@@ -310,6 +310,7 @@ export default defineComponent({
       dataSource.value.store().clear();
       dataSource.value.reload()
       store.commit('common/setComponentPA520', 1);
+      resetAddComponent.value++;
       store.commit('common/setIsErrorPA520',true)
     });
     const {
@@ -335,7 +336,7 @@ export default defineComponent({
       }
     })
 
-    watch(clickYearStatus, async (newVal : ClickYearStatus) => {
+    watch(clickYearStatus,(newVal : ClickYearStatus) => {
         if (fromAddIsChange.value && newVal !== ClickYearStatus.none) {
           store.commit('common/setModalChangeValueAddPA520', true);
         }
