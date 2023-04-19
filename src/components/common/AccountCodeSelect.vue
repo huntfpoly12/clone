@@ -1,14 +1,14 @@
 <template>
-    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="true" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
+    <DxSelectBox :onOpened="onOpened" :width="width" :search-enabled="false" :searchExpr="['name', 'shortCode']" :data-source="accountSubjects"
         placeholder="선택" value-expr="code" display-expr="name" :show-clear-button="clearButton" v-model:value="value"
-        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled"
+        field-template="field" item-template="item" :key="resetSelect" :disabled="disabled" :read-only="readOnly"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <DxTextBox v-if="data" :value="data.name + ' ' + data.shortCode"></DxTextBox>
-            <DxTextBox v-else placeholder="선택" />
+            <DxTextBox :read-only="readOnly" v-if="data" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            <DxTextBox :read-only="readOnly" v-else placeholder="선택" height="26" />
         </template>
         <template #item="{ data }">
-            <div class="custom-value">
+            <div class="custom-value-account-code">
                 <a-tooltip zIndex="9999" placement="top" color="black">
                     <template #title>{{ data.name1 }} > {{ data.name2 }}</template>
                     <div>
@@ -43,7 +43,7 @@ export default {
         disabled: Boolean,
         valueInput: {
             type: [Number, String],
-            default: "",
+            default: null,
         },
         readOnly: Boolean,
         nameInput: {
@@ -78,7 +78,7 @@ export default {
             messageRequired.value = props.messRequired;
         }
         const resetSelect = ref(0)
-        const value = ref(props.valueInput);
+        let value: any = ref(null);
         const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
         let accountSubjects: any = ref([])
         onMounted(() => {
@@ -108,15 +108,15 @@ export default {
                     }
                 })
             }
-            if (!accountSubjects.value.find((row: any) => row.code == value.value)) {
-                emit("update:valueInput", '');
-                resetSelect.value++
-            }
+            // if (!accountSubjects.value.find((row: any) => row.code == value.value)) {
+            //     emit("update:valueInput", '');
+            //     resetSelect.value++
+            // }
         }
         const fillRow = (row: any) => {
             const filteredArr = ref(row.codes)
             if (props.classification) {
-                filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
+              filteredArr.value = row.codes.filter((item: any) => props.classification.includes(item.classification));
             }
             filteredArr.value?.map((val: any) => {
                 accountSubjects.value.push({
@@ -137,10 +137,13 @@ export default {
         };
 
         watch(() => props.valueInput, (newValue) => {
-            value.value = newValue;
+            value.value = !!newValue ? newValue : null;
+        },{
+          deep: true,
+          immediate: true,
         });
         const onOpened = (e: any) => {
-            e.component._popup.option('width', 250);
+            e.component._popup.option('width', props.width);
         }
         return {
             messageRequired, arrAllCallApi, resetSelect, onOpened,
@@ -152,9 +155,18 @@ export default {
 };
 </script>
   
-<style scoped>
+<style scoped lang="scss">
 .form-group {
     margin-top: 30px;
+}
+.custom-value-account-code {
+  div{
+    max-width: 100%;
+    display:inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
   

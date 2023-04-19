@@ -7,13 +7,13 @@
                     <a-col :span="12" class="col-1">
                         <div class="input_info">
                             <a-form-item label="선택된 전표">
-                                <number-box :width="60" />
+                                <number-box :width="60" :valueInput="dataRows.length" disabled="true"/>
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
                         <div class="input_info">
                             <a-form-item label="동일 통장내역의 전표">
-                                <number-box :width="60" />
+                                <number-box :width="60" :valueInput="sumHandwritingFalse" disabled="true"/>
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
@@ -21,13 +21,13 @@
                     <a-col :span="12" class="col-2">
                         <div class="input_info">
                             <a-form-item label="수기입력 전표">
-                                <number-box :width="60" />
+                                <number-box :width="60" :valueInput="sumHandwritingTrue" disabled="true"/>
                             </a-form-item>
                             <span class="pl-5 mb-5">건 (삭제 예정)</span>
                         </div>
                         <div class="input_info">
                             <a-form-item label="전체 전표취소 건수">
-                                <number-box :width="60" />
+                                <number-box :width="60" :valueInput="sumHandwritingTrueFalse" disabled="true"/>
                             </a-form-item>
                             <span class="pl-5 mb-5">건</span>
                         </div>
@@ -46,25 +46,109 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue'
+import { useStore } from 'vuex';
+import { companyId } from "@/helpers/commonFunction"
+import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { useMutation } from '@vue/apollo-composable';
+import mutations from "@/graphql/mutations/AC/AC1/AC120";
+import notification from '@/utils/notification';
+import { Message } from "@/configs/enum"
 export default defineComponent({
     props: {
         modalStatus: {
             type: Boolean,
             default: false,
         },
+        dataRows: {
+            type: Array,
+            default: [],
+        }
     },
     components: {
     },
 
     setup(props, { emit }) {
+        const store = useStore();
+        const globalYear = computed(() => store.state.settings.globalYear)
+        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+
+        const sumHandwritingTrue = ref(0)
+        const sumHandwritingFalse = ref(0)
+        const sumHandwritingTrueFalse = ref(0)
+        
+        // =================== GRAPHQL ===================
+        // mutation unregisterAccountingDocument    ----- handwriting = true
+        const {
+            mutate: mutateUnregisterAccountingDocument, onDone: doneUnregisterAccountingDocument, onError: errorUnregisterAccountingDocument,
+        } = useMutation(mutations.unregisterAccountingDocument);
+
+        // mutation initializeTransactionDetails    ----- handwriting = false
+        const {
+            mutate: mutateInitializeTransactionDetails, onDone: doneInitializeTransactionDetails, onError: errorInitializeTransactionDetails,
+        } = useMutation(mutations.initializeTransactionDetails);
+
+        // ============== ON DONE MUTATION GRAPHQL ===============
+        // unregisterAccountingDocument
+        doneUnregisterAccountingDocument((e) => {
+            notification('success', Message.getMessage('COMMON', '106').message)
+            store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.resetDataAccountingProcesses++
+        })
+        errorUnregisterAccountingDocument(e => {
+            notification('error', e.message)
+        })
+
+        // initializeTransactionDetails
+         doneInitializeTransactionDetails((e) => {
+            notification('success', Message.getMessage('COMMON', '106').message)
+            store.state.common.ac120.resetDataTable++
+            store.state.common.ac120.resetDataAccountingProcesses++
+        })
+        errorInitializeTransactionDetails(e => {
+            notification('error', e.message)
+        })
+
+
+        watch(() => props.modalStatus, async (newValue, old) => {
+            if (newValue) {
+                props.dataRows.map((row: any) => {
+                    if (row.handwriting === true) {
+                        sumHandwritingTrue.value++ 
+                    } else if (row.handwriting === false) {
+                        sumHandwritingFalse.value++ 
+                    }
+                })
+                sumHandwritingTrueFalse.value = sumHandwritingTrue.value + sumHandwritingFalse.value
+            }
+        })
+
+        // ================ FUNCTION ============================================
         const cancel = () => {
             emit("closePopup", false)
         };
         const submit = () => {
-            emit("submit")
+            props.dataRows.map((row: any) => {
+                if (row.handwriting === true) {
+                    mutateUnregisterAccountingDocument({
+                        companyId: companyId,
+                        fiscalYear: globalYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        transactionDetailDate: row.transactionDetailDate,
+                        accountingDocumentId: row.accountingDocumentId
+                    })
+                } else if (row.handwriting === false) {
+                    mutateInitializeTransactionDetails({
+                        companyId: companyId,
+                        fiscalYear: globalYear.value,
+                        facilityBusinessId: globalFacilityBizId.value,
+                        bankbookDetailDate: row.transactionDetailDate,
+                        bankbookDetailId: row.bankbookDetailId
+                    })
+                }
+            })
         }
         return {
+            sumHandwritingTrueFalse, sumHandwritingTrue, sumHandwritingFalse,
             submit,
             cancel
         }

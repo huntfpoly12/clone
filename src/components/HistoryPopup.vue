@@ -6,7 +6,7 @@
                 :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
-                || loadingAC110">
+                || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataTableShow"
                     :show-borders="true" :keyExpr="keyExpr ? keyExpr : 'ts'" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
@@ -93,10 +93,14 @@ export default defineComponent({
         let triggerBf310 = ref<boolean>(false);
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
+        let triggerPA880 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
         let triggerAC620 = ref<boolean>(false);
-        let triggerAC110 = ref<boolean>(false);
+        let triggerAC110BankbookDetailLogs = ref<boolean>(false);
+        let triggerAC110AccountingProcessLogs = ref<boolean>(false);
+        let triggerAC120AccountingProcess = ref<boolean>(false);
+        let triggerAC120AccountingDocuments = ref<boolean>(false);
         const dataTableShow = ref([]);
 
         // config grid
@@ -108,7 +112,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         watch(
             () => props.modalStatus,
-            (newValue, old) => {
+            async (newValue, old) => {
                 if (newValue) {
                     visible.value = newValue;
                     if (companyId) {
@@ -377,9 +381,30 @@ export default defineComponent({
                             triggerPA810.value = true;
                             refetchPA810();
                             break;
-                        case 'ac-110':
+                        case 'pa-880':
+                            dataQuery.value = {
+                              companyId: companyId,
+                              imputedYear: globalYear,
+                              workId: props.data,
+                            };
+                            triggerPA880.value = true;
+                            refetchPA880();
+                            break;
+                        case 'ac-110-bankbook':
                             dataQuery.value = props.data;
-                            triggerAC110.value = true;
+                            triggerAC110BankbookDetailLogs.value = true;
+                            break;
+                        case 'ac-110-accounting':
+                            dataQuery.value = props.data;
+                            triggerAC110AccountingProcessLogs.value = true;
+                            break;
+                        case 'ac-120-accounting-process':
+                            await (dataQuery.value = props.data);
+                            await (triggerAC120AccountingProcess.value = true);
+                            break;
+                        case 'ac-120-accounting-documents':
+                            await (dataQuery.value = props.data);
+                            await (triggerAC120AccountingDocuments.value = true);
                             break;
                         case 'ac-610':
                             dataQuery.value = props.data;
@@ -422,7 +447,10 @@ export default defineComponent({
                     triggerAC610.value = false;
                     triggerCM121.value = false;
                     triggerAC620.value = false;
-                    triggerAC110.value = false;
+                    triggerAC110BankbookDetailLogs.value = false;
+                    triggerAC110AccountingProcessLogs.value = false;
+                    triggerAC120AccountingProcess.value = false;
+                    triggerAC120AccountingDocuments.value = false;
                 }
             }
         );
@@ -813,8 +841,21 @@ export default defineComponent({
             })
         );
         watch(resultPA810, (value) => {
+          if (value) {
+            dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
+          }
+        });
+        const { result: resultPA880, loading: loadingPA880, refetch: refetchPA880 } = useQuery(
+            queries.getMajorInsuranceCompanyOutLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA880.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA880, (value) => {
             if (value) {
-                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
+                dataTableShow.value = value.getMajorInsuranceCompanyOutLogs;
             }
         });
         // get getClientLogs ac-610
@@ -850,20 +891,68 @@ export default defineComponent({
             triggerAC620.value = false;
         });
         // get getBankbookDetailLogs ac110
-        const { result: resultAC110, loading: loadingAC110, refetch: refetchAC110 } = useQuery(
+        const { result: resultAC110BankbookLogs, loading: loadingAC110BankbookLogs } = useQuery(
             queries.getBankbookDetailLogs,
             dataQuery,
             () => ({
-                enabled: triggerAC110.value,
+                enabled: triggerAC110BankbookDetailLogs.value,
                 fetchPolicy: "no-cache",
             })
         );
-        watch(resultAC110, (value) => {
+        watch(resultAC110BankbookLogs, (value) => {
             if (value) {
                 dataTableShow.value = value.getBankbookDetailLogs;
             }
-            triggerAC110.value = false;
+            triggerAC110BankbookDetailLogs.value = false;
         });
+         // get AccountingProcessLogs ac110
+         const { result: resultAC110AccountingProcessLogs, loading: loadingAC110AccountingProcessLogs } = useQuery(
+            queries.getAccountingProcessLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC110AccountingProcessLogs.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC110AccountingProcessLogs, (value) => {
+            if (value) {
+                dataTableShow.value = value.getAccountingProcessLogs;
+            }
+            triggerAC110AccountingProcessLogs.value = false;
+        });
+
+        // get AccountingProcessLogs ac120
+        const { result: resultAC120AccountingProcess, loading: loadingAC120AccountingProcess } = useQuery(
+            queries.getAccountingProcessLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC120AccountingProcess.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC120AccountingProcess, (value) => {
+            if (value) {
+                dataTableShow.value = value.getAccountingProcessLogs;
+            }
+            triggerAC120AccountingProcess.value = false;
+        });
+
+        // get AccountingDocumentsLogs ac120
+        const { result: resultAC120AccountingDocuments, loading: loadingAC120AccountingDocuments } = useQuery(
+            queries.getAccountingDocumentsLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerAC120AccountingDocuments.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultAC120AccountingDocuments, (value) => {
+            if (value) {
+                dataTableShow.value = value.getAccountingDocumentsLogs;
+            }
+            triggerAC120AccountingDocuments.value = false;
+        });
+
         const formarDate = (date: any) => {
             return dayjs(date).format('YYYY/MM/DD')
         };
@@ -904,10 +993,14 @@ export default defineComponent({
             loadingStatusPA720,
             loadingPA210,
             loadingPA810,
+            loadingPA880,
             loadingAC610,
             loadingCM121,
             loadingAC620,
-            loadingAC110
+            loadingAC110BankbookLogs,
+            loadingAC110AccountingProcessLogs,
+            loadingAC120AccountingProcess,
+            loadingAC120AccountingDocuments,
         }
     },
 

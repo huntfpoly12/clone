@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :visible="modalStatus" title="사원등록" centered @cancel="setModalVisible()" :mask-closable="false" :width="750"
+    <a-modal :visible="modalStatus" title="부양가족 등록" centered @cancel="setModalVisible()" :mask-closable="false" :width="750"
       :footer="null" :bodyStyle="{ padding: '0px', height: '478px' }">
       <div class="page-content" id="add-new-dependent-pa-120">
         <a-row>
@@ -21,7 +21,7 @@
             </a-form-item>
             <a-form-item :label="labelResidebId" label-align="right" class="red">
               <id-number-text-box :required="true" width="150px" :disabled="disabledButton || formState.relation == 0"
-                v-model:valueInput="formState.residentId">
+                v-model:valueInput="formState.residentId" :foreigner=formState.foreigner>
               </id-number-text-box>
             </a-form-item>
             <a-form-item label="나이" label-align="right">

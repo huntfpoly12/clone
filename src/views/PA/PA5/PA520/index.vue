@@ -34,7 +34,6 @@
         </a-col>
   </a-row> -->
   <div id="pa-520" class="page-content">
-  
       <a-row>
           <a-col :span="13" class="custom-layout" >
               <a-spin :spinning="loading" size="large">
@@ -52,14 +51,14 @@
                   v-model:focused-row-key="focusedRowKey" 
                   @exporting="onExporting" 
                   id="gridContainer" 
-                  style="max-height: 700px;"
+                  style="max-height: 768px;"
                   ref="pa520Grid"
                   @focused-row-changing="onFocusedRowChanging"
                   @focused-row-changed="onFocusedRowChanged"
                   >
                       <DxScrolling mode="virtual" show-scrollbar="always"/>
                       <DxSearchPanel :visible="true" />
-                      <DxExport :enabled="true"/>
+                      <DxExport :enabled="true" />
                       <DxPaging :enabled="false" />
                       <DxToolbar>
                           <DxItem location="before">
@@ -108,12 +107,12 @@
                               신규
                             </template>
                             <div style="text-align: center;" >
-                              <DxButton icon="plus" @click="onAddBtClick" />
+                              <DxButton icon="plus" @click="onAddBtClick"  :disabled="isError"/>
                             </div>
                         </a-tooltip>
                       </template>
                       <template #button-history>
-                          <DxButton>
+                          <DxButton  :disabled="isError">
                               <HistoryOutlined @click="modalHistory" class="fz-18" />
                           </DxButton>
                       </template>
@@ -215,7 +214,6 @@ import { saveAs } from "file-saver-es";
 import { Message } from "@/configs/enum";
 import DataSource from "devextreme/data/data_source";
 import { ClickYearStatus, FormStatus } from "@/store/settingModule/types";
-
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -243,6 +241,7 @@ export default defineComponent({
     PA520PopupEdit,
   },
   setup() {
+
     const pa520Grid = ref<any>(null);
     const contentDelete = Message.getMessage("PA120", "002").message;
     const modalComfirmDelete = ref(false);
@@ -272,6 +271,7 @@ export default defineComponent({
     // const isValidateAddPA520 = computed(() => store.getters['common/isValidateAddPA520']);
     const isClickRow = computed(() => store.getters['common/isClickRowPA520']); // determine when action click row
     const isClickBtnSavePA520 = computed(() => store.getters['common/isClickBtnSavePA520']); 
+    const isError  = computed(() => store.getters['common/isErrorPA520'])
     // const isDelete = computed(() => store.state.common.isClickDelete); // determine when action click icon delete
     const tab1IsChange = computed(() => store.getters['common/checkChangeValueEditTab1PA520']);
     const tab2IsChange = computed(() => store.getters['common/checkChangeValueEditTab2PA520']);
@@ -280,7 +280,7 @@ export default defineComponent({
     const modalChangeValueAdd = computed(() => store.getters['common/modalChangeValueAddPA520'])
     const actionChangeComponent = computed(() => store.getters['common/setComponentPA520'])
     const idRowEdit = computed(() => store.getters['common/idRowCurrentEditPA520'])
-    const activeAddRowPA520  = computed(() => store.getters['common/activeAddRowPA520'])
+    //const activeAddRowPA520  = computed(() => store.getters['common/activeAddRowPA520'])
     const originData = ref({
       companyId: companyId,
       imputedYear: globalYear,
@@ -306,8 +306,12 @@ export default defineComponent({
       fetchPolicy: "no-cache",
     }));
     onError((e) => {
-      store.commit('settings/setCurrentYear')
       notification("error", e.message);
+      dataSource.value.store().clear();
+      dataSource.value.reload()
+      store.commit('common/setComponentPA520', 1);
+      resetAddComponent.value++;
+      store.commit('common/setIsErrorPA520',true)
     });
     const {
       mutate: actionDelete,
@@ -332,7 +336,7 @@ export default defineComponent({
       }
     })
 
-    watch(clickYearStatus, async (newVal : ClickYearStatus) => {
+    watch(clickYearStatus,(newVal : ClickYearStatus) => {
         if (fromAddIsChange.value && newVal !== ClickYearStatus.none) {
           store.commit('common/setModalChangeValueAddPA520', true);
         }
@@ -343,6 +347,7 @@ export default defineComponent({
 
     watch(result,() => {
       if (result && result.value) {
+        store.commit('common/setIsErrorPA520',false)
         const data = result.value.getEmployeeWageDailies.map((item: any) => ({
           ...item,
           key: item.employeeId
@@ -364,7 +369,6 @@ export default defineComponent({
         ).length;
         totalUser.value = result.value.getEmployeeWageDailies.length;
 
-
         // nếu sau confirm mà trươc đấy click thêm row thì thêm row mới
         if (addBtOnclick.value && !isClickRow.value && !isChangeYear.value && !isClickBtnSavePA520.value) {
           onAddBtClick()
@@ -379,7 +383,9 @@ export default defineComponent({
         }
         // nếu chỉ click Save btn -> focus vào row vừa tạo
         if (isClickBtnSavePA520.value) {
+          store.commit('common/setFocusedRowKeyPA520', 0)
           setRowEdit(parseInt(idRowSaveDone.value))
+          store.commit('common/setComponentPA520',2);
           store.dispatch('common/resetStatusModal')
         }
 
@@ -399,7 +405,6 @@ export default defineComponent({
       }
       store.dispatch('common/resetActionStatus')
     });
-
 
     watch(()=>store.state.common.dataSourcePA520,(newVal)=>{
       dataSource.value.store().update(0,newVal).then(() => dataSource.value.reload());
@@ -425,9 +430,10 @@ export default defineComponent({
       let newRow = dataSource.value.items().filter((item: any) => item.key == 0);
       if (newRow.length > 0 && isClickRow.value) {
         removeNewRow()
+        store.dispatch('common/resetActionStatus')
       }
     })
-    const removeNewRow = ()=>{
+    const removeNewRow = () => {
         dataSource.value.store().remove(0).then(() => {dataSource.value.reload()})
     }
     // ======================= FUNCTION ================================
@@ -463,8 +469,9 @@ export default defineComponent({
         store.commit('common/setAddBtOnclickPA520',false);
       
     }
-    const onFocusedRowChanged = (event: any) => {
-      if(focusedRowKey.value == 0 && !isClickRow.value ){
+    const onFocusedRowChanged = async (event: any) => {
+
+      if (focusedRowKey.value == 0 && !isClickRow.value) {
         store.commit('common/setComponentPA520',1);
       } else {
         store.commit('common/setComponentPA520', 2);
@@ -523,11 +530,12 @@ export default defineComponent({
         if (isClickRow.value && !addBtOnclick.value && clickYearStatus.value == ClickYearStatus.none) {
           setRowEdit(idRowCurrentClick.value)
           store.dispatch('common/resetStatusModal')
-          store.dispatch('common/resetActionStatus')
+          //store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')
         }
 
         if (clickYearStatus.value !== ClickYearStatus.none) {
+     
           store.dispatch('common/resetStatusModal')
           store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')
@@ -566,7 +574,6 @@ export default defineComponent({
           if (tab1IsChange.value) {
             store.commit('common/setTabActivePA520','1')
           }
-
           if (tab2IsChange.value) {
             store.commit('common/setTabActivePA520','2')
           }
@@ -589,7 +596,7 @@ export default defineComponent({
           store.dispatch('common/resetStatusChangeFrom')
         }
 
-         if (clickYearStatus.value !== ClickYearStatus.none) {
+        if (clickYearStatus.value !== ClickYearStatus.none) {
           store.dispatch('common/resetStatusModal')
           store.dispatch('common/resetActionStatus')
           store.dispatch('common/resetStatusChangeFrom')
@@ -702,7 +709,8 @@ export default defineComponent({
       idRowCurrentClick,
       idRowSaveDone,
       globalYear,
-      clickYearStatus
+      clickYearStatus,
+      isError
     };
   },
 });

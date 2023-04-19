@@ -2,16 +2,16 @@
     <a-col :span="24">
         <div class="header-detail-main">
             <div class="table-detail-left d-flex-center">
-                <div class="text-box-1">귀 {{!hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
-                <div class="text-box-2">지 {{!hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
-                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="!hasDataIncRetirements"/>
+                <div class="text-box-1">귀 {{hasDataIncRetirements ? `${dataTableDetail.processKey.imputedYear}-${$filters.formatMonth(dataTableDetail.processKey.imputedMonth)}` :''}}</div>
+                <div class="text-box-2">지 {{hasDataIncRetirements ? `${dataTableDetail.processKey.paymentYear}-${$filters.formatMonth(dataTableDetail.processKey.paymentMonth)}` : ''}}</div>
+                <process-status v-model:valueStatus="statusButton" @checkConfirm="statusComfirm" :disabled="statusButton !== 10 && statusButton !== 20"/>
             </div>
             <div class="table-detail-right">
-                <DxButton @click="deleteItem" :disabled="checkActionValue || hasDataIncRetirements" >
+                <DxButton @click="deleteItem" :disabled="checkActionValue" >
                     <DeleteOutlined style="font-size: 18px;" />
                 </DxButton>
-                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue || !hasDataIncRetirements" />
-                <DxButton @click="onItemClick('history')" :disabled="checkActionValue  && (statusButton != 20) && (statusButton != 40)">
+                <DxButton icon="plus" @click="addRow" :disabled="checkActionValue" />
+                <DxButton @click="onItemClick('history')" :disabled="checkActionValue">
                     <a-tooltip placement="left">
                         <template #title>근로소득자료 변경이력</template>
                         <div class="text-center">
@@ -19,7 +19,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue && (statusButton != 20) && (statusButton != 40)">
+                <DxButton @click="onItemClick('historyEdit')" :disabled="checkActionValue">
                     <a-tooltip placement="left">
                         <template #title>근로소득 마감상태 변경이력</template>
                         <div class="text-center">
@@ -28,7 +28,7 @@
                         </div>
                     </a-tooltip>
                 </DxButton>
-                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue || hasDataIncRetirements">
+                <DxButton @click="editPaymentDate" class="custom-button-checkbox" :disabled="checkActionValue">
                     <div class="d-flex-center">
                         <checkbox-basic :valueCheckbox="true" disabled="true" />
                         <span class="fz-12 pl-5">지급일변경</span>
@@ -40,11 +40,11 @@
     <a-col :span="24">
         <a-spin :spinning="loadingTableDetail" size="large">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail"
-                :show-borders="true" key-expr="incomeId" class="mt-10" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged">
+                :show-borders="true" key-expr="incomeId" class="mt-10"
+                :allow-column-resizing="colomn_resize"  @selection-changed="selectionChanged">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxSelection mode="multiple" :fixed="true" />
-                <DxColumn caption="사원" cell-template="tag" width="300px" header-cell-template="title-header-사원"/>
+                <DxColumn caption="사원" cell-template="tag" width="200" header-cell-template="title-header-사원"/>
                 <template #tag="{ data }">
                     <employee-info :idEmployee="data.data.employeeId" :name="data.data.employee.name"
                         :idCardNumber="data.data.employee.residentId" :status="data.data.employee.status"
@@ -112,10 +112,10 @@
                 <template #payment-day="{ data }">
                     {{ data.data.paymentDay < 10 ? "0"+ data.data.paymentDay :  data.data.paymentDay}}
                 </template>
-                <DxColumn caption="" cell-template="action" width="50px" :fixed="true" fixedPosition="right"/>
+                <DxColumn caption="" cell-template="action" width="50px" fixedPosition="right"/>
                 <template #action="{ data }">
-                    <div class="wf-100 text-center">
-                        <EditOutlined class="fz-18" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
+                    <div class=" text-center">
+                        <EditOutlined class="" @click="statusButton !=  20 ? actionEditRow(data.data.incomeId) :''" />
                     </div>
                 </template>
                 <DxSummary v-if="dataSourceDetail.length > 0">
@@ -149,25 +149,51 @@
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch, reactive, computed } from "vue";
-import { useStore } from 'vuex';
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import {computed, defineComponent, reactive, ref, watch} from "vue";
+import {useStore} from 'vuex';
+import {useMutation, useQuery} from "@vue/apollo-composable";
 import notification from "@/utils/notification";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
-import { DxDataGrid, DxColumn, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxEditing, DxGrouping, DxScrolling, DxItem, DxMasterDetail, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import { EditOutlined, HistoryOutlined, SearchOutlined, MenuFoldOutlined, MenuUnfoldOutlined, MailOutlined, PrinterOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons-vue";
+import {
+  DxColumn,
+  DxDataGrid,
+  DxEditing,
+  DxExport,
+  DxGrouping,
+  DxItem,
+  DxMasterDetail,
+  DxPaging,
+  DxScrolling,
+  DxSearchPanel,
+  DxSelection,
+  DxSummary,
+  DxToolbar,
+  DxTotalItem
+} from "devextreme-vue/data-grid";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  HistoryOutlined,
+  MailOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  PrinterOutlined,
+  SaveOutlined,
+  SearchOutlined
+} from "@ant-design/icons-vue";
 import DxButton from "devextreme-vue/button";
-import { dataActionUtils } from "../utils/index";
+import {dataActionUtils} from "../utils/index";
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
-import type { DropdownProps } from "ant-design-vue";
+import type {DropdownProps} from "ant-design-vue";
 import DeletePopup from "./DeletePopup.vue"
 import EditPopup from "./EditPaymentDayPopup.vue"
 import AddPopup from "./AddPopup.vue"
 import UpdatePopup from "./UpdatePopup.vue"
 import filters from "@/helpers/filters";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
-import { companyId } from '@/helpers/commonFunction';
-import { Message } from '@/configs/enum';
+import {companyId} from '@/helpers/commonFunction';
+import {Message} from '@/configs/enum';
+
 export default defineComponent({
     components: {
         DxDataGrid, DxColumn, DxPaging, DxSelection, DxExport, DxSearchPanel, DxScrolling, DxToolbar, DxEditing, DxDropDownButton, DxGrouping, DxItem, DxButton, DxMasterDetail, DxSummary, DxTotalItem,
@@ -176,18 +202,18 @@ export default defineComponent({
         DeletePopup, EditPopup, AddPopup, UpdatePopup
     },
     props: {
-        dataCallTableDetail: {
-            type: Object
-        },
         statusButton: {
-            type: Number
+            type: Number,
+            default: 0,
+            required: true
         },
         actionSave: {
             type: Number
         }
     },
+    emits: ['createdDone'],
     setup(props, { emit }) {
-        let statusButton = ref(props.statusButton)
+        let statusButton = ref(0)
         const dataSourceDetail = ref([]);
         const listEmployeeId = ref<any>([]);
         let placements = ["bottomRight"] as DropdownProps["placement"][];
@@ -201,6 +227,8 @@ export default defineComponent({
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const hasDataIncRetirements = computed(() => store.getters['common/hasIncomeProcessRetirements']);
+        const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
+
         const rowTable = ref(0);
         const modalHistory = ref<boolean>(false)
         const modalAdd = ref(false)
@@ -213,8 +241,9 @@ export default defineComponent({
         let dataAction: any = reactive({
             ...dataActionUtils
         })
-        let dataTableDetail: any = ref({
-            ...props.dataCallTableDetail
+        let dataTableDetail = ref({
+          companyId: companyId,
+          processKey: {...selectMonthColumn.value}
         })
         // ================GRAPQL==============================================
         const { refetch: refetchTableDetail, loading: loadingTableDetail, onError: errorTableDetail, onResult: resTableDetail } = useQuery(queries.getIncomeRetirements, dataTableDetail, () => ({
@@ -251,10 +280,9 @@ export default defineComponent({
             notification('success', Message.getCommonMessage('106').message)
         })
         // ================WATCHING============================================
-        watch(() => props.dataCallTableDetail, (newValue) => {
+        watch(selectMonthColumn, (newValue) => {
             if (newValue) {
-              dataTableDetail.value = newValue
-              console.log('newValue', newValue)
+              dataTableDetail.value.processKey = newValue
               triggerDetail.value = true
               refetchTableDetail()
             }
@@ -262,11 +290,7 @@ export default defineComponent({
 
         watch(() => props.statusButton, (newValue) => {
           statusButton.value = newValue
-          if (newValue != 10) {
-            checkActionValue.value = true
-          } else{
-            checkActionValue.value = false
-          }
+          checkActionValue.value = !(newValue === 10);
         })
         // ================FUNCTION============================================
         const addRow = () => {

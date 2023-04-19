@@ -3,6 +3,7 @@ import { AdminScreenRole, getJwtObject, WorkScreenRole } from "@bankda/jangbuda-
 const ROLE_BF600 = [AdminScreenRole.WITHHOLDING_WORK_CLOSING_MANAGE.enumKey]
 const ROLE_AC000 = [WorkScreenRole.ACCOUNTING_WORK.enumKey]
 const ROLE_PA000 = [WorkScreenRole.WITHHOLDING_WORK.enumKey]
+const ROLE_BF500 = [AdminScreenRole.ACCOUNTING_WORK_CLOSING_MANAGE.enumKey]
 const token = sessionStorage.getItem("token");
 const jwtObject = token ? getJwtObject(token) : null;
 let menuData = [
@@ -22,7 +23,7 @@ let menuData = [
   { name: "미납관리", url: "#", id: "bf-430", roles: [AdminScreenRole.UNPAID_MANAGE.enumKey] },
 
   { name: "회계업무마감", url: "#", id: "bf-510", roles: [] },
-  { name: "4대보험업무관리", url: "#", id: "bf-530", roles: [] },
+  { name: "4대보험업무관리", url: "/dashboard/bf-530", id: "bf-530", roles: ROLE_BF500 },
 
   { name: "원천마감관리", url: "/dashboard/bf-610", id: "bf-610", roles: ROLE_BF600 },
   { name: "원천세/지방소득세전자신고", url: "/dashboard/bf-620", id: "bf-620", roles: ROLE_BF600, },
@@ -86,7 +87,7 @@ let menuData = [
 
   { name: "기타소득자등록", url: "/dashboard/pa-710", id: "pa-710", roles: ROLE_PA000 },
   { name: "기타소득자료입력", url: "/dashboard/pa-720", id: "pa-720", roles: ROLE_PA000 },
-  { name: "기타소득원천징수영수증", url: "/dashboard/bf-730", id: "pa-730", roles: ROLE_PA000 },
+  { name: "기타소득원천징수영수증", url: "/dashboard/pa-730", id: "pa-730", roles: ROLE_PA000 },
 
   { name: "취득신고등록", url: "/dashboard/pa-810", id: "pa-810", roles: ROLE_PA000 },
   { name: "상실신고", url: "/dashboard/pa-820", id: "pa-820", roles: ROLE_PA000 },

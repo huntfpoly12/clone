@@ -155,7 +155,7 @@
                                                         v-model:valueInput="dataActiveRow.price" :spinButtons="false" />
                                                 </a-form-item>
                                             </div>
-                                            <div class="custom-money input-float-right">
+                                            <div class="custom-money input-float-right custom-option">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 1)" text="입력대행"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 1, dataActiveRow)" />
@@ -164,7 +164,7 @@
                                                     :disabled="disableInput(dataActiveRow.options, 1)"
                                                     @keyDown="changeValueInput($event.component, 1, dataActiveRow)" />
                                             </div>
-                                            <div class="custom-money input-float-right">
+                                            <div class="custom-money input-float-right custom-option">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 2)" text="계좌통합"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 2, dataActiveRow)" />
@@ -173,7 +173,7 @@
                                                     :disabled="disableInput(dataActiveRow.options, 2)"
                                                     @keyDown="changeValueInput($event.component, 2, dataActiveRow)" />
                                             </div>
-                                            <div class="custom-money input-float-right">
+                                            <div class="custom-money input-float-right custom-option">
                                                 <DxCheckBox :value="checkOption(dataActiveRow.options, 3)" text="W4C"
                                                     class="custom-checkbox"
                                                     @value-changed="changeChecked($event.value, 3, dataActiveRow)" />

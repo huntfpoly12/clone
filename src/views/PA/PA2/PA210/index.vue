@@ -205,9 +205,10 @@ export default defineComponent({
         DxDataGrid, DxColumn, DxToolbar, DxScrolling, DxItem, DxButton, HistoryOutlined,
         AddPA210Popup, HistoryPopup, PopupPrint, PopupSendEmail, ReportGridEdit,
         ReportGridModify,ReportGridEditModify,ZoomInOutlined,EditOutlined
-    },
-    setup() {
+      },
+      setup() {
         const store = useStore();
+        store.dispatch('auth/getUserInfor', sessionStorage.getItem('token'));
         const hasChangedPopupPA520 = computed(() => store.getters['common/hasChangedPopupPA520']);
         const globalYear = computed(() => store.state.settings.globalYear);
         
@@ -251,7 +252,7 @@ export default defineComponent({
             loading,
         } = useQuery(queries.getTaxWithholdingStatusReports, originData, () => ({ fetchPolicy: "no-cache" }));
         const { result: resultConfig } = useQuery(queries.getWithholdingConfig, originData, () => ({ fetchPolicy: "no-cache" }));
-        const { result: resultCompany } = useQuery(queries.getCompany, { id: companyId }, () => ({ fetchPolicy: "no-cache" }));
+        const { result: resultCompany } = useQuery(queries.getMyCompany, { companyId: companyId }, () => ({ fetchPolicy: "no-cache" }));
         const {
             mutate: actionChangeStatus,
             onDone: doneChangeStatus,
@@ -289,7 +290,7 @@ export default defineComponent({
             }
         });
         watch(resultCompany, (value) => {
-            let data = value.getCompany;
+            let data = value.getMyCompany;
             if (data) {
                 dataPopupAdd.value.withholdingDutyName = data.name;
                 dataPopupAdd.value.withholdingDutyPresidentName = data.presidentName;
@@ -310,9 +311,9 @@ export default defineComponent({
         }
 
         const closeReportGridEdit = () => {
-
           if (hasChangedPopupPA520.value)
           {
+              notification('destroy', '')
               comfirmClosePopup(() => {
                 statusReportGridEdit.value = false;
                 refetchData()
@@ -327,7 +328,7 @@ export default defineComponent({
 
         const closeReportGridModify = () => {
           if (hasChangedPopupPA520.value)
-          {
+          {     notification('destroy', '')
                 comfirmClosePopup(() => {
                   statusReportGridModify.value = false;
                   refetchData()
@@ -342,6 +343,7 @@ export default defineComponent({
         const closeReportGridEditModify = () => {
           if (hasChangedPopupPA520.value)
           {
+            notification('destroy', '')
             comfirmClosePopup(() => {
                 statusReportGridEditModify.value = false;
                 refetchData()

@@ -1,28 +1,25 @@
 <template>
-  <div style="margin-right: -10px;
-      overflow-x: hidden;" 
-      :style="[
-        heightHidden ? { height: heightHidden, overflow: 'hidden' } : {},
-        !!width ? `min-width: ${width}px; width: 100%` : ''
-      ]">
-    <div ref="elementUpload" class="upload-pewview-img">
-      <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
-        @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
-        accept="image/png, image/jpeg, image/jpg image/gif">
-        <div v-if="fileList.length <= limit">
-          <div class="ant-btn-upload">
-            <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
-            <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
-            <p class="ant-btn-upload-text">또는</p>
-            <button class="ant-btn-upload-button">파일 선택</button>
+  <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
+    <div class="form-upload-ac110" :class="{ 'ac110-disable-form-upload': !payload.bankbookDetailId }">
+      <div ref="elementUpload" class="upload-pewview-img">
+        <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
+          @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
+          accept="image/png, image/jpeg, image/jpg image/gif">
+          <div v-if="fileList.length <= limit">
+            <div class="ant-btn-upload">
+              <p class="ant-btn-upload-text">이미지 파일을 여기에 끌이다 놓으세요</p>
+              <img src="@/assets/images/iconImage.png" class="ant-btn-upload-image" alt="">
+              <p class="ant-btn-upload-text">또는</p>
+              <button class="ant-btn-upload-button">파일 선택</button>
+            </div>
           </div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-        <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
-      </a-modal>
+        </a-upload>
+        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+          <img alt="example" style="width: 100%; margin-top: 20px" :src="previewImage" />
+        </a-modal>
+      </div>
     </div>
-  </div>
+  </a-spin>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch, computed, nextTick } from "vue";
@@ -108,9 +105,17 @@ export default defineComponent({
       loading: loadingAddBankbookDetailProof,
     } = useMutation(mutations.addBankbookDetailProof);
     doneAddBankbookDetailProof((e) => {
+      emit("updateAddBankbookDetailProof")
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorAddBankbookDetailProof(e => {
+      const index = listFileStorageId.value.length-1
+      listFileStorageId.value[index].status = 'error'
+      listFileStorageId.value[index].error = e.message
+      listFileStorageId.value[index].response = undefined
+      fileList.value[index].status = 'error'
+      fileList.value[index].error = e.message
+      fileList.value[index].response = undefined
       notification('error', e.message)
     })
 
@@ -121,18 +126,36 @@ export default defineComponent({
       loading: loadingRemoveBankbookDetailProof,
     } = useMutation(mutations.removeBankbookDetailProof);
     doneRemoveBankbookDetailProof((e) => {
+      emit("updateremoveBankbookDetailProof")
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorRemoveBankbookDetailProof(e => {
       notification('error', e.message)
     })
     // watch
+    watch(() => payload.value, (value) => {
+      if (value.bankbookDetailDate) {
+        triggerBankbookDetailProofs.value = true
+      }
+    }, {
+      deep: true,
+    })
     watch(() => props.listImageFile, (value) => {
       fileList.value = value
     })
 
-    watch(() => resGetBankbookDetailProofs, (value) => {
-
+    watch(resGetBankbookDetailProofs, (value) => {
+      listFileStorageId.value = []
+      if (value.getBankbookDetailProofs.length) {
+        listFileStorageId.value = value.getBankbookDetailProofs.map((file: any) => ({
+          ...file,
+          fileStorageId: null,
+          thumbUrl: file.url,
+          response: "ok",
+          status: "done"
+        }))
+      }
+      triggerBankbookDetailProofs.value = false
     })
 
     watch(() => props.payLoadProofs, (value) => {
@@ -178,25 +201,25 @@ export default defineComponent({
       }
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
-    
+
     watch(() => listFileStorageId.value, (value) => {
       emit("update:listImageFile", value)
     }, { deep: true });
 
     watch(() => fileList.value, (value) => {
       nextTick(() => {
-        if(value.length){
+        if (value.length) {
           value.forEach(items => {
-            if(items.status === 'error') {
+            if (items.status === 'error') {
               items.response = '업로드 오류'
             }
           })
           const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
           const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
-          elementsIconPreview.forEach((el:any) => {
+          elementsIconPreview.forEach((el: any) => {
             el.setAttribute("title", "원본 보기");
           })
-          elementsIconDelete.forEach((el:any) => {
+          elementsIconDelete.forEach((el: any) => {
             el.setAttribute("title", "삭제");
           })
         }
@@ -213,14 +236,18 @@ export default defineComponent({
       const formData = new FormData();
       formData.append('file', e.file);
       formData.append('companyId', props.payLoadProofs.companyId);
-      formData.append('fiscalYear ', props.payLoadProofs.fiscalYear);
-      formData.append('facilityBusinessId ', props.payLoadProofs.facilityBusinessId);
-      uploadRepository.accountingProof(formData).then((res:any) => {
+      formData.append('fiscalYear', props.payLoadProofs.fiscalYear);
+      formData.append('facilityBusinessId', props.payLoadProofs.facilityBusinessId);
+      uploadRepository.accountingProof(formData).then((res: any) => {
         e.onSuccess("ok");
         listFileStorageId.value.push({
           ...fileList.value[fileList.value.length - 1], fileStorageId: res.data.id
         })
-      }).catch((error:any) => {
+        addBankbookDetailProof({
+          ...payload.value,
+          fileStorageId: res.data.id
+        })
+      }).catch((error: any) => {
         e.onError(error.message);
         listFileStorageId.value.push({
           ...fileList.value[fileList.value.length - 1], fileStorageId: null
@@ -229,12 +256,11 @@ export default defineComponent({
     }
     const remove = (e: any) => {
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
-      if(!!listFileStorageId.value[index].fileStorageId && Number.isInteger(listFileStorageId.value[index].fileStorageId)) {
-        removeBankbookDetailProof({
+      if (!listFileStorageId.value[index].fileStorageId) return false
+      removeBankbookDetailProof({
         ...props.payLoadProofs,
         fileStorageId: listFileStorageId.value[index].fileStorageId
       })
-      }
       listFileStorageId.value.splice(index, 1)
       emit("update:listImageFile", listFileStorageId.value)
     }
@@ -248,7 +274,9 @@ export default defineComponent({
       changeFile,
       customRequest,
       remove,
-      elementUpload
+      elementUpload,
+      payload,
+      loadingGetBankbookDetailProofs
     }
   }
 })
@@ -256,9 +284,19 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .upload-pewview-img {
+  padding: 15px;
+  .ant-upload-list  {
+    display: grid !important;
+    grid-template-columns: auto auto auto !important;
+    gap: 8px;
+    &::before {
+      display: none;
+    }
+  }
   .ant-upload-list-picture-card-container {
     width: 120px;
     height: 120px;
+    margin: 0;
   }
 
   .ant-upload-list-item {
@@ -297,5 +335,10 @@ export default defineComponent({
       padding: 0 15px;
     }
   }
+}
+
+.ac110-disable-form-upload {
+  opacity: .7;
+  pointer-events: none;
 }
 </style>

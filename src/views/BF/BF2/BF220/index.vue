@@ -1,5 +1,5 @@
 <template>
-    <action-header title="권한그룹관리" @actionSearch="searching" />
+    <action-header title="권한그룹관리" @actionSearch="searching" :buttonSearch="true"/>
     <div id="bf-220">
         <div class="search-form">
             <div id="components-grid-demo-flex">

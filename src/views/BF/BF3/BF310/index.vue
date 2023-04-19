@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" />
+        <action-header title="계약정보관리&심사" @actionSearch="actionSearch ? searching($event) : changePage($event)" :buttonSearch="true"/>
         <div id="bf-310">
             <div class="search-form">
                 <a-row :gutter="[24, 8]">
@@ -42,7 +42,7 @@
                     <a-col>
                         <div class="dflex custom-flex">
                             <label class="lable-item">신청기간 :</label>
-                            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :placeholder="['Start', 'End']"/>
+                            <range-date-time-box v-model:valueDate="rangeDate" width="250px" :multi-calendars="true" :placeholder="'시작 날짜 - 종료 날짜'"/>
                         </div>
                     </a-col>
                 </a-row>
@@ -52,7 +52,7 @@
                     :show-borders="true" key-expr="id" @exporting="onExporting" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
-                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                    <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                     <DxPaging :page-size="rowTable" />
                     <DxExport :enabled="true"/>
                     <DxToolbar>

@@ -13,6 +13,7 @@ import statesPA720 from "./screenStates/screenStatePA720";
 import layputState from "./screenStates/layoutState";
 import statesPA520 from "./screenStates/screenStatePA520";
 import statesBF620 from "./screenStates/screenStateBF620";
+import statesAC120 from "./screenStates/screenStateAC120";
 import statesAC580 from "./screenStates/screenStateAC580";
 import statesAC520 from "./screenStates/screenStateAC520";
 import {Module} from "vuex";
@@ -29,6 +30,7 @@ const commonState = {
   ...statesPA720,
   ...statesPA520,
   ...statesBF620,
+  ...statesAC120,
   ...statesAC580,
   ...statesAC520
 }

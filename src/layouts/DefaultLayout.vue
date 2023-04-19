@@ -43,14 +43,15 @@
             <div v-if="!collapsed" class="wrap-search">
               <a-select
                 v-model:value="selectedItems"
-                :options=" menuData.map((item) => ({
+                :options="menuData.map((item) => ({
                     value: item.id,
-                    label: item.id + ' | ' + item.name,
+                    label: item.id + ' | ' + item.name
                   }))"
                 show-search
                 placeholder="메뉴를 입력해보세요"
                 style="width: 180px"
                 optionFilterProp="label"
+                :disabled="menuTab.length >= MAX_TAB"
                 @change="addMenuTab"
               />
             </div>
@@ -145,10 +146,11 @@
                   :data-source="menuTab" 
                   v-model:selected-index="tabIndex"
                   itemTemplate="titleTab"
+                  :scrollByContent="true"
                   >
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
-                      <span>{{ itemTab.name }}</span>
+                      <span :class="{'color-active-tab': activeTab.id === itemTab.id}">{{ itemTab.name }}</span>
                       <close-circle-filled
                         @click.stop="removeItemTab(itemTab)"
                         :style="{
@@ -193,6 +195,7 @@ import {
   BF330,
   BF340,
   BF210,
+  BF530,
   BF610,
   BF620,
   BF640,
@@ -280,6 +283,7 @@ export default defineComponent({
     BF330,
     BF340,
     BF210,
+    BF530,
     BF610,
     BF620,
     BF640,
@@ -458,6 +462,7 @@ export default defineComponent({
       if (this.activeTab.id === "bf-340") return 'BF340';
       if (this.activeTab.id === "bf-210") return 'BF210';
       if (this.activeTab.id === "bf-220") return 'BF220';
+      if (this.activeTab.id === "bf-530") return 'BF530';
       if (this.activeTab.id === "bf-610") return 'BF610';
       if (this.activeTab.id === "bf-620") return 'BF620';
       if (this.activeTab.id === "bf-640") return 'BF640';
@@ -510,6 +515,7 @@ export default defineComponent({
     },
   },
   setup() {
+    const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
     const openKeys = ref([]);
@@ -522,7 +528,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute();
     const collapsed = ref(false);
-    const selectedItems = ref([]);
+    const selectedItems = ref(null);
     const activeTab = ref();
     let menuTab = ref([]);
     const tabDashboard = { name: "Dashboard", url: "/dashboard", id: "" }
@@ -535,11 +541,19 @@ export default defineComponent({
     const cachedTab = computed(() => {
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
+
+    const infosAccounting = jwtObject.accounting;
+    if(!!infosAccounting && infosAccounting.length) {
+      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    }
+
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
-     //get and set account subject
-      let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-      //await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      //get and set account subject
+      if (jwtObject.userType === 'c') {
+        let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
+        await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
+      }
       // store.commit('auth/setTokenInfo',jwtObject)
       if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         openTab(tabDashboard)
@@ -583,8 +597,8 @@ export default defineComponent({
     }
 
     const addMenuTab = (itemId) => {
-      if (menuTab.value.length > 20) {
-        alert("Maximum only 20 tab")
+      if (menuTab.value.length >= MAX_TAB) {
+        alert(`Maximum only ${MAX_TAB} tab`)
         return
       }
       const itemNew = itemId === '' ? tabDashboard : menuData.find(item => item.id === itemId);
@@ -604,11 +618,15 @@ export default defineComponent({
      * event when click icon close one tab
      */
     const removeItemTab = (item) => {
-      if(menuTab.value.length === 1) return
+      if(menuTab.value.length === 1 && item.id === '') return
       tabRemove.value = item
       isRemoveTab.value = true
-      const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
-      setMenuTab(newMenuTab)
+      if(menuTab.value.length === 1) {
+        setMenuTab([])
+      }else {
+        const newMenuTab = menuTab.value.filter(item => item.id !== tabRemove.value.id)
+        setMenuTab(newMenuTab)
+      }
     }
     const changeActiveTab  = (item)=>{
       if(activeTab.value.id === item.id) return
@@ -637,38 +655,75 @@ export default defineComponent({
      * monitor activeTab variable on vuex to blow activeTab variable at component
      */
     watch(()=>store.state.common.activeTab, (newValue)=>{
+        selectedItems.value = null
         activeTab.value = newValue;
     }, { deep: true })
 
     watch(() => store.state.common.menuTab, (value) => {
       if(isRemoveTab.value) {
-        const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
-        menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
-        const maxInexBeforeRemove =  menuTab.value.length
-        let indexActive = 0
-        if(indexTabRemove === maxInexBeforeRemove){
-          indexActive = indexTabRemove - 1
-        }else {
-          indexActive = indexTabRemove
+        if(value.length){
+          const indexTabRemove = menuTab.value.findIndex(tab => tab.id === tabRemove.value.id)
+          menuTab.value = menuTab.value.filter(tab => tab.id !== tabRemove.value.id)
+          const maxInexBeforeRemove =  menuTab.value.length
+          let indexActive = 0
+
+          if(tabIndex.value === maxInexBeforeRemove && indexTabRemove === maxInexBeforeRemove){
+            indexActive = tabIndex.value - 1
+          }else {
+            if(indexTabRemove < tabIndex.value){
+              indexActive = tabIndex.value - 1
+            }else{
+              indexActive = tabIndex.value
+            }
+          }
+          activeTab.value = {
+            id: menuTab.value[indexActive].id,
+            name: menuTab.value[indexActive].name, 
+            url: menuTab.value[indexActive].url, 
+            roles: menuTab.value[indexActive].roles,
+          };
+          store.state.common.activeTab =  {...activeTab.value}
+          nextTick(() => {
+            tabIndex.value = indexActive
+          })
+        }else{
+          isRemoveTab.value = false
+          menuTab.value = []
+          openTab(tabDashboard)
+          return 
         }
-        tabIndex.value = indexActive
-        activeTab.value = {
-          id: menuTab.value[indexActive].id,
-          name: menuTab.value[indexActive].name, 
-          url: menuTab.value[indexActive].url, 
-          roles: menuTab.value[indexActive].roles,
-        };
-        store.state.common.activeTab =  {...activeTab.value}
         isRemoveTab.value = false
         return
       }
-      const newItem = value[value.length - 1]
-      menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
-      tabIndex.value = menuTab.value.length - 1
+      if(value.length){
+        const newItem = value[value.length - 1]
+        menuTab.value = [...menuTab.value, {...newItem, text: newItem.name}]
+        nextTick(() => {
+          tabIndex.value = menuTab.value.length - 1
+        })
+      }else {
+        menuTab.value = []
+        openTab(tabDashboard)
+      }
+
     }, {
       deep: true,
     })
-
+    watch(() => menuTab.value, () => {
+      nextTick(() => {
+        const btnArrowTab = document.querySelector('.tab-main')?.querySelectorAll('.dx-button-content')
+        if(!!btnArrowTab && btnArrowTab.length) {
+          btnArrowTab[0].addEventListener("click", (e) => {
+            e.preventDefault();
+            addMenuTab(menuTab.value[0].id)
+          });
+          btnArrowTab[1].addEventListener("click", (e) => {
+            e.preventDefault();
+            addMenuTab(menuTab.value[menuTab.value.length-1].id)
+          });
+        }
+      })
+    })
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1
@@ -706,7 +761,8 @@ export default defineComponent({
       cachedTab,
       tabIndex,
       onTabDragStart,
-      onTabDrop
+      onTabDrop,
+      MAX_TAB
     }
   },
 });
@@ -733,13 +789,8 @@ export default defineComponent({
 }
 </style>
 <style scoped lang="scss">
-.icon-close-tab {
-  color: red;
-  padding: 3px;
-  &:hover {
-    background-color: #0000002a;
-    border-radius: 50%;
-  }
+.color-active-tab {
+  color: #1890ff;
 }
 :deep .tab-main .dx-tabs-wrapper {
   display: flex;
@@ -754,6 +805,22 @@ export default defineComponent({
   margin: 0 1.5px;
   border-radius: 8px 8px 0 0;
   padding: 0;
+}
+:deep .tab-main .dx-tab-content {
+    span:first-child {
+      width: 150px;
+      display:inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+    span:last-child {
+      margin-left: 0 !important;
+      svg {
+        margin-bottom: 3px;
+      }
+    }
 }
 :deep .tab-main .tab-main-title-tab {
   padding: 9px;

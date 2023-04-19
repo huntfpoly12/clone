@@ -8,6 +8,7 @@ import store from "@/store";
 import Router from '../router';
 
 let companyId: any = null
+let startYearMonth: any = null
 let userType: any = null
 let userId: any = null
 let managerGrade: any = null
@@ -21,6 +22,7 @@ if (token) {
     screenRoleInfo = jwtObject.screenRoleInfo
   if (userType === 'c') {
       companyId = jwtObject.companyId
+      startYearMonth = jwtObject.withholding?.startYearMonth
   }
 }
 
@@ -39,6 +41,8 @@ const openTab = (objTab :  any) => {
 
 const setMenuTab = (menu: any) => {
   store.state.common.menuTab = menu
+  console.log(' store.state.common.menuTab',  store.state.common.menuTab);
+  
 }
 
 
@@ -84,16 +88,19 @@ const convertAge = (idCart: any) => {
     }
 }
 
-const makeDataClean = (obj: any) => {
+const makeDataClean = (obj: any, excluded: any=[]) => {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
 
   Object.keys(obj).forEach((key) => {
+    if(excluded.findIndex((item:any) => {return item == key}) > - 1 ){
+      return;
+    }
     if (typeof obj[key] === "string" && obj[key].trim() === "") {
       obj[key] = null;
     } else if (typeof obj[key] === "object") {
-      obj[key] = makeDataClean(obj[key]);
+      obj[key] = makeDataClean(obj[key], excluded);
     }
   });
 
@@ -184,6 +191,10 @@ const calculateEmployeementInsuranceEmployee = (totalTaxPay: any, insurancesuppo
     return employeementinsuranceemployee
 }
 
+const convertResidentId = (residentId: string) => {
+  // add - to index 6
+  return residentId.slice(0, 6) + '-' + residentId.slice(6);
+}
 export {
     companyId,
     openTab,
@@ -199,6 +210,8 @@ export {
     calculateLongTermCareInsurance,
     calculateEmployeementInsuranceEmployee,
     convertBirthDayKorea,
-    makeDataClean
+    makeDataClean,
+    startYearMonth,
+    convertResidentId
 }
 

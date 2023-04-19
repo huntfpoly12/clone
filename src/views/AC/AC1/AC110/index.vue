@@ -3,105 +3,21 @@
   <div class="ac-110">
     <div class="ac-110__top">
       <div class="ac-110__top-grid">
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 1 }"
-          @click="selectedMonth(1)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">01</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusEntering" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 2 }"
-          @click="selectedMonth(2)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">02</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 3 }"
-          @click="selectedMonth(3)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">03</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 4 }"
-          @click="selectedMonth(4)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">04</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 5 }"
-          @click="selectedMonth(5)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">05</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 6 }"
-          @click="selectedMonth(6)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">06</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 7 }"
-          @click="selectedMonth(7)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">07</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 8 }"
-          @click="selectedMonth(8)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">08</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 9 }"
-          @click="selectedMonth(9)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">09</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 10 }"
-          @click="selectedMonth(10)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">10</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusInput" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 11 }"
-          @click="selectedMonth(11)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">11</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusting" :heightBtn="36" />
-        </div>
-        <div class="ac-110__top-grid-items" :class="{ 'ac-110__top-grid-items-active': monthSelected === 12 }"
-          @click="selectedMonth(12)">
-          <div class="ac-110__top-grid-items-month">
-            <span class="">12</span>
-            <span class="">월</span>
-          </div>
-          <ProcessStatus :disabled="true" :valueStatus="statusAdjusted" :heightBtn="36" />
+        <div v-for="(month, index) in 12" :key="index" class="ac-110__top-grid-items"
+          :class="{ 'ac-110__top-grid-items-active': monthSelected === month }" @click="selectedMonth(month)">
+          <colorful-badge :value="listAccountingProcesses.find((item: any) => item.month === month)?.status || null"
+            :year="globalYear" :month="month" />
         </div>
       </div>
       <div class="ac-110__top-flex">
-        <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+        <div class="ac-110__top-flex-action">
+          <ProcessStatus v-if="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+            :valueStatus="listAccountingProcesses.find((item: any) => item.month === monthSelected)?.status || 0"
+            :disabled="true" />
+          <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
+          </button-basic>
+          <HistoryOutlined style="font-size: 18px; margin-left: 5px;" @click="modalHistoryAccountingProcessLogs" />
+        </div>
         <div class="ac-110__top-flex-action">
           <button-basic :text="'통장내역 불러오기'" :type="'default'" :mode="'contained'"
             @onClick="openPopupRetrieveStatements" />
@@ -114,10 +30,12 @@
     <div class="ac-110__main">
       <div class="ac-110__main-main">
         <a-spin :spinning="loadingGetBankbookDetails" size="large">
-          <DxDataGrid key-expr="bankbookId" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-            v-model:selected-row-keys="selectedRowKeys" :show-borders="true" :allow-column-reordering="move_column"
-            v-model:focused-row-key="rowKeyfocused" :focused-row-enabled="true" :allow-column-resizing="colomn_resize"
-            :column-auto-width="true" @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging">
+          <DxDataGrid id="DxDataGridMainAc110" key-expr="bankbookDetailId" :show-row-lines="true"
+            :hoverStateEnabled="true" :data-source="dataSource" v-model:selected-row-keys="selectedRowKeys"
+            :show-borders="true" :allow-column-reordering="move_column" v-model:focused-row-key="rowKeyfocused"
+            :focused-row-enabled="true" :allow-column-resizing="colomn_resize" :column-auto-width="true"
+            @selection-changed="selectionChanged" @focused-row-changing="onFocusedRowChanging">
+            <DxPaging :enabled="false" />
             <DxScrolling mode="standard" show-scrollbar="always" />
             <DxSelection mode="multiple" :fixed="true" show-check-boxes-mode="onClick" :deferred="false" />
             <DxColumn caption="통장" cell-template="nickName" />
@@ -127,10 +45,17 @@
                 <div>{{ data.data.bankbook.bankbookNickname }}</div>
               </a-tooltip>
             </template>
-            <DxColumn caption="통장용도" data-field="bankbook.useType">
-              <DxLookup :data-source="bankbookUseType" value-expr="value" display-expr="label" />
+            <DxColumn caption="통장용도" data-field="bankbook.useType" alignment="center">
+              <DxLookup :data-source="bankbookUseType" display-expr="label" value-expr="value" />
             </DxColumn>
-            <DxColumn caption="일자" data-field="bankbookDetailDate" />
+            <DxColumn caption="일자" cell-template="bankbookDetailDate" />
+            <template #bankbookDetailDate="{ data }">
+              <div>
+                {{ data.data.bankbookDetailDate.toString().slice(0, 4) }}-{{
+                  data.data.bankbookDetailDate.toString().slice(4, 6) }}-{{ data.data.bankbookDetailDate.toString().slice(6)
+  }}
+              </div>
+            </template>
             <DxColumn caption="통장적요" data-field="summary" />
             <DxColumn caption="내용|비고" cell-template="content" />
             <template #content="{ data }">
@@ -141,7 +66,12 @@
             <DxColumn caption="입금액" data-field="deposit" format="fixedPoint" />
             <DxColumn caption="출금액" data-field="withdraw" format="fixedPoint" />
             <DxColumn caption="통장잔액" data-field="balance" format="fixedPoint" />
-            <DxColumn caption="증빙" data-field="proofCount" />
+            <DxColumn caption="증빙" cell-template="proofCount" />
+            <template #proofCount="{ data }">
+              <div style="text-align: end;">
+                {{ data.data.proofCount ? data.data.proofCount : '' }}
+              </div>
+            </template>
             <DxColumn caption="거래내역" data-field="transactionDetailsCount" />
             <DxColumn caption="정상여부" cell-template="normalTransactionDetails" width="80" />
             <template #normalTransactionDetails="{ data }">
@@ -179,9 +109,10 @@
           </div>
           <a-spin :spinning="loadingGetTransactionDetails" size="large">
             <standard-form>
-              <DxDataGrid key-expr="transactionDetails.theOrder" :show-row-lines="true" :hoverStateEnabled="true"
-                :data-source="dataSourceTransactionDetails" :show-borders="true" :allow-column-reordering="move_column"
-                :allow-column-resizing="colomn_resize" :column-auto-width="true">
+              <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
+                :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
+                :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true">
+                <DxPaging :enabled="false" />
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
@@ -194,16 +125,16 @@
                 <template #summary-transaction-detail>
                   <div class="ac-110__main-detail-detail1-summary">
                     <div class="ac-110__main-detail-detail1-summary-quantity">
-                      <p class="ac-110__main-detail-detail1-summary-label">거래내역수:</p>
-                      <p class="ac-110__main-detail-detail1-summary-value">{{ dataSourceTransactionDetails.length }}</p>
+                      <span class="ac-110__main-detail-detail1-summary-label">거래내역수:</span>
+                      <span class="ac-110__main-detail-detail1-summary-value">{{ totalTransactions() }}</span>
                     </div>
                     <div class="ac-110__main-detail-detail1-summary-income">
-                      <p class="ac-110__main-detail-detail1-summary-label">수입액 합계:</p>
-                      <p class="ac-110__main-detail-detail1-summary-value">{{ sumOfIncome() }}</p>
+                      <span class="ac-110__main-detail-detail1-summary-label">수입액 합계:</span>
+                      <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfIncome() }}</span>
                     </div>
                     <div class="ac-110__main-detail-detail1-summary-expenses">
-                      <p class="ac-110__main-detail-detail1-summary-label">지출액 합계:</p>
-                      <p class="ac-110__main-detail-detail1-summary-value">{{ sumOfExpenses() }}</p>
+                      <span class="ac-110__main-detail-detail1-summary-label">지출액 합계:</span>
+                      <span class="ac-110__main-detail-detail1-summary-value">{{ sumOfExpenses() }}</span>
                     </div>
                   </div>
                 </template>
@@ -227,59 +158,72 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" cell-template="resolutionClassification" />
-                <template #resolutionClassification="{ data }">
-                  {{ data.data.transactionDetails.bankbookId !== null ? resolutionClassification.find((item: any) =>
-                    item.value ==
-                    data.data.transactionDetails.resolutionClassification).label : '' }}
+                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center">
+                  <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
+                </DxColumn>
+                <DxColumn caption="수입액" cell-template="income" width="150" />
+                <template #income="{ data }">
+                  <div :key="data.data.spending">
+                    <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
+                      :disabled="!!data.data.spending" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
+                  </div>
                 </template>
-                <DxColumn caption="수입액" data-field="transactionDetails.income" format="fixedPoint" alignment="end" />
-                <DxColumn caption="지출액" data-field="transactionDetails.spending" format="fixedPoint" alignment="end" />
-                <DxColumn caption="적요" data-field="transactionDetails.summary" />
+                <DxColumn caption="지출액" cell-template="spending" width="150" />
+                <template #spending="{ data }">
+                  <div :key="data.data.income">
+                    <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
+                      :disabled="!!data.data.income" height="26"
+                      @changeInput="changeInputIncomeSpending(data.data)" />
+                  </div>
+                </template>
+                <DxColumn caption="적요" cell-template="summary" width="200" />
+                <template #summary="{ data }">
+                  <default-text-box v-model:valueInput="data.data.summary" :required="true" />
+                </template>
                 <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
                 <template #accountCode="{ data }">
-                  <account-code-select v-model:valueInput="data.data.transactionDetails.accountCode"
-                    :classification="data.data.transactionDetails.income !== 0 ? [4] : [5]" />
+                  <account-code-select v-model:valueInput="data.data.accountCode"
+                    :classification="!!data.data.income ? [4] : [5]" />
                 </template>
                 <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
                 <template #relationCode="{ data }">
-                  <account-code-select v-model:valueInput="data.data.transactionDetails.relationCode"
-                    :classification="data.data.transactionDetails.resolutionClassification === 2 ? [4] : [11111]"
-                    :disabled="data.data.transactionDetails.resolutionClassification === 1" />
+                  <account-code-select v-model:valueInput="data.data.relationCode"
+                    :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
+                    :disabled="data.data.resolutionClassification === 1" />
                 </template>
                 <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                 <template #fundingSource="{ data }">
-                  <FundingSourceSelect v-model:valueInput="data.data.transactionDetails.fundingSource" :required="true" />
+                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
                 </template>
-                <DxColumn caption="거래처" data-field="transactionDetails.clientId" alignment="start" />
+                <DxColumn caption="거래처" data-field="clientId" alignment="start" />
                 <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                 <template #letterOfApprovalType="{ data }">
-                  <LetterOfApprovalTypeSelect v-model:valueInput="data.data.transactionDetails.letterOfApprovalType"
-                    :disabled="data.data.transactionDetails.resolutionClassification === 1"
-                    :required="data.data.transactionDetails.resolutionClassification === 2" />
+                  <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
+                    :disabled="data.data.resolutionClassification === 1"
+                    :required="data.data.resolutionClassification === 2" />
                 </template>
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
-                  <div
-                    :class="{ 'disable-button-edit-add': data.data.transactionDetails.resolutionClassification === 1 }">
-                    <EditOutlined v-if="data.data.content.length" style="font-size: 12px"
+                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                    <EditOutlined v-if="!!data.data.causeUsage && data.data.causeUsage.length" style="font-size: 12px"
                       @click="openPopupNoteItemDetail(data, 'causeUsage')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
                   </div>
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <PlusOutlined v-if="!data.data.content.length" style="font-size: 12px"
-                    @click="openPopupItemDetail(data.data)" />
-                  <div v-else>{{ data.data.transactionDetails.goodsCount }}</div>
+                  <a-badge v-if="!data.data.goodsCount" :count="data.data.goodsCount || 0" :offset="[6, 0]">
+                    <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                  </a-badge>
+                  <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
-                  <div
-                    :class="{ 'disable-button-edit-add': data.data.transactionDetails.resolutionClassification === 1 }">
-                    <EditOutlined v-if="data.data.content.length" style="font-size: 12px"
+                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                    <EditOutlined v-if="!!data.data.memo && data.data.memo.length" style="font-size: 12px"
                       @click="openPopupNoteItemDetail(data, 'memo')" />
-                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
                   </div>
                 </template>
               </DxDataGrid>
@@ -288,8 +232,9 @@
         </div>
         <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage v-model:list-image-file="fileList" width="385"
-              :payLoadProofs="payloadGetTransactionDetails" />
+            <UploadPreviewImage v-model:list-image-file="fileList" width="400"
+              :payLoadProofs="payloadGetTransactionDetails" @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" />
           </div>
         </div>
       </div>
@@ -307,12 +252,14 @@
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
     <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
-      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false"
-      @submit="isModalItemDetail = false" />
+      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
-      typeHistory="ac-110" :data="payloadGetTransactionDetails" />
+      typeHistory="ac-110-bankbook" :data="payloadGetTransactionDetails" />
+    <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
+      @closePopup="isModalHistoryAccountingProcessLogs = false" title="변경이력" :idRowEdit="idRowEdit"
+      typeHistory="ac-110-accounting" :data="payloadGetAccountingProcessLogs" />
   </div>
 </template>
 <script lang="ts">
@@ -323,9 +270,10 @@ import queries from "@/graphql/queries/AC/AC1/AC110";
 import mutations from "@/graphql/mutations/AC/AC1/AC110";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import ProcessStatus from "@/components/common/ProcessStatus.vue"
-import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup } from "devextreme-vue/data-grid";
+import { DxItem, DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxToolbar, DxExport, DxLookup, DxPaging } from "devextreme-vue/data-grid";
+import DxSelectBox from "devextreme-vue/select-box";
 import { HistoryOutlined, EditOutlined, PlusOutlined, SaveFilled } from "@ant-design/icons-vue";
-import { dataDemoMain, demTableMain, contentPopupRetrieveStatements, demoTableTransactionDetails, InitTransactionDetails } from "./utils/index"
+import { contentPopupRetrieveStatements, InitTransactionDetails } from "./utils/index"
 import { Message } from "@/configs/enum"
 import notification from '@/utils/notification';
 import DxButton from "devextreme-vue/button";
@@ -336,8 +284,9 @@ import PopupItemDetails from "./components/PopupItemDetails.vue"
 import PopupNoteItemDetail from "./components/PopupNoteItemDetail.vue"
 import PopupRetrieveStatements from "./components/PopupRetrieveStatements.vue"
 import UploadPreviewImage from './components/UploadPreviewImage.vue'
-import { BankType, enum2Entries, BankBookUseType, ResolutionClassification } from "@bankda/jangbuda-common";
+import { BankType, enum2Entries, BankBookUseType, ResolutionClassification, FundingSource, LetterOfApprovalType } from "@bankda/jangbuda-common";
 import HistoryPopup from "@/components/HistoryPopup.vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: {
@@ -364,7 +313,9 @@ export default defineComponent({
     UploadPreviewImage,
     DxLookup,
     HistoryPopup,
-    SaveFilled
+    SaveFilled,
+    DxPaging,
+    DxSelectBox
   },
   setup() {
     const store = useStore();
@@ -387,6 +338,35 @@ export default defineComponent({
       }));
       return bsDeduction;
     });
+
+    // data select
+    const arrAllCallApi = computed(() => store.getters['settings/accountSubjects'])
+    let arrAccoountSubjects = ref([])
+    watch(() => arrAllCallApi.value, (value) => {
+      const arrAll: any = []
+      if (value.length) {
+        value.forEach((items: any) => {
+          items.codes.forEach((x: any) => {
+            arrAll.push(x)
+          })
+        })
+      }
+      arrAccoountSubjects.value = arrAll
+    })
+    const fundingSource: any = computed(() => {
+      let bsDeduction: any = enum2Entries(FundingSource).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
+    const letterOfApprovalType: any = computed(() => {
+      let bsDeduction: any = enum2Entries(LetterOfApprovalType).map((value) => ({
+        value: value[1],
+        label: value[0],
+      }));
+      return bsDeduction;
+    });
     const propListSlipRegistrationSelected: any = ref({
       count: 0,
       selectedRowKeys: []
@@ -397,6 +377,7 @@ export default defineComponent({
     let triggerBankbookDetails = ref<boolean>(true)
     let triggerTransactionDetails = ref<boolean>(false)
 
+    let listAccountingProcesses = ref<any>([])
     let statusEntering = ref(10);
     let statusInput = ref(20);
     let statusAdjusting = ref(30);
@@ -405,7 +386,7 @@ export default defineComponent({
     let rowKeyfocused = ref()
     let firstLoad = ref<boolean>(true)
     let dataSource = ref<any[]>([])
-    let dataSourceTransactionDetails = ref<any[]>([])
+    let dataSourceTransactionDetails = ref<any>({})
     let fileList = ref<any[]>([])
     let isModalRetrieveStatements = ref(false);
     let isModalSlipCancellation = ref(false);
@@ -415,7 +396,7 @@ export default defineComponent({
     let isModalNoteItemDetail = ref(false);
     let transactionSelected: any = ref()
     let dataStatementOfGoodsItems: any = ref()
-    let monthSelected: any = ref(3)
+    let monthSelected: any = ref(dayjs().month() + 1)
     watch(() => fileList.value, (value) => {
     }, {
       deep: true,
@@ -428,12 +409,21 @@ export default defineComponent({
       fiscalYear: globalYear.value,
       facilityBusinessId: globalFacilityBizId.value,
       bankbookDetailDate: null,
-      bankbookDetailId: null
+      bankbookDetailId: null,
+    })
+    const payloadGetAccountingProcessLogs: any = reactive({
+      companyId: companyId,
+      fiscalYear: globalYear.value,
+      facilityBusinessId: globalFacilityBizId.value,
+      year: globalYear.value,
+      month: monthSelected.value
     })
     const isModalHistory = ref<boolean>(false);
+    const isModalHistoryAccountingProcessLogs = ref<boolean>(false);
     let idRowEdit = ref<number>(0);
+    const refGridDetailAc110: any = ref()
     // COMPUTED
-    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookId === rowKeyfocused.value))
+    const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -456,13 +446,7 @@ export default defineComponent({
       // onResult: onResBankbookDetails,
       loading: loadingGetBankbookDetails,
       onError: errorGetBankbookDetails
-    } = useQuery(queries.getBankbookDetails, {
-      companyId: companyId,
-      fiscalYear: globalYear.value,
-      facilityBusinessId: globalFacilityBizId.value,
-      year: globalYear.value,
-      month: monthSelected.value
-    },
+    } = useQuery(queries.getBankbookDetails, payloadGetAccountingProcessLogs,
       () => ({
         enabled: triggerBankbookDetails.value,
         fetchPolicy: "no-cache",
@@ -484,7 +468,6 @@ export default defineComponent({
       }))
     errorTransactionDetails(e => {
       notification('error', e.message)
-      dataSourceTransactionDetails.value = demoTableTransactionDetails
     })
     // mutations
     const {
@@ -494,6 +477,7 @@ export default defineComponent({
       loading: loadingSyncBankbookDetails,
     } = useMutation(mutations.syncBankbookDetails);
     doneSyncBankbookDetails((e) => {
+      triggerAccountingProcesses.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSyncBankbookDetails(e => {
@@ -542,6 +526,7 @@ export default defineComponent({
       loading: loadingSaveTransactionDetails,
     } = useMutation(mutations.saveTransactionDetails);
     doneSaveTransactionDetails((e) => {
+      triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorSaveTransactionDetails(e => {
@@ -549,28 +534,43 @@ export default defineComponent({
     })
     // WATCH
     watch(resAccountingProcesses, (value) => {
+      if (!!value.getAccountingProcesses && value.getAccountingProcesses.length) {
+        listAccountingProcesses.value = value.getAccountingProcesses
+      }
       triggerAccountingProcesses.value = false
     })
 
     watch(resBankbookDetails, (value) => {
-      // if(value.getBankbookDetails.length){
-      //   dataSource.value = value.getBankbookDetails
-      // }
-      if (demTableMain.length) {
-        dataSource.value = demTableMain
+      if (!!value.getBankbookDetails && value.getBankbookDetails.length) {
+        dataSource.value = value.getBankbookDetails
         if (firstLoad.value) {
-          rowKeyfocused.value = demTableMain[0].bankbookId
-          payloadGetTransactionDetails.bankbookDetailDate = demTableMain[0].bankbookDetailDate
-          payloadGetTransactionDetails.bankbookDetailId = demTableMain[0].bankbookDetailId
+          rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
+          payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
+          payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
           triggerTransactionDetails.value = true
         }
+      } else {
+        dataSource.value = []
+        rowKeyfocused.value = null
+        payloadGetTransactionDetails.bankbookDetailDate = null
+        payloadGetTransactionDetails.bankbookDetailId = null
+        dataSourceTransactionDetails.value = {}
       }
+      firstLoad.value = false
       triggerBankbookDetails.value = false
     })
 
     watch(resTransactionDetails, (value) => {
-      dataSourceTransactionDetails.value = demoTableTransactionDetails
+      if (!!value.getTransactionDetails && value.getTransactionDetails) {
+        dataSourceTransactionDetails.value = value.getTransactionDetails
+      }
       triggerTransactionDetails.value = false
+    })
+
+    watch(() => payloadGetTransactionDetails, () => {
+      fileList.value = []
+    }, {
+      deep: true
     })
     // MOUNTED
     // METHODS
@@ -585,8 +585,13 @@ export default defineComponent({
     const modalHistory = () => {
       isModalHistory.value = true
     }
+    const modalHistoryAccountingProcessLogs = () => {
+      isModalHistoryAccountingProcessLogs.value = true
+    }
     const selectedMonth = (month: number) => {
+      firstLoad.value = true
       monthSelected.value = month
+      payloadGetAccountingProcessLogs.month = month
       triggerBankbookDetails.value = true
     }
     // Grid Main
@@ -596,7 +601,7 @@ export default defineComponent({
       const listItemDisable: any = []
       dataSource.value.forEach((items: any) => {
         if (items.normalTransactionDetails && !items.documentRegistered) { }
-        else { listItemDisable.push(items.bankbookId) }
+        else { listItemDisable.push(items.bankbookDetailId) }
       })
       const indexItemDisable = selectedRowKeys.value.findIndex((items: any) => listItemDisable.includes(items))
       if (indexItemDisable >= 0) {
@@ -606,6 +611,7 @@ export default defineComponent({
     const onFocusedRowChanging = (event: any) => {
       const item = event.rows[event.newRowIndex].data
       if (payloadGetTransactionDetails.bankbookDetailId === item.bankbookDetailId) return
+      rowKeyfocused.value = item.bankbookDetailId
       payloadGetTransactionDetails.bankbookDetailDate = item.bankbookDetailDate
       payloadGetTransactionDetails.bankbookDetailId = item.bankbookDetailId
       triggerTransactionDetails.value = true
@@ -616,7 +622,7 @@ export default defineComponent({
     }
     const openPopupSlipRegistrationSelected = () => {
       propListSlipRegistrationSelected.value.count = selectedRowKeys.value.length
-      propListSlipRegistrationSelected.value.selectedRowKeys = dataSource.value.filter((items) => selectedRowKeys.value.includes(items.bankbookId)).map(e => e.transactionDetailsCount)
+      propListSlipRegistrationSelected.value.selectedRowKeys = dataSource.value.filter((items) => selectedRowKeys.value.includes(items.bankbookDetailId)).map(e => e.transactionDetailsCount)
       isModalSlipRegistrationSelected.value = true
     }
     const openPopupRegistration = (value: any) => {
@@ -654,19 +660,35 @@ export default defineComponent({
       return `전표등록 여부 (O: ${totalRegistration}, X: ${totalCancellation})`
     };
     // ---------------Grid detail----------------
+    const totalTransactions = () => {
+      let total = 0;
+      if (Object.keys(dataSourceTransactionDetails.value).length) {
+        dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
+          if (item.bankbookDetailId !== null) {
+            total++
+          }
+        });
+      }
+      return formatNumber(total)
+    }
+
     const sumOfIncome = () => {
       let total = 0;
-      dataSourceTransactionDetails.value.forEach((item) => {
-        total += item.transactionDetails.income
-      });
+      if (Object.keys(dataSourceTransactionDetails.value).length) {
+        dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
+          total += item.income || 0
+        });
+      }
       return formatNumber(total)
     }
 
     const sumOfExpenses = () => {
       let total = 0;
-      dataSourceTransactionDetails.value.forEach((item) => {
-        total += item.transactionDetails.spending
-      });
+      if (Object.keys(dataSourceTransactionDetails.value).length) {
+        dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
+          total += item.spending || 0
+        })
+      }
       return formatNumber(total)
     }
     // -----------------------Popup---------------------
@@ -684,7 +706,7 @@ export default defineComponent({
       let bankbookDetailDate: number = 0
       const bankbookDetailIds: number[] = []
       dataSource.value.forEach(items => {
-        if (selectedRowKeys.value.includes(items.bankbookId)) {
+        if (selectedRowKeys.value.includes(items.bankbookDetailId)) {
           bankbookDetailDate = items.bankbookDetailDate
           bankbookDetailIds.push(items.bankbookDetailId)
         }
@@ -735,15 +757,17 @@ export default defineComponent({
       })
     }
     const handleInitializeTransactionDetails = () => {
-      initializeTransactionDetails({
-        ...payloadGetTransactionDetails,
-        bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
-        bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
-      })
+      if (rowKeyfocused.value === null) return
+      triggerTransactionDetails.value = true
+      // initializeTransactionDetails({
+      //   ...payloadGetTransactionDetails,
+      //   bankbookDetailDate: bankbookSelected.value.bankbookDetailDate,
+      //   bankbookDetailIds: bankbookSelected.value.bankbookDetailIds,
+      // })
     }
     const openPopupItemDetail = (data: any) => {
-      if (data.transactionDetails.resolutionClassification === 1) return
-      dataStatementOfGoodsItems.value = data.transactionDetails
+      if (data.resolutionClassification === 1) return
+      dataStatementOfGoodsItems.value = data
       isModalItemDetail.value = true
     }
     const openPopupNoteItemDetail = (data: any, key: string) => {
@@ -751,50 +775,72 @@ export default defineComponent({
       transactionSelected.value = {
         index: data.rowIndex,
         key: key,
-        noteValue: data.data.transactionDetails[key]
+        noteValue: data.data[key]
       }
       isModalNoteItemDetail.value = true
     }
 
     const updateNoteValue = (value: any) => {
-      dataSourceTransactionDetails.value[value.index].transactionDetails[value.key] = value.noteValue
+      dataSourceTransactionDetails.value.transactionDetails[value.index][value.key] = value.noteValue
       isModalNoteItemDetail.value = false
     }
     const addNewRowTransactionDetails = () => {
+      if (rowKeyfocused.value === null) return
+
       const initTransactionDetails: any = { ...InitTransactionDetails }
-      const lengthData = dataSourceTransactionDetails.value.length
+      const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
       if (lengthData > 0) {
-        initTransactionDetails.transactionDetails.theOrder = dataSourceTransactionDetails.value[lengthData - 1].transactionDetails.theOrder + 1
+        initTransactionDetails.theOrder = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].theOrder + 1 || 1
+        initTransactionDetails.accountingDocumentId = dataSourceTransactionDetails.value.transactionDetails[lengthData - 1].accountingDocumentId + 1 + 'create' || 'create'
       } else {
-        initTransactionDetails.transactionDetails.theOrder = 0
+        initTransactionDetails.theOrder = 0
+        initTransactionDetails.accountingDocumentId = 'create'
       }
-      dataSourceTransactionDetails.value = [...dataSourceTransactionDetails.value, initTransactionDetails]
+      // refGridDetailAc110.value.instance.addRow(initTransactionDetails)
+      dataSourceTransactionDetails.value.transactionDetails = [initTransactionDetails, ...dataSourceTransactionDetails.value.transactionDetails]
     }
-    const submitTransactionDetails = (event: any) => {
-      const res = event.validationGroup.validate();
+    const submitTransactionDetails = async (event: any) => {
+      if (rowKeyfocused.value === null) return
+      const res = await event.validationGroup.validate();
       if (!res.isValid) return
-      let payloadCreate: any = {}
-      const isCreate = !dataSourceTransactionDetails.value[dataSourceTransactionDetails.value.length - 1].transactionDetails.accountingDocumentId
-      const payLoadUpdate = dataSourceTransactionDetails.value.map(item => {
-        return {
-          resolutionClassification: item.transactionDetails.resolutionClassification,
-          income: item.transactionDetails.income,
-          spending: item.transactionDetails.spending,
-          summary: item.transactionDetails.summary,
-          theOrder: item.transactionDetails.theOrder,
-          accountCode: item.transactionDetails.accountCode,
-          relationCode: item.transactionDetails.relationCode,
-          fundingSource: item.transactionDetails.fundingSource,
-          letterOfApprovalType: item.transactionDetails.letterOfApprovalType,
-          causeUsage: item.transactionDetails.causeUsage,
-          memo: item.transactionDetails.memo,
-          clientId: item.transactionDetails.clientId,
-          accountingDocumentId: item.transactionDetails.accountingDocumentId,
+      // await refGridDetailAc110.value.instance.saveEditData()
+      dataSourceTransactionDetails.value.transactionDetails = dataSourceTransactionDetails.value.transactionDetails.map((item: any) => {
+        if (Number.isInteger(item.accountingDocumentId)) {
+          return item
+        } else {
+          return {
+            ...InitTransactionDetails,
+            ...item
+          }
         }
       })
-      if (isCreate) {
-        payloadCreate = payLoadUpdate.splice(payLoadUpdate.length - 1, 1)
-        delete payloadCreate.accountingDocumentId
+      const payLoadUpdate: any = []
+      const payloadCreate: any = []
+      dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
+        const objPayload = {
+          resolutionClassification: item.resolutionClassification,
+          income: !!item.income ? item.income : 0,
+          spending: !!item.spending ? item.spending : 0,
+          summary: item.summary,
+          theOrder: item.theOrder,
+          accountCode: item.accountCode,
+          relationCode: item.relationCode,
+          fundingSource: item.fundingSource,
+          letterOfApprovalType: item.letterOfApprovalType,
+          causeUsage: item.causeUsage,
+          memo: item.memo,
+          clientId: item.clientId,
+        }
+        if (item.accountingDocumentId.toString().includes('create')) {
+          payloadCreate.push(objPayload)
+        } else {
+          payLoadUpdate.push({
+            ...objPayload,
+            accountingDocumentId: item.accountingDocumentId
+          })
+        }
+      })
+      if (payloadCreate.length) {
         const payloadClear = makeDataClean({
           ...payloadGetTransactionDetails,
           updates: payLoadUpdate,
@@ -810,6 +856,29 @@ export default defineComponent({
       }
     }
 
+    const updateAddBankbookDetailProof = () => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+      dataSource.value[indexSelected].proofCount++
+    }
+
+    const updateremoveBankbookDetailProof = () => {
+      const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
+      dataSource.value[indexSelected].proofCount--
+    }
+    const changeInputIncomeSpending = (data:any) => {
+      if(!data.income && !data.spending) {
+        data.resolutionClassification = null
+      }else {
+        if(!!data.income) {
+          data.resolutionClassification = 1
+          data.spending = 0
+        }
+        if(!!data.spending) {
+          data.resolutionClassification = 2
+          data.income = 0
+        }
+      }
+    }
     // ------------------method common------------------
     const formatNumber = (value: number) => {
       if (Number.isInteger(value)) {
@@ -829,7 +898,6 @@ export default defineComponent({
       selectedRowKeys,
       selectionChanged,
       onFocusedRowChanging,
-      dataDemoMain,
       dataSource,
       totalDeposits,
       totalWithdrawal,
@@ -848,6 +916,7 @@ export default defineComponent({
       isModalSlipRegistrationSelected,
       isModalItemDetail,
       openPopupSlipRegistrationSelected,
+      totalTransactions,
       sumOfIncome,
       sumOfExpenses,
       resolutionClassification,
@@ -880,7 +949,18 @@ export default defineComponent({
       addNewRowTransactionDetails,
       dataStatementOfGoodsItems,
       monthSelected,
-      selectedMonth
+      selectedMonth,
+      payloadGetAccountingProcessLogs,
+      isModalHistoryAccountingProcessLogs,
+      modalHistoryAccountingProcessLogs,
+      listAccountingProcesses,
+      updateremoveBankbookDetailProof,
+      updateAddBankbookDetailProof,
+      refGridDetailAc110,
+      arrAccoountSubjects,
+      fundingSource,
+      letterOfApprovalType,
+      changeInputIncomeSpending
     };
   },
 });

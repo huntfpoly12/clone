@@ -11,6 +11,7 @@
                 </div>
             </div>
             <div class="info-employee">
+              <standard-form formName="formPA410" ref="formPA410">
                 <a-row :gutter="16">
                     <a-col :span="12">
                         <div class="header-text-2">근속기간</div> 
@@ -33,9 +34,9 @@
                                 </span>
                             </div>  
                             <div class="input-employee">
-                                <a-form-item label="제외일수" label-align="right" >
+                                <a-form-item label="제외일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays" > </number-box-money>
+                                    <number-box  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.exclusionDays"  :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>      
                                   </div>
                                 </a-form-item> 
@@ -45,9 +46,9 @@
                                 </span>
                             </div>
                             <div class="input-employee">
-                                <a-form-item label="가산일수" label-align="right" >
+                                <a-form-item label="가산일수" label-align="right" class="red">
                                   <div class="d-flex-center">
-                                    <number-box-money  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays"> </number-box-money>
+                                    <number-box  width="200px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.additionalDays" :required="true" format="0,###"> </number-box>
                                     <span class="pl-5 pr-5">일</span>
                                   </div>
                                 </a-form-item> 
@@ -63,19 +64,19 @@
                         <div class="salary">
                             <div class="input-salary">
                                 <a-form-item label="퇴직전 3개월 임금 총액 (세전)" label-align="right" class="red">
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalPay3Month" :required="true"> </number-box-money>
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalPay3Month" :required="true" format="0,###"> </number-box-money>
                                 </a-form-item>  
                                 <span class="pl-5 pt-4">원</span>
                             </div>
                             <div class="input-salary">
                                 <a-form-item label="연간 상여금 총액" label-align="right" class="red">
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalAnualBonus" :required="true"> </number-box-money>
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.totalAnualBonus" :required="true" format="0,###"> </number-box-money>
                                 </a-form-item> 
                                 <span class="pl-5 pt-4">원</span>
                             </div>
                             <div class="input-salary">
                                 <a-form-item label="연차수당" label-align="right" class="red">
-                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.annualLeaveAllowance" :required="true"> </number-box-money>
+                                    <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" v-model:valueInput="formState.annualLeaveAllowance" :required="true" format="0,###"> </number-box-money>
                                 </a-form-item> 
                                 <span class="pl-5 pt-4">원</span>
                             </div>
@@ -90,6 +91,7 @@
                     <span class="pl-5">상기 급여(수당)으로 퇴직금 계산합니다.</span>
                 </span>
                 </div>
+              </standard-form>
             </div>
             <div class="retirement-benefit">
                 <div class="header-text-2">퇴직급여</div>
@@ -97,7 +99,7 @@
                     <a-col :span="12">
                         <div class="input-benefit">
                             <a-form-item label="퇴직급여(예상)" label-align="right" >
-                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" :readOnly="true" v-model:valueInput="caculateValue"> </number-box-money>
+                                <number-box-money  width="150px" :spinButtons="false" :rtlEnabled="true" :readOnly="true" v-model:valueInput="caculateValue" format="0,###"> </number-box-money>
                             </a-form-item>
                             <span class="pl-5 pt-4">원</span>
                         </div>
@@ -120,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, reactive } from 'vue'
+import { defineComponent, watch, ref, reactive, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useQuery } from "@vue/apollo-composable";
 import notification from "@/utils/notification";
@@ -131,11 +133,24 @@ import EmailSinglePopup from './EmailSinglePopup.vue';
 import dayjs from 'dayjs';
 import filters from '@/helpers/filters';
 import { Formula } from "@bankda/jangbuda-common";
+import { onMounted } from 'vue';
 export default defineComponent({
     components: {
         EmailSinglePopup
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        onMounted(() => {
+          let employeeInfor = store.state.common.arrayEmployeePA410.find((item: any) => item.employeeId == store.state.common.employeeIdPA410)
+          formState.settlementStartDate = employeeInfor && employeeInfor.joinedAt ? employeeInfor.joinedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
+          formState.settlementFinishDate = employeeInfor && employeeInfor.leavedAt ? employeeInfor.leavedAt : filters.formatDateToInterger(dayjs().format("YYYY-MM-DD"))
+          dataLastRetiredYearsOfService.value = Formula.getDateOfService(
+              new Date(filters.formatDate(formState.settlementStartDate)),
+              new Date(filters.formatDate(formState.settlementFinishDate)),
+              formState.exclusionDays,
+              formState.additionalDays
+          )
+        })
+        const formPA410 =  ref()
         const store = useStore();
         const caculateValue = ref(0);
         const trigger = ref<boolean>(false)
@@ -152,12 +167,17 @@ export default defineComponent({
                 input: formState
         }
         const arrayEmployeeSelect = ref(store.state.common.arrayEmployeePA410)
-      watch(() => formState.settlementFinishDate, (newFinishDate) => {
+        watch(() => [
+          formState.settlementStartDate,
+          formState.settlementFinishDate,
+          formState.exclusionDays,
+          formState.additionalDays
+        ], ([ newStartDate,newFinishDate,newExclusionDays,newAdditionalDays]) => {
           dataLastRetiredYearsOfService.value = Formula.getDateOfService(
-              new Date(filters.formatDate(formState.settlementStartDate)),
+              new Date(filters.formatDate(newStartDate)),
               new Date(filters.formatDate(newFinishDate)),
-              formState.exclusionDays,
-              formState.additionalDays
+              newExclusionDays,
+              newAdditionalDays
           )
         })
    
@@ -173,20 +193,32 @@ export default defineComponent({
       
         watch(result, (value) => {
             if (value && value.calculateIncomeRetirement) {
-                caculateValue.value = value.calculateIncomeRetirement;
-             }
+              caculateValue.value = value.calculateIncomeRetirement;
+              trigger.value = false;
+            }
         })
 
         const calculateIncomeRetirement = () => {
+          var res = formPA410.value.validate();
+          if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+          } else {
             trigger.value = true;
             refetch()
+          }
         }
 
         const openMailPopup = () => {
+          var res = formPA410.value.validate();
+          if (!res.isValid) {
+            res.brokenRules[0].validator.focus();
+          } else {
             modalMailStatus.value = true
+          }
         }
 
-        return {
+          return {
+            formPA410,
             loading,
             formState,
             caculateValue,
@@ -194,8 +226,8 @@ export default defineComponent({
             arrayEmployeeSelect,
             valueSelected,
             openMailPopup,
-          modalMailStatus,
-          dataLastRetiredYearsOfService
+            modalMailStatus,
+            dataLastRetiredYearsOfService
         }
     },
 })

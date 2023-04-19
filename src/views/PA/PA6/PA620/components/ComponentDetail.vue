@@ -42,11 +42,6 @@
   <a-row>
     <a-col :span="14" class="custom-layout" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
-        <!-- {{ compareType }} compareType <br />
-        {{ selectedRowKeys }} selectedRowKeys <br />
-        {{ isClickEditClick }} isClickEditClick <br />
-        {{ isClickMonthDiff }} isClickMonthDiff <br />
-        {{ isClickYearDiff }} isClickYearDiff <br /> -->
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
@@ -106,8 +101,6 @@
     </a-col>
     <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
-        <!-- {{ dataAction }} dataAction <br />
-        {{ focusedRowKey }} focusedRowKey <br /> -->
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
             <employ-type-select :arrayValue="arrayEmploySelect" v-model:valueEmploy="dataAction.input.employeeId"
@@ -135,8 +128,8 @@
                 </a-form-item>
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
-                    <number-box-money :min="1" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
-                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" /> 원
+                    <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
+                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" format="0,###" /> 원
                   </div>
                 </a-form-item>
                 <a-form-item label="세율" label-align="right">
@@ -156,13 +149,13 @@
                   <a-form-item label="소득세(공제)" label-align="right">
                     <div class="d-flex-center">
                       <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
-                        v-model:valueInput="dataAction.input.withholdingIncomeTax" /> 원
+                        v-model:valueInput="dataAction.input.withholdingIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
                   <a-form-item label="지방소득세(공제)" label-align="right">
                     <div class="d-flex-center">
                       <number-box-money :min="0" width="150px" class="mr-5" :disabled="true"
-                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" /> 원
+                        v-model:valueInput="dataAction.input.withholdingLocalIncomeTax" format="0,###" /> 원
                     </div>
                   </a-form-item>
                 </div>

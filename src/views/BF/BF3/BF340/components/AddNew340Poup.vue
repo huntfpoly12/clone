@@ -3,7 +3,7 @@
         <a-modal :visible="modalStatus" title="영업자관리[bf-340 –pop]" centered @cancel="setModalVisible()"
             :mask-closable="false" :width="1028" :footer="null">
             <a-spin :spinning="loading">
-                <form action="your-action">
+                <standard-form ref="formAddBF340">
                     <a-row :gutter="24">
                         <a-col :span="9" :md="13" :lg="10">
                             <a-form-item label="영업자코드" label-align="right" :label-col="labelCol">
@@ -56,7 +56,7 @@
                                 :wrapper-col="{ span: 21 }" class="post-code red">
                                 <div style="display:flex">
                                     <default-text-box v-model:valueInput="formState.zipcode" width="200px"
-                                        :disabled="true" :required="true" />
+                                         :required="true" :readOnly="true"/>
                                     <div style="margin-left: 5px">
                                         <post-code-button @dataAddress="funcAddress" />
                                     </div>
@@ -115,7 +115,7 @@
                             </a-form-item>
                             <a-form-item label="가입일자" class="red" label-align="right" :label-col="labelCol">
                                 <div style="width: 150px">
-                                    <date-time-box v-model:valueDate="formState.registerDate" />
+                                    <date-time-box v-model:valueDate="formState.registerDate"  ref="registerDate"/>
                                 </div>
                             </a-form-item>
                         </a-col>
@@ -147,7 +147,7 @@
                                 @onClick="createSale($event)" :width="150" />
                         </a-col>
                     </a-row>
-                </form>
+                </standard-form>
             </a-spin>
         </a-modal>
     </div>
@@ -164,56 +164,48 @@ export default defineComponent({
     props: {
         modalStatus: Boolean,
     },
-    setup(props, { emit }) {
+  setup(props, { emit }) {
+        const formAddBF340 = ref()
+        const registerDate = ref();
         const visible = ref<boolean>(false);
         const labelCol = { span: 6 };
         const wrapperCol = { span: 14 };
-        let confirm = ref<string>('');
-        const isResidentId =  ref<boolean>(false);
+        let confirm = ref<string>("");
+        const isResidentId = ref<boolean>(true);
         const formState = reactive<any>({ ...initialFormState });
         const receiptOrNot = ref<boolean>(false);
         // watch event modal popup
-        watch(
-            () => props.modalStatus,
-            (newValue, old) => {
-                if (newValue) {
-                    Object.assign(formState, initialFormState);
-                }
+        watch(() => props.modalStatus, (newValue, old) => {
+            if (newValue) {
+                Object.assign(formState, initialFormState);
             }
-        );
-
-        watch(
-          () => formState.bizType,
-          (newVal) => {
+        });
+        watch(() => formState.bizType, (newVal) => {
             if (newVal == 1) {
-              isResidentId.value = true
-            } else {
-              isResidentId.value = false
+                isResidentId.value = false;
             }
-          },{deep:true}
-        )
+            else {
+                isResidentId.value = true;
+            }
+        }, { deep: true });
         // create saler
-        const {
-            mutate: createSaleMutate,
-            onDone: onDoneAdd,
-            loading,
-            onError
-        } = useMutation(mutations.creactedSale);
+        const { mutate: createSaleMutate, onDone: onDoneAdd, loading, onError } = useMutation(mutations.creactedSale);
         onDoneAdd((res) => {
-            notification('success', `새러운 영업자 추가 완료!`)
+            notification("success", `새러운 영업자 추가 완료!`);
             emit("closePopup", false);
             emit("createSuccess", true);
-        })
+        });
         onError((error) => {
-            notification('error', error.message)
+            notification("error", error.message);
         });
         const setModalVisible = () => {
             if (JSON.stringify(initialFormState) == JSON.stringify(formState)) {
-                emit("closePopup", false)
-            } else {
-                comfirmClosePopup(() => emit("closePopup", false))
+                emit("closePopup", false);
             }
-        }
+            else {
+                comfirmClosePopup(() => emit("closePopup", false));
+            }
+        };
         const funcAddress = (data: any) => {
             formState.zipcode = data.zonecode;
             formState.roadAddress = data.roadAddress;
@@ -221,39 +213,57 @@ export default defineComponent({
             formState.addressDetail.bcode = data.bcode;
             formState.addressDetail.bname = data.bname;
             formState.addressDetail.buildingCode = data.buildingCode;
-            formState.addressDetail.buildingName = data.buildingName ? data.buildingName : '';
+            formState.addressDetail.buildingName = data.buildingName ? data.buildingName : "";
             formState.addressDetail.roadname = data.roadname;
             formState.addressDetail.roadnameCode = data.roadnameCode;
             formState.addressDetail.sido = data.sido;
             formState.addressDetail.sigungu = data.sigungu;
             formState.addressDetail.sigunguCode = data.sigunguCode;
             formState.addressDetail.zonecode = data.zonecode;
-        }
+        };
         const createSale = (e: any) => {
-            var res = e.validationGroup.validate();
+            if (!formState.registerDate) {
+              registerDate.value.validate(true)
+              return
+            }
+            var res = formAddBF340.value.validate();
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
-            } else if (formState.zipcode == '' || formState.roadAddress == '') {
-                notification('error', '주소를 선택하지 않았습니다');
+            }
+            else if (formState.zipcode == "" || formState.roadAddress == "") {
+                notification("error", "주소를 선택하지 않았습니다");
                 return;
-            } else {
+            }
+            else {
                 let dataNew = {
                     input: {
                         ...formState
                     }
-                }
-                dataNew = makeDataClean(dataNew)
-                createSaleMutate(dataNew)
+                };
+                dataNew = makeDataClean(dataNew, ["buildingName"]);
+                createSaleMutate(dataNew);
             }
-        }
+        };
         // if taxvoice = true then 전자세금계산서 수신이메일 require
         watch(() => formState.taxInvoice, (newValue) => {
             receiptOrNot.value = newValue;
         });
         return {
-            labelCol, wrapperCol, formState, visible, confirm, receiptOrNot, loading,
-            createSaleMutate, funcAddress, setModalVisible, createSale,isResidentId
-        }
+            labelCol,
+            formAddBF340,
+            wrapperCol,
+            formState,
+            visible,
+            confirm,
+            receiptOrNot,
+            loading,
+            createSaleMutate,
+            funcAddress,
+            setModalVisible,
+            createSale,
+            isResidentId,
+            registerDate
+        };
     }
 })
 </script>

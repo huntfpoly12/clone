@@ -4,7 +4,6 @@
     <a-upload
       v-model:file-list="fileList"
       name="file"
-      @change="onFileChange"
       :beforeUpload="beforeUpload"
       :headers="headers"
       :disabled="disabled"
@@ -15,6 +14,14 @@
           <span>{{ label }}</span>
         </div>
       </div>
+      <template #removeIcon>
+        <a-tooltip placement="bottom" title="삭제">
+          <div>
+            <DeleteOutlined />
+          </div>
+        </a-tooltip>
+      </template>
+
     </a-upload>
 
 <!--  </div>-->
@@ -34,6 +41,7 @@ ZoomInOutlined,
 import { Upload, UploadProps } from "ant-design-vue";
 import {defineComponent, ref, watch, watchEffect} from "vue";
 import Repository from "@/repositories";
+import { Message } from "@/configs/enum";
 
 const uploadRepository = Repository.get("upload");
 
@@ -81,22 +89,6 @@ export default defineComponent({
     let messageUpload = ref<any>("");
     const file = ref<any>("");
     const fileName = ref<any>("");
-    const onFileChange = async (info: {
-      [x: string]: any;
-      target: { files: any[] };
-    }) => {
-      if (info.file.status === 'done') {
-        const status = info.file.status;
-        if (status === 'done') {
-          emit("response-fileId", info.file.response);
-          // show success message
-          notification('success', "Upload successfully!")
-        } else if (status === 'error') {
-          // show error message
-          notification('error', "Upload failed!")
-        }
-      }
-    };
     const beforeUpload = async (file: File) => {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
@@ -115,10 +107,10 @@ export default defineComponent({
         if (status === 201) {
           emit("response-fileId", data.data);
           // show success message
-          notification('success', "Upload successfully!")
+          notification('success', '업데이트 완료')
         } else if (status === 'error') {
           // show error message
-          notification('error', "Upload failed!")
+          notification('error', Message.getCommonMessage('109').message)
         }
       } catch (error) {
         console.log('error', error)
@@ -136,7 +128,6 @@ export default defineComponent({
       Upload,
       file,
       fileName,
-      onFileChange,
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('token')
       },
@@ -177,6 +168,4 @@ export default defineComponent({
     color: #000;
   }
 }
-
-
 </style>

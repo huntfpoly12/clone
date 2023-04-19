@@ -1,6 +1,6 @@
 import { message } from "ant-design-vue";
 
-export default (typeMessage: string, text: string) => {
+export default (typeMessage: string, text = '') => {
 
     switch (typeMessage) {
         case 'success':
@@ -10,7 +10,7 @@ export default (typeMessage: string, text: string) => {
                 style: {
                     marginTop: '20vh',
                 },
-            }, 4);
+            }, 2);
             break;
         case 'error':
             message.error({
@@ -21,7 +21,7 @@ export default (typeMessage: string, text: string) => {
                     color: 'red',
                     borderColor: 'red'
                 },
-            }, 4);
+            }, 2);
             break;
         case 'warning':
             message.warning({
@@ -30,9 +30,11 @@ export default (typeMessage: string, text: string) => {
                 style: {
                     marginTop: '20vh',
                 },
-            }, 4);
+            }, 2);
             break;
-
+        case 'destroy':
+              message.destroy()
+              break;
         default:
             message.success({
                 content: () => text,
@@ -40,7 +42,7 @@ export default (typeMessage: string, text: string) => {
                 style: {
                     marginTop: '20vh',
                 },
-            }, 4);
+            }, 2);
             break;
     }
 

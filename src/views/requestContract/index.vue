@@ -10,7 +10,7 @@
             </a-steps>
             <div class="step-content">
                 <form action="your-action">
-                    <template v-if="step === 0">
+                    <section v-if="step === 0" class="step1">
                         <div class="mt-3">
                             <div class="custom-checkbox-step-1">
                                 <label>1. 서비스약관 동의</label>
@@ -19,7 +19,9 @@
                                         @change="checkAllFunc" :disabled="false" :size="16" />
                                 </div>
                             </div>
-                            <text-area-box placeholder="서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                              <Policy1></Policy1>
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.terms" label="동의함"
                                     :disabled="false" :size="16" />
@@ -27,7 +29,9 @@
                         </div>
                         <div>
                             <label>2. 개인정보제공 및 활용동의</label>
-                            <text-area-box placeholder="개인정보제공 및 활용동의" disabled></text-area-box>
+                            <div class="register-input">
+                              <Policy2></Policy2>
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.personalInfo" label="동의함"
                                     :disabled="false" :size="16" />
@@ -35,7 +39,9 @@
                         </div>
                         <div>
                             <label>3. 회계서비스약관 동의</label>
-                            <text-area-box placeholder="회계서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                              <Policy3></Policy3>
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.accountingService" label="동의함"
                                     :disabled="false" :size="16" />
@@ -43,76 +49,79 @@
                         </div>
                         <div>
                             <label>4. 원천서비스약관 동의</label>
-                            <text-area-box placeholder="원천서비스약관 동의" disabled></text-area-box>
+                            <div class="register-input">
+                              <Policy4></Policy4>
+                            </div>
                             <div class="radio-group">
                                 <checkbox-basic v-model:valueCheckbox="contractCreacted.withholdingService" label="동의함"
                                     :disabled="false" :size="16" />
                             </div>
                         </div>
-                    </template>
+                    </section>
                     <template v-if="step === 1">
                         <div class="form-group">
                             <label>1. 사업자정보</label>
-                            <div class="info-box">
-                                <div class="form-item">
-                                    <label class="red">상 호 :</label>
-                                    <default-text-box width="400px" :required="true"
-                                        v-model:valueInput="contractCreacted.nameCompany" />
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">사업자등록번호 :</label>
-                                    <biz-number-text-box v-model:valueInput="contractCreacted.bizNumber"
-                                        :required="true" />
-                                </div>
-                                <div class="form-item">
-                                    <a-row style="width: 100%">
-                                        <a-col :span="12" class="d-flex">
-                                            <label class="red">사업자유형 :</label>
-                                            <radio-group :arrayValue="arrayRadioCheck"
-                                                v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
-                                        </a-col>
-                                        <a-col :span="12" class="d-flex">
-                                            <div style="margin-right: 5px;width: 90px;">{{ textIDNo }} :</div>
-                                            <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId" width="365px"/>
-                                        </a-col>
-                                    </a-row>
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">주 소 :</label>
-                                    <div class="group-label">
-                                        <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
-                                            placeholder="우편번호" :readOnly="true" />
-                                        <post-code-button @dataAddress="funcAddress" />
+                            <div class="info-box d-flex">
+                                <div class="left-group">
+                                    <div class="form-item">
+                                        <label class="red">상 호 :</label>
+                                        <default-text-box :required="true"
+                                            v-model:valueInput="contractCreacted.nameCompany" width="70%" />
                                     </div>
-                                </div>
-                                <div class="form-item">
-                                    <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
-                                        placeholder="주소" :disabled="true" width="100%" />
-                                </div>
-                                <div class="form-item">
-                                    <label></label>
-                                    <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
-                                        placeholder="상세주소(입력)" width="100%" />
-                                </div>
-                                <div class="form-item">
-                                    <label class="red">연락처 :</label>
-                                    <tel-text-box width="100%" placeholder="‘-’ 없이 슷자입력"
-                                        v-model:value="contractCreacted.phone" :required="true" />
-                                </div>
-                                <div class="form-item">
-                                    <label>팩 스 :</label>
-                                    <tel-text-box width="180px" placeholder="‘-’ 없이 슷자입력"
-                                        v-model:value="contractCreacted.fax" />
-                                </div>
-                                <div class="d-flex mt-10 pl-10">
-                                    <div>
-                                        <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10" />
+                                    <div class="form-item">
+                                        <label class="red">사업자등록번호 :</label>
+                                        <biz-number-text-box width="135px" v-model:valueInput="contractCreacted.ownerBizNumber"
+                                            :required="true" />
                                     </div>
-                                    <div>
-                                        <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
+                                    <div class="form-item">
+                                        <label class="red">사업자유형 :</label>
+                                        <radio-group :arrayValue="arrayRadioCheck"
+                                            v-model:valueRadioCheck="valueRadioBox" :layoutCustom="'horizontal'" />
                                     </div>
+                                    <div class="form-item">
+                                        <label class="red">{{ textIDNo }} :</label>
+                                        <id-number-text-box v-model:valueInput="contractCreacted.residentId" :isResidentId="isResidentId"  width="135px"/>
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="red">주 소 :</label>
+                                        <div class="group-label">
+                                            <default-text-box v-model:valueInput="contractCreacted.zipcode" :required="true"
+                                                placeholder="우편번호" :readOnly="true"  width="135px" class="mr-5" />
+                                            <post-code-button @dataAddress="funcAddress" width="130px" />
+                                        </div>
+                                    </div>
+                                    <div class="form-item">
+                                        <label></label>
+                                        <default-text-box v-model:valueInput="contractCreacted.roadAddress" :required="true"
+                                            placeholder="주소" :disabled="true"  class="mr-10" width="70%" />
+                                        
+                                    </div>
+                                    <div class="form-item">
+                                        <label></label>
+                                        <default-text-box v-model:valueInput="contractCreacted.addressExtend" :required="true"
+                                            placeholder="상세주소(입력)" width="70%" />
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="red">연락처 :</label>
+                                        <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
+                                            v-model:value="contractCreacted.phone" :required="true" />
+                                    </div>
+                                    <div class="form-item">
+                                        <label>팩 스 :</label>
+                                        <tel-text-box width="200px" placeholder="‘-’ 없이 슷자입력"
+                                            v-model:value="contractCreacted.fax" />
+                                    </div>
+                                    <div class="d-flex mt-10">
+                                        <div>
+                                            <imgUpload :title="titleModal" @update-img="getImgUrl" class="mt-10"  width="130px"/>
+                                        </div>
+                                    </div>
+                                  </div>
+                              <div class="right-group">
+                                <div>
+                                    <preview-image :dataImage="dataImg" @deleteImg="removeImg" />
                                 </div>
+                              </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -151,7 +160,7 @@
                             </label>
                             <div class="group-title">
                                 <p class="red" id="title-table-step3">⁙ 운영사업</p>
-                            </div>
+                            </div>{{ valueFacilityBusinesses }}
                             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" id="gridContainer"
                                 :data-source="valueFacilityBusinesses" :show-borders="true"
                                 :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -168,7 +177,7 @@
                                     <DxItem location="after" template="button-template" css-class="cell-button-add" />
                                 </DxToolbar>
                                 <template #button-template>
-                                    <DxButton icon="plus" @click="addRow" text="추가" />
+                                    <DxButton icon="plus" @click="addRow" text="추가" :disabled="valueRadioBox == 2" />
                                 </template>
                                 <DxColumn data-field="No" :allow-editing="false" :width="50" caption="#"
                                     cell-template="indexCell" />
@@ -195,23 +204,23 @@
                             <a-row :gutter="24" class="custom-label-master-detail" v-if="dataActiveRow"
                                 :key="dataActiveRow.rowIndex">
                                 <a-col :span="12">
-                                    <a-form-item label="사업분류">
+                                    <a-form-item label="사업분류" class="red">
                                         <select-box-common :arrSelect="facilityBizTypeCommon"
                                             v-model:valueInput="dataActiveRow.facilityBizType" displayeExpr="n"
                                             valueExpr="v" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="사업명 (중복불가)">
+                                    <a-form-item label="사업명 (중복불가)" class="red">
                                         <default-text-box v-model:valueInput="dataActiveRow.name" width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="서비스 시작년월">
+                                    <a-form-item label="서비스 시작년월" class="red">
                                         <month-picker-box v-model:valueDate="dataActiveRow.startYearMonth"
                                             width="200px" />
                                     </a-form-item>
-                                    <a-form-item label="정원수">
+                                    <a-form-item label="정원수" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.capacity" />
                                     </a-form-item>
-                                    <a-form-item label="장기요양기관등록번호">
+                                    <a-form-item label="장기요양기관등록번호" class="red">
                                         <text-number-box width="200px" :required="true" :disabled="disableFormVal2"
                                             v-model:valueInput="dataActiveRow.longTermCareInstitutionNumber" />
                                     </a-form-item>
@@ -348,7 +357,7 @@ import queries from "../../graphql/queries/common/index";
 import notification from "../../utils/notification";
 import { useRouter } from "vue-router";
 import { makeDataClean } from "@/helpers/commonFunction"
-import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3 } from "./utils";
+import { dataDefaultsUtil, plainOptionsUtil, arrayRadioCheckUtil, arrayRadioWithdrawDayUtil, arrayRadioCheckUtilStep3} from "./utils";
 import dayjs from 'dayjs';
 export default {
     components: { CheckOutlined, EditOutlined, DxDataGrid, DxScrolling, DxColumn, DxPaging, DxMasterDetail, DxEditing, DxSelection, DxLookup, DxToolbar, DxItem, DxTexts, DxButton, imgUpload, DxRequiredRule, DeleteOutlined, DxAsyncRule, },
@@ -451,12 +460,12 @@ export default {
                 step.value = 1
                 window.scrollTo(0, 0);
             }
-            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 3 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
             ) {
                 step.value = 2
                 window.scrollTo(0, 0);
             }
-            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.bizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.bizNumber.length == 10 && statusMailValidate.value == false
+            if (val == 4 && contractCreacted.terms == true && contractCreacted.personalInfo == true && contractCreacted.accountingService == true && contractCreacted.withholdingService == true && contractCreacted.nameCompany != "" && contractCreacted.ownerBizNumber != "" && contractCreacted.zipcode != "" && contractCreacted.namePresident != "" && contractCreacted.birthday != "" && contractCreacted.mobilePhone != "" && contractCreacted.email != "" && contractCreacted.phone != "" && contractCreacted.ownerBizNumber.length == 10 && statusMailValidate.value == false
             ) {
                 if (dataInputCallApi.dossier != 2 && dataInputCallApi.applicationService != 2) {
                     let count = 0
@@ -528,7 +537,7 @@ export default {
                 } else if (step.value == 1) {
                     if (
                         contractCreacted.nameCompany != "" &&
-                        contractCreacted.bizNumber != "" &&
+                        contractCreacted.ownerBizNumber != "" &&
                         contractCreacted.zipcode != "" &&
                         contractCreacted.namePresident != "" &&
                         contractCreacted.birthday != "" &&
@@ -536,7 +545,7 @@ export default {
                         contractCreacted.email != "" &&
                         contractCreacted.phone != "" &&
                         contractCreacted.addressExtend != "" &&
-                        contractCreacted.bizNumber.length == 10 &&
+                        contractCreacted.ownerBizNumber.length == 10 &&
                         statusMailValidate.value == false
                     ) {
                         step.value++;
@@ -620,7 +629,7 @@ export default {
             }
         };
         const gridRefName: any = ref("grid");
-        const Create = () => {
+        const Create = async () => {
             let dataFacility = JSON.parse(JSON.stringify(valueFacilityBusinesses.value))
             dataFacility.map((val: any) => {
                 delete val.__KEY__
@@ -658,13 +667,13 @@ export default {
                         phone: contractCreacted.phone,
                         fax: contractCreacted.fax,
                         licenseFileStorageId: contractCreacted.licenseFileStorageId,
-                        bizNumber: contractCreacted.bizNumber,
+                        bizNumber: contractCreacted.ownerBizNumber,
                         bizType: contractCreacted.bizType,
                         residentId: contractCreacted.residentId,
                     },
                     president: {
                         name: contractCreacted.namePresident,
-                        birthday: parseInt(dayjs(contractCreacted.birthday).format('YYYYMMDD')),
+                        birthday: contractCreacted.birthday,
                         mobilePhone: contractCreacted.mobilePhone,
                         email: contractCreacted.email,
                     },
@@ -691,8 +700,8 @@ export default {
                 }
             }
           if (dataCallCreated) {
-            dataCallCreated = makeDataClean(dataCallCreated)
-            mutateCreated(dataCallCreated)
+              await makeDataClean(dataCallCreated, ['buildingName']);
+              mutateCreated(dataCallCreated)
           }
                
         }
@@ -738,6 +747,10 @@ export default {
             (newVal) => {
                 contractCreacted.bizType = newVal;
                 changeTypeCompany(newVal);
+                if (newVal == 2) {
+                  valueFacilityBusinesses.value = Array()
+                  dataActiveRow.value = null
+                }
             }
         );
         watch(() => valueAccountingService.value,
@@ -773,7 +786,7 @@ export default {
         return {
             modalStatus, dayjs, arrayRadioCheckStep3, focusedRowKey, dataActiveRow, gridRefName, facilityBizTypeCommon, move_column, colomn_resize, arrayRadioWithdrawDay, valueRadioWithdrawDay, valueSourceService, valueAccountingService, dataImg, dataImgStep3, valueRadioBox, arrayRadioCheck, checkAll, signinLoading, textIDNo, statusMailValidate, disableFormVal, disableFormVal2, contractCreacted, valueFacilityBusinesses, visibleModal, step, checkStepTwo, checkStepThree, checkStepFour, titleModal, titleModal2, plainOptions,isResidentId,
             statusComfirm, deleteRow, contentReady, onSelectionChanged, checkAllFunc, funcAddress, prevStep, nextStep, Create, handleOk, getImgUrl, getImgUrlAccounting, changeStep, removeImg, removeImgStep, addRow, onSelectionClick,
-            optionSale, 
+            optionSale
         };
     },
 };

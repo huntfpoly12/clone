@@ -16,7 +16,22 @@ export default gql`
       month: $month
       resolutionNumber: $resolutionNumber
     ) {
-        bankbookId
+      resolutionNumber
+      bankbook {
+        bankbookNickname
+        type
+        bankbookNumber
+      }
+      transactionDetailDate
+      resolutionClassification
+      income
+      spending
+      summaryOfBankbookDetail
+      summary
+      accountCode
+      relationCode
+      fundingSource
+      clientId
     }
   }
 `;

@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div id="tab23-pa120">
+    <div class="header-text-3" style="margin-bottom: 0">부양가족 상세</div>
     <a-row>
       <a-col :span="24">
         <a-spin :spinning="loading" size="large">
@@ -15,7 +16,7 @@
               <DxButton icon="plus" @click="openAddDependent" />
             </template>
             <DxColumn alignment="left" caption="연말 관계" data-field="relation" cell-template="relationChange" />
-            <DxColumn alignment="left" caption="성명" data-field="name" />
+            <DxColumn alignment="left" caption="성명" data-field="name"/>
             <DxColumn caption="내/외국인" data-field="foreigner" cell-template="foreignerChange" :width="80" />
             <DxColumn alignment="left" caption="주민등록번호" data-field="residentId" />
             <DxColumn alignment="left" cell-template="ageChange" header-cell-template="age-header" />
@@ -33,16 +34,17 @@
             <DxColumn alignment="left" caption="출산 입양" data-field="maternityAdoption"
               cell-template="maternityAdoptionChange" />
             <DxColumn alignment="left" caption="위탁 관계 " data-field="consignmentRelationship" />
+            <DxColumn alignment="left" caption="세대주여부 " data-field="householder" cell-template="householderChange" />
             <DxColumnFixing :enabled="true" />
             <DxColumn :width="50" cell-template="pupop" :fixed="true" fixed-position="right" alignment="center" />
 
             <template #pupop="{ data }">
-              <DxButton class="custom-action"  @click="actionEdit(data.data)"
-                  style="border: none; margin-top: -2px; width: 35px; height: 35px;">
-                    <div v-if="!loading">
-                      <zoom-in-outlined v-if="data.data.relation == 0" :style="{fontSize: '20px', color: 'black'}"/>
-                      <edit-outlined v-else :style="{fontSize: '20px', color: 'black'}"/>
-                    </div>
+              <DxButton class="custom-action" @click="actionEdit(data.data)"
+                style="border: none; margin-top: -2px; width: 35px; height: 35px;">
+                <div v-if="!loading">
+                  <zoom-in-outlined v-if="data.data.relation == 0" :style="{ fontSize: '20px', color: 'black' }" />
+                  <edit-outlined v-else :style="{ fontSize: '20px', color: 'black' }" />
+                </div>
               </DxButton>
             </template>
             <template #foreignerChange="{ data: cellData }">
@@ -78,12 +80,15 @@
             </template>
           <!-- <template #consignmentRelationshipChange="{ data: cellData }">
               <BtnCheck :value="cellData.value" />
-                    </template> -->
+                      </template> -->
+            <template #householderChange="{ data: cellData }">
+              <BtnCheck :value="cellData.value" />
+            </template>
             <template #relationChange="{ data: cellData }">
               {{ $filters.formatRelation(cellData.value) }}
             </template>
             <template #age-header>
-              <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{maxWidth: '500px'}">
+              <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{ maxWidth: '500px' }">
                 <template #title>
                   주민등록번호로 해당 원천년도 기준 나이 자동 계산
                 </template>
@@ -93,7 +98,7 @@
               </a-tooltip>
             </template>
             <template #basicDeduction-header>
-              <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{maxWidth: '500px'}">
+              <a-tooltip placement="top" class="custom-tooltip" :overlayStyle="{ maxWidth: '500px' }">
                 <template #title>
                   주민등록번호로 해당 원천년도 기준 나이 자동 계산 <br />
                   다만, 장애인에 해당하는 경우 나이 기준을 적용하지 아니함

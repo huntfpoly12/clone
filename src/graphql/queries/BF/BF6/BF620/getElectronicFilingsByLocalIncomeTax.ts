@@ -3,15 +3,9 @@ export default gql`
   query getElectronicFilingsByLocalIncomeTax(
     $input: ElectronicFilingReportKeyInput!
   ) {
-    getElectronicFilingsByLocalIncomeTax(filter: $filter) {
+    getElectronicFilingsByLocalIncomeTax(input: $input) {
+      type
       electronicFilingId
-      imputedYear
-      imputedMonth
-      paymentYear
-      paymentHalfYear
-      paymentMonth
-      withholdingTaxType
-      reportType
       productionStatus
       productionRequestedAt
       productionRequestUserId
@@ -19,13 +13,15 @@ export default gql`
       productionStartedAt
       productionCompletedAt
       causeOfProductionFailure
+      referenceInformation
       createdAt
       createdBy
       updatedAt
       updatedBy
       ip
       active
-    #   fileStorage
+      # productionRequestUser
+      #   fileStorage
     }
   }
 `;

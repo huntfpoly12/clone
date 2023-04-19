@@ -39,7 +39,12 @@ import getMajorInsuranceCompanyEmployeeAcquisitionLogs from "./getMajorInsurance
 import getBankbooksLogs from "./getBankbooksLogs";
 import getBankbookDetailLogs from "./getBankbookDetailLogs";
 import getAccoountSubjects from "./getAccoountSubjects";
+import getAccountingProcessLogs from "./getAccountingProcessLogs";
+import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
+import getMe from "./getMe";
+import getMajorInsuranceCompanyOutLogs from "./getMajorInsuranceCompanyOutLogs";
 const queries = {
+  getMe: getMe,
   getUser: getUser,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
@@ -82,7 +87,10 @@ const queries = {
   getBankbooksLogs: getBankbooksLogs,
   getBackerLogs: getBackerLogs,
   getBankbookDetailLogs: getBankbookDetailLogs,
-  getAccoountSubjects:getAccoountSubjects
+  getAccoountSubjects:getAccoountSubjects,
+  getAccountingProcessLogs: getAccountingProcessLogs,
+  getAccountingDocumentsLogs: getAccountingDocumentsLogs,
+  getMajorInsuranceCompanyOutLogs: getMajorInsuranceCompanyOutLogs,
 };
 
 export default queries;

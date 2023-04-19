@@ -12,7 +12,9 @@
       <a-col>
         <div class="search-date" style="flex-direction: column;">
           <a-form-item label="신고주기" label-align="left" class="mb-0 ml-10" v-if="tab1">
-            <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
+            <span @click="onChangeCheckbox1">
+              <checkbox-basic size="14" label="전체" class="mr-10 mx-10" v-model:valueCheckbox="reportType.checkbox1" />
+            </span>
             <checkbox-basic size="14" label="매월" class="mr-10" v-model:valueCheckbox="reportType.checkbox2" />
             <checkbox-basic size="14" label="반기" v-model:valueCheckbox="reportType.checkbox3" />
           </a-form-item>
@@ -24,19 +26,17 @@
             <radio-group :arrayValue="reportTypeTab2" v-model:valueRadioCheck="filterBF620.reportType"
               layoutCustom="horizontal" class="mt-1"></radio-group>
           </a-form-item>
-
         </div>
       </a-col>
       <a-col>
         <div class="search-production">
           <a-form-item label="제작요청상태">
-            <switch-basic v-model:valueSwitch="filterBF620.beforeProduction" :textCheck="'제작요청후'"
-              :textUnCheck="'제작요청전'" />
+            <switch-basic v-model:valueSwitch="setBefore" :textCheck="'제작요청후'" :textUnCheck="'제작요청전'" />
             <span style="font-size: 11px; color: #888888" class="ml-5"> <img src="@/assets/images/iconInfo.png"
                 style="width: 14px" /> 제작전은 제작요청되지 않은 상태입니다. </span>
           </a-form-item>
           <div class="mt-5 production-check">
-            <CheckboxGroup :disabled="!filterBF620.beforeProduction" :options="productionStatusesCheckbox"
+            <CheckboxGroup :disabled="filterBF620.beforeProduction" :options="productionStatusesCheckbox"
               v-model:valueCheckbox="filterBF620.productionStatuses" size="18"> </CheckboxGroup>
           </div>
         </div>
@@ -76,98 +76,102 @@ import CheckboxGroup from './CheckboxGroup.vue';
 export default defineComponent({
   components: { DxButton, CheckboxGroup },
   props: {
+    rerenderReport: {
+      type: Number,
+      default: 0,
+    },
     tab1: {
       type: Boolean,
       default: true
     }
   },
-  setup() {
+  setup(props) {
     const store = useStore();
     const filterBF620 = computed(() => store.state.common.filterBF620);
     const radioCheckForeigner = ref([]);
     const foreigner = ref();
-    const month2: any = ref(dayjs().format('YYYY-MM'));
-    let reportType = reactive({
-      checkbox1: true,
-      checkbox2: true,
-      checkbox3: filterBF620.value.reportType == 6 || filterBF620.value.reportType == 6,
-    });
-    const searchWithholdingTrigger = ref(true);
-    // watch filterBF620.reportType to change value
+    const month2: any = ref(dayjs(`${filterBF620.value.paymentYear}${filterBF620.value.paymentMonth}`))
+    let reportType = computed(() => store.state.common.reportType);
+    const onChangeCheckbox1 = () => {
+      reportType.value.checkbox2 = reportType.value.checkbox1;
+      reportType.value.checkbox3 = reportType.value.checkbox1;
+      filterBF620.value.reportType = null;
+    }
+    watch(() => props.rerenderReport, (newVal: any) => {
+      if (filterBF620.value.reportType == 1) {
+        reportType.value.checkbox1 = false;
+        reportType.value.checkbox2 = true;
+        reportType.value.checkbox3 = false;
+      }
+      if (filterBF620.value.reportType == 6) {
+        reportType.value.checkbox1 = false;
+        reportType.value.checkbox2 = false;
+        reportType.value.checkbox3 = true;
+      }
+    }, { deep: true })
     watch(
-      () => reportType.checkbox1, (newVal: any) => {
-        if (!newVal && (!reportType.checkbox2 || !reportType.checkbox3)) {
-          return;
-        }
-        reportType.checkbox2 = newVal;
-        reportType.checkbox3 = newVal;
-        // delete filterBF620.value.reportType;
-        filterBF620.value.reportType = null;
-
-      },
-      { deep: true }
-    );
-    watch(
-      () => reportType,
-      (newVal: any) => {
-        if (newVal.checkbox2 == true && newVal.checkbox3 == true) {
-          newVal.checkbox1 = true;
-          // delete filterBF620.value.reportType;
+      () => [reportType.value.checkbox2, reportType.value.checkbox3],
+      ([newVal2, newVal3]) => {
+        if (newVal2 && newVal3 && props.tab1) {
+          reportType.value.checkbox1 = true;
           filterBF620.value.reportType = null;
           return;
         }
-        newVal.checkbox1 = false;
-        if (newVal.checkbox2) {
-          filterBF620.value.reportType = 1;
+        if (!newVal2 && !newVal3) {
+          reportType.value.checkbox1 = false;
+          filterBF620.value.reportType = null;
           return;
         }
-        if (newVal.checkbox3) {
+        if (newVal2 && !newVal3) {
+          filterBF620.value.reportType = 1;
+          reportType.value.checkbox1 = false;
+          return;
+        }
+        if (newVal3 && !newVal2) {
+          reportType.value.checkbox1 = false;
           filterBF620.value.reportType = 6;
           return;
         }
       },
-      { deep: true }
+      { immediate: true }
     );
-    watchEffect(() => {
-      reportType.checkbox1 = filterBF620.value.reportType == 0 || filterBF620.value.reportType == null;
-      reportType.checkbox2 = filterBF620.value.reportType == 1 || filterBF620.value.reportType == null;
-      reportType.checkbox3 = filterBF620.value.reportType == 6 || filterBF620.value.reportType == null;
-    });
+
     //watch date
+
     watch(month2, (newVal: any) => {
       if (newVal) {
         filterBF620.value.paymentYear = +month2.value.toString().slice(0, 4);
         filterBF620.value.paymentMonth = +month2.value.toString().slice(4, 6);
       }
     });
+
     // watch beforeProduction
+
     watch(() => filterBF620.value.beforeProduction, (newVal: any) => {
-      if (!newVal) {
+      if (newVal) {
         filterBF620.value.productionStatuses = [];
       } else {
         filterBF620.value.productionStatuses = [0, 1, 2, -1];
       }
     }, { deep: true })
-    // afterDeadLineIndex
-    // const afterDeadLineIndex = ref(1);
-    // watch(afterDeadLineIndex,(newVal: any)=> {
-    //   if(newVal === 1) {
-    //     filterBF620.value.index = 0;
-    //     filterBF620.value.afterDeadline = false;
-    //   }
-    //   if(newVal === 2) {
-    //     filterBF620.value.index = 1;
-    //     filterBF620.value.afterDeadline = false;
-    //   }
-    //   if(newVal === 3) {
-    //     filterBF620.value.index = 0;
-    //     filterBF620.value.afterDeadline = true;
-    //   }
-    // })
+
     // ----------------convert companyCode to upper case------------
+
     const onChange = () => {
       filterBF620.value.companyCode = filterBF620.value.companyCode.toUpperCase();
     }
+    const onChangeSwitch = (e: any) => {
+      filterBF620.value.beforeProduction = !e;
+    }
+    let setBefore = computed(({
+      get() {
+        return !filterBF620.value.beforeProduction;
+      },
+      set(val) {
+        filterBF620.value.beforeProduction = !val;
+      }
+    }))
+
     return {
       radioCheckForeigner,
       foreigner,
@@ -178,7 +182,9 @@ export default defineComponent({
       reportType,
       // afterDeadLineIndex,
       reportTypeTab2,
-      onChange
+      onChange, onChangeSwitch, onChangeCheckbox1,
+      setBefore,
+      dayjs,
     };
   },
 });

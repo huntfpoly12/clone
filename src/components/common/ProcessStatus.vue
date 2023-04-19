@@ -2,7 +2,7 @@
     <span v-if="(disabled || managerGrade == 3)">
         <span v-for="item in arrayRadioManager" :key="item.id">
             <button-basic v-if="(currentBt == item.id)" :width="90" :height="heightBtn" :text="item.text" :class="item.class"
-                class="buttonModal disabled">
+                class="buttonModal disabled-button-process">
             </button-basic>
         </span>
     </span>
@@ -144,7 +144,7 @@ export default defineComponent({
     border: none;
     border-radius: 6px;
 }
-.disabled {
+.disabled-button-process {
     cursor: no-drop;
 }
 

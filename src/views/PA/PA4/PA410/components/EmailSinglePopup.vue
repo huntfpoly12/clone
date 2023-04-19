@@ -27,6 +27,7 @@ import { companyId } from "@/helpers/commonFunction"
 import notification from "@/utils/notification";
 import { useMutation } from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA410/index"
+import { Message } from "@/configs/enum";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -42,6 +43,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        store.dispatch('auth/getUserInfor', sessionStorage.getItem('token'));
         const userInfor = reactive(store.state.auth.userInfor)
         const empployeeDetail = reactive(
             store.state.common.arrayEmployeePA410.filter(function(item : any) { 
@@ -70,7 +72,7 @@ export default defineComponent({
                     emailInput: {
                         senderName: userInfor.username,
                         receiverName: empployeeDetail[0].name,
-                        receiverAddress: empployeeDetail[0].email
+                        receiverAddress: emailAddress.value
                     }
                 }
                 // variables.employeeInputs.receiverAddress = emailAddress.value
@@ -78,7 +80,7 @@ export default defineComponent({
             }
         };
         onDoneAdd(() => {
-            notification('success', `업데이트 완료!`)
+            notification('success', Message.getCommonMessage('801').message)
             emit("closePopup", false)
         })
         errorSendEmail((e: any) => {
@@ -93,7 +95,8 @@ export default defineComponent({
             onSubmit,
             emailAddress,
             empployeeDetail,
-            userInfor
+            userInfor,
+            Message
         }
     },
 })

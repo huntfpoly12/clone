@@ -7,7 +7,10 @@
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-					{{ data.value }}
+          <a-tooltip overlayClassName="selected-value">
+            <template #title>{{ data.value }}</template>
+            <p class="contry-name">{{ data.value }}</p>
+          </a-tooltip>
 				</div>
 			</div>
 			<div v-else class="select-content" style="padding: 1px 0px; height: 30px;">
@@ -22,7 +25,10 @@
 				<a-tag color="default">{{ data.key }}</a-tag>
 				<div>
 					<DxTextBox :value="data && data.value" :read-only="true" class="product-name" />
-					{{ data.value }}
+          <a-tooltip overlayClassName="value-selecte" :overlayStyle="{'z-index': '9999999999999!important' }">
+            <template #title>{{ data.value }}</template>
+            <p class="contry-name">{{ data.value }}</p>
+          </a-tooltip>
 				</div>
 			</div>
 		</template>
@@ -164,5 +170,16 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	padding: 3px 4px !important;
+}
+
+.contry-name{
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100px;
+}
+:deep .value-selecte {
+  z-index: 9999999999999!important;
 }
 </style>

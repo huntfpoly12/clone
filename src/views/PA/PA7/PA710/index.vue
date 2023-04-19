@@ -1,25 +1,14 @@
 <template>
-    <action-header title="기타소득자등록" @actionSave="actionSave()" :buttonDelete="false" />
+    <action-header title="기타소득자등록" @actionSave="disabledBlock ? false :actionSave()" :buttonSave="disabledBlock ? false : true" />
     <div id="pa-710">
         <div class="page-content">
             <a-row>
-                <!-- <a-col span="2" class="total-user">
-                    <div>
-                        <span>{{ listEmployeeExtra.length }}</span>
-                        <br>
-                        <span>전체</span>
-                    </div>
-                    <div>
-                        <img src="@/assets/images/user.svg" style="width: 39px;" />
-                    </div>
-                </a-col>
-                <a-col span="22"></a-col> -->
-                <a-col span="16" class="data-table">
+                <a-col span="16" class="data-table" :class="{'disabledBlock': disabledBlockTable}">
                     <a-spin :spinning="loading || loadingCreated" size="large">
                         <DxDataGrid id="gridContainer" :show-row-lines="true" :hoverStateEnabled="true"
                             :data-source="listEmployeeExtra" :show-borders="true" key-expr="residentIdHide"
                             :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                            :column-auto-width="true" :onRowClick="onSelectionClick"
+                            :column-auto-width="true"
                             @focused-row-changing="onFocusedRowChanging"
                             ref="gridRef"
                             v-model:focused-row-key="focusedRowKey" :focused-row-enabled="true">
@@ -124,7 +113,7 @@
                         <a-form-item :label="!formState.foreigner ? '주민등록번호' : '외국인번호 유효성'" :label-col="labelCol"
                             class="red">
                             <id-number-text-box :width="200" v-model:valueInput="formState.residentId"
-                                :required="true"></id-number-text-box>
+                                :required="true" :foreigner="formState.foreigner"/>
                         </a-form-item>
                         <a-form-item label="소득구분" :label-col="labelCol" class="red">
                             <type-code-select-box style="width: 200px" v-model:valueInput="formState.incomeTypeCode"
@@ -240,7 +229,7 @@ export default defineComponent({
         const dataYearNew = ref(globalYear.value)
         const checkClickYear = ref<Boolean>(false)
         var disabledBlock = ref<boolean>(false);
-
+        const disabledBlockTable = ref<boolean>(false);
         // ================GRAPQL==============================================
         const { mutate: createEmployeeExtra, onDone: onDoneAdd, onError: onErrorAdd, loading: loadingCreated } = useMutation(
             mutations.createEmployeeExtra
@@ -248,10 +237,24 @@ export default defineComponent({
         const { mutate: updateEmployeeExtra, onDone: onDoneUpdate, onError: onErrorUpdate } = useMutation(
             mutations.updateEmployeeExtra
         );
-        const { refetch: refetchData, loading, result } = useQuery(queries.getEmployeeExtras, originData, () => ({
+        const { loading, result, onError } = useQuery(queries.getEmployeeExtras, originData, () => ({
             fetchPolicy: "no-cache",
             enabled: trigger.value,
         }));
+        onError((e: any) => {
+            notification('error', e.message)
+            trigger.value = false;
+            statusAddRow.value = true;
+            listEmployeeExtra.value = []
+            if (runOne.value) {
+                statusFormUpdate.value = false;
+                resetFormNum.value++;
+                Object.assign(formState.value, initialState);
+                runOne.value = false;
+            }
+            disabledBlock.value = true;
+            disabledBlockTable.value = true;
+        })
         const { refetch: refetchDataDetail, loading: loadingDetail, onResult: resultDetail } = useQuery(queries.getEmployeeExtra, originDataDetail, () => ({
             fetchPolicy: "no-cache",
             enabled: triggerDetail.value,
@@ -285,7 +288,7 @@ export default defineComponent({
             notification('error', error.message)
         });
         onDoneAdd(async (data) => {
-            notification('success', `업데이트 완료되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '101').message)
             if (checkClickYear.value) {
                 originData.imputedYear = dataYearNew.value
                 runOne.value = true;
@@ -329,7 +332,7 @@ export default defineComponent({
             store.state.common.savePA710++;
         });
         onDoneUpdate(async (data) => {
-            notification('success', `업데이트 완료되었습니다!`)
+            notification('success', Message.getMessage('COMMON', '106').message)
             if (checkClickYear.value) {
                 originData.imputedYear = dataYearNew.value
                 runOne.value = true;
@@ -419,42 +422,7 @@ export default defineComponent({
         const textTypeCode = (e: any) => {
             formState.value.incomeTypeName = e
         }
-        
 
-        // When changing the value in the input form then moving to another row, check the valid form and display the popup
-        // const actionToAddFromEdit = (e: any) => {
-        //     var res = e.validationGroup.validate();
-        //     //remove active row edit
-        //     const element = document.querySelector('.dx-row-focused');
-        //     if (element)
-        //         (element as HTMLInputElement).classList.remove("dx-row-focused");
-
-        //     if (!res.isValid) {
-        //         res.brokenRules[0].validator.focus();
-        //     } else
-        //         confirmSave.value = true
-        // }
-        const onSelectionClick = (data: any) => {
-            // dataRow = data.data
-            // if (dataRow.employeeId && dataRow.employeeId != formState.value.employeeId) {
-            //     originDataDetail.value.employeeId = data.data.employeeId
-            //     originDataDetail.value.incomeTypeCode = data.data.incomeTypeCode
-            //     if (statusFormUpdate.value == false && JSON.stringify(initialState) !== JSON.stringify(formState.value)) {
-            //         modalStatus.value = true;
-            //     } else {
-            //         if (JSON.stringify(dataRowOld) !== JSON.stringify(formState.value) && statusFormUpdate.value == true) {
-            //             modalStatus.value = true;
-            //         } else {
-            //             if (!statusAddRow.value && listEmployeeExtra.value[listEmployeeExtra.value.length - 1]?.employeeId == null) {
-            //                 listEmployeeExtra.value = listEmployeeExtra.value.splice(0, listEmployeeExtra.value.length - 1)
-            //                 statusAddRow.value = true
-            //             }
-            //             triggerDetail.value = true;
-            //         }
-            //         statusFormUpdate.value = true;
-            //     }
-            // }
-        }
         const onFocusedRowChanging = (e: any) => {
             statusClickButtonAdd.value = false
             dataRow = e.rows[e.newRowIndex]?.data
@@ -494,12 +462,6 @@ export default defineComponent({
                     statusClickButtonAdd.value = true
                 } else if(statusAddRow.value) {
                     addRow()
-                    // statusAddRow.value = false;
-                    // listEmployeeExtra.value = JSON.parse(JSON.stringify(listEmployeeExtra.value)).concat({ ...initialState })
-                    // formState.value = listEmployeeExtra.value[listEmployeeExtra.value.length - 1]
-                    // resetFormNum.value++;
-                    // focusedRowKey.value = 'PA710';
-                    // statusFormUpdate.value = false;
                 }
             }
         }
@@ -569,6 +531,7 @@ export default defineComponent({
         watch(result, (value) => {
             trigger.value = false;
             statusAddRow.value = true;
+            disabledBlockTable.value = false;
             if (value) {
                 listEmployeeExtra.value = value.getEmployeeExtras.map((value: any) => {
                     return {
@@ -594,7 +557,6 @@ export default defineComponent({
                 } else {
                     disabledBlock.value = true;
                 }
-                // listEmployeeExtra.value = value.getEmployeeExtras
                 
             }
             if (statusClickButtonAdd.value && !statusClickButtonSave.value) { // nếu trước đó ấn button add
@@ -637,8 +599,8 @@ export default defineComponent({
             confirmSave, move_column, colomn_resize, idRowEdit, loading, loadingDetail, modalHistoryStatus, labelCol: { style: { width: "150px" } }, formState, optionsRadio, statusFormUpdate, popupData, listEmployeeExtra, DeleteOutlined, modalStatus, focusedRowKey, resetFormNum, modalStatusAdd, loadingCreated,
             // confimSaveWhenChangeRow, 
             onFocusedRowChanging,
-            // actionToAddFromEdit, 
-            textCountry, actionCreate, textTypeCode, onSelectionClick, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
+            disabledBlockTable,
+            textCountry, actionCreate, textTypeCode, actionSave, modalHistory, statusComfirm, statusComfirmAdd,
             contentDelete, modalStatusDelete, onSubmitDelete, statusAddRow, Message, pa710FormRef, disabledBlock, gridRef,
         };
     },

@@ -1,5 +1,5 @@
 <template>
-	<DxSelectBox :search-enabled="true" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueInput"
+	<DxSelectBox :search-enabled="searchEnabled" :data-source="dataSelect" @value-changed="onValueChanged" :value="valueInput"
 		value-expr="key" display-expr="value" field-template="field" item-template="item" :style="{ width: width }"
 		:disabled="disabled" :required="required">
 		<template #field="{ data }">
@@ -63,8 +63,11 @@ export default defineComponent({
 			default: '1'
 			//1: backgroud : gray
 			//2: backgroud : black
-		}
-
+		},
+    searchEnabled: {
+      type: Boolean,
+      default: true
+    }
 	},
 	components: {
 		DxSelectBox,

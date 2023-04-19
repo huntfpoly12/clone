@@ -57,7 +57,7 @@ table tr td {
 
 $lenght: 50;
 
-@for $i from 1 through $lenght {
+@for $i from 0 through $lenght {
   .pl-#{$i} {
     padding-left: $i+ px;
   }
@@ -218,7 +218,7 @@ $lenght: 50;
 }
 .column-focus {
   background-color: #5c95c5;
-  color: black;
+  color: white;
 }
 .column-hover {
   background-color: #D1E1F8;
@@ -231,4 +231,8 @@ $lenght: 50;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.4;
 }

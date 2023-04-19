@@ -22,7 +22,11 @@
           <DxItem location="after" template="button-template" css-class="cell-button-add"/>
         </DxToolbar>
         <template #button-template>
-          <DxButton icon="plus" @click="openAddNewModal"/>
+          <a-tooltip placement="top" title="신규">
+            <div>
+              <DxButton icon="plus" @click="openAddNewModal"/>
+            </div>
+          </a-tooltip>
         </template>
         <DxColumn caption="일련번호" data-field="workId" width="100" alignment="center"/>
         <DxColumn caption="성명" data-field="name" alignment="center"/>
@@ -30,7 +34,10 @@
         <template #convertBirthday="{ data }" class="">
           <div class="d-flex justify-content-center">{{ convertBirthDayKorea(data.data.residentId) }}</div>
         </template>
-        <DxColumn caption="주민등록증" data-field="residentId" width="150" alignment="center"/>
+        <DxColumn caption="주민등록증" data-field="residentId" cell-template="residentId" width="150" alignment="center"/>
+        <template #residentId="{ data }">
+          <div>{{ convertResidentId(data.data.residentId)}}</div>
+        </template>
         <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="center" cell-template="workingStatus"/>
         <template #workingStatus="{ data }">
           <div>
@@ -64,23 +71,23 @@
         <DxScrolling column-rendering-mode="virtual" />
         <DxColumn cell-template="action" width="150" alignment="center"/>
         <template #action="{ data }" class="custom-action">
-          <div class="custom-action" style="text-align: center">
-            <a-space>
+            <a-space :size="4">
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px"/>
               </DxButton>
-              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
-                <DeleteOutlined/>
+              <DxButton :disabled="data.data.workingStatus === 0" type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
+                <DeleteOutlined style="font-size: 16px"/>
               </DxButton>
             </a-space>
-          </div>
         </template>
         <DxScrolling column-rendering-mode="virtual"/>
       </DxDataGrid>
     </a-spin>
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
                   typeHistory="pa-810"/>
-    <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    <div v-if="isOpenModalCreate">
+      <CreatePA810Popup  :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false" @handleCreate="handleCreate" />
+    </div>
     <PopupMessage :modalStatus="isDelete"  @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
   </div>
 </template>
@@ -88,7 +95,7 @@
 <script lang="ts">
 import mutations from '@/graphql/mutations/PA/PA8/PA810/index';
 import queries from '@/graphql/queries/PA/PA8/PA810/index';
-import {companyId, convertBirthDayKorea} from '@/helpers/commonFunction';
+import {companyId, convertBirthDayKorea, convertResidentId} from '@/helpers/commonFunction';
 import notification from '@/utils/notification';
 import {DeleteOutlined, DownloadOutlined, HistoryOutlined, ZoomInOutlined} from '@ant-design/icons-vue';
 import {useMutation, useQuery} from '@vue/apollo-composable';
@@ -117,9 +124,8 @@ enum MajorInsuranceWorkingStatus {
     취소 = 0
 }
 export default defineComponent({
-  methods: {convertBirthDayKorea},
+  methods: {convertResidentId, convertBirthDayKorea},
   components: {
-    // ViewPA810Popup,
     DxDataGrid,
     DxColumn,
     DxButton,
@@ -237,6 +243,7 @@ export default defineComponent({
       mutateCancelAcquistion(actionParam);
     }
   }
+  // view detail
     return {
       globalYear,
       per_page,
@@ -263,7 +270,7 @@ export default defineComponent({
       contentDelete,
       handleCreate,
       MajorInsuranceWorkingStatus,
-      onGetFileStorageId
+      onGetFileStorageId,
     };
   },
 });

@@ -3,7 +3,8 @@
     title="후원자 관리"
     @actionSave="actionSave($event)"
     @actionSearch="actionSearch && searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-620">
     <div class="search-form dflex">
@@ -24,121 +25,122 @@
         <text-number-box width="150px" v-model:valueInput="dataSearch.phone" />
       </div>
     </div>
-    <div class="page-content">
-      <a-row gutter="24">
+    <div class="px-6">
+      <a-row :gutter="[12,0]">
         <a-col span="16" style="height: 700px">
-          <a-spin :spinning="loading" size="large">
-            <DxDataGrid
-              ref="gridRef"
-              :show-row-lines="true"
-              :hoverStateEnabled="true"
-              :dataSource="dataSource"
-              :show-borders="true"
-              key-expr="backerCode"
-              :allow-column-reordering="move_column"
-              :focused-row-enabled="true"
-              @focused-row-changing="onFocusedRowChanging"
-              @focused-row-changed="onFocusedRowChanged"
-              v-model:focused-row-key="focusedRowKey"
-              :focusedRowIndex="0"
-              style="max-height: 700px"
-            >
-              <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
-              <DxPaging :page-size="0" />
-              <DxExport :enabled="true" />
-              <DxToolbar>
-                <DxItem name="searchPanel" />
-                <DxItem name="exportButton" css-class="cell-button-export" />
-                <DxItem location="after" template="button-template" css-class="cell-button-add"/>
+          <div style="height: 100%; border: 1px solid #d7d7d7">
+            <a-spin :spinning="loading" size="large">
+              <DxDataGrid
+                ref="gridRef"
+                :show-row-lines="true"
+                :hoverStateEnabled="true"
+                :dataSource="dataSource"
+                :show-borders="true"
+                key-expr="backerCode"
+                :allow-column-reordering="move_column"
+                :focused-row-enabled="true"
+                @focused-row-changing="onFocusedRowChanging"
+                @focused-row-changed="onFocusedRowChanged"
+                v-model:focused-row-key="focusedRowKey"
+                :focusedRowIndex="0"
+                style="max-height: 700px"
+              >
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                <DxPaging :page-size="0" />
+                <DxExport :enabled="true" />
+                <DxToolbar>
+                  <DxItem name="searchPanel" />
+                  <DxItem name="exportButton" css-class="cell-button-export" />
+                  <DxItem location="after" template="button-template" css-class="cell-button-add"/>
 
-              </DxToolbar>
+                </DxToolbar>
 
-              <template #button-template>
-                <a-tooltip placement="top">
-                  <template #title>거래처 등록</template>
-                  <div>
-                    <DxButton icon="plus" @click="addRow" />
+                <template #button-template>
+                  <a-tooltip placement="top" title="신규">
+                    <div>
+                      <DxButton icon="plus" @click="addRow" />
+                    </div>
+                  </a-tooltip>
+                </template>
+                <DxColumn caption="후원자코드" data-field="backerCode" alignment="center"/>
+                <DxColumn caption="후원자명" data-field="name" alignment="center"/>
+                <DxColumn caption="후원자구분" cell-template="type" data-field="type" alignment="center"/>
+                <template #type="{ data }">{{ BeckerType[data.data.type] }}</template>
+                <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"
+                />
+                <template #residentId="{ data }">
+                  <div v-if="data.data.residentId?.length == 14">
+                    <a-tooltip
+                      placement="top"
+                      v-if="
+                        parseInt(data.data.residentId.split('-')[0].slice(2, 4)) <
+                          13 &&
+                        parseInt(data.data.residentId.split('-')[0].slice(4, 6)) <
+                          32
+                      "
+                      key="black"
+                    >
+                      {{ data.data.residentId }}
+                    </a-tooltip>
+                    <a-tooltip placement="top" v-else title="ERROR" color="red">
+                      {{ data.data.residentId }}
+                    </a-tooltip>
                   </div>
-                </a-tooltip>
-              </template>
-              <DxColumn caption="후원자코드" data-field="backerCode" alignment="center"/>
-              <DxColumn caption="후원자명" data-field="name" alignment="center"/>
-              <DxColumn caption="후원자구분" cell-template="type" data-field="type" alignment="center"/>
-              <template #type="{ data }">{{ BeckerType[data.data.type] }}</template>
-              <DxColumn caption="주민등록번호" cell-template="residentId" data-field="residentId"
-              />
-              <template #residentId="{ data }">
-                <div v-if="data.data.residentId?.length == 14">
-                  <a-tooltip
-                    placement="top"
-                    v-if="
-                      parseInt(data.data.residentId.split('-')[0].slice(2, 4)) <
-                        13 &&
-                      parseInt(data.data.residentId.split('-')[0].slice(4, 6)) <
-                        32
-                    "
-                    key="black"
-                  >
-                    {{ data.data.residentId }}
-                  </a-tooltip>
-                  <a-tooltip placement="top" v-else title="ERROR" color="red">
-                    {{ data.data.residentId }}
-                  </a-tooltip>
-                </div>
-                <div v-else>
-                  <a-tooltip
-                    v-if="data.data.residentId"
-                    placement="top"
-                    key="black"
-                  >
-                    {{
-                      data.data.residentId.slice(0, 6) +
-                      "-" +
-                      data.data.residentId.slice(6, 13)
-                    }}
-                  </a-tooltip>
-                </div>
-              </template>
-              <DxColumn
-                caption="사업자(고유)등록번호"
-                cell-template="bizNumber"
-                data-field="bizNumber"
-                alignment="center"
-              />
-              <template #bizNumber="{ data }">
-                <span v-if="data.data.bizNumber">
-                  {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
-                    data.data.bizNumber.toString().slice(3, 5)
-                  }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
-                </span>
-              </template>
-              <DxColumn caption="주소" data-field="roadAddress" alignment="center"/>
-              <DxColumn caption="연락처" data-field="phone" alignment="center"/>
-              <DxColumn caption="기부금영수증 발행 가능 여부" data-field="donationOrganization" cell-template="donationOrganization" alignment="center"/>
-              <template #donationOrganization="{ data }">
-                <span>{{
-                  data.data.name
-                  && (data.data.residentId || data.data.bizNumber)
-                  && (data.data.roadAddress || data.data.addressExtend)
-                    ? 'O' : 'X' }}</span>
-              </template>
-              <DxColumn
-                caption="이용여부"
-                cell-template="use"
-                data-field="use"
-                alignment="center"
-              />
-              <template #use="{ data }">
-                <tag-color-use :valueUse="data.value" />
-              </template>
-              <DxColumn cell-template="historyBacker" width="70px" alignment="center"/>
-              <template #historyBacker="{ data }">
-                <div @click="handleClickShowHistory(data.data.backerCode)">
-                  <HistoryOutlined  style="font-size: 18px" class="" />
-                </div>
-              </template>
-            </DxDataGrid>
-          </a-spin>
+                  <div v-else>
+                    <a-tooltip
+                      v-if="data.data.residentId"
+                      placement="top"
+                      key="black"
+                    >
+                      {{
+                        data.data.residentId.slice(0, 6) +
+                        "-" +
+                        data.data.residentId.slice(6, 13)
+                      }}
+                    </a-tooltip>
+                  </div>
+                </template>
+                <DxColumn
+                  caption="사업자(고유)등록번호"
+                  cell-template="bizNumber"
+                  data-field="bizNumber"
+                  alignment="center"
+                />
+                <template #bizNumber="{ data }">
+                  <span v-if="data.data.bizNumber">
+                    {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
+                      data.data.bizNumber.toString().slice(3, 5)
+                    }}-{{ data.data.bizNumber.toString().slice(5, 10) }}
+                  </span>
+                </template>
+                <DxColumn caption="주소" data-field="roadAddress" alignment="center"/>
+                <DxColumn caption="연락처" data-field="phone" alignment="center"/>
+                <DxColumn caption="기부금영수증 발행 가능 여부" data-field="donationOrganization" cell-template="donationOrganization" alignment="center"/>
+                <template #donationOrganization="{ data }">
+                  <span>{{
+                    data.data.name
+                    && (data.data.residentId || data.data.bizNumber)
+                    && (data.data.roadAddress || data.data.addressExtend)
+                      ? 'O' : 'X' }}</span>
+                </template>
+                <DxColumn
+                  caption="이용여부"
+                  cell-template="use"
+                  data-field="use"
+                  alignment="center"
+                />
+                <template #use="{ data }">
+                  <tag-color-use :valueUse="data.value" />
+                </template>
+                <DxColumn cell-template="historyBacker" width="70px" alignment="center"/>
+                <template #historyBacker="{ data }">
+                  <div @click="handleClickShowHistory(data.data.backerCode)">
+                    <HistoryOutlined  style="font-size: 18px" class="" />
+                  </div>
+                </template>
+              </DxDataGrid>
+            </a-spin>
+          </div>
         </a-col>
         <a-col span="8" class="relative form-custom" :style="!isDataRow && 'pointer-events: none;'">
           <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
@@ -205,8 +207,8 @@
               <span v-else>해당사항없음</span>
             </a-form-item>
 
-            <a-form-item label="주민등록번호" :label-col="labelCol">
-              <div class="d-flex gap-6">
+            <a-form-item label="주민등록번호" :label-col="labelCol" v-if="formState.type === 1">
+              <div class="d-flex gap-6" >
                 <id-number-text-box
                   :required="formState.type === 1"
                   :width="200"
@@ -224,7 +226,7 @@
               </div>
             </a-form-item>
 
-            <a-form-item label="사업자(고유)등록번호" :label-col="labelCol">
+            <a-form-item label="사업자(고유)등록번호" :label-col="labelCol" v-else>
               <div class="d-flex gap-6">
                 <biz-number-text-box
                   :required="formState.type !== 1"
@@ -327,19 +329,19 @@ import DataSource from "devextreme/data/data_source";
 import { FocusedRowChangedEvent, FocusedRowChangingEvent } from "devextreme/ui/data_grid";
 import {computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
-import { initBackerCreateInput } from "./utils/index";
+import {checkAndAddKeyToObject, initBackerCreateInput} from "./utils/index";
 import TextNumberBox from "@/components/common/TextNumberBox.vue";
 import InfoToolTip from './components/InfoToolTip.vue'
 import {isEqual, cloneDeep} from "lodash";
-
-type SearchType = {
-  page: number
-  rows: number
-  name: string | null
-  phone: string
-  type: null | number
-  includeNonUse: boolean
-};
+import {message} from "ant-design-vue";
+// type SearchType = {
+//   page: number
+//   rows: number
+//   name: string | null
+//   phone: string | undefined
+//   type: null | number
+//   includeNonUse: boolean
+// };
 enum BeckerType {
   개인 = 1,
   영리법인 = 2,
@@ -388,7 +390,7 @@ export default defineComponent({
     const focusedRowKey = ref<number>(0); // focused row key
     const previousRowData = ref({...initBackerCreateInput}); // save previous row data when focus row change
 
-    const formState = ref({...initBackerCreateInput}); // data show in form when click row or add new row
+    const formState: any = ref({...initBackerCreateInput}); // data show in form when click row or add new row
     const selectRowKeyAction = ref<number>(0); // key of row selected in gridData
     const dataSource = ref<DataSource>(); // data source of grid
     const originDataDetail: any = ref({
@@ -406,11 +408,11 @@ export default defineComponent({
     const actionSearch: any = ref<boolean>(true);
     const type = ref(0);
 
-    const dataSearch = ref<SearchType>({
+    const dataSearch: any = ref({
       page: 1,
       rows: per_page,
       name: null,
-      phone: '',
+      phone: undefined,
       type: null,
       includeNonUse: true,
     });
@@ -439,7 +441,11 @@ export default defineComponent({
     } = useQuery(
       queries.searchBackers,{
         companyId: companyId,
-        filter: {...dataSearch.value},
+        filter: {
+          page: 1,
+          rows: per_page,
+          includeNonUse: true,
+        },
       },() => ({
         fetchPolicy: "no-cache",
         enabled: trigger.value,
@@ -515,6 +521,7 @@ export default defineComponent({
       isCheckedResidentId.value = false;
       isDiscard.value = false;
       notification("success", Message.getCommonMessage('106').message);
+
     });
     onErrorUpdate((e) => {
       triggerDetail.value = true;
@@ -625,13 +632,26 @@ export default defineComponent({
             await updateBacker(dataUpdate.value);
           }
         } else {
-          const {backerCode, ...newData} = formState.value
+          const newData = {
+            type: formState.value.type,
+            year: globalYear.value,
+            use: formState.value.use,
+            name: formState.value.name
+          }
+          checkAndAddKeyToObject({obj: newData, key: 'fundrasingInstitution', value: formState.value.fundrasingInstitution})
+          checkAndAddKeyToObject({obj: newData, key: 'donationOrganization', value: formState.value.donationOrganization})
+          checkAndAddKeyToObject({obj: newData, key: 'residentId', value: formState.value.residentId})
+          checkAndAddKeyToObject({obj: newData, key: 'bizNumber', value: formState.value.bizNumber})
+          checkAndAddKeyToObject({obj: newData, key: 'roadAddress', value: formState.value.roadAddress})
+          checkAndAddKeyToObject({obj: newData, key: 'addressExtend', value: formState.value.addressExtend})
+          checkAndAddKeyToObject({obj: newData, key: 'phone', value: formState.value.phone})
+          checkAndAddKeyToObject({obj: newData, key: 'nonProfitCorpType', value: formState.value.nonProfitCorpType})
+          checkAndAddKeyToObject({obj: newData, key: 'otherContents', value: formState.value.otherContents})
           // if form disabled => action add isCheckedBizNumber
           const newDataCreate = {
             companyId: companyId,
             input: {
               ...newData,
-              year: globalYear.value,
             },
           };
           if (!isDisableBtnCheckBizNumber.value || !isDisableBtnCheckResidentId.value) {
@@ -775,29 +795,48 @@ export default defineComponent({
     onResultCheckBizNumber(e => {
       triggerBizNumber.value = false
         if (e.data?.isBackerRegistableBizNumber) {
-          notification('success', `사용 가능한 아이디입니다!`)
+          message.success({
+            content: () =>  '사용 가능한 아이디입니다!',
+            class: 'ant-message',
+            style: {
+              marginTop: '20vh',
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "100px",
+            },
+          }, 2);
           isCheckedBizNumber.value = true
         } else {
-          notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+          message.error({
+            content: () =>  '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요',
+            class: 'ant-message',
+            style: {
+              marginTop: '20vh',
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "100px",
+            },
+          }, 2);
           isCheckedBizNumber.value = false
         }
     })
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
+      const input:any = {
+        name: formState.value.name,
+        use: formState.value.use,
+      }
+      if (formState.value.residentId) input.residentId = formState.value.residentId?.replace("-", "");
+      if (formState.value.bizNumber) input.bizNumber = formState.value.bizNumber;
+      if (formState.value.phone) input.phone = formState.value.phone;
+      if (formState.value.fundrasingInstitution) input.fundrasingInstitution = formState.value.fundrasingInstitution;
+      if (formState.value.donationOrganization) input.donationOrganization = formState.value.donationOrganization;
+      if (formState.value.roadAddress) input.roadAddress = formState.value.roadAddress;
+      if (formState.value.addressExtend) input.addressExtend = formState.value.addressExtend;
       return {
         companyId: companyId,
         backerCode: formState.value.backerCode,
-        input: {
-          name: formState.value.name,
-          bizNumber: formState.value.bizNumber,
-          residentId: formState.value.residentId?.replace("-", ""),
-          phone: formState.value.phone,
-          use: formState.value.use,
-          fundrasingInstitution: formState.value.fundrasingInstitution,
-          donationOrganization: formState.value.donationOrganization,
-          roadAddress: formState.value.roadAddress,
-          addressExtend: formState.value.addressExtend,
-        },
+        input: input,
       };
     });
     const actionSave = (e: any) => {
@@ -823,11 +862,19 @@ export default defineComponent({
     };
 
     const searching = (e: any) => {
-      dataSearch.value.type = type.value === 0 ? null : type.value;
+      // dataSearch.value.type = type.value === 0 ? null : type.value;
       dataSearch.value.page = listBackers.value.page;
+      const dataFilter = {
+        page: 1,
+        rows: per_page,
+        includeNonUse: true,
+      };
+      checkAndAddKeyToObject({obj: dataFilter, key: 'name', value: dataSearch.value.name})
+      checkAndAddKeyToObject({obj: dataFilter, key: 'phone', value: dataSearch.value.phone})
+      checkAndAddKeyToObject({obj: dataFilter, key: 'type', value: type.value})
       refetchData({
         companyId: companyId,
-        filter: {...dataSearch.value},
+        filter: {...dataFilter},
       })
     };
 

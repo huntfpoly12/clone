@@ -1,7 +1,7 @@
 <template>
     <a-tooltip placement="bottom" :title="textError" color='red' :visible="showError">
       <div>
-        <button-basic style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
+        <button-basic :disabled="disabled" style="margin: 0px 5px" @onClick="clickButton($event)" mode="contained"
         :type="statusChange ? 'calculate' : 'default'" :text="text" />
       </div>
     </a-tooltip>

@@ -1,8 +1,9 @@
 <template>
+  <action-header title="통장 관리" @actionSave="onSubmitConfig" :buttonSave="true"/>
     <div id="cm-130" class="cm-130" style="padding: 24px;">
         <!-- <a-spin tip="Loading..." :spinning="loading || loadingWithholdingConfig || loadingDeduction"> -->
             <a-tabs v-model:activeKey="activeKey" type="card">
-                <template #rightExtra>
+                <!-- <template #rightExtra>
                     <div class="list-action">
                         <div v-if="activeKey == '1'">
                             <a-tooltip color="black">
@@ -34,16 +35,16 @@
                                 </a-tooltip>
                             </div>
                         </div>
-                        <div v-if="activeKey == '3'">
-                            <a-tooltip color="black">
+                        <div v-if="activeKey == '3'"> -->
+                            <!-- <a-tooltip color="black">
                                 <template #title>저장</template>
                                 <a-button @click="onSubmitConfigDeduction">
                                     <SaveOutlined />
                                 </a-button>
-                            </a-tooltip>
-                        </div>
+                            </a-tooltip> -->
+                        <!-- </div>
                     </div>
-                </template>
+                </template> -->
                 <a-tab-pane key="1" tab="기본">
                     <a-spin tip="Loading..." :spinning="loading">
                     <a-row>
@@ -146,7 +147,7 @@
                                     <a-row :gutter="24">
                                         <a-col>
                                             <a-form-item label="사업장주소" :label-col="labelCol">
-                                                <default-text-box style="width: 574px; margin-right: 10px; float: left;"
+                                                <default-text-box style="width: 565px; margin-right: 10px; float: left;"
                                                     :disabled="true"
                                                     v-model:valueInput="formState.companyAddressInfoAddress">
                                                 </default-text-box>
@@ -197,13 +198,13 @@
                                                     </a-form-item>
                                                 </a-col>
                                                 <a-col>
-                                                    <div style="margin-left: 22px;">
-                                                        <span>지방소득세 납세지:</span>
-                                                        <default-text-box
-                                                            style="width: 200px; display: inline-block; margin-left: 10px;"
-                                                            :disabled="true"
-                                                            v-model:valueInput="formState.localIncomeTaxArea">
-                                                        </default-text-box>
+                                                    <div style="margin-left: 20px; margin-right: 3px;">
+                                                        <a-form-item label="지방소득세 납세지" :label-col="labelCol">
+                                                            <default-text-box width="170"
+                                                                :disabled="true"
+                                                                v-model:valueInput="formState.localIncomeTaxArea">
+                                                            </default-text-box>
+                                                        </a-form-item>
                                                     </div>
                                                 </a-col>
                                                 <a-form-item>

@@ -8,12 +8,12 @@
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-::v-deep img-preview {
+:deep img-preview {
     position: relative;
     width: 100%;
 }
 
-::v-deep .preview-img img {
+:deep .preview-img img {
     position: relative;
     width: 100%;
     height: 345px;
@@ -29,9 +29,9 @@
 
 .contract-container {
     max-width: 960px;
-    margin: 50px auto;
+    margin: 0px auto;
     text-align: left;
-    padding-bottom: 50px;
+    padding: 10px 0;
 }
 
 .contract-container h2 {
@@ -46,14 +46,13 @@
     margin-top: 30px;
 }
 
-::v-deep .custom-label-master-detail {
+:deep .custom-label-master-detail {
     border: 1px solid #ccc;
     margin: 5px 0 10px 0 !important;
     padding: 10px 0px;
 
 
     label {
-        color: red;
         width: 170px;
     }
 
@@ -71,7 +70,7 @@
     margin-top: 5px;
 }
 
-::v-deep textarea {
+:deep textarea {
     height: 100px;
 }
 
@@ -84,7 +83,7 @@
     margin-top: 20px;
 }
 
-.group-button ::v-deep button {
+.group-button :deep button {
     margin: 0 10px;
 }
 
@@ -99,7 +98,7 @@
 }
 
 .form-item label {
-    min-width: 165px;
+    min-width: 155px;
 }
 
 .red {
@@ -110,11 +109,11 @@
     width: auto;
 }
 
-.form-item ::v-deep button {
+.form-item :deep button {
     margin-left: 5px;
 }
 
-::v-deep #nest-messages_user_email {
+:deep #nest-messages_user_email {
     min-width: 350px !important;
 }
 
@@ -161,7 +160,7 @@
 }
 
 .date-picker label {
-    width: 165px;
+    width: 125px;
     display: inline-block;
 }
 
@@ -170,7 +169,7 @@
     display: none;
 }
 
-::v-deep .ant-radio-group {
+:deep .ant-radio-group {
     display: flex;
 }
 
@@ -191,7 +190,7 @@
     display: inline-block;
 }
 
-::v-deep .ant-pagination {
+:deep .ant-pagination {
     display: none;
 }
 
@@ -212,15 +211,15 @@
     margin-top: 30px;
 }
 
-::v-deep .ant-checkbox-wrapper {
+:deep .ant-checkbox-wrapper {
     display: flex;
 }
 
-::v-deep .ant-select {
+:deep .ant-select {
     width: 180px;
 }
 
-::v-deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
+:deep .dx-toolbar-text-auto-hide .dx-button .dx-button-text {
     display: inline-block;
 }
 
@@ -232,24 +231,24 @@
     border-radius: 2px !important;
 }
 
-::v-deep .ant-form-item-explain-error {
+:deep .ant-form-item-explain-error {
     min-width: 300px !important;
 }
 
-::v-deep .width-400 {
+:deep .width-400 {
     width: 400px;
 }
 
-::v-deep .width-150 {
+:deep .width-150 {
     width: 150px;
 }
 
-::v-deep .width-350 {
+:deep .width-350 {
     width: 350px;
 }
 
 
-::v-deep .confirm-modal {
+:deep .confirm-modal {
     .ant-modal-footer {
         display: none !important;
     }
@@ -264,6 +263,43 @@
     display: flex;
 }
 
-.button-plus-add{
+
+.register-input {
+    background: #fff;
+    border: 1px solid #ddd;
+    // color: #999;
+    padding: 10px;
+    height: 142px;
+    overflow: scroll;
+}
     
+.register-input::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+}
+.register-input::-webkit-scrollbar-thumb {
+  background-color: #1890ff; 
+  width: 20px;
+  height: 50px;
+} /* this will style the thumb, ignoring the track */
+.register-input::-webkit-scrollbar-track {
+  width: 30px;
+}
+
+.step1 {
+  :deep span.dx-checkbox-text {
+    width: 61px;
+  }
+}
+:deep .ant-form-item-label > label {
+  width: 155px;
+}
+:deep .ant-space-align-center {
+  margin-left: 125px;
+}
+:deep .custom-file-input{
+  width: 130px;
+  &::before {
+    width: 130px;
+  }
 }

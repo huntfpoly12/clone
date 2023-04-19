@@ -1,7 +1,7 @@
 <template>
     <a-spin :spinning="loading" size="large">
         <div id="bf-330">
-            <action-header title="서비스관리"  @actionSearch="searching"/>
+            <action-header title="서비스관리"  @actionSearch="searching" :buttonSearch="true"/>
             <div class="search-form">
                 <div class="components-grid-demo-flex">
                     <a-row justify="start" :gutter="[16, 8]">
@@ -80,9 +80,11 @@
                         {{ data.data.manageStartDate ? $filters.formatDate(data.data.manageStartDate) : '' }}
                     </template>
                     <DxColumn data-field="compactSalesRepresentative.name" caption="영업자" />
-                    <DxColumn caption="서비스" cell-template="used-withholding"/>
+                    <DxColumn :width="150" caption="서비스" cell-template="used-withholding"/>
                     <template #used-withholding="{ data }">
-                        회계 {{ data.data.usedAccountingCount }}{{  data.data.usedWithholding === true ? ', 원천' : '' }}
+                        <a-tag>회계</a-tag>
+                        <a-tag style="border-radius: 50%;" >{{ data.data.usedAccountingCount }}</a-tag>
+                        <a-tag color="black" v-if="data.data.usedWithholding === true">원천</a-tag>
                     </template>
                     <DxColumn data-field="servicePrice" caption="이용료" :format="amountFormat" data-type="number" />
                     <DxColumn data-field="canceledAt" caption="해지일자" />

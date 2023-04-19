@@ -1,9 +1,9 @@
 <template>
-    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton class="ml-3" @click="deleteItem" :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd&&store.state.common.pa510.statusFormAdd)">
         <img style="width: 17px;" src="@/assets/images/icon_delete.png" alt="">
     </DxButton>
-    <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.statusDisabledStatus"/>
-    <!-- <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.statusDisabledStatus">
+    <DxButton class="ml-4" icon="plus" @click="actionAddItem" :disabled="store.state.common.pa510.statusDisabledStatus"/>
+    <!-- <DxButton @click="onSubmit($event)" size="large" class="ml-4" :disabled="store.state.common.pa510.statusDisabledStatus">
         <SaveOutlined style="font-size: 17px" />
     </DxButton> -->
     <DxButton class="ml-4" style="cursor: pointer; display: inline-flex;"
@@ -23,7 +23,7 @@
             </div>
         </a-tooltip>
     </DxButton>
-    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.statusDisabledStatus || (store.state.common.statusChangeFormAdd&&store.state.common.statusFormAdd)">
+    <DxButton @click="editItem" class="ml-4 custom-button-checkbox" :disabled="store.state.common.pa510.statusDisabledStatus || (store.state.common.pa510.statusChangeFormAdd&&store.state.common.pa510.statusFormAdd)">
         <div class="d-flex-center">
             <checkbox-basic  :valueCheckbox="true" disabled="true" />
             <span class="fz-12 pl-5">지급일변경</span>
@@ -63,8 +63,8 @@
     <EditPopup :modalStatus="modalEdit" @closePopup="modalEdit = false" :data="popupDataEdit" />
     <PrintPayrollRegisterPopup :modalStatus="modalPrintPayrollRegister"
         @closePopup="modalPrintPayrollRegister = false" />
-    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" :emailAddress="emailAddress"/>
-    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister" :emailAddress="emailAddress"
+    <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="modalEmailMulti = false" :data="popupDataEmailMulti" />
+    <EmailSinglePayrollRegisterPopup :modalStatus="modalEmailSinglePayrollRegister"
         @closePopup="modalEmailSinglePayrollRegister = false" :data="popupDataEmailSinglePayrollRegister" />
     <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="modalEmailSingle = false"
         :data="popupDataEmailSingle" />
@@ -90,8 +90,6 @@ import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA5/PA510/index";
 import notification from "@/utils/notification";
 import { Message } from "@/configs/enum";
-import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
-import { userId } from "@/helpers/commonFunction";
 export default defineComponent({
     components: {
         DxButton,
@@ -115,7 +113,7 @@ export default defineComponent({
         const messageSelectItem = Message.getMessage('COMMON', '404').message
         const store = useStore()
         const globalYear = computed(() => store.state.settings.globalYear)
-        const processKey = computed(() => store.state.common.processKeyPA510)
+        const processKey = computed(() => store.state.common.pa510.processKeyPA510)
         const trigger = ref<boolean>(false)
 
         const popupDataHistory: any = ref({})
@@ -156,25 +154,25 @@ export default defineComponent({
             }
         };
         const actionAddItem = () => {
-            if (store.state.common.statusChangeFormEdit) {
+            if (store.state.common.pa510.statusChangeFormEdit) {
                 modalStatusAdd.value = true
-                store.state.common.statusClickButtonAdd = true;
+                store.state.common.pa510.statusClickButtonAdd = true;
             } else {
-                if (store.state.common.statusRowAdd) {
-                    store.state.common.addRow++ // add row
-                        store.state.common.statusRowAdd = false;
-                        store.state.common.statusFormAdd = true;
+                if (store.state.common.pa510.statusRowAdd) {
+                    store.state.common.pa510.addRow++ // add row
+                        store.state.common.pa510.statusRowAdd = false;
+                        store.state.common.pa510.statusFormAdd = true;
                 } else {
-                    if (store.state.common.statusChangeFormAdd) {
+                    if (store.state.common.pa510.statusChangeFormAdd) {
                         modalStatusAdd.value = true
-                        store.state.common.statusClickButtonAdd = true;
+                        store.state.common.pa510.statusClickButtonAdd = true;
                     }
                 }
             }
         }
         const editItem = () => {
             if (props.dataRows.length) {
-                if (store.state.common.statusChangeFormEdit) {
+                if (store.state.common.pa510.statusChangeFormEdit) {
                     modalChangeRow.value = true
                 } else {
                     modalEdit.value = true;
@@ -259,42 +257,31 @@ export default defineComponent({
             }
         })
 
-        // Using the useQuery hook to fetch data from the server.
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        let emailAddress = ref('')
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser?.email
-        })
-
         const statusComfirmAdd = (val: any) => {
             if (val) { // action save form
-                store.state.common.statusClickButtonSave = false
-                store.state.common.checkClickYear = false;
-                store.state.common.actionSubmit++
+                store.state.common.pa510.statusClickButtonSave = false
+                store.state.common.pa510.checkClickYear = false;
+                store.state.common.pa510.actionSubmit++
             } else { // reset form
-                if (store.state.common.statusRowAdd) {
-                    store.state.common.addRow++ // add row
-                    store.state.common.statusRowAdd = false;
-                    store.state.common.statusFormAdd = true;
+                if (store.state.common.pa510.statusRowAdd) {
+                    store.state.common.pa510.addRow++ // add row
+                    store.state.common.pa510.statusRowAdd = false;
+                    store.state.common.pa510.statusFormAdd = true;
                 } else {
-                    store.state.common.actionResetForm++;
+                    store.state.common.pa510.actionResetForm++;
                 }
             }
         }
         const statusComfirmChange = async (res: any) => {
-            store.state.common.statusClickEditItem = true
+            store.state.common.pa510.statusClickEditItem = true
             if (res) {
-                await store.state.common.actionSubmit++
+                await store.state.common.pa510.actionSubmit++
             } else {
-                store.state.common.loadingFormData++
+                store.state.common.pa510.loadingFormData++
             }
         }
-        watch(() => store.state.common.onEditItem, (value) => {
-            store.state.common.statusClickEditItem = false
+        watch(() => store.state.common.pa510.onEditItem, (value) => {
+            store.state.common.pa510.statusClickEditItem = false
             editItem()
         })
 
@@ -323,9 +310,8 @@ export default defineComponent({
             popupDataEdit,
             modalStatusAdd, statusComfirmAdd,
             openTab,
-            // onSubmit,
-            store,
-            emailAddress, Message, statusComfirmChange, modalChangeRow,
+            store, 
+            Message, statusComfirmChange, modalChangeRow,
         };
     },
 });

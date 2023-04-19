@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loadingCreated">
-        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add">
+        <standard-form action="" formName="add-page-PA520" ref="formRefPa520Add" :disabled="true">
             <a-form-item label="사번(코드)" class="label-red" label-align="right">
               <div class="d-flex-center">
                 <text-number-box width="200px" v-model:valueInput="dataCreated.employeeId" :required="true"
@@ -110,7 +110,7 @@
             </a-form-item>
             <div class="wf-100 text-center mt-10">
                 <button-basic text="저장" type="default" mode="contained" @onClick="actionCreated(true)"
-                    id="action-save" />
+                    id="action-save"  :disabled="isError"/>
             </div>
         </standard-form>
     </a-spin>
@@ -131,6 +131,7 @@ export default defineComponent({
         const formRefPa520Add = ref()
         const labelResident = ref('주민등록번호')
         const clickYearStatus = computed(() => store.getters['settings/clickYearStatus'])
+        const isError  = computed(() => store.getters['common/isErrorPA520'])
         const activeLabel = ref(false)
         const disabledSelectBox = ref(true)
         const selectBoxData1 = ref([])
@@ -292,7 +293,7 @@ export default defineComponent({
         }
         return {
             loadingCreated, activeLabel, labelResident, disabledSelectBox, dataCreated, radioCheckForeigner, selectBoxData1, selectBoxData2,
-            actionCreated, funcAddress,formRefPa520Add,store
+            actionCreated, funcAddress,formRefPa520Add,store,isError
         };
     },
 });

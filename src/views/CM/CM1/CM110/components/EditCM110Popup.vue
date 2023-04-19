@@ -2,82 +2,84 @@
     <div>
         <a-modal :visible="modalStatus" centered okText="저장하고 나가기" :mask-closable="false" cancelText="그냥 나가기"
             @cancel="setModalVisible()" width="700px" footer="">
-            <h2 class="title-h2">이용자정보</h2>
-            <standard-form formName="edit-cm110">
-                <a-row :gutter="24" class="cm-100-popup-edit">
-                    <a-col :span="18">
-                        <a-form-item label="이용자ID" :label-col="labelCol">
-                            <default-text-box :width="150" v-model:valueInput="formState.username" :disabled="true">
-                            </default-text-box>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-form-item label="상태">
-                            <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
-                                :textUnCheck="'이용중지'" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-form-item label="성명" :label-col="labelCol" class="red">
-                            <default-text-box :width="150" v-model:valueInput="formState.name" :required="true">
-                            </default-text-box>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="24">
-                        <a-form-item label="회계권한(담당사업)" :label-col="labelCol">
-                            <tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList"
-                                v-model:valueTagSelect="valueFacilyti" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="16">
-                        <a-form-item label="원천권한" :label-col="labelCol">
-                            <radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
-                                :layoutCustom="'horizontal'" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="24">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="휴대폰" :label-col="labelCol" class="red">
-                                    <tel-text-box :width="150" v-model:valueInput="formState.mobilePhone"
-                                        :required="true"></tel-text-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <p class="validate-message">‘-’없이 숫자만 입력</p>
-                            </a-col>
-                        </a-row>
-                    </a-col>
-                    <a-col :span="24">
-                        <a-row>
-                            <a-col :span="14">
-                                <a-form-item label="이메일" class="red" :label-col="labelCol">
-                                    <mail-text-box v-model:valueInput="formState.email" :required="true"
-                                        :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
-                                    </mail-text-box>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :span="10">
-                                <p class="validate-message" v-if="!statusMailValidate">
-                                    이메일 형식이 정확하지 않습니다.
-                                </p>
-                            </a-col>
-                        </a-row>
-                    </a-col>
-                </a-row>
-                <div>
-                    <a-col style="margin-left: 150px;">
-                        <button-basic :disabled="!statusMailValidate" class="btn-set-password" :width="140"
-                            :text="'비밀번호 설정'" :type="'danger'" :mode="'outlined'" @onClick="confirmPopup" />
-                    </a-col>
-                </div>
-                <div class="text-align-center mt-20">
-                    <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
-                        @onClick="setModalVisible()" />
-                    <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
-                        :mode="'contained'" @onClick="confirmUpdate($event)" />
-                </div>
-            </standard-form>
+            <a-spin :spinning="loading" size="large">
+                <h2 class="title-h2">이용자정보</h2>
+                <standard-form formName="edit-cm110">
+                    <a-row :gutter="24" class="cm-100-popup-edit">
+                        <a-col :span="18">
+                            <a-form-item label="이용자ID" :label-col="labelCol">
+                                <default-text-box :width="150" v-model:valueInput="formState.username" :disabled="true">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="6">
+                            <a-form-item label="상태">
+                                <switch-basic v-model:valueSwitch="formState.active" :textCheck="'이용중'"
+                                    :textUnCheck="'이용중지'" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="성명" :label-col="labelCol" class="red">
+                                <default-text-box :width="150" v-model:valueInput="formState.name" :required="true">
+                                </default-text-box>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-form-item label="회계권한(담당사업)" :label-col="labelCol">
+                                <tag-select-box placeholder="선택하십시오" :arrayValue="bizTypeList"
+                                    v-model:valueTagSelect="valueFacilyti" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="16">
+                            <a-form-item label="원천권한" :label-col="labelCol">
+                                <radio-group :arrayValue="optionsRadio" v-model:valueRadioCheck="returnRadio"
+                                    :layoutCustom="'horizontal'" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-row>
+                                <a-col>
+                                    <a-form-item label="휴대폰" :label-col="labelCol" class="red">
+                                        <tel-text-box :width="150" v-model:valueInput="formState.mobilePhone"
+                                            :required="true"></tel-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col>
+                                    <p class="validate-message">‘-’없이 숫자만 입력</p>
+                                </a-col>
+                            </a-row>
+                        </a-col>
+                        <a-col :span="24">
+                            <a-row>
+                                <a-col :span="14">
+                                    <a-form-item label="이메일" class="red" :label-col="labelCol">
+                                        <mail-text-box v-model:valueInput="formState.email" :required="true"
+                                            :style="!statusMailValidate ? { borderColor: 'red' } : ''" id="email">
+                                        </mail-text-box>
+                                    </a-form-item>
+                                </a-col>
+                                <a-col :span="10">
+                                    <p class="validate-message" v-if="!statusMailValidate">
+                                        이메일 형식이 정확하지 않습니다.
+                                    </p>
+                                </a-col>
+                            </a-row>
+                        </a-col>
+                    </a-row>
+                    <div>
+                        <a-col style="margin-left: 150px;">
+                            <button-basic :disabled="!statusMailValidate" class="btn-set-password" :width="140"
+                                :text="'비밀번호 설정'" :type="'danger'" :mode="'outlined'" @onClick="confirmPopup" />
+                        </a-col>
+                    </div>
+                    <div class="text-align-center mt-20">
+                        <button-basic class="button-form-modal" :text="'그냥 나가기'" :type="'default'" :mode="'outlined'"
+                            @onClick="setModalVisible()" />
+                        <button-basic class="button-form-modal" :text="'저장하고 나가기'" :width="140" :type="'default'"
+                            :mode="'contained'" @onClick="confirmUpdate($event)" />
+                    </div>
+                </standard-form>
+            </a-spin>
         </a-modal>
         <div class="confirm-popup">
             <a-modal v-model:visible="visible" :mask-closable="false" footer="">
@@ -111,21 +113,22 @@ import queries from "@/graphql/queries/CM/CM110/index";
 import mutations from "@/graphql/mutations/CM/CM110/index";
 import notification from "@/utils/notification";
 import { initialOptionsRadio, initialState } from "../utils/index";
-
+import { companyId } from "@/helpers/commonFunction"
 export default defineComponent({
     props: {
         modalStatus: {
             default: false,
             type: Boolean,
         },
-        data: null,
+        userId: null,
+        bizTypeList: Array,
     },
     components: {
         MailOutlined,
     },
     setup(props, { emit }) {
         const optionsRadio = reactive([...initialOptionsRadio]);
-        
+
         const visible = ref<boolean>(false);
         const statusMailValidate = ref<boolean>(true);
         const options = ref<SelectProps["options"]>([]);
@@ -133,6 +136,7 @@ export default defineComponent({
         let valueFacilyti = ref([]);
         let arrValueFacilytiDefault = ref([]);
         let trigger = ref<boolean>(false);
+        let triggerDataFacilityBusiness = ref<boolean>(false);
         let dataCall = ref();
         let dataUser = ref();
         let returnRadio = ref();
@@ -146,7 +150,6 @@ export default defineComponent({
         let objDataDefault = ref({ ...initialState });
         // Get detail user
         const {
-            refetch: refetchData,
             loading,
             error,
             onResult,
@@ -202,13 +205,14 @@ export default defineComponent({
         );
 
         onResult((res) => {
+            trigger.value = false
             let newFaci: any = [];
             res.data.getMyCompanyUser.facilityBusinesses.map((e: any) => {
                 newFaci.push(e.facilityBusinessId);
             });
             valueFacilyti.value = newFaci;
             arrValueFacilytiDefault.value = newFaci;
-            
+
             formState.value = res.data.getMyCompanyUser;
             objDataDefault.value = { ...res.data.getMyCompanyUser }
             if (formState.value.withholdingRole == true) {
@@ -225,36 +229,29 @@ export default defineComponent({
                 statusMailValidate.value = true;
             }
         });
-        let bizTypeList = ref([]);
-        const { refetch: refetchFacility, onResult: resultFacility } = useQuery(
-            queries.getDataFacilityBusiness,
-            dataCall,
-            () => ({ enabled: trigger.value, fetchPolicy: "no-cache" })
-        );
-        resultFacility((e) => {
-            let dataRes: any = [];
-            e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
-                dataRes.push({
-                    name: val.name,
-                    id: val.facilityBusinessId,
-                });
-            });
-            bizTypeList.value = dataRes;
-        });
-        watch(
-            () => props.modalStatus,
-            (value) => {
-                if (props.data && props.data.companyId) {
-                    trigger.value = true;
-                    dataCall.value = {
-                        companyId: props.data.companyId,
-                    };
-                    dataUser.value = props.data;
-                    refetchData();
-                    refetchFacility();
-                }
+        // let bizTypeList = ref([]);
+        // const { refetch: refetchFacility, onResult: resultFacility } = useQuery(
+        //     queries.getDataFacilityBusiness,
+        //     dataCall,
+        //     () => ({ enabled: triggerDataFacilityBusiness.value, fetchPolicy: "no-cache" })
+        // );
+        // resultFacility((e) => {
+        //     triggerDataFacilityBusiness.value = false;
+        //     let dataRes: any = [];
+        //     e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
+        //         dataRes.push({
+        //             name: val.name,
+        //             id: val.facilityBusinessId,
+        //         });
+        //     });
+        //     bizTypeList.value = dataRes;
+        // });
+        watch(() => props.modalStatus, async (value) => {
+            if (props.userId && value) {
+                await (dataUser.value = {userId: props.userId, companyId: companyId});
+                await (trigger.value = true);
             }
-        );
+        });
         const confirmUpdate = (e: any) => {
             var res = e.validationGroup.validate();
             if (!res.isValid) {
@@ -262,11 +259,11 @@ export default defineComponent({
             } else {
                 if (statusMailValidate.value == true) {
                     let dataUpdate = {
-                        companyId: props.data.companyId,
-                        userId: props.data.userId,
+                        companyId: companyId,
+                        userId: props.userId,
                         input: {
                             name: formState.value.name,
-                            accountingRole: false,
+                            accountingRole: valueFacilyti.value.length ? true : false,
                             facilityBusinessIds: valueFacilyti.value,
                             withholdingRole: formState.value.withholdingRole,
                             mobilePhone: formState.value.mobilePhone,
@@ -289,8 +286,8 @@ export default defineComponent({
 
         const sendMessToGmail = () => {
             let dataCallSendEmail = {
-                companyId: props.data.companyId,
-                userId: props.data.userId,
+                companyId: companyId,
+                userId: props.userId,
             };
             sendGmail(dataCallSendEmail);
         };
@@ -329,10 +326,10 @@ export default defineComponent({
             confirmUpdate,
             sendGmail,
             sendMessToGmail,
-            bizTypeList,
-            refetchFacility,
+            // bizTypeList,
             setModalVisible,
             closePopupEmail,
+            loading,
         };
     },
 });

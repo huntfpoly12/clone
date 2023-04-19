@@ -1,5 +1,65 @@
-export const initialState = {};
-export const MAX_UP_LOAD = 8;
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
+export const initialArrayRadioCheck = [
+  { id: 0, text: '구입' },
+  { id: 1, text: '운반' },
+  { id: 2, text: '수선' },
+  { id: 3, text: '인쇄' },
+  { id: 4, text: '지출' }
+]
+export const initialArrayRadioMonth = [
+  { id: 1, text: '01' },
+  { id: 2, text: '02' },
+  { id: 3, text: '03' },
+  { id: 4, text: '04' },
+  { id: 5, text: '05' },
+  { id: 6, text: '06' },
+  { id: 7, text: '07' },
+  { id: 8, text: '08' },
+  { id: 9, text: '09' },
+  { id: 10, text: '10' },
+  { id: 11, text: '11' },
+  { id: 12, text: '12' },
+
+]
+export const initialStateFormAdd = {
+  bankbookId: null,
+  resolutionDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  resolutionType: 11,
+  amount: null,
+  summary: null,
+  fundingSource: 3,
+  letterOfApprovalType: 1,
+};
+export const initialStateFormData = {
+  bankbookId: null,
+  paymentDate: null,
+  resolutionType: 11,
+  amount: null,
+  summary: null,
+  fundingSource: 3,
+  letterOfApprovalType: 1,
+  theOrder: 1,
+  resolutionClassification: null,
+  resolutionDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  causeActionDate: null,
+  proposedDate: null,
+  accountingDate: null,
+  registrationDate: null,
+  // bankbookNickname: null,
+  // bankbookNumber: null,
+  accountCode: null,
+  relationCode: null,
+  // clientId: null,
+  source: null,
+  writer: null,
+  memo: null,
+  causeUsage: null,
+  statementOfGoodsItems: null,
+  // goodsCount: null,
+
+  accountingDocumentId: 'AC120',
+}
 export const dataDemoMain = [
   {
     fill1: 20230330,
@@ -344,5 +404,14 @@ export const dataDemoMain2 = [
   //   slipRegistration: false,
   // },
 ];
+export const initStatementOfGoods = {
+  item: '',
+  standard: '',
+  unit: '',
+  quantity: null,
+  unitPrice: null,
+  amount: null,
+  remark: ''
+};
 export const contentPopupRetrieveStatements =
   "새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?";

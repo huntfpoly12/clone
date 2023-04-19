@@ -118,7 +118,7 @@ export default defineComponent({
       requesteStartDate: rangeDate.value[0],
       requesteFinishDate: rangeDate.value[1],
       productionStatuses: [2, -1],
-      manageUserId: 0
+      manageUserId: null
     }
     )
 

@@ -59,7 +59,7 @@ export default [
         id: "bf-500",
         subMenus: [
           {title: "회계업무마감", url: "#", id: "bf-510", roles: ROLE_BF500},
-          {title: "4대보험업무관리", url: "#", id: "bf-530", roles: ROLE_BF500},
+          {title: "4대보험업무관리", url: "/dashboard/bf-530", id: "bf-530", roles: ROLE_BF500},
         ],
         roles: ROLE_BF500
       },
@@ -154,7 +154,7 @@ export default [
         id: "ac-600",
         subMenus: [
           {title: "거래처등록", url: "/dashboard/ac-610", id: "ac-610", roles: ROLE_AC000},
-          {title: "후원자관리", url: "#", id: "ac-620", roles: ROLE_AC000},
+          {title: "후원자관리", url: "/dashboard/ac-620", id: "ac-620", roles: ROLE_AC000},
           {title: "기부금영수증", url: "/dashboard/ac-630", id: "ac-630", roles: ROLE_AC000},
         ],
         roles: ROLE_AC000

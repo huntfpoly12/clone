@@ -1,6 +1,6 @@
 <template>
   <div class="tab-group">
-    <SearchArea :tab1="true" />
+    <SearchArea :rerenderReport="search" :tab1="true" />
     <a-row class="top-table">
       <a-col class="d-flex-center">
         <span class="mr-10">파일 제작 설정</span>
@@ -21,12 +21,16 @@
       </a-col>
     </a-row>
     <div class="content-grid">
+      <!-- {{ filteredDataSource }} <br />
+      {{ dataSource }} <br />
+      {{ productionCount }} productionCount<br />
+      {{ beforeCount }} beforeCount<br /> -->
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
         key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true"
         @editor-preparing="onEditorPreparing">
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxLoadPanel :enabled="true" :showPane="true"/>
+        <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
         <DxColumn caption="사업자코드" data-field="companyCode" cell-template="companyCode" />
         <template #companyCode="{ data }">
@@ -76,9 +80,8 @@
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="제작현황" cell-template="productionStatus" />
         <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
-            @productionStatusData="productionStatusData" />
-          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+          <GetStatusTable :dataProcduct="data.data"/>
+          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -94,11 +97,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, onActivated, ref, watch, watchEffect, onDeactivated } from 'vue';
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
-import { useQuery } from '@vue/apollo-composable';
+import { useApolloClient, useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
@@ -109,6 +112,8 @@ import { Message } from '@/configs/enum';
 import { formatMonth } from '../utils/index'
 import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
+import filters from '@/helpers/filters';
+import { reactive } from '@vue/reactivity';
 export default defineComponent({
   components: {
     SearchArea,
@@ -140,7 +145,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
-
+    const statusRef = ref();
     //-----------------------Fcn common-----------------------------------------
 
     const changeWithholdingTaxType = (index: Number, afterDeadline: boolean) => {
@@ -150,6 +155,33 @@ export default defineComponent({
       return 2;
     }
 
+    // --------------------search production status-----------------------------------------
+
+    const { client } = useApolloClient();
+
+    const fetchDataStatus = async (companies: any) => {
+      if (companies.length === 0) return;
+      for (let i = 0; i < companies.length; i++) {
+        await client.query({
+          query: queries.getElectronicFilingsByWithholdingTax, variables: {
+            input: {
+              companyId: companies[i].companyId,
+              imputedYear: companies[i].imputedYear,
+              reportId: companies[i].reportId,
+            }
+          }
+        }).then((res) => {
+          let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
+          productionCount.value--;
+          dataSource.value.forEach((item: any) => {
+            if (item.reportId == companies[i].reportId) {
+              item.productionStatus = productionStatus;
+            }
+          })
+        }).catch((err: any) => err);
+      }
+    };
+
     //-----------------------Search with holding and data source----------------
 
     const dataSource = ref<any[]>([]);
@@ -158,7 +190,9 @@ export default defineComponent({
       paymentMonth: filterBF620.value.paymentMonth,
       paymentYear: filterBF620.value.paymentYear,
     })
+    const eletroFillingTrigger = ref(true);
     const {
+      refetch: searchWithholdingRefetch,
       result: searchWithholdingResult,
       loading: searchWithholdingLoading,
       onError: searchWithholdingError,
@@ -166,11 +200,14 @@ export default defineComponent({
       queries.searchWithholdingTaxElectronicFilingsByYearMonth,
       searchWithholdingParam,
       () => ({
-        // enabled: eletroFillingTrigger.value,
+        enabled: eletroFillingTrigger.value,
         fetchPolicy: 'no-cache',
       })
     );
-    watch(searchWithholdingResult, (newVal) => {
+    const productionCount = ref(0);
+    const beforeCount = ref(0);
+    watch(searchWithholdingResult, async (newVal) => {
+      beforeCount.value = 0;
       let data = newVal.searchWithholdingTaxElectronicFilingsByYearMonth.map((item: any) => {
         let arrData = {};
         if (item) {
@@ -193,12 +230,10 @@ export default defineComponent({
             paymentMonth: item.paymentMonth,
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
-            beforeProduction: item.lastProductionRequestedAt ? true : false,
+            beforeProduction: item.lastProductionRequestedAt ? false : true,
             allowSelection: true,
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
-          // filterBF620.value.imputedYear = item.imputedYear;
-          // filterBF620.value.imputedMonth = item.imputedMonth;
         }
         return arrData;
       });
@@ -209,8 +244,12 @@ export default defineComponent({
         return acc;
       }, {}));
       dataSource.value = [...result];
-      filteredDataSource.value = [...result];
-      if (props.onSearch) {
+      await fetchDataStatus(dataSource.value.map((item: any) => {
+        if (item.lastProductionRequestedAt)
+          productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
+        return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+      }));
+      if (props.onSearch && productionCount.value == 0) {
         props.onSearch();
       }
     });
@@ -219,12 +258,28 @@ export default defineComponent({
     })
     watchEffect(() => {
       if (filterBF620.value.paymentYear && filterBF620.value.paymentMonth) {
-        searchWithholdingParam.value = {
-          paymentMonth: filterBF620.value.paymentMonth,
-          paymentYear: filterBF620.value.paymentYear,
+        if (eletroFillingTrigger.value) {
+          filteredDataSource.value = [];
+          dataSource.value = [];
+          searchWithholdingParam.value = {
+            paymentMonth: filterBF620.value.paymentMonth,
+            paymentYear: filterBF620.value.paymentYear,
+          }
         }
       }
     })
+    const productionStatusData = (emitVal: any, index: number) => {
+      productionStatusArr.value = [emitVal];
+      productionCount.value--;
+      if (emitVal?.companyId != 'undefined') {
+        productionStatusArr.value = [...productionStatusArr.value, emitVal];
+        filteredDataSource.value[index].productionStatus = emitVal?.productionStatus;
+        filteredDataSource.value[index].allowSelection = false;
+      }
+      if (props.onSearch && productionCount.value == 0) {
+        props.onSearch();
+      }
+    };
 
     //------------------------SUM AREA------------------------------ 
 
@@ -236,13 +291,13 @@ export default defineComponent({
       }
       let typeCustom: number = 0;
       if (typeof type === 'boolean') {
-        typeCustom = type ? 1 : 0;
+        typeCustom = 0;
       }
       if (isNumber(type)) {
         typeCustom = type;
       }
       let count = arr.reduce((acc: any, crr: any) => {
-        let item = crr[propertyCompare] === false ? 0 : crr[propertyCompare];
+        let item = typeof (crr[propertyCompare]) == 'boolean' && crr[propertyCompare] == type ? 0 : crr[propertyCompare];
         acc[item] = acc[item] ? acc[item] + 1 : 1;
         return acc;
       }, {});
@@ -260,21 +315,8 @@ export default defineComponent({
         filteredDataSource.value, 3, 'withholdingTaxType')}`;
     };
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, false, 'beforeProduction')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
-        productionStatusArr.value,
-        1, 'productionStatus'
-      )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
-    };
-    // caculator sum
-    const productionStatusData = (emitVal: any) => {
-      productionStatusArr.value = [emitVal];
-      filteredDataSource.value = filteredDataSource.value.map((item: any) => {
-        if (item.companyId == emitVal.companyId) {
-          return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
-        }
-        return { ...item, beforeProduction: false, allowSelection: false };
-      })
-      // reFreshDataGrid();
+      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
     };
 
     //--------------------on Search----------------------
@@ -285,30 +327,26 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, ...compareObj } = filterBF620.value;
-        let arr = dataSource.value.filter((item: any) => {
-          return Object.keys(compareObj).every((key: any) => {
-            // if (key == 'index' || key == 'afterDeadline') {
-            //   if (compareObj.afterDeadline !== item.afterDeadline) {
-            //     return false;
-            //   }
-            //   if ((compareObj.index && item.index) || (compareObj.index === item.index)) {
-            //     return true;
-            //   }
-            //   return false;
-            // }
-            if (key === 'productionStatuses') {  //error search main reason is 
-              return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
-            }
-            if (compareObj[key]) {
-              return compareObj[key] == item[key];
-            }
-            return true;
+        if (!filterBF620.value.beforeProduction && beforeCount.value == 1) {
+          searchWithholdingRefetch();
+        } else {
+          let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, ...compareObj } = filterBF620.value;
+          let arr = dataSource.value.filter((item: any) => {
+            return Object.keys(compareObj).every((key: any) => {
+              if (key === 'productionStatuses') {  //error search main reason is 
+                return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
+              }
+              if (compareObj[key]) {
+                return compareObj[key] == item[key];
+              }
+              return true;
+            })
           })
-        })
-        filteredDataSource.value = arr;
+          filteredDataSource.value = arr;
+        }
+        beforeCount.value = 1;
       },
-      { immediate: true }
+      { deep: true }
     );
 
     // ----------------request file withholding---------
@@ -317,8 +355,8 @@ export default defineComponent({
       reportKeyInputs: [],
       filter: filterBF620.value,
       emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
       },
     });
     const selectionChanged = (event: any) => {
@@ -338,15 +376,17 @@ export default defineComponent({
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
           return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
         });
-      // requestFileData.value.filter
+      // customFilter.beforeProduction = beforeProduction
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
       requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
       };
+      const { active, ...customFilter } = filterBF620.value;
+      requestFileData.value.filter = customFilter;
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
       } else {
@@ -365,6 +405,10 @@ export default defineComponent({
       //   }
       // }
     }
+
+    //
+
+
     return {
       filterBF620,
       searchWithholdingLoading,
@@ -383,7 +427,8 @@ export default defineComponent({
       formatMonth,
       searchWithholdingParam,
       filteredDataSource,
-      onEditorPreparing
+      onEditorPreparing,
+      productionCount, statusRef, beforeCount,
     };
   },
 })

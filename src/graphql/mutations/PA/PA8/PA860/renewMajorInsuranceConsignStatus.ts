@@ -6,8 +6,7 @@ export default gql`
   ) {
     renewMajorInsuranceConsignStatus(
       companyId: $companyId
-      imputedYear: $imputedYear
-      workId: $workId
+      manageId: $manageId
     ) {
       companyId
       manageId

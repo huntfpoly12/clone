@@ -40,13 +40,13 @@
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.nationalPensionSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport || !initFormTab2PA120.nationalPensionDeduction"></radio-group>
             </a-col>
             <a-col span="7"> 고용보험 적용율: </a-col>
             <a-col span="12">
               <radio-group :arrayValue="radioCheckPersenPension"
                 v-model:valueRadioCheck="initFormTab2PA120.employeementInsuranceSupportPercent" layoutCustom="horizontal"
-                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport"></radio-group>
+                :disabled="!initFormTab2PA120.insuranceSupport || !isDisableInsuranceSupport || !initFormTab2PA120.employeementInsuranceDeduction"></radio-group>
             </a-col>
             <a-col span="7"><span class="header-text-4"> 소득세 적용율: </span></a-col>
             <a-col span="17" class="income-tax-app-rate">
@@ -117,7 +117,7 @@
             }}</span> 원</a-col>
             <a-col class="ml-15" :span="12">수당 과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
-              $filters.formatCurrency(totalPayItemTax) }}</span> 원</a-col>
+              $filters.formatCurrency(totalPayItemTaxAll) }}</span> 원</a-col>
             <a-col class="ml-15" :span="12">수당 비과세 합계:</a-col>
             <a-col style="display: inline-flex; justify-content: flex-end"><span>{{
               $filters.formatCurrency(totalPayItemTaxFree) }}</span> 원</a-col>
@@ -140,8 +140,8 @@
         </a-col>
         <a-col class="col-2" style="display: flex; flex-direction: column">
           <div class="header-text-2">
-            급여 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 =
-            과세 {{ $filters.formatCurrency(totalPayItemTax) }} 원 + 비과세
+            급여 {{ $filters.formatCurrency(totalPayItemTaxAll) }} 원 =
+            과세 {{ $filters.formatCurrency(calculateVariables.totalTaxPay) }} 원 + 비과세
             {{ $filters.formatCurrency(totalPayItemTaxFree) }} 원
           </div>
           <a-spin :spinning="loading1" size="large" style="height: 100%">
@@ -246,9 +246,9 @@ export default defineComponent({
       }
     );
     const totalPayItemTaxFree = ref(0);
-    const totalPayItemTax = ref(0);
+    const totalPayItemTaxAll = ref(0);
     const totalDeduction = ref(0);
-    const subPayment = computed(() => calculateVariables.totalTaxPay - totalDeduction.value);
+    const subPayment = computed(() => totalPayItemTaxAll.value - totalDeduction.value);
 
     const rangeDate = ref<RangeValue>();
     const store = useStore();
@@ -320,10 +320,10 @@ export default defineComponent({
       }
     });
     const onChangePayItem = (emitVal: any) => {
-      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTaxAll.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
       }, 0);
-      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (object.tax) {
           accumulator += object.value;
         }
@@ -404,13 +404,14 @@ export default defineComponent({
     watch(resultGetEmployeeWage, async (value) => {
       if (value) {
         let data = value.getEmployeeWage;
+        console.log(`output->value`, data)
         store.state.common.presidentEditPA120 = data.president;
         let editRowData: any = {};
         editRowData.nationalPensionDeduction = data.nationalPensionDeduction;
         editRowData.healthInsuranceDeduction = data.healthInsuranceDeduction;
         editRowData.longTermCareInsuranceDeduction = data.longTermCareInsuranceDeduction;
         editRowData.employeementInsuranceDeduction = presidentEditPA120.value ? false : data.employeementInsuranceDeduction;
-        editRowData.insuranceSupport = data.insuranceSupport;
+        editRowData.insuranceSupport = data.length == 0 ? isDisableInsuranceSupport.value : data.insuranceSupport;
         if (data?.nationalPensionSupportPercent >= 0 && editRowData.insuranceSupport) {
           editRowData.nationalPensionSupportPercent = data.nationalPensionSupportPercent ?? 0;
         }
@@ -461,7 +462,10 @@ export default defineComponent({
         }
         calculateVariables.dependentCount = data.dependents.length > 0 ? data.dependents.length : 1;
         calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
-          return accumulator + object.value;
+          if (object.tax) {
+            accumulator += object.value;
+          }
+          return accumulator;
         }, 0);
         isBtnYellow.value = false;
         triggerDetail.value = false;
@@ -526,8 +530,14 @@ export default defineComponent({
      * */
 
     const calcSum = () => {
-      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+      totalPayItemTaxAll.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         return accumulator + object.value;
+      }, 0);
+      calculateVariables.totalTaxPay = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
+        if (object.tax) {
+          accumulator += object.value;
+        }
+        return accumulator;
       }, 0);
       dataConfigDeduction.value?.map((item: any) => {
         if (item.itemCode == 1001) {
@@ -563,12 +573,6 @@ export default defineComponent({
           };
         }
       });
-      totalPayItemTax.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
-        if (object.tax) {
-          accumulator += object.value;
-        }
-        return accumulator;
-      }, 0);
       totalPayItemTaxFree.value = dataConfigPayItems.value.reduce((accumulator: any, object: any) => {
         if (!object.tax) {
           accumulator += object.value;
@@ -599,13 +603,31 @@ export default defineComponent({
     // custom data with logical
     const onChangeSwitch1 = (e: any) => {
       if (e) {
-        initFormTab2PA120.value.nationalPensionSupportPercent = 0;
-        initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+        if (initFormTab2PA120.value.nationalPensionDeduction) {
+          initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+        }
+        if (initFormTab2PA120.value.employeementInsuranceDeduction) {
+          initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+        }
       } else {
         delete initFormTab2PA120.value.nationalPensionSupportPercent;
         delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
       }
     };
+    watch(() => initFormTab2PA120.value.nationalPensionDeduction, (newVal) => {
+      if (newVal && initFormTab2PA120.value.insuranceSupport) {
+        initFormTab2PA120.value.nationalPensionSupportPercent = 0;
+      } else {
+        delete initFormTab2PA120.value.nationalPensionSupportPercent;
+      }
+    }, { deep: true })
+    watch(() => initFormTab2PA120.value.employeementInsuranceDeduction, (newVal) => {
+      if (newVal && initFormTab2PA120.value.insuranceSupport) {
+        initFormTab2PA120.value.employeementInsuranceSupportPercent = 0;
+      } else {
+        delete initFormTab2PA120.value.employeementInsuranceSupportPercent;
+      }
+    }, { deep: true })
     const onChangeSwitch2 = (e: any) => {
       if (e) {
         initFormTab2PA120.value.employeementReductionRatePercent = 50;
@@ -743,7 +765,7 @@ export default defineComponent({
       loadingEmployeeWage,
       rangeDate,
       totalPayItemTaxFree,
-      totalPayItemTax,
+      totalPayItemTaxAll,
       totalDeduction,
       subPayment,
       calculateTax,

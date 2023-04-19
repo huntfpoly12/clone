@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading" size="large">
-        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" />
+        <action-header title="거주자의 사업소득원천징수영수증 " @actionSearch="searching" :buttonSearch="true"/>
         <div id="pa-630">
             <div class="search-form">
                 <a-row>
@@ -84,7 +84,10 @@
                                 :foreigner="data.data.employee.foreigner" :checkStatus="false" />
                         </div>
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" />
+                    <DxColumn caption="주민등록번호" cell-template="residentId"  data-field="employee.residentId" />
+                    <template #residentId="{ data }">
+                        <resident-id :residentId="data.data.employee?.residentId"></resident-id>
+                    </template>
                     <DxColumn caption="소득구분" cell-template="grade-cell" :width="200" />
                     <template #grade-cell="{ data }">
                         <income-type :typeCode="data.data.employee.incomeTypeCode"
@@ -123,7 +126,7 @@
                 <EmailSinglePopup :modalStatus="modalEmailSingle" @closePopup="onCloseEmailSingleModal"
                     :data="popupDataEmailSingle" />
                 <EmailMultiPopup :modalStatus="modalEmailMulti" @closePopup="onCloseEmailMultiModal"
-                    :data="popupDataEmailMulti" :emailUserLogin="emailUserLogin" />
+                    :data="popupDataEmailMulti" />
             </div>
         </div>
     </a-spin>
@@ -298,15 +301,6 @@ export default defineComponent({
                 })
             })
         }
-        const {
-            onResult: onResultUserInf
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        const emailUserLogin = ref('')
-        onResultUserInf(e => {
-            emailUserLogin.value = e.data.getUser.email
-        })
 
         watch(result, (value) => {
             if (value) {
@@ -364,7 +358,6 @@ export default defineComponent({
             onCloseEmailSingleModal,
             onCloseEmailMultiModal,
             selectionChanged,
-            emailUserLogin,
             actionPrint, onPrintGroup, gridRef,
             // amountFormat,
             customTextSummaryWRST,

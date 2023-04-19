@@ -1,6 +1,6 @@
 <template>
     <a-spin :spinning="loading || loadingPrint || loadingSendEmail" size="large">
-        <action-header title="" @actionSearch="searching" />
+        <action-header title="" @actionSearch="searching" :buttonSearch="true"/>
         <div id="pa-230">
             <div class="search-form">
                 <a-row>
@@ -50,6 +50,7 @@
                     @selection-changed="selectionChanged"
                     @cell-prepared="onCellPrepared"
                     @row-prepared="onRowPrepared"
+                    style="max-height: 600px;"
                     >
                     <DxToolbar>
                         <DxItem template="pagination-send-group-mail" />
@@ -57,8 +58,8 @@
                     </DxToolbar>
                     <template #pagination-send-group-mail>
                     <div class="custom-mail-group">
-                        <DxButton><img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;"
-                                @click="sendMail" />
+                        <DxButton @click="sendMail">
+                          <img src="@/assets/images/emailGroup.png" alt="" style="width: 28px;" />
                         </DxButton>
                     </div>
                     </template>
@@ -80,7 +81,10 @@
                             :foreigner="data.data.employee.foreigner" :checkStatus="false"
                             :employeeId="data.data.employeeId" />
                     </template>
-                    <DxColumn caption="주민등록번호" data-field="employee.residentId" width="150"/>
+                    <DxColumn caption="주민등록번호" data-field="employee.residentId" cell-template="employee-residentId" width="150"/>
+                    <template #employee-residentId="{ data }">
+                        <div>{{ convertResidentId(data.data.employee.residentId)}}</div>
+                    </template>
                     <DxColumn caption="비고" cell-template="four-major-insurance"  />
                     <template #four-major-insurance="{ data }">
                         <div>
@@ -120,14 +124,14 @@
                     <DxSummary >
                         <DxTotalItem :customize-text="customTextSummaryInfo" show-in-column="성명"/>
                         <DxTotalItem column="totalPay" name="total_summary" summary-type="sum" display-format="총급여계합계: {0}"
-                            value-format="#,###" />        
+                            value-format="#,###" />
                     </DxSummary>
                 </DxDataGrid>
-                
+
             </div>
         </div>
     </a-spin>
-    <a-modal  v-if="modalSendMail == true" :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
+    <a-modal v-if="modalSendMail" :visible="modalSendMail" @cancel="modalSendMail = false" width="562px" footer="" :mask-closable="false">
         <standard-form>
             <div class="d-flex-center mt-20" v-if="switchTypeSendMail == true">
                 <img src="@/assets/images/email.svg" alt="" style="width: 50px;">
@@ -160,13 +164,13 @@
     </a-modal>
 </template>
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
+import {ref, defineComponent, watch, computed, watchEffect} from "vue";
 import { useStore } from "vuex";
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { radioCheckDataSearch, radioCheckData } from "./utils/index";
 import { DxDataGrid, DxColumn,DxScrolling, DxPaging, DxExport, DxSelection, DxSearchPanel, DxToolbar, DxItem, DxSummary,DxTotalItem } from "devextreme-vue/data-grid";
 import { DxTooltip } from 'devextreme-vue/tooltip';
-import { companyId, userId } from "@/helpers/commonFunction";
+import {companyId, convertResidentId, userId} from "@/helpers/commonFunction";
 import DxButton from "devextreme-vue/button";
 import queries from "@/graphql/queries/PA/PA2/PA230/index";
 import dayjs from "dayjs";
@@ -176,7 +180,14 @@ import notification from "@/utils/notification";
 import queriesGetUser from "@/graphql/queries/BF/BF2/BF210/index";
 import { Message } from "@/configs/enum";
 import Tooltip from '@/components/common/Tooltip.vue';
+import {UserInfo} from "@/store/authModule/types";
+import {converter} from "protobufjs";
 export default defineComponent({
+  computed: {
+    converter() {
+      return converter
+    }
+  },
     components: {
         DxDataGrid, DxColumn,DxScrolling, DxPaging, DxSelection, DxExport, DxSearchPanel, DxToolbar, DxItem,DxSummary,DxTotalItem,DxButton,DxTooltip,Tooltip
     },
@@ -185,6 +196,10 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear);
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
+
+        const token = computed(()=>sessionStorage.getItem("token"))
+        store.dispatch('auth/getUserInfor', token.value);
+        const userInfo = computed<UserInfo>(() => store.state.auth.userInfor as UserInfo);
 
         const checkBoxOption = ref(1);
         const checkBoxOption2 = ref(1);
@@ -221,7 +236,7 @@ export default defineComponent({
             },
             "employeeIds": []
         })
-        
+
         // =========================== GRAPHQL =======================================
         const {
             refetch: refetchPrint,
@@ -254,20 +269,24 @@ export default defineComponent({
             refetchData()
         }, { deep: true });
         // QUERY NAME : getUser
-        const {
-            onResult: onResultUserInf,
-            result: resultUserInf,
-        } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
-            fetchPolicy: "no-cache",
-        }));
-        onResultUserInf(e => {
-            emailAddress.value = e.data.getUser.email
+        // const {
+        //     onResult: onResultUserInf,
+        //     result: resultUserInf,
+        // } = useQuery(queriesGetUser.getUser, { id: userId }, () => ({
+        //     fetchPolicy: "no-cache",
+        // }));
+        // onResultUserInf(e => {
+        //     emailAddress.value = e.data.getUser.email
+        // })
+        watchEffect(() => {
+          emailAddress.value = userInfo.value?.email
         })
         const { mutate: callSendEmail, onDone, onError, loading: loadingSendEmail } = useMutation(
             mutations.sendIncomeWageWithholdingTaxByEmployeeReportEmail
         );
         onDone(() => {
-            notification('success', `업데이트 완료!`)
+            clearSelection()
+            notification('success', Message.getCommonMessage('801').message)
         })
         onError(e => {
             notification('error', e.message)
@@ -287,8 +306,7 @@ export default defineComponent({
         };
         const switchTypeSendMail = ref(true) //If true:send one person. false: send many people.
         const sendMail = (e: any) => {
-          clearSelection()
-            // If the retention style is number, send an email to one person. If it's an object type, send a group. 
+            // If the retention style is number, send an email to one person. If it's an object type, send a group.
             dataSendEmail.value.companyId = companyId
             dataSendEmail.value.input = {
                 "imputedYear": globalYear.value,
@@ -296,6 +314,7 @@ export default defineComponent({
                 "createDate": createDate.value
             }
             if (e.employeeId) {
+                clearSelection()
                 emailAddress.value = e.email
                 dataSendEmail.value.employeeInputs = [
                     {
@@ -307,12 +326,13 @@ export default defineComponent({
                 ]
                 switchTypeSendMail.value = true
             } else {
-                emailAddress.value = resultUserInf.value.getUser.email
-                switchTypeSendMail.value = false
                 if (selectedItemKeys.value.length < 2) {
-                    notification('error', Message.getCommonMessage('601').message)
-                    return;
-                } else {
+                  notification('error', Message.getCommonMessage('601').message)
+                  return;
+                }
+                emailAddress.value = userInfo.value.email
+                switchTypeSendMail.value = false
+
                   dataSendEmail.value.employeeInputs = selectedItemKeys.value.map((val: any) => {
                     let dataChecked = dataSource.value.find((data: any) => data.employeeId === val)
                     return  {
@@ -322,7 +342,6 @@ export default defineComponent({
                       "employeeId": dataChecked.employeeId
                     }
                   })
-                }
             }
             modalSendMail.value = true
         }
@@ -404,6 +423,7 @@ export default defineComponent({
         };
     },
     methods: {
+      convertResidentId,
       onCellPrepared(e: any) {
         if(!e.cellElement.getAttributeNames().includes('aria-describedby') && e.cellElement.getAttribute('role') === 'gridcell' &&  e.cellElement.getAttribute('aria-colindex') === '6'){
           e.cellElement.colSpan = 2

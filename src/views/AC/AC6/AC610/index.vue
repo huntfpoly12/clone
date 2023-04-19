@@ -3,7 +3,8 @@
     title="거래처 관리"
     @actionSave="actionSave($event)"
     @actionSearch="searching($event)"
-    :buttonDelete="false"
+    :buttonSave="true"
+    :buttonSearch="true"
   />
   <div id="ac-610">
     <div class="search-form dflex">
@@ -27,10 +28,11 @@
         />
       </div>
     </div>
-    <div class="page-content">
-      <a-row gutter="24">
-        <a-col span="16" class="custom-layout">
-          <a-spin :spinning="loading" size="large">
+    <div class="px-6">
+      <a-row :gutter="[12,0]">
+        <a-col span="16" class="" style="height: 700px">
+          <div style="height: 100%; border: 1px solid #d7d7d7">
+            <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
               :show-row-lines="true"
@@ -45,7 +47,7 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              height="700px"
+              style="max-height: 700px"
             >
 <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -62,8 +64,7 @@
               </DxToolbar>
 
               <template #button-template>
-                <a-tooltip placement="top">
-                  <template #title>거래처 등록</template>
+                <a-tooltip placement="top" title="신규">
                   <div>
                     <DxButton icon="plus" @click="addRow" />
                   </div>
@@ -142,9 +143,10 @@
               </template>
             </DxDataGrid>
           </a-spin>
+          </div>
         </a-col>
-        <a-col span="8" class="custom-layout" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
-          <standard-form formName="ac-610" ref="formRef">
+        <a-col span="8" class="" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
+          <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
             <a-form-item label="거래처명" :label-col="labelCol" class="red">
               <default-text-box
                 :required="true"
@@ -156,16 +158,17 @@
             <a-form-item label="사업자등록번호" :label-col="labelCol">
               <biz-number-text-box
                 v-model:valueInput="formState.bizNumber"
-                :width="200"
+                width="200"
                 :disabled="!!formState.residentId"
               />
             </a-form-item>
 
             <a-form-item label="주민등록번호" :label-col="labelCol">
               <id-number-text-box
-                :width="200"
+                width="200"
                 v-model:valueInput="formState.residentId"
                 :disabled="!!formState.bizNumber"
+                :isResidentId="false"
               />
             </a-form-item>
 
@@ -258,7 +261,14 @@ import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
 
+const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
+  if (value) {
+    obj[key] = value;
+  }
+  return obj;
+};
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -309,9 +319,9 @@ export default defineComponent({
     const dataSearch = ref({
       page: 1,
       rows: per_page,
-      name: null,
-      presidentName: null,
-      phone: null,
+      name: '',
+      presidentName: '',
+      phone: '',
       includeNonUse: false,
     });
     let confirmSave = ref(false);
@@ -382,7 +392,7 @@ export default defineComponent({
         else focusedRowKey.value = selectRowKeyAction.value;
         previousRowData.value = { ...formState.value };
       }
-      notification("success", Message.getCommonMessage('106').message);
+      notification("success", Message.getCommonMessage('101').message);
     });
     onErrorAdd((e) => {
       notification("error", e.message);
@@ -510,19 +520,18 @@ export default defineComponent({
             updateClient(dataUpdate.value);
           } else {
             // if form disabled => action add
-            const newDataCreate = {
+            const newDataCreate: any = {
               companyId: companyId,
               input: {
                 name: formState.value.name,
-                bizNumber: formState.value.bizNumber,
-                residentId: formState.value.residentId?.replace("-", ""),
-                presidentName: formState.value.presidentName,
-                phone: formState.value.phone,
                 use: formState.value.use,
               },
             };
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'bizNumber', value: formState.value.bizNumber})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'residentId', value: formState.value.residentId})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'presidentName', value: formState.value.presidentName})
+            checkAndAddKeyToObject({obj: newDataCreate.input, key: 'phone', value: formState.value.phone})
             await createClient(newDataCreate);
-
           }
         }
     }
@@ -572,16 +581,18 @@ export default defineComponent({
 
     // ================FUNCTION============================================
     const dataUpdate = computed(() => {
+      const newDataUpdate :any ={}
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'bizNumber', value: formState.value.bizNumber})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'residentId', value: formState.value.residentId})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'presidentName', value: formState.value.presidentName})
+      checkAndAddKeyToObject({obj: newDataUpdate, key: 'phone', value: formState.value.phone})
       return {
         companyId: companyId,
         clientId: formState.value.clientId,
         input: {
           name: formState.value.name,
-          bizNumber: formState.value.bizNumber,
-          residentId: formState.value.residentId?.replace("-", ""),
-          presidentName: formState.value.presidentName,
-          phone: formState.value.phone,
           use: formState.value.use,
+          ...newDataUpdate
         },
       };
     });
@@ -609,9 +620,18 @@ export default defineComponent({
 
     const searching = (e: any) => {
       trigger.value = true;
-      Object.assign(dataFilter.value, dataSearch.value)
-      dataSearch.value.page = listClient.value.page;
-      refetchData()
+      const dataFilter: any = {
+        page: 1,
+        rows: per_page,
+        includeNonUse: dataSearch.value.includeNonUse,
+      };
+      if(dataSearch.value.name) dataFilter.name = dataSearch.value.name;
+      if(dataSearch.value.phone) dataFilter.phone = dataSearch.value.phone;
+      if(dataSearch.value.presidentName) dataFilter.presidentName = dataSearch.value.presidentName;
+      refetchData({
+        companyId: companyId,
+        filter: {...dataFilter},
+      })
     };
 
     return {

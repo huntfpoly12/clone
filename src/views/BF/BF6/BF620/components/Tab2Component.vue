@@ -23,7 +23,6 @@
         </a-tooltip>
       </a-col>
     </a-row>
-    <!-- {{ dataSource }} dataSource <br/> -->
     <div class="content-grid">
       <DxDataGrid :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
         :data-source="filteredDataSource" :show-borders="true" key-expr="companyId" class="mt-10"
@@ -58,13 +57,13 @@
             height: $config_styles.HeightInput
           }" class="btn-date" />
         </template>
-        <DxColumn caption="신고 주기" cell-template="reportType" />
+        <DxColumn caption="신고 주기" cell-template="reportType" width="95px" />
         <template #reportType="{ data }">
           <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
         <template #afterDeadline="{ data }">
           <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
@@ -75,9 +74,8 @@
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="제작현황" cell-template="productionStatus" />
         <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data" v-if="data.data.lastProductionRequestedAt"
-            @productionStatusData="productionStatusData" />
-          <span class="before-production-tag" v-if="!data.data.beforeProduction">제작요청전</span>
+          <GetStatusTable :dataProcduct="data.data"/>
+          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
@@ -87,7 +85,7 @@
         </DxSummary>
       </DxDataGrid>
     </div>
-    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :data="requestFileData" tab-name="tab2"
+    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :requestFileData="requestFileData" tab-name="tab2"
       @cancel="modalStatus = false" />
   </div>
 </template>
@@ -97,7 +95,7 @@ import { computed, defineComponent, reactive, ref, watch, watchEffect } from 'vu
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
-import { useQuery } from '@vue/apollo-composable';
+import { useApolloClient, useQuery } from '@vue/apollo-composable';
 import { useStore } from 'vuex';
 import DxButton from 'devextreme-vue/button';
 import { DxDataGrid, DxColumn, DxScrolling, DxSelection, DxSummary, DxTotalItem, DxLoadPanel } from 'devextreme-vue/data-grid';
@@ -108,6 +106,7 @@ import dayjs from 'dayjs';
 import { formatMonth } from '../utils/index'
 import { isNumber } from 'lodash';
 import { Message } from '@/configs/enum';
+import GetStatusTable from './GetStatusTable.vue';
 
 export default defineComponent({
   components: {
@@ -121,7 +120,8 @@ export default defineComponent({
     SaveOutlined,
     DxSummary,
     DxTotalItem,
-    DxLoadPanel
+    DxLoadPanel,
+    GetStatusTable,
   },
   props: {
     search: {
@@ -140,6 +140,33 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
 
+    // --------------------search production status-----------------------------------------
+
+    const { client } = useApolloClient();
+
+    const fetchDataStatus = async (companies: any) => {
+      if (companies.length === 0) return;
+      for (let i = 0; i < companies.length; i++) {
+        await client.query({
+          query: queries.getElectronicFilingsByLocalIncomeTax, variables: {
+            input: {
+              companyId: companies[i].companyId,
+              imputedYear: companies[i].imputedYear,
+              reportId: companies[i].reportId,
+            }
+          }
+        }).then((res) => {
+          let productionStatus = res.data.getElectronicFilingsByLocalIncomeTax[0].productionStatus;
+          productionCount.value--;
+          dataSource.value.forEach((item: any) => {
+            if (item.reportId == companies[i].reportId) {
+              item.productionStatus = productionStatus;
+            }
+          })
+        }).catch((err: any) => err);
+      }
+    };
+
     //-----------------------Fcn common-----------------------------------------
 
     const changeWithholdingTaxType = (index: Number, afterDeadline: boolean) => {
@@ -148,33 +175,6 @@ export default defineComponent({
       }
       return 2;
     }
-
-    //produtionStatus
-
-    const eletroFillingParam = reactive({
-      input: {
-        companyId: companyId,
-        imputedYear: globalYear.value,
-        reportId: 2,
-      },
-    });
-    const productionStatus = ref();
-    // const {
-    //   result: eletroFillingResult,
-    //   refetch: eletroFillingRefetch,
-    //   loading: eletroFillingLoading,
-    //   onError: searchWithholdingError,
-    // } = useQuery(queries.getElectronicFilingsByLocalIncomeTax, eletroFillingParam, () => ({
-    //   enabled: eletroFillingTrigger.value,
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(eletroFillingResult, (newVal) => {
-    //   let data = newVal.getElectronicFilingsByLocalIncomeTax;
-    //   productionStatus.value = data;
-    // });
-
-    //Search with holding and data source
-
     const dataSource = ref<any[]>([]);
     const filteredDataSource = ref<any[]>([]);
     let searchLocalIncomeParam = ref({
@@ -188,7 +188,8 @@ export default defineComponent({
     } = useQuery(queries.searchLocalIncomeTaxElectronicFilingsByYearMonth, searchLocalIncomeParam, () => ({
       fetchPolicy: 'no-cache',
     }));
-    watch(searchLocalIncomeResult, (newVal) => {
+    const productionCount = ref(0);
+    watch(searchLocalIncomeResult, async (newVal) => {
       let data = newVal.searchLocalIncomeTaxElectronicFilingsByYearMonth.map((item: any) => {
         let arrData = {};
         if (item) {
@@ -201,6 +202,7 @@ export default defineComponent({
             active: item.companyServiceContract.active,
             reportType: item.reportType,
             afterDeadline: item.afterDeadline,
+            reportId: item.reportId,
             index: item.index,
             localIncomeTaxAmount: item?.localIncomeTaxAmount,
             statusUpdatedAt: item?.statusUpdatedAt,
@@ -210,8 +212,8 @@ export default defineComponent({
             paymentMonth: item.paymentMonth,
             imputedYear: item.imputedYear,
             imputedMonth: item.imputedMonth,
-            beforeProduction: item.lastProductionRequestedAt ? true : false,
-            allowSelection: false,
+            beforeProduction: item.lastProductionRequestedAt ? false : true,
+            allowSelection: true,
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
         }
@@ -224,8 +226,12 @@ export default defineComponent({
         return acc;
       }, {}));
       dataSource.value = [...result];
-      filteredDataSource.value = [...result];
-      if (props.onSearch) {
+      await fetchDataStatus(dataSource.value.map((item: any) => {
+        if (item.lastProductionRequestedAt)
+          productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
+        return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+      }));
+      if (props.onSearch && productionCount.value == 0) {
         props.onSearch();
       }
     });
@@ -240,6 +246,18 @@ export default defineComponent({
         }
       }
     })
+    const productionStatusData = (emitVal: any, index: number) => {
+      productionStatusArr.value = [emitVal];
+      productionCount.value--;
+      if (emitVal?.companyId != 'undefined') {
+        productionStatusArr.value = [...productionStatusArr.value, emitVal];
+        filteredDataSource.value[index].productionStatus = emitVal.productionStatus;
+        filteredDataSource.value[index].allowSelection = false;
+      }
+      if (props.onSearch && productionCount.value == 0) {
+        props.onSearch();
+      }
+    };
 
     //------------------------SUM AREA------------------------------ 
 
@@ -251,13 +269,13 @@ export default defineComponent({
       }
       let typeCustom: number = 0;
       if (typeof type === 'boolean') {
-        typeCustom = type ? 1 : 0;
+        typeCustom = 0;
       }
       if (isNumber(type)) {
         typeCustom = type;
       }
       let count = arr.reduce((acc: any, crr: any) => {
-        let item = crr[propertyCompare] === false ? 0 : crr[propertyCompare];
+        let item = typeof (crr[propertyCompare]) == 'boolean' && crr[propertyCompare] == type ? 0 : crr[propertyCompare];
         acc[item] = acc[item] ? acc[item] + 1 : 1;
         return acc;
       }, {});
@@ -275,21 +293,8 @@ export default defineComponent({
         filteredDataSource.value, 3, 'withholdingTaxType')}`;
     };
     const productStatusSummary = () => {
-      return `제작요청전 ${countStatus(filteredDataSource.value, false, 'beforeProduction')} 제작대기 ${countStatus(productionStatusArr.value, 0, 'productionStatus')} 제작중 ${countStatus(
-        productionStatusArr.value,
-        1, 'productionStatus'
-      )} 제작실패 ${countStatus(productionStatusArr.value, -1, 'productionStatus')} 제작성공 ${countStatus(productionStatusArr.value, 2, 'productionStatus')}`;
-    };
-    // caculator sum
-    const productionStatusData = (emitVal: any) => {
-      productionStatusArr.value = [emitVal];
-      filteredDataSource.value = filteredDataSource.value.map((item: any) => {
-        if (item.companyId == emitVal.companyId) {
-          return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
-        }
-        return { ...item, beforeProduction: false, allowSelection: false };
-      })
-      // reFreshDataGrid();
+      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
     };
 
 
@@ -301,13 +306,13 @@ export default defineComponent({
     watch(
       () => props.search,
       () => {
-        if (filterBF620.value.reportType == null || filterBF620.value.reportType == 0) {
+        if (filterBF620.value.reportType == null) {
           filterBF620.value.reportType = 1;
         }
         let { paymentYear, paymentMonth, imputedYear, imputedMonth, afterDeadline, index, withholdingTaxType, ...compareObj } = filterBF620.value;
         let arr = dataSource.value.filter((item: any) => {
           return Object.keys(compareObj).every((key: any) => {
-            if (key === 'productionStatuses') {  //error search main reason is 
+            if (key === 'productionStatuses') {
               return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
             }
             if (compareObj[key]) {
@@ -327,8 +332,8 @@ export default defineComponent({
       reportKeyInputs: [],
       filter: filterBF620.value,
       emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor.value?.name,
+        receiverAddress: userInfor.value?.email,
       },
     });
     const selectionChanged = (event: any) => {
@@ -350,9 +355,11 @@ export default defineComponent({
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
     const onRequestFile = () => {
       requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
       };
+      const { active, withholdingTaxType, ...customFilter } = filterBF620.value;
+      requestFileData.value.filter = customFilter;
       if (requestFileData.value.reportKeyInputs.length > 0) {
         modalStatus.value = true;
       } else {
@@ -365,7 +372,6 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      productionStatus,
       onRequestFile,
       modalStatus,
       requestFileData,
@@ -374,6 +380,7 @@ export default defineComponent({
       filteredDataSource,
       reportTypeSummary, afterDeadlineSummary, productStatusSummary,
       selectionChanged, productionStatusData,
+      productionCount,
 
     };
   },

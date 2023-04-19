@@ -11,13 +11,13 @@
       <radio-group
         class="radio-group one"
         :arrayValue="option1"
-        v-model:valueRadioCheck="retirementIncome1"
+        v-model:valueRadioCheck="retirementIncome"
         layoutCustom="horizontal"
       />
       <radio-group
         class="radio-group two"
         :arrayValue="option2"
-        v-model:valueRadioCheck="dataForm.input.retirementType"
+        v-model:valueRadioCheck="retirementType"
         layoutCustom="horizontal"
       />
       <div class="mt-10">
@@ -57,39 +57,38 @@
       <a-step
         :status="step === 0 ? 'process' : 'finish'"
         title="기본정보"
-        @click="changeStep(0)"
       />
+<!--        @click="changeStep(0)"-->
       <a-step
         :status="checkStepTwo"
         title="퇴직금계산"
-        @click="changeStep(1)"
       />
+<!--        @click="changeStep(1)"-->
       <a-step
         :status="checkStepThree"
         title="퇴직소득세"
-        @click="changeStep(2)"
       />
+<!--        @click="changeStep(2)"-->
     </a-steps>
     <div class="step-content pt-20">
       <keep-alive>
         <template v-if="step === 0">
           <Tab1
-            :dataForm="dataForm"
-            :processKey="processKey"
             :arrayEmploySelect="arrayEmploySelect"
             :actionNextStep="valueNextStep"
+            :retirement-type="retirementType"
             @nextPage="step++"
           />
         </template>
       </keep-alive>
       <keep-alive>
         <template v-if="step === 1">
-          <Tab2 :dataForm="dataForm" />
+          <Tab2/>
         </template>
       </keep-alive>
       <keep-alive>
         <template v-if="step === 2">
-          <Tab3 :dataForm="dataForm" ref="formAddTab3"/>
+          <Tab3/>
         </template>
       </keep-alive>
     </div>
@@ -107,6 +106,7 @@
         type="default"
         mode="contained"
         @onClick="nextStep"
+        :disabled="isDisableBtnTab2 && step === 1"
         v-if="step < 2"
       />
       <button-basic
@@ -115,283 +115,209 @@
         type="default"
         mode="contained"
         @onClick="created"
+        :disabled="isDisableCreate"
         v-if="step === 2"
       />
     </div>
   </a-modal>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, reactive, watch } from "vue";
+<script lang="ts" setup>
+import {computed, reactive, ref} from "vue";
 import notification from "@/utils/notification";
-import { companyId } from "@/helpers/commonFunction";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import {companyId} from "@/helpers/commonFunction";
+import {useMutation, useQuery} from "@vue/apollo-composable";
 import mutations from "@/graphql/mutations/PA/PA4/PA420/index";
 import queriescm130 from "@/graphql/queries/CM/CM130/index";
 import Tab1 from "./TabCreated/Tab1.vue";
 import Tab2 from "./TabCreated/Tab2.vue";
 import Tab3 from "./TabCreated/Tab3.vue";
-import { initialFormState } from "../utils/index";
-import { useStore } from "vuex";
+import {useStore} from "vuex";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import {Message} from "@/configs/enum";
-export default defineComponent({
-  props: {
-    modalStatus: {
-      type: Boolean,
-      default: false,
-    },
-    data: {
-      type: Array,
-      default: [],
-    },
-    processKey: {
-      type: Object,
-    },
-    key: {
-      type: Number,
-    },
-    listEmployeeexist: {
-      type: Array,
-      default: [],
-    },
-  },
-  components: {
-    Tab1,
-    Tab2,
-    Tab3,
-  },
-  setup(props, { emit }) {
-    const store = useStore();
-    const formAddTab3 = ref()
-    const globalYear = computed(() => store.state.settings.globalYear);
-    const step = ref(0);
-    const valueNextStep = ref(0);
-    const dayValue = ref(1);
-    const modalStatusAccept = ref(false);
-    const retirementIncome1 = ref(true);
 
-    const dataForm = reactive(
-      JSON.parse(
-        JSON.stringify({ ...initialFormState, processKey: props.processKey })
-      )
-    );
-    const defaltDataForm = reactive(
-      JSON.parse(
-        JSON.stringify({ ...initialFormState, processKey: props.processKey })
-      )
-    );
-    // set riêng trường hợp retirementType vì
-    // watch(()=>dataForm.input.retirementType, () => {
-    //   alert()
-    // }, { deep: true })
+interface Props {
+  modalStatus: boolean,
+  listEmployeeexist: Array<any>
+}
 
-    const option1 = reactive([
-      { id: true, text: "사원" },
-      { id: false, text: "일용직사원" },
-    ]);
-    const option2 = reactive([
-      { id: 1, text: "퇴직소득(퇴직자)" },
-      { id: 2, text: "중도정산" },
-    ]);
-    const setModalVisible = () => {
-      if (JSON.stringify(defaltDataForm) === JSON.stringify(dataForm))
-      {
-        emit("closePopup", false)
-        modalStatusAccept.value = false;
-      }else{
-        comfirmClosePopup(() => { emit("closePopup", false); modalStatusAccept.value = false;})
-      }
-    };
-    const setModalSelectVisible = () => {
-      emit("closePopup", false)
-    };
-    store.dispatch("common/getListEmployee", {
-      companyId: companyId,
-      imputedYear: globalYear,
-    });
-    const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410);
+const props = defineProps<Props>();
+const emit = defineEmits(["closePopup", "refreshData"]);
 
-    // =========================  GRAPQL =================================================
-    // query get config from screen cm-130
-    const {
-              loading: loadingConfig,
-              result: resultConfig,
-            } = useQuery(
-                  queriescm130.getWithholdingConfig,
-                  {
-                    companyId:companyId,
-                    imputedYear:globalYear
-                  },
-                  () => ({
-                      fetchPolicy: "no-cache",
-                  })
-            );
+const store = useStore();
+const globalYear = computed(() => store.state.settings.globalYear);
+const step = ref(0);
+const valueNextStep = ref(0);
+const modalStatusAccept = ref(false);
+const retirementIncome = ref(true);
+const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
+const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
 
-        watch(resultConfig,(resConfig)=>{
-          if (resConfig) {
-            store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
-            dataForm.input.paymentDay = store.state.common.paymentDayPA420
-            defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420
-          }
-        })
-    const {
-      mutate: mutateCreateIncomeRetirement,
-      onDone: onDoneCreateIncomeRetirement,
-      onError: onErrorCreateIncomeRetirement,
-    } = useMutation(mutations.createIncomeRetirement);
-    onDoneCreateIncomeRetirement(() => {
-      notification("success", Message.getCommonMessage('101').message);
-      modalStatusAccept.value = false;
+const retirementType = ref(2)
+
+const option1 = reactive([
+  {id: true, text: "사원"},
+  {id: false, text: "일용직사원"},
+]);
+const option2 = reactive([
+  {id: 1, text: "퇴직소득(퇴직자)"},
+  {id: 2, text: "중도정산"},
+]);
+const setModalVisible = () => {
+  if (!isChangeForm.value) {
+    emit("closePopup", false)
+    modalStatusAccept.value = false;
+  } else {
+    comfirmClosePopup(() => {
       emit("closePopup", false);
-    });
-    onErrorCreateIncomeRetirement((e: any) => {
-      notification("error", e.message);
-    });
-
-    // ================WATCHING============================================
-
-    // =========================  FUNCTION ===============================================
-    // all Computed
-    const checkStepTwo = computed(() => {
-      if (step.value === 0) {
-        return "wait";
-      } else if (step.value === 1) {
-        return "process";
-      } else {
-        return "finish";
-      }
-    });
-    const checkStepThree = computed(() => {
-      if (step.value < 2) {
-        return "wait";
-      } else if (step.value === 2) {
-        return "process";
-      } else {
-        return "finish";
-      }
-    });
-    const checkStepFour = computed(() => {
-      if (step.value < 3) {
-        return "wait";
-      } else if (step.value === 3) {
-        return "process";
-      } else {
-        return "finish";
-      }
-    });
-
-    const changeStep = (stepChange: any) => {
-      step.value = stepChange;
-    };
-
-    const nextStep = (event: any) => {
-      if (step.value == 0) valueNextStep.value++;
-      else if (step.value == 1) step.value++;
-    };
-
-    const prevStep = () => {
-      step.value--;
-    };
-
-    const created = (e: any) => {
-      // validate datepicker tab 3
-      let statements = dataForm.taxCalculationInput.calculationOfDeferredRetirementIncomeTax.statements;
-      let dtValidate = true
-      if (formAddTab3.value.isReqStatements1 && statements.length > 0 && statements[0].depositDate == null) {
-        formAddTab3.value.statements1Ref.validate(true)
-        dtValidate = false
-      } else {
-        formAddTab3.value.statements1Ref.validate(false)
-      }
-      if (formAddTab3.value.isReqStatements2 && statements.length > 1 && statements[1].depositDate == null) {
-        formAddTab3.value.statements2Ref.validate(true)
-        dtValidate = false
-      } else {
-        formAddTab3.value.statements2Ref.validate(false)
-      }
-
-      // validate form tab 3
-      const validFrom3 = formAddTab3.value.tab3AddForm.validate();
-      if (!validFrom3.isValid ) {
-        validFrom3.brokenRules[0].validator.focus();
-      } else if (!dtValidate) {
-            dtValidate = true
-      } else {
-        const variables: any = reactive({
-          companyId: companyId,
-          processKey: { ...dataForm.processKey },
-          input: { ...dataForm.input },
-          incomeCalculationInput: { ...dataForm.incomeCalculationInput },
-          taxCalculationInput: { ...dataForm.taxCalculationInput },
-        });
-        if (!dataForm.checkBoxCallApi) {
-          delete variables.taxCalculationInput.prevRetiredYearsOfService;
-          delete variables.taxCalculationInput.prevRetirementBenefitStatus;
-        }
-
-        delete variables.checkBoxCallApi;
-        mutateCreateIncomeRetirement(variables)
-      }
-
-    };
-
-    const openModalAdd = () => {
-      // if is 사원
-      if (retirementIncome1.value) {
-        // filter 일용 employee
-        // console.log('store.state.common.arrayEmployeePA410' , store.state.common.arrayEmployeePA410)
-        arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
-          (element: any) =>
-            element.type === 10 &&
-            !props.listEmployeeexist.includes(element.employeeId)
-        );
-        // if it is 일용직사원
-      } else {
-        arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
-          (element: any) =>
-            element.type === 20 &&
-            !props.listEmployeeexist.includes(element.employeeId)
-        );
-      }
-      //If you choose retired employees, you have to filter again
-      if (dataForm.input.retirementType == 1) {
-        arrayEmploySelect.value = arrayEmploySelect.value.filter(
-          (element: any) => element.status === 0
-        );
-      } else {
-        arrayEmploySelect.value = arrayEmploySelect.value.filter(
-          (element: any) => element.status !== 0
-        );
-      }
-      modalStatusAccept.value = true;
-      //emit("closePopup", false);
-    };
-    return {
-      setModalVisible,
-      setModalSelectVisible,
-      formAddTab3,
-      changeStep,
-      nextStep,
-      prevStep,
-      created,
-      openModalAdd,
-      checkStepTwo,
-      checkStepThree,
-      checkStepFour,
-      step,
-      dayValue,
-      modalStatusAccept,
-      option1,
-      option2,
-      retirementIncome1,
-      dataForm,
-      arrayEmploySelect,
-      valueNextStep,
-      initialFormState,
-    };
-  },
+      modalStatusAccept.value = false;
+    })
+  }
+};
+const setModalSelectVisible = () => {
+  emit("closePopup", false)
+};
+store.dispatch("common/getListEmployee", {
+  companyId: companyId,
+  imputedYear: globalYear,
 });
+const arrayEmploySelect = ref(store.state.common.arrayEmployeePA410);
+
+// =========================  GRAPQL =================================================
+// query get config from screen cm-130
+const {
+  loading: loadingConfig,
+  result: resultConfig,
+} = useQuery(
+  queriescm130.getWithholdingConfig,
+  {
+    companyId: companyId,
+    imputedYear: globalYear
+  },
+  () => ({
+    fetchPolicy: "no-cache",
+  })
+);
+
+// watch(resultConfig, (resConfig) => {
+//   if (resConfig) {
+//     store.state.common.paymentDayPA420 = resConfig.getWithholdingConfig.paymentDay;
+//     dataForm.input.paymentDay = store.state.common.paymentDayPA420
+//     defaltDataForm.input.paymentDay = store.state.common.paymentDayPA420
+//   }
+// })
+const {
+  mutate: mutateCreateIncomeRetirement,
+  onDone: onDoneCreateIncomeRetirement,
+  onError: onErrorCreateIncomeRetirement,
+} = useMutation(mutations.createIncomeRetirement);
+onDoneCreateIncomeRetirement(() => {
+  notification("success", Message.getCommonMessage('101').message);
+  modalStatusAccept.value = false;
+  emit("closePopup", false);
+});
+onErrorCreateIncomeRetirement((e: any) => {
+  notification("error", e.message);
+});
+
+// ================WATCHING============================================
+
+// =========================  FUNCTION ===============================================
+// all Computed
+const checkStepTwo = computed(() => {
+  if (step.value === 0) {
+    return "wait";
+  } else if (step.value === 1) {
+    return "process";
+  } else {
+    return "finish";
+  }
+});
+const checkStepThree = computed(() => {
+  if (step.value < 2) {
+    return "wait";
+  } else if (step.value === 2) {
+    return "process";
+  } else {
+    return "finish";
+  }
+});
+const checkStepFour = computed(() => {
+  if (step.value < 3) {
+    return "wait";
+  } else if (step.value === 3) {
+    return "process";
+  } else {
+    return "finish";
+  }
+});
+
+const changeStep = (stepChange: any) => {
+  step.value = stepChange;
+};
+
+const nextStep = (event: any) => {
+  if (step.value == 0) valueNextStep.value++;
+  else if (step.value == 1) step.value++;
+};
+
+const prevStep = () => {
+  step.value--;
+};
+const isDisableCreate = computed(() => store.getters['common/getIsDisableCreate'])
+const getAllData = computed(() => store.getters['common/getAllData'])
+const interimPaymentTab1 = computed(() => store.getters['common/getInterimPaymentTab1'])
+
+const created = (e: any) => {
+  if (isDisableCreate.value) {
+  } else {
+    const dataForm: any = getAllData.value;
+    if (!interimPaymentTab1.value) {
+      delete dataForm.taxCalculationInput.prevRetiredYearsOfService
+      delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
+    }
+    if (!dataForm.taxCalculationInput?.prevRetirementBenefitStatus?.retirementBenefits)
+      delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
+    const variables: any = reactive({
+      companyId: companyId,
+      ...dataForm
+    });
+    mutateCreateIncomeRetirement(variables)
+  }
+};
+
+const openModalAdd = () => {
+  // if is 사원
+  if (retirementIncome.value) {
+    // filter 일용 employee
+    // console.log('store.state.common.arrayEmployeePA410' , store.state.common.arrayEmployeePA410)
+    arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
+      (element: any) =>
+        element.type === 10 &&
+        !props.listEmployeeexist.includes(element.employeaeId)
+    );
+    // if it is 일용직사원
+  } else {
+    arrayEmploySelect.value = store.state.common.arrayEmployeePA410.filter(
+      (element: any) =>
+        element.type === 20 &&
+        !props.listEmployeeexist.includes(element.employeeId)
+    );
+  }
+  //If you choose retired employees, you have to filter again
+  if (retirementType.value == 1) {
+    arrayEmploySelect.value = arrayEmploySelect.value.filter(
+      (element: any) => element.status === 0
+    );
+  } else {
+    arrayEmploySelect.value = arrayEmploySelect.value.filter(
+      (element: any) => element.status !== 0
+    );
+  }
+  modalStatusAccept.value = true;
+  //emit("closePopup", false);
+};
+
 </script>
 
 <style lang="scss" scoped src="../style/modalAdd.scss"></style>

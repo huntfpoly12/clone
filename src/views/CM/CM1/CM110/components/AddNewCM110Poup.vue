@@ -5,16 +5,20 @@
 			<h2 class="title-h2">이용자정보</h2>
 			<standard-form formName="add-cm110">
 				<a-row :gutter="24" class="cm-100-popup-add">
-					<a-col :span="12">
-						<a-form-item label="이용자ID" :label-col="labelCol" class="red">
-							<default-text-box :width="150" :required="true" :replaceRegex="true"
-								v-model:valueInput="formState.username">
-							</default-text-box>
-						</a-form-item>
-					</a-col>
-					<a-col :span="12">
-						<button-basic :disabled="!disabledCheckUserName" :text="'중복체크'" :type="'default'"
-							:mode="'contained'" @onClick="checkUserName" />
+					<a-col :span="24">
+						<a-row>
+							<a-col>
+								<a-form-item label="이용자ID" :label-col="labelCol" class="red">
+									<default-text-box :width="150" :required="true" :replaceRegex="true"
+										v-model:valueInput="formState.username">
+									</default-text-box>
+								</a-form-item>
+							</a-col>
+							<a-col class="ml-10">
+								<button-basic :disabled="!disabledCheckUserName" :text="'중복체크'" :type="'default'"
+									:mode="'contained'" @onClick="checkUserName" />
+							</a-col>
+						</a-row>
 					</a-col>
 					<a-col :span="12">
 						<a-form-item label="성명" :label-col="labelCol" class="red">
@@ -89,6 +93,7 @@ export default defineComponent({
 			type: Boolean,
 		},
 		data: null,
+		bizTypeList: Array,
 	},
 	components: {
 		MailOutlined,
@@ -97,24 +102,24 @@ export default defineComponent({
 
 	},
 	setup(props, { emit }) {
-		const optionsRadio = reactive([...initialOptionsRadio]); 
+		const optionsRadio = reactive([...initialOptionsRadio]);
 		const statusMailValidate = ref<boolean>(true);
-		const disabledCheckUserName = ref<boolean>(false); 
+		const disabledCheckUserName = ref<boolean>(false);
 		let triggers = ref<boolean>(false);
 		let triggersUserName = ref<boolean>(false);
 		let dataQuery = ref()
 		let returnRadio = ref(0);
-		watch(() => props.modalStatus, (value) => {
-			if (props.data.companyId) {
-				triggers.value = true;
-				dataQuery.value = { companyId: props.data.companyId };
-				refetchData()
-			}
+		watch(() => props.modalStatus, async (value) => {
+			// if (props.data.companyId && value) {
+			// 	await(dataQuery.value = { companyId: props.data.companyId });
+			// 	await(triggers.value = true);
+			// 	// refetchData()
+			// }
 			Object.assign(formState, initialState);
-		}) 
+		})
 
 		const formState = reactive({ ...initialState });
-		let objDataDefault = ref({ ...initialState }); 
+		let objDataDefault = ref({ ...initialState });
 		watch(() => formState.email, (value) => {
 			let checkMail = value.match(
 				/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -125,22 +130,23 @@ export default defineComponent({
 				statusMailValidate.value = true;
 			}
 		})
-		let bizTypeList = ref([])
-		const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
+		// let bizTypeList = ref([])
+		// const { refetch: refetchData, onResult } = useQuery(queries.getDataFacilityBusiness, dataQuery, () => ({ enabled: triggers.value, fetchPolicy: "no-cache", }))
 
 		let dataCallApiCheck = ref({})
 		const { refetch: refetchUserName, onResult: onResultUsername } = useQuery(queries.checkUserNameCompany, dataCallApiCheck, () => ({ enabled: triggersUserName.value, fetchPolicy: "no-cache", }))
 
-		onResult(e => {
-			let dataRes: any = []
-			e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
-				dataRes.push({
-					name: val.name,
-					id: val.facilityBusinessId
-				})
-			})
-			bizTypeList.value = dataRes
-		})
+		// onResult(e => {
+		// 	triggers.value = false;
+		// 	let dataRes: any = []
+		// 	e.data.getMyCompanyFacilityBusinesses.map((val: any) => {
+		// 		dataRes.push({
+		// 			name: val.name,
+		// 			id: val.facilityBusinessId
+		// 		})
+		// 	})
+		// 	bizTypeList.value = dataRes
+		// })
 		onResultUsername(e => {
 			if (e.data)
 				if (e.data.isUserRegistableUsername == true) {
@@ -174,7 +180,7 @@ export default defineComponent({
 					input: {
 						username: formState.username,
 						name: formState.name,
-						accountingRole: false,
+						accountingRole: formState.facilityBusinessIds.length ? true : false,
 						facilityBusinessIds: formState.facilityBusinessIds,
 						withholdingRole: formState.withholdingRole,
 						mobilePhone: formState.mobilePhone,
@@ -209,7 +215,7 @@ export default defineComponent({
 			}
 		})
 
-		watch(() => formState.mobilePhone, (value) => { 
+		watch(() => formState.mobilePhone, (value) => {
 			formState.mobilePhone = value.replace(/\D/g, '');
 		})
 		watch(() => returnRadio.value, (value) => {
@@ -219,24 +225,23 @@ export default defineComponent({
 				formState.withholdingRole = false;
 			}
 		}
-		); 
+		);
 
 		const setModalVisible = () => {
 			if (JSON.stringify(objDataDefault.value) === JSON.stringify(formState) == true)
 				emit("closePopup", false)
 			else
 				comfirmClosePopup(() => emit('closePopup', false))
-		} 
+		}
 		return {
 			dataCallApiCheck,
 			labelCol: { style: { width: "150px" } },
-			formState,  
-			optionsRadio, 
+			formState,
+			optionsRadio,
 			statusMailValidate,
 			disabledCheckUserName,
-			bizTypeList,
+			// bizTypeList,
 			creactUserNew,
-			refetchData,
 			checkUserName,
 			setModalVisible,
 			returnRadio,
