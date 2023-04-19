@@ -518,30 +518,12 @@ export default defineComponent({
       isCheckedBizNumber.value = false;
       isCheckedResidentId.value = false;
       isDiscard.value = false;
-      // notification("success", Message.getCommonMessage('106').message);
-      message.success({
-        content: () =>  Message.getCommonMessage('106').message,
-        class: 'ant-message',
-        style: {
-          marginTop: '20vh',
-          display: "flex",
-          justifyContent: "end",
-          paddingRight: "100px",
-        },
-      }, 2);
+      notification("success", Message.getCommonMessage('106').message);
+
     });
     onErrorUpdate((e) => {
       triggerDetail.value = true;
-      message.error({
-        content: () =>  e.message,
-        class: 'ant-message',
-        style: {
-          marginTop: '20vh',
-          display: "flex",
-          justifyContent: "end",
-          paddingRight: "100px",
-        },
-      }, 2);
+      notification("error", e.message);
     });
 
     // handle add row
@@ -811,10 +793,28 @@ export default defineComponent({
     onResultCheckBizNumber(e => {
       triggerBizNumber.value = false
         if (e.data?.isBackerRegistableBizNumber) {
-          notification('success', `사용 가능한 아이디입니다!`)
+          message.success({
+            content: () =>  Message.getCommonMessage('106').message,
+            class: 'ant-message',
+            style: {
+              marginTop: '20vh',
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "100px",
+            },
+          }, 2);
           isCheckedBizNumber.value = true
         } else {
-          notification('error', '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요');
+          message.error({
+            content: () =>  '이미 존재하는 아이디 입니다. 다른 아이디를 입력해주세요',
+            class: 'ant-message',
+            style: {
+              marginTop: '20vh',
+              display: "flex",
+              justifyContent: "end",
+              paddingRight: "100px",
+            },
+          }, 2);
           isCheckedBizNumber.value = false
         }
     })
