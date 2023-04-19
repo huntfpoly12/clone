@@ -11,11 +11,11 @@
           'mt-1': index > 0 && listChat[index - 1].name === items.name,
           'mt-10': index > 0 && listChat[index - 1].name !== items.name,
         }">
-          <div class="form-chat-timeline-avatar">
+          <div class="form-chat-timeline-avatar" :class="{'hidden-avatar': items.name === userName}">
             <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
               alt=""> -->
             <a-badge :dot="true" :offset="[-5, 33]" :status="items.name === userName ? 'success' : 'error'"
-              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }">
+              :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">
               <a-avatar shape="circle" size="large"  :style="`background-color: ${items.name === userName ? '#1890ff' : '#f56a00'}`" >{{ items.name }}</a-avatar>
             </a-badge>
           </div>
@@ -137,14 +137,11 @@ export default defineComponent({
       if(!!props.idUserTo){
         const idUser = userName.value?.toString() || ''
         if (props.idUserTo > idUser) {
-          console.log(props.idUserTo + idUser);
           return props.idUserTo + idUser;
         } else {
-          console.log(idUser + props.idUserTo);
           return idUser + props.idUserTo;
         }
       }else{
-        console.log(props.keyChatChannel);
         return props.keyChatChannel.toString()
       }
     };
@@ -383,7 +380,6 @@ export default defineComponent({
     &-content {
       max-width: 70%;
       background-color: #DCE6F2;
-      border-radius: 2px;
       padding: 5px 12px 8px 12px;
 
       &-info {
@@ -509,11 +505,12 @@ export default defineComponent({
 }
 
 .borderRadiusleft10 {
-  border-radius: 20px 2px 2px 2px;
+  border-radius: 10px 2px 2px 2px;
 }
 
 .borderRadiusRight10 {
-  border-radius: 2px 20px 2px 2px;
+  background-color: #EBF1DE;
+  border-radius: 2px 10px 2px 2px;
 }
 
 .borderEdit {
