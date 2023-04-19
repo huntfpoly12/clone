@@ -28,10 +28,11 @@
         />
       </div>
     </div>
-    <div class="page-content">
-      <a-row gutter="24">
+    <div class="px-6">
+      <a-row :gutter="[12,0]">
         <a-col span="16" class="" style="height: 700px">
-          <a-spin :spinning="loading" size="large">
+          <div style="height: 100%; border: 1px solid #d7d7d7">
+            <a-spin :spinning="loading" size="large">
             <DxDataGrid
               ref="gridRef"
               :show-row-lines="true"
@@ -46,7 +47,7 @@
               @focused-row-changed="onFocusedRowChanged"
               v-model:focused-row-key="focusedRowKey"
               :focusedRowIndex="0"
-              height="700px"
+              style="max-height: 700px"
             >
 <!--              <DxScrolling mode="standard" show-scrollbar="always" />-->
               <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
@@ -142,6 +143,7 @@
               </template>
             </DxDataGrid>
           </a-spin>
+          </div>
         </a-col>
         <a-col span="8" class="" :style="storeDataSourceCount === 0 && 'pointer-events: none;'">
           <standard-form formName="ac-610" ref="formRef" style="padding-top: 10px">
@@ -156,16 +158,17 @@
             <a-form-item label="사업자등록번호" :label-col="labelCol">
               <biz-number-text-box
                 v-model:valueInput="formState.bizNumber"
-                :width="200"
+                width="200"
                 :disabled="!!formState.residentId"
               />
             </a-form-item>
 
             <a-form-item label="주민등록번호" :label-col="labelCol">
               <id-number-text-box
-                :width="200"
+                width="200"
                 v-model:valueInput="formState.residentId"
                 :disabled="!!formState.bizNumber"
+                :isResidentId="false"
               />
             </a-form-item>
 
@@ -258,6 +261,7 @@ import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {initialState} from "./utils/index";
 import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
 
 const checkAndAddKeyToObject = ({obj, key ,value}: {obj: any, key: any, value: any}) => {
   if (value) {
@@ -315,9 +319,9 @@ export default defineComponent({
     const dataSearch = ref({
       page: 1,
       rows: per_page,
-      name: null,
-      presidentName: null,
-      phone: null,
+      name: '',
+      presidentName: '',
+      phone: '',
       includeNonUse: false,
     });
     let confirmSave = ref(false);
@@ -616,9 +620,18 @@ export default defineComponent({
 
     const searching = (e: any) => {
       trigger.value = true;
-      Object.assign(dataFilter.value, dataSearch.value)
-      dataSearch.value.page = listClient.value.page;
-      refetchData()
+      const dataFilter: any = {
+        page: 1,
+        rows: per_page,
+        includeNonUse: dataSearch.value.includeNonUse,
+      };
+      if(dataSearch.value.name) dataFilter.name = dataSearch.value.name;
+      if(dataSearch.value.phone) dataFilter.phone = dataSearch.value.phone;
+      if(dataSearch.value.presidentName) dataFilter.presidentName = dataSearch.value.presidentName;
+      refetchData({
+        companyId: companyId,
+        filter: {...dataFilter},
+      })
     };
 
     return {

@@ -137,7 +137,6 @@
           <div class="d-flex-center">
             <number-box-money :required="interimPaymentTab1" width="150px" :disabled="!interimPaymentTab1"
                               v-model:valueInput="taxCalculationInput.prevRetiredYearsOfService.additionalDays"
-                              ref="additionalDays"
                               :rule-custom="positiveNumber" :message-rule-custom="'값은 0보다 커야 합니다'"
             />
             <div class="ml-5 d-flex-center">
@@ -325,7 +324,6 @@ const inputFormTab1:any = ref(cloneDeep(INPUT_FORM_TAB_1))
 const taxCalculationInput:any = ref(cloneDeep(TAX_CALCULATION_INPUT))
 const incomeCalculationInput:any = ref(cloneDeep(INCOME_CALCULATION_INPUT))
 
-// computed
 const interimPaymentTab1 = ref(false)
 
 const prevSettlementStartDate = ref()
@@ -336,8 +334,6 @@ const lastRetiredYearsOfServicePaymentDate = ref()
 const incomeCalculationInputSettlementStartDate = ref()
 const incomeCalculationInputSettlementFinishDate = ref()
 const prevRetiredYearsOfServicePaymentDate = ref()
-const exclusionDays = ref()
-const additionalDays = ref()
 
 const joinedAt = ref(filters.formatDateToInterger(dayjs()))
 const ProcessKey = computed(() => store.getters['common/getSelectMonthColumn'])

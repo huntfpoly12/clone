@@ -1,6 +1,10 @@
 #pa-610 {
   margin-top: 10px;
 
+  .page-content {
+    padding-left: 0;
+  }
+
   .total-user {
     background-color: #17375E;
     color: white;
@@ -17,11 +21,13 @@
       padding-left: 5px;
     }
   }
+
   .custom-layout {
-    height: 700px;
+    height: 750px;
     border: 1px solid #d7d7d7;
     padding: 10px 0 0 10px;
   }
+
   :deep(.dx-datagrid-header-panel) {
     //border: 1px solid #d7d7d7;
     border-bottom: none;
@@ -33,7 +39,7 @@
     padding-left: 10px;
   }
 
-  :deep(.red .ant-form-item-label > label){
+  :deep(.red .ant-form-item-label > label) {
     color: red;
   }
 
@@ -59,6 +65,7 @@
     background-color: #337AB7;
     color: white;
   }
+
   .ant-tag {
     text-align: center;
     align-items: center;
