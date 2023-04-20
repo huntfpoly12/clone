@@ -1,7 +1,7 @@
 <template>
   <DxSelectBox :width="width" :data-source="arrayValue" item-template="item-data" value-expr="key"
     display-expr="employeeId" :value="valueEmployRes" field-template="field-data" @value-changed="updateValue"
-    :height="$config_styles.HeightInput" :disabled="disabled">
+    :height="$config_styles.HeightInput" :disabled="disabled" :dropDownOptions="{ height: '250px' }">
     <template #field-data="{ data }">
       <div v-if="data" style="padding: 2px">
         <income-type :typeCode="data?.employeeId" :typeName="(data?.name)" :incomeTypeName="data?.incomeTypeName" />
@@ -106,7 +106,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 :deep .dx-list-item.dx-state-active:focus {
   border-color: blue;
   box-shadow: 0 0 3px blue;
@@ -167,6 +167,20 @@ export default defineComponent({
 
 :deep .dx-list-item.dx-state-active {
   color: black !important;
+}
+
+:deep .custom-grade-cell {
+  display: flex;
+  align-items: center;
+
+  .custom-grade-cell-tag {
+    padding: 1px 10px !important;
+    border: 1px solid #304967;
+    margin-right: 10px;
+    border-radius: 5px;
+    min-width: 50px;
+    text-align: center;
+  }
 }
 </style>
   

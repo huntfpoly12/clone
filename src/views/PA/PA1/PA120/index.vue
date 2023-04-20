@@ -1,8 +1,8 @@
 <template>
   <action-header title="기타소득자등록" :buttonDelete="false" :buttonSave="false" :buttonSearch="false" :buttonPrint="false" />
   <div id="pa-120" class="page-content">
-    <a-row style="flex-flow: row nowrap">
-      <a-col :span="11" style="max-width: 46.84%" class="custom-layout">
+    <a-row style="flex-flow: row nowrap" class="row-first">
+      <a-col :span="11" style="max-width: 46.84%" class="col-left">
         <a-spin :spinning="loading" size="large">
           <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
             key-expr="key" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -84,7 +84,7 @@
             <template #residentId="{ data }">
               <resident-id :residentId="data.data.residentId"></resident-id>
             </template>
-            <DxColumn caption="비고" cell-template="grade-cell" width="410" data-field="incomeTaxMagnification"
+            <DxColumn caption="비고" cell-template="grade-cell" data-field="incomeTaxMagnification"
               :calculateCellValue="calculateIncomeTypeCodeAndName" />
             <template #grade-cell="{ data }">
               <div>
@@ -101,7 +101,7 @@
                   :ratio="data.data.incomeTaxMagnification" />
               </div>
             </template>
-            <DxColumn cell-template="pupop" width="30" />
+            <DxColumn cell-template="pupop" width="40" />
             <template #pupop="{ data }">
               <div class="custom-action" style="text-align: center" v-if="data.data.deletable">
                 <a-space :size="10">
@@ -114,7 +114,7 @@
         </a-spin>
         <!-- <input v-model="focusedRowKey"/> -->
       </a-col>
-      <a-col :span="13" class="custom-layout">
+      <a-col :span="13" class="col-right">
         <PA120PopupAddNewVue ref="addNew" :idRowEdit="idRowEdit" :modalStatus="modalAddNewStatus"
           v-if="actionChangeComponent == 1" :key="addComponentKey" />
         <PA120PopupEdit :idRowEdit="idRowEdit" v-if="actionChangeComponent == 2" />
