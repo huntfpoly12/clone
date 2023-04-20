@@ -3,6 +3,7 @@
     companyId : {{ jwtObject.companyId }}<br/>
     userType : {{ jwtObject.userType }}<br/>
     isExpired : {{jwtObject.isExpired()}}<br/>
+    time Expired : {{dayjs(jwtObject.expiredTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}}<br/>
     userId : {{ jwtObject.userId }} <br/>
     ip : {{ jwtObject.ip }} <br/>
     managerGrade : {{ jwtObject.managerGrade }} <br/>
@@ -67,19 +68,19 @@
 <script lang="ts">
 import { getJwtObject,AdminScreenRole  } from "@bankda/jangbuda-common";
 import { defineComponent, ref } from "vue";
+import dayjs from "dayjs";
 export default defineComponent({
   setup() {
     const token  = sessionStorage.getItem("token")
     const jwtObject = getJwtObject(token!);
     const infos = jwtObject.accounting;
     const info = jwtObject.withholding;
-
-    console.log(info);
     return {
       jwtObject,
       AdminScreenRole ,
       infos,
-      info
+      info,
+      dayjs
     }
    }
 });
