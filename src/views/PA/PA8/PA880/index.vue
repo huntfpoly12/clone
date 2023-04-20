@@ -6,7 +6,7 @@
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
         <DxPaging :page-size="0" />
-        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
+        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
@@ -44,9 +44,9 @@
         <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="text-align: center">
             <a-space>
-              <DxButton type="ghost" style="cursor: pointer" @click="onDetailData(data.data.workId)">
+              <!-- <DxButton type="ghost" style="cursor: pointer" @click="onDetailData(data.data.workId)">
                 <SearchOutlined style="font-size: 16px" />
-              </DxButton>
+              </DxButton> -->
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px" />
               </DxButton>
@@ -58,9 +58,7 @@
         </template>
       </DxDataGrid>
     </a-spin>
-    <!-- <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
-      typeHistory="pa-810" /> -->
-    <FormReport v-if="modalCreate" @onCreateModal="onCreateModal" :workId="workId" />
+    <FormReport v-if="modalCreate" @onCreateModal="onCreateModal" />
     <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm"
       :content="contentDelete" okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
     <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="workIdHistory" title="변경이력"
@@ -130,6 +128,7 @@ export default defineComponent({
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const focusedRowKey = ref();
     const globalYear = computed(() => store.state.settings.globalYear);
+
     //--------------------------DATASOURCE getMajorInsuranceCompanyOuts--------------------------
 
     const dataSource = ref([]);
@@ -155,6 +154,7 @@ export default defineComponent({
     companyOutsError((res: any) => {
       notification('error', res.message)
     })
+
     //---------------------------CREATE------------------
 
     const modalCreate = ref(false);
@@ -168,11 +168,11 @@ export default defineComponent({
 
     //----------------------------ON DETAIL DATA---------------
 
-    const workId = ref();
-    const onDetailData = (val: Number) => {
-      workId.value = val;
-      modalCreate.value = true;
-    }
+    // const workId = ref();
+    // const onDetailData = (val: Number) => {
+    //   workId.value = val;
+    //   modalCreate.value = true;
+    // }
 
     // -----------------------------HISTORY-------------------
 
@@ -250,16 +250,13 @@ export default defineComponent({
     const onGetFileStorageId = (url: string) => {
       window.open(url);
     };
-    // onError((e) => {
-    //   notification('error', e.message);
-    // });
     return {
       per_page, move_column, colomn_resize,
       focusedRowKey, dataSource,
       modalHistory, workIdHistory, onOpenLogs,
       onCreateModal, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       modalCreate, modalDelete, handleDelete, contentDelete,
-      onDetailData, workId,
+      // onDetailData, workId,
     };
   },
 })

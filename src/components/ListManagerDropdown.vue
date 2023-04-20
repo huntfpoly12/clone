@@ -63,6 +63,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    isExample: {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     DxSelectBox,
@@ -72,6 +76,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const app: any = getCurrentInstance();
+    const trigger = ref<boolean>(!props.isExample); // trigger for call api
     const messages = app.appContext.config.globalProperties.$messages;
     const messageRequired = ref(messages.getCommonMessage('102').message);
     if (props.messRequired != "") {
@@ -85,8 +90,11 @@ export default defineComponent({
       filter: {
         rows: 10000,
         type: 'm'
-      }
-    }
+      },
+    },() => ({
+            fetchPolicy: "no-cache",
+            enabled: trigger.value,
+        })
     );
     watch(
       () => props.valueInput,

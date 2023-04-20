@@ -27,7 +27,7 @@
                 </a-form-item>
             </a-col>
             <a-col>
-                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+                <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
                     <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" width="200" />
                 </a-form-item>
             </a-col>
@@ -72,7 +72,7 @@ import { defineComponent, ref, computed, getCurrentInstance, watch } from "vue";
 import { dataSearchStep2Utils } from "../utils";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
 import { DxRadioGroup } from 'devextreme-vue/radio-group';
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -80,7 +80,7 @@ import notification from "@/utils/notification"
 import ElectronicFilingFileProductions from "./ElectronicFilingFileProductions.vue";
 export default defineComponent({
     components: {
-        SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxRadioGroup,
+        SaveOutlined, DxDataGrid, DxToolbar, DxColumn, DxItem, DxScrolling, DxRadioGroup,
         ElectronicFilingFileProductions
     },
     props: {
