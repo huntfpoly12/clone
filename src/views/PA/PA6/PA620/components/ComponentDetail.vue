@@ -39,14 +39,15 @@
       </div>
     </div>
   </div>
-  <a-row>
-    <a-col :span="14" class="custom-layout" :class="{ 'ele-opacity': !compareForm() }">
+  <a-row style="flex-flow: row nowrap">
+    <a-col :span="14" class="col-tax" :class="{ 'ele-opacity': !compareForm() }">
       <a-spin :spinning="(loadingIncomeBusinesses)" size="large">
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSourceDetail" :show-borders="true"
           key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
           @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
-          v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging">
+          v-model:selected-row-keys="selectedRowKeys" ref="gridRef" @focused-row-changing="onFocusedRowChanging"
+          id="tax-pay-620">
           <DxSelection select-all-mode="allPages" mode="multiple" />
           <DxColumn caption="기타소득자 [소득구분]" cell-template="tag" />
           <template #tag="{ data }">
@@ -99,7 +100,7 @@
         </DxDataGrid>
       </a-spin>
     </a-col>
-    <a-col :span="10" class="custom-layout form-action" style="padding-right: 0px;">
+    <a-col :span="10" class="form-tax form-action">
       <a-spin :spinning="(loadingIncomeBusiness || loadingIncomeBusinesses)" size="large">
         <StandardForm formName="pa-620-form" ref="pa620FormRef">
           <a-form-item label="사업소득자" label-align="right" class="red">
