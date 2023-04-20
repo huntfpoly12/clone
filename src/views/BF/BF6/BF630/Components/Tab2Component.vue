@@ -104,7 +104,7 @@
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeRetirementPayment || loadingElectronicFilings" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        <DxDataGrid id="DxDataGrid-bf-630-tab2" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys">
           <DxScrolling mode="standard" show-scrollbar="always" />
