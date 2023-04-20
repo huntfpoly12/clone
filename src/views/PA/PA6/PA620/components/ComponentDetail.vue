@@ -130,7 +130,8 @@
                 <a-form-item label="지급액" label-align="right" class="red">
                   <div class="d-flex-center">
                     <number-box-money :min="0" width="150px" class="mr-5" :max="2147483647" :disabled="idDisableNoData"
-                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true" format="0,###" /> 원
+                      v-model:valueInput="dataAction.input.paymentAmount" @changeInput="caclInput" :required="true"
+                      format="0,###" /> 원
                   </div>
                 </a-form-item>
                 <a-form-item label="세율" label-align="right">
@@ -434,9 +435,9 @@ export default defineComponent({
       await resetForm();
       dataSourceDetail.value = dataSourceDetail.value.concat(dataAction.value.input);
       focusedRowKey.value = dataAction.value.input.incomeId;
-      setTimeout(()=>{
+      setTimeout(() => {
         selectedRowKeys.value = [0];
-      },10)
+      }, 10)
       isNewRow.value = true;
       compareType.value = 1;
       dataCallApiIncomeBusiness.incomeId = dataAction.value.input.incomeId;
@@ -569,7 +570,13 @@ export default defineComponent({
         incomeTypeCode: event.selectedRowsData[0]?.incomeTypeCode,
       }
       popupDataDelete.value = event.selectedRowKeys;
-      editParam.value = event.selectedRowsData.map((item: any) => item.incomeId);
+      editParam.value = event.selectedRowsData.map((item: any) => {
+        console.log(`output->item`,item)
+        return {
+          param: { incomeId: item.incomeId },
+          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, incomeTypeCode: item.incomeTypeCode },
+        };
+      });
     }
     const deleteItem = () => {
       if (popupDataDelete.value.length > 0) {

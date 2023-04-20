@@ -499,7 +499,6 @@ export default defineComponent({
       refetchIncomeProcessExtras();
     });
     const actionEditDaySuccess = (emit: any) => {
-      console.log(`output->emit`,emit)
       if (emit.length > 0) {
         store.commit('common/formEditPA720', formPA720.value);
         changeFommDone.value++;
