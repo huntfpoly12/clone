@@ -202,17 +202,11 @@ export default defineComponent({
         //         focusedRowKey.value = keyNew;
         //     }, 100);
         // }
-        const addNewRow = () => {
-            if (dataSource.value.length) {
-                dataSource.value = [...dataSource.value, { ...initStatementOfGoods, id: dataSource.value[dataSource.value.length - 1].id + 'create' }]
-            } else {
-                dataSource.value = [{ ...initStatementOfGoods, id: 'create' }]
-            }
-        }
-        const onInitRow = (e: any) => {
-            // e.data = JSON.parse(JSON.stringify({ ... }));
-            // dataActiveRow.value = e.data
-        }
+        
+        // const onInitRow = (e: any) => {
+        //     // e.data = JSON.parse(JSON.stringify({ ... }));
+        //     // dataActiveRow.value = e.data
+        // }
 
         // =================== GRAPHQL ===================
         // mutation deleteStatementOfGoods    
@@ -227,6 +221,8 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // DeleteStatementOfGoods
         doneDeleteStatementOfGoods((e) => {
+            store.state.common.ac120.resetDataTable++
+            emit("closePopup", false)
             notification('success', Message.getMessage('COMMON', '106').message)
         })
         errorDeleteStatementOfGoods(e => {
@@ -236,6 +232,7 @@ export default defineComponent({
         // SaveStatementOfGoods
         doneSaveStatementOfGoods((e) => {
             notification('success', Message.getMessage('COMMON', '106').message)
+            store.state.common.ac120.resetDataTable++
             emit("closePopup", false)
         })
         errorSaveStatementOfGoods(e => {
@@ -245,7 +242,13 @@ export default defineComponent({
         // ================== WATCH ================
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
-                dataSource.value = store.state.common.ac120.formData?.statementOfGoodsItems
+                dataSource.value = store.state.common.ac120.formData?.statementOfGoodsItems?.map((item: any, index: number) => {
+                    return {
+                        ...item,
+                        id: index
+                    }
+                })
+                
             }
         })
 
@@ -253,15 +256,30 @@ export default defineComponent({
         const cancel = () => {
             emit("closePopup", false)
         };
-        const onRowInserted = (e: any) => {
-            e.component.navigateToRow(e.key);
+        // const onRowInserted = (e: any) => {
+        //     e.component.navigateToRow(e.key);
+        // }
+        const addNewRow = () => {
+            if (dataSource.value?.length) {
+                dataSource.value = [...dataSource.value, { ...initStatementOfGoods, id: dataSource.value[dataSource.value.length - 1].id + 'create' }]
+            } else {
+                dataSource.value = [{ ...initStatementOfGoods, id: 'create' }]
+            }
         }
 
         const deleteItem = (data: any) => {
             dataSource.value = dataSource.value.filter((item: any) => item.id !== data.id)
-            if (!store.state.common.ac120.statusFormAdd && dataSource.length == 1) { // status update = true and 1 data left
+            console.log(!store.state.common.ac120.statusFormAdd);
+            console.log(dataSource.value.length == 0);
+            console.log(dataSource.value.length);
+            
+            if (!store.state.common.ac120.statusFormAdd && dataSource.value.length == 0) { // status update = true and 1 data left
                 mutateDeleteStatementOfGoods({
-
+                    companyId: companyId,
+                    fiscalYear: globalYear.value,
+                    facilityBusinessId: globalFacilityBizId.value,
+                    transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
+                    accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
                 })
             }
         }
@@ -307,8 +325,9 @@ export default defineComponent({
             cancel,
             deleteItem,
             dataSource,
-            onRowInserted,
-            addNewRow, dataGridRef, onInitRow,
+            // onRowInserted,
+            addNewRow, dataGridRef, 
+            // onInitRow,
             focusedRowKey,
             onSubmit,
             arrSelectItem,

@@ -27,8 +27,7 @@
       {{ beforeCount }} beforeCount<br /> -->
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
         key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true"
-        @editor-preparing="onEditorPreparing">
+        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
@@ -37,7 +36,7 @@
           {{ data.data.companyCode }}
           {{ data.data.active ? '' : '해지' }}
         </template>
-        <DxColumn caption="상호 주소" cell-template="companyName" />
+        <DxColumn caption="상호 주소" cell-template="companyName" width="300" />
         <template #companyName="{ data }">
           {{ data.data.companyName }}
           {{ data.data.address }}
@@ -62,7 +61,7 @@
             height: $config_styles.HeightInput
           }" class="btn-date" />
         </template>
-        <DxColumn caption="신고 주기" cell-template="reportType" width="95px" />
+        <DxColumn caption="신고 주기" cell-template="reportType" width="100px" />
         <template #reportType="{ data }">
           <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
@@ -75,12 +74,12 @@
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
             data.data.index }}</div>
         </template>
-        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
+        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###"  width="100"/>
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" />
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" width="120"/>
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="360"/>
         <template #productionStatus="{ data }">
-          <GetStatusTable :dataProcduct="data.data"/>
+          <GetStatusTable :dataProcduct="data.data" :message="data.data.causeOfProductionFailure"/>
           <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
         <DxSummary>
@@ -97,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onActivated, ref, watch, watchEffect, onDeactivated } from 'vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import SearchArea from './SearchArea.vue';
 import RequestFilePopup from './RequestFilePopup.vue';
 import queries from '@/graphql/queries/BF/BF6/BF620/index';
@@ -112,8 +111,6 @@ import { Message } from '@/configs/enum';
 import { formatMonth } from '../utils/index'
 import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
-import filters from '@/helpers/filters';
-import { reactive } from '@vue/reactivity';
 export default defineComponent({
   components: {
     SearchArea,
@@ -138,7 +135,7 @@ export default defineComponent({
       default: () => { },
     }
   },
-  setup(props, { emit }) {
+  setup(props) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const filterBF620 = computed(() => store.state.common.filterBF620);
@@ -146,6 +143,7 @@ export default defineComponent({
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const userInfor = computed(() => store.state.auth.userInfor);
     const statusRef = ref();
+
     //-----------------------Fcn common-----------------------------------------
 
     const changeWithholdingTaxType = (index: Number, afterDeadline: boolean) => {
@@ -158,7 +156,6 @@ export default defineComponent({
     // --------------------search production status-----------------------------------------
 
     const { client } = useApolloClient();
-
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
@@ -172,10 +169,14 @@ export default defineComponent({
           }
         }).then((res) => {
           let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
+          let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
           productionCount.value--;
           dataSource.value.forEach((item: any) => {
             if (item.reportId == companies[i].reportId) {
               item.productionStatus = productionStatus;
+              if(productionStatus == -1){
+                item.causeOfProductionFailure = causeOfProductionFailure;
+              }
             }
           })
         }).catch((err: any) => err);
@@ -232,6 +233,7 @@ export default defineComponent({
             imputedMonth: item.imputedMonth,
             beforeProduction: item.lastProductionRequestedAt ? false : true,
             allowSelection: true,
+            causeOfProductionFailure: '',
             withholdingTaxType: changeWithholdingTaxType(item.index, item.afterDeadline),
           }
         }
@@ -369,14 +371,10 @@ export default defineComponent({
         event.component.deselectRows(deselectRowKeys);
         return;
       }
-      // checkBoxUpdating = true;
-      // selectAllCheckBox.option("value", true);
-      // checkBoxUpdating = false;
       if (event.selectedRowsData)
         requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
           return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
         });
-      // customFilter.beforeProduction = beforeProduction
     };
     const modalStatus = ref<boolean>(false);
     const messageDelNoItem = Message.getMessage('COMMON', '404').message;
@@ -393,22 +391,6 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
-
-    //------------------------disable selection row--------------------------------
-
-    const onEditorPreparing = (e: any) => {
-      // if (e.command === 'select') {
-      //   if (e.parentType === 'dataRow' && e.row) {
-      //     if (!e.row.data.allowSelection) {
-      //       e.editorOptions.disabled = true;
-      //     }
-      //   }
-      // }
-    }
-
-    //
-
-
     return {
       filterBF620,
       searchWithholdingLoading,
@@ -427,7 +409,6 @@ export default defineComponent({
       formatMonth,
       searchWithholdingParam,
       filteredDataSource,
-      onEditorPreparing,
       productionCount, statusRef, beforeCount,
     };
   },

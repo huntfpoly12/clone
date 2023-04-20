@@ -1,6 +1,8 @@
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 let statesAC120 = {
     ac120: {
-        statusShowFull: true,
+        statusShowFull: false,
         formData: null,
         onAddRow: 0,
         onDeleteRowAdd: 0,
@@ -10,7 +12,11 @@ let statesAC120 = {
         resetDataAccountingProcesses: 0,
         statusFormAdd: true,
         // dataRowFocus: {},
-        arrResolutionType: []
+        arrResolutionType: [],
+        arrLetterOfApprovalType: [],
+        transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
+        keyRefreshForm: 0,
+        monthSelected: dayjs().month() + 1
     }
 };
 

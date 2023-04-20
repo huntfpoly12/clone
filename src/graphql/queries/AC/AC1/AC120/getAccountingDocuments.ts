@@ -20,12 +20,12 @@ export default gql`
         accountingDocumentId
         documentOrderByDate
         bankbookId
-        bankbookDetailId
+        
         resolutionClassification
         income
         spending
         summary
-        theOrder
+        
         accountCode
         relationCode
         fundingSource
@@ -34,17 +34,15 @@ export default gql`
         causeUsage
         goodsCount
         memo
-        goodsId
-        documentRegistered
-        createdAt
-        createdBy
-        updatedAt
-        updatedBy
-        ip
-        active
-        client{
-          clientId
-        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
         statementOfGoodsItems {
           item
           standard

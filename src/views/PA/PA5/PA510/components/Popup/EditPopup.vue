@@ -1,6 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
         :width="500">
+        <a-spin :spinning="loading" size="large">
         <standard-form action="" name="edit-510">
             <div class="custom-modal-edit">
                 <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
@@ -16,6 +17,24 @@
                     :mode="'contained'" @onClick="onSubmit" />
             </div>
         </standard-form>
+        </a-spin>
+    </a-modal>
+    <a-modal v-model:visible="statusOnCallApiChange" okText="확인" :closable="false" :footer="null">
+        <h3 style="text-align: center;">지급일변경 결과</h3>
+        <p>요청건수: {{ data.length }}건</p>
+        <p>처리건수: {{ sumSuccessCallApi }}건</p>
+        <p>미처리건수 및 내역: {{ sumErrorCallApi }} 건 </p>
+        <ul>
+            <li v-for="(item) in arrDataError" :key="item.employeeId" style="margin: 5px 0;">
+                <employee-info :idEmployee="item.employee.employeeId" :name="item.employee.name"
+                    :idCardNumber="item.employee.residentId" :status="item.employee.status"
+                    :foreigner="item.employee.foreigner" :checkStatus="false" />
+            </li>
+        </ul>
+        <a-row justify="center">
+            <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
+                @onClick="closePupop" />
+        </a-row>
     </a-modal>
 </template>
 
@@ -45,6 +64,12 @@ export default defineComponent({
         const store = useStore()
         const processKey = computed(() => store.state.common.pa510.processKeyPA510)
         const dayValue = ref(1)
+        const statusOnCallApiChange = ref<boolean>(false);
+        const arrData = ref<any[]>([])
+        const arrDataError = ref<any[]>([])
+        let sumSuccessCallApi = ref<number>(0)
+        let sumErrorCallApi = ref<number>(0)
+        const loading = ref<boolean>(false)
         const setModalVisible = () => {
             emit("closePopup", false)
         };
@@ -54,31 +79,69 @@ export default defineComponent({
             onError,
         } = useMutation(mutations.changeIncomeWageDailyPaymentDay);
         onDone(() => {
-            notification('success', Message.getMessage('COMMON', '106').message)
-            emit("closePopup", false)
-            store.state.common.pa510.onDoneEdit = true;
-            store.state.common.pa510.loadingTableInfo++
+            sumSuccessCallApi.value++
+            arrData.value.shift()
+            if (arrData.value?.length) {
+                callOneApiChange();
+            } else {
+                loading.value = false
+                statusOnCallApiChange.value = true;
+                store.state.common.pa510.onDoneEdit = true;
+                store.state.common.pa510.loadingTableInfo++
+            }
+            // notification('success', Message.getMessage('COMMON', '106').message)
+            // emit("closePopup", false)
+            // store.state.common.pa510.onDoneEdit = true;
+            // store.state.common.pa510.loadingTableInfo++
             // store.state.common.pa510.loadingFormData++
         })
         onError((e: any) => {
-            notification('error', e.message)
+            sumErrorCallApi.value++
+            arrDataError.value.push(arrData.value[0])
+            arrData.value.shift()
+            if (arrData.value?.length) {
+                callOneApiChange();
+            } else {
+                loading.value = false
+                statusOnCallApiChange.value = true;
+                store.state.common.pa510.onDoneEdit = true;
+                store.state.common.pa510.loadingTableInfo++
+            }
+            // notification('error', e.message)
         })
         const onSubmit = (e: any) => {
-            props.data.forEach((data: any) => {
-                mutate({
-                    companyId: companyId,
-                    processKey: processKey.value,
-                    incomeId: data.incomeId,
-                    day: dayValue.value
-                })
-            })
+            sumSuccessCallApi.value = 0
+            sumErrorCallApi.value = 0
+            arrDataError.value = []
+            arrData.value = JSON.parse(JSON.stringify(props.data))
+            // arrData.value.forEach((data: any) => {
+            if (arrData.value?.length) {
+                loading.value = true
+                callOneApiChange();
+            }
+            // })
 
         };
+        const callOneApiChange = () => {
+            mutate({
+                companyId: companyId,
+                processKey: processKey.value,
+                incomeId: arrData.value[0].incomeId,
+                day: dayValue.value
+            })
+        }
+        const closePupop = () => {
+            statusOnCallApiChange.value = false
+            emit("closePopup", false)
+        }
 
         return {
             setModalVisible,
             onSubmit,
             dayValue,
+            statusOnCallApiChange,
+            arrDataError, sumSuccessCallApi, sumErrorCallApi,
+            closePupop, loading,
         }
     },
 })

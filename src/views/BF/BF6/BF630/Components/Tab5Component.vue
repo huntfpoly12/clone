@@ -37,7 +37,7 @@
   <div class="grid-view">
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -181,7 +181,6 @@ export default defineComponent({
     })
 
     const openPopupDetail = (data: any) => {
-      console.log('datadatadata', data);
       dataPopup.value = data
       modalCompanies.value = true
     }

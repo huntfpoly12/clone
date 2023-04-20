@@ -335,7 +335,7 @@
                       <date-time-box
                         default="2022-12-12"
                         dateFormat="YYYY-MM-DD"
-                        v-model="formData.contractExpiredDate"
+                        v-model:value-date="formData.contractExpiredDate"
                         :disabled="
                           !formData.contractWorker ||
                           !isChooseEmployeementInsuranceAndIndustrialAccidentInsurance
@@ -829,7 +829,7 @@ export default defineComponent({
           formData.value.insuranceReductionReasonCode
         );
         if (!input.contractWorker) delete input.contractExpiredDate
-        input.contractExpiredDate &&= filters.formatDateToInterger(newFormData.contractExpiredDate);
+        input.contractExpiredDate &&= newFormData.contractExpiredDate;
         mutate({
           ...variables,
           input: input,

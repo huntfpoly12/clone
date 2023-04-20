@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
-export const initialArrayRadioCheck = [
-  { id: 0, text: '구입' },
-  { id: 1, text: '운반' },
-  { id: 2, text: '수선' },
-  { id: 3, text: '인쇄' },
-  { id: 4, text: '지출' }
-]
+// export const initialArrayRadioCheck = [
+//   { id: 0, text: '구입' },
+//   { id: 1, text: '운반' },
+//   { id: 2, text: '수선' },
+//   { id: 3, text: '인쇄' },
+//   { id: 4, text: '지출' }
+// ]
 export const initialArrayRadioMonth = [
   { id: 1, text: '01' },
   { id: 2, text: '02' },
@@ -24,7 +24,7 @@ export const initialArrayRadioMonth = [
 ]
 export const initialStateFormAdd = {
   bankbookId: null,
-  resolutionDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   resolutionType: 11,
   amount: null,
   summary: null,
@@ -41,7 +41,8 @@ export const initialStateFormData = {
   letterOfApprovalType: 1,
   theOrder: 1,
   resolutionClassification: null,
-  resolutionDate: filters.formatDateToInterger(dayjs().startOf('year').toDate()),
+  resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
+  // transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   causeActionDate: null,
   proposedDate: null,
   accountingDate: null,
