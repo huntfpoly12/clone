@@ -3,7 +3,7 @@
         <a-modal v-model:visible="visible" :title="title" centered @cancel="setModalVisible()" width="1024px"
             :mask-closable="false">
             <a-spin tip="로딩 중..."
-                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810||
+                :spinning="loadingBf320 || loadingBf330 || loadingBf210 || loadingBf340 || loadingBf210 || loadingPA210 ||loadingPA810|| loadingPA820||
                 loadingCM110 || loadingCM130 || loadingBF220 || loadingPA710 || loadingPA610 || loadingPA520 || loadingPA510 || loadingStatusPA510 || loadingPA620 || loadingStatusPA620 ||
                 loadingPA120 || loadingPA110 || loadingStatusPA110 || loadingCMDeduction130 || loadingStatusPA420 || loadingStatusPA720 || loadingPA720 || loadingBf310 || loadingAC610 || loadingCM121
                 || loadingAC110BankbookLogs || loadingAC110AccountingProcessLogs || loadingPA880 || loadingAC120AccountingProcess || loadingAC120AccountingDocuments">
@@ -93,6 +93,7 @@ export default defineComponent({
         let triggerBf310 = ref<boolean>(false);
         let triggerPA210 = ref<boolean>(false);
         let triggerPA810 = ref<boolean>(false);
+        let triggerPA820 = ref<boolean>(false);
         let triggerPA880 = ref<boolean>(false);
         let triggerAC610 = ref<boolean>(false);
         let triggerCM121 = ref<boolean>(false);
@@ -381,11 +382,21 @@ export default defineComponent({
                             triggerPA810.value = true;
                             refetchPA810();
                             break;
+                        case 'pa-820':
+                          dataQuery.value = {
+                            companyId: companyId,
+                            imputedYear: globalYear.value,
+                            workId: props.data,
+                          };
+                          console.log(`output-`,dataQuery.value)
+                            triggerPA820.value = true;
+                            // refetchPA820();
+                            break;
                         case 'pa-880':
                             dataQuery.value = {
-                              companyId: companyId,
-                              imputedYear: globalYear,
-                              workId: props.data,
+                                companyId: companyId,
+                                imputedYear: globalYear,
+                                workId: props.data,
                             };
                             triggerPA880.value = true;
                             refetchPA880();
@@ -444,6 +455,8 @@ export default defineComponent({
                     triggerStatus720.value = false;
                     triggerPA210.value = false;
                     triggerPA810.value = false;
+                    triggerPA820.value = false;
+                    triggerPA880.value = false;
                     triggerAC610.value = false;
                     triggerCM121.value = false;
                     triggerAC620.value = false;
@@ -845,6 +858,21 @@ export default defineComponent({
             dataTableShow.value = value.getMajorInsuranceCompanyEmployeeAcquisitionLogs;
           }
         });
+        // get pa-820
+        const { result: resultPA820, loading: loadingPA820, refetch: refetchPA820 } = useQuery(
+            queries.getMajorInsuranceCompanyEmployeeLossLogs,
+            dataQuery,
+            () => ({
+                enabled: triggerPA820.value,
+                fetchPolicy: "no-cache",
+            })
+        );
+        watch(resultPA820, (value) => {
+            if (value) {
+                dataTableShow.value = value.getMajorInsuranceCompanyEmployeeLossLogs;
+            }
+        });
+        // get pa-880
         const { result: resultPA880, loading: loadingPA880, refetch: refetchPA880 } = useQuery(
             queries.getMajorInsuranceCompanyOutLogs,
             dataQuery,
@@ -993,6 +1021,7 @@ export default defineComponent({
             loadingStatusPA720,
             loadingPA210,
             loadingPA810,
+            loadingPA820,
             loadingPA880,
             loadingAC610,
             loadingCM121,

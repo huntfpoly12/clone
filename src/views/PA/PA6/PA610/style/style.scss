@@ -23,7 +23,6 @@
   }
 
   .custom-layout {
-    height: 750px;
     border: 1px solid #d7d7d7;
     padding: 10px 0 0 10px;
   }
@@ -72,4 +71,7 @@
     width: 35px;
     height: 25px;
   }
+}
+:deep(.dx-freespace-row) {
+  display: none !important;
 }

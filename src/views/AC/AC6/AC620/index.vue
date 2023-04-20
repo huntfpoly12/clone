@@ -27,7 +27,7 @@
     </div>
     <div class="px-6">
       <a-row :gutter="[12,0]">
-        <a-col span="16" style="height: 700px">
+        <a-col span="16">
           <div style="height: 100%; border: 1px solid #d7d7d7">
             <a-spin :spinning="loading" size="large">
               <DxDataGrid
@@ -43,9 +43,9 @@
                 @focused-row-changed="onFocusedRowChanged"
                 v-model:focused-row-key="focusedRowKey"
                 :focusedRowIndex="0"
-                style="max-height: 700px"
+                style="height: 740px"
               >
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" />
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" placeholder="검색"/>
                 <DxPaging :page-size="0" />
                 <DxExport :enabled="true" />
                 <DxToolbar>

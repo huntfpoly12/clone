@@ -68,17 +68,17 @@
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="125px" />
         <template #afterDeadline="{ data }">
           <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
           <div v-if="data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-black">기한후</div>
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-orange">수정 {{
             data.data.index }}</div>
         </template>
-        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###" />
+        <DxColumn caption="납부세액(A99)" data-field="totalCollectedTaxAmount" format=",###"  width="100"/>
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" />
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" width="120"/>
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="360"/>
         <template #productionStatus="{ data }">
           <GetStatusTable :dataProcduct="data.data"/>
           <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>

@@ -18,6 +18,18 @@
       </div>
     </standard-form>
   </a-modal>
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
+    <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ incomeIdRender.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역:{{ errorState.length }} 건 </p>
+    <ul>
+      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.incomeTypeName }}</li>
+    </ul>
+    <a-row justify="center">
+      <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
+        @onClick="updateStatus = false" />
+    </a-row>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -44,7 +56,8 @@ export default defineComponent({
     const dayValue = ref(1)
     const messageUpdate = Message.getMessage('COMMON', '106').message;
     const store = useStore();
-    const changeDayDataPA720 = computed(() => store.state.common.changeDayDataPA720);
+    const changeDayDataPA720 = computed(() => store.state.common.changeDayDataPA720);;
+    const updateStatus = ref(false);
     const setModalVisible = () => {
       emit("closePopup", '')
     };
@@ -55,43 +68,91 @@ export default defineComponent({
     } = useMutation(mutations.changeIncomeExtraPaymentDay);
     const dataUpdateLen = ref(props?.data?.length);
     const incomeIdRender = ref<any>([]);
+    const succesState = ref<any>([]);
+    const errorState = ref<any>([]);
     watch(() => props.modalStatus, (newVal: any) => {
       if (newVal) {
-        dataUpdateLen.value = props?.data.length;
+        dataUpdateLen.value = props?.data?.length;
         incomeIdRender.value = [];
+        succesState.value = [];
+        errorState.value = [];
       }
     }, { deep: true })
     onDone((res: any) => {
       dataUpdateLen.value--;
       let resData = res.data.changeIncomeExtraPaymentDay;
-      notification('success', messageUpdate);
-      let data = {
+      incomeIdRender.value.push(resData.incomeId);
+      succesState.value.push({
         employeeId: resData.employeeId,
         incomeTypeCode: resData.incomeTypeCode,
-      }
-      if (JSON.stringify(data) == JSON.stringify(changeDayDataPA720.value)) {
-        incomeIdRender.value.unshift(resData.incomeId);
-      } else {
-        let hasData = incomeIdRender.value.findIndex((item: any) => item == resData.incomeId);
-        if (hasData == -1) {
-          incomeIdRender.value.push(resData.incomeId);
-        }
-      }
+      });
       if (dataUpdateLen.value == 0) {
-        emit("closePopup", incomeIdRender.value)
+        let allData = props.data;
+        allData = allData.filter((item: any, index) => {
+          const firstIndex = allData.findIndex((elem: any) =>
+            elem.errorInfo.employeeId.toString() === item.errorInfo.employeeId.toString()
+            && elem.errorInfo.incomeTypeCode.toString() === item.errorInfo.incomeTypeCode.toString()
+          );
+          if (index == firstIndex) {
+            return true
+          } else {
+            errorState.value.push(item);
+            return false;
+          }
+        });
+        let arr = allData.filter((item1: any) => {
+          return !succesState.value.some((item2: any) => {
+            return (
+              item2.employeeId === item1.errorInfo.employeeId
+              && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
+            )
+          }
+          );
+        });
+        errorState.value = [...errorState.value, ...arr];
+        updateStatus.value = true;
+        emit("closePopup", incomeIdRender.value);
       }
     })
     onError((e: any) => {
       dataUpdateLen.value--;
-      notification('error', e.message);
       if (dataUpdateLen.value == 0) {
+        let allData = props.data;
+        allData = allData.filter((item: any, index) => {
+          const firstIndex = allData.findIndex((elem: any) =>
+            elem.errorInfo.employeeId.toString() === item.errorInfo.employeeId.toString()
+            && elem.errorInfo.incomeTypeCode.toString() === item.errorInfo.incomeTypeCode.toString()
+          );
+          if (index == firstIndex) {
+            return true
+          } else {
+            errorState.value.push(item);
+            return false;
+          }
+        });
+        let arr = allData.filter((item1: any) => {
+          return !succesState.value.some((item2: any) => {
+            return (
+              item2.employeeId === item1.errorInfo.employeeId
+              && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
+            )
+          }
+          );
+        });
+        errorState.value = [...errorState.value, ...arr];
+        updateStatus.value = true;
         emit("closePopup", incomeIdRender.value)
       }
     })
     const onSubmit = (e: any) => {
-      const reversedArr = props.data.reverse();
+      const reversedArr: any = props.data.reverse();
       reversedArr.forEach((item: any) => {
-        mutate({ ...item, day: dayValue.value })
+        mutate({
+          processKey: item.param.processKey,
+          incomeId: item.param.incomeId,
+          companyId: item.param.companyId,
+          day: dayValue.value,
+        })
       })
     };
 
@@ -99,7 +160,9 @@ export default defineComponent({
       setModalVisible,
       onSubmit,
       dayValue,
-
+      changeDayDataPA720,
+      updateStatus, incomeIdRender, errorState,
+      dataUpdateLen, succesState,
     }
   },
 })

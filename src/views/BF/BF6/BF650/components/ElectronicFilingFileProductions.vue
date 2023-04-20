@@ -8,7 +8,10 @@
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxScrolling mode="standard" show-scrollbar="always" />
                 <DxColumn caption="사업자코드" data-field="code" />
-                <DxColumn caption="사업자번호" data-field="bizNumber" />
+                <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />
+                <template #bizNumber="{ data }">
+                  <div>{{ convertResidentId(data.data.bizNumber) }}</div>
+                </template>
                 <DxColumn caption="상호" data-field="name" />
                 <DxColumn caption="대표자명" data-field="presidentName" />
             </DxDataGrid>
@@ -16,14 +19,16 @@
         </div>
     </a-modal>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent, ref, watch, computed } from "vue"
 import { useQuery } from "@vue/apollo-composable"
 import { useStore } from 'vuex';
 import queries from "@/graphql/queries/BF/BF6/BF650/index";
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import {convertResidentId} from "@/helpers/commonFunction";
 export default defineComponent({
+  methods: {convertResidentId},
     props: {
         modalStatus: Boolean,
         data: {
@@ -55,7 +60,7 @@ export default defineComponent({
         }))
         watch( result, (newVal: any) => {
             trigger.value = false
-            
+
             dataSource.value = newVal.getCompaniesInElectronicFilingFile
         })
 
@@ -81,4 +86,4 @@ export default defineComponent({
         }
     }
 })
-</script>   
+</script>
