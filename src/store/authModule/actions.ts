@@ -4,6 +4,7 @@ import queries from "@/graphql/queries/common/index";
 import {ActionTree} from "vuex";
 import {AuthState} from "./types";
 import { getJwtObject } from '@bankda/jangbuda-common';
+import { trigger } from 'devextreme/events';
 
 const actions: ActionTree<AuthState, any> = {
   /* A function that gets the user information from the server. */
@@ -22,27 +23,33 @@ const actions: ActionTree<AuthState, any> = {
       }
     })
   },
-  checkToken:({commit })=>{
+  checkToken:({ state, dispatch,commit })=>{
     const token = sessionStorage.getItem('token')
     const refreshToken = sessionStorage.getItem('refreshToken')
+    console.log(token, 'kkkkkkkkkkkkkkkkkkk', refreshToken);
+    const trigger = ref(false)
+    const {
+      result,refetch
+    } = useQuery(queries.refreshLogin,
+    { 
+      accessToken:token,
+      refreshToken:refreshToken
+      }, () => ({
+      enabled:trigger.value,
+      fetchPolicy: "no-cache",
+    }));
+
+    watch(result, value => {
+      if (value && value.refreshLogin) {
+        trigger.value = false
+        commit('setAuthData', value.refreshLogin)
+      }
+    })
     if (token && refreshToken) {
       const jwtObject = getJwtObject(token);
       if (jwtObject.isExpired()) {
-        const {
-          result
-        } = useQuery(queries.refreshLogin,
-        { 
-          accessToken:token,
-          refreshToken:refreshToken
-        }, () => ({
-          fetchPolicy: "no-cache",
-        }));
-
-        watch(result, value => {
-          if (value && value.refreshLogin) {
-            commit('setAuthData', value.refreshLogin)
-          }
-        })
+        trigger.value = true
+        refetch()
       }
 
     }
