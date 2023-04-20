@@ -41,7 +41,9 @@
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
             <div class="form-chat-timeline-content-files">
-              <img class="form-chat-timeline-content-files-items" v-for="(file, indexFile) in items.files" :src="file.url" alt="" :key="file.url"> 
+              <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading" size="small" :key="file.url">
+                <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""> 
+              </a-spin>
             </div>
             <div class="form-chat-timeline-content-text" v-html="items.text"></div>
           </div>
@@ -86,8 +88,8 @@
           </div>
         </div>
       </div>
-      <div class="form-chat-bottom-send">
-        <SendOutlined class="form-chat-bottom-send-icon" @click="submitChat" />
+      <div class="form-chat-bottom-send" @click.stop="submitChat">
+        <SendOutlined class="form-chat-bottom-send-icon" />
       </div>
     </div>
     <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
@@ -139,7 +141,9 @@ export default defineComponent({
     const inputChat: any = ref()
     let idEditComment = ref<any>(null)
     let listFileUpload: any = ref([])
+    let listFileUploadHandleLoading: any = ref([])
     let listImageUpload: any = ref([])
+    let isLoadingUpload = ref(false)
     let payload: any = ref({
       name: userName.value,
       avatar: '',
@@ -191,6 +195,7 @@ export default defineComponent({
     };
 
     const submitChat = () => {
+      if(isLoadingUpload.value) return
       if (!textChat.value.trim() && !listFileUpload.value.length) return
       payload.value = {
         ...payload.value,
@@ -198,6 +203,19 @@ export default defineComponent({
         files: []
       }
       if(listFileUpload.value.length) {
+        isLoadingUpload.value = true
+        listFileUploadHandleLoading.value = [...listFileUpload.value]
+        listChat.value = [...listChat.value, {
+          ...payload.value,
+          text: textChat.value,
+          files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true}))
+        }]
+        textChat.value = ""
+        listFileUpload.value = []
+        nextTick(() => {
+          formTimeline.value.scrollTop = 10000000
+          resetInputChat()
+        })
         uploadFileServer()
       }else {
         sendChat()
@@ -206,15 +224,14 @@ export default defineComponent({
 
     const sendChat = () => {
       if (idEditComment.value === null) {
-        if(listImageUpload.value.length) {
+        if(listFileUploadHandleLoading.value.length) {
           payload.value = {
             ...payload.value,
             files: listImageUpload.value
           }
           textChat.value = "";
-          listFileUpload.value = []
           listImageUpload.value = []
-          listChat.value = [...listChat.value, payload.value]
+          listFileUploadHandleLoading.value = []
         }
         const postListRef = reffb(databaseFirebase, channelChatSubrights());
         const newPostRef = push(postListRef);
@@ -229,6 +246,7 @@ export default defineComponent({
           .catch((err) => {
             console.log(err);
           }).finally(() => {
+            isLoadingUpload.value = false
             formTimeline.value.scrollTop = 10000000
           })
       } 
@@ -255,7 +273,7 @@ export default defineComponent({
     })
 
     watch(() => listImageUpload.value, (value) => {
-      if(value.length && value.length === listFileUpload.value.length){
+      if(value.length && value.length === listFileUploadHandleLoading.value.length){
         sendChat()
       }
     }, {
@@ -349,12 +367,13 @@ export default defineComponent({
 
     const uploadFileServer = () => {
       listImageUpload.value = []
-      listFileUpload.value.forEach((file: any) =>  {
+      listFileUploadHandleLoading.value.forEach((file: any) =>  {
         const storageRef = refStorage(storage, file.file.name);
         uploadBytes(storageRef, file.file, file.metadata).then(async (res) => {
           const url = await getDownloadURL(res.ref)
           listImageUpload.value = [...listImageUpload.value, { url: url}]
         }).catch((err) => {
+          isLoadingUpload.value = false
           console.log('error', err);
         })
       })
@@ -389,7 +408,8 @@ export default defineComponent({
       openFile,
       uploadPreviewFile,
       listFileUpload,
-      removeFile
+      removeFile,
+      isLoadingUpload
     }
   },
 })
@@ -503,8 +523,8 @@ export default defineComponent({
         flex-wrap: wrap;
         margin: 0 -5px;
         &-items {
-          width: 200px;
-          height: 200px;
+          width: 130px;
+          height: 130px;
           object-fit: cover;
           display: block;
           padding: 5px;
