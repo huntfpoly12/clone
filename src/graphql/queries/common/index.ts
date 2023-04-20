@@ -43,12 +43,10 @@ import getAccountingProcessLogs from "./getAccountingProcessLogs";
 import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
 import getMe from "./getMe";
 import getMajorInsuranceCompanyOutLogs from "./getMajorInsuranceCompanyOutLogs";
-import refreshLogin from "./refreshLogin";
 import getMajorInsuranceCompanyEmployeeLossLogs from "./getMajorInsuranceCompanyEmployeeLossLogs";
 const queries = {
   getMe: getMe,
   getUser: getUser,
-  refreshLogin:refreshLogin,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
   getIncomeWagesLogs: getIncomeWagesLogs,
