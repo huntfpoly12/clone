@@ -5,7 +5,7 @@ export default gql`
     $fiscalYear: Int!,
     $facilityBusinessId: Int!,
     $transactionDetailDate: Int!,
-    $accountingDocumentId: Int!
+    $accountingDocumentId: Float!
   ) {
     deleteStatementOfGoods(
       companyId: $companyId,
@@ -13,8 +13,6 @@ export default gql`
       facilityBusinessId: $facilityBusinessId,
       transactionDetailDate: $transactionDetailDate,
       accountingDocumentId: $accountingDocumentId
-    ) {
-      scalar
-    }
+    )
   }
 `;

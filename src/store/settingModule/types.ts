@@ -22,7 +22,7 @@ export interface SettingState {
   globalFacilityBizId: number | null,
   listFacilityBizTypeForUser: any[],
   accountSubject: any
-  
+  clients: any[],
 }
 
 export interface PayLoadAccSubject {

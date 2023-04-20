@@ -5,7 +5,8 @@
             <a-spin tip="Loading..." :spinning="loadingGetAccountingProcesses">
                 <div class="grid">
                     <div v-for="(month, index) in 12" :key="index" class="items"
-                        :class="{ 'items-active': monthSelected === month }" @click="selectedMonth(month)">
+                        :class="{ 'items-active': store.state.common.ac120.monthSelected === month }"
+                        @click="selectedMonth(month)">
                         <colorful-badge
                             :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
                             :year="globalYear" :month="month" />
@@ -14,7 +15,12 @@
             </a-spin>
             <div class="flex">
                 <div class="action">
-                    <ProcessStatus :valueStatus="statusAdjusting" :disabled="true" />
+                    <ProcessStatus
+                        v-if="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status || 0"
+                        :valueStatus="dataGetAccountingProcesses.find((item: any) => item.month === store.state.common.ac120.monthSelected)?.status || 0"
+                        :disabled="true" />
+                    <button-basic v-else mode="contained" style="width: 90px;" :disabled="true">
+                    </button-basic>
                     <DxButton icon="plus" class="ml-4">
                         <HistoryOutlined style="font-size: 18px" @click="modalHistoryAccountingProcess" />
                     </DxButton>
@@ -196,8 +202,7 @@
                 </DxDataGrid> -->
                     <!-- {{ dataSource }} -->
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
-                        :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                        :focused-row-enabled="true"
+                        :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" :focused-row-enabled="true"
                         @focused-row-changing="onFocusedRowChanging" ref="gridRefAC120"
                         :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
                         :allow-column-resizing="colomn_resize" :column-auto-width="true"
@@ -215,8 +220,8 @@
                         <DxColumn caption="결의번호" data-field="resolutionNumber" />
                         <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
                         <template #bankbook="{ data }">
-                            <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
-                                <div>{{ data.bankbook?.bankbookNickname }}</div>
+                            <a-tooltip placement="left" :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+                                <div>{{ data.data.bankbook?.bankbookNickname }}</div>
                             </a-tooltip>
                         </template>
 
@@ -225,43 +230,53 @@
                         <DxColumn caption="지출액" data-field="spending" format="fixedPoint" />
                         <DxColumn caption="잔액" cell-template="balance" format="fixedPoint" />
                         <template #balance="{ data }">
-                            {{ $filters.formatCurrency(data.lastBalance + data.spending - data.balance) }}
+                            {{ $filters.formatCurrency(data.data.lastBalance + data.data.spending - data.data.balance) }}
                         </template>
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint" />
                         <DxColumn caption="적요" data-field="summary" format="fixedPoint" />
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200px"/>
                         <template #accountCode="{ data }">
-                            <account-code-select :valueInput="data.accountCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                             <!-- <account-code-select :disabled="true" /> -->
                         </template>
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150px"/>
                         <template #relationCode="{ data }">
-                            <account-code-select :valueInput="data.relationCode" :disabled="true" />
+                            <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                             <!-- <account-code-select :disabled="true" /> -->
                         </template>
 
                         <DxColumn caption="자금원천" data-field="fundingSource" />
-                        <DxColumn caption="거래처" data-field="clientId" />
+                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId"/>
+                        <template #clientId="{ data }">
+                            {{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
+                        </template>
                         <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" />
 
-                        <DxColumn caption="물품 내역" cell-template="normality" />
+                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" />
                         <template #normality="{ data }">
-                            <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail(data.data)" />
+                            <PlusOutlined v-if="data.data.resolutionClassification != 1" class="icon-add"
+                                @click="actionPopupItemDetail(data.data)" />
                         </template>
                         <DxColumn caption="수기 여부" cell-template="slipRegistration" />
                         <template #slipRegistration="{ data }">
                             <div class="slipRegistration">
-                                <button-basic :text="data.handwriting ? 'O' : 'X'"
-                                    :type="data.handwriting ? 'success' : 'danger'" :mode="'contained'"
-                                    style="margin-right: 5px;" />
+                                <DxButton :focusStateEnabled="false" :text="data.data.handwriting ? 'O' : 'X'"
+                                        :style="{ backgroundColor: data.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
+                                        :height="$config_styles.HeightInput" />
+                                <!-- <button-basic :text="data.data.handwriting ? 'O' : 'X'"
+                                    :type="data.data.handwriting ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" /> -->
                             </div>
                         </template>
                         <DxColumn caption="정상 여부" cell-template="slipRegistration1" />
                         <template #slipRegistration1="{ data }">
                             <div class="slipRegistration">
-                                <button-basic :text="data.resolutionNormalStatus ? 'O' : 'X'"
-                                    :type="data.resolutionNormalStatus ? 'success' : 'danger'" :mode="'contained'"
-                                    style="margin-right: 5px;" />
+                                <DxButton :focusStateEnabled="false" :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
+                                        :style="{ backgroundColor: data.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
+                                        :height="$config_styles.HeightInput" />
+                                <!-- <button-basic :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
+                                    :type="data.data.resolutionNormalStatus ? 'success' : 'danger'" :mode="'contained'"
+                                    style="margin-right: 5px;" /> -->
                             </div>
                         </template>
                         <DxSummary>
@@ -286,7 +301,8 @@
         :typeModal="'confirm'" :title="''" :content="contentPopupRetrieveStatements" :okText="'네. 불러옵니다'"
         :cancelText="'아니요'" @checkConfirm="handleConfirmChange" />
 
-    <PopupSlipCancellation :modalStatus="statusModalSlipCancellation" @closePopup="statusModalSlipCancellation = false" :dataRows='dataRows'/>
+    <PopupSlipCancellation :modalStatus="statusModalSlipCancellation" @closePopup="statusModalSlipCancellation = false"
+        :dataRows='dataRows' />
 
     <PopupSlipRegistration :modalStatus="statusModalSlipRegistrantion" @closePopup="statusModalSlipRegistrantion = false"
         @submit="onFillDataAdd" />
@@ -350,8 +366,9 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const globalYear = computed(() => store.state.settings.globalYear)
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const clients = computed(() => store.state.settings.clients)
 
-        let statusAdjusting = ref(30);
+        // let statusAdjusting = ref(30);
         let focusedRowKey = ref()
 
         let isModalRetrieveStatements = ref(false);
@@ -405,7 +422,7 @@ export default defineComponent({
             month: dayjs().month() + 1
         })
 
-        const monthSelected = ref(dayjs().month() + 1)
+        // const monthSelected = ref(dayjs().month() + 1)
         // =================== GRAPHQL ===================
         // query getAccountingProcesses
         const {
@@ -445,6 +462,8 @@ export default defineComponent({
         // ================== WATCH ================
         // 1. getAccountingProcesses
         watch(resGetAccountingProcesses, (value) => {
+            console.log(dayjs().startOf('month').toDate());
+
             triggerGetAccountingProcesses.value = false
             dataGetAccountingProcesses.value = value.getAccountingProcesses
         })
@@ -452,14 +471,20 @@ export default defineComponent({
         watch(resGetAccountingDocuments, (value) => {
             triggerGetAccountingDocuments.value = false
             dataSource.value = value.getAccountingDocuments?.accountingDocuments
-            if (dataSource.value[0]){ // if table has data source
+            lastBalance.value = value.getAccountingDocuments?.lastBalance
+            if (dataSource.value[0]) { // if table has data source
                 focusedRowKey.value = dataSource.value[0].accountingDocumentId
                 Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 store.state.common.ac120.statusFormAdd = false
+            } else {
+                focusedRowKey.value = null
+                store.state.common.ac120.statusFormAdd = true
+                Object.assign(store.state.common.ac120.formData, initialStateFormData)
+                store.state.common.ac120.keyRefreshForm++
             }
-            lastBalance.value = value.getAccountingDocuments?.lastBalance
+
         })
-        
+
         // call api GetAccountingDocuments
         watch(() => store.state.common.ac120.resetDataTable, (value) => {
             triggerGetAccountingDocuments.value = true
@@ -468,13 +493,13 @@ export default defineComponent({
         watch(() => store.state.common.ac120.resetDataAccountingProcesses, (value) => {
             triggerGetAccountingProcesses.value = true
         })
-        
+
         watch(() => store.state.common.ac120.onDeleteRowAdd, (value) => {
             deleteRowAdd()
         })
 
         // ================ FUNCTION ============================================
-        const selectionChanged = (data: any) => { 
+        const selectionChanged = (data: any) => {
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
                 // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
@@ -565,7 +590,12 @@ export default defineComponent({
 
 
         const actionPopupSlipCancellation = (value: any) => {
-            statusModalSlipCancellation.value = true
+            if (dataRows.value?.length) {
+                statusModalSlipCancellation.value = true
+            } else {
+                notification('error', Message.getMessage('COMMON', '404').message)
+            }
+
         }
 
         const actionPopupSlipRegistration = (value: any) => {
@@ -579,7 +609,7 @@ export default defineComponent({
 
         const actionPopupItemDetail = (data: any) => {
             console.log(data);
-            
+
             // store.state.common.ac120.dataRowFocus = data
             statusModalItemDetail.value = true
         }
@@ -642,9 +672,9 @@ export default defineComponent({
 
         const onFillDataAdd = (dataAdd: any) => {
             statusModalSlipRegistrantion.value = false; // close popup
-            
+
             // Object.assign(store.state.common.ac120.formData, initialStateFormData);
-            
+
             // if (!store.state.common.ac120.statusFormAdd) {
             //     store.state.common.ac120.formData = reactive({ ...initialStateFormData })
             //     // Object.assign(store.state.common.ac120.formData, dataAdd);
@@ -666,19 +696,23 @@ export default defineComponent({
             dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ ...initialStateFormData })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]
             focusedRowKey.value = 'AC120';
-            store.state.common.ac120.onAddRow++
+            store.state.common.ac120.keyRefreshForm++
         }
 
 
 
         const selectedMonth = (month: number) => {
-            monthSelected.value = month
+            console.log(month);
+            store.state.common.ac120.monthSelected = month
+            dataQueryGetAccountingDocuments.value.month = month
+            triggerGetAccountingDocuments.value = true;
+
         }
 
         const modalHistoryAccountingProcess = () => {
             popupData.value = { ...dataQueryGetAccountingDocuments.value }
             console.log(popupData.value);
-            
+
             modalHistoryStatusAccountingProcess.value = true
         }
 
@@ -704,7 +738,7 @@ export default defineComponent({
             heightTable,
             // statusEntering,
             // statusInput,
-            statusAdjusting,
+            // statusAdjusting,
             // statusAdjusted,
             move_column,
             colomn_resize,
@@ -740,12 +774,13 @@ export default defineComponent({
             dataDemoMain2,
             onReorder, onDragChange, onRowDragging,
 
-            monthSelected,
+            // monthSelected,
             selectedMonth,
             modalHistoryAccountingProcess, modalHistoryAccountingDocuments,
             modalHistoryStatusAccountingProcess,
             modalHistoryStatuAccountingDocuments,
             popupData,
+            clients,
         };
     },
 });
