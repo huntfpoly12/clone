@@ -22,7 +22,8 @@ const settingModule: Module<SettingState, any>  = {
     // globalFacilityBizId
     globalFacilityBizId: null,
     listFacilityBizTypeForUser: [],
-    accountSubject: {}
+    accountSubject: {},
+    clients: [], // danh sách Client call api searchClients
   },
   mutations: mutations,
   actions: actions,

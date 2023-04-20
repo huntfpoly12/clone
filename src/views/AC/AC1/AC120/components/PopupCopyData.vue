@@ -37,21 +37,21 @@
         <a-spin tip="Loading..." :spinning="loadingSearchSpendingAccountingDocuments">
             <div style="margin: 48px 0">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-                    key-expr="bcode" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+                    key-expr="accountingDocumentId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
                     v-model:focused-row-key="focusedRowKey" focused-row-enabled="true" :onRowClick="onSelectionChanged"
                     :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always" />
                     <DxColumn caption="선택" cell-template="radioCheck" />
                         <template #radioCheck="{ data }">
                             <div class="text-align-center pt-8">
-                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.reportId ? true : false"/>
+                                <input type="radio" name="radioCheck" :checked="focusedRowKey == data.data.accountingDocumentId ? true : false"/>
                             </div>
                         </template>
                     <DxColumn data-field="resolutionNumber" caption="결의번호" />
                     <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
                     <template #bankbook="{ data }">
-                        <a-tooltip placement="left" :title="data.bankbook?.type + ' ' + data.bankbook?.bankbookNumber">
-                            <div>{{ data.bankbook?.bankbookNickname }}</div>
+                        <a-tooltip placement="top" :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+                            <div>{{ data.data.bankbook?.bankbookNickname }}</div>
                         </a-tooltip>
                     </template>
                     <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
@@ -65,11 +65,11 @@
                     <DxColumn data-field="summary" caption="적요" />
                     <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" />
                     <template #accountCode="{ data }">
-                        <account-code-select :valueInput="data.accountCode" :disabled="true" />
+                        <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                     </template>
                     <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" />
                     <template #relationCode="{ data }">
-                        <account-code-select :valueInput="data.relationCode" :disabled="true" />
+                        <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                     </template>
                     <DxColumn data-field="fundingSource" caption="자금원천" />
                     <DxColumn data-field="clientId" caption="거래처" />
@@ -92,6 +92,7 @@ import queries from "@/graphql/queries/AC/AC1/AC120";
 import { useQuery } from "@vue/apollo-composable";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import { initialArrayRadioMonth } from '../utils'
+import notification from '@/utils/notification';
 import {
     DxDataGrid,
     DxColumn, DxScrolling,
@@ -115,8 +116,8 @@ export default defineComponent({
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
         // let showEmployeeInfo = ref(false);
         const dataSource = ref([]);
-        const search = ref<string>("");
-        let dataEmit = ref()
+        // const search = ref<string>("");
+        let dataSelect = ref()
         const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(false)
         const dataQuerySearchSpendingAccountingDocuments = ref({
             companyId: companyId,
@@ -147,7 +148,11 @@ export default defineComponent({
         })
 
 
-
+        // ================ FUNCTION ============================================
+        errorSearchSpendingAccountingDocuments(e => {
+            dataSource.value = []
+            notification('error', e.message)
+        })
 
         const onSearch = () => {
             makeDataClean(dataQuerySearchSpendingAccountingDocuments.value)
@@ -162,18 +167,23 @@ export default defineComponent({
 
 
         const onSubmit = () => {
-            emit("dataEmit", dataEmit.value);
-            setModalVisible()
+            if (dataSelect.value) {
+                setModalVisible()
+            } else {
+                notification('error', 'vui lòng chọn data')
+            }
+            // emit("dataEmit", dataEmit.value);
+            
         }
         const onSelectionChanged = (data: any) => {
-            // dataReport.value = [data.data]
+            dataSelect.value = data.data
         };
 
 
         return {
             move_column,
             colomn_resize,
-            search,
+            // search,
             onSearch,
             setModalVisible,
             focusedRowKey,

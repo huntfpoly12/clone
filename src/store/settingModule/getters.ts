@@ -20,6 +20,7 @@ const getters:  GetterTree<SettingState, any> = {
   globalFacilityBizId: (state: any) => state.globalFacilityBizId,
   listFacilityBizTypeForUser: (state: any) => state.listFacilityBizTypeForUser,
   accountSubjects: (state: any) => state.accountSubject,
+  clients: (state: any) => state.clients,
 };
 
 export default getters;

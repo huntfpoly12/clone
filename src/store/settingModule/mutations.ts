@@ -27,7 +27,10 @@ const mutations: MutationTree<SettingState> = {
   },
   setAccoountSubjects(state, value: any) {
     state.accountSubject = value
-  }
+  },
+  setClients(state, value: any[]) {
+    state.clients = value
+  },
 };
 
 export default mutations;

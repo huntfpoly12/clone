@@ -16,6 +16,7 @@ export default gql`
       month: $month
       resolutionNumber: $resolutionNumber
     ) {
+      accountingDocumentId
       resolutionNumber
       bankbook {
         bankbookNickname

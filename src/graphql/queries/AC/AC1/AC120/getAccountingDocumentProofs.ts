@@ -14,6 +14,7 @@ export default gql`
       transactionDetailDate: $transactionDetailDate
       accountingDocumentId: $accountingDocumentId
     ) {
+        id
         name
         url
         turl
