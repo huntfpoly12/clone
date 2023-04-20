@@ -239,7 +239,7 @@ export default defineComponent({
         paymentData.value = e.selectedRowsData.map((item: any) => {
           return {
             param: { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value },
-            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, incomeTypeCode: item.employee.incomeTypeCode },
+            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.employee.incomeTypeCode },
           };
         });
       }

@@ -3,13 +3,13 @@
   <div id="pa-820" class="px-10 py-10">
     <a-spin :spinning="false" size="large">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-        key-expr="incomeId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+        key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxColumn caption="일련번호" cell-template="tag" width="205" />
+        <DxColumn caption="일련번호" data-field="workId" width="80" alignment="left" />
         <DxToolbar>
           <DxItem name="searchPanel" />
           <DxItem name="exportButton" css-class="cell-button-export" />
@@ -21,35 +21,19 @@
               신규
             </template>
             <div style="text-align: center;">
-              <DxButton icon="plus" @click="openAddNewModal" />
+              <DxButton icon="plus" @click="modalCreate = true" />
             </div>
           </a-tooltip>
         </template>
-        <!-- <DxColumn caption="일련번호" cell-template="tag" width="205" />
-        <template #tag="{ data }">
-          <div>
-            <button class="btn-container">
-              {{ data.data.employeeId }}
-            </button>
-            {{ data.data?.employee?.name }}
-            <a-tooltip placement="top" v-if="data.data?.employee?.incomeTypeName">
-              <template #title>
-                {{ data.data.incomeTypeCode }}
-                <span v-if="data.data?.employee?.incomeTypeName?.length > 10">{{ data.data?.employee?.incomeTypeName
-                }}</span>
-              </template>
-            </a-tooltip>
-          </div>
-        </template> -->
-        <DxColumn caption="성명" data-field="name" width="60" alignment="left" />
-        <DxColumn caption="생년월일" data-field="workId" width="100" alignment="right" />
-        <DxColumn caption="상태" data-field="workingStatus" width="100" alignment="right" />
-        <DxColumn caption="등록일" data-field="registeredAt" width="45" alignment="left" />
-        <DxColumn caption="접수일" data-field="acceptedAt" width="120px" alignment="right" />
-        <DxColumn caption="완료일" data-field="completedAt" width="120px" alignment="right" />
+        <DxColumn caption="성명" data-field="name" width="130" alignment="left" />
+        <DxColumn caption="생년월일" data-field="workId" width="80" alignment="right" />
+        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="right" />
+        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd HH:mm"/>
+        <DxColumn caption="접수일" data-field="acceptedAt" alignment="right" data-type="date" format="yyyy-MM-dd HH:mm"/>
+        <DxColumn caption="완료일" data-field="completedAt" alignment="right" data-type="date" format="yyyy-MM-dd HH:mm"/>
         <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="right" />
         <DxColumn caption="메모" data-field="memo" width="120px" alignment="right" />
-        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="120px" alignment="right" />
+        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="right" />
         <template #downA="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
@@ -57,7 +41,7 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="120px" alignment="right" />
+        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="right" />
         <template #downB="{ data }" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
@@ -66,7 +50,7 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="" cell-template="action" alignment="right" />
+        <DxColumn caption="" cell-template="action" alignment="right" width="150px" />
         <template #action="{ data }" class="custom-action">
           <div class="custom-action" style="text-align: center">
             <a-space>
@@ -81,18 +65,18 @@
         </template>
       </DxDataGrid>
     </a-spin>
-    <!-- <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="actionParam" title="변경이력"
-      typeHistory="pa-810" /> -->
-    <CreatePA820Popup :isOpenModalCreate="isOpenModalCreate" @closeModal="isOpenModalCreate = false"
-      @handleCreate="handleCreate" />
-    <PopupMessage :modalStatus="isDelete" @closePopup="isDelete = false" typeModal="confirm" :content="contentDelete"
+    <CreatePA820Popup :modalCreate="modalCreate" @closeModal="modalCreate = false"
+      @onCreateModal="onCreateModal"/>
+    <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm" :content="contentDelete"
       okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
+      <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="workIdHistory" title="변경이력"
+      typeHistory="pa-820" />
   </div>
 </template>
 <script lang="ts">
 import { ref, defineComponent, watch, reactive, computed } from 'vue';
 import { useStore } from 'vuex';
-import { useQuery } from '@vue/apollo-composable';
+import { useMutation, useQuery } from '@vue/apollo-composable';
 import {
   DxDataGrid,
   DxColumn,
@@ -110,13 +94,15 @@ import {
   DxTotalItem,
 } from 'devextreme-vue/data-grid';
 import { companyId } from '@/helpers/commonFunction';
-import queries from '@/graphql/queries/PA/PA7/PA720/index';
+import queries from '@/graphql/queries/PA/PA8/PA820/index';
+import mutations from '@/graphql/mutations/PA/PA8/PA820/index';
 import filters from '@/helpers/filters';
 import DxButton from 'devextreme-vue/button';
 // import { formatMonth } from '../utils/index';
 import { Message } from "@/configs/enum";
 import CreatePA820Popup from './components/CreatePA820Popup.vue';
-import { DeleteOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import { DeleteOutlined, DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
+import notification from '@/utils/notification';
 
 export default defineComponent({
   components: {
@@ -137,14 +123,41 @@ export default defineComponent({
     DxButton,
     CreatePA820Popup,
     DeleteOutlined,
-    HistoryOutlined
+    HistoryOutlined,
+    DownloadOutlined
 },
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const dataSource = ref([]);
     const focusedRowKey = ref();
-    
+    const globalYear = computed(() => store.state.settings.globalYear);
+
+    //--------------------------DATASOURCE cetMajorInsuranceCompanyEmployeeLosses--------------------------
+
+    const dataSource = ref([]);
+    const companyEmployeeLossesTrigger = ref<boolean>(false);
+    const companyEmployeeLossesParam = reactive({
+      companyId: companyId,
+      imputedYear: globalYear
+    })
+    const { refetch: companyEmployeeLossesRefetch, result: companyEmployeeLossesResult, onError: companyEmployeeLossesError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeLosses,
+      companyEmployeeLossesParam,
+      () => ({
+        // enabled: companyEmployeeLossesTrigger.value,
+        fetchPolicy: 'no-cache',
+      })
+    );
+    watch(companyEmployeeLossesResult, (newVal) => {
+      if (newVal) {
+        dataSource.value = newVal.getMajorInsuranceCompanyEmployeeLosses;
+        // companyEmployeeLossesTrigger.value = false;
+      }
+    });
+    companyEmployeeLossesError((res: any) => {
+      notification('error', res.message)
+    })
+
     // -----------------------------MAIL-------------------
 
     const modalMail = ref(false);
@@ -152,7 +165,7 @@ export default defineComponent({
       modalHistory.value = true;
       // actionParam.workId = e;
     };
-    
+
     // -----------------------------PRINT-------------------
 
     const modalPrint = ref(false);
@@ -160,94 +173,100 @@ export default defineComponent({
       modalHistory.value = true;
       // actionParam.workId = e;
     };
-    
-    // -----------------------------DELETE-------------------
-
-    const modalDelete = ref(false);
-    const openDeleteModal = (e: any) => {
-      modalHistory.value = true;
-      // actionParam.workId = e;
-    };
 
     //---------------------------ADD FORM------------------
-
-    const isOpenModalCreate = ref(false);
-    const openAddNewModal = () => {
-      isOpenModalCreate.value = true;
+    
+    const modalCreate = ref(false);
+    const onCreateModal = (emitVal: Boolean) => {
+      modalCreate.value = false;
+      if (emitVal) {
+        modalCreate.value = false;
+        companyEmployeeLossesRefetch();
+      }
     }
-    const handleCreate = () => {
-      // refetch();
-      isOpenModalCreate.value = false;
-    };
 
     // -----------------------------HISTORY-------------------
 
     const modalHistory = ref(false);
+    const workIdHistory = ref();
     const onOpenLogs = (e: any) => {
       modalHistory.value = true;
+      workIdHistory.value = e;
       // actionParam.workId = e;
     };
 
-    //-------------------------mutation cancel acquistion -----------
+    //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
     const contentDelete = Message.getCommonMessage('401').message as string
-    const isDelete = ref(false);
-    // const {
-    //   mutate: mutateCancelAcquistion,
-    //   onDone: onDoneAcquisitionDone,
-    //   onError: onDoneAcquisitionError,
-    // } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeAcquisition);
-    // onDoneAcquisitionDone(() => {
-    //   notification('success', Message.getMessage('COMMON', '402').message);
-    //   refetch();
-    // });
+    const modalDelete = ref(false);
+    const cancelCompanyOutParam = reactive({
+      companyId: companyId,
+      imputedYear: globalYear,
+      workId: NaN,
+    })
+    const {
+      mutate: cancelCompanyOutMutate,
+      onDone: cancelCompanyOutOnDone,
+      onError: cancelCompanyOutError,
+    } = useMutation(mutations.cancelMajorInsuranceCompanyEmployeeLoss);
+    cancelCompanyOutOnDone(() => {
+      notification('success', Message.getMessage('COMMON', '402').message);
+      companyEmployeeLossesRefetch();
+    });
+    cancelCompanyOutError((res) => {
+      notification('error', res.message);
+    })
     const actionDelete = (workId: number) => {
-      // isDelete.value = true;
-      // actionParam.workId = workId;
+      modalDelete.value = true;
+      cancelCompanyOutParam.workId = workId;
     }
-    // onDoneAcquisitionError((res) => {
-    //   notification('error', res.message);
-    // })
     const handleDelete = (e: boolean) => {
       if (e) {
-        isDelete.value = false;
-        // mutateCancelAcquistion(actionParam);
+        modalDelete.value = false;
+        cancelCompanyOutMutate(cancelCompanyOutParam);
       }
     }
 
-    //------get ReportViewUrl ----
+    //--------------------------get ReportViewUrl ---------------------
 
-    // const fillRpTrigger = ref<boolean>(false);
-    // const {refetch: fillRpRefetch, result: fillRpResult, onError} = useQuery(
-    //   queries.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl,
-    //   actionParam,
-    //   () => ({
-    //     enabled: fillRpTrigger.value,
-    //     fetchPolicy: 'no-cache',
-    //   })
-    // );
-    // watch(fillRpResult, (newVal) => {
-    //   if (newVal) {
-    //     window.open(newVal.getMajorInsuranceCompanyEmployeeAcquisitionFaxFilingReportViewUrl);
-    //     fillRpTrigger.value = false;
-    //   }
-    // });
+    const companyEmployeeLossUrlParam = reactive({
+      companyId: companyId,
+      imputedYear: globalYear,
+      workId: '',
+    })
+    const companyEmployeeLossUrlTrigger = ref<boolean>(false);
+    const { result: companyEmployeeLossUrlResult, onError: companyEmployeeLossUrlError } = useQuery(
+      queries.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl,
+      companyEmployeeLossUrlParam,
+      () => ({
+        enabled: companyEmployeeLossUrlTrigger.value,
+        fetchPolicy: 'no-cache',
+      })
+    );
+    companyEmployeeLossUrlError((res: any) => {
+      notification('error', res.message);
+    })
+    watch(companyEmployeeLossUrlResult, (newVal) => {
+      if (newVal) {
+        window.open(newVal.getMajorInsuranceCompanyEmployeeLossFaxFilingReportViewUrl);
+        companyEmployeeLossUrlTrigger.value = false;
+      }
+    });
     const onGetAcquistionRp = (workId: any) => {
-      // actionParam.workId = workId;
-      // fillRpTrigger.value = true;
-      // fillRpRefetch();
+      companyEmployeeLossUrlParam.workId = workId;
+      companyEmployeeLossUrlTrigger.value = true;
+      // companyEmployeeLossUrlRefetch();
     };
     const onGetFileStorageId = (url: string) => {
       window.open(url);
     };
-    // onError((e) => {
-    //   notification('error', e.message);
-    // });
+
     return {
       per_page, move_column, colomn_resize,
       focusedRowKey, dataSource, modalHistory,
-      openAddNewModal, onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
-      handleCreate, isOpenModalCreate, isDelete, handleDelete, contentDelete
+      onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
+      onCreateModal, modalCreate, modalDelete, handleDelete, contentDelete,
+      workIdHistory, 
     };
   },
 })

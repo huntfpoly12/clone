@@ -8,6 +8,7 @@
     </DxSelectBox>
 </template>
 <script lang="ts">
+import { useStore } from 'vuex';
 import { ref, watch, getCurrentInstance, computed } from "vue";
 import queries from "@/graphql/queries/AC/AC6/AC610/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -47,6 +48,7 @@ export default {
         DxRequiredRule,
     },
     setup(props: any, { emit }: any) {
+        const store = useStore();
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
         const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -83,6 +85,7 @@ export default {
                     label: value.name,
                 }
             })
+            store.commit('settings/setClients', dataSource.value)
         });
         const updateValue = (value: any) => {
             emit("update:valueInput", value);

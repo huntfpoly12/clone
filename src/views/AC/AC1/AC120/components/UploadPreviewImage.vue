@@ -2,12 +2,13 @@
     <a-spin :spinning="loadingGetAccountingDocumentProofs" size="large">
         <div style="margin-right: -10px; overflow-x: hidden" :style="[
             !store.state.common.ac120.statusShowFull ? { height: '125px', overflow: 'hidden', transition: '.5s' } : {},
-            `max-width: 387px; width: 100%` ,
+            `max-width: 387px; width: 100%`,
         ]" :class="{ 'ac120-disable-form-upload': false }">
             <div ref="elementUpload" class="upload-pewview-img">
-                <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList"
-                    @preview="handlePreview" @change="changeFile" :customRequest="customRequest"
-                    :before-upload="beforeUpload" @remove="remove" accept="image/png, image/jpeg, image/jpg image/gif">
+                <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
+                    v-model:file-list="fileList" @preview="handlePreview" @change="changeFile"
+                    :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
+                    accept="image/png, image/jpeg, image/jpg image/gif">
                     <div v-if="fileList.length <= limit">
                         <div class="ant-btn-upload">
                             <p class="ant-btn-upload-text">
@@ -92,6 +93,8 @@ export default defineComponent({
         const previewVisible = ref<boolean>(false);
         let triggerAccountingDocumentProofs = ref(false);
         const elementUpload = ref<any>();
+        let statusDisabledImg = ref<boolean>(true);
+        const indexImg = ref<number>(0)
         const dataGetAccountingDocumentProofs: any = ref({
             companyId: companyId,
             fiscalYear: globalYear.value,
@@ -128,6 +131,7 @@ export default defineComponent({
 
         // RemoveAccountingDocumentProof
         doneRemoveAccountingDocumentProof((e) => {
+            fileList.value.splice(indexImg.value, 1);
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorRemoveAccountingDocumentProof((e) => {
@@ -137,9 +141,13 @@ export default defineComponent({
         // ================== WATCH ================
         watch(() => store.state.common.ac120.formData.accountingDocumentId, (value) => {
             if (value != 'AC120') {
+                statusDisabledImg.value = false;
                 dataGetAccountingDocumentProofs.value.transactionDetailDate = store.state.common.ac120.formData.transactionDetailDate
                 dataGetAccountingDocumentProofs.value.accountingDocumentId = value
                 triggerAccountingDocumentProofs.value = true;
+            } else if (value == 'AC120') {
+                statusDisabledImg.value = true;
+                fileList.value = []
             }
         }, { deep: true });
         // watch( () => props.listImageFile, (value) => {
@@ -260,11 +268,6 @@ export default defineComponent({
             uploadRepository.accountingProof(formData)
                 .then((res: any) => {
                     e.onSuccess("ok");
-                    // fileList.value.push({
-                    //     ...fileList.value[fileList.value.length - 1],
-                    //     fileStorageId: res.data.id,
-                    // });
-
                     addAccountingDocumentProof({
                         ...dataGetAccountingDocumentProofs.value,
                         fileStorageId: res.data.id,
@@ -279,16 +282,13 @@ export default defineComponent({
                 });
         };
         const remove = (e: any) => {
-            const index = fileList.value.findIndex(
-                (item: any) => item.name === e.name
-            );
-            if (!fileList.value[index].fileStorageId) return false;
+            indexImg.value = fileList.value.findIndex((item: any) => item.name === e.name);
+            if (!fileList.value[indexImg.value].id) return false;
             removeAccountingDocumentProof({
                 ...dataGetAccountingDocumentProofs.value,
-                fileStorageId: fileList.value[index].fileStorageId,
+                fileStorageId: fileList.value[indexImg.value].id,
             });
-            fileList.value.splice(index, 1);
-            // emit("update:listImageFile", fileList.value);
+
         };
         return {
             handlePreview,
@@ -302,7 +302,7 @@ export default defineComponent({
             remove,
             elementUpload,
             loadingGetAccountingDocumentProofs,
-            store,
+            store, statusDisabledImg,
         };
     },
 });

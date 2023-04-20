@@ -11,12 +11,14 @@
           'mt-1': index > 0 && listChat[index - 1].name === items.name,
           'mt-10': index > 0 && listChat[index - 1].name !== items.name,
         }">
-          <div class="form-chat-timeline-avatar" :class="{'hidden-avatar': items.name === userName}">
+          <div class="form-chat-timeline-avatar" :class="{ 'hidden-avatar': items.name === userName }">
             <!-- <img :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name, }" :src="items.avatar"
               alt=""> -->
             <a-badge :dot="true" :offset="[-5, 33]" :status="items.name === userName ? 'success' : 'error'"
               :class="{ 'hidden-avatar': index > 0 && listChat[index - 1].name === items.name }">
-              <a-avatar shape="circle" size="large"  :style="`background-color: ${items.name === userName ? '#1890ff' : '#f56a00'}`" >{{ items.name }}</a-avatar>
+              <a-avatar shape="circle" size="large"
+                :style="`background-color: ${items.name === userName ? '#1890ff' : '#f56a00'}`">{{ items.name
+                }}</a-avatar>
             </a-badge>
           </div>
 
@@ -24,6 +26,7 @@
           <div class="form-chat-timeline-content" :class="{
             'borderRadiusleft10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name !== userName,
             'borderRadiusRight10': (index === 0 || listChat[index - 1]?.name !== items.name) && items.name === userName,
+            'form-chat-timeline-content-right': items.name === userName,
             'borderEdit': idEditComment === items.id
           }">
             <div class="form-chat-timeline-content-info">
@@ -37,11 +40,15 @@
               </div>
               <div class="form-chat-timeline-content-info-time">{{ formatDate(items.createdAt) }}</div>
             </div>
-            <div class="form-chat-timeline-content-text" v-html="items.text">
+            <div class="form-chat-timeline-content-files">
+              <a-spin v-for="(file, indexFile) in items.files" :spinning="isLoadingUpload && !!file?.isUploading" size="small" :key="file.url">
+                <img class="form-chat-timeline-content-files-items" :src="file.url" alt=""> 
+              </a-spin>
             </div>
+            <div class="form-chat-timeline-content-text" v-html="items.text"></div>
           </div>
 
-          
+
           <div class="form-chat-timeline-common-menu">
             <a-dropdown :placement="items.name === userName ? 'bottomRight' : 'bottomLeft'" :trigger="['click']">
               <EllipsisOutlined :style="{ fontSize: '16px' }" />
@@ -64,21 +71,29 @@
     </div>
     <div class="form-chat-bottom">
       <a-badge :dot="true" :offset="[-5, 33]" status="success" class="mr-5">
-        <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff" >{{ userName }}</a-avatar>
+        <a-avatar shape="circle" size="large" style="backgroundColor: #1890ff">{{ userName }}</a-avatar>
       </a-badge>
       <div class="form-chat-bottom-input">
-        <textarea rows="1" ref="inputChat" placeholder="댓글을 입력하세요…" v-model="textChat" @input="changeInput"
-          @keypress.enter.exact.prevent="sendChat"></textarea>
+        <textarea rows="1" ref="inputChat" :class="{ 'active-input-file': listFileUpload.length }" placeholder="댓글을 입력하세요…"
+          v-model="textChat" @input="changeInput" @keypress.enter.exact.prevent="submitChat"></textarea>
         <div class="form-chat-bottom-input-tool">
           <CloseOutlined @click="removeText()" />
           <SmileOutlined style="margin: 0 5px;" />
-          <FileAddOutlined />
+          <FileAddOutlined @click="openFile" />
+        </div>
+        <div v-if="listFileUpload.length" class="form-chat-bottom-input-files">
+          <div v-for="(file, index) in listFileUpload" class="form-chat-bottom-input-files-item">
+            <img :src="file.url" alt="" :key="index">
+            <CloseOutlined class="form-chat-bottom-input-files-item-close" @click="removeFile(index)"/>
+          </div>
         </div>
       </div>
-      <div class="form-chat-bottom-send">
-        <SendOutlined class="form-chat-bottom-send-icon" @click="sendChat" />
+      <div class="form-chat-bottom-send" @click.stop="submitChat">
+        <SendOutlined class="form-chat-bottom-send-icon" />
       </div>
     </div>
+    <input v-show="false" ref="inputFile" type="file" accept="image/png, image/jpeg, image/jpg image/gif"
+      @change="uploadPreviewFile" />
   </div>
 </template>
 
@@ -86,7 +101,7 @@
 import { useStore } from 'vuex';
 import { defineComponent, ref, nextTick, onMounted, reactive, watch, computed } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
-import { databaseFirebase } from "@/firebaseConfig";
+import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
   ref as reffb,
   push,
@@ -94,6 +109,8 @@ import {
   onChildAdded,
   onValue,
 } from "firebase/database";
+import { ref as refStorage, uploadBytes, getDownloadURL } from "firebase/storage";
+import notification from '@/utils/notification';
 export default defineComponent({
   props: {
     // Message only 2 people
@@ -117,31 +134,36 @@ export default defineComponent({
     SendOutlined
   },
   setup(props, { emit }) {
+    const inputFile = ref<any>()
     const userName = ref(sessionStorage.getItem("username"));
     let textChat = ref('')
     const formTimeline: any = ref()
     const inputChat: any = ref()
     let idEditComment = ref<any>(null)
-    const payload = {
+    let listFileUpload: any = ref([])
+    let listFileUploadHandleLoading: any = ref([])
+    let listImageUpload: any = ref([])
+    let isLoadingUpload = ref(false)
+    let payload: any = ref({
       name: userName.value,
       avatar: '',
       text: '',
       files: [],
-      createdAt: new Date().getTime() ,
+      createdAt: new Date().getTime(),
       status: '일반',
       uid: userName.value
-    }
+    })
     const listChat = ref<any>([])
-    
+
     const channelChatSubrights = () => {
-      if(!!props.idUserTo){
+      if (!!props.idUserTo) {
         const idUser = userName.value?.toString() || ''
         if (props.idUserTo > idUser) {
           return props.idUserTo + idUser;
         } else {
           return idUser + props.idUserTo;
         }
-      }else{
+      } else {
         return props.keyChatChannel.toString()
       }
     };
@@ -157,6 +179,7 @@ export default defineComponent({
           for (const key in objList) {
             arr.push({
               key: key,
+              files: objList?.files || [],
               ...objList[key]
             })
           }
@@ -171,37 +194,73 @@ export default defineComponent({
       );
     };
 
+    const submitChat = () => {
+      if(isLoadingUpload.value) return
+      if (!textChat.value.trim() && !listFileUpload.value.length) return
+      payload.value = {
+        ...payload.value,
+        text: textChat.value,
+        files: []
+      }
+      if(listFileUpload.value.length) {
+        isLoadingUpload.value = true
+        listFileUploadHandleLoading.value = [...listFileUpload.value]
+        listChat.value = [...listChat.value, {
+          ...payload.value,
+          text: textChat.value,
+          files: listFileUploadHandleLoading.value.map((file:any) => ({...file, isUploading: true}))
+        }]
+        textChat.value = ""
+        listFileUpload.value = []
+        nextTick(() => {
+          formTimeline.value.scrollTop = 10000000
+          resetInputChat()
+        })
+        uploadFileServer()
+      }else {
+        sendChat()
+      }
+    };
+
     const sendChat = () => {
-      if (!textChat.value.trim()) return
       if (idEditComment.value === null) {
+        if(listFileUploadHandleLoading.value.length) {
+          payload.value = {
+            ...payload.value,
+            files: listImageUpload.value
+          }
+          textChat.value = "";
+          listImageUpload.value = []
+          listFileUploadHandleLoading.value = []
+        }
         const postListRef = reffb(databaseFirebase, channelChatSubrights());
         const newPostRef = push(postListRef);
-        set(newPostRef, { 
-          ...payload, 
-          text: textChat.value })
-        .then(() => {
-          textChat.value = "";
-          nextTick(() => {
-            formTimeline.value.scrollTop = 10000000
-            resetInputChat()
+        set(newPostRef, payload.value)
+          .then(() => {
+            textChat.value = "";
+            nextTick(() => {
+              formTimeline.value.scrollTop = 10000000
+              resetInputChat()
+            })
           })
-        })
-        .catch((err) => {
-          console.log(err);
-        }).finally(() => {
-          formTimeline.value.scrollTop = 10000000
-        })
-      }else{
+          .catch((err) => {
+            console.log(err);
+          }).finally(() => {
+            isLoadingUpload.value = false
+            formTimeline.value.scrollTop = 10000000
+          })
+      } 
+      else {
         textChat.value = "";
         nextTick(() => {
           formTimeline.value.scrollTop = 10000000
           resetInputChat()
         })
       }
-    };
+    }
 
     watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
-      if(!!value){
+      if (!!value) {
         chatListRef = reffb(databaseFirebase, channelChatSubrights());
         getListContentChat();
         nextTick(() => {
@@ -212,6 +271,15 @@ export default defineComponent({
       deep: true,
       immediate: true,
     })
+
+    watch(() => listImageUpload.value, (value) => {
+      if(value.length && value.length === listFileUploadHandleLoading.value.length){
+        sendChat()
+      }
+    }, {
+      deep: true,
+    })
+
     const changeInput = (event: any) => {
       const elment = event?.target ? event.target : event
       const style = getComputedStyle(elment, null);
@@ -260,14 +328,74 @@ export default defineComponent({
       const date = new Date(timestamp)
       const month = date.getMonth()
       const day = date.getDate()
-      return `${date.getFullYear()}-${month < 10 ? '0'+ month : month}-${day < 10 ? '0'+ day : day} ${date.getHours()}:${date.getMinutes()}`
+      return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${date.getHours()}:${date.getMinutes()}`
     }
 
+    const openFile = () => {
+      inputFile.value.click()
+    }
+
+    const uploadPreviewFile = async (e: any) => {
+      const file = e.target.files[0]
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg'
+      if (!isImage) {
+        notification('error', 'You can only upload png, jpg, jpeg, gif file!')
+      }
+      const isLt10M = file.size / 1024 / 1024 <= 10;
+      if (!isLt10M) {
+        notification('error', 'Image must smaller than 10MB!')
+      }
+      const isDuplicaseName = listFileUpload.value.some((items: any) => file.name === items.file.name)
+      if (isDuplicaseName) {
+        notification('error', 'Duplicate image are not allowed!')
+      }
+      if(!isImage || !isLt10M || isDuplicaseName) {
+        e.target.value = null
+        return
+      }
+      const metadata = {
+        contentType: file.type
+      }
+      const url = await getBase64(file)
+      listFileUpload.value.push({
+        file: file,
+        metadata: metadata,
+        url: url
+      })
+      e.target.value = null
+    }
+
+    const uploadFileServer = () => {
+      listImageUpload.value = []
+      listFileUploadHandleLoading.value.forEach((file: any) =>  {
+        const storageRef = refStorage(storage, file.file.name);
+        uploadBytes(storageRef, file.file, file.metadata).then(async (res) => {
+          const url = await getDownloadURL(res.ref)
+          listImageUpload.value = [...listImageUpload.value, { url: url}]
+        }).catch((err) => {
+          isLoadingUpload.value = false
+          console.log('error', err);
+        })
+      })
+    }
+
+    const getBase64 = (file: File) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    const removeFile = (index: number) => {
+      listFileUpload.value.splice(index, 1)
+    }
     return {
       userName,
       listChat,
       changeInput,
-      sendChat,
+      submitChat,
       textChat,
       formTimeline,
       inputChat,
@@ -275,7 +403,13 @@ export default defineComponent({
       deleteComment,
       idEditComment,
       removeText,
-      formatDate
+      formatDate,
+      inputFile,
+      openFile,
+      uploadPreviewFile,
+      listFileUpload,
+      removeFile,
+      isLoadingUpload
     }
   },
 })
@@ -381,7 +515,21 @@ export default defineComponent({
       max-width: 70%;
       background-color: #DCE6F2;
       padding: 5px 12px 8px 12px;
-
+      &-right {
+        background-color: #EBF1DE;
+      }
+      &-files {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -5px;
+        &-items {
+          width: 130px;
+          height: 130px;
+          object-fit: cover;
+          display: block;
+          padding: 5px;
+        }
+      }
       &-info {
         display: flex;
         align-items: center;
@@ -453,6 +601,11 @@ export default defineComponent({
         border: 1px solid #385D8A;
       }
 
+      .active-input-file {
+        border-radius: 0 0 20px 20px;
+        border-top: none;
+      }
+
       &-tool {
         position: absolute;
         right: 8px;
@@ -461,6 +614,39 @@ export default defineComponent({
         .anticon {
           font-size: 18px;
           cursor: pointer;
+        }
+      }
+
+      &-files {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        transform: translateY(-100%);
+        background-color: #EBF1DE;
+        padding: 5px;
+        border-radius: 5px 5px 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        border: 1px solid #385D8A;
+        border-bottom: none;
+        &-item {
+          position: relative;
+          padding: 4px;
+
+          img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+          }
+
+          &-close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: red;
+            border-radius: 10px;
+            cursor: pointer;
+          }
         }
       }
     }
@@ -509,12 +695,10 @@ export default defineComponent({
 }
 
 .borderRadiusRight10 {
-  background-color: #EBF1DE;
   border-radius: 2px 10px 2px 2px;
 }
 
 .borderEdit {
   border: 1px solid red;
-}
-</style>
+}</style>
 
