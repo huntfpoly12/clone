@@ -574,7 +574,7 @@ export default defineComponent({
         console.log(`output->item`,item)
         return {
           param: { incomeId: item.incomeId },
-          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, incomeTypeCode: item.incomeTypeCode },
+          errorInfo: { employeeId: item.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.incomeTypeCode },
         };
       });
     }
