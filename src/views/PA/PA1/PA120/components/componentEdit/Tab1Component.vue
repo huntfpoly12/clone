@@ -37,7 +37,8 @@
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal">
+          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"
+            :disabled="!initFormStateTabPA120.deletable">
           </radio-group>
         </a-form-item>
 
@@ -54,8 +55,9 @@
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px" :foreigner="initFormStateTabPA120.foreigner">
-          </id-number-text-box>
+          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
+            :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
+          </id-number-text-box>{{ initFormStateTabPA120.foreigner }}
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
@@ -265,6 +267,7 @@ export default defineComponent({
       editRowData.householder = data.householder;
       editRowData.department = data.department;
       editRowData.responsibility = data.responsibility;
+      editRowData.deletable = data.deletable;
       store.commit('common/editRowPA120', editRowData);
       store.commit('common/initFormStateTabPA120', editRowData);
       employeeId.value = data.employeeId;
