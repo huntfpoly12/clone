@@ -300,12 +300,12 @@ export default defineComponent({
     SearchOutlined,
     DxFileUploader,
   },
-  props: {
-    workId: {
-      type: Number,
-      default: NaN,
-    }
-  },
+  // props: {
+  //   workId: {
+  //     type: Number,
+  //     default: NaN,
+  //   }
+  // },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -346,7 +346,9 @@ export default defineComponent({
       reportDate: +dayjs().format('YYYYMMDD'),
     })
     const formStateToCompare = ref({ ...formState });
-    // get Company
+
+    //-------------------------- get Company-----------------------
+
     const myCompanyParam = reactive({
       companyId: companyId,
     });
@@ -406,37 +408,37 @@ export default defineComponent({
 
     //-----------------------------GET DETAIL getMajorInsuranceCompanyOut-------------------
 
-    const getCompanyOutTrigger = ref<boolean>(false);
-    const getCompanyOutParam = reactive({
-      companyId: companyId,
-      imputedYear: globalYear,
-      workId: NaN,
-    })
-    const { refetch: getCompanyOutRefetch, result: getCompanyOutResult, onError: getCompanyOutError } = useQuery(
-      queries.getMajorInsuranceCompanyOut,
-      getCompanyOutParam,
-      () => ({
-        enabled: getCompanyOutTrigger.value,
-        fetchPolicy: 'no-cache',
-      })
-    );
-    watch(getCompanyOutResult, (newVal) => {
-      if (newVal) {
-        let data = newVal.getMajorInsuranceCompanyOut;
-        console.log(`output->data`,data);
-        // formState.value = newVal.getMajorInsurancegetCompanyOut;
-        getCompanyOutTrigger.value = false;
-      }
-    });
-    getCompanyOutError((res: any) => {
-      notification('error', res.message)
-    })
-    watch(()=>props.workId,(newVal: number) => {
-      if(newVal){
-        getCompanyOutParam.workId = newVal;
-        getCompanyOutTrigger.value = true;
-      }
-    },{immediate: true})
+    // const getCompanyOutTrigger = ref<boolean>(false);
+    // const getCompanyOutParam = reactive({
+    //   companyId: companyId,
+    //   imputedYear: globalYear,
+    //   workId: NaN,
+    // })
+    // const { refetch: getCompanyOutRefetch, result: getCompanyOutResult, onError: getCompanyOutError } = useQuery(
+    //   queries.getMajorInsuranceCompanyOut,
+    //   getCompanyOutParam,
+    //   () => ({
+    //     enabled: getCompanyOutTrigger.value,
+    //     fetchPolicy: 'no-cache',
+    //   })
+    // );
+    // watch(getCompanyOutResult, (newVal) => {
+    //   if (newVal) {
+    //     let data = newVal.getMajorInsuranceCompanyOut;
+    //     console.log(`output->data`,data);
+    //     // formState.value = newVal.getMajorInsurancegetCompanyOut;
+    //     getCompanyOutTrigger.value = false;
+    //   }
+    // });
+    // getCompanyOutError((res: any) => {
+    //   notification('error', res.message)
+    // })
+    // watch(()=>props.workId,(newVal: number) => {
+    //   if(newVal){
+    //     getCompanyOutParam.workId = newVal;
+    //     getCompanyOutTrigger.value = true;
+    //   }
+    // },{immediate: true})
     
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
@@ -453,8 +455,6 @@ export default defineComponent({
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        store.state.common.isNewRowPA120 = true;
-        store.commit('common/actionFormErrorPA120');
       } else {
         makeDataClean(formState, ['presidentResidentNumber']);
         createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
