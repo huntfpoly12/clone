@@ -57,20 +57,6 @@
     }
   }
 
-  .custom-grade-cell {
-    display: flex;
-    align-items: center;
-
-    .custom-grade-cell-tag {
-      padding: 3px 10px;
-      border: 1px solid #304967;
-      margin-right: 10px;
-      border-radius: 5px;
-      min-width: 50px;
-      text-align: center;
-    }
-  }
-
   .hover-underlined:hover {
     text-decoration: underline;
   }
@@ -86,13 +72,13 @@
   }
 
   :deep .custom-layout {
-    padding: 10px 10px 10px 0;
+    // padding: 10px 10px 10px 0;
 
-    >div {
-      border: 1px solid #d7d7d7;
-      padding: 10px;
-      max-height: 770px;
-    }
+    // >div {
+    //   border: 1px solid #d7d7d7;
+    //   padding: 10px;
+    //   max-height: 770px;
+    // }
   }
 
   :deep .content-btm col:first-child {
@@ -164,7 +150,7 @@
   }
 
   :deep .dx-datagrid-rowsview .dx-row-focused.dx-data-row>td:not(.dx-focused) {
-    color: black;
+    color: white;
   }
 
   :deep.ant-btn.ant-dropdown-trigger {
@@ -241,12 +227,14 @@
     .dx-button-content {
       padding: 0px 10px 2px;
     }
+
     div.dx-button-content {
       padding: 0px 6px 1px;
+
       .dx-dropdowneditor-icon {
         width: 24px;
       }
-  
+
       .dx-dropdowneditor-icon::before {
         margin-left: -6px;
       }
@@ -258,6 +246,7 @@
       padding: 0px 10px 0px;
     }
   }
+
   :deep .btn-container {
     margin-right: 5px;
     text-align: center;
@@ -266,8 +255,49 @@
     padding: 3px 4px;
     height: 25px;
     background: white;
+    color: black !important;
   }
-  :deep .dx-command-expand.dx-datagrid-group-space{
+
+  :deep .dx-command-expand.dx-datagrid-group-space {
     padding: 0;
+  }
+
+  :deep .col-tax {
+    height: calc(70vh);
+    border: 1px solid #d7d7d7;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding-top: 10px;
+  }
+
+  :deep .form-tax {
+    border: 1px solid #d7d7d7;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  #tax-pay-720 {
+    height: calc(69vh);
+
+    :deep .dx-datagrid-total-footer {
+      height: 77px;
+      overflow: hidden;
+      position: absolute;
+      bottom: 0;
+    }
+
+    :deep .dx-datagrid-headers {
+      height: 27px;
+    }
+
+    :deep .dx-datagrid-rowsview {
+      max-height: calc(calc(69vh) - 77px - 0px); // chiều cao bảng - chiều cao header - chiều cao footer
+    }
+
+    :deep .dx-freespace-row {
+      display: none !important; // cục lúc hiện lúc không
+    }
   }
 }
