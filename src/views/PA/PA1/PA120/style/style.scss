@@ -1,11 +1,14 @@
 #pa-120 {
   margin-top: 10px;
-  padding-right: 1px;
 
   #pa-120-gridContainer {
-    max-height: 695px;
+    max-height: calc(100vh - 173px);
   }
-
+  .row-first{
+  }
+  :deep .dx-datagrid-header-panel .dx-toolbar {
+    padding: 0px 5px;
+  }
   .total-user {
     background-color: #17375E;
     color: white;
@@ -26,12 +29,20 @@
   :deep .custom-layout {
 
     >div {
-      border: 1px solid #d7d7d7;
-      padding: 10px;
       height: 100%;
     }
   }
-
+  :deep .col-right {
+    margin-left: 10px;
+    border: 1px solid #d7d7d7;
+    padding-top: 10px;
+    height: calc(100vh - 152px);
+  }
+  :deep .col-left {
+    border: 1px solid #d7d7d7;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
   .current-user {
     background-color: #d99694;
   }

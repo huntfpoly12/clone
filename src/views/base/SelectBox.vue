@@ -340,7 +340,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">List sale select box</div>
                         <div class="dx-field-value">
-                            <list-sales-dropdown width="150px" :required="true"></list-sales-dropdown>
+                            <list-sales-dropdown width="150px" :required="true" :isExample="true"></list-sales-dropdown>
                         </div>
                     </div>
                 </td>
@@ -376,7 +376,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">List manager select box</div>
                         <div class="dx-field-value">
-                            <list-manager-dropdown width="150px" :required="true"></list-manager-dropdown>
+                            <list-manager-dropdown width="150px" :required="true" :isExample="true"></list-manager-dropdown>
                         </div>
                     </div>
                 </td>
@@ -412,7 +412,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">List partner select box</div>
                         <div class="dx-field-value">
-                            <list-partner width="150px" :required="true"></list-partner>
+                            <list-partner width="150px" :required="true" :isExample="true"></list-partner>
                         </div>
                     </div>
                 </td>
@@ -688,7 +688,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Customer Select common</div>
                         <div class="dx-field-value">
-                            <customer-select v-model:valueInput="valueSelectBox" />
+                            <customer-select v-model:valueInput="valueSelectBox" :isExample="true"/>
                         </div>
                     </div>
                 </td>

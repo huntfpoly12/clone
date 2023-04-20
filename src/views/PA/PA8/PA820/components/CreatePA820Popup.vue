@@ -1,8 +1,11 @@
 <template>
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
-    :visible="isOpenModalCreate" title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
-    <a-spin :spinning="false">
-      <!-- {{ formState }} formState <br /> -->
+    :visible="modalCreate" title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
+    <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
+      <!-- {{ formState }} formState <br />
+      {{ formState.employeeId }} formState.employeeId <br />
+      {{ formState.employeeType }} formState.employeeType <br /> -->
+      <!-- {{ employeeWageDaily }} employeeWageDaily <br /> -->
       <standard-form ref="formPa820Ref">
         <div class="form-container">
           <div class="form-first pl-15">
@@ -33,12 +36,12 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="업체명" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="대표자명" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.presidentName"
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.presidentName"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -46,13 +49,13 @@
             <a-row class="mt-10">
               <a-col :span="10">
                 <a-form-item label="사업자등록번호" label-align="right" class="red">
-                  <biz-number-text-box v-model:valueInput="formState.bizNumber" width="200px" :disabled="true"
+                  <biz-number-text-box v-model:valueInput="showData.bizNumber" width="200px" :disabled="true"
                     messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="사업장관리번호" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.adding"
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.adding"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -62,26 +65,27 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="성명" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.name" :required="true" />
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name1"
+                    :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="주민등록번호" label-align="right" class="red">
-                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="formState.residentId" />
+                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="mt-10">
               <a-col :span="10">
                 <a-form-item label="취득일(입사일)" label-align="right" class="red">
-                  <default-text-box :disabled="true" width="200px" v-model:valueInput="formState.totalPay"
-                    :required="true" />
+                  <date-time-box text="지" v-model:valueDate="showData.joinedAt" bgColor="white" :clearable="false"
+                    width="200px" :disabled="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="상실년월일(퇴사일)" label-align="right" class="red">
-                  <date-time-box text="지" v-model:valueDate="formState.joinedAt" width="200px"
-                    bgColor="white"></date-time-box>
+                  <date-time-box text="지" v-model:valueDate="showData.leavedAt" bgColor="white" :clearable="false"
+                    width="200px" :disabled="true" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -104,13 +108,13 @@
                   <div class="select-group">
                     <span>상실부호</span>
                     <select-box-common width="348px" :arrSelect="nationaPersionSelectbox" :required="true"
-                      v-model:valueInput="formState.nationalPensionAcquisitionCode"
+                      v-model:valueInput="formState.nationalPensionLossCode"
                       :disabled="!formState.nationalPensionReport" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="취득월 국민연금 납부"
-                      v-model:valueCheckbox="formState.acquisitionMonthPayment"
-                      :disabled="!formState.acquisitionMonthPayment" />
+                      v-model:valueCheckbox="showData.acquisitionMonthPayment"
+                      :disabled="!showData.acquisitionMonthPayment" />
                   </span>
                   <span class="ml-10 notice">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
@@ -124,7 +128,7 @@
                   <div class="select-group">
                     <span>상실부호</span>
                     <select-box-common width="348px" :arrSelect="healthInsuranceSelectbox" :required="true"
-                      v-model:valueInput="formState.healthInsuranceAcquisitionCode"
+                      v-model:valueInput="formState.healthInsuranceLossCode"
                       :disabled="!formState.nationalPensionReport" />
                   </div>
                 </div>
@@ -149,11 +153,12 @@
                       </template>
                     </DxSelectBox> -->
                     <select-box-common width="348px" :arrSelect="includeDependentsSelectbox" :required="true"
-                      v-model:valueInput="formState.healthInsuranceAcquisitionCode2"
+                      v-model:valueInput="showData.healthInsuranceAcquisitionCode2"
                       :disabled="!formState.healthInsuranceReport" />
                   </div>
                   <span class="ml-50">
-                    <checkbox-basic size="14" label="이직확인서 발급희망" v-model:valueCheckbox="formState.includeDependents"
+                    <checkbox-basic size="14" label="이직확인서 발급희망"
+                      v-model:valueCheckbox="formState.employeementInsuranceJobChangeReport"
                       :disabled="!formState.healthInsuranceReport || !isDisabled2" />
                   </span>
                 </div>
@@ -162,7 +167,8 @@
             <a-row class="mt-10">
               <div class="input-text jobtype-margin">
                 <div class="text-detail">상실사유 (10자이내 간략히)</div>
-                <text-number-box :disabled="isDisabled1" width="200px" v-model:valueInput="formState.jobTypeCode" />
+                <text-number-box :disabled="isDisabled1" width="200px"
+                  v-model:valueInput="formState.employeementInsuranceLossDescription" />
               </div>
             </a-row>
           </div>
@@ -170,13 +176,13 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="당해년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode2"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="isDisabled1"
+                    v-model:valueInput="formState.totalSalaryThisYear" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="당해년도 산정월수" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode3"
+                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.workMonthThisYear"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -184,14 +190,13 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="전년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.jobTypeCode4"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled="isDisabled1"
+                    v-model:valueInput="formState.totalSalaryLastYear" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="전년도 산정월수" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="formState.contractWorker"
-                    :required="true" />
+                  <number-box-money width="200px" v-model:valueInput="formState.workMonthLastYear" :required="true" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -210,10 +215,10 @@
 </template>
 
 <script lang="ts">
-import mutations from "@/graphql/mutations/PA/PA8/PA810/index";
-import queries from "@/graphql/queries/PA/PA8/PA810/index";
+import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
+import queries from "@/graphql/queries/PA/PA8/PA820/index";
 import getCompany from "@/graphql/queries/common/getCompany";
-import { companyId } from "@/helpers/commonFunction";
+import { companyId, makeDataClean } from "@/helpers/commonFunction";
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
   DeleteOutlined,
@@ -236,13 +241,11 @@ import {
   reactive,
   ref,
   watch,
-  watchEffect,
 } from "vue";
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
-import filters from "@/helpers/filters";
-import { clone, cloneDeep } from "lodash";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
+import { getCurrentInstance } from "vue";
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -255,7 +258,7 @@ export default defineComponent({
     DxSelectBox,
   },
   props: {
-    isOpenModalCreate: {
+    modalCreate: {
       type: Boolean,
       default: false,
     },
@@ -263,79 +266,204 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
+    const app: any = getCurrentInstance();
+    const messages = app.appContext.config.globalProperties.$messages;
     const formState = reactive({
-      employeeType: 0,
-      employeeId: 1,
-      name: 'ss',
-      bizNumber: 'ss',
-      presidentName: 'ss',
-      adding: 'ADDING',
-      totalPay: 'ss',
-      residentId: '',
-      joinedAt: dayjs().format('YYYY-MM'),
+      employeeType: 10,
+      employeeId: 0,
       nationalPensionReport: false,
       healthInsuranceReport: true,
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
-      nationalPensionAcquisitionCode: 3,
-      acquisitionMonthPayment: false,
-      healthInsuranceAcquisitionCode: 1,
-      healthInsuranceAcquisitionCode2: 1,
-      includeDependents: true,
-      acquisitionMonthPayment2: false,
-      jobTypeCode: 100000,
-      jobTypeCode2: 100000,
-      jobTypeCode3: 1,
-      jobTypeCode4: 100000,
-      contractWorker: 'contractWorker',
+      nationalPensionLossCode: 3,
+      nationalPensionPaymentCurrentMonthLoss: '',
+      employeementInsuranceLossCode: '',
+      employeementInsuranceJobChangeReport: true,
+      healthInsuranceLossCode: '1',
+      employeementInsuranceLossDescription: '100000',
+      totalSalaryThisYear: 100000,
+      totalSalaryLastYear: 100000,
+      workMonthThisYear: 1300,
+      workMonthLastYear: 100000,
     })
-    const formStateToCompare = {...formState};
+    const showData = reactive({
+      name: '',
+      name1: '',
+      bizNumber: '',
+      presidentName: '',
+      adding: 'ADDING',
+      leavedAt: '',
+      residentId: '',
+      joinedAt: '',
+      acquisitionMonthPayment: false,
+      healthInsuranceAcquisitionCode2: 1,
+    })
+    const formStateToCompare = ref({ ...formState });
 
-    // ----------------get and refetch data when employeeWageType change---------
+    //-------------------------- get Company-----------------------
+
+    const myCompanyParam = reactive({
+      companyId: companyId,
+    });
+    const {
+      result: myCompanyResult,
+      loading: myCompanyLoading,
+    } = useQuery(
+      queries.getMyCompany,
+      myCompanyParam,
+      () => ({
+        fetchPolicy: "no-cache",
+      })
+    );
+    watch(myCompanyResult, (value) => {
+      if (value) {
+        let data = value.getMyCompany;
+        showData.name = data.name;
+        showData.bizNumber = data.bizNumber;
+        showData.presidentName = data.presidentName;
+        formStateToCompare.value = { ...formState };
+      }
+    });
+
+    // ----------------get data employeeWages--------------
 
     const employeeWages = ref([]);
     const variables = reactive({
       companyId: companyId,
       imputedYear: globalYear.value,
     });
-    const query = ref(queries.getEmployeeWages);
-    const { result: dataEmployeeWages, refetch: refetchDataEmployeeWages } =
-      useQuery(query, variables, () => ({
+    const { result: dataEmployeeWages } =
+      useQuery(queries.getEmployeeWages, variables, () => ({
         fetchPolicy: "no-cache",
       }));
-    watch(
-      dataEmployeeWages,
-      (value) => {
-        if (value) {
-          // if (stateSelectQuery.selectedRadioValue === EmployeeWageType.WAGE) {
-          employeeWages.value = value.getEmployeeWages;
-          // } else {
-          //   employeeWages.value = value.getEmployeeWageDailies;
-          // }
+    watch(dataEmployeeWages, (value) => {
+      if (value) {
+        employeeWages.value = value.getEmployeeWages;
+      }
+    }, { deep: true });
+
+
+    // -----------------FNC COMMON--------------------------
+
+    const resetEmployeeWage = () => {
+      showData.name1 = '';
+      showData.joinedAt = '';
+      showData.residentId = '';
+      showData.leavedAt = '';
+    }
+    // ----------------GET DATA WHEN employeeType == 0--------------
+
+    const getEmployeeWageTrigger = ref(false);
+    const getEmployeeWageParam = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: formState.employeeId,
+    });
+    const { result: getEmployeeWageResult, onError: getEmployeeWageOnError, loading: getEmployeeWageLoading } = useQuery(queries.getEmployeeWage, getEmployeeWageParam, () => ({
+      enabled: getEmployeeWageTrigger.value,
+    }));
+    watch(getEmployeeWageResult, (value) => {
+      if (value) {
+        let data = value.getEmployeeWage;
+        if (formState.employeeType == 10) {
+          showData.name1 = data.name || '';
+          showData.joinedAt = data?.joinedAt || '';
+          showData.residentId = data.residentId || '';
+          showData.leavedAt = data.leavedAt || '';
+          formStateToCompare.value = { ...formState };
         }
-      },
-      { deep: true }
-    );
+        getEmployeeWageTrigger.value = false;
+      }
+    }, { deep: true });
+
+    getEmployeeWageOnError((res: any) => {
+      notification('error', res.message);
+      resetEmployeeWage();
+    })
+
+    // ----------------GET DATA WHEN employeeType == 1--------------
+
+    const getEmployeeWageDailyTrigger = ref(false);
+    const getEmployeeWageDailyParam = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+      employeeId: formState.employeeId,
+    });
+    const { result: getEmployeeWageDailyResult, loading: getEmployeeWageDailyLoading, onError: getEmployeeWageDailyOnError } = useQuery(queries.getEmployeeWageDaily, getEmployeeWageDailyParam, () => ({
+      enabled: getEmployeeWageDailyTrigger.value,
+    }));
+    watch(
+      getEmployeeWageDailyResult, (value) => {
+        if (value) {
+          let data = value.getEmployeeWageDaily;
+          if (formState.employeeType == 20) {
+            showData.name1 = data.name || '';
+            showData.joinedAt = data.joinedAt || '';
+            showData.residentId = data.residentId || '';
+            showData.leavedAt = data.leavedAt || '';
+            formStateToCompare.value = { ...formState };
+          }
+          getEmployeeWageDailyTrigger.value = false;
+        }
+      }, { deep: true });
+    getEmployeeWageDailyOnError((res: any) => {
+      notification('error', res.message);
+      resetEmployeeWage();
+    })
+
+    //-----------------------UPDATE DATA WHEN EMPLOYEE CHANGE------------------------
+
+    watch(() => [formState.employeeId, formState.employeeType], ([newVal, newVal2]: any) => {
+      if (newVal) {
+        if (newVal2 == 10) {
+          getEmployeeWageParam.employeeId = newVal;
+          getEmployeeWageTrigger.value = true;
+          // return;
+        }
+        if (newVal2 == 20) {
+          getEmployeeWageDailyParam.employeeId = newVal;
+          getEmployeeWageDailyTrigger.value = true;
+          // return;
+        }
+      }
+      // console.log(`output->thay doi employee,`, newVal, newVal2);
+      // console.log(`output->thay doi employee,`, getEmployeeWageTrigger.value, getEmployeeWageDailyTrigger.value);
+    }, { deep: true })
 
     //---------------------------------DISABLED FIELD--------------------------------
 
     const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
       // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-      let check = [23, 26, 32].some((item: any) => formState.healthInsuranceAcquisitionCode2 == item);
-      formState.includeDependents = check;
+      let check = [23, 26, 32].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
+      formState.employeementInsuranceJobChangeReport = check;
+      formStateToCompare.value.employeementInsuranceJobChangeReport = check;
       return check;
     })
 
     //-----------------------------------FORM ACTION--------------------------------
 
+    const messageCreate = messages.getCommonMessage('101').message;
+    const {
+      mutate: createCompanyEmployeeLossMutate,
+      onDone: createCompanyEmployeeLossDone,
+      onError: createCompanyEmployeeLossError }
+      = useMutation(mutations.createMajorInsuranceCompanyEmployeeLoss);
+    createCompanyEmployeeLossDone((res: any) => {
+      notification('success', messageCreate);
+      emit('onCreateModal', true);
+    })
+    createCompanyEmployeeLossError((res: any) => {
+      notification('error', res.message);
+    })
     const onSubmit = (e: any) => {
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        store.state.common.isNewRowPA120 = true;
-        store.commit('common/actionFormErrorPA120');
-      } else { }
+      } else {
+        makeDataClean(formState, ['presidentResidentNumber']);
+        createCompanyEmployeeLossMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
+      }
     }
     function onOptionRendered(e: any) {
       e.element.dxTooltip({
@@ -360,9 +488,10 @@ export default defineComponent({
     return {
       globalYear, employeeWages,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
-      formState, onSubmit,
+      formState, onSubmit,showData,
       isDisabled1, isDisabled2, onOptionRendered,
-      onCanCelModal
+      onCanCelModal,
+      getEmployeeWageLoading, getEmployeeWageDailyLoading,
     };
   },
 });

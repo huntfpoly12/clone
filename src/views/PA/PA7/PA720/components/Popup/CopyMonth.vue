@@ -105,27 +105,7 @@ export default defineComponent({
       },
     });
     const trigger = ref(false);
-    //-----------get config to check default date type----------------
-    // const configTrigger = ref(false);
-    // const dateType = ref<number>(1);
-    // const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
-    // const { result: resultConfig, loading, refetch: configRefetch } = useQuery(queriesHolding.getWithholdingConfig, dataQuery, () => ({
-    //   enabled: configTrigger.value,
-    //   fetchPolicy: 'no-cache',
-    // }));
-    // watch(resultConfig, (newVal) => {
-    //   if (newVal) {
-    //     const data = newVal.getWithholdingConfig;
-    //     dateType.value = data.paymentType;
-    //     store.commit('common/paymentDayPA720', data.paymentDay);
-    //     configTrigger.value = false;
-    //   }
-    // });
-    // watch(() => props.month, () => {
-    //   dataQuery.value.imputedYear = globalYear.value;
-    //   configTrigger.value = true;
-    //   configRefetch();
-    // })
+
     // ----------set month source default because dependent on the set up before--------------
 
     const month2 = ref<String>(`${globalYear.value}${processKeyPA720.value.processKey.imputedMonth}`);
@@ -183,7 +163,6 @@ export default defineComponent({
     const openModalCopy = () => {
       modalCopy.value = true
     }
-    // get date to copy
     const updateValue = (value: any) => {
       dataApiCopy.value = {
         imputedYear: value.value.imputedYear,
@@ -230,7 +209,9 @@ export default defineComponent({
       }
       return month;
     };
+
     //----------------emit date and set to store------------------
+
     const commitDate = async () => {
       let dateTarget = {
         imputedYear: globalYear.value,
@@ -241,7 +222,9 @@ export default defineComponent({
       emit('dataAddIncomeProcess', dateTarget);
       processKeyPA720.value.processKey = dateTarget;
     }
+
     //------------------fn submit add new------------------------
+
     const onSubmit = () => {
       commitDate();
       emit("closePopup", false);
