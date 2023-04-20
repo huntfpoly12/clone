@@ -14,7 +14,7 @@
         style="max-height: 770px"
       >
         <DxPaging :page-size="0" />
-        <DxSearchPanel :visible="true" placeholder="Search..." />
+        <DxSearchPanel :visible="true" placeholder="검색" />
         <DxExport :enabled="true" />
         <DxToolbar>
           <DxItem name="searchPanel" />
