@@ -36,6 +36,10 @@ export default {
             type: String,
             default: '',
         },
+        isExample: {
+          type: Boolean,
+          default: false,
+        }  
     },
     components: {
         DxSelectBox,
@@ -54,7 +58,7 @@ export default {
             rows: 10000,
             includeNonUse: false,
         });
-        const trigger = ref<boolean>(true); // trigger for call api
+        const trigger = ref<boolean>(!props.isExample); // trigger for call api
         const dataSource = ref([]); // data source of grid
         // get list client
         const {
