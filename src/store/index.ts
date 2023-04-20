@@ -12,7 +12,7 @@ const store : any= createStore({
 });
 export default store;
 
-// gọi lại hàm checkToken mỗi 19 phút
+// gọi lại hàm checkToken mỗi 5 phút
 setInterval(() => {
   store.dispatch('auth/checkToken')
-}, 10 * 60 * 1000) // 19 phút
+}, 5 * 60 * 1000) // 5 phút
