@@ -232,7 +232,7 @@
         </div>
         <div class="ac-110__main-detail-detail2">
           <div class="ac-110__main-detail-detail2-upload">
-            <UploadPreviewImage v-model:list-image-file="fileList" width="400"
+            <UploadPreviewImage width="400"
               :payLoadProofs="payloadGetTransactionDetails" @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
               @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" />
           </div>
@@ -387,7 +387,6 @@ export default defineComponent({
     let firstLoad = ref<boolean>(true)
     let dataSource = ref<any[]>([])
     let dataSourceTransactionDetails = ref<any>({})
-    let fileList = ref<any[]>([])
     let isModalRetrieveStatements = ref(false);
     let isModalSlipCancellation = ref(false);
     let isModalSlipRegistrantion = ref(false);
@@ -397,11 +396,6 @@ export default defineComponent({
     let transactionSelected: any = ref()
     let dataStatementOfGoodsItems: any = ref()
     let monthSelected: any = ref(dayjs().month() + 1)
-    watch(() => fileList.value, (value) => {
-    }, {
-      deep: true,
-    })
-
     let valueAccountSubjectClassification = ref(null)
     let valueFundingSource = ref(null)
     const payloadGetTransactionDetails: any = reactive({
@@ -565,12 +559,6 @@ export default defineComponent({
         dataSourceTransactionDetails.value = value.getTransactionDetails
       }
       triggerTransactionDetails.value = false
-    })
-
-    watch(() => payloadGetTransactionDetails, () => {
-      fileList.value = []
-    }, {
-      deep: true
     })
     // MOUNTED
     // METHODS
@@ -925,7 +913,6 @@ export default defineComponent({
       isModalNoteItemDetail,
       valueAccountSubjectClassification,
       valueFundingSource,
-      fileList,
       bankType,
       bankbookUseType,
       getNameBankType,
