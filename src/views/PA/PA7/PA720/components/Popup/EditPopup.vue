@@ -2,8 +2,6 @@
   <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
     :width="500">
     <standard-form action="" name="edit-510">
-      {{ changeDayDataPA720 }}
-      {{ dataUpdateLen }} dataUpdateLen <br />
       <div class="custom-modal-edit" v-if="data.length">
         <img src="@/assets/images/icon_edit.png" alt="" style="width: 30px;">
         <span>선택된 내역 지급일을</span>
@@ -20,16 +18,12 @@
       </div>
     </standard-form>
   </a-modal>
-  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null">
-    {{ dataUpdateLen }} dataUpdateLen <br />
-    {{ succesState }} succesState <br />
-    {{ data }} data <br />
-    {{ dayValue }} dayValue <br />
-    <p>요청건수: {{ data.length }}건</p>
-    <p>처리건수: {{ incomeIdRender.length }}건</p>
-    <p>미처리건수 및 내역:{{ errorState.length }} 건 </p>
+  <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
+    <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ incomeIdRender.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역:{{ errorState.length }} 건 </p>
     <ul>
-      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.incomeTypeName }}1</li>
+      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.incomeTypeName }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"
@@ -84,63 +78,70 @@ export default defineComponent({
         errorState.value = [];
       }
     }, { deep: true })
-    // const checkAction = () => {
-    //   let val = props.data.filter((item: any) => item.errorInfo.incomeTypeName ==  )
-    //   const
-    // }
     onDone((res: any) => {
       dataUpdateLen.value--;
-      console.log(`output->res.data[0]`, res.data)
       let resData = res.data.changeIncomeExtraPaymentDay;
-      let hasData = incomeIdRender.value.findIndex((item: any) => item == resData.incomeId);
-      if (hasData == -1) {
-        incomeIdRender.value.push(resData.incomeId);
-        succesState.value.push({
-          employeeId: resData.employeeId,
-          incomeTypeCode: resData.incomeTypeCode,
-          paymentDay: true,
-        });
-      }
+      incomeIdRender.value.push(resData.incomeId);
+      succesState.value.push({
+        employeeId: resData.employeeId,
+        incomeTypeCode: resData.incomeTypeCode,
+      });
       if (dataUpdateLen.value == 0) {
-        errorState.value = props.data.filter((item1: any) => {
-            console.log(`output->item2.paymentDay`, item1)
+        let allData = props.data;
+        allData = allData.filter((item: any, index) => {
+          const firstIndex = allData.findIndex((elem: any) =>
+            elem.errorInfo.employeeId.toString() === item.errorInfo.employeeId.toString()
+            && elem.errorInfo.incomeTypeCode.toString() === item.errorInfo.incomeTypeCode.toString()
+          );
+          if (index == firstIndex) {
+            return true
+          } else {
+            errorState.value.push(item);
+            return false;
+          }
+        });
+        let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-            console.log(`output->item2.paymentDay`, item2.paymentDay, item1.errorInfo)
             return (
               item2.employeeId === item1.errorInfo.employeeId
               && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
-              && item2.paymentDay === true
             )
           }
           );
         });
-        notification('success', messageUpdate);
-        console.log(`output->`, errorState.value)
-        emit("closePopup", incomeIdRender.value);
+        errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
+        emit("closePopup", incomeIdRender.value);
       }
-      console.log(`output->dataUpdateLen.value`, dataUpdateLen.value)
     })
     onError((e: any) => {
-      console.log(`output->e.message`, e.message)
       dataUpdateLen.value--;
       if (dataUpdateLen.value == 0) {
-        errorState.value = props.data.filter((item1: any) => {
-            console.log(`output->item2.paymentDay`, item1)
+        let allData = props.data;
+        allData = allData.filter((item: any, index) => {
+          const firstIndex = allData.findIndex((elem: any) =>
+            elem.errorInfo.employeeId.toString() === item.errorInfo.employeeId.toString()
+            && elem.errorInfo.incomeTypeCode.toString() === item.errorInfo.incomeTypeCode.toString()
+          );
+          if (index == firstIndex) {
+            return true
+          } else {
+            errorState.value.push(item);
+            return false;
+          }
+        });
+        let arr = allData.filter((item1: any) => {
           return !succesState.value.some((item2: any) => {
-            console.log(`output->item2.paymentDay`, item2.paymentDay, item1.errorInfo)
             return (
               item2.employeeId === item1.errorInfo.employeeId
               && item2.incomeTypeCode === item1.errorInfo.incomeTypeCode
-              && item2.paymentDay === true
             )
           }
           );
         });
-        notification('error', e.message);
-        emit("closePopup", incomeIdRender.value)
-        console.log(`output->`, errorState.value, succesState.value)
+        errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
+        emit("closePopup", incomeIdRender.value)
       }
     })
     const onSubmit = (e: any) => {

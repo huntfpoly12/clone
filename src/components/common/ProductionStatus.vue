@@ -51,6 +51,7 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 5px;
     width: 80px;
+    display: block;
 }
 
 .tag-status-1 {
@@ -69,6 +70,7 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 5px;
     width: 80px;
+    display: block;
 }
 
 .tag-status-3 {
@@ -78,6 +80,7 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 5px;
     width: 80px;
+    display: block;
 }
 
 
@@ -88,6 +91,7 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 5px;
     width: 80px;
+    display: block;
 }
 
 .tag-status-5 {
@@ -97,5 +101,6 @@ export default defineComponent({
     border-radius: 5px;
     margin-right: 5px;
     width: 80px;
+    display: block;
 }
 </style> 

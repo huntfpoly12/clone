@@ -31,8 +31,8 @@
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
-        <DxColumn caption="사업자코드" data-field="code" />
-        <DxColumn caption="상호 주소" cell-template="companyName" />
+        <DxColumn caption="사업자코드" data-field="code" width="90" />
+        <DxColumn caption="상호 주소" cell-template="companyName" width="320"/>
         <template #companyName="{ data }">
           {{ data.data.name }}
           {{ data.data.address }}
@@ -63,16 +63,16 @@
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
-        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
+        <DxColumn caption="신고 종류" cell-template="afterDeadline" width="110px"  />
         <template #afterDeadline="{ data }">
           <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
           <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
         </template>
-        <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" format="0,###" alignment="right" />
+        <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" format="0,###" alignment="right"  width="140px" />
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
-        <DxColumn caption="제작현황" cell-template="productionStatus" />
+        <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" width="120" />
+        <DxColumn caption="제작현황" cell-template="productionStatus" width="355" />
         <template #productionStatus="{ data }">
           <GetStatusTable :dataProcduct="data.data"/>
           <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
