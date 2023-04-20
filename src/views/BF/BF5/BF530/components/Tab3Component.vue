@@ -57,7 +57,7 @@
         </DxColumn>
         <DxColumn data-field="lastProductionRequestedAt" caption="등록일" width="125" :allow-editing="false" />
         <DxColumn data-field="productionStatus" caption="접수일" width="125"/>
-        <DxColumn caption="완료일" data-field="afterDeadline" width="155px" :allow-editing="false" />
+        <DxColumn caption="완료일" data-field="afterDeadline" width="155px" :allow-editing="false"  data-type="date"/>
         <DxColumn caption="접수번호" data-field="afterDeadline" width="155px" :allow-editing="false" />
         <DxColumn caption="FAX상태" data-field="afterDeadline" width="155px" :allow-editing="false" />
         <DxColumn caption="메모" data-field="afterDeadline" width="155px" :allow-editing="false" />
@@ -323,31 +323,31 @@ export default defineComponent({
 
     // ----------------request file withholding---------
 
-    const requestFileData = ref<any>({
-      reportKeyInputs: [],
-      filter: formState,
-      emailInput: {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
-      },
-    });
+    // const requestFileData = ref<any>({
+    //   reportKeyInputs: [],
+    //   filter: formState,
+    //   emailInput: {
+    //     receiverName: userInfor.value.name,
+    //     receiverAddress: userInfor.value.email,
+    //   },
+    // });
     const selectionChanged = (event: any) => {
-      let deselectRowKeys: any = [];
-      event.selectedRowsData.forEach((item: any) => {
-        if (!item.allowSelection)
-          deselectRowKeys.push(event.component.keyOf(item));
-      });
-      if (deselectRowKeys.length) {
-        event.component.deselectRows(deselectRowKeys);
-        return;
-      }
-      // checkBoxUpdating = true;
-      // selectAllCheckBox.option("value", true);
-      // checkBoxUpdating = false;
-      if (event.selectedRowsData)
-        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
-          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
-        });
+      // let deselectRowKeys: any = [];
+      // event.selectedRowsData.forEach((item: any) => {
+      //   if (!item.allowSelection)
+      //     deselectRowKeys.push(event.component.keyOf(item));
+      // });
+      // if (deselectRowKeys.length) {
+      //   event.component.deselectRows(deselectRowKeys);
+      //   return;
+      // }
+      // // checkBoxUpdating = true;
+      // // selectAllCheckBox.option("value", true);
+      // // checkBoxUpdating = false;
+      // if (event.selectedRowsData)
+      //   requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
+      //     return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+      //   });
       // requestFileData.value.filter
     };
     const modalStatus1 = ref<boolean>(false);
@@ -356,17 +356,17 @@ export default defineComponent({
     const handleOkConfirm = () => {
       modalStatus1.value = true;
     }
-    const onRequestFile = () => {
-      requestFileData.value.emailInput = {
-        receiverName: userInfor.value.name,
-        receiverAddress: userInfor.value.email,
-      };
-      if (requestFileData.value.reportKeyInputs.length > 0) {
-        modalStatus1.value = true;
-      } else {
-        notification('warning', messageDelNoItem);
-      }
-    };
+    // const onRequestFile = () => {
+    //   requestFileData.value.emailInput = {
+    //     receiverName: userInfor.value.name,
+    //     receiverAddress: userInfor.value.email,
+    //   };
+    //   if (requestFileData.value.reportKeyInputs.length > 0) {
+    //     modalStatus1.value = true;
+    //   } else {
+    //     notification('warning', messageDelNoItem);
+    //   }
+    // };
 
     //------------------------disable selection row--------------------------------
 
@@ -393,9 +393,9 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      onRequestFile,
+      // onRequestFile,
       modalStatus1, modalStatus2,
-      requestFileData,
+      // requestFileData,
       userInfor,
       productionStatusData,
       reportTypeSummary,

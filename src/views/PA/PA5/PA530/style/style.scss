@@ -1,6 +1,9 @@
 #pa-530 {
     #DxDataGrid-pa530 {
       height: calc(100vh - 260px);
+      :deep .dx-freespace-row {
+          display: none !important;
+      }
     }
     .custom-info {
         display: flex;

@@ -10,7 +10,7 @@
                   </a-form-item> -->
                   <a-form-item label="지급연월" label-align="left" class="clr mb-0 label-select">
                       <imputed-year-month-select-box :dataSelect="arraySelectBox2" width="150px" :required="true"
-                          v-model:valueInput="searchMonth" type="2" />
+                          v-model:valueInput="searchMonth" type="2" :search-enabled="false" />
                   </a-form-item>
                   <!-- <a-form-item label="" label-align="left" class="clr mb-0 label-select">
                   </a-form-item> -->

@@ -5,7 +5,8 @@
         @update:modelValue="updateValue" :style="{ height: $config_styles.HeightInput, width: width }"
         :placeholder="placeholder" :range="true"
         :multi-calendars="multiCalendars"
-        :teleport="teleport">
+        :teleport="teleport"
+    >
     </Datepicker>
 </template>
 <script lang="ts">
@@ -54,14 +55,22 @@ export default defineComponent({
         watch(
             () => props.valueDate,
           (newValue) => {
+              if (newValue){
                 date.value = [filters.formatDate(newValue[0]),filters.formatDate(newValue[1])];
+              }else{
+                date.value = null;
+              }
             }
         );
         const updateValue = () => {
+            if (date.value) {
               let newDate = date.value.map((item: any) => {
                   return +dayjs(item).format('YYYYMMDD')
               });
               emit("update:valueDate", newDate);
+            } else {
+              emit("update:valueDate", date);
+            }
         };
 
         return {
@@ -72,7 +81,7 @@ export default defineComponent({
         };
     },
 });
-</script> 
+</script>
 
 
 <style lang="scss" >

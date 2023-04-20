@@ -515,6 +515,7 @@
                       placeholder=""
                     />
                   </td>
+
                   <td>
                     <range-date-time-box
                       width="100%"
@@ -639,7 +640,7 @@ export default defineComponent({
     const globalYear = computed(() => store.state.settings.globalYear);
     const {per_page, move_column, colomn_resize} = store.state.settings;
     const employeeWageType = ref<EmployeeWageType>(EmployeeWageType.WAGE);
-    const employeeWage = ref(INITIAL_DATA.initialEmployeeWage);
+    const employeeWage = ref(cloneDeep(INITIAL_DATA.initialEmployeeWage));
     const employeeWages = ref();
     const employeeWageSelected = ref();
     const formRef = ref();
@@ -674,8 +675,8 @@ export default defineComponent({
         || employeeWageType.value !== EmployeeWageType.WAGE;
     });
     const handleRadioChange = (event: Event) => {
-      stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement)
-        .value;
+      stateSelectQuery.selectedRadioValue = +(event.target as HTMLInputElement).value;
+      query.value = getQuery(+(event.target as HTMLInputElement).value);
       employeeWageSelected.value = null;
       employeeWage.value = {...INITIAL_DATA.initialEmployeeWage};
     };
@@ -714,21 +715,20 @@ export default defineComponent({
       },
       {deep: true}
     );
-    watch(
-      () => stateSelectQuery.selectedRadioValue,
-      (newValue) => {
-        query.value = getQuery(newValue);
-      }
-    );
-
     //  get Employee Wage
     watch(
       employeeWageSelected,
       (value) => {
         if (value) {
-          const emp = employeeWages.value.find((item: any) => item.employeeId === value)
-          if (emp && emp?.dependents) emp.dependents.sort((a: any, b: any) => a.relation - b.relation);
-
+          let emp = employeeWages.value.find((item: any) => item.employeeId === value)
+          if (emp && emp?.dependents) {
+            emp = {
+              ...emp,
+              dependents: emp.dependents
+                .map((i: any) => ({...i,contractExpiredDate: [filters.formatDateToInterger(dayjs()), filters.formatDateToInterger(dayjs())], disabledRegisteredDate: null}))
+                .sort((a: any, b: any) => a.relation - b.relation)
+            }
+          }
           employeeWage.value = cloneDeep(emp);
         }
       },
@@ -798,24 +798,21 @@ export default defineComponent({
         if (!newDataFix?.stayQualification ) delete newDataFix?.stayQualification
         const dependents = employeeWage.value?.dependents
           ? employeeWage.value.dependents.map((item: any) => {
-            return {
+            const result: any = {
               name: employeeWage.value.name,
               residentId: employeeWage.value.residentId,
               relationCode: getCodeOrLabel(item.relation).number,
-              nationalityNumber: item.nationalityNumber,
-              stayQualification: item.stayQualification,
-              stayPeriodFrom: item?.contractExpiredDate
-                ? item.contractExpiredDate[0]
-                : filters.formatDateToInterger(new Date().getTime()),
-              stayPeriodTo: item?.contractExpiredDate
-                ? item.contractExpiredDate[1]
-                : filters.formatDateToInterger(
-                  new Date().setDate(new Date().getDate() + 7)
-                ),
-              disabledRegisteredDate: item.disabledRegisteredDate
-                ? filters.formatDateToInterger(item.disabledRegisteredDate)
-                : 0,
-            };
+            }
+            if (item?.nationalityNumber) result.nationalityNumber = item.nationalityNumber
+            if (item?.stayQualification) result.stayQualification = item.stayQualification
+            if (item?.disabledCode) result.disabledCode = item.disabledCode
+            if (item?.contractExpiredDate) {
+              result.stayPeriodFrom = item.contractExpiredDate[0]
+              result.stayPeriodTo = item.contractExpiredDate[1]
+            }
+            if (item.disabledRegisteredDate) result.disabledRegisteredDate = filters.formatDateToInterger(item.disabledRegisteredDate)
+            return result
+
           })
           : [];
         const input = {
@@ -831,6 +828,7 @@ export default defineComponent({
         input.insuranceReductionReasonCode &&= Number(
           formData.value.insuranceReductionReasonCode
         );
+        if (!input.contractWorker) delete input.contractExpiredDate
         input.contractExpiredDate &&= filters.formatDateToInterger(newFormData.contractExpiredDate);
         mutate({
           ...variables,

@@ -5,13 +5,16 @@
         <div class="content-grid">
           <a-spin :spinning="loading" size="large">
                 <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+                    :show-borders="true" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn caption="사업자코드" data-field="code" />
                     <DxColumn caption="사업자번호" data-field="bizNumber"/>
-                    <DxColumn caption="상호" data-field="cname"/>
+                    <DxColumn caption="상호" data-field="name"/>
                     <DxColumn caption="대표자명" data-field="presidentName" />
+                    <DxSummary>
+                      <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+                    </DxSummary>
                 </DxDataGrid>
             </a-spin>
         </div>
@@ -21,7 +24,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue'
-import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling } from "devextreme-vue/data-grid";
+import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
 import notification from "@/utils/notification";
 import { useQuery } from "@vue/apollo-composable";
 import queries from "@/graphql/queries/BF/BF6/BF630/index";
@@ -42,7 +45,7 @@ export default defineComponent({
       }
   },
   components: {
-    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling
+    DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem
   },
   setup(props, { emit }) {
     const store = useStore();

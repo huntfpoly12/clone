@@ -146,6 +146,7 @@
                   :data-source="menuTab" 
                   v-model:selected-index="tabIndex"
                   itemTemplate="titleTab"
+                  :scrollByContent="true"
                   >
                   <template #titleTab="{ data: itemTab }">
                     <div class="tab-main-title-tab" @click="changeActiveTab(itemTab)">
@@ -704,11 +705,25 @@ export default defineComponent({
         menuTab.value = []
         openTab(tabDashboard)
       }
-      
+
     }, {
       deep: true,
     })
-
+    watch(() => menuTab.value, () => {
+      nextTick(() => {
+        const btnArrowTab = document.querySelector('.tab-main')?.querySelectorAll('.dx-button-content')
+        if(!!btnArrowTab && btnArrowTab.length) {
+          btnArrowTab[0].addEventListener("click", (e) => {
+            e.preventDefault();
+            addMenuTab(menuTab.value[0].id)
+          });
+          btnArrowTab[1].addEventListener("click", (e) => {
+            e.preventDefault();
+            addMenuTab(menuTab.value[menuTab.value.length-1].id)
+          });
+        }
+      })
+    })
     const onOpenChange = (opKeys) => {
       const latestOpenKey = opKeys.find(
         (key) => openKeys.value.indexOf(key) === -1

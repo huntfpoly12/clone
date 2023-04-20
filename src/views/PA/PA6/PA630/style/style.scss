@@ -3,7 +3,10 @@
 }
 
 #gridContainerPA630 {
-    max-height: 750px;
+    height: calc(100vh - 220px);
+}
+:deep .dx-freespace-row {
+    display: none !important;
 }
 
 .custom-flex {
@@ -20,14 +23,6 @@
         padding-left: 18px;
     }
 }
-
-// .custom-mail-group :deep(.dx-button-content) {
-//     padding: 1px;
-// }
-
-// .bt-print-group :deep(.dx-button-content) {
-//     padding: 1px;
-// }
 
 .created-date {
     float: right;

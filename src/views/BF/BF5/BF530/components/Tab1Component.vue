@@ -20,31 +20,31 @@
         <a-rol class="mr-15">
           <a-form-item label="신고구분">
             <select-box-common :arrSelect="reportTypeSelectbox" v-model:valueInput="formState.companyName4"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="상태">
             <select-box-common :arrSelect="situationSelectbox" v-model:valueInput="formState.companyName5"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="수임상태">
             <select-box-common :arrSelect="acceptanceStatusSelectbox" v-model:valueInput="formState.companyName6"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="건강ED 연계상태">
             <select-box-common :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName7"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="연금EDI 연계상태">
             <select-box-common :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName8"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="사업유형 선택" :searchEnabled="false" />
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
         </a-rol>
         <a-col>
@@ -57,6 +57,7 @@
     <a-row class="top-table" justify="end">
       <button-basic @onClick="handleOkConfirm" mode="contained" type="default" text="팩스발송" />
     </a-row>
+    <date-time-box v-model:valueDate="formState.companyName8"></date-time-box>
     <div class="content-grid">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -73,18 +74,21 @@
         <DxColumn caption="사업장관리번호" data-field="paymentYearMonth" :allow-editing="false" />
         <DxColumn caption="대표자명" data-field="reportType" width="95px" :allow-editing="false" />
         <DxColumn caption="직원수" data-field="afterDeadline" width="155px" :allow-editing="false" />
-        <DxColumn data-field="totalCollectedTaxAmount" caption="수임상태"  width="125">
+        <DxColumn data-field="totalCollectedTaxAmount" caption="수임상태" width="125">
           <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
         </DxColumn>
         <DxColumn data-field="statusUpdatedAt" caption="상태(처리상태)" width="125">
           <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
         </DxColumn>
-        <DxColumn data-field="lastProductionRequestedAt" caption="수임일" width="125" data-type="date">
+        <DxColumn data-field="lastProductionRequestedAt" caption="수임일" width="150" edit-cell-template="submission-date" alignment="center">
         </DxColumn>
-        <DxColumn data-field="productionStatus" caption="해지일" width="125" data-type="date">
+        <template #submission-date="{ data }">
+          <date-time-box v-model:valueDate="data.data.lastProductionRequestedAt" width="125px" :clearable="false"></date-time-box>
+        </template>
+        <DxColumn data-field="productionStatus" caption="해지일" width="150" data-type="date">
         </DxColumn>
         <DxColumn data-field="productionStatus1" caption="메모" width="125">
-          <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
+          <!-- <DxLookup :data-source="states1" display-expr="name" value-expr="id" /> -->
         </DxColumn>
         <DxColumn data-field="productionStatus2" caption="건강EDI 연계상태 " width="125">
           <DxLookup :data-source="states1" display-expr="name" value-expr="id" />
@@ -316,14 +320,14 @@ export default defineComponent({
     // searchWithholdingError((res: any) => {
     //   notification('error', res.message)
     // })
-    watchEffect(() => {
-      if (formState.paymentYear && formState.paymentMonth) {
-        searchWithholdingParam.value = {
-          paymentMonth: formState.paymentMonth,
-          paymentYear: formState.paymentYear,
-        }
-      }
-    })
+    // watchEffect(() => {
+    //   if (formState.paymentYear && formState.paymentMonth) {
+    //     searchWithholdingParam.value = {
+    //       paymentMonth: formState.paymentMonth,
+    //       paymentYear: formState.paymentYear,
+    //     }
+    //   }
+    // })
 
     //------------------------SUM AREA------------------------------ 
 
