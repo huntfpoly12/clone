@@ -68,7 +68,9 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChat />
+            <FormChatNotification>
+              <FormChat />
+            </FormChatNotification>
           </div>
         </div>
       </a-col>
@@ -86,6 +88,7 @@ import TableBalanceOfCashRegister from "./components/TableBalanceOfCashRegister.
 import TablePersonnelExpenses from "./components/TablePersonnelExpenses.vue"
 import TableBudget from "./components/TableBudget.vue"
 import FormChat from "./components/FormChat.vue"
+import FormChatNotification from "./components/FormChatNotification.vue"
 import { Message } from "@/configs/enum"
 import DxButton from "devextreme-vue/button";
 import dayjs from "dayjs";
@@ -109,7 +112,8 @@ export default defineComponent({
     TableBalanceOfCashRegister,
     TablePersonnelExpenses,
     TableBudget,
-    FormChat
+    FormChat,
+    FormChatNotification
   },
   setup() {
     const store = useStore();
