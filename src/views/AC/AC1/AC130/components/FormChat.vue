@@ -500,13 +500,14 @@ export default defineComponent({
       }
       &-files {
         display: flex;
+        flex-wrap: wrap;
+        margin: 0 -5px;
         &-items {
           width: 200px;
           height: 200px;
           object-fit: cover;
-          & + & {
-            margin-left: 10px;
-          }
+          display: block;
+          padding: 5px;
         }
       }
       &-info {
