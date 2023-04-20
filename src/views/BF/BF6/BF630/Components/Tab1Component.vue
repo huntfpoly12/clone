@@ -104,7 +104,7 @@
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        <DxDataGrid id="DxDataGrid-bf-630-tab1" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys">
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -510,7 +510,10 @@ export default defineComponent({
   }
 })
 </script>
-<style  scoped lang="scss" src="../style/styleTabs.scss"></style>
+<style  scoped lang="scss" src="../style/styleTabs.scss">
+
+
+</style>
 <style scoped lang="scss">
 :deep(.ant-form-item-label>label) {
   width: 110px;
