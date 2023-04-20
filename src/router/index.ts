@@ -467,9 +467,9 @@ router.beforeEach((to, from, next) => {
 
   const { read } = useCheckPermission(roles)
   // check if token isExpired
-  // if(token && getJwtObject(token).isExpired()){
-  //   store.dispatch('auth/checkToken')
-  // }
+  if (token && getJwtObject(token).isExpired()) {
+    store.dispatch('auth/checkToken')
+  }
   
   if ((requiresAuth && !token)) {
     next("/login");
