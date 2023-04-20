@@ -121,6 +121,7 @@ export class Message extends BaseType {
   //전표
     public static AC120 = new Message({
         '001': { "message" : "결의서 종류를 변경하면 기존 저장된 값들(물품내역 포함)은 모두 삭제 및 초기화됩니다. 그래도 진행하시겠습니까?","yes": "네. 진행합니다","no":"아니요"}, // If you change the resolution type, all previously saved values ​​(including item details) are deleted and initialized. Would you like to proceed anyway?
+        '002': { "message" : "여입결의서 반영되었습니다"}, // It was reflected in the entry resolution
     });
   
   //과목전용조서
