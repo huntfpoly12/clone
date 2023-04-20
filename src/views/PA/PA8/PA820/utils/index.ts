@@ -1,6 +1,6 @@
 export const employeeFashionArr = [
-  { id: 0, text: "사원" },
-  { id: 1, text: "일용직사원" },
+  { id: 10, text: "사원" },
+  { id: 20, text: "일용직사원" },
 ];
 export const productionStatusesCheckbox = [
   { id: 0, text: "국민연금" },
@@ -24,12 +24,12 @@ export const nationaPersionSelectbox = [
   { value: 26, label: " 취득취소" },
 ];
 export const healthInsuranceSelectbox = [
-  { value: 1, label: " 퇴직" },
-  { value: 2, label: " 사망" },
-  { value: 4, label: " 의료급여수급권자" },
-  { value: 10, label: " 유공자 등 건강보험 배제신청" },
-  { value: 13, label: " 기타" },
-  { value: 58, label: " 무보수대표이사" },
+  { value: '1', label: " 퇴직" },
+  { value: '2', label: " 사망" },
+  { value: '4', label: " 의료급여수급권자" },
+  { value: '10', label: " 유공자 등 건강보험 배제신청" },
+  { value: '13', label: " 기타" },
+  { value: '58', label: " 무보수대표이사" },
 ];
 export const includeDependentsSelectbox = [
   { value: 11, label: " 개인사정으로 인한 자진퇴사" },

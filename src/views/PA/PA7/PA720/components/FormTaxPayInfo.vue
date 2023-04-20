@@ -100,7 +100,7 @@
           </div>
         </a-col>
       </a-row>
-      <a-row justify="center" class="my-10 mt-20">
+      <a-row justify="center" class="my-10 mt-30">
         <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSubmitForm($event)"
           id="pa720-save-js" :disabled="idDisableInput">
         </button-basic>
