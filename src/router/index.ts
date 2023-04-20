@@ -9,6 +9,7 @@ import NotFound from "../views/NotFound.vue";
 import { AdminScreenRole, WorkScreenRole, getJwtObject } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
+import store from '@/store'
 const ALL_ROLE = [...AdminScreenRole.all().map(i => i.enumKey), ...WorkScreenRole.all().map(i => i.enumKey)];
 
 const routes = [
@@ -465,9 +466,9 @@ router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem("token");
 
   const { read } = useCheckPermission(roles)
+  // check if token isExpired
   if(token && getJwtObject(token).isExpired()){
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('username');
+    store.dispatch('auth/checkToken')
   }
   
   if ((requiresAuth && !token)) {
