@@ -88,7 +88,7 @@
                   :type="data.data.documentRegistered ? 'success' : 'danger'" :mode="'contained'"
                   style="margin-right: 5px;" />
                 <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="'contained'"
-                  @onClick="openPopupRegistration(data.data)" />
+                  @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
               </div>
             </template>
 
@@ -197,7 +197,7 @@
                 <template #fundingSource="{ data }">
                   <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
                 </template>
-                <DxColumn caption="거래처" cell-template="clientId"  width="165px"/>
+                <DxColumn caption="거래처" cell-template="clientId" width="165px" />
                 <template #clientId="{ data }">
                   <customer-select v-model:valueInput="data.data.clientId" width="150px" />
                 </template>
@@ -210,8 +210,14 @@
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined v-if="!!data.data.causeUsage && data.data.causeUsage.length" style="font-size: 12px"
-                      @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                    <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
+                      <template #title>
+                        <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
+                      </template>
+                      <div>
+                        <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
+                      </div>
+                    </a-tooltip>
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'causeUsage')" />
                   </div>
                 </template>
@@ -225,8 +231,14 @@
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <EditOutlined v-if="!!data.data.memo && data.data.memo.length" style="font-size: 12px"
-                      @click="openPopupNoteItemDetail(data, 'memo')" />
+                    <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
+                      <template #title>
+                        <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
+                      </template>
+                      <div>
+                        <EditOutlined style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
+                      </div>
+                    </a-tooltip>
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupNoteItemDetail(data, 'memo')" />
                   </div>
                 </template>
@@ -256,7 +268,8 @@
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
     <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
-      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}" @updateGoodsCount="updateGoodsCount"/>
+      :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}"
+      @updateGoodsCount="updateGoodsCount" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
       @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
@@ -654,14 +667,7 @@ export default defineComponent({
     };
     // ---------------Grid detail----------------
     const totalTransactions = () => {
-      let total = 0;
-      if (Object.keys(dataSourceTransactionDetails.value).length) {
-        dataSourceTransactionDetails.value.transactionDetails.forEach((item: any) => {
-          if (item.bankbookDetailId !== null) {
-            total++
-          }
-        });
-      }
+      let total = !!dataSourceTransactionDetails.value?.transactionDetails ? dataSourceTransactionDetails.value?.transactionDetails.length : 0
       return formatNumber(total)
     }
 
@@ -714,12 +720,13 @@ export default defineComponent({
       })
     }
     const handleSlipRegistration = () => {
-      let bankbookDetailDate: number = 0
-      const bankbookDetailIds: number[] = []
+      const keys: any = []
       dataSource.value.forEach(items => {
         if (transactionDetailsCountSelected.value === items.transactionDetailsCount) {
-          bankbookDetailDate = items.bankbookDetailDate
-          bankbookDetailIds.push(items.bankbookDetailId)
+          keys.push({
+            bankbookDetailDate: items.bankbookDetailDate,
+            bankbookDetailId: items.bankbookDetailId
+          })
         }
       })
       isModalSlipRegistrantion.value = false
@@ -727,8 +734,7 @@ export default defineComponent({
         companyId: companyId,
         fiscalYear: globalYear.value,
         facilityBusinessId: globalFacilityBizId.value,
-        bankbookDetailDate,
-        bankbookDetailIds
+        keys: keys
       })
     }
     const handleConfirmSlipCancellation = () => {
@@ -869,7 +875,7 @@ export default defineComponent({
         }
       }
     }
-    const updateGoodsCount = (accountingDocumentId: any, value:any) => {
+    const updateGoodsCount = (accountingDocumentId: any, value: any) => {
       const indexTransition = dataSourceTransactionDetails.value.transactionDetails.findIndex((item: any) => item.accountingDocumentId === accountingDocumentId)
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].goodsCount = value.length
       dataSourceTransactionDetails.value.transactionDetails[indexTransition].statementOfGoodsItems = [...value]
@@ -962,3 +968,13 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped src="./style/style.scss"></style>
+<style>
+.ac-110-tooltip-memocauseUsage {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+</style>
