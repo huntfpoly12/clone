@@ -6,7 +6,8 @@
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
         <DxPaging :page-size="0" />
-        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색"  />
+        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
+          placeholder="검색" />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxColumn caption="일련번호" data-field="workId" width="80" alignment="left" />
@@ -26,48 +27,49 @@
           </a-tooltip>
         </template>
         <DxColumn caption="성명" data-field="name" width="130" alignment="left" />
-        <DxColumn caption="생년월일" alignment="left" cell-template="residentId"/>
-        <template #residentId="{data}:any">
+        <DxColumn caption="생년월일" alignment="left" cell-template="residentId" />
+        <template #residentId="{data}: any">
           <div>
-            {{ convertBirthDayKorea(data.data.residentId  || '')}}
+            {{ convertBirthDayKorea(data.data.residentId || '')}}
           </div>
         </template>
-        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="left"  cell-template="workingStatus"/>
-        <template #workingStatus =" {data: dataValue}:any">
+        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="left" cell-template="workingStatus" />
+        <template #workingStatus=" { data: dataValue }: any ">
           <div>
             {{ MajorInsuranceWorkingStatus[dataValue.value] }}
           </div>
         </template>
-        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
-        <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
-        <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
+        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
+        <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd" />
         <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="left" />
         <DxColumn caption="메모" data-field="memo" width="120px" alignment="left" />
         <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="left" />
-        <template #downA="{ data }: any" class="custom-action">
+        <template #downA=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
-              <DownloadOutlined :size="12" />
+            <DxButton type="ghost" class="" style="cursor: pointer" @click=" onGetAcquistionRp(data.data.workId) ">
+              <DownloadOutlined :size=" 12 " />
             </DxButton>
           </div>
         </template>
         <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="left" />
-        <template #downB="{ data }: any" class="custom-action">
+        <template #downB=" { data }: any " class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
-              @click="onGetFileStorageId(data.data.dependentsEvidenceFile.url)">
-              <DownloadOutlined :size="12" />
+              @click=" onGetFileStorageId(data.data.dependentsEvidenceFile.url) ">
+              <DownloadOutlined :size=" 12 " />
             </DxButton>
           </div>
         </template>
         <DxColumn caption="" cell-template="action" alignment="right" width="150px" />
-        <template #action="{ data }: any" class="custom-action">
+        <template #action=" { data }: any " class="custom-action">
           <div class="custom-action" style="text-align: center">
             <a-space>
-              <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
+              <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
                 <HistoryOutlined style="font-size: 16px" />
               </DxButton>
-              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)" :disabled="data.data.workingStatus == 0">
+              <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
+                :disabled=" data.data.workingStatus == 0 ">
                 <DeleteOutlined />
               </DxButton>
             </a-space>
@@ -75,11 +77,10 @@
         </template>
       </DxDataGrid>
     </a-spin>
-    <CreatePA820Popup :modalCreate="modalCreate" @closeModal="modalCreate = false"
-      @onCreateModal="onCreateModal"/>
-    <PopupMessage :modalStatus="modalDelete" @closePopup="modalDelete = false" typeModal="confirm" :content="contentDelete"
-      okText="네. 삭제합니다" cancelText="아니요" @checkConfirm="handleDelete" />
-      <HistoryPopup :modalStatus="modalHistory" @closePopup="modalHistory = false" :data="workIdHistory" title="변경이력"
+    <CreatePA820Popup v-if=" modalCreate " @closeModal=" onCreateModal " />
+    <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
+      :content=" contentDelete " okText="네. 삭제합니다" cancelText="아니요" @checkConfirm=" handleDelete " />
+    <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-820" />
   </div>
 </template>
@@ -114,11 +115,11 @@ import CreatePA820Popup from './components/CreatePA820Popup.vue';
 import { DeleteOutlined, DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
 enum MajorInsuranceWorkingStatus {
-    등록 = 1,
-    접수 = 2,
-    완료 = 10,
-    오류 = -1,
-    취소 = 0
+  등록 = 1,
+  접수 = 2,
+  완료 = 10,
+  오류 = -1,
+  취소 = 0
 }
 export default defineComponent({
   components: {
@@ -141,7 +142,7 @@ export default defineComponent({
     DeleteOutlined,
     HistoryOutlined,
     DownloadOutlined
-},
+  },
   setup(props, { emit }) {
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
@@ -191,7 +192,7 @@ export default defineComponent({
     };
 
     //---------------------------ADD FORM------------------
-    
+
     const modalCreate = ref(false);
     const onCreateModal = (emitVal: Boolean) => {
       modalCreate.value = false;

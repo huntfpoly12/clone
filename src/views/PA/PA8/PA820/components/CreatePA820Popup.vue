@@ -1,9 +1,9 @@
 <template>
-  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }"
-    :visible="modalCreate" title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
+  <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
+    title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
-      <!-- {{ formState }} formState <br />
-      {{ formStateToCompare }} formStateToCompare <br /> -->
+      <!-- {{ formState }} formState <br /> -->
+      <!-- {{ formStateToCompare }} formStateToCompare <br /> -->
       <!-- {{ formState.employeeType }} formState.employeeType <br /> -->
       <!-- {{ employeeWageDaily }} employeeWageDaily <br /> -->
       <standard-form ref="formPa820Ref">
@@ -65,8 +65,7 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="성명" label-align="right" class="red">
-                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name1"
-                    :required="true" />
+                  <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name1" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
@@ -112,9 +111,8 @@
                       :disabled="!formState.nationalPensionReport" />
                   </div>
                   <span class="ml-50">
-                    <checkbox-basic size="14" label="취득월 국민연금 납부"
-                      v-model:valueCheckbox="showData.acquisitionMonthPayment"
-                      :disabled="!showData.acquisitionMonthPayment" />
+                    <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
+                      :disabled="!formState.nationalPensionReport" />
                   </span>
                   <span class="ml-10 notice">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
@@ -129,7 +127,7 @@
                     <span>상실부호</span>
                     <select-box-common width="348px" :arrSelect="healthInsuranceSelectbox" :required="true"
                       v-model:valueInput="formState.healthInsuranceLossCode"
-                      :disabled="!formState.nationalPensionReport" />
+                      :disabled="!formState.healthInsuranceReport" />
                   </div>
                 </div>
               </a-form-item>
@@ -139,27 +137,13 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <!-- <DxSelectBox :dataSource="includeDependentsSelectbox" valueExpr="value" displayExpr="label"
-                      :showDropDownButton="true" :searchEnabled="true" :searchExpr="['label']" :searchMode="'contains'"
-                      :value="formState.healthInsuranceAcquisitionCode2" :disabled="!formState.healthInsuranceReport"
-                      width="200px" :required="true">
-                      <template #item="data">
-                        <a-tooltip placement="top" zIndex="999999" color="black">
-                          <template #title>
-                            {{ data.data.label }}
-                          </template>
-                          <div class="text-overflow">{{ data.data.label }}</div>
-                        </a-tooltip>
-                      </template>
-                    </DxSelectBox> -->
                     <select-box-common width="348px" :arrSelect="includeDependentsSelectbox" :required="true"
-                      v-model:valueInput="showData.healthInsuranceAcquisitionCode2"
-                      :disabled="!formState.healthInsuranceReport" />
+                      v-model:valueInput="showData.healthInsuranceAcquisitionCode2" :disabled="isDisabled1" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
                       v-model:valueCheckbox="formState.employeementInsuranceJobChangeReport"
-                      :disabled="!formState.healthInsuranceReport || !isDisabled2" />
+                      :disabled="isDisabled1 || !isDisabled2" />
                   </span>
                 </div>
               </a-form-item>
@@ -167,8 +151,7 @@
             <a-row class="mt-10">
               <div class="input-text jobtype-margin">
                 <div class="text-detail">상실사유 (10자이내 간략히)</div>
-                <text-number-box :disabled="isDisabled1" width="200px"
-                  v-model:valueInput="formState.employeementInsuranceLossDescription" />
+                <text-number-box :disabled="true" width="580px" v-model:valueInput="formState.employeementInsuranceLossDescription" />
               </div>
             </a-row>
           </div>
@@ -176,13 +159,13 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="당해년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="isDisabled1"
-                    v-model:valueInput="formState.totalSalaryThisYear" :required="true" />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryThisYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="당해년도 산정월수" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="isDisabled1" v-model:valueInput="formState.workMonthThisYear"
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthThisYear"
                     :required="true" />
                 </a-form-item>
               </a-col>
@@ -190,13 +173,14 @@
             <a-row>
               <a-col :span="10">
                 <a-form-item label="전년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="isDisabled1"
-                    v-model:valueInput="formState.totalSalaryLastYear" :required="true" />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryLastYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
                 <a-form-item label="전년도 산정월수" label-align="right" class="red">
-                  <number-box-money width="200px" v-model:valueInput="formState.workMonthLastYear" :required="true" />
+                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthLastYear"
+                    :required="true" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -246,6 +230,15 @@ import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
+
+const getValue = (val: any, arr: any[]) => {
+  return arr.filter((item: any) => {
+    if (item.value == val) {
+      return true;
+    }
+    return [{ label: '' }];
+  })[0].label;
+}
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -257,35 +250,11 @@ export default defineComponent({
     SearchOutlined,
     DxSelectBox,
   },
-  props: {
-    modalCreate: {
-      type: Boolean,
-      default: false,
-    },
-  },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
-    const formState = reactive({
-      employeeType: 10,
-      employeeId: 0,
-      nationalPensionReport: false,
-      healthInsuranceReport: true,
-      employeementInsuranceReport: true,
-      industrialAccidentInsuranceReport: true,
-      nationalPensionLossCode: 3,
-      nationalPensionPaymentCurrentMonthLoss: '',
-      employeementInsuranceLossCode: '',
-      employeementInsuranceJobChangeReport: true,
-      healthInsuranceLossCode: '1',
-      employeementInsuranceLossDescription: '100000',
-      totalSalaryThisYear: 100000,
-      totalSalaryLastYear: 100000,
-      workMonthThisYear: 1300,
-      workMonthLastYear: 100000,
-    })
     const showData = reactive({
       name: '',
       name1: '',
@@ -298,7 +267,28 @@ export default defineComponent({
       acquisitionMonthPayment: false,
       healthInsuranceAcquisitionCode2: 1,
     })
+    const formState = reactive({
+      employeeType: 10,
+      employeeId: 0,
+      nationalPensionReport: false,
+      healthInsuranceReport: true,
+      employeementInsuranceReport: true,
+      industrialAccidentInsuranceReport: true,
+      nationalPensionLossCode: 3,
+      nationalPensionPaymentCurrentMonthLoss: '',
+      employeementInsuranceLossCode: '',
+      employeementInsuranceJobChangeReport: true,
+      healthInsuranceLossCode: '1',
+      employeementInsuranceLossDescription: getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox),
+      totalSalaryThisYear: 100000,
+      totalSalaryLastYear: 100000,
+      workMonthThisYear: 1300,
+      workMonthLastYear: 100000,
+    })
     const formStateToCompare = ref({ ...formState });
+
+    //-----------------------Fnc COMMON ------------------------
+
 
     //-------------------------- get Company-----------------------
 
@@ -428,12 +418,20 @@ export default defineComponent({
       }
     }, { deep: true })
 
+    //--------------------------------CHANGE DATA---------------------------------------
+
+    watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
+      if (newVal) {
+        formState.employeementInsuranceLossDescription = getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox)
+      }
+    }, { deep: true })
+
     //---------------------------------DISABLED FIELD--------------------------------
 
-    const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
+    const isDisabled1 = computed(() => formState.employeementInsuranceReport && formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
       // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-      let check = [23, 26, 32].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
+      let check = [23, 26, 31].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
       formState.employeementInsuranceJobChangeReport = check;
       formStateToCompare.value.employeementInsuranceJobChangeReport = check;
       return check;
@@ -449,7 +447,7 @@ export default defineComponent({
       = useMutation(mutations.createMajorInsuranceCompanyEmployeeLoss);
     createCompanyEmployeeLossDone((res: any) => {
       notification('success', messageCreate);
-      emit('onCreateModal', true);
+      emit('closeModal', true);
     })
     createCompanyEmployeeLossError((res: any) => {
       notification('error', res.message);
@@ -463,16 +461,6 @@ export default defineComponent({
         createCompanyEmployeeLossMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });
       }
     }
-    function onOptionRendered(e: any) {
-      e.element.dxTooltip({
-        target: `.${e.component._$element.attr('class')}`,
-        showEvent: 'mouseenter',
-        hideEvent: 'mouseleave',
-        contentTemplate: function () {
-          return e.component.option('valueExpr') === 'value' ? e.text : e.component.option('displayExpr');
-        },
-      })
-    };
 
     // ---------------------------------ON CANCEL MODAL--------------------------------
 
@@ -486,8 +474,8 @@ export default defineComponent({
     return {
       globalYear, employeeWages,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
-      formState, onSubmit,showData,formStateToCompare,
-      isDisabled1, isDisabled2, onOptionRendered,
+      formState, onSubmit, showData, formStateToCompare,
+      isDisabled1, isDisabled2,
       onCanCelModal,
       getEmployeeWageLoading, getEmployeeWageDailyLoading,
     };
