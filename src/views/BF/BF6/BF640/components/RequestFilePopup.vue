@@ -23,7 +23,7 @@
 <script lang="ts">
 import { useMutation } from '@vue/apollo-composable';
 import { defineComponent, ref } from 'vue';
-import mutations from '@/graphql/mutations/BF/BF6/BF620/index';
+import mutations from "@/graphql/mutations/BF/BF6/BF640/index";
 import notification from '@/utils/notification';
 import { makeDataClean } from '@/helpers/commonFunction';
 
@@ -47,11 +47,14 @@ export default defineComponent({
       mutate: creationWithholdingTaxTab1,
       onDone: onDoneTab1,
       onError: onErrorTab1,
-    } = useMutation(mutations.requestCreationWithholdingTaxElectronicFilingFile);
+    } = useMutation(mutations.requestCreationIncomeWageSimplifiedPaymentStatementElectronicFilingFile);
 
     // --------------query send request file tab 2--------------------------------
 
-    const { mutate: creationLocalTab2, onDone: onDoneTab2, onError: onErrorTab2 } = useMutation(mutations.requestCreationLocalIncomeTaxElectronicFilingFile);
+    const {
+      mutate: creationLocalTab2,
+      onDone: onDoneTab2,
+      onError: onErrorTab2 } = useMutation(mutations.requestCreationIncomeBusinessSimplifiedPaymentStatementElectronicFilingFile);
 
     //-------------------on Submit request --------------------------------
 

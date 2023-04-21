@@ -33,12 +33,12 @@
         <DxSelection mode="multiple" :fixed="true" />
         <DxColumn caption="사업자코드" data-field="code" width="90" />
         <DxColumn caption="상호 주소" cell-template="companyName" width="270" />
-        <template #companyName="{ data }">
+        <template #companyName="{ data }:any">
           {{ data.data.name }}
           {{ data.data.address }}
         </template>
         <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
-        <template #inputYearMonth="{ data }">
+        <template #inputYearMonth="{ data }:any">
           <!-- {{ data.data.imputedYear }} -->
           <a-tooltip color="black">
             <template #title>삭제</template>
@@ -50,7 +50,7 @@
           </a-tooltip>
         </template>
         <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
-        <template #paymentYearMonth="{ data }">
+        <template #paymentYearMonth="{ data }:any">
           <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
             color: 'white',
             backgroundColor: 'black',
@@ -58,13 +58,13 @@
           }" class="btn-date" />
         </template>
         <DxColumn caption="신고 주기" cell-template="reportType" width="100px" />
-        <template #reportType="{ data }">
+        <template #reportType="{ data }:any">
           <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
           <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
         <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
-        <template #afterDeadline="{ data }">
+        <template #afterDeadline="{ data }:any">
           <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
           <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
           <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
@@ -74,7 +74,7 @@
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
         <DxColumn caption="제작현황" cell-template="productionStatus" width="355" />
-        <template #productionStatus="{ data }">
+        <template #productionStatus="{ data }:any">
           <GetStatusTable :dataProcduct="data.data" :message="data.data?.causeOfProductionFailure" />
           <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
         </template>
@@ -87,7 +87,7 @@
       </DxDataGrid>
     </div>
     <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :requestFileData="requestFileData" tab-name="tab2"
-      @cancel="modalStatus = false" />
+      @cancel="onRequestDone" />
   </div>
 </template>
   
@@ -165,8 +165,6 @@ export default defineComponent({
           }
         }).then((res) => {
           let { productionStatus, causeOfProductionFailure } = res.data.getElectronicFilingsByLocalIncomeTax[0];
-          console.log(`output->`, causeOfProductionFailure, res.data.getElectronicFilingsByLocalIncomeTax[0])
-          // let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
           productionCount.value--;
           dataSource.value.forEach((item: any) => {
             if (item.reportId == companies[i].reportId) {
@@ -189,6 +187,7 @@ export default defineComponent({
       paymentYear: filterBF620.value.paymentYear,
     })
     const {
+      refetch: searchLocalIncomeRefetch,
       result: searchLocalIncomeResult,
       loading: searchLocalIncomeLoading,
       onError: searchLocalIncomeError,
@@ -235,11 +234,12 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       await fetchDataStatus(dataSource.value.map((item: any) => {
-        if (item.lastProductionRequestedAt)
+        if (item.lastProductionRequestedAt){
           productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
-        return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
+        }
+        return;
       }));
-      console.log(`output->productionCount.value`, productionCount.value)
       if (props.onSearch && productionCount.value == 0) {
         props.onSearch();
       }
@@ -249,8 +249,6 @@ export default defineComponent({
     })
     watchEffect(() => {
       if (filterBF620.value.paymentYear && filterBF620.value.paymentMonth) {
-        filteredDataSource.value = [];
-        dataSource.value = [];
         searchLocalIncomeParam.value = {
           paymentMonth: filterBF620.value.paymentMonth,
           paymentYear: filterBF620.value.paymentYear,
@@ -377,13 +375,18 @@ export default defineComponent({
         notification('warning', messageDelNoItem);
       }
     };
+    const onRequestDone = () => {
+      searchLocalIncomeRefetch();
+      modalStatus.value = false;
+    }
+
     return {
       filterBF620,
       searchLocalIncomeLoading,
       move_column,
       colomn_resize,
       dataSource,
-      onRequestFile,
+      onRequestFile,onRequestDone,
       modalStatus,
       requestFileData,
       userInfor,
