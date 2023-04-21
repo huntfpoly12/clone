@@ -85,11 +85,11 @@
                                 <!-- {{  store.state.common.ac120.formData.accountCode + 1 }} -->
                                 <a-form-item label="계정과목" class="red">
                                     <account-code-select v-model:valueInput="store.state.common.ac120.formData.accountCode"
-                                        width="150px" :required="true" />
+                                        width="190px" :required="true" />
                                 </a-form-item>
                                 <a-form-item label="자금원천" class="red">
                                     <FundingSourceSelect
-                                        v-model:valueInput="store.state.common.ac120.formData.fundingSource" width="150px"
+                                        v-model:valueInput="store.state.common.ac120.formData.fundingSource" width="190px"
                                         :required="true" />
                                 </a-form-item>
                             </a-col>
@@ -155,11 +155,13 @@
                                     <a-form-item label="상대계정">
                                         <account-code-select
                                             v-model:valueInput="store.state.common.ac120.formData.relationCode"
-                                            width="150px" />
+                                            width="190px" />
                                     </a-form-item>
                                     <a-form-item label="메모">
-                                        <default-text-box v-model:valueInput="store.state.common.ac120.formData.memo"
-                                            width="150px" height="60px" />
+                                        <!-- <default-text-box v-model:valueInput="store.state.common.ac120.formData.memo"
+                                            width="150px" height="60px" /> -->
+                                            <text-area-box width="190px" v-model:valueInput="store.state.common.ac120.formData.memo"
+                                            :height="60" />
                                     </a-form-item>
                                 </a-col>
                             </a-row>
@@ -406,8 +408,19 @@ export default defineComponent({
                     delete dataSubmit.input.resolutionNormalStatus
                     delete dataSubmit.input.resolutionNumber
                     delete dataSubmit.input.summaryOfBankbookDetail
-                    delete dataSubmit.input.__typename
-                    mutateUpdateAccountingDocument(dataSubmit)
+                    // delete dataSubmit.input.__typename
+                    const cleanData = JSON.parse(
+                        JSON.stringify(dataSubmit, (name, val) => {
+                            if (
+                                name === "__typename"
+                            ) {
+                                delete val[name];
+                            } else {
+                                return val;
+                            }
+                        })
+                    );
+                    mutateUpdateAccountingDocument(cleanData)
                 }
             }
         }

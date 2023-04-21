@@ -201,16 +201,33 @@
                     </DxSummary>
                 </DxDataGrid> -->
                     <!-- {{ dataSource }} -->
+                    {{ store.state.common.ac120.selectedRowKeys }}
                     <DxDataGrid id="dataGridAc120" key-expr="accountingDocumentId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" :focused-row-enabled="true"
                         @focused-row-changing="onFocusedRowChanging" ref="gridRefAC120"
                         :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
+                        :allow-column-resizing="colomn_resize" :column-auto-width="true" :onRowPrepared="onCellPrepared"
+                        v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
-                        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
-                            :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging" />
-                        <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
+                        <!-- <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
+                            :on-drag-change="onDragChange" :allowDropInsideItem="true" :onRowDragging="onRowDragging" /> -->
+                        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" :on-drag-change="onDragChange"
+                            :on-drag-start="onDragStart" drag-template="dragItems" />
+                        <template #dragItems="{ data }">
+                            <table className="drag-container">
+                                <tbody>
+                                    <tr v-for="item in data.itemData" class="dragged-item" v-bind:key="item['accountingDocumentId']">
+                                        <td v-for="key in Object.keys(item)" v-bind:key="item['accountingDocumentId'] + key">
+                                            {{ item[key] }}
+                                        </td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                            <DxSelection :deferred="true" select-all-mode="allPages" show-check-boxes-mode="onClick"
                             mode="multiple" />
+                        </template>
+                        
                         <DxScrolling mode="standard" show-scrollbar="always" />
                         <DxColumn caption="일자" data-field="transactionDetailDate" cell-template="transactionDetailDate" />
                         <template #transactionDetailDate="{ data }">
@@ -220,7 +237,8 @@
                         <DxColumn caption="결의번호" data-field="resolutionNumber" />
                         <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
                         <template #bankbook="{ data }">
-                            <a-tooltip placement="left" :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
+                            <a-tooltip placement="top"
+                                :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
                                 <div>{{ data.data.bankbook?.bankbookNickname }}</div>
                             </a-tooltip>
                         </template>
@@ -234,19 +252,19 @@
                         </template>
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail" format="fixedPoint" />
                         <DxColumn caption="적요" data-field="summary" format="fixedPoint" />
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200px"/>
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200px" />
                         <template #accountCode="{ data }">
                             <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
                             <!-- <account-code-select :disabled="true" /> -->
                         </template>
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150px"/>
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150px" />
                         <template #relationCode="{ data }">
                             <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
                             <!-- <account-code-select :disabled="true" /> -->
                         </template>
 
                         <DxColumn caption="자금원천" data-field="fundingSource" />
-                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId"/>
+                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" />
                         <template #clientId="{ data }">
                             {{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
                         </template>
@@ -261,8 +279,8 @@
                         <template #slipRegistration="{ data }">
                             <div class="slipRegistration">
                                 <DxButton :focusStateEnabled="false" :text="data.data.handwriting ? 'O' : 'X'"
-                                        :style="{ backgroundColor: data.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
-                                        :height="$config_styles.HeightInput" />
+                                    :style="{ backgroundColor: data.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
                                 <!-- <button-basic :text="data.data.handwriting ? 'O' : 'X'"
                                     :type="data.data.handwriting ? 'success' : 'danger'" :mode="'contained'"
                                     style="margin-right: 5px;" /> -->
@@ -272,8 +290,8 @@
                         <template #slipRegistration1="{ data }">
                             <div class="slipRegistration">
                                 <DxButton :focusStateEnabled="false" :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
-                                        :style="{ backgroundColor: data.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
-                                        :height="$config_styles.HeightInput" />
+                                    :style="{ backgroundColor: data.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
+                                    :height="$config_styles.HeightInput" />
                                 <!-- <button-basic :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
                                     :type="data.data.resolutionNormalStatus ? 'success' : 'danger'" :mode="'contained'"
                                     style="margin-right: 5px;" /> -->
@@ -377,6 +395,9 @@ export default defineComponent({
 
         let statusModalItemDetail = ref(false);
 
+        const gridRefAC120 = ref(); // ref of grid
+        // const dataGridRef = computed(() => gridRefAC120.value?.instance as any); // ref of grid Instance
+
         const popupData = ref({});
         const modalHistoryStatusAccountingProcess = ref<boolean>(false);
         const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
@@ -474,6 +495,7 @@ export default defineComponent({
             lastBalance.value = value.getAccountingDocuments?.lastBalance
             if (dataSource.value[0]) { // if table has data source
                 focusedRowKey.value = dataSource.value[0].accountingDocumentId
+                store.state.common.ac120.selectedRowKeys = [dataSource.value[0].accountingDocumentId]
                 Object.assign(store.state.common.ac120.formData, dataSource.value[0])
                 store.state.common.ac120.statusFormAdd = false
             } else {
@@ -500,6 +522,7 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
         const selectionChanged = (data: any) => {
+            // gridRefAC120.value?.instance.refresh();
             data.component.getSelectedRowsData().then((rowData: any) => {
                 dataRows.value = rowData
                 // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
@@ -518,6 +541,8 @@ export default defineComponent({
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
                     deleteRowAdd()
                 }
+                // store.state.common.ac120.selectedRowKeys = [e.rows[e.newRowIndex]?.data.accountingDocumentId]
+                // gridRefAC120.value?.instance.refresh();
                 const rowElement = e.rowElement[0]
                 // store.state.common.pa110.dataRowOnActive = e.rows[e.newRowIndex]?.data
                 // if (store.state.common.pa110.dataRowOnActive.employeeId) { // if row data (not row add)
@@ -656,6 +681,9 @@ export default defineComponent({
             // console.log(e);
 
         }
+        const onDragStart = (e: any) => {
+
+        }
 
         const onRowDragging = (e: any) => {
             console.log(e);
@@ -721,6 +749,36 @@ export default defineComponent({
             modalHistoryStatuAccountingDocuments.value = true
         }
 
+        const onCellPrepared = (e: any) => {
+            // if (e.data) {
+            //     if (e.data.amount == e.data.amountNew) {
+            //         e.rowElement.style.color = 'black';
+            //     } else {
+            //         e.rowElement.style.color = 'red';
+            //     }
+            //     e.cells[0].cellElement.style.color = 'black';
+            //     e.cells[2].cellElement.style.color = 'black';
+            // }
+
+            // console.log();
+            // console.log();
+            // console.log();
+
+            if (e.rowType !== "data") {
+                return;
+            }
+            console.log(e.rowType, e.data, e.rowIndex, e.rowElement, e.cells);
+            // e.cells[0].cellElement.rowSpan = 2
+            // if (e.cellElement) {
+            //     e.cellElement.rowSpan = 2;
+            //     console.log(e.cellElement?.rowSpan);
+
+            //     e.cellElement.innerHTML = "<div>My Text</div>";
+            // } else {
+            //     // e.cellElement.style.display = "none";
+            // }
+        }
+
         return {
             dataGetAccountingProcesses,
             dataSource,
@@ -729,6 +787,7 @@ export default defineComponent({
             loadingGetAccountingDocuments,
             dataRows,
             onFocusedRowChanging,
+            onCellPrepared,
             // onSubmit,
             // refFormAC120,
 
@@ -764,6 +823,7 @@ export default defineComponent({
             sumOfIncome,
             sumOfExpenses,
             arraySelectBox,
+            onDragStart,
 
             actionPopupItemDetail,
 
@@ -781,6 +841,7 @@ export default defineComponent({
             modalHistoryStatuAccountingDocuments,
             popupData,
             clients,
+            gridRefAC120,
         };
     },
 });
