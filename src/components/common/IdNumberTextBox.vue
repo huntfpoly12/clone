@@ -89,13 +89,26 @@ export default defineComponent({
         return true
       }
       const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
-      if (props.foreigner && fNumber > 4 && fNumber < 9) {
-          return validResidentId(value.value || "");
-      } else if (props.foreigner && (fNumber < 4 || fNumber > 9)) {
+      if (fNumber > 4 && fNumber < 9)
+      {
+          return validResidentId(value.value);
+      } else{
           return false
+      };
+    }
+
+    const checkIdNotForeigner = () => {
+      if (!value.value) {
+        return true
+      }
+      const fNumber = value.value ? parseInt(value.value.charAt(6)) : 0;
+      if ( fNumber <= 4 || fNumber >= 9)
+      {
+        return validResidentId(value.value);
+      } else {
+        return false
       }
     }
-    const checkIdNotForeigner = () => value.value ? validResidentId(value.value || "") : false
 
     return {
       updateValue,

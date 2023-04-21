@@ -1,5 +1,4 @@
 #pa-520 {
-    margin-top: 10px;
     min-height: 95%;
     .total-user {
         display: flex;
@@ -54,7 +53,7 @@
     }
     
     ::v-deep .custom-layout {
-        padding: 10px 10px 10px 0;
+        padding: 10px 10px 0px 0;
         >div {
             height: 100%;
             border: 1px solid #d7d7d7;
@@ -76,5 +75,8 @@
     ::v-deep .dx-state-hover-new {
       background-color: #D1E1F8;
       color: white;
+    }
+    :deep .dx-toolbar-before{
+      padding-left: 5px;
     }
 }
