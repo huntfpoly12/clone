@@ -240,8 +240,8 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="transactionDetailDate" cell-template="transactionDetailDateDetail" />
-                                <template #transactionDetailDateDetail="{ data }">
-                                    {{ $filters.formatDate(data.value) }}
+                                <template #transactionDetailDateDetail="{ data: row }">
+                                    {{ $filters.formatDate(row.value) }}
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -273,10 +273,10 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="bankbook" cell-template="bankbookDetail" />
-                                <template #bankbookDetail="{ data }">
+                                <template #bankbookDetail="{ data: row }">
                                     <a-tooltip placement="top"
-                                        :title="data.data.bankbook?.type + ' ' + data.data.bankbook?.bankbookNumber">
-                                        <div>{{ data.data.bankbook?.bankbookNickname }}</div>
+                                        :title="row.data.bankbook?.type + ' ' + row.data.bankbook?.bankbookNumber">
+                                        <div>{{ row.data.bankbook?.bankbookNickname }}</div>
                                     </a-tooltip>
                                 </template>
                             </DxDataGrid>
@@ -319,9 +319,9 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="balance" cell-template="balanceDetail" />
-                                <template #balanceDetail="{ data }">
-                                    {{ $filters.formatCurrency(data.data.lastBalance + data.data.spending -
-                                        data.data.balance) }}
+                                <template #balanceDetail="{ data: row }">
+                                    {{ $filters.formatCurrency(row.data.lastBalance + row.data.spending -
+                                        row.data.balance) }}
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -355,8 +355,8 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="accountCode" cell-template="accountCodeDetail" />
-                                <template #accountCodeDetail="{ data }">
-                                    <account-code-select :valueInput="data.data.accountCode" :disabled="true" />
+                                <template #accountCodeDetail="{ data: row }">
+                                    <account-code-select :valueInput="row.data.accountCode" :disabled="true" />
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -368,8 +368,8 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="relationCode" cell-template="relationCodeDetail" />
-                                <template #relationCodeDetail="{ data }">
-                                    <account-code-select :valueInput="data.data.relationCode" :disabled="true" />
+                                <template #relationCodeDetail="{ data: row }">
+                                    <account-code-select :valueInput="row.data.relationCode" :disabled="true" />
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -380,10 +380,7 @@
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="fundingSource" cell-template="fundingSourceDetail" />
-                                <template #fundingSourceDetail="{ data }">
-                                    {{ data.value }}
-                                </template>
+                                <DxColumn data-field="fundingSource" />
                             </DxDataGrid>
                         </template>
 
@@ -394,8 +391,8 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="clientId" cell-template="clientIdDetail" />
-                                <template #clientIdDetail="{ data }">
-                                    {{ clients.find((item: any) => item.value == data.data.clientId)?.label }}
+                                <template #clientIdDetail="{ data: row }">
+                                    {{ clients.find((item: any) => item.value == row.data.clientId)?.label }}
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -406,10 +403,7 @@
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="proofCount" cell-template="proofCountDetail" />
-                                <template #proofCountDetail="{ data }">
-                                    {{ data.value }}
-                                </template>
+                                <DxColumn data-field="proofCount"/>
                             </DxDataGrid>
                         </template>
 
@@ -421,9 +415,9 @@
                                 :showColumnHeaders="false" :show-row-lines="true" :hoverStateEnabled="true"
                                 :data-source="data.data.data">
                                 <DxColumn data-field="normality" cell-template="normalityDetail" css-class="cell-center" />
-                                <template #normalityDetail="{ data }">
-                                    <PlusOutlined v-if="data.data.resolutionClassification != 1" class="icon-add"
-                                        @click="actionPopupItemDetail(data.data)" />
+                                <template #normalityDetail="{ data: row }">
+                                    <PlusOutlined v-if="row.data.resolutionClassification != 1" class="icon-add"
+                                        @click="actionPopupItemDetail(row.data)" />
                                 </template>
                             </DxDataGrid>
                         </template>
@@ -435,10 +429,10 @@
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="slipRegistration" cell-template="slipRegistrationDetail" />
-                                <template #slipRegistrationDetail="{ data }">
+                                <template #slipRegistrationDetail="{ data: row }">
                                     <div class="slipRegistration">
-                                        <DxButton :focusStateEnabled="false" :text="data.data.handwriting ? 'O' : 'X'"
-                                            :style="{ backgroundColor: data.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
+                                        <DxButton :focusStateEnabled="false" :text="row.data.handwriting ? 'O' : 'X'"
+                                            :style="{ backgroundColor: row.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
                                             :height="$config_styles.HeightInput" />
                                     </div>
                                 </template>
@@ -453,11 +447,11 @@
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="resolutionNormalStatus"
                                     cell-template="resolutionNormalStatusDetail" />
-                                <template #resolutionNormalStatusDetail="{ data }">
+                                <template #resolutionNormalStatusDetail="{ data: row }">
                                     <div class="slipRegistration">
                                         <DxButton :focusStateEnabled="false"
-                                            :text="data.data.resolutionNormalStatus ? 'O' : 'X'"
-                                            :style="{ backgroundColor: data.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
+                                            :text="row.data.resolutionNormalStatus ? 'O' : 'X'"
+                                            :style="{ backgroundColor: row.data.resolutionNormalStatus ? '#337614' : '#BB3835', color: 'white' }"
                                             :height="$config_styles.HeightInput" />
                                     </div>
                                 </template>
