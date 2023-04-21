@@ -2,7 +2,7 @@
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
-      <!-- {{ formState }} formState <br /> -->
+      {{ formState.employeementInsuranceLossDescription }} formState.employeementInsuranceLossDescription <br />
       <!-- {{ formStateToCompare }} formStateToCompare <br /> -->
       <!-- {{ formState.employeeType }} formState.employeeType <br /> -->
       <!-- {{ employeeWageDaily }} employeeWageDaily <br /> -->
@@ -84,7 +84,7 @@
               <a-col :span="12">
                 <a-form-item label="상실년월일(퇴사일)" label-align="right" class="red">
                   <date-time-box text="지" v-model:valueDate="showData.leavedAt" bgColor="white" :clearable="false"
-                    width="200px" :disabled="true" />
+                    width="200px" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -125,9 +125,39 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
+                    <!-- <DxSelectBox :search-enabled="true" width="348px" :data-source="healthInsuranceSelectbox"
+                      :show-clear-button="clearButton" display-expr="label" value-expr="value" :disabled="!formState.healthInsuranceReport"
+                      @value-changed="updateValue" :height="$config_styles.HeightInput" placeholder="선택"
+                      field-template="field" item-template="item">
+                      <template #field="{ data }">
+                        <div v-if="data" class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
+                          <a-tag color="black">{{ data?.value }}</a-tag>
+                          <div>
+                            {{ data.label }}
+                            <DxTextBox style="display: none;" />
+                          </div>
+                        </div>
+                        <div v-else class="pt-5 pl-5">
+                          <span>선택</span>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                      </template>
+                      <template #item="{ data }">
+                        <div style="display: flex; align-items: center;">
+                          <a-tag color="black">{{ data?.value }}</a-tag>
+                          <div>
+                            {{ data?.label }}
+                            <DxTextBox style="display: none;" />
+                          </div>
+                        </div>
+                      </template>
+                      <DxValidator>
+                        <DxRequiredRule v-if="required" :message="messageRequired" />
+                      </DxValidator>
+                    </DxSelectBox>
                     <select-box-common width="348px" :arrSelect="healthInsuranceSelectbox" :required="true"
                       v-model:valueInput="formState.healthInsuranceLossCode"
-                      :disabled="!formState.healthInsuranceReport" />
+                      :disabled="!formState.healthInsuranceReport" /> -->
                   </div>
                 </div>
               </a-form-item>
@@ -151,7 +181,8 @@
             <a-row class="mt-10">
               <div class="input-text jobtype-margin">
                 <div class="text-detail">상실사유 (10자이내 간략히)</div>
-                <text-number-box :disabled="true" width="580px" v-model:valueInput="formState.employeementInsuranceLossDescription" />
+                <text-number-box :disabled="true" width="580px"
+                  v-model:valueInput="formState.employeementInsuranceLossDescription" />
               </div>
             </a-row>
           </div>
@@ -232,12 +263,13 @@ import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
 
 const getValue = (val: any, arr: any[]) => {
-  return arr.filter((item: any) => {
+  let data = arr.filter((item: any) => {
     if (item.value == val) {
-      return true;
+      return item;
     }
-    return [{ label: '' }];
-  })[0].label;
+    return false;
+  });
+  return data.length == 0 ? '' : data[0].label;
 }
 export default defineComponent({
   components: {
@@ -421,6 +453,7 @@ export default defineComponent({
     //--------------------------------CHANGE DATA---------------------------------------
 
     watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
+      console.log(`output->newVal`, newVal)
       if (newVal) {
         formState.employeementInsuranceLossDescription = getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox)
       }
@@ -428,7 +461,7 @@ export default defineComponent({
 
     //---------------------------------DISABLED FIELD--------------------------------
 
-    const isDisabled1 = computed(() => formState.employeementInsuranceReport && formState.industrialAccidentInsuranceReport)
+    const isDisabled1 = computed(() => formState.employeementInsuranceReport == formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
       // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
       let check = [23, 26, 31].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);
