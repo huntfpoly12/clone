@@ -142,7 +142,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(["closePopup", "refreshData"]);
+const emit = defineEmits(["closePopup"]);
 
 const store = useStore();
 const globalYear = computed(() => store.state.settings.globalYear);
@@ -214,7 +214,7 @@ const {
 onDoneCreateIncomeRetirement(() => {
   notification("success", Message.getCommonMessage('101').message);
   modalStatusAccept.value = false;
-  emit("closePopup", false);
+  emit("closePopup", true);
 });
 onErrorCreateIncomeRetirement((e: any) => {
   notification("error", e.message);

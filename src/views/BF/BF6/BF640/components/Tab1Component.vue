@@ -111,7 +111,8 @@
         </DxDataGrid>
       </a-spin>
     </div>
-    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1" @cancel=" onRequestDone " />
+    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
+      @cancel=" onRequestDone " />
   </div>
 </template>
 <script lang="ts">
@@ -184,6 +185,9 @@ export default defineComponent({
               item.productionStatus = productionStatus;
               if (productionStatus == -1) {
                 item.causeOfProductionFailure = causeOfProductionFailure;
+              }
+              if (productionStatus == 2){
+                item.allowSelection = false;
               }
             }
           })
@@ -426,6 +430,29 @@ export default defineComponent({
 #dataGrid1 {
   :deep .custom-sumary {
     white-space: break-spaces;
+  }
+}
+
+:deep .dx-datagrid {
+  height: calc(62vh);
+
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
+
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
+
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
+
+  :deep .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
   }
 }
 </style>

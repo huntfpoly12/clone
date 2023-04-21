@@ -15,4 +15,4 @@ export default store;
 // gọi lại hàm checkToken mỗi 5 phút
 setInterval(() => {
   store.dispatch('auth/checkToken')
-}, 5 * 60 * 1000) // 5 phút
+}, 3 * 60 * 1000) // 5 phút

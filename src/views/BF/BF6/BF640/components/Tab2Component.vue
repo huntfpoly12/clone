@@ -182,6 +182,9 @@ export default defineComponent({
               if (productionStatus == -1) {
                 item.causeOfProductionFailure = causeOfProductionFailure;
               }
+              if (productionStatus == 2){
+                item.allowSelection = false;
+              }
             }
           })
         }).catch((err: any) => err);
@@ -238,7 +241,7 @@ export default defineComponent({
         }, {}));
         dataSource.value = [...result];
         await fetchDataStatus(dataSource.value.map((item: any) => {
-          if (item.lastProductionRequestedAt){
+          if (item.lastProductionRequestedAt) {
             productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
             return { companyId: item.companyId, paymentYear: item.paymentYear, paymentMonth: item.paymentMonth }
           }
@@ -408,4 +411,29 @@ export default defineComponent({
   }
 })
 </script> 
-<style scoped lang="scss" src="../style/style.scss"></style>
+<style lang="scss" scoped>
+@import '../style/style.scss';
+
+:deep .dx-datagrid {
+  height: calc(62vh);
+
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
+
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
+
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
+
+  :deep .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
+  }
+}
+</style>
