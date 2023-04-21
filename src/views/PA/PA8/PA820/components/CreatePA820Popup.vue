@@ -3,8 +3,8 @@
     :visible="modalCreate" title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
       <!-- {{ formState }} formState <br />
-      {{ formState.employeeId }} formState.employeeId <br />
-      {{ formState.employeeType }} formState.employeeType <br /> -->
+      {{ formStateToCompare }} formStateToCompare <br /> -->
+      <!-- {{ formState.employeeType }} formState.employeeType <br /> -->
       <!-- {{ employeeWageDaily }} employeeWageDaily <br /> -->
       <standard-form ref="formPa820Ref">
         <div class="form-container">
@@ -426,8 +426,6 @@ export default defineComponent({
           // return;
         }
       }
-      // console.log(`output->thay doi employee,`, newVal, newVal2);
-      // console.log(`output->thay doi employee,`, getEmployeeWageTrigger.value, getEmployeeWageDailyTrigger.value);
     }, { deep: true })
 
     //---------------------------------DISABLED FIELD--------------------------------
@@ -479,7 +477,7 @@ export default defineComponent({
     // ---------------------------------ON CANCEL MODAL--------------------------------
 
     const onCanCelModal = () => {
-      if (JSON.stringify(formStateToCompare) == JSON.stringify(formState)) {
+      if (JSON.stringify(formStateToCompare.value) == JSON.stringify(formState)) {
         emit('closeModal');
       } else {
         comfirmClosePopup(() => emit('closeModal'))
@@ -488,7 +486,7 @@ export default defineComponent({
     return {
       globalYear, employeeWages,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
-      formState, onSubmit,showData,
+      formState, onSubmit,showData,formStateToCompare,
       isDisabled1, isDisabled2, onOptionRendered,
       onCanCelModal,
       getEmployeeWageLoading, getEmployeeWageDailyLoading,

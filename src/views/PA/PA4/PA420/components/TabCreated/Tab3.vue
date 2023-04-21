@@ -19,16 +19,16 @@
           <a-form-item label="비과세퇴직급여(확정)">
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px"
-                                v-model:valueInput="taxCalculationInput.lastRetirementBenefitStatus.nonTaxableRetirementBenefits"
+                                v-model:valueInput="formState.nonTaxableRetirementBenefits"
                                 format="#0,###" :min="0"/>
               <span class="pl-5">원</span>
             </div>
           </a-form-item>
-          <a-form-item label="과세대상 퇴직급여(확정) 1">
+          <a-form-item label="과세대상 퇴직급여(확정)">
             <div class="d-flex-center">
               <div :class="taxableRetirementBenefitsRef <= 0 ? 'validate-caculate':''">
                 <number-box-money :required="false" width="150px"
-                                  v-model:valueInput="taxableRetirementBenefitsRef" :disabled="true" format="#0,###"
+                                  :value-input="taxableRetirementBenefitsRef" :disabled="true" format="#0,###"
                                   />
                 <div v-if="taxableRetirementBenefitsRef <= 0" class="message-error">
                   <span style="word-wrap: break-word;hyphens: auto;">{{
@@ -49,7 +49,7 @@
             <div class="d-flex-top">
               <div class="d-flex-center">
                 <number-box-money :required="false" width="150px"
-                                  v-model:valueInput="taxCalculationInput.taxCredit" format="0,###" :min="0"/>
+                                  v-model:valueInput="formState.taxCredit" format="0,###" :min="0"/>
                 <span class="pl-5 mr-5">원</span>
                 <a-tooltip placement="top">
                   <template #title>거주자의 퇴직소득금액에 국외원천소득이 합산되어 있는 경우로서 그 국외원천소득에 대하여 외국에서 외국소득세액을 납부하였거나 납부할
@@ -67,7 +67,7 @@
           <a-form-item label="기납부(기과세이연)세액">
             <div class="d-flex-center">
               <number-box-money :required="false" width="150px"
-                                v-model:valueInput="taxCalculationInput.prePaidDelayedTaxPaymentTaxAmount"
+                                v-model:valueInput="formState.prePaidDelayedTaxPaymentTaxAmount"
                                 format="0,###" :min="0"/>
               <span class="pl-5 mr-5">원</span>
               <a-tooltip placement="top">
@@ -82,41 +82,41 @@
         <a-col :span="12">
           <div class="header-text-2 mb-10">연금계좌입금명세
             ({{
-              $filters.formatCurrency(taxCalculationInput.calculationOfDeferredRetirementIncomeTax.totalAmount)
+              $filters.formatCurrency(formState.calculationOfDeferredRetirementIncomeTax.totalAmount)
             }} 원)
           </div>
           <div class="d-flex">
             <default-text-box
-              v-model:valueInput="statements1.pensionAccountHolder"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[0].pensionAccountHolder"
               :required="isReqStatements1" width="20%" class="mr-5" placeholder="연금계좌취급자"/>
             <biz-number-text-box
-              v-model:valueInput="statements1.bizNumber"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[0].bizNumber"
               :required="isReqStatements1" width="20%" class="mr-5" placeholder="사업자등록번호"/>
             <default-text-box
-              v-model:valueInput="statements1.bankAccountNumber"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[0].bankAccountNumber"
               :required="isReqStatements1" width="15%" class="mr-5" placeholder="계좌번호"/>
             <date-time-box
-              v-model:valueDate="statements1.depositDate"
+              v-model:valueDate="formState.calculationOfDeferredRetirementIncomeTax.statements[0].depositDate"
               :required="isReqStatements1" width="25%" class="mr-5" placeholder="입금일" ref="statements1Ref"/>
             <number-box-money
-              v-model:valueInput="statements1.accountDepositAmount"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[0].accountDepositAmount"
               :required="isReqStatements1" width="20%" placeholder="계좌입금금액"/>
           </div>
           <div class="d-flex mt-5">
             <default-text-box
-              v-model:valueInput="statements2.pensionAccountHolder"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[1].pensionAccountHolder"
               :required="isReqStatements2" width="20%" class="mr-5" placeholder="연금계좌취급자"/>
             <biz-number-text-box
-              v-model:valueInput="statements2.bizNumber"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[1].bizNumber"
               :required="isReqStatements2" width="20%" class="mr-5" placeholder="사업자등록번호"/>
             <default-text-box
-              v-model:valueInput="statements2.bankAccountNumber"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[1].bankAccountNumber"
               :required="isReqStatements2" width="15%" class="mr-5" placeholder="계좌번호"/>
             <date-time-box
-              v-model:valueDate="statements2.depositDate"
+              v-model:valueDate="formState.calculationOfDeferredRetirementIncomeTax.statements[1].depositDate"
               :required="isReqStatements2" width="25%" class="mr-5" placeholder="입금일" ref="statements2Ref"/>
             <number-box-money
-              v-model:valueInput="statements2.accountDepositAmount"
+              v-model:valueInput="formState.calculationOfDeferredRetirementIncomeTax.statements[1].accountDepositAmount"
               :required="isReqStatements2" width="20%" placeholder="계좌입금금액"/>
           </div>
         </a-col>
@@ -222,6 +222,8 @@
               <span class="pl-5">원</span>
             </div>
           </a-form-item>
+
+          <!-- TODO table input deferred retirement income tax -->
           <div>연금계좌입금명세 ({{
               dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount ?
                 $filters.formatCurrency(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.totalAmount)
@@ -332,12 +334,12 @@
 
 
 <script lang="ts" setup>
-import {computed, ref, watch, watchEffect} from 'vue'
+import {computed, reactive, ref, watch, watchEffect} from 'vue'
 import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
-import {initialIncomeRetirementTax} from "../../utils/index"
+import {FORM_STATE_TAB_3, initialIncomeRetirementTax} from "../../utils/index"
 import {Message} from '@/configs/enum';
 import {useStore} from "vuex";
 import cloneDeep from "lodash/cloneDeep";
@@ -357,21 +359,19 @@ const isReqStatements1 = ref<boolean>(false)
 const isReqStatements2 = ref<boolean>(false)
 const variables: any = ref({})
 const retirementBenefits = ref(retirementBenefitsStore.value)
-const taxCalculationInput = ref(cloneDeep(taxCalculationInputStore.value))
-const taxCalculationInputOld = ref(cloneDeep(taxCalculationInputStore.value))
+
+const formState = reactive(cloneDeep(FORM_STATE_TAB_3))
 
 const dataIncomeRetirementTax: any = ref({...initialIncomeRetirementTax})
-const statements1 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
-const statements2 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const statementsAfterCal1 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const statementsAfterCal2 = ref({...initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0]})
 const disableBtn = ref(true)
 
 const isChangeRetirementBenefits = computed(() => {
-  return !isEqual(taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements[0], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] ) ||
-    !isEqual(taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements[1], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] )
+  return !isEqual(taxCalculationInputStore.value.calculationOfDeferredRetirementIncomeTax.statements[0], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] ) ||
+    !isEqual(taxCalculationInputStore.value.calculationOfDeferredRetirementIncomeTax.statements[1], initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0] )
 })
-const isChangeTaxInput = computed(() => !isEqual(taxCalculationInput.value, taxCalculationInputOld.value))
+const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_TAB_3))
 
 watchEffect(() => {
   store.commit('common/setIsChangeForm', {tab3: isChangeRetirementBenefits.value || isChangeTaxInput.value})
@@ -379,11 +379,9 @@ watchEffect(() => {
 watchEffect(() => {
   retirementBenefits.value = retirementBenefitsStore.value
 })
-watchEffect(() => {
-  taxCalculationInput.value = cloneDeep(taxCalculationInputStore.value)
-})
+
 // calculate taxableRetirementBenefits
-const taxableRetirementBenefitsRef = computed<number>(() => retirementBenefits.value - taxCalculationInput.value.lastRetirementBenefitStatus.nonTaxableRetirementBenefits)
+const taxableRetirementBenefitsRef = computed<number>(() => retirementBenefits.value - formState.nonTaxableRetirementBenefits)
 
 const {
   result,
@@ -410,36 +408,47 @@ onResult((value) => {
   store.commit('common/setIsDisableBtnTab3', false)
   store.commit('common/setTaxCalculationInput', {
     calculationOfDeferredRetirementIncomeTax: {
-      statements: taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements,
-      totalAmount: taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.totalAmount
+      statements: formState.calculationOfDeferredRetirementIncomeTax.statements.filter(i => Object.values(i).every(j => Boolean(j))),
+      totalAmount: formState.calculationOfDeferredRetirementIncomeTax.totalAmount
     },
     lastRetirementBenefitStatus: {
-      ...taxCalculationInput.value.lastRetirementBenefitStatus,
+      nonTaxableRetirementBenefits: formState.nonTaxableRetirementBenefits,
       taxableRetirementBenefits: taxableRetirementBenefitsRef.value,
       retirementBenefits: retirementBenefits.value,
     },
-    taxCredit: taxCalculationInput.value.taxCredit,
-    prePaidDelayedTaxPaymentTaxAmount: taxCalculationInput.value.prePaidDelayedTaxPaymentTaxAmount
+    taxCredit: formState.taxCredit,
+    prePaidDelayedTaxPaymentTaxAmount: formState.prePaidDelayedTaxPaymentTaxAmount
   })
   // notification calculation success
   trigger.value = false;
 })
 const handleCalculateIncomeRetirementTax = () => {
-  let result = {
-    ...taxCalculationInput.value,
+  const {nonTaxableRetirementBenefits, ...newFormState} = formState
+  let result: any = {
+    ...newFormState,
+    calculationOfDeferredRetirementIncomeTax: {
+      ...newFormState.calculationOfDeferredRetirementIncomeTax,
+      statements: newFormState.calculationOfDeferredRetirementIncomeTax.statements.filter(i => Object.values(i).every(j => Boolean(j)))
+    },
     lastRetirementBenefitStatus: {
-      ...taxCalculationInput.value.lastRetirementBenefitStatus,
+      nonTaxableRetirementBenefits: nonTaxableRetirementBenefits,
       taxableRetirementBenefits: taxableRetirementBenefitsRef.value,
       retirementBenefits: retirementBenefits.value
-    }
+    },
+    lastRetiredYearsOfService: {
+      ...taxCalculationInputStore.value.lastRetiredYearsOfService
+    },
   }
 
   if (interimPaymentTab1.value) {
     result = {
       ...result,
-      prevRetiredYearsOfService: {...taxCalculationInputStore.value.prevRetiredYearsOfService, paymentDate: taxCalculationInputStore.value.prevRetiredYearsOfService.paymentDate || 0},
+      prevRetiredYearsOfService: {
+        ...taxCalculationInputStore.value.prevRetiredYearsOfService,
+        paymentDate: taxCalculationInputStore.value.prevRetiredYearsOfService.paymentDate || 0
+      },
     }
-    if (result.prevRetirementBenefitStatus.nonTaxableRetirementBenefits) {
+    if (taxCalculationInputStore.value.prevRetirementBenefitStatus.nonTaxableRetirementBenefits) {
       result.prevRetirementBenefitStatus =  taxCalculationInputStore.value.prevRetirementBenefitStatus
     }
   } else {
@@ -447,6 +456,7 @@ const handleCalculateIncomeRetirementTax = () => {
     delete result.prevRetiredYearsOfService
     delete result.prevRetirementBenefitStatus
   }
+
   variables.value = {
     companyId: companyId,
     input: result
@@ -458,7 +468,6 @@ const handleCalculateIncomeRetirementTax = () => {
 function compareObjects(obj1: any, obj2: any) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-
   if (keys1.length !== keys2.length) return false
   for (let key of keys1) {
     if (obj1[key] === obj2[key]) return false
@@ -466,27 +475,21 @@ function compareObjects(obj1: any, obj2: any) {
   return true;
 }
 
-watch(() => [
-  statements1.value,
-  statements2.value
-], ([value1, value2]) => {
-  if (value1 && value2) {
-    const isNotEmpty1 = compareObjects(value1, initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])
-    const isNotEmpty2 = compareObjects(value2, initialIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0])
+watch(formState.calculationOfDeferredRetirementIncomeTax.statements, (value) => {
+  if (value[0] && value[1]) {
+    const isNotEmpty1 = compareObjects(value[0], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[0])
+    const isNotEmpty2 = compareObjects(value[1], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[1])
     if (!isNotEmpty1 && !isNotEmpty2) {
       disableBtn.value = true
       return
     }
-    taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements = []
     if (isNotEmpty1) {
-      taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements.push(value1)
       disableBtn.value = false
     }
     if (isNotEmpty2) {
-      taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.statements.push(value2)
       disableBtn.value = false
     }
-    taxCalculationInput.value.calculationOfDeferredRetirementIncomeTax.totalAmount = value1.accountDepositAmount + value2.accountDepositAmount
+    formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
   }
 }, {deep: true})
 

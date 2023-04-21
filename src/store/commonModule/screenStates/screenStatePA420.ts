@@ -97,6 +97,10 @@ const statesPA420 = {
     tab2: false,
     tab3: false,
   },
+  // Edit
+  employee: {
+    employeeId: null,
+  }
 };
 
 export default statesPA420;

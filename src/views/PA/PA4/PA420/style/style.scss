@@ -202,3 +202,6 @@
         color: blue;
     }
 }
+:deep(.dx-datagrid-expand) {
+  padding-top: 3px !important;
+}

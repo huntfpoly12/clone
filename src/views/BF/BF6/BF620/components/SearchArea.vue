@@ -160,9 +160,9 @@ export default defineComponent({
     const onChange = () => {
       filterBF620.value.companyCode = filterBF620.value.companyCode.toUpperCase();
     }
-    const onChangeSwitch = (e: any) => {
-      filterBF620.value.beforeProduction = !e;
-    }
+    // const onChangeSwitch = (e: any) => {
+    //   filterBF620.value.beforeProduction = !e;
+    // }
     let setBefore = computed(({
       get() {
         return !filterBF620.value.beforeProduction;
@@ -182,7 +182,7 @@ export default defineComponent({
       reportType,
       // afterDeadLineIndex,
       reportTypeTab2,
-      onChange, onChangeSwitch, onChangeCheckbox1,
+      onChange, onChangeCheckbox1,
       setBefore,
       dayjs,
     };
