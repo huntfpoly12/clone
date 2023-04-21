@@ -109,7 +109,6 @@ export default defineComponent({
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        console.log(`output->incomeIdRender.value`,incomeIdRender.value);
         emit("closePopup", incomeIdRender.value)
       }
     })
@@ -140,7 +139,6 @@ export default defineComponent({
         });
         errorState.value = [...errorState.value, ...arr];
         updateStatus.value = true;
-        console.log(`output->incomeIdRender.value`,incomeIdRender.value);
         emit("closePopup", incomeIdRender.value)
       }
     })

@@ -9,9 +9,11 @@ export const dataSearchUtils = {
     "companyCode": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
-    "excludeCancel": true,
+    "active": true,
     "paymentYear": parseInt(dayjs().format('YYYY')),
-    "paymentHalfYear": 1
+    "paymentHalfYear": 1,
+    "excludeCancel": false,
+
 }
 export const dataSearchStep2Utils = {
     "beforeProduction": false,
@@ -19,9 +21,10 @@ export const dataSearchStep2Utils = {
     "companyCode": '',
     "manageUserId": null,
     "salesRepresentativeId": null,
-    "excludeCancel": true,
+    "active": true,
     "paymentYear": parseInt(dayjs().format('YYYY')),
-    "paymentMonth": parseInt(dayjs().format('MM'))
+    "paymentMonth": parseInt(dayjs().format('MM')),
+    "excludeCancel": false,
 }
 export const dataSearchStep3Utils = {
     "type": 7,
@@ -30,3 +33,9 @@ export const dataSearchStep3Utils = {
     "productionStatuses": [2, -1,],
     "manageUserId": null
 }
+export const productionStatusesCheckbox = [
+  { id: 0, text: "제작대기",  },
+  { id: 1, text: "제작중",  },
+  { id: 2, text: "제작성공",  },
+  { id: -1, text: "제작실패",  },
+]
