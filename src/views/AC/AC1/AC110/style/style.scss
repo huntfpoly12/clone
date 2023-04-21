@@ -42,7 +42,16 @@
         }
       }
       #DxDataGridMainAc110 {
-        height: calc(100vh - 560px)
+        height: calc(100vh - 560px);
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
+      }
+      &-tabUserType {
+        border: 1px solid #bfbfbf;
+        border-radius: 6px;
+        height: 28px;
+        line-height: 28px;
       }
     }
     &-detail {
@@ -111,6 +120,9 @@
       }
       #DxDataGridDetailAc110 {
         height: 235px;
+        :deep .dx-freespace-row {
+          display: none !important;
+        }
       }
     }
   }

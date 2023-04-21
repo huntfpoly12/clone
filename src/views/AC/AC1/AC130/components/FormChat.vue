@@ -98,8 +98,7 @@
 </template>
 
 <script lang="ts">
-import { useStore } from 'vuex';
-import { defineComponent, ref, nextTick, onMounted, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, nextTick, watch } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
@@ -634,8 +633,8 @@ export default defineComponent({
           padding: 4px;
 
           img {
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
             object-fit: cover;
           }
 
@@ -643,9 +642,13 @@ export default defineComponent({
             position: absolute;
             top: 0;
             right: 0;
-            background-color: red;
             border-radius: 10px;
+            padding: 3px;
+            background-color: #70707042;;
             cursor: pointer;
+            &:hover{
+              background-color: #33333373;
+            }
           }
         }
       }
