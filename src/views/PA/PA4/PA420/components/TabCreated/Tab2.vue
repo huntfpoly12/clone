@@ -28,8 +28,7 @@
 
         <div class="d-flex mt-20 mb-20 wf-100">
           <div class="d-flex-center" style="margin-left: 250px;">
-            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement"
-                          :disabled="isDisableBtnCalculate"/>
+            <button-basic text="퇴직금 계산" type="default" mode="contained" @onClick="calculateIncomeRetirement"/>
             <div class="ml-5 d-flex-center">
               <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
               <span class="custom-waring">상기 급여(수당)으로 퇴직금 계산합니다.</span>
@@ -74,14 +73,12 @@
 
 <script lang="ts" setup>
 import {computed, ref, watch} from 'vue'
-import {useQuery} from "@vue/apollo-composable";
+import {useApolloClient} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import {companyId} from "@/helpers/commonFunction"
-import notification from '@/utils/notification';
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import {useStore} from "vuex";
-import {Message} from "@/configs/enum";
 
 interface DataFormIncomeCalculation {
   additionalDays: number;
@@ -103,11 +100,10 @@ const dataIncomeRetirement = ref()
 const store = useStore()
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
 
-const dataFormIncomeCalculation = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
+const dataFormIncomeCalculation: any = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const dataFormOld = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation.value, dataFormOld.value))
 
-const isDisableBtnCalculate = ref(true)
 
 const definedRetirementBenefits = ref(0) // 5. 퇴직급여(확정)
 const emptyForm = computed(() => {
@@ -124,41 +120,32 @@ watch(isChangeForm, (value) => {
 watch(definedRetirementBenefits, (value) => {
   store.commit('common/setDefinedRetirementBenefits', value)
 })
-watch([isChangeForm, emptyForm], ([valueIsChangeForm, valueEmptyForm]) => {
-  isDisableBtnCalculate.value = !valueIsChangeForm || valueEmptyForm
-}, {deep: true})
 const formRef = ref()
-const {
-  result, loading, refetch, onError, onResult
-} = useQuery(queries.calculateIncomeRetirement,  {
-  companyId: companyId,
-  input: dataFormIncomeCalculation.value,
-}, () => ({
-  enabled: trigger.value,
-  fetchPolicy: "no-cache",
-}))
-onError(e => {
-  notification('error', e.message)
-  isDisableBtnCalculate.value = false
-  trigger.value = false;
-})
-onResult(({data}) => {
-  if (data) {
-    dataIncomeRetirement.value = data.calculateIncomeRetirement;
-    store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
-    store.commit('common/setIsDisableBtnTab2', false)
-    trigger.value = false;
+const { client } = useApolloClient()
 
-  }
-})
-//
-const calculateIncomeRetirement = () => {
+const calculateIncomeRetirement = async () => {
   const res = formRef.value?.validate();
   if (!res.isValid) {
     res.brokenRules[0].validator.focus();
   } else {
-    isDisableBtnCalculate.value = true
-    trigger.value = true;
+    const { data } = await client.query({
+      query: queries.calculateIncomeRetirement,
+      variables: {
+        companyId: companyId,
+        input: {
+          ...incomeCalculationInput.value,
+          totalPay3Month:dataFormIncomeCalculation.value.totalPay3Month,
+          totalAnualBonus:dataFormIncomeCalculation.value.totalAnualBonus,
+          annualLeaveAllowance:dataFormIncomeCalculation.value.annualLeaveAllowance,
+        },
+      },
+    })
+    if (data) {
+      dataIncomeRetirement.value = data.calculateIncomeRetirement;
+      store.commit('common/setIncomeCalculationInput', {...dataFormIncomeCalculation.value})
+      store.commit('common/setIsDisableBtnTab2', false)
+      trigger.value = false;
+    }
   }
 }
 </script>

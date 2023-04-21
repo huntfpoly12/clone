@@ -37,7 +37,7 @@ export default defineComponent({
           default: "#,###",
         },
         valueInput: {
-            type: [String, Number],
+            type: Object as () => string | number | null,
             default: 0,
         },
         min: Number,

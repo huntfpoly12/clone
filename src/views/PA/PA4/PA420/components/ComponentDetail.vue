@@ -145,7 +145,7 @@
         :processKey="dataTableDetail.processKey" />
     <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
@@ -265,6 +265,7 @@ export default defineComponent({
             triggerDetail.value = false
         })
         errorTableDetail(res => {
+            dataSourceDetail.value = []
             notification('error', res.message)
         })
         const {

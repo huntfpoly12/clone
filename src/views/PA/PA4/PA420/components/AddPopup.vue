@@ -153,7 +153,7 @@ const retirementIncome = ref(true);
 const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
 const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
 
-const retirementType = ref(2)
+const retirementType = ref(1)
 
 const option1 = reactive([
   {id: true, text: "사원"},
