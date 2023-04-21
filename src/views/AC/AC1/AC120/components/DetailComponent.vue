@@ -408,7 +408,7 @@ export default defineComponent({
                     delete dataSubmit.input.resolutionNormalStatus
                     delete dataSubmit.input.resolutionNumber
                     delete dataSubmit.input.summaryOfBankbookDetail
-                    // delete dataSubmit.input.__typename
+                    delete dataSubmit.input.bankbookDetailId
                     const cleanData = JSON.parse(
                         JSON.stringify(dataSubmit, (name, val) => {
                             if (
