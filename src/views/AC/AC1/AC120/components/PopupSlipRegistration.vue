@@ -23,15 +23,17 @@
                     </a-col>
                     <a-col :span="14" class="col-2">
                         <a-form-item class="red" label="결의일자">
+                            <!-- <date-time-box width="150px" :required="true"
+                                v-model:valueDate="store.state.common.ac120.formData.resolutionDate" /> -->
                             <date-time-box width="150px" :required="true"
-                                v-model:valueDate="store.state.common.ac120.formData.resolutionDate" />
+                                v-model:valueDate="store.state.common.ac120.transactionDetailDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
-                            <radio-group :arrayValue="arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
+                            <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
@@ -54,6 +56,8 @@ import queries from "@/graphql/queries/CM/CM120";
 import { useQuery } from "@vue/apollo-composable";
 import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
+import dayjs from "dayjs";
+import filters from "@/helpers/filters";
 // import { initialStateFormAdd } from '../utils/index'
 import { ResolutionType, LetterOfApprovalType, enum2Entries  } from "@bankda/jangbuda-common";
 export default defineComponent({
@@ -105,6 +109,7 @@ export default defineComponent({
 
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
+                store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs().set('year', globalYear.value).set('month', store.state.common.ac120.monthSelected - 1).set('date', 1).toDate())
                 countKey.value++
             }
         })
@@ -135,7 +140,7 @@ export default defineComponent({
             }));
             return item;
         });
-        const arrLetterOfApprovalType: any = computed(() => {
+        store.state.common.ac120.arrLetterOfApprovalType = computed(() => {
             let item: any = enum2Entries(LetterOfApprovalType).map((value) => ({
                 id: value[1],
                 text: value[0],
@@ -148,7 +153,7 @@ export default defineComponent({
             submit,
             cancel,
             arraySelectBox,
-            arrLetterOfApprovalType,
+            // arrLetterOfApprovalType,
             countKey,
             store,
         }

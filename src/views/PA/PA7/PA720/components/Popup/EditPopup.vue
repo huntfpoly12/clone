@@ -20,10 +20,13 @@
   </a-modal>
   <a-modal v-model:visible="updateStatus" okText="확인" :closable="false" :footer="null" width="350px">
     <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
-    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ incomeIdRender.length }}건</p>
-    <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역:{{ errorState.length }} 건 </p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{
+      incomeIdRender.length }}건</p>
+    <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{
+      errorState.length }} 건 </p>
     <ul>
-      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.incomeTypeName }}</li>
+      <li v-for="(item) in errorState">{{ item.errorInfo.employeeId }} {{ item.errorInfo.name }} {{
+        item.errorInfo.incomeTypeName }}</li>
     </ul>
     <a-row justify="center">
       <button-basic class="button-form-modal" :text="'확인'" :width="60" :type="'default'" :mode="'contained'"

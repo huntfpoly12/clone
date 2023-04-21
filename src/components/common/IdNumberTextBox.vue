@@ -4,7 +4,8 @@
     :height="$config_styles.HeightInput" :name="nameInput">
     <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
-      <DxCustomRule v-if="isResidentId" :validation-callback="foreigner ? checkID : checkIdNotForeigner" :message="msgError" />
+      <DxCustomRule v-if="isResidentId" :validation-callback="foreigner ? checkID : checkIdNotForeigner"
+        :message="msgError" />
     </DxValidator>
   </DxTextBox>
 </template>
@@ -44,7 +45,7 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    foreigner : {
+    foreigner: {
       type: Boolean,
       default: false,
     },
@@ -84,7 +85,7 @@ export default defineComponent({
         value.value = convertValue(newValue || "");
       }
     );
-    const checkID = (e: any) => {
+    const checkID = () => {
       if (!value.value) {
         return true
       }
@@ -109,7 +110,7 @@ export default defineComponent({
         return false
       }
     }
-
+    
     return {
       updateValue,
       value,

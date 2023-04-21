@@ -90,7 +90,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // unregisterAccountingDocument
         doneUnregisterAccountingDocument((e) => {
-            notification('success', Message.getMessage('COMMON', '106').message)
+            notification('success', Message.getMessage('COMMON', '302').message)
             store.state.common.ac120.resetDataTable++
             store.state.common.ac120.resetDataAccountingProcesses++
         })
@@ -100,7 +100,7 @@ export default defineComponent({
 
         // initializeTransactionDetails
          doneInitializeTransactionDetails((e) => {
-            notification('success', Message.getMessage('COMMON', '106').message)
+            notification('success', Message.getMessage('COMMON', '302').message)
             store.state.common.ac120.resetDataTable++
             store.state.common.ac120.resetDataAccountingProcesses++
         })
