@@ -6,7 +6,7 @@
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
         <DxPaging :page-size="0" />
-        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
+        <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색"  />
         <DxExport :enabled="true" />
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxColumn caption="일련번호" data-field="workId" width="80" alignment="left" />
@@ -26,23 +26,33 @@
           </a-tooltip>
         </template>
         <DxColumn caption="성명" data-field="name" width="130" alignment="left" />
-        <DxColumn caption="생년월일" data-field="workId" width="80" alignment="right" />
-        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="right" />
-        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd HH:mm"/>
-        <DxColumn caption="접수일" data-field="acceptedAt" alignment="right" data-type="date" format="yyyy-MM-dd HH:mm"/>
-        <DxColumn caption="완료일" data-field="completedAt" alignment="right" data-type="date" format="yyyy-MM-dd HH:mm"/>
-        <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="right" />
-        <DxColumn caption="메모" data-field="memo" width="120px" alignment="right" />
-        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="right" />
-        <template #downA="{ data }" class="custom-action">
+        <DxColumn caption="생년월일" alignment="left" cell-template="residentId"/>
+        <template #residentId="{data}:any">
+          <div>
+            {{ convertBirthDayKorea(data.data.residentId  || '')}}
+          </div>
+        </template>
+        <DxColumn caption="상태" data-field="workingStatus" width="80" alignment="left"  cell-template="workingStatus"/>
+        <template #workingStatus =" {data: dataValue}:any">
+          <div>
+            {{ MajorInsuranceWorkingStatus[dataValue.value] }}
+          </div>
+        </template>
+        <DxColumn caption="등록일" data-field="registeredAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
+        <DxColumn caption="접수일" data-field="acceptedAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
+        <DxColumn caption="완료일" data-field="completedAt" alignment="left" data-type="date" format="yyyy-MM-dd"/>
+        <DxColumn caption="접수번호" data-field="accedpedNumber" width="120px" alignment="left" />
+        <DxColumn caption="메모" data-field="memo" width="120px" alignment="left" />
+        <DxColumn caption="상실신고서다운로드" cell-template="downA" width="140px" alignment="left" />
+        <template #downA="{ data }: any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="right" />
-        <template #downB="{ data }" class="custom-action">
+        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="left" />
+        <template #downB="{ data }: any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer"
               @click="onGetFileStorageId(data.data.dependentsEvidenceFile.url)">
@@ -51,13 +61,13 @@
           </div>
         </template>
         <DxColumn caption="" cell-template="action" alignment="right" width="150px" />
-        <template #action="{ data }" class="custom-action">
+        <template #action="{ data }: any" class="custom-action">
           <div class="custom-action" style="text-align: center">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click="onOpenLogs(data.data.workId)">
                 <HistoryOutlined style="font-size: 16px" />
               </DxButton>
-              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)">
+              <DxButton type="ghost" style="cursor: pointer" @click="actionDelete(data.data.workId)" :disabled="data.data.workingStatus == 0">
                 <DeleteOutlined />
               </DxButton>
             </a-space>
@@ -93,7 +103,7 @@ import {
   DxSummary,
   DxTotalItem,
 } from 'devextreme-vue/data-grid';
-import { companyId } from '@/helpers/commonFunction';
+import { companyId, convertBirthDayKorea } from '@/helpers/commonFunction';
 import queries from '@/graphql/queries/PA/PA8/PA820/index';
 import mutations from '@/graphql/mutations/PA/PA8/PA820/index';
 import filters from '@/helpers/filters';
@@ -103,7 +113,13 @@ import { Message } from "@/configs/enum";
 import CreatePA820Popup from './components/CreatePA820Popup.vue';
 import { DeleteOutlined, DownloadOutlined, HistoryOutlined } from '@ant-design/icons-vue';
 import notification from '@/utils/notification';
-
+enum MajorInsuranceWorkingStatus {
+    등록 = 1,
+    접수 = 2,
+    완료 = 10,
+    오류 = -1,
+    취소 = 0
+}
 export default defineComponent({
   components: {
     DxDataGrid,
@@ -266,7 +282,8 @@ export default defineComponent({
       focusedRowKey, dataSource, modalHistory,
       onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       onCreateModal, modalCreate, modalDelete, handleDelete, contentDelete,
-      workIdHistory, 
+      workIdHistory,
+      MajorInsuranceWorkingStatus, convertBirthDayKorea,
     };
   },
 })

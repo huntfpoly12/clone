@@ -276,7 +276,6 @@ export default defineComponent({
 
     const checkManageIdLen = ref(false);
     watch(() => dataState.value.manageId, (value) => {
-      // console.log(`output->value`, value)
       checkManageIdLen.value = value.length == 11;
     }, { deep: true })
     return {
