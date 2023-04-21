@@ -20,57 +20,60 @@
             <a-form-item label="제작상태">
               <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model="productionStatuses"
                 layout="horizontal" :icon-size="12">
-                <template #radio="{ data }">
-                  <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
-                  <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
-                  <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
+                <template #radio="{ data }: any">
+                  <production-status :typeTag=" 0 " v-if=" data == 0 " padding="0px 10px" />
+                  <production-status :typeTag=" 4 " v-if=" data == 2 " padding="1px 10px" />
+                  <production-status :typeTag=" 5 " v-if=" data == -1 " padding="1px 10px" />
                 </template>
               </DxRadioGroup>
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="제작요청자">
-              <list-manager-dropdown width="150px" v-model:valueInput="ElecFilingFileFilter.manageUserId" />
+              <list-manager-dropdown width="150px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
     </div>
     <div class="content-grid mt-10">
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
-        key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering="move_column"
-        :allow-column-resizing="colomn_resize" :column-auto-width="true">
+      <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource " :show-borders=" true "
+        key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
+        :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
         <DxScrolling mode="standard" show-scrollbar="always" />
-        <DxLoadPanel :enabled="true" />
+        <DxLoadPanel :enabled=" true " />
         <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" />
         <DxColumn caption="참고사항" data-field="referenceInformation" />
         <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="아이디" data-field="productionRequestUserId" alignment="left" />
         <DxColumn caption="제작현황" data-field="productionStatus" cell-template="productionStatus" alignment="left" />
-        <template #productionStatus="{ data }">
-          <production-status :typeTag="2" v-if="data.value == 0" padding="1px 10px" />
-          <production-status :typeTag="3" v-if="data.value == 1" padding="1px 10px" />
-          <production-status :typeTag="4" v-if="data.value == 2" padding="1px 10px" />
-          <production-status :typeTag="5" v-if="data.value == -1" :message="data.data.causeOfProductionFailure"
+        <template #productionStatus=" { data }: any ">
+          <production-status :typeTag=" 2 " v-if=" data.value == 0 " padding="1px 10px" />
+          <production-status :typeTag=" 3 " v-if=" data.value == 1 " padding="1px 10px" />
+          <production-status :typeTag=" 4 " v-if=" data.value == 2 " padding="1px 10px" />
+          <production-status :typeTag=" 5 " v-if=" data.value == -1 " :message=" data.data.causeOfProductionFailure "
             padding="1px 10px" />
         </template>
         <DxColumn caption="상세보기" cell-template="afterDeadline" />
-        <template #afterDeadline="{ data }">
-          <DxButton class="custom-action" @click="onShow(data.data.electronicFilingId)"
+        <template #afterDeadline=" { data }: any ">
+          <DxButton class="custom-action" @click=" onShow(data.data.electronicFilingId) "
             style="border: none; margin-top: -2px; width: 35px; height: 35px;">
-            <zoom-in-outlined :style="{ fontSize: '20px', color: 'black' }" />
+            <zoom-in-outlined :style=" { fontSize: '20px', color: 'black' } " />
           </DxButton>
         </template>
+        <DxSummary>
+          <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
+        </DxSummary>
       </DxDataGrid>
       <!-- <div @click="onShow">Kính lúp</div> -->
     </div>
-    <a-modal :visible="modalStatus" @cancel="modalStatus = false" :mask-closable="false" class="confirm-md" footer=""
-      :width="700">
-      <a-spin :spinning="companiesInElectronicLoading">
+    <a-modal :visible=" modalStatus " @cancel=" modalStatus = false " :mask-closable=" false " class="confirm-md"
+      footer="" :width=" 700 ">
+      <a-spin :spinning=" companiesInElectronicLoading ">
         <br />
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="companiesInElectronicDataSource"
-          :show-borders="true" key-expr="code" class="mt-10" :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize" :column-auto-width="true">
+        <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" companiesInElectronicDataSource "
+          :show-borders=" true " key-expr="code" class="mt-10" :allow-column-reordering=" move_column "
+          :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
           <DxColumn caption="사업자번호" data-field="bizNumber" />
@@ -264,5 +267,30 @@ export default defineComponent({
   border: 1px solid v-bind("styleCheckBox.ColorCheckBox");
   width: 14px;
   height: 14px;
+}
+
+.content-grid {
+  :deep .dx-datagrid {
+    height: calc(71vh);
+
+    :deep .dx-datagrid-total-footer {
+      height: 77px;
+      overflow: hidden;
+      position: absolute;
+      bottom: 0;
+    }
+
+    :deep .dx-datagrid-headers {
+      height: 27px;
+    }
+
+    :deep .dx-datagrid-rowsview {
+      max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+    }
+
+    :deep .dx-freespace-row {
+      display: none !important; // cục lúc hiện lúc không
+    }
+  }
 }
 </style>
