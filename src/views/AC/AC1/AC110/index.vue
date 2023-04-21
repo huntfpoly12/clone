@@ -87,7 +87,8 @@
                 <button-basic :text="data.data.documentRegistered ? 'O' : 'X'"
                   :type="data.data.documentRegistered ? 'success' : 'danger'" :mode="'contained'"
                   style="margin-right: 5px;" />
-                <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'" :mode="'contained'"
+                <button-basic :text="data.data.documentRegistered ? '전표취소' : '전표등록'" :type="'default'"
+                  :mode="data.data.documentRegistered ? 'outlined' : 'contained'"
                   @onClick="openPopupRegistration(data.data)" :disabled="!data.data.normalTransactionDetails" />
               </div>
             </template>
@@ -110,7 +111,7 @@
             <button-basic v-if="!!bankbookSelected" :text="bankbookSelected.normalTransactionDetails ? 'O' : 'X'"
               :type="bankbookSelected.normalTransactionDetails ? 'success' : 'danger'" :mode="'contained'" />
           </div>
-          <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails" size="large">
+          <a-spin :spinning="loadingGetTransactionDetails || loadingInitializeTransactionDetails || loadingGetBankbookDetails" size="large">
             <standard-form>
               <DxDataGrid id="DxDataGridDetailAc110" key-expr="accountingDocumentId" ref="refGridDetailAc110"
                 :show-row-lines="true" :data-source="dataSourceTransactionDetails.transactionDetails" :show-borders="true"
@@ -161,21 +162,23 @@
                     </DxButton>
                   </a-tooltip>
                 </template>
-                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center">
+                <DxColumn caption="결의구분" data-field="resolutionClassification" alignment="center" :allowUpdating="true">
                   <DxLookup :data-source="resolutionClassification" display-expr="label" value-expr="value" />
                 </DxColumn>
                 <DxColumn caption="수입액" cell-template="income" width="150" />
                 <template #income="{ data }">
                   <div :key="data.data.spending">
                     <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.spending" height="26" @changeInput="changeInputIncomeSpending(data.data)" />
+                      :disabled="!!data.data.spending" height="26"
+                      @focusInput="(e: any) => changeInputIncomeSpending(e, data.data, 'income')" />
                   </div>
                 </template>
                 <DxColumn caption="지출액" cell-template="spending" width="150" />
                 <template #spending="{ data }">
                   <div :key="data.data.income">
                     <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.income" height="26" @changeInput="changeInputIncomeSpending(data.data)" />
+                      :disabled="!!data.data.income" height="26"
+                      @focusInput="(e: any) => changeInputIncomeSpending(e, data.data, 'spending')" />
                   </div>
                 </template>
                 <DxColumn caption="적요" cell-template="summary" width="200" />
@@ -185,13 +188,13 @@
                 <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
-                    :classification="!!data.data.income ? [4] : [5]" />
+                    :classification="!!data.data.income ? [4] : [5]" :lengthText="10" />
                 </template>
                 <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
                 <template #relationCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.relationCode"
                     :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
-                    :disabled="data.data.resolutionClassification === 1" />
+                    :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                 </template>
                 <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                 <template #fundingSource="{ data }">
@@ -223,10 +226,12 @@
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <a-badge v-if="!!data.data.goodsCount" :count="data.data.goodsCount || 0" :offset="[7, 0]">
-                    <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                  </a-badge>
-                  <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                    <a-badge v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" :count="data.data.goodsCount || 0" :offset="[7, 0]">
+                      <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                    </a-badge>
+                    <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
+                  </div>
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
@@ -559,8 +564,8 @@ export default defineComponent({
           rowKeyfocused.value = value.getBankbookDetails[0].bankbookDetailId
           payloadGetTransactionDetails.bankbookDetailDate = value.getBankbookDetails[0].bankbookDetailDate
           payloadGetTransactionDetails.bankbookDetailId = value.getBankbookDetails[0].bankbookDetailId
-          triggerTransactionDetails.value = true
         }
+        triggerTransactionDetails.value = true
       } else {
         dataSource.value = []
         rowKeyfocused.value = null
@@ -861,18 +866,14 @@ export default defineComponent({
       const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
       dataSource.value[indexSelected].proofCount--
     }
-    const changeInputIncomeSpending = (data: any) => {
-      if (!data.income && !data.spending) {
-        data.resolutionClassification = null
-      } else {
-        if (!!data.income) {
-          data.resolutionClassification = 1
-          data.spending = 0
-        }
-        if (!!data.spending) {
-          data.resolutionClassification = 2
-          data.income = 0
-        }
+    const changeInputIncomeSpending = (e: any, data: any, key: string) => {
+      if (key === 'income') {
+        data.resolutionClassification = 1
+        data.spending = 0
+      }
+      else {
+        data.resolutionClassification = 2
+        data.income = 0
       }
     }
     const updateGoodsCount = (accountingDocumentId: any, value: any) => {
