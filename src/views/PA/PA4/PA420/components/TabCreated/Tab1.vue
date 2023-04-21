@@ -77,7 +77,9 @@
               width="150px" :disabled="!interimPaymentTab1"
               v-model:valueDate="formState.prevRetiredYearsOfService.settlementStartDate"
               ref="prevSettlementStartDate"
-              :startDate="joinedAt ? dayjs(String(joinedAt)) : joinedAt"/>
+              :startDate="joinedAt ? dayjs(String(joinedAt)) : joinedAt"
+              :finishDate="finishDateRetirement"
+            />
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
                 <template #title>퇴직소득 정산의 시작일(기산일)로서, 중간정산지급 등으로 인해 입사일과 상이할 수 있습니다. 중간정산지급한 경우 중간정산 정산종료(퇴사)일의
@@ -96,6 +98,7 @@
             <date-time-box-custom width="150px"
                                   :disabled="!interimPaymentTab1"
                                   :startDate="dayjs(String(formState.prevRetiredYearsOfService.settlementStartDate))"
+                                  :finishDate="finishDateRetirement"
                                   v-model:valueDate="formState.prevRetiredYearsOfService.settlementFinishDate"
                                   ref="prevSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
@@ -158,8 +161,10 @@
         <div class="header-text-2 mb-10">최종 근속연수</div>
         <a-form-item label="정산시작(입사)일" class="label-required">
           <div class="d-flex-center">
-            <date-time-box :required="true" width="150px"
+            <date-time-box-custom :required="true" width="150px"
                            v-model:valueDate="formState.lastRetiredYearsOfService.settlementStartDate"
+                           :startDate="joinedAt ? dayjs(String(joinedAt)) : joinedAt"
+                           :finishDate="finishDateRetirement"
                            ref="lastSettlementStartDate"/>
             <div class="ml-5 d-flex-center">
               <a-tooltip placement="top">
@@ -175,8 +180,10 @@
         </a-form-item>
         <a-form-item label="정산종료(퇴사)일" class="label-required">
           <div class="d-flex-center">
+            
             <date-time-box-custom :required="true" width="150px"
                                   v-model:valueDate="formState.lastRetiredYearsOfService.settlementFinishDate"
+                                  :disabled="retirementType == 1"
                                   :startDate="dayjs(String(formState.lastRetiredYearsOfService.settlementStartDate))"
                                   ref="lastSettlementFinishDate"/>
             <div class="ml-5 d-flex-center">
@@ -290,7 +297,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, reactive, ref, watch, watchEffect} from 'vue'
+import {computed, onMounted, reactive, ref, watch, watchEffect} from 'vue'
 import dayjs from "dayjs";
 import {
   arrayReasonResignationUtils,
@@ -320,7 +327,7 @@ const emit = defineEmits(['nextPage'])
 // const formState:any = ref(cloneDeep(TAX_CALCULATION_INPUT))
 // const incomeCalculationInput:any = ref(cloneDeep(INCOME_CALCULATION_INPUT))
 
-const formState: any = reactive(FORM_STATE_TAB_1)
+const formState: any = reactive(cloneDeep(FORM_STATE_TAB_1))
 
 const interimPaymentTab1 = ref(false)
 
@@ -397,7 +404,7 @@ const dataSettlement = computed(() => {
     daysOfService: 0,
   }
 })
-
+const finishDateRetirement = computed(() => props.retirementType === 1 ? formState.lastRetiredYearsOfService.settlementFinishDate : null)
 const paymentDayOld = store.getters['common/getPaymentDay']
 const paymentDay = ref(store.getters['common/getPaymentDay'])
 
@@ -422,6 +429,7 @@ watch(() => formState.inputFormTab1.employeeId, (value) => {
   formState.inputFormTab1.employeeType = dataEmployee?.type
   joinedAt.value = dataEmployee?.joinedAt // add join at of employee
   formState.lastRetiredYearsOfService.settlementStartDate = dataEmployee?.joinedAt
+  formState.lastRetiredYearsOfService.settlementFinishDate = dataEmployee?.leavedAt
   formState.incomeCalculationInput.settlementStartDate = dataEmployee?.joinedAt
   if (interimPaymentTab1.value) {
     formState.prevRetiredYearsOfService.settlementStartDate = dataEmployee?.joinedAt
@@ -447,16 +455,18 @@ watch(() => formState.prevRetiredYearsOfService.settlementStartDate, (value: any
   }
 });
 watch(() => formState.prevRetiredYearsOfService.settlementFinishDate, (value: any) => {
-  if (value) {
+  if (value && +value > +formState.lastRetiredYearsOfService.settlementStartDate) {
     formState.lastRetiredYearsOfService.settlementStartDate = value
     formState.lastRetiredYearsOfService.settlementFinishDate = value
   }
 });
 
+watch(() => formState.lastRetiredYearsOfService.settlementStartDate, (value: any) => {
+  if(!interimPaymentTab1.value) formState.incomeCalculationInput.settlementStartDate = value
+});
 watch(() => formState.lastRetiredYearsOfService.settlementFinishDate, (value: any) => {
   formState.incomeCalculationInput.settlementFinishDate = value
 });
-
 watch(() => [
   formState.prevRetiredYearsOfService.additionalDays,
   formState.lastRetiredYearsOfService.additionalDays

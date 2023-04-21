@@ -47,7 +47,7 @@
                         <template #title>전자신고파일 다운로드</template>
                         <span><production-status :typeTag="4" padding="1px 10px" /></span>
                     </a-tooltip>
-                    <a-tooltip placement="top" color="black" v-if="data.value == -1">
+                    <a-tooltip placement="top" color="red" v-if="data.value == -1">
                         <template #title>{{ data.data.causeOfProductionFailure }}</template>
                         <span><production-status :typeTag="5" padding="1px 10px" /></span>
                     </a-tooltip>
