@@ -25,7 +25,7 @@ export default defineComponent({
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: {
-            type: Number,
+            type: Object as () => string | number | null,
             default: "",
         },
         readOnly: Boolean,

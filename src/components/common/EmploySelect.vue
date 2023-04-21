@@ -37,7 +37,7 @@ export default defineComponent({
         width: String,
         disabled: Boolean,
         valueEmploy: {
-            type: Number,
+            type: Object as () => string | number | null,
         },
         arrayValue: {
             type: Array,
