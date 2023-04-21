@@ -436,7 +436,6 @@ watch(interimPaymentTab1, (value) => {
 
 watch(() => taxCalculationInput.value.prevRetiredYearsOfService.settlementStartDate, (value: any) => {
   if (value) {
-    console.log('value', value)
     incomeCalculationInput.value.settlementStartDate = value
     if (+value > +taxCalculationInput.value.prevRetiredYearsOfService.settlementFinishDate) {
       taxCalculationInput.value.prevRetiredYearsOfService.settlementFinishDate = value

@@ -71,7 +71,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                     key-expr="index" class="mt-10" :allow-column-reordering="move_column"
                     :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
+                    @selection-changed="selectionChanged" style="height: 590px">
           <DxSelection mode="multiple" :fixed="true"/>
           <DxColumn caption="사업자코드" cell-template="company-code" data-field="company.code"/>
           <template #company-code="{ data }">

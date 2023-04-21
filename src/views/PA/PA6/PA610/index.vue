@@ -163,7 +163,7 @@
                 <radio-group
                   :arrayValue="arrForeigner"
                   width="200px"
-                  :disabled="!dataShow.deletable"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   v-model:valueRadioCheck="dataShow.foreigner"
                   layoutCustom="horizontal"
                   @update:valueRadioCheck="changeRadioForeigner"
@@ -227,7 +227,7 @@
                   width="200px"
                   placeholder="숫자 13자리"
                   :required="true"
-                  :disabled="!dataShow.deletable"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   :foreigner="dataShow.foreigner"
                 />
               </a-form-item>
