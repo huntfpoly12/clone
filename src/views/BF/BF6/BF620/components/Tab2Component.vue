@@ -33,61 +33,65 @@
         <DxSelection mode="multiple" :fixed="true" />
         <DxColumn caption="사업자코드" data-field="code" width="90" />
         <DxColumn caption="상호 주소" cell-template="companyName" width="270" />
-        <template #companyName="{ data }:any">
+        <template #companyName="{ data }: any">
           {{ data.data.name }}
           {{ data.data.address }}
         </template>
         <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
-        <template #inputYearMonth="{ data }:any">
+        <template #inputYearMonth=" { data }: any ">
           <!-- {{ data.data.imputedYear }} -->
           <a-tooltip color="black">
             <template #title>삭제</template>
-            <DxButton :text="'귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth)" :style="{
-              color: 'white',
-              backgroundColor: 'gray',
-              height: $config_styles.HeightInput
-            }" class="btn-date" />
+            <DxButton :text=" '귀 ' + data.data.imputedYear + '-' + formatMonth(data.data.imputedMonth) " :style="
+              {
+                color: 'white',
+                  backgroundColor: 'gray',
+                    height: $config_styles.HeightInput
+              }
+            " class="btn-date" />
           </a-tooltip>
         </template>
         <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
-        <template #paymentYearMonth="{ data }:any">
-          <DxButton :text="'지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth)" :style="{
-            color: 'white',
-            backgroundColor: 'black',
-            height: $config_styles.HeightInput
-          }" class="btn-date" />
+        <template #paymentYearMonth=" { data }: any ">
+          <DxButton :text=" '지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth) " :style="
+            {
+              color: 'white',
+                backgroundColor: 'black',
+                  height: $config_styles.HeightInput
+            }
+          " class="btn-date" />
         </template>
         <DxColumn caption="신고 주기" cell-template="reportType" width="100px" />
-        <template #reportType="{ data }:any">
-          <div v-if="data.data.reportType == 1" class="px-3 py-4 report-tag-black">매월</div>
-          <div v-if="data.data.reportType == 6" class="px-3 py-4 report-tag-gray">반기</div>
+        <template #reportType=" { data }: any ">
+          <div v-if=" data.data.reportType == 1 " class="px-3 py-4 report-tag-black">매월</div>
+          <div v-if=" data.data.reportType == 6 " class="px-3 py-4 report-tag-gray">반기</div>
           <div v-else></div>
         </template>
         <DxColumn caption="신고 종류" cell-template="afterDeadline" width="155px" />
-        <template #afterDeadline="{ data }:any">
-          <div v-if="!data.data.afterDeadline && data.data.index == 0" class="deadline-tag tag-white">정기</div>
-          <div v-if="!data.data.afterDeadline && data.data.index > 0" class="deadline-tag tag-black">기한후</div>
-          <div v-if="data.data.afterDeadline" class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
+        <template #afterDeadline=" { data }: any ">
+          <div v-if=" !data.data.afterDeadline && data.data.index == 0 " class="deadline-tag tag-white">정기</div>
+          <div v-if=" !data.data.afterDeadline && data.data.index > 0 " class="deadline-tag tag-black">기한후</div>
+          <div v-if=" data.data.afterDeadline " class="deadline-tag tag-orange">수정 {{ data.data.index }}</div>
         </template>
         <DxColumn caption="지방소득세 납부세액" data-field="localIncomeTaxAmount" format="0,###" alignment="right" width="140px" />
         <DxColumn caption="최종마감일시" data-field="statusUpdatedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
         <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"
           width="120" />
         <DxColumn caption="제작현황" cell-template="productionStatus" width="355" />
-        <template #productionStatus="{ data }:any">
-          <GetStatusTable :dataProcduct="data.data" :message="data.data?.causeOfProductionFailure" />
-          <span class="before-production-tag" v-if="data.data.beforeProduction">제작요청전</span>
+        <template #productionStatus=" { data }: any ">
+          <GetStatusTable :dataProcduct=" data.data " :message=" data.data?.causeOfProductionFailure " />
+          <span class="before-production-tag" v-if=" data.data.beforeProduction ">제작요청전</span>
         </template>
         <DxSummary>
           <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text="reportTypeSummary" />
-          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text="afterDeadlineSummary" />
-          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="productStatusSummary" />
+          <DxTotalItem cssClass="custom-sumary" column="신고 주기" :customize-text=" reportTypeSummary " />
+          <DxTotalItem cssClass="custom-sumary" column="신고 종류" :customize-text=" afterDeadlineSummary " />
+          <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
         </DxSummary>
       </DxDataGrid>
     </div>
-    <RequestFilePopup v-if="modalStatus" :modalStatus="modalStatus" :requestFileData="requestFileData" tab-name="tab2"
-      @cancel="onRequestDone" />
+    <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData " tab-name="tab2"
+      @cancel=" onRequestDone " />
   </div>
 </template>
   
@@ -172,6 +176,9 @@ export default defineComponent({
               if (productionStatus == -1) {
                 item.causeOfProductionFailure = causeOfProductionFailure;
               }
+              if (productionStatus == 2){
+                item.allowSelection = false;
+              }
             }
           })
         }).catch((err: any) => err);
@@ -234,7 +241,7 @@ export default defineComponent({
       }, {}));
       dataSource.value = [...result];
       await fetchDataStatus(dataSource.value.map((item: any) => {
-        if (item.lastProductionRequestedAt){
+        if (item.lastProductionRequestedAt) {
           productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
           return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId }
         }
@@ -386,7 +393,7 @@ export default defineComponent({
       move_column,
       colomn_resize,
       dataSource,
-      onRequestFile,onRequestDone,
+      onRequestFile, onRequestDone,
       modalStatus,
       requestFileData,
       userInfor,
@@ -405,5 +412,28 @@ export default defineComponent({
 
 .lable-item {
   display: inline-block;
+}
+
+:deep .dx-datagrid {
+  height: calc(62vh);
+
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
+
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
+
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
+
+  :deep .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
+  }
 }
 </style>
