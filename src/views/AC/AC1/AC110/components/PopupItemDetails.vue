@@ -42,7 +42,7 @@
           </template>
           <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" height="26" />
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" @changeInput="changeInput"/>
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
@@ -55,7 +55,7 @@
 
           <DxSummary>
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="단위" :customize-text="totalValue" />
+            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
             <DxTotalItem cssClass="custom-sumary" column="비고" :customize-text="totalDifference" />
           </DxSummary>
@@ -271,6 +271,12 @@ export default defineComponent({
         return 0
       }
     }
+    const changeInput = () => {
+      const el = document.querySelector('.refPopupDetail110TotalValue')
+      if(el){
+        el.textContent = totalValue()
+      }
+    }
     return {
       move_column,
       colomn_resize,
@@ -291,7 +297,8 @@ export default defineComponent({
       arrSelectItem,
       arrSelectStandard,
       arrSelectUnit,
-      handleConfirmChange
+      handleConfirmChange,
+      changeInput,
     }
   },
 })
