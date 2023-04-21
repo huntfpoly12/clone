@@ -2,7 +2,7 @@
   <div id="tab2-pa120">
     <!-- {{ formStateTab2 }} -->
     <div class="header-text-1">공제 / 감면 / 소득세 적용율</div>
-    <a-row :gutter="16" class="mb-7">
+    <a-row class="mb-7">
       <a-col span="24" style="display: flex; flex-wrap: wrap;">
         <a-form-item label="4대보험 공제 여부" label-align="right" class="ins-dedu input-text empl-ins">
           <span class="check-box-tab1">
@@ -108,7 +108,7 @@
         <p>급여소득자료 입력시 본 급여 기본값을 불러옵니다</p>
       </span>
     </div>
-    <a-row :gutter="16">
+    <a-row >
       <a-col style="flex: 0 0 28%;">
         <div class="header-text-2">요약</div>
         <div class="summary">

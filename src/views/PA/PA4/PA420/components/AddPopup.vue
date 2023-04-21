@@ -142,7 +142,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(["closePopup", "refreshData"]);
+const emit = defineEmits(["closePopup"]);
 
 const store = useStore();
 const globalYear = computed(() => store.state.settings.globalYear);
@@ -153,7 +153,7 @@ const retirementIncome = ref(true);
 const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
 const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
 
-const retirementType = ref(2)
+const retirementType = ref(1)
 
 const option1 = reactive([
   {id: true, text: "사원"},
@@ -214,7 +214,7 @@ const {
 onDoneCreateIncomeRetirement(() => {
   notification("success", Message.getCommonMessage('101').message);
   modalStatusAccept.value = false;
-  emit("closePopup", false);
+  emit("closePopup", true);
 });
 onErrorCreateIncomeRetirement((e: any) => {
   notification("error", e.message);

@@ -124,7 +124,7 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="사유발생일" label-align="right">
+                <a-form-item label="사유발생일" label-align="right" class="red">
                   <date-time-box text="지" v-model:valueDate="formState.issueDate" bgColor="white" :clearable="false" width="200px" />
                 </a-form-item>
               </a-col>
@@ -325,7 +325,7 @@ export default defineComponent({
       isShutdown: true,
       isNoWorker: true,
       is1YearWithoutWorker: true,
-      issueDate: NaN,
+      issueDate: +dayjs().format('YYYYMMDD'),
       afterReportPostAddress: '',
       afterReportPostNumber: '',
       nationalPensionClosingPeriod: '',
@@ -395,50 +395,6 @@ export default defineComponent({
         formState.industrialAccidentInsuranceCloseDate = NaN;
       }
     }, { immediate: true })
-
-    // //---------------------------------DISABLED FIELD--------------------------------
-
-    // const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
-    // const isDisabled2 = computed(() => {
-    //   // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-    //   let check = [23, 26, 32].some((item: any) => formState.healthInsuranceAcquisitionCode2 == item);
-    //   formState.includeDependents = check;
-    //   return check;
-    // })
-
-    //-----------------------------GET DETAIL getMajorInsuranceCompanyOut-------------------
-
-    // const getCompanyOutTrigger = ref<boolean>(false);
-    // const getCompanyOutParam = reactive({
-    //   companyId: companyId,
-    //   imputedYear: globalYear,
-    //   workId: NaN,
-    // })
-    // const { refetch: getCompanyOutRefetch, result: getCompanyOutResult, onError: getCompanyOutError } = useQuery(
-    //   queries.getMajorInsuranceCompanyOut,
-    //   getCompanyOutParam,
-    //   () => ({
-    //     enabled: getCompanyOutTrigger.value,
-    //     fetchPolicy: 'no-cache',
-    //   })
-    // );
-    // watch(getCompanyOutResult, (newVal) => {
-    //   if (newVal) {
-    //     let data = newVal.getMajorInsuranceCompanyOut;
-    //     console.log(`output->data`,data);
-    //     // formState.value = newVal.getMajorInsurancegetCompanyOut;
-    //     getCompanyOutTrigger.value = false;
-    //   }
-    // });
-    // getCompanyOutError((res: any) => {
-    //   notification('error', res.message)
-    // })
-    // watch(()=>props.workId,(newVal: number) => {
-    //   if(newVal){
-    //     getCompanyOutParam.workId = newVal;
-    //     getCompanyOutTrigger.value = true;
-    //   }
-    // },{immediate: true})
     
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 

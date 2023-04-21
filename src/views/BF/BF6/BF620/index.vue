@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, onMounted } from 'vue';
-import { SearchOutlined } from '@ant-design/icons-vue';
 import Tab1Component from './components/Tab1Component.vue';
 import Tab2Component from './components/Tab2Component.vue';
 import Tab3Component from './components/Tab3Component.vue';
@@ -27,7 +26,6 @@ export default defineComponent({
     Tab1Component,
     Tab2Component,
     Tab3Component,
-    SearchOutlined,
   },
   setup() {
     const activeKey = ref<string | number>('1');

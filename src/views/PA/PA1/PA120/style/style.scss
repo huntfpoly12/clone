@@ -311,3 +311,7 @@
     background-color: white;
   }
 }
+:deep .ant-tabs-tabpane {
+  padding-left: 5px;
+  padding-right: 5px;
+}

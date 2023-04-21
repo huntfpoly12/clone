@@ -143,9 +143,9 @@
         :data="dataTableDetail.processKey" title="변경이력" typeHistory="pa-status-420" />
     <EditPopup  :modalStatus="modalEdit" @closePopup="closeChangePaymentDay" :data="popupDataDelete"
         :processKey="dataTableDetail.processKey" />
-    <AddPopup v-if="modalAdd"  :modalStatus="modalAdd" @closePopup="actionDeleteSuccess" :data="popupDataDelete" :key="resetFormNum"
+    <AddPopup v-if="modalAdd" :modalStatus="modalAdd" @closePopup="handleClose" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup  :modalStatus="modalUpdate" @closePopup="actionClosePopup" :data="popupDataDelete"
+    <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup"
         :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
@@ -265,6 +265,7 @@ export default defineComponent({
             triggerDetail.value = false
         })
         errorTableDetail(res => {
+            dataSourceDetail.value = []
             notification('error', res.message)
         })
         const {
@@ -316,8 +317,13 @@ export default defineComponent({
             triggerDetail.value = true
             refetchTableDetail()
             emit('createdDone', true)
-            modalAdd.value = false
             modalUpdate.value = false
+        }
+
+        // action modal create
+        const handleClose = (e: boolean) => {
+          if (e) triggerDetail.value = true
+          modalAdd.value = false
         }
         const actionClosePopup = () => {
             modalUpdate.value = false
@@ -402,7 +408,8 @@ export default defineComponent({
             refetchTableDetail,
             resetFormNum,
             listEmployeeId,
-            closeChangePaymentDay,store,hasDataIncRetirements
+            closeChangePaymentDay,store,hasDataIncRetirements,
+            handleClose
         }
     }
 });
