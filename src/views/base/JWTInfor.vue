@@ -69,17 +69,20 @@
 import { getJwtObject,AdminScreenRole  } from "@bankda/jangbuda-common";
 import { computed, defineComponent, onMounted, ref } from "vue";
 import dayjs from "dayjs";
-const token  = sessionStorage.getItem("token")
-const jwtObject = getJwtObject(token!);
-let expirationTime = jwtObject.expiredTime
+
 export default defineComponent({
   setup() {
+    const token  = ref(sessionStorage.getItem("token"))
     const now = ref(dayjs().valueOf())
-    const token  = sessionStorage.getItem("token")
-    const jwtObject = getJwtObject(token!);
-    const infos = jwtObject.accounting;
-    const info = jwtObject.withholding;
+    const infos = ref();
+    const info = ref();
+    let jwtObject = getJwtObject(token.value!);
     const timeRemaining = computed(() => {
+      jwtObject = getJwtObject(token.value!);
+      let expirationTime = jwtObject.expiredTime
+      infos.value = jwtObject.accounting;
+      info.value = jwtObject.withholding;
+
       const remaining = expirationTime - now.value;
       const hoursRemaining = Math.floor(remaining / (1000 * 60 * 60));
       const minutesRemaining = Math.floor((remaining / (1000 * 60)) % 60);

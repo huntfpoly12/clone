@@ -1,10 +1,12 @@
 <template>
   <div class="facilityBizType-header">
+    <p>회계(Facility-Business-A, 2023) 원천(2023)</p>
+
     <label for="" class="facilityBizType-header-label">시설사업명</label>
       <DxSelectBox  :width="'170px'" :data-source="listFacilityBizTypeForUser" 
         v-model:value="facilityBiz"  :display-expr="'name'" :value-expr="'facilityBusinessId'" 
        :height="$config_styles.HeightInput"  placeholder="사업유형 선택"  :onItemClick="itemClick">
-    </DxSelectBox>
+      </DxSelectBox>
   </div>
   <a-modal :visible="modalConfirm" title="시설사업변경에 따른 주의 안내" :closable="false" :width="500" footer="" :bodyStyle="{padding: '15px'}">
     <a-row>

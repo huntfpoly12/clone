@@ -42,12 +42,10 @@
             </div>
           </a-col>
         </a-row>
-      <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
-    </form>
-    <div class="request-contract">
-      
-    </div>
 
+    </form>
+    <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
+    <select-facility-year v-if="modalSelectFacilityYear" :modalStatus="modalSelectFacilityYear" @closePopup="modalSelectFacilityYear = false"></select-facility-year>
   </div>
 </template>
 
@@ -64,16 +62,17 @@ export default {
     setup() {
         const store = useStore();
         const router = useRouter();
-        const modalForgotPassword= ref(false)
+        const modalForgotPassword = ref(false)
+        const modalSelectFacilityYear = ref(false)
         const form = reactive({
             username: "",
             password: "",
         });
         const errors = ref(null);
         const submitForm = (e) => {
-            e.preventDefault();
-            signinData();
-            sessionStorage.setItem("username", form.username);
+          e.preventDefault();  
+          signinData();
+          sessionStorage.setItem("username", form.username);
         };
         // signin mutation
         const { mutate: signinData, loading: signinLoading, onDone: signinDone, onError, } = useMutation(mutations.SIGN_IN, () => ({
@@ -83,9 +82,10 @@ export default {
             },
         }));
         signinDone((res) => {
-            store.commit("auth/setAuthData", res.data.login);
-            const url = new URL("/dashboard", window.location.origin);
-            window.location.href = url.toString();
+          store.commit("auth/setAuthData", res.data.login);
+          modalSelectFacilityYear.value = true
+            //const url = new URL("/dashboard", window.location.origin);
+            //window.location.href = url.toString();
         });
         onError((error) => {
             errors.value = error.message;
@@ -96,7 +96,8 @@ export default {
         return {
             form,
             submitForm,
-            openForgotPassword,modalForgotPassword,
+            openForgotPassword, modalForgotPassword,
+            modalSelectFacilityYear,
             errors,
             signinLoading,
         };
