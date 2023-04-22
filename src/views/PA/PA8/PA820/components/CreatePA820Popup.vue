@@ -66,7 +66,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item label="주민등록번호" label-align="right" class="red">
-                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" />
+                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" :mask="'#############*'" />
                 </a-form-item>
               </a-col>
             </a-row>
