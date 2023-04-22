@@ -24,7 +24,7 @@
       </a-col>
     </a-row>
     <div class="content-grid">
-      <DxDataGrid :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
+      <DxDataGrid id="tab2-bf620" :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
         :data-source="filteredDataSource" :show-borders="true" key-expr="companyId" class="mt-10"
         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
         @selection-changed="selectionChanged">
@@ -414,7 +414,7 @@ export default defineComponent({
   display: inline-block;
 }
 
-:deep .dx-datagrid {
+:deep #tab2-bf620 {
   height: calc(62vh);
 
   :deep .dx-datagrid-total-footer {
@@ -432,7 +432,7 @@ export default defineComponent({
     max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
   }
 
-  :deep .dx-freespace-row {
+  .dx-freespace-row {
     display: none !important; // cục lúc hiện lúc không
   }
 }

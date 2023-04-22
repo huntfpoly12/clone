@@ -52,15 +52,6 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="left" />
-        <template #downB=" { data }: any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer"
-              @click=" onGetFileStorageId(data.data.dependentsEvidenceFile.url) ">
-              <DownloadOutlined :size=" 12 " />
-            </DxButton>
-          </div>
-        </template>
         <DxColumn caption="" cell-template="action" alignment="right" width="150px" />
         <template #action=" { data }: any " class="custom-action">
           <div class="custom-action" style="text-align: center">

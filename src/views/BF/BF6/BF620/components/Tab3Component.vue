@@ -37,8 +37,8 @@
       </div>
     </div>
     <div class="content-grid mt-10">
-      <DxDataGrid :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource " :show-borders=" true "
-        key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
+      <DxDataGrid id="tab3-bf620" :show-row-lines=" true " :hoverStateEnabled=" true " :data-source=" dataSource "
+        :show-borders=" true " key-expr="productionRequestUserId" class="mt-10" :allow-column-reordering=" move_column "
         :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled=" true " />
@@ -76,7 +76,14 @@
           :allow-column-resizing=" colomn_resize " :column-auto-width=" true ">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
-          <DxColumn caption="사업자번호" data-field="bizNumber" />
+          <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />
+          <template #bizNumber=" { data }: any ">
+            <div> {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
+              data.data.bizNumber.toString().slice(3, 5)
+              }}-{{
+              data.data.bizNumber.toString().slice(5, 10)
+              }}</div>
+          </template>
           <DxColumn caption="상호" data-field="name" />
           <DxColumn caption="대표자명" data-field="presidentName" />
           <DxSummary>
@@ -221,17 +228,6 @@ export default defineComponent({
       ElecFilingFileFilter.requesteStartDate = newVal[0];
       ElecFilingFileFilter.requesteFinishDate = newVal[1];
     });
-    //
-    const productionStatusData = (emitVal: any) => {
-      // productionStatusArr.value = [emitVal];
-      // filteredDataSource.value = filteredDataSource.value.map((item: any) => {
-      //   if (item.companyId == emitVal.companyId) {
-      //     return { ...item, productionStatus: emitVal.productionStatus, beforeProduction: true, allowSelection: false }
-      //   }
-      //   return { ...item, beforeProduction: false, allowSelection: false };
-      // })
-      // reFreshDataGrid();
-    };
     return {
       ElecFilingFileFilter,
       variables,
@@ -248,7 +244,6 @@ export default defineComponent({
       companiesInElectronicLoading,
       companiesInElectronicDataSource,
       styleCheckBox,
-      productionStatusData,
       companiesInElectronic
     };
   },
@@ -269,28 +264,26 @@ export default defineComponent({
   height: 14px;
 }
 
-.content-grid {
-  :deep .dx-datagrid {
-    height: calc(71vh);
+:deep #tab3-bf620 {
+  height: calc(70vh);
 
-    :deep .dx-datagrid-total-footer {
-      height: 77px;
-      overflow: hidden;
-      position: absolute;
-      bottom: 0;
-    }
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
 
-    :deep .dx-datagrid-headers {
-      height: 27px;
-    }
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
 
-    :deep .dx-datagrid-rowsview {
-      max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-    }
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
 
-    :deep .dx-freespace-row {
-      display: none !important; // cục lúc hiện lúc không
-    }
+  .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
   }
 }
 </style>

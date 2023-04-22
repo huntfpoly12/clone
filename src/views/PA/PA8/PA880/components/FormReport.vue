@@ -137,7 +137,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <number-box width="200px" v-model:valueInput="formState.afterReportPostNumber" />
+                  <default-text-box :lengthFixed="5" :maxCharacter="5" lengthFixMsg="length must be 5"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -178,7 +178,7 @@
               <a-col :span="8">
                 <a-form-item label="근로자수" label-align="right" :class="{ red: formState.healthInsuranceReport }">
                   <number-box width="200px" v-model:valueInput="formState.healthInsuranceEmployeeNumber"
-                    :required="formState.healthInsuranceReport" />
+                    :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport"/>
                 </a-form-item>
               </a-col>
             </a-row>
