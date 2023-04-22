@@ -4,7 +4,15 @@
         field-template="field" item-template="item" :key="resetSelect" :disabled="disabled" :read-only="readOnly"
         @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput">
         <template #field="{ data }">
-            <DxTextBox :read-only="readOnly" v-if="data" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            <template v-if="data">
+              <a-tooltip v-if="!!lengthText" zIndex="9999999" placement="top" color="black">
+                  <template #title>{{ data.name + ' ' + data.shortCode }}</template>
+                  <div>
+                    <DxTextBox :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+                  </div>
+                </a-tooltip>
+              <DxTextBox v-else :read-only="readOnly" :value="data.name + ' ' + data.shortCode" height="26"></DxTextBox>
+            </template>
             <DxTextBox :read-only="readOnly" v-else placeholder="선택" height="26" />
         </template>
         <template #item="{ data }">
@@ -61,6 +69,10 @@ export default {
         classification: {
             type: Array,
             default: null,
+        },
+        lengthText: {
+          type: Number,
+          default: null,
         }
     },
     components: {

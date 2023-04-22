@@ -43,11 +43,11 @@
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
           <DxColumn caption="참고사항" data-field="referenceInformation" />
-          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
+          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center" />
           <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center" />
           <template #productionStatus="{ data }">
-            <a-tooltip placement="topLeft" color="black" v-if="data.data.productionStatus == -1">
+            <a-tooltip placement="topLeft" color="red" v-if="data.data.productionStatus == -1">
               <template #title>{{ data.data.causeOfProductionFailure }}</template>
               <div>
                 <production-status :typeTag="5" padding="1px 10px" />

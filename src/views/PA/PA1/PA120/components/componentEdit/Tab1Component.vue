@@ -57,7 +57,7 @@
         <a-form-item :label="labelResidebId" label-align="right" class="red">
           <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
             :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
-          </id-number-text-box>{{ initFormStateTabPA120.foreigner }}
+          </id-number-text-box>
         </a-form-item>
 
         <a-form-item label="주소정근무시간" label-align="right" class="red">
@@ -285,6 +285,7 @@ export default defineComponent({
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
         delete editData.employeeId;
         delete editData.key;
+        delete editData.deletable;
         let dataCallCreat = {
           ...originDataDetail.value,
           input: {

@@ -9,7 +9,10 @@
                     :allow-column-resizing="colomn_resize" :column-auto-width="true">
                     <DxScrolling mode="standard" show-scrollbar="always"/>
                     <DxColumn caption="사업자코드" data-field="code" />
-                    <DxColumn caption="사업자번호" data-field="bizNumber"/>
+                    <DxColumn caption="사업자번호" cell-template="bizNumber"/>
+                    <template #bizNumber="{ data }">
+                      {{ formatBizNumber(data.data.bizNumber) }}
+                    </template>
                     <DxColumn caption="상호" data-field="name"/>
                     <DxColumn caption="대표자명" data-field="presidentName" />
                     <DxSummary>
@@ -77,13 +80,18 @@ export default defineComponent({
     onError(e => {
       notification('error', e.message)
     })
+    const formatBizNumber = (value:any) => {
+      const bizNumber = value.toString()
+      return `${bizNumber.slice(0, 3)}-${bizNumber.slice(3, 5)}-${bizNumber.slice(5)}`
+    }
 
     return {
         move_column,
         colomn_resize,
         dataSource,
         loading,
-        setModalVisible
+        setModalVisible,
+        formatBizNumber
       }
   },
 })
