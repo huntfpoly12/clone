@@ -2,7 +2,7 @@
   <a-spin :spinning="loadingTab1 || loadingTab2 || loadingTab3 || loadingTab4">
     <span class="tag-status-null" style="padding:1px 10px;opacity: 50%" v-if="beforeProductionRequest">제작요청전</span>
     <template v-else>
-      <a-tooltip placement="topLeft" color="red"  v-if="checkStatus(-1)">
+      <a-tooltip placement="topLeft" color="#C00000"  v-if="checkStatus(-1)">
         <template #title>{{ causeOfProductionFailure }}</template>
         <div>
           <production-status :typeTag="5" padding="1px 10px" />
