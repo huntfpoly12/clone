@@ -2,10 +2,6 @@
   <a-modal class="form-modal" width="60%" :bodyStyle="{ 'max-height': '90vh', 'overflow-y': 'scroll' }" :visible="true"
     title="상실신고 신규 등록" centered @cancel="onCanCelModal" :footer="null">
     <a-spin :spinning="getEmployeeWageDailyLoading || getEmployeeWageLoading">
-      {{ formState.employeementInsuranceLossDescription }} formState.employeementInsuranceLossDescription <br />
-      <!-- {{ formStateToCompare }} formStateToCompare <br /> -->
-      <!-- {{ formState.employeeType }} formState.employeeType <br /> -->
-      <!-- {{ employeeWageDaily }} employeeWageDaily <br /> -->
       <standard-form ref="formPa820Ref">
         <div class="form-container">
           <div class="form-first pl-15">
@@ -19,7 +15,7 @@
               <a-col :span="12">
                 <a-form-item label="직원선택" class="label-required">
                   <div class="d-flex-center">
-                    <employ-select :arrayValue="employeeWages" :required="true" v-model:valueEmploy="formState.employeeId"
+                    <employ-select :arrayValue="employeeArr" :required="true" v-model:valueEmploy="formState.employeeId"
                       width="300px" />
                     <!-- <div class="ml-5 d-flex-center">
                       <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
@@ -106,9 +102,9 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common width="348px" :arrSelect="nationaPersionSelectbox" :required="true"
+                    <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
                       v-model:valueInput="formState.nationalPensionLossCode"
-                      :disabled="!formState.nationalPensionReport" />
+                      :disabled="!formState.nationalPensionReport" placeholder="선택" />
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
@@ -125,13 +121,13 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <!-- <DxSelectBox :search-enabled="true" width="348px" :data-source="healthInsuranceSelectbox"
-                      :show-clear-button="clearButton" display-expr="label" value-expr="value" :disabled="!formState.healthInsuranceReport"
-                      @value-changed="updateValue" :height="$config_styles.HeightInput" placeholder="선택"
-                      field-template="field" item-template="item">
-                      <template #field="{ data }">
-                        <div v-if="data" class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
-                          <a-tag color="black">{{ data?.value }}</a-tag>
+                    <DxSelectBox :search-enabled="false" width="357px" :data-source="healthInsuranceSelectbox"
+                      :show-clear-button="false" display-expr="label" value-expr="value"
+                      :disabled="!formState.healthInsuranceReport" v-model="formState.healthInsuranceLossCode"
+                      :height="$config_styles.HeightInput" placeholder="선택" field-template="field" item-template="item">
+                      <template #field="{ data } : any">
+                        <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
+                          <a-tag>{{ data?.value }}</a-tag>
                           <div>
                             {{ data.label }}
                             <DxTextBox style="display: none;" />
@@ -142,22 +138,19 @@
                           <DxTextBox style="display: none;" />
                         </div>
                       </template>
-                      <template #item="{ data }">
+                      <template #item=" { data } : any ">
                         <div style="display: flex; align-items: center;">
-                          <a-tag color="black">{{ data?.value }}</a-tag>
+                          <a-tag>{{ data?.value }}</a-tag>
                           <div>
                             {{ data?.label }}
                             <DxTextBox style="display: none;" />
                           </div>
                         </div>
                       </template>
-                      <DxValidator>
+                      <!-- <DxValidator>
                         <DxRequiredRule v-if="required" :message="messageRequired" />
-                      </DxValidator>
+                      </DxValidator> -->
                     </DxSelectBox>
-                    <select-box-common width="348px" :arrSelect="healthInsuranceSelectbox" :required="true"
-                      v-model:valueInput="formState.healthInsuranceLossCode"
-                      :disabled="!formState.healthInsuranceReport" /> -->
                   </div>
                 </div>
               </a-form-item>
@@ -167,13 +160,40 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common width="348px" :arrSelect="includeDependentsSelectbox" :required="true"
-                      v-model:valueInput="showData.healthInsuranceAcquisitionCode2" :disabled="isDisabled1" />
+                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" includeDependentsSelectbox "
+                      :show-clear-button=" false " display-expr="label" value-expr="value" :disabled=" isDisabled1 "
+                      v-model=" showData.healthInsuranceAcquisitionCode2 " placeholder="선택" field-template="field"
+                      item-template="item">
+                      <template #field=" { data } : any " style="padding: 4px;display: flex; align-items: center;">
+                        <div v-if=" data " style="padding: 2px;display: flex; align-items: center;">
+                          <a-tag>{{ data?.value }}</a-tag>
+                          <div class="text-overflow">
+                            {{ data.label }}
+                          </div>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                        <div v-else class="pt-5 pl-5">
+                          <span>선택</span>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                      </template>
+                      <template #item=" { data } : any " style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center;">
+                          <a-tag>{{ data?.value }}</a-tag>
+                          <div class="text-overflow" style="width: 296px;">
+                            {{ data?.label }}
+                          </div>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                      </template>
+                    </DxSelectBox>
+                    <!-- <select-box-common width="357px" :arrSelect=" includeDependentsSelectbox " :required=" true "
+                      v-model:valueInput=" showData.healthInsuranceAcquisitionCode2 " :disabled=" isDisabled1 " /> -->
                   </div>
                   <span class="ml-50">
                     <checkbox-basic size="14" label="이직확인서 발급희망"
-                      v-model:valueCheckbox="formState.employeementInsuranceJobChangeReport"
-                      :disabled="isDisabled1 || !isDisabled2" />
+                      v-model:valueCheckbox=" formState.employeementInsuranceJobChangeReport "
+                      :disabled=" isDisabled1 || !isDisabled2 " />
                   </span>
                 </div>
               </a-form-item>
@@ -181,46 +201,46 @@
             <a-row class="mt-10">
               <div class="input-text jobtype-margin">
                 <div class="text-detail">상실사유 (10자이내 간략히)</div>
-                <text-number-box :disabled="true" width="580px"
-                  v-model:valueInput="formState.employeementInsuranceLossDescription" />
+                <text-number-box :disabled=" true " width="580px"
+                  v-model:valueInput=" formState.employeementInsuranceLossDescription " />
               </div>
             </a-row>
           </div>
           <div class="form-group">
             <a-row>
-              <a-col :span="10">
+              <a-col :span=" 10 ">
                 <a-form-item label="당해년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryThisYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryThisYear "
+                    :required=" true " />
                 </a-form-item>
               </a-col>
-              <a-col :span="12">
+              <a-col :span=" 12 ">
                 <a-form-item label="당해년도 산정월수" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthThisYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthThisYear "
+                    :required=" true " />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row>
-              <a-col :span="10">
+              <a-col :span=" 10 ">
                 <a-form-item label="전년도 보수총액" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.totalSalaryLastYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryLastYear "
+                    :required=" true " />
                 </a-form-item>
               </a-col>
-              <a-col :span="12">
+              <a-col :span=" 12 ">
                 <a-form-item label="전년도 산정월수" label-align="right" class="red">
-                  <number-box-money width="200px" :disabled="true" v-model:valueInput="formState.workMonthLastYear"
-                    :required="true" />
+                  <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthLastYear "
+                    :required=" true " />
                 </a-form-item>
               </a-col>
             </a-row>
 
           </div>
           <a-row class="mt-15">
-            <a-col :span="8" :offset="8" style="text-align: center;">
-              <button-basic text="저장" type="default" mode="contained" :width="90" id="btn-save"
-                @onClick="onSubmit($event)" />
+            <a-col :span=" 8 " :offset=" 8 " style="text-align: center;">
+              <button-basic text="저장" type="default" mode="contained" :width=" 90 " id="btn-save"
+                @onClick=" onSubmit($event) " />
             </a-col>
           </a-row>
         </div>
@@ -261,6 +281,7 @@ import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 import { getCurrentInstance } from "vue";
+import { DxTextBox } from "devextreme-vue";
 
 const getValue = (val: any, arr: any[]) => {
   let data = arr.filter((item: any) => {
@@ -281,12 +302,14 @@ export default defineComponent({
     DeleteOutlined,
     SearchOutlined,
     DxSelectBox,
+    DxTextBox
   },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
+    const employeeArr = ref([]);
     const showData = reactive({
       name: '',
       name1: '',
@@ -309,7 +332,7 @@ export default defineComponent({
       nationalPensionLossCode: 3,
       nationalPensionPaymentCurrentMonthLoss: '',
       employeementInsuranceLossCode: '',
-      employeementInsuranceJobChangeReport: true,
+      employeementInsuranceJobChangeReport: false,
       healthInsuranceLossCode: '1',
       employeementInsuranceLossDescription: getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox),
       totalSalaryThisYear: 100000,
@@ -361,9 +384,27 @@ export default defineComponent({
     watch(dataEmployeeWages, (value) => {
       if (value) {
         employeeWages.value = value.getEmployeeWages;
+        employeeArr.value = value.getEmployeeWages;
       }
     }, { deep: true });
 
+    // ----------------get data employeeWages--------------
+
+    const employeeWageDailies = ref([]);
+    const variablesWageDailies = reactive({
+      companyId: companyId,
+      imputedYear: globalYear.value,
+    });
+    const { result: getEmployeeWageDailies } =
+      useQuery(queries.getEmployeeWageDailies, variablesWageDailies, () => ({
+        fetchPolicy: "no-cache",
+      }));
+    watch(getEmployeeWageDailies, (value) => {
+      if (value) {
+        employeeWageDailies.value = value.getEmployeeWageDailies;
+        // employeeArr.value = value.getEmployeeWageDailies;
+      }
+    }, { deep: true });
 
     // -----------------FNC COMMON--------------------------
 
@@ -435,18 +476,25 @@ export default defineComponent({
 
     //-----------------------UPDATE DATA WHEN EMPLOYEE CHANGE------------------------
 
-    watch(() => [formState.employeeId, formState.employeeType], ([newVal, newVal2]: any) => {
+    watch(() => formState.employeeId, (newVal: any) => {
       if (newVal) {
-        if (newVal2 == 10) {
+        if (formState.employeeType == 10) {
           getEmployeeWageParam.employeeId = newVal;
           getEmployeeWageTrigger.value = true;
           // return;
         }
-        if (newVal2 == 20) {
+        if (formState.employeeType == 20) {
           getEmployeeWageDailyParam.employeeId = newVal;
           getEmployeeWageDailyTrigger.value = true;
           // return;
         }
+      }
+    }, { deep: true })
+    watch(() => formState.employeeType, (newVal: any) => {
+      if (newVal == 10) {
+        employeeArr.value = employeeWages.value;
+      } else {
+        employeeArr.value = employeeWageDailies.value;
       }
     }, { deep: true })
 
@@ -505,7 +553,7 @@ export default defineComponent({
       }
     }
     return {
-      globalYear, employeeWages,
+      globalYear, employeeWages, employeeWageDailies, employeeArr,
       employeeFashionArr, productionStatusesCheckbox, nationaPersionSelectbox, healthInsuranceSelectbox, includeDependentsSelectbox,
       formState, onSubmit, showData, formStateToCompare,
       isDisabled1, isDisabled2,
@@ -517,4 +565,17 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import "../styles/form.scss";
+
+:deep .dx-dropdowneditor-field-template-wrapper {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 322px;
+}
+
+// .text-overflow {
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+// }
 </style>
