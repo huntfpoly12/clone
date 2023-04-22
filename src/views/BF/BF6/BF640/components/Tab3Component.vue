@@ -16,7 +16,7 @@
                     <div class="mt-7">
                         <DxRadioGroup :data-source="typeCheckbox" item-template="radio" v-model:value="typeStatus"
                             layout="horizontal" :icon-size="12">
-                            <template #radio="{ data }">
+                            <template #radio="{ data }: any">
                                 <production-status :typeTag="0" v-if="data == 0" padding="0px 10px" />
                                 <production-status :typeTag="4" v-if="data == 2" padding="1px 10px" />
                                 <production-status :typeTag="5" v-if="data == -1" padding="1px 10px" />
@@ -31,24 +31,24 @@
                 </a-form-item>
             </a-col>
         </a-row>
-        <div class="form-table">
+        <div class="content-grid">
           <a-spin :spinning="loadingTable">
             <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
-                <DxColumn caption="일련번호" data-field="electronicFilingId" />
+                <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" width="150"/>
                 <DxColumn caption="참고사항"  data-field="referenceInformation"/>
                 <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
                 <DxColumn caption="아이디" data-field="productionRequestUserId" />
                 <DxColumn caption="제작현황" cell-template="제작현황" />
-                <template #제작현황="{ data }">
+                <template #제작현황="{ data }: any">
                   <production-status :typeTag="2" v-if="(data.data.productionStatus==0)" padding="1px 10px" />
                   <production-status :typeTag="3" v-if="(data.data.productionStatus==1)" padding="1px 10px" />
                   <production-status :typeTag="4" v-if="(data.data.productionStatus==2)" padding="1px 10px" />
                   <production-status :typeTag="5" v-if="(data.data.productionStatus==-1)" padding="1px 10px" :message="data.data.causeOfProductionFailure"/>
                 </template>
                 <DxColumn caption="상세보기" width="80px" cell-template="action" />
-                <template #action="{ data }">
+                <template #action="{ data }: any">
                     <div style="text-align: center">
                         <img src="@/assets/images/searchPlus.png" style="width: 20px; height: 20px; margin-top: 0px;"
                             @click="openPopupDetail(data.data)" />
@@ -180,5 +180,29 @@ export default defineComponent({
 }
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
+}
+.content-grid {
+  :deep .dx-datagrid {
+    height: calc(71vh);
+
+    :deep .dx-datagrid-total-footer {
+      height: 77px;
+      overflow: hidden;
+      position: absolute;
+      bottom: 0;
+    }
+
+    :deep .dx-datagrid-headers {
+      height: 27px;
+    }
+
+    :deep .dx-datagrid-rowsview {
+      max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+    }
+
+    :deep .dx-freespace-row {
+      display: none !important; // cục lúc hiện lúc không
+    }
+  }
 }
 </style> 
