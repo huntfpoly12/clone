@@ -3,7 +3,7 @@
     companyId : {{ jwtObject.companyId }}<br/>
     userType : {{ jwtObject.userType }}<br/>
     isExpired : {{jwtObject.isExpired()}}<br/>
-    time Expired : {{dayjs(jwtObject.expiredTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}}<br/>
+    time Expired : {{dayjs(jwtObject.expiredTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}} --- <a-tag color="#f50">{{ timeRemaining }}</a-tag><br/>
     userId : {{ jwtObject.userId }} <br/>
     ip : {{ jwtObject.ip }} <br/>
     managerGrade : {{ jwtObject.managerGrade }} <br/>
@@ -67,20 +67,39 @@
 
 <script lang="ts">
 import { getJwtObject,AdminScreenRole  } from "@bankda/jangbuda-common";
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import dayjs from "dayjs";
+const token  = sessionStorage.getItem("token")
+const jwtObject = getJwtObject(token!);
+let expirationTime = jwtObject.expiredTime
 export default defineComponent({
   setup() {
+    const now = ref(dayjs().valueOf())
     const token  = sessionStorage.getItem("token")
     const jwtObject = getJwtObject(token!);
     const infos = jwtObject.accounting;
     const info = jwtObject.withholding;
+    const timeRemaining = computed(() => {
+      const remaining = expirationTime - now.value;
+      const hoursRemaining = Math.floor(remaining / (1000 * 60 * 60));
+      const minutesRemaining = Math.floor((remaining / (1000 * 60)) % 60);
+      const secondsRemaining = Math.floor((remaining / 1000) % 60);
+      return `${hoursRemaining} 시간 ${minutesRemaining} 분 ${secondsRemaining} 초`;
+    });
+
+    const intervalId = setInterval(() => {
+      now.value = dayjs().valueOf();
+    }, 1000);
+    onMounted(() => {
+      now.value = dayjs().valueOf();
+    });
     return {
       jwtObject,
       AdminScreenRole ,
       infos,
       info,
-      dayjs
+      dayjs,
+      timeRemaining
     }
    }
 });

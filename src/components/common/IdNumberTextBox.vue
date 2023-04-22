@@ -52,7 +52,11 @@ export default defineComponent({
     isResidentId: {
       type: Boolean,
       default: true,
-    }
+    },
+    mask: {
+      type: String,
+      default: "000000-0000000",
+    },
   },
   components: {
     DxTextBox,
@@ -63,7 +67,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const app: any = getCurrentInstance()
     const messages = app.appContext.config.globalProperties.$messages;
-    const mask = ref("000000-0000000");
+    // const mask = ref("000000-0000000");
     const maskMess = ref(messages.getCommonMessage('105').message);
     const messageRequired = ref(messages.getCommonMessage('102').message);
     const msgError = Message.getMessage('COMMON', '701').message;
@@ -114,7 +118,7 @@ export default defineComponent({
     return {
       updateValue,
       value,
-      mask,
+      // mask,
       maskMess,
       messageRequired,
       msgError,
