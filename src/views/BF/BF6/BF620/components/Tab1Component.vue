@@ -25,7 +25,7 @@
       {{ dataSource }} <br />
       {{ productionCount }} productionCount<br />
       {{ beforeCount }} beforeCount<br /> -->
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
+      <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
         key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true">
         <DxScrolling mode="standard" show-scrollbar="always" />
@@ -41,7 +41,7 @@
           {{ data.data.companyName }}
           {{ data.data.address }}
         </template>
-        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="102px" />
+        <DxColumn caption="귀속연월" cell-template="inputYearMonth" width="115px" />
         <template #inputYearMonth=" { data }: any ">
           <!-- {{ data.data.imputedYear }} -->
           <a-tooltip color="black">
@@ -55,7 +55,7 @@
             " class="btn-date" />
           </a-tooltip>
         </template>
-        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="102px" />
+        <DxColumn caption="지급연월" cell-template="paymentYearMonth" width="115px" />
         <template #paymentYearMonth=" { data }: any ">
           <DxButton :text=" '지 ' + data.data.paymentYear + '-' + formatMonth(data.data.paymentMonth) " :style="
             {
@@ -182,7 +182,7 @@ export default defineComponent({
               if (productionStatus == -1) {
                 item.causeOfProductionFailure = causeOfProductionFailure;
               }
-              if (productionStatus == 2){
+              if (productionStatus == 2) {
                 item.allowSelection = false;
               }
             }
@@ -412,7 +412,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import '../style/style.scss';
 
-:deep .dx-datagrid {
+:deep #tab1-bf620 {
   height: calc(62vh);
 
   :deep .dx-datagrid-total-footer {
@@ -430,7 +430,7 @@ export default defineComponent({
     max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
   }
 
-  :deep .dx-freespace-row {
+  .dx-freespace-row {
     display: none !important; // cục lúc hiện lúc không
   }
 }

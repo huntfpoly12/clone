@@ -166,6 +166,10 @@
 :deep .dx-datagrid-headers .dx-row > td {
     padding: 4px 7px;
 }
+:deep .dx-datagrid-text-content {
+    white-space: pre-wrap;
+    text-align: left !important;
+}
 // :deep .data-grid-child .dx-datagrid-rowsview.dx-empty {
 //     height: 40px;
 // }

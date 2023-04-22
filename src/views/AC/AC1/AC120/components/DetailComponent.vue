@@ -5,7 +5,7 @@
                 <img @click="toggleTransition" src="@/assets/images/iconArrowUp.png" alt="">
             </div>
             <div class="column">
-                {{ store.state.common.ac120.formData }}
+                <!-- {{ store.state.common.ac120.formData }} -->
                 <!-- {{  store.state.common.ac120.arrResolutionType }} -->
                 <a-spin :spinning="false">
                     <StandardForm formName="ac-120-form" ref="refFormAC120" :key='store.state.common.ac120.keyRefreshForm'>
@@ -45,7 +45,7 @@
                                             v-model:valueInput="store.state.common.ac120.formData.resolutionType"
                                             width="70px" placeholder="여입" disabled="true" />
                                     </a-form-item>
-                                    <button-basic @onClick="actionPopupCopyData" style="margin: -5px 0px 0px 5px"
+                                    <button-basic @onClick="statusPopupCopyData = true" :disabled="store.state.common.ac120.formData.resolutionType != 11" style="margin: -5px 0px 0px 5px"
                                         mode="contained" type="default" :text="textButton + '로 변경'" />
                                 </div>
                             </a-col>
@@ -361,11 +361,11 @@ export default defineComponent({
             store.state.common.ac120.statusShowFull = !store.state.common.ac120.statusShowFull
         }
 
-        const actionPopupCopyData = () => {
-            if (store.state.common.ac120.formData.resolutionType == 11) {
-                statusPopupCopyData.value = true
-            }
-        }
+        // const actionPopupCopyData = () => {
+        //     if (store.state.common.ac120.formData.resolutionType == 11) {
+        //         statusPopupCopyData.value = true
+        //     }
+        // }
         const onSubmit = () => {
             const res = refFormAC120.value?.validate();
             if (!res.isValid) {
@@ -450,7 +450,7 @@ export default defineComponent({
         return {
             store,
             toggleTransition,
-            actionPopupCopyData,
+            // actionPopupCopyData,
             statusPopupCopyData,
             arrayRadioCheck,
             onSubmit,

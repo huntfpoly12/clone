@@ -93,6 +93,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { companyId, makeDataClean } from "@/helpers/commonFunction"
 import { initialArrayRadioMonth } from '../utils'
 import notification from '@/utils/notification';
+import { Message } from "@/configs/enum"
 import {
     DxDataGrid,
     DxColumn, DxScrolling,
@@ -168,7 +169,16 @@ export default defineComponent({
 
         const onSubmit = () => {
             if (dataSelect.value) {
+                console.log(dataSelect.value);
+                store.state.common.ac120.formData.accountCode = dataSelect.value.accountCode
+                store.state.common.ac120.formData.relationCode = dataSelect.value.relationCode
+                store.state.common.ac120.formData.fundingSource = dataSelect.value.fundingSource
+                store.state.common.ac120.formData.clientId = dataSelect.value.clientId
+                store.state.common.ac120.formData.letterOfApprovalType = dataSelect.value.letterOfApprovalType
+                store.state.common.ac120.formData.causeUsage = dataSelect.value.causeUsage
+                store.state.common.ac120.formData.memo = `원본 지출결의서: ` + dataSelect.value.accountingDocumentId
                 setModalVisible()
+                notification('success', Message.getMessage('AC120', '002').message)
             } else {
                 notification('error', 'vui lòng chọn data')
             }
