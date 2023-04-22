@@ -1,37 +1,26 @@
 <template>
-  <a-modal
-    :visible="modalStatus"
-    @cancel="setModalVisible"
-    :mask-closable="false"
-    class="confirm-md"
-    footer=""
-    :width="700"
-  >
+  <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+    :width="700">
     <div class="pt-10">
       <a-spin :spinning="companiesInElectronicLoading" size="large">
-        <DxDataGrid
-          :show-row-lines="true"
-          :hoverStateEnabled="true"
-          :data-source="dataSource"
-          :show-borders="true"
-          key-expr="id"
-          class="mt-10"
-          :allow-column-reordering="move_column"
-          :allow-column-resizing="colomn_resize"
-          :column-auto-width="true"
-        >
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+          key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
+          :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="사업자코드" data-field="code" />
-          <DxColumn caption="사업자번호" data-field="bizNumber" />
+          <DxColumn caption="사업자번호" cell-template="bizNumber" data-field="bizNumber" />
+          <template #bizNumber=" { data }: any ">
+            <div> {{ data.data.bizNumber.toString().slice(0, 3) }}-{{
+              data.data.bizNumber.toString().slice(3, 5)
+              }}-{{
+              data.data.bizNumber.toString().slice(5, 10)
+              }}</div>
+          </template>
           <DxColumn caption="상호" data-field="name" />
           <DxColumn caption="대표자명" data-field="presidentName" />
           <DxSummary>
-              <DxTotalItem
-              column="사업자코드"
-              summary-type="count"
-              display-format="전체: {0}"
-              />
-            </DxSummary>
+            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+          </DxSummary>
         </DxDataGrid>
       </a-spin>
     </div>
@@ -80,16 +69,13 @@ export default defineComponent({
 
     // Query getCompaniesInElectronicFilingFile
 
-    // const companiesInElectronicTrigger = ref(true);
     let {
-      refetch: companiesInElectronicRefetch,
       loading: companiesInElectronicLoading,
       result: companiesInElectronicResult,
     } = useQuery(
       queries.getCompaniesInElectronicFilingFile,
       companiesInElectronicParam.value,
       () => ({
-        // enabled: companiesInElectronicTrigger.value,
         fetchPolicy: "no-cache",
       })
     );
@@ -123,7 +109,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-:deep .dx-datagrid-total-footer > .dx-datagrid-content {
-    padding: 0;
+:deep .dx-datagrid-total-footer>.dx-datagrid-content {
+  padding: 0;
 }
 </style>

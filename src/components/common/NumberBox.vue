@@ -3,7 +3,7 @@
     :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
     :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled" :min="min" :format="isFormat && formatNumber"
     :mode="mode" :style="{ height: $config_styles.HeightInput }" :name="nameInput" :readOnly="readOnly">
-    <DxValidator v-if="required" :name="nameInput">
+    <DxValidator :name="nameInput">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxRangeRule v-if="required && min" :min="min" :message="messageMin"/>
     </DxValidator>
