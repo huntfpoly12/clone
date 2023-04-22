@@ -30,7 +30,7 @@
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" />
+                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" @update:valueRadioCheck="changeRadioResolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
@@ -132,6 +132,15 @@ export default defineComponent({
             }
             
         };
+        const changeRadioResolutionType = (value: Number) => {
+            console.log(value);
+            if (value == 11 || value == 21) {
+                store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+            } else if (value == 12 || value == 22) {
+                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            }
+            
+        }
 
         store.state.common.ac120.arrResolutionType = computed(() => {
             let item: any = enum2Entries(ResolutionType).map((value) => ({
@@ -153,7 +162,7 @@ export default defineComponent({
             submit,
             cancel,
             arraySelectBox,
-            // arrLetterOfApprovalType,
+            changeRadioResolutionType,
             countKey,
             store,
         }
