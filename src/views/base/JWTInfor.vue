@@ -3,7 +3,7 @@
     companyId : {{ jwtObject.companyId }}<br/>
     userType : {{ jwtObject.userType }}<br/>
     isExpired : {{jwtObject.isExpired()}}<br/>
-    time Expired : {{dayjs(jwtObject.expiredTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}} --- {{ timeRemaining }}<br/>
+    time Expired : {{dayjs(jwtObject.expiredTime).format('YYYY-MM-DDTHH:mm:ssZ[Z]')}} --- <a-tag color="#f50">{{ timeRemaining }}</a-tag><br/>
     userId : {{ jwtObject.userId }} <br/>
     ip : {{ jwtObject.ip }} <br/>
     managerGrade : {{ jwtObject.managerGrade }} <br/>
