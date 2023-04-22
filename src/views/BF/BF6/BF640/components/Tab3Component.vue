@@ -27,13 +27,13 @@
             </a-col>
             <a-col>
                 <a-form-item label="제작요청자" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" />
+                    <list-manager-dropdown :required="true" v-model:valueInput="dataSearch.manageUserId" width="200px"/>
                 </a-form-item>
             </a-col>
         </a-row>
         <div class="content-grid">
           <a-spin :spinning="loadingTable">
-            <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+            <DxDataGrid id="tab3-bf640" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
                 key-expr="electronicFilingId" class="mt-10" :allow-column-reordering="move_column"
                 :allow-column-resizing="colomn_resize" :column-auto-width="true">
                 <DxColumn caption="일련번호" data-field="electronicFilingId" alignment="left" width="150"/>
@@ -93,7 +93,9 @@ export default defineComponent({
     GetStatusTable
 },
     props: {
-        searchStep: Number,
+      search: {
+        type: Number,
+      },
     },
     setup(props) {
         let modalDetail = ref(false)
@@ -135,13 +137,11 @@ export default defineComponent({
             else
                 dataSearch.value.productionStatuses = [newVal]
         })
-        watch(() => props.searchStep, (val: any) => {
+        watch(() => props.search, (val: any) => {
+            console.log(`output-`,)
             dataSearch.value.requesteStartDate = rangeDate.value[0]
             dataSearch.value.requesteFinishDate = rangeDate.value[1]
-            if (dataSearch.value) {
-                trigger.value = true
-                refetchTable()
-            }
+            trigger.value = true
         }, { deep: true })
         // ============== FUNCTION =====================
         const openPopupDetail = (data: any) => {
@@ -181,28 +181,26 @@ export default defineComponent({
 :deep .dx-radiogroup-horizontal .dx-radiobutton {
     margin-right: 0px;
 }
-.content-grid {
-  :deep .dx-datagrid {
-    height: calc(71vh);
+:deep #tab3-bf640 {
+  height: calc(70vh);
 
-    :deep .dx-datagrid-total-footer {
-      height: 77px;
-      overflow: hidden;
-      position: absolute;
-      bottom: 0;
-    }
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
 
-    :deep .dx-datagrid-headers {
-      height: 27px;
-    }
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
 
-    :deep .dx-datagrid-rowsview {
-      max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
-    }
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
 
-    :deep .dx-freespace-row {
-      display: none !important; // cục lúc hiện lúc không
-    }
+  .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
   }
 }
 </style> 

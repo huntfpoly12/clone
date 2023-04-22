@@ -97,4 +97,8 @@
     border-radius: 5px;
     padding: 1px 10px;
   }
+
+  :deep .dx-button-has-text .dx-button-content {
+    padding: 0px 8px;
+  }
 }
