@@ -227,7 +227,7 @@
                 </a-col>
             </a-row>
             <a-row :class="{ 'disabledBlock': statusDisabledBlock }">
-                <a-col :span="12" class="custom-layout"
+                <a-col :span="12" class="custom-layout custom-layout-table"
                     :class="{ 'ele-opacity': (store.state.common.pa110.statusChangeFormEdit && !store.state.common.pa110.statusFormAdd) || (store.state.common.pa110.statusChangeFormAdd && store.state.common.pa110.statusFormAdd) }">
                     <a-spin :spinning="loadingTaxPayInfo" size="large">
                         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true"
@@ -304,7 +304,7 @@
                         </DxDataGrid>
                     </a-spin>
                 </a-col>
-                <a-col :span="12" class="custom-layout" style="padding-right: 0px;"
+                <a-col :span="12" class="custom-layout custom-form-data" style="padding-right: 0px;"
                     :class="{ 'disabledBlock': !store.state.common.pa110.dataTaxPayInfo.length }">
                     <FormDataComponent />
                 </a-col>
