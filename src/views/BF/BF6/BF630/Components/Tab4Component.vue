@@ -398,7 +398,8 @@ export default defineComponent({
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
-      if (countListData.value > dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length) return
+      const lengthDataSourceAfterProduction = dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length
+      if (countListData.value > lengthDataSourceAfterProduction) return
       if (emitVal !== null) {
         productionStatusArr.value = [...productionStatusArr.value, emitVal];
         dataSource.value[index].productionStatus = emitVal.productionStatus
@@ -406,7 +407,7 @@ export default defineComponent({
         dataSourceOrigin.value[index].productionStatus = emitVal.productionStatus
         dataSourceOrigin.value[index].afterProduction = true
       }
-      if (countListData.value == dataSource.value.length) {
+      if (countListData.value == lengthDataSourceAfterProduction) {
         if (isFirstSearchByfilter.value) {
           isFirstSearchByfilter.value = false
           searchByFilter()

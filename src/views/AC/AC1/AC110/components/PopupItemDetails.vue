@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
@@ -155,14 +155,8 @@ export default defineComponent({
       setData()
     })
     const setData = () => {
-      arrSelectItem.value = []
-      arrSelectStandard.value = []
-      arrSelectUnit.value = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
-          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item }]
-          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard }]
-          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit }]
           return {
             ...item,
             id: index
@@ -173,6 +167,30 @@ export default defineComponent({
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
     }
+    watch(() => dataSource.value.statementOfGoodsItems, (value, oldValue) => {
+      if(!value) return
+      const lengthOldVal = !!oldValue ? oldValue.length : 0
+      if(value.length !== lengthOldVal){
+        setDataSelect()
+      }
+    }, {
+      deep: true,
+    }) 
+
+    const setDataSelect = () => {
+      dataSource.value.statementOfGoodsItems.forEach((item: any, index: number) => {
+        if(!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())){
+          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
+        }
+        if(!!item.standard && !arrSelectStandard.value.some((option: any) =>  option.value === item.standard.toString().trim())){
+          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
+        }
+        if(!!item.unit && !arrSelectUnit.value.some((option: any) =>  option.value === item.unit.toString().trim())){
+          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
+        }
+      })
+    }
+
     const cancel = () => {
       if (!isEqual(dataSourceCopy.value, dataSource.value.statementOfGoodsItems)) {
         isModalConfirmSaveChange.value = true
