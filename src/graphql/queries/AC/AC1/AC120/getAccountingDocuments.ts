@@ -20,7 +20,7 @@ export default gql`
         accountingDocumentId
         documentOrderByDate
         bankbookId
-        
+        bankbookDetailId
         resolutionClassification
         income
         spending

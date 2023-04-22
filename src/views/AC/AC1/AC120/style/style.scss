@@ -151,3 +151,21 @@
     font-size: 16px;
     font-weight: bold;
 }
+:deep .data-grid-child .dx-datagrid-rowsview {
+    border-top: none;
+}
+:deep .data-grid-child .dx-row-lines {
+    height: 37px;
+}
+:deep .dx-datagrid .dx-row > td {
+    padding: 0;
+}
+:deep .data-grid-child .dx-row > td {
+    padding: 4px 7px;
+}
+:deep .dx-datagrid-headers .dx-row > td {
+    padding: 4px 7px;
+}
+// :deep .data-grid-child .dx-datagrid-rowsview.dx-empty {
+//     height: 40px;
+// }

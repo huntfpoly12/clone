@@ -1,6 +1,6 @@
 
 <template>
-    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input"
+    <DxNumberBox @valueChanged="updateValue" :width="width" value-change-event="input" @focusIn="focus"
         :show-clear-button="clearButton" v-model:value="value" :disabled="disabled" :placeholder="placeholder"
         :show-spin-buttons="spinButtons" @input="onChange" @keyDown="onChange" :rtlEnabled="rtlEnabled"
         :mode="mode" :style="{ height: $config_styles.HeightInput }" :format="format" :name="nameInput" :readOnly="readOnly">
@@ -104,12 +104,15 @@ export default defineComponent({
         const onChange = (e: any) => {
             emit("changeInput",e);
         }
-
+        const focus = (e: any) => {
+          emit("focusInput",e);
+        }
         return {
             updateValue,
             value,
             messageRequired,
             onChange,
+            focus
         };
     },
 });
