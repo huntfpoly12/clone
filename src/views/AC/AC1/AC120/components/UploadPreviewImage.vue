@@ -6,7 +6,7 @@
         ]" :class="{ 'ac120-disable-form-upload': false }">
             <div ref="elementUpload" class="upload-pewview-img">
                 <a-upload :disabled="statusDisabledImg" list-type="picture-card" :multiple="multiple"
-                    v-model:file-list="fileList" @preview="handlePreview" @change="changeFile"
+                    v-model:file-list="fileList" @preview="handlePreview"
                     :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
                     accept="image/png, image/jpeg, image/jpg image/gif">
                     <div v-if="fileList.length <= limit">
@@ -49,11 +49,6 @@ interface FileItem {
     originFileObj?: any;
     fileStorageId?: any;
 }
-
-interface FileInfo {
-    file: FileItem;
-    fileList: FileItem[];
-}
 export default defineComponent({
     props: {
         limit: {
@@ -68,14 +63,6 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        // width: {
-        //     type: String,
-        //     default: "",
-        // },
-        // heightHidden: {
-        //     type: String,
-        //     default: "",
-        // },
         payLoadProofs: {
             type: Object,
             default: () => { },
@@ -87,7 +74,6 @@ export default defineComponent({
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
 
         let fileList = ref<any[]>([]);
-        let listFileStorageId = ref<any[]>([]);
         let isFailUpload = ref(false);
         const previewImage = ref<string | undefined>("");
         const previewVisible = ref<boolean>(false);
@@ -102,8 +88,6 @@ export default defineComponent({
             transactionDetailDate: null,
             accountingDocumentId: null,
         })
-        // computed
-        // const payload = computed(() => props.payLoadProofs);
         // =================== GRAPHQL ===================
         // queries getAccountingDocumentProofs
         const { result: resGetAccountingDocumentProofs, loading: loadingGetAccountingDocumentProofs
@@ -123,6 +107,7 @@ export default defineComponent({
         // ============== ON DONE MUTATION GRAPHQL ===============
         // AddAccountingDocumentProof
         doneAddAccountingDocumentProof((e) => {
+            // triggerAccountingDocumentProofs.value = true;
             notification("success", Message.getMessage("COMMON", "106").message);
         });
         errorAddAccountingDocumentProof((e) => {
@@ -150,9 +135,6 @@ export default defineComponent({
                 fileList.value = []
             }
         }, { deep: true });
-        // watch( () => props.listImageFile, (value) => {
-        //     fileList.value = value;
-        // });
 
         watch(resGetAccountingDocumentProofs, (value) => {
             triggerAccountingDocumentProofs.value = false;
@@ -166,13 +148,8 @@ export default defineComponent({
                         status: "done",
                     }
                 });
-                // fileList.value = listFileStorageId.value
             }
         });
-
-        // watch(() => listFileStorageId.value, (value) => {
-        //     emit("update:listImageFile", value);
-        // }, { deep: true });
 
         watch(() => fileList.value, (value) => {
             nextTick(() => {
@@ -201,15 +178,6 @@ export default defineComponent({
 
         // ================ FUNCTION ============================================
 
-        // watch(
-        //     () => props.payLoadProofs,
-        //     (value) => {
-        //         if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
-        //             triggerAccountingDocumentProofs.value = true;
-        //         }
-        //     }
-        // );
-
         const getBase64 = (file: File) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -228,8 +196,6 @@ export default defineComponent({
         const handleCancel = () => {
             previewVisible.value = false;
         };
-
-        const changeFile = ({ file, fileList: newFileList }: FileInfo) => { };
 
         const beforeUpload = (file: any) => {
             const isImage =
@@ -257,7 +223,6 @@ export default defineComponent({
             if (!isFailUpload.value) {
                 fileList.value.splice(fileList.value.length - 1, 1);
                 e.onError("");
-                // emit("update:listImageFile", listFileStorageId.value);
                 return;
             }
             const formData = new FormData();
@@ -268,6 +233,7 @@ export default defineComponent({
             uploadRepository.accountingProof(formData)
                 .then((res: any) => {
                     e.onSuccess("ok");
+                    fileList.value[fileList.value.length - 1].id = res.data.id
                     addAccountingDocumentProof({
                         ...dataGetAccountingDocumentProofs.value,
                         fileStorageId: res.data.id,
@@ -288,6 +254,7 @@ export default defineComponent({
                 ...dataGetAccountingDocumentProofs.value,
                 fileStorageId: fileList.value[indexImg.value].id,
             });
+            return false
 
         };
         return {
@@ -297,7 +264,6 @@ export default defineComponent({
             fileList,
             handleCancel,
             previewImage,
-            changeFile,
             customRequest,
             remove,
             elementUpload,
