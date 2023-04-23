@@ -542,18 +542,14 @@ export default defineComponent({
       return menuTab.value.map((tab) => tab.id.toUpperCase().replaceAll('-', '') || 'Example')
     })
 
-    const infosAccounting = jwtObject.accounting;
-    if(!!infosAccounting && infosAccounting.length) {
-      store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
-    }
+    // const infosAccounting = jwtObject.accounting;
+    // if(!!infosAccounting && infosAccounting.length) {
+    //   store.commit('settings/setGlobalFacilityBizId', infosAccounting[0].id)
+    // }
 
     onMounted(async() => {
       store.commit('auth/setTokenInfo',jwtObject)
-      //get and set account subject
-      if (jwtObject.userType === 'c') {
-        let globalFacilityBizId = store.getters['settings/globalFacilityBizId']
-        await store.dispatch('settings/getAccountSubject',{ companyId: companyId, fiscalYear: Number(dayjs().year()),facilityBizType: globalFacilityBizId})
-      }
+ 
       // store.commit('auth/setTokenInfo',jwtObject)
       if(route.fullPath === "/dashboard/" || route.fullPath === "/dashboard") {
         openTab(tabDashboard)

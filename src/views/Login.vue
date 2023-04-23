@@ -45,7 +45,6 @@
 
     </form>
     <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
-    <select-facility-year v-if="modalSelectFacilityYear" :modalStatus="modalSelectFacilityYear" @closePopup="modalSelectFacilityYear = false"></select-facility-year>
   </div>
 </template>
 
@@ -63,7 +62,6 @@ export default {
         const store = useStore();
         const router = useRouter();
         const modalForgotPassword = ref(false)
-        const modalSelectFacilityYear = ref(false)
         const form = reactive({
             username: "",
             password: "",
@@ -83,9 +81,8 @@ export default {
         }));
         signinDone((res) => {
           store.commit("auth/setAuthData", res.data.login);
-          modalSelectFacilityYear.value = true
-            //const url = new URL("/dashboard", window.location.origin);
-            //window.location.href = url.toString();
+          const url = new URL("/dashboard", window.location.origin);
+          window.location.href = url.toString();
         });
         onError((error) => {
             errors.value = error.message;
@@ -97,7 +94,6 @@ export default {
             form,
             submitForm,
             openForgotPassword, modalForgotPassword,
-            modalSelectFacilityYear,
             errors,
             signinLoading,
         };
