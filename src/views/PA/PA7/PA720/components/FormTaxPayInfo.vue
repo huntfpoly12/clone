@@ -47,7 +47,7 @@
             <DxSelectBox width="200px" valueExpr="value" :data-source="taxRateOptions" v-model="formPA720.input.taxRate"
               placeholder="선택" item-template="item" display-expr="label" :height="$config_styles.HeightInput"
                :required="true" :disabled="idDisableInput" >
-              <template #item="{ data }">
+              <template #item="{ data } : any">
                 <a-tooltip placement="top" zIndex="9999">
                   <template #title v-if="data?.tooltip">
                     <span>{{ data.tooltip }}</span>
@@ -100,7 +100,7 @@
           </div>
         </a-col>
       </a-row>
-      <a-row justify="center" class="my-10 mt-20">
+      <a-row justify="center" class="my-10 mt-30">
         <button-basic text="저장" type="default" mode="contained" :width="90" @onClick="onSubmitForm($event)"
           id="pa720-save-js" :disabled="idDisableInput">
         </button-basic>

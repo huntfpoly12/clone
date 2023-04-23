@@ -11,7 +11,7 @@
                     <div class="dx-field">
                         <div class="dx-field-label">Number box format money</div>
                         <div class="dx-field-value">
-                            <number-box-money width="150px" :required="true" :spinButtons="false" :rtlEnabled="true"></number-box-money>
+                            <number-box-money width="150px" :required="true" :spinButtons="false" :rtlEnabled="true" format="0,###" :min="0"></number-box-money>
                         </div>
                     </div>
                 </td>
@@ -49,7 +49,7 @@
                 <td>
                     <pre class="mycode">
                 &lt;number-box-money width="150px" width="150px" :required="true"
-                placeholder="Number box" :min="5" :max="50"
+                placeholder="Number box" format="0,###" :min="0" :max="50"
                 :spinButtons="true"/&gt;
                     </pre>
                 </td>

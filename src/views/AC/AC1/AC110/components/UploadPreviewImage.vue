@@ -1,8 +1,8 @@
 <template>
   <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
-    <div class="form-upload-ac110" :class="{ 'ac110-disable-form-upload': !payload.bankbookDetailId }">
+    <div class="form-upload-ac110" >
       <div ref="elementUpload" class="upload-pewview-img">
-        <a-upload list-type="picture-card" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
+        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
           @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
           accept="image/png, image/jpeg, image/jpg image/gif">
           <div v-if="fileList.length <= limit">
@@ -81,6 +81,7 @@ export default defineComponent({
     const previewVisible = ref<boolean>(false);
     let triggerBankbookDetailProofs = ref(false);
     const elementUpload = ref<any>()
+    let indexImgRemove = ref<any>(null)
     // computed
     const payload = computed(() => props.payLoadProofs)
     // graphQL
@@ -126,6 +127,8 @@ export default defineComponent({
       loading: loadingRemoveBankbookDetailProof,
     } = useMutation(mutations.removeBankbookDetailProof);
     doneRemoveBankbookDetailProof((e) => {
+      fileList.value.splice(indexImgRemove.value, 1)
+      listFileStorageId.value.splice(indexImgRemove.value, 1)
       emit("updateremoveBankbookDetailProof")
       notification('success', Message.getMessage('COMMON', '106').message)
     })
@@ -140,29 +143,45 @@ export default defineComponent({
     }, {
       deep: true,
     })
-    watch(() => props.listImageFile, (value) => {
-      fileList.value = value
-    })
 
     watch(resGetBankbookDetailProofs, (value) => {
-      listFileStorageId.value = []
       if (value.getBankbookDetailProofs.length) {
         listFileStorageId.value = value.getBankbookDetailProofs.map((file: any) => ({
           ...file,
-          fileStorageId: null,
+          fileStorageId: file.id,
           thumbUrl: file.url,
           response: "ok",
           status: "done"
         }))
       }
+      fileList.value = [...listFileStorageId.value]
       triggerBankbookDetailProofs.value = false
     })
 
     watch(() => props.payLoadProofs, (value) => {
+      fileList.value = []
+      listFileStorageId.value = []
       if (!!value?.bankbookDetailId && !!value?.bankbookDetailDate) {
         triggerBankbookDetailProofs.value = true
       }
+    },{
+      deep: true,
     })
+
+    watch(() => fileList.value, (value) => {
+      nextTick(() => {
+        if (value.length) {
+          const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
+          const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
+          elementsIconPreview.forEach((el: any) => {
+            el.setAttribute("title", "원본 보기");
+          })
+          elementsIconDelete.forEach((el: any) => {
+            el.setAttribute("title", "삭제");
+          })
+        }
+      })
+    }, { deep: true });
 
     const getBase64 = (file: File) => {
       return new Promise((resolve, reject) => {
@@ -202,35 +221,10 @@ export default defineComponent({
       isFailUpload.value = isImage && isLt10M && !isDuplicaseName
     };
 
-    watch(() => listFileStorageId.value, (value) => {
-      emit("update:listImageFile", value)
-    }, { deep: true });
-
-    watch(() => fileList.value, (value) => {
-      nextTick(() => {
-        if (value.length) {
-          value.forEach(items => {
-            if (items.status === 'error') {
-              items.response = '업로드 오류'
-            }
-          })
-          const elementsIconPreview = elementUpload.value.querySelectorAll("a[title='Preview file']")
-          const elementsIconDelete = elementUpload.value.querySelectorAll("button[title='Remove file']")
-          elementsIconPreview.forEach((el: any) => {
-            el.setAttribute("title", "원본 보기");
-          })
-          elementsIconDelete.forEach((el: any) => {
-            el.setAttribute("title", "삭제");
-          })
-        }
-      })
-    }, { deep: true });
-
     const customRequest = (e: any) => {
       if (!isFailUpload.value) {
         fileList.value.splice(fileList.value.length - 1, 1)
         e.onError("");
-        emit("update:listImageFile", listFileStorageId.value)
         return
       }
       const formData = new FormData();
@@ -256,13 +250,13 @@ export default defineComponent({
     }
     const remove = (e: any) => {
       const index = listFileStorageId.value.findIndex((item: any) => item.name === e.name)
+      indexImgRemove.value = index
       if (!listFileStorageId.value[index].fileStorageId) return false
       removeBankbookDetailProof({
         ...props.payLoadProofs,
         fileStorageId: listFileStorageId.value[index].fileStorageId
       })
-      listFileStorageId.value.splice(index, 1)
-      emit("update:listImageFile", listFileStorageId.value)
+      return false
     }
     return {
       handlePreview,
@@ -276,7 +270,8 @@ export default defineComponent({
       remove,
       elementUpload,
       payload,
-      loadingGetBankbookDetailProofs
+      loadingGetBankbookDetailProofs,
+      loadingRemoveBankbookDetailProof
     }
   }
 })

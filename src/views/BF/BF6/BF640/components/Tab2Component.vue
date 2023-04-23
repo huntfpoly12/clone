@@ -1,342 +1,439 @@
 <template>
-    <div id="step2">
-        <a-row gutter="24" class="search-form-step-1">
-            <a-col>
-                <a-form-item label="지급연월" label-align="left">
-                    <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지"/>
-                </a-form-item>
-            </a-col>
-            <a-col class="ml-30">
-                <a-form-item label="제작요청상태" label-align="left">
-                    <div class="custom-note d-flex-center">
-                        <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작요청후"
-                            textUnCheck="제작요청전"/>
-                        <div class="d-flex-center ml-5">
-                            <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
-                            <span>제작전은 제작요청되지 않은 상태입니다.</span>
-                        </div>
-                    </div>
-                </a-form-item>
-                <div class="production-check">
-                    <div class="d-flex-center custom-checkbox-search">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox1"
-                            :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="2" :disabled="dataSearch.beforeProduction"/>
-                        </checkbox-basic>
-                    </div>
-                    <div class="d-flex-center custom-checkbox-search">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox2"
-                            :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="3" :disabled="dataSearch.beforeProduction"/>
-                        </checkbox-basic>
-                    </div>
-                    <div class="d-flex-center custom-checkbox-search">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox3"
-                            :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="4" :disabled="dataSearch.beforeProduction"/>
-                        </checkbox-basic>
-                    </div>
-                    <div class="d-flex-center custom-checkbox-search">
-                        <checkbox-basic v-model:valueCheckbox="typeCheckbox.checkbox4"
-                            :disabled="dataSearch.beforeProduction">
-                            <production-status :typeTag="5" :disabled="dataSearch.beforeProduction"/>
-                        </checkbox-basic>
-                    </div>
-                </div>
-            </a-col>
-            <a-col class="ml-30 search-company">
-                <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
-                    <default-text-box v-model:valueInput="dataSearch.companyCode" />
-                </a-form-item>
-                <a-form-item label="상호" label-align="left" class="fix-width-label">
-                    <default-text-box v-model:valueInput="dataSearch.companyName" />
-                </a-form-item>
-                <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
-                    <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
-                </a-form-item>
-                <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
-                    <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
-                </a-form-item>
-            </a-col>
-            <a-col class="search-4">
-                <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
-            </a-col>
-        </a-row>
-        <div class="title-table d-flex">
-            <a-form-item label="파일 제작 설정" label-align="left">
-                <div class="custom-note d-flex-center">
-                    <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고" :disabled="true"/>
-                    <span class="d-flex-center">
-                        <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
-                        <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
-                    </span>
-                </div>
-            </a-form-item>
-            <a-form-item label="제출연월일" label-align="left">
-                <div class="d-flex-center">
-                    <date-time-box width="150px"  v-model:valueDate="dayReport" />
-                    <a-tooltip placement="topLeft" color="black">
-                        <template #title>전자신고파일 제작 요청</template>
-                        <div class="btn-modal-save" @click="openModalSave">
-                            <SaveOutlined class="fz-20 ml-5 action-save"/>
-                        <span style="margin-left: 5px;">파일제작요청</span>
-                        </div>
-                    </a-tooltip>
-                </div>
-            </a-form-item>
+  <div id="step2">
+    <a-row gutter="24" class="search-form-step-1">
+      <a-col>
+        <a-form-item label="지급연월" label-align="left">
+          <month-picker-box-custom v-model:valueDate="datePayment" bgColor="black" text="지" />
+        </a-form-item>
+      </a-col>
+      <a-col class="ml-30">
+        <a-form-item label="제작요청상태" label-align="left">
+          <div class="custom-note d-flex-center">
+            <switch-basic v-model:valueSwitch="beforeProduction" textCheck="제작요청후" textUnCheck="제작요청전" />
+            <div class="d-flex-center ml-5">
+              <img src="@/assets/images/iconInfo.png" style="width: 14px;" />
+              <span>제작전은 제작요청되지 않은 상태입니다.</span>
+            </div>
+          </div>
+        </a-form-item>
+        <div class="production-check">
+          <CheckboxGroup :disabled="dataSearch.beforeProduction" :options="productionStatusesCheckbox"
+            v-model:valueCheckbox="dataSearch.productionStatuses" size="18"> </CheckboxGroup>
         </div>
-        <div class="form-table">
-            <a-spin :spinning="loadingTable">
-                <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource"
-                    :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
-                    :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                    @selection-changed="selectionChanged">
-                    <DxSelection mode="multiple" :fixed="true" />
-                    <DxColumn caption="사업자코드" data-field="company.code" cell-template="company-code"/>
-                    <template #company-code="{ data }">
-                        {{ data.data.company.code }}  {{ !data.data.companyServiceContract.active ? '[해지]': ''}}
-                    </template>
-                    <DxColumn caption="상호 주소" cell-template="상호" />
-                    <template #상호="{ data }">
-                        {{ data.data.company.name }} - {{ data.data.company.address }}
-                    </template>
-                    <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
-                    <template #bizNumber="{ data }">
-                        <span>
-                            {{
-                                data.data.company.bizNumber.toString().slice(0, 3)
-                            }}-{{
-    data.data.company.bizNumber.toString().slice(3, 5)
-}}-{{
-    data.data.company.bizNumber.toString().slice(5, 10)
-}}
-                        </span>
-                    </template>
-                    <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm"/>
-                    <DxColumn caption="제작현황" cell-template="제작현황" />
-                    <template #제작현황="{ data }">
-                        <GetStatusTable  :data="data.data"   @productionStatusData="productionStatusData"/>
-                    </template>
-                    <DxSummary>
-                        <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
-                        <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text="customTextSummary" />
-                    </DxSummary>
-                </DxDataGrid>
-            </a-spin>
+      </a-col>
+      <a-col class="ml-30 search-company">
+        <a-form-item label="사업자코드" label-align="left" class="fix-width-label">
+          <default-text-box v-model:valueInput="dataSearch.companyCode" />
+        </a-form-item>
+        <a-form-item label="상호" label-align="left" class="fix-width-label">
+          <default-text-box v-model:valueInput="dataSearch.companyName" />
+        </a-form-item>
+        <a-form-item label="매니저리스트" label-align="left" class="fix-width-label">
+          <list-manager-dropdown v-model:valueInput="dataSearch.manageUserId" />
+        </a-form-item>
+        <a-form-item label="영업자리스트" label-align="left" class="fix-width-label">
+          <list-sales-dropdown v-model:valueInput="dataSearch.salesRepresentativeId" />
+        </a-form-item>
+      </a-col>
+      <a-col class="search-4">
+        <switch-basic textCheck="해지제외" textUnCheck="해지포함" v-model:valueSwitch="dataSearch.excludeCancel" />
+      </a-col>
+    </a-row>
+    <div class="title-table d-flex">
+      <a-form-item label="파일 제작 설정" label-align="left">
+        <div class="custom-note d-flex-center">
+          <switch-basic v-model:valueSwitch="valueDefaultSwitch" textCheck="세무대리인신고" textUnCheck="납세자자진신고"
+            :disabled="true" />
+          <span class="d-flex-center">
+            <img src="@/assets/images/iconInfo.png" style="width: 16px;" />
+            <span class="pl-5">본 설정으로 적용된 파일로 다운로드 및 메일발송 됩니다.</span>
+          </span>
         </div>
+      </a-form-item>
+      <a-form-item label="제출연월일" label-align="left">
+        <div class="d-flex-center">
+          <date-time-box width="150px" v-model:valueDate="dayReport" />
+          <a-tooltip placement="topLeft" color="black">
+            <template #title>전자신고파일 제작 요청</template>
+            <div class="btn-modal-save" @click="onRequestFile">
+              <SaveOutlined class="fz-20 ml-5 action-save" />
+              <span style="margin-left: 5px;">파일제작요청</span>
+            </div>
+          </a-tooltip>
+        </div>
+      </a-form-item>
     </div>
-    <PopupConfirmSave :modalStatus="modalConfirmMail" @closePopup="closeConfirmMail" :data="dataModalSave"
-        :step="2" />
-    <div v-for="data in defaultDataSource" :key="data.id">
-        <GetStatusTableHidden   :data="data" @productionStatusData="productionStatusData" />
+    <div class="form-table">
+      <a-spin :spinning="loadingTable">
+        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
+          :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+          id="tab2-bf640">
+          <DxSelection mode="multiple" :fixed="true" />
+          <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
+          <template #company-code="{ data }: any">
+            {{ data.data.companyCode }}
+            {{ data.data.active ? '' : '해지' }}
+          </template>
+          <DxColumn caption="상호 주소" cell-template="상호" />
+          <template #상호=" { data }: any ">
+            {{ data.data.companyName }} -
+            {{ data.data.address }}
+          </template>
+          <DxColumn caption="사업자등록번호" cell-template="bizNumber" />
+          <template #bizNumber=" { data }: any ">
+            <span>
+              {{
+              data.data.bizNumber.toString().slice(0, 3)
+              }}-{{
+              data.data.bizNumber.toString().slice(3, 5)
+              }}-{{
+              data.data.bizNumber.toString().slice(5, 10)
+              }}
+            </span>
+          </template>
+          <DxColumn caption="최종제작요청일시" data-field="lastProductionRequestedAt" data-type="date"
+            format="yyyy-MM-dd HH:mm" />
+          <DxColumn caption="제작현황" cell-template="제작현황" width="360" />
+          <template #제작현황=" { data }: any ">
+            <GetStatusTable :dataProcduct=" data.data " :message=" data.data.causeOfProductionFailure " />
+          </template>
+          <DxSummary>
+            <DxTotalItem column="사업자코드" summary-type="count" display-format="전체: {0}" />
+            <DxTotalItem cssClass="custom-sumary" column="제작현황" :customize-text=" productStatusSummary " />
+          </DxSummary>
+        </DxDataGrid>
+      </a-spin>
     </div>
+    <RequestFilePopup v-if=" modalStatus " :requestFileData=" requestFileData " tab-name="tab1"
+      @cancel=" modalStatus = false " />
+    <!-- <GetStatusTableHidden :data="data" @productionStatusData="productionStatusData" /> -->
+  </div>
 </template>
 <script lang="ts">
-import dayjs from "dayjs";
-import { defineComponent, ref, computed, watch } from "vue";
-import { checkBoxSearchStep1, dataSearchStep2Utils } from "../utils";
-import {
-    SaveOutlined
-} from "@ant-design/icons-vue";
+import { defineComponent, ref, computed, watch, reactive } from "vue";
+import { checkBoxSearchStep1, dataSearchStep2Utils, productionStatusesCheckbox } from "../utils";
+import { SaveOutlined } from "@ant-design/icons-vue";
 import { useStore } from 'vuex'
 import { DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem } from "devextreme-vue/data-grid";
-import PopupConfirmSave from "./PopupConfirmSave.vue";
-import GetStatusTable from "./GetStatusTableStep2.vue";
+import RequestFilePopup from "./RequestFilePopup.vue";
+import GetStatusTable from "./GetStatusTable.vue";
+
 import queries from "@/graphql/queries/BF/BF6/BF640/index";
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation, useApolloClient } from "@vue/apollo-composable";
 import notification from "@/utils/notification"
-import { Message } from "@/configs/enum";
+import dayjs from 'dayjs';
+import { Message } from '@/configs/enum';
+import CheckboxGroup from './CheckboxGroup.vue';
+import { watchEffect } from "vue";
+import { isNumber } from "lodash";
 export default defineComponent({
-    components: {
-    SaveOutlined,
-    DxDataGrid,
-    DxToolbar,
-    DxSelection,
-    DxColumn,
-    DxItem,
-    DxScrolling,
-    PopupConfirmSave,
-    GetStatusTable,
-    DxSummary,
-    DxTotalItem
-},
-    props: {
-        searchStep: Number,
+  components: {
+    SaveOutlined, DxDataGrid, DxToolbar, DxSelection, DxColumn, DxItem, DxScrolling, DxSummary, DxTotalItem,
+    RequestFilePopup, GetStatusTable,
+    CheckboxGroup,
+  },
+  props: {
+    search: {
+      type: Number,
     },
-  setup(props) {
-  
-        let checkBoxSearch = [...checkBoxSearchStep1]
-        let valueDefaultCheckbox = ref(1)
-        let valueDefaultSwitch = ref(true)
-        let beforeProduction = ref(true)
-        let keySelect = ref([])
-        let dataSearch: any = ref({ ...dataSearchStep2Utils })
-        let typeCheckbox = ref<any>({
-            checkbox1: true,
-            checkbox2: true,
-            checkbox3: true,
-            checkbox4: true,
-        })
-        let dataSource: any = ref([])
-        let defaultDataSource: any = ref([])
-        const store = useStore()
-        const userInfor = computed(() => (store.state.auth.userInfor))
-        const move_column = computed(() => store.state.settings.move_column);
-        const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const datePayment = ref(parseInt(dayjs().format('YYYYMM')))
-        const dayReport = ref(`${dayjs().format('YYYYMM')}${dayjs().daysInMonth()}`);
-        let trigger = ref(true)
-        let modalConfirmMail = ref(false)
-        let dataModalSave = ref()
-        const messageDelNoItem = Message.getMessage('COMMON', '404').message;
-        // ================== GRAPHQL=================
-        //  QUERY : searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
-        let {
-            refetch: refetchTable,
-            loading: loadingTable,
-            onError: errorTable,
-            onResult: resTable
-        } = useQuery(queries.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth, {  paymentYear: dataSearch.value.paymentYear,  paymentMonth: dataSearch.value.paymentMonth}, () => ({
-            enabled: trigger.value,
-            fetchPolicy: "no-cache"
-        }));
-        resTable(queryResult => {
-        if (queryResult && queryResult.data) {
-          defaultDataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
-          //dataSource.value = queryResult.data.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth
-          trigger.value = false
-        }
-        })
-
-        errorTable((error: any) => {
-            notification('error', error.message)
-        })
-        // =================== WATCH ====================
-        watch(beforeProduction, (newVal) => {
-          dataSearch.value.beforeProduction = !newVal
-        })
-
-        watch(() => props.searchStep, () => {
-            dataSearch.value.productionStatuses = []
-            if (typeCheckbox.value.checkbox1 == true)
-                dataSearch.value.productionStatuses.push(0)
-            if (typeCheckbox.value.checkbox2 == true)
-                dataSearch.value.productionStatuses.push(1)
-            if (typeCheckbox.value.checkbox3 == true)
-                dataSearch.value.productionStatuses.push(2)
-            if (typeCheckbox.value.checkbox4 == true)
-                dataSearch.value.productionStatuses.push(-1)
-            dataSearch.value.paymentYear = parseInt(datePayment.value.toString().slice(0, 4))
-            dataSearch.value.paymentMonth = parseInt(datePayment.value.toString().slice(4, 6))
-            searchTab2()
-        }, { deep: true })
-        // ================== FUNCTION ================== 
-        const openModalSave = () => {
-            dataModalSave.value = {
-                filter: dataSearch.value,
-                emailInput: {
-                    receiverName: userInfor.value.name,
-                    receiverAddress: userInfor.value.email
-                },
-                companyIds: keySelect.value
-            }
-            if (keySelect.value.length > 0) {
-                modalConfirmMail.value = true;
-            }else {
-                notification('warning',messageDelNoItem)
-            }
-        }
-
-      // The above code is a function that is called when the user clicks the "Close" button on the
-      // modal.
-        const closeConfirmMail = () => {
-          modalConfirmMail.value = false;
-          trigger.value = true
-          refetchTable()
-          watchFirstRun.value = false;
-        }
-
-        const selectionChanged = (res: any) => {
-            keySelect.value = res.selectedRowKeys
-        }
-
-        //SUM
-        // count the number of status
-        let productionStatusArr = ref<any>([]);
-        const  watchFirstRun = ref(true)
-        const countStatus = (arr: any[], type: number) => {
-            if (Object.keys(arr).length === 0 || arr.length === 0) {
-                return 0;
-            }
-            let count = arr.reduce((acc: any, crr: any) => {
-                acc[crr.productionStatus] = acc[crr.productionStatus] ? acc[crr.productionStatus] + 1 : 1;
-                return acc;
-            }, {});
-            if(count[type]){
-                return count[type];
-            }
-            return 0;
-        }
-        // custom summary
-        const customTextSummary = () => {
-            return `제작요청전 ${countStatus(productionStatusArr.value, 0)} 제작대기 ${countStatus(productionStatusArr.value, 0)} 제작중 ${countStatus(productionStatusArr.value, 1)} 제작실패 ${countStatus(productionStatusArr.value, -1)} 제작성공 ${countStatus(productionStatusArr.value, 2)}`
-        }
-        // watch beforeProduction
-        watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
-            for (const key in typeCheckbox.value) {
-                if (!newVal) {
-                    typeCheckbox.value[key] = true;
-                } else {
-                    typeCheckbox.value[key] = false;
-                }
-            }
-         }, { deep: true });
-
-        // set last day of month for report
-        watch(datePayment, (newVal) => {
-          let month = newVal.toString().substring(4);
-          let year = newVal.toString().substring(0, 4);
-          dayReport.value = `${newVal}${dayjs(`${year}-${month}-01`).daysInMonth()}`
-        });
-
-        // caculator sum
-        const reFreshDataGrid = () => {
-          if(watchFirstRun.value) {
-              searchTab2();
-              watchFirstRun.value = false;
-          }
-        }
-        const searchTab2 = ()=>{
-            dataSource.value =  defaultDataSource.value
-            dataSource.value =  dataSource.value.filter((item:any)=>{
-                return  dataSearch.value.productionStatuses.includes(item.productStatus.productionStatus)
-            })
-            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentHalfYear == dataSearch.value.paymentHalfYear)
-            if(dataSearch.value.excludeCancel) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.active == true)
-            dataSource.value =  dataSource.value.filter((item:any)=>item.paymentYear == dataSearch.value.paymentYear)
-            if(dataSearch.value.companyCode != '') dataSource.value =  dataSource.value.filter((item:any)=>item.company.companyCode == dataSearch.value.companyCode)
-            if(dataSearch.value.manageUserId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.manageUserId == dataSearch.value.manageUserId)
-            if(dataSearch.value.salesRepresentativeId) dataSource.value =  dataSource.value.filter((item:any)=>item.companyServiceContract.salesRepresentativeId == dataSearch.value.salesRepresentativeId) 
-            dataSource.value = dataSource.value.concat([]);
-            dataSource.value = dataSource.value.splice(dataSource.value.length - 1, 1);
-            productionStatusArr.value = dataSource.value.length > 0  ? [dataSource.value[0].productStatus] : [];
-        }
-        const productionStatusData = (emitVal: any) => {
-            defaultDataSource.value.map((item : any)=>{
-                if(item.companyId == emitVal.companyId){
-                    item['productStatus'] = emitVal.productStatus
-                }
-            })
-            reFreshDataGrid();
-        }
-
-
-        return {
-            loadingTable, activeKey: ref("1"), valueDefaultCheckbox, valueDefaultSwitch, datePayment,dayReport, dataModalSave, dayjs, checkBoxSearch, typeCheckbox, dataSearch, dataSource, colomn_resize, move_column, modalConfirmMail,customTextSummary,
-            selectionChanged, openModalSave,closeConfirmMail,beforeProduction,productionStatusData,defaultDataSource
-        }
+    onSearch: {
+      type: Function,
+      default: () => { },
     }
+  },
+  setup(props) {
+    const globalYear: any = computed(() => store.state.settings.globalYear);
+    let checkBoxSearch = [...checkBoxSearchStep1]
+    let valueDefaultCheckbox = ref(1)
+    let valueDefaultSwitch = ref(true)
+    let beforeProduction = ref(true)
+    let dataSearch: any = ref({ ...dataSearchStep2Utils })
+    let defaultDataSource: any = ref([])
+    const store = useStore()
+    const userInfor = computed(() => (store.state.auth.userInfor))
+    const move_column = computed(() => store.state.settings.move_column);
+    const colomn_resize = computed(() => store.state.settings.colomn_resize);
+    const datePayment: any = ref(dayjs(`${dataSearch.value.paymentYear}${dataSearch.value.paymentMonth}`))
+    const dayReport = ref(`${dayjs().format('YYYYMM')}${dayjs().daysInMonth()}`);
+    const messageDelNoItem = Message.getMessage('COMMON', '404').message;
+
+    // --------------------search production status-----------------------------------------
+
+    const { client } = useApolloClient();
+    const fetchDataStatus = async (companies: any) => {
+      if (companies.length === 0) return;
+      for (let i = 0; i < companies.length; i++) {
+        await client.query({
+          query: queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, variables: {
+            input: {
+              companyId: companies[i].companyId,
+              paymentYear: companies[i].paymentYear,
+              paymentMonth: companies[i].paymentMonth,
+            }
+          }
+        }).then((res) => {
+          let productionStatus = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0].productionStatus;
+          let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
+          productionCount.value--;
+          dataSource.value.forEach((item: any) => {
+            if (item.companyId == companies[i].companyId) {
+              item.productionStatus = productionStatus;
+              if (productionStatus == -1) {
+                item.causeOfProductionFailure = causeOfProductionFailure;
+              }
+              if (productionStatus == 2){
+                item.allowSelection = false;
+              }
+            }
+          })
+        }).catch((err: any) => err);
+      }
+    };
+
+    //  QUERY : searchIncomeWageSimplifiedPaymentStatementElectronicFilingsByHalfYear
+
+    const dataSource = ref<any[]>([]);
+    const filteredDataSource = ref<any[]>([]);
+    let searchIncomeWageParam = ref({
+      paymentYear: dataSearch.value.paymentYear,
+      paymentMonth: dataSearch.value.paymentMonth
+    })
+    let {
+      refetch: refetchTable,
+      loading: loadingTable,
+      onError: errorTable,
+      result
+    } = useQuery(queries.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth, searchIncomeWageParam, () => ({
+      fetchPolicy: "no-cache"
+    }));
+    const productionCount = ref(0);
+    const beforeCount = ref(0);
+    watch(result, async (newVal: any) => {
+      if (newVal) {
+        let data = newVal.searchIncomeBusinessSimplifiedPaymentStatementElectronicFilingsByYearMonth.map((item: any) => {
+          let arrData = {};
+          if (item) {
+            arrData = {
+              companyCode: item.company.code,
+              companyName: item.company.name,
+              address: item.company.address,
+              bizNumber: item.company.bizNumber,
+              companyId: item.companyId,
+              lastProductionRequestedAt: item.lastProductionRequestedAt,
+              paymentMonth: item.paymentMonth,
+              paymentYear: item.paymentYear,
+              salesRepresentativeId: item.companyServiceContract.salesRepresentativeId,
+              manageUserId: item.companyServiceContract.manageUserId,
+              active: item.companyServiceContract.active,
+              beforeProduction: item.lastProductionRequestedAt ? false : true,
+              allowSelection: true,
+              causeOfProductionFailure: '',
+            }
+          }
+          return arrData;
+        });
+        let result = Object.values(data.reduce((acc: any, curr: any) => {
+          if (!acc[curr.companyId] || dayjs(curr.lastProductionRequestedAt).isBefore(dayjs(acc[curr.companyId].lastProductionRequestedAt))) {
+            acc[curr.companyId] = curr;
+          }
+          return acc;
+        }, {}));
+        dataSource.value = [...result];
+        await fetchDataStatus(dataSource.value.map((item: any) => {
+          if (item.lastProductionRequestedAt) {
+            productionCount.value = item.lastProductionRequestedAt ? productionCount.value + 1 : productionCount.value;
+            return { companyId: item.companyId, paymentYear: item.paymentYear, paymentMonth: item.paymentMonth }
+          }
+          return;
+        }));
+        if (props.onSearch && productionCount.value == 0) {
+          props.onSearch();
+        }
+      }
+    }, { deep: true })
+
+    errorTable((error: any) => {
+      notification('error', error.message)
+    });
+    watchEffect(() => {
+      if (dataSearch.value.paymentYear && dataSearch.value.paymentMonth) {
+        searchIncomeWageParam.value = {
+          paymentMonth: dataSearch.value.paymentMonth,
+          paymentYear: dataSearch.value.paymentYear,
+        }
+      }
+    })
+
+    //------------------------SUM AREA------------------------------ 
+
+    // count the number of status
+    const countStatus = (arr: any[], type: number | Boolean, propertyCompare: string) => {
+      if (Object.keys(arr).length === 0 || arr.length === 0) {
+        return 0;
+      }
+      let typeCustom: number = 0;
+      if (typeof type === 'boolean') {
+        typeCustom = 0;
+      }
+      if (isNumber(type)) {
+        typeCustom = type;
+      }
+      let count = arr.reduce((acc: any, crr: any) => {
+        let item = typeof (crr[propertyCompare]) == 'boolean' && crr[propertyCompare] == type ? 0 : crr[propertyCompare];
+        acc[item] = acc[item] ? acc[item] + 1 : 1;
+        return acc;
+      }, {});
+      if (count[typeCustom]) {
+        return count[typeCustom];
+      }
+      return 0;
+    };
+    // custom summary
+    const productStatusSummary = () => {
+      return `제작요청전 ${countStatus(filteredDataSource.value, true, 'beforeProduction')} 제작대기 ${countStatus(filteredDataSource.value, 0, 'productionStatus')} 제작중 ${countStatus(
+        filteredDataSource.value, 1, 'productionStatus')} 제작성공 ${countStatus(filteredDataSource.value, 2, 'productionStatus')} 제작실패 ${countStatus(filteredDataSource.value, -1, 'productionStatus')} `;
+    };
+
+    //--------------------on Search----------------------
+
+    watch(
+      () => props.search,
+      () => {
+        let { paymentYear, paymentMonth, imputedYear, imputedMonth, ...compareObj } = dataSearch.value;
+        let arr = dataSource.value.filter((item: any) => {
+          return Object.keys(compareObj).every((key: any) => {
+            if (key === 'productionStatuses') {  //error search main reason is 
+              return compareObj.productionStatuses.length > 0 ? compareObj.productionStatuses.findIndex((status: any) => status === item.productionStatus) > -1 : true;
+            }
+            if (compareObj[key]) {
+              return compareObj[key] == item[key];
+            }
+            return true;
+          })
+        })
+        filteredDataSource.value = arr;
+        beforeCount.value = 1;
+      },
+      { deep: true }
+    );
+
+    // ----------------request file withholding---------
+
+    const requestFileData = ref<any>({
+      reportKeyInputs: [],
+      filter: dataSearch.value,
+      emailInput: {
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
+      },
+    });
+    const selectionChanged = (event: any) => {
+      let deselectRowKeys: any = [];
+      event.selectedRowsData.forEach((item: any) => {
+        if (!item.allowSelection)
+          deselectRowKeys.push(event.component.keyOf(item));
+      });
+      if (deselectRowKeys.length) {
+        event.component.deselectRows(deselectRowKeys);
+        return;
+      }
+      if (event.selectedRowsData)
+        requestFileData.value.reportKeyInputs = event.selectedRowsData.map((item: any) => {
+          return { companyId: item.companyId, imputedYear: item.imputedYear, reportId: item.reportId };
+        });
+    };
+    const modalStatus = ref<boolean>(false);
+    const onRequestFile = () => {
+      requestFileData.value.emailInput = {
+        receiverName: userInfor?.value?.name,
+        receiverAddress: userInfor?.value?.email,
+      };
+      const { active, ...customFilter } = dataSearch.value;
+      requestFileData.value.filter = customFilter;
+      if (requestFileData.value.reportKeyInputs.length > 0) {
+        modalStatus.value = true;
+      } else {
+        notification('warning', messageDelNoItem);
+      }
+    };
+    const onRequestDone = () => {
+      refetchTable();
+      modalStatus.value = false;
+    }
+
+    // watch beforeProduction
+
+    let setBefore = computed(({
+      get() {
+        return !dataSearch.value.beforeProduction;
+      },
+      set(val) {
+        dataSearch.value.beforeProduction = !val;
+      }
+    }))
+    watch(() => dataSearch.value.beforeProduction, (newVal: any) => {
+      if (newVal) {
+        dataSearch.value.productionStatuses = [];
+      } else {
+        dataSearch.value.productionStatuses = [0, 1, 2, -1];
+      }
+    }, { deep: true })
+
+    //watch date
+
+    watch(datePayment, (newVal: any) => {
+      if (newVal) {
+        dataSearch.value.paymentYear = +newVal.toString().slice(0, 4);
+        dataSearch.value.paymentMonth = +newVal.toString().slice(4, 6);
+      }
+    });
+
+    return {
+      userInfor,
+      activeKey: ref("1"),
+      valueDefaultCheckbox,
+      valueDefaultSwitch,
+      loadingTable, dayjs,
+      checkBoxSearch,
+      dataSearch,
+      dataSource, filteredDataSource,
+      colomn_resize,
+      move_column,
+      dayReport, defaultDataSource,
+      selectionChanged, productStatusSummary, beforeProduction,
+      productionStatusesCheckbox,
+      onRequestFile, requestFileData, modalStatus, onRequestDone,
+      setBefore, datePayment,
+      beforeCount,
+      searchIncomeWageParam,
+    }
+  }
 })
 </script> 
-<style scoped lang="scss" src="../style/style.scss">
+<style lang="scss" scoped>
+@import '../style/style.scss';
+
+:deep #tab2-bf640 {
+  height: calc(62vh);
+
+  :deep .dx-datagrid-total-footer {
+    height: 77px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+  }
+
+  :deep .dx-datagrid-headers {
+    height: 27px;
+  }
+
+  :deep .dx-datagrid-rowsview {
+    max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
+  }
+
+  .dx-freespace-row {
+    display: none !important; // cục lúc hiện lúc không
+  }
+}
 </style>

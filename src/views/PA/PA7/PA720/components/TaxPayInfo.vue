@@ -4,7 +4,8 @@
       key-expr="incomeId" :allow-column-reordering="move_column" :onRowClick="onRowClick"
       :allow-column-resizing="colomn_resize" :column-auto-width="true" :focused-row-enabled="true"
       @selection-changed="selectionChanged" v-model:focused-row-key="focusedRowKey"
-      v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef">
+      v-model:selected-row-keys="selectedRowKeys" @focused-row-changing="onFocusedRowChanging" ref="taxPayDataRef"
+      id="tax-pay-720">
       <DxScrolling mode="standard" show-scrollbar="always" />
       <DxSelection select-all-mode="allPages" mode="multiple" />
       <DxPaging :page-size="15" />
@@ -235,8 +236,11 @@ export default defineComponent({
         incomeIdDels.value = e.selectedRowsData.map((item: { incomeId: number }) => {
           return item.incomeId;
         });
-        paymentData.value = e.selectedRowsData.map((item: { incomeId: number; paymentDay: number }) => {
-          return { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value };
+        paymentData.value = e.selectedRowsData.map((item: any) => {
+          return {
+            param: { incomeId: item.incomeId, day: item.paymentDay, ...dataTableDetail.value },
+            errorInfo: { employeeId: item.employee.employeeId, incomeTypeName: item.employee.incomeTypeName, name: item.employee.name, incomeTypeCode: item.employee.incomeTypeCode },
+          };
         });
       }
     };
@@ -331,4 +335,6 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style lang="scss">
+@import './../style/style.scss';
+</style>

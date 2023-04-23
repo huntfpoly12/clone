@@ -1,11 +1,12 @@
 <template>
   <a-modal :visible="isModalItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
+    <p class="ac-110-popup-detail-title">물품내역</p>
     <a-spin :spinning="loadingSaveStatementOfGoods || loadingDeleteStatementOfGoods" size="large">
       <standard-form>
-        <DxDataGrid class="mt-20" :show-row-lines="true" :data-source="dataSource.statementOfGoodsItems"
-          :show-borders="true" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-          :column-auto-width="true">
+        <DxDataGrid id="DxDataGrid-ac-110-popup-detail" class="mt-20" :show-row-lines="true"
+          :data-source="dataSource.statementOfGoodsItems" :show-borders="true" :allow-column-reordering="move_column"
+          :allow-column-resizing="colomn_resize" :column-auto-width="true">
           <DxToolbar>
             <DxItem location="after" template="button-add" css-class="cell-button-add" />
           </DxToolbar>
@@ -33,15 +34,15 @@
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26"/>
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" />
           </template>
           <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26"/>
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" />
           </template>
           <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" @changeInput="" height="26"/>
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" @changeInput="changeInput"/>
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
@@ -54,7 +55,7 @@
 
           <DxSummary>
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
-            <DxTotalItem cssClass="custom-sumary" column="단위" :customize-text="totalValue" />
+            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
             <DxTotalItem cssClass="custom-sumary" column="비고" :customize-text="totalDifference" />
           </DxSummary>
@@ -69,13 +70,12 @@
     title="물품내역을 삭제하시겠습니까?" content="" okText="네. 삭제합니다" :cancelText="Message.getMessage('COMMON', '501').no"
     @checkConfirm="handleDelete" />
   <PopupMessage :modalStatus="isModalConfirmSaveChange" @closePopup="isModalConfirmSaveChange = false"
-      :typeModal="'confirm'" title="정보가 저장되지 않았습니다. 닫으시겠습니까?" content=""
-      :okText="Message.getMessage('COMMON', '501').yes" :cancelText="Message.getMessage('COMMON', '501').no"
-      @checkConfirm="handleConfirmChange" />
+    :typeModal="'confirm'" title="정보가 저장되지 않았습니다. 닫으시겠습니까?" content="" :okText="Message.getMessage('COMMON', '501').yes"
+    :cancelText="Message.getMessage('COMMON', '501').no" @checkConfirm="handleConfirmChange" />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
@@ -119,6 +119,7 @@ export default defineComponent({
     let arrSelectStandard: any = ref([])
     let arrSelectUnit: any = ref([])
     let dataSourceCopy: any = ref()
+    let itemDelete: any = ref()
     // graphql
     const {
       mutate: deleteStatementOfGoods,
@@ -127,6 +128,9 @@ export default defineComponent({
       loading: loadingDeleteStatementOfGoods,
     } = useMutation(mutations.deleteStatementOfGoods);
     doneDeleteStatementOfGoods((e) => {
+      dataSource.value.statementOfGoodsItems = []
+      emit("updateGoodsCount",  props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
+      setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorDeleteStatementOfGoods(e => {
@@ -139,6 +143,7 @@ export default defineComponent({
       loading: loadingSaveStatementOfGoods,
     } = useMutation(mutations.saveStatementOfGoods);
     doneSaveStatementOfGoods((e) => {
+      emit("updateGoodsCount",  props.data.accountingDocumentId, dataSource.value.statementOfGoodsItems)
       setData()
       notification('success', Message.getMessage('COMMON', '106').message)
     })
@@ -150,14 +155,8 @@ export default defineComponent({
       setData()
     })
     const setData = () => {
-      arrSelectItem.value = []
-      arrSelectStandard.value = []
-      arrSelectUnit.value = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
-          arrSelectItem.value = [...arrSelectItem.value, {id: index, value: item.item}]
-          arrSelectStandard.value = [...arrSelectStandard.value, {id: index, value: item.standard}]
-          arrSelectUnit.value = [...arrSelectUnit.value, {id: index,value: item.unit}]
           return {
             ...item,
             id: index
@@ -168,18 +167,42 @@ export default defineComponent({
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
     }
+    watch(() => dataSource.value.statementOfGoodsItems, (value, oldValue) => {
+      if(!value) return
+      const lengthOldVal = !!oldValue ? oldValue.length : 0
+      if(value.length !== lengthOldVal){
+        setDataSelect()
+      }
+    }, {
+      deep: true,
+    }) 
+
+    const setDataSelect = () => {
+      dataSource.value.statementOfGoodsItems.forEach((item: any, index: number) => {
+        if(!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())){
+          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
+        }
+        if(!!item.standard && !arrSelectStandard.value.some((option: any) =>  option.value === item.standard.toString().trim())){
+          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
+        }
+        if(!!item.unit && !arrSelectUnit.value.some((option: any) =>  option.value === item.unit.toString().trim())){
+          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
+        }
+      })
+    }
+
     const cancel = () => {
-      if(!isEqual(dataSourceCopy.value, dataSource.value.statementOfGoodsItems)){
+      if (!isEqual(dataSourceCopy.value, dataSource.value.statementOfGoodsItems)) {
         isModalConfirmSaveChange.value = true
-      }else {
+      } else {
         emit("closePopup", false)
       }
     };
     const handleConfirmChange = (status: Boolean) => {
-      if(status){
+      if (status) {
         isModalConfirmSaveChange.value = false
         emit("closePopup", false)
-      }else {
+      } else {
         isModalConfirmSaveChange.value = false
       }
     }
@@ -204,19 +227,23 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
-      if (data.id.toString().includes('create')) return
+      itemDelete.value = data
       isModalDelete.value = true
     }
     const handleDelete = (status: Boolean) => {
       if (!status) return
-      const payloadRequest = { ...props.payload }
-      delete payloadRequest.bankbookDetailDate
-      delete payloadRequest.bankbookDetailId
-      deleteStatementOfGoods({
-        ...payloadRequest,
-        transactionDetailDate: dataSource.value.transactionDetailDate,
-        accountingDocumentId: dataSource.value.accountingDocumentId
-      })
+      if (dataSource.value.statementOfGoodsItems.length === 1 && !dataSource.value.accountingDocumentId.toString().includes('create')) {
+        const payloadRequest = { ...props.payload }
+        delete payloadRequest.bankbookDetailDate
+        delete payloadRequest.bankbookDetailId
+        deleteStatementOfGoods({
+          ...payloadRequest,
+          transactionDetailDate: dataSource.value.transactionDetailDate,
+          accountingDocumentId: dataSource.value.accountingDocumentId
+        })
+      } else {
+        dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.filter((item: any) => item.id.toString() !== itemDelete.value.id.toString())
+      }
     }
     const submitFormDetail = (event: any) => {
       const res = event.validationGroup.validate();
@@ -233,13 +260,19 @@ export default defineComponent({
           unitPrice: item.unitPrice
         }
       })
-      const payloadClear = makeDataClean({
-        ...payloadRequest,
-        transactionDetailDate: dataSource.value.transactionDetailDate,
-        accountingDocumentId: dataSource.value.accountingDocumentId,
-        items: dataTable
-      })
-      saveStatementOfGoods(payloadClear)
+      if(!dataSource.value.accountingDocumentId.toString().includes('create')) {
+        const payloadClear = makeDataClean({
+          ...payloadRequest,
+          transactionDetailDate: dataSource.value.transactionDetailDate,
+          accountingDocumentId: dataSource.value.accountingDocumentId,
+          items: dataTable
+        })
+        saveStatementOfGoods(payloadClear)
+      }else {
+        setData()
+        emit("updateGoodsCount",  props.data.accountingDocumentId, dataTable)
+        notification('success', Message.getMessage('COMMON', '106').message)
+      }
     }
     const addNewRow = () => {
       if (!!dataSource.value.statementOfGoodsItems && dataSource.value.statementOfGoodsItems.length) {
@@ -254,6 +287,12 @@ export default defineComponent({
         return new Intl.NumberFormat().format(value)
       } else {
         return 0
+      }
+    }
+    const changeInput = () => {
+      const el = document.querySelector('.refPopupDetail110TotalValue')
+      if(el){
+        el.textContent = totalValue()
       }
     }
     return {
@@ -276,7 +315,8 @@ export default defineComponent({
       arrSelectItem,
       arrSelectStandard,
       arrSelectUnit,
-      handleConfirmChange
+      handleConfirmChange,
+      changeInput,
     }
   },
 })
@@ -284,10 +324,24 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .ac-110-popup-detail {
+  &-title {
+    text-align: center;
+    margin: 0;
+    font-size: 18px;
+  }
+
   &-btn {
     margin-top: 20px;
     display: flex;
     justify-content: center;
+  }
+}
+
+#DxDataGrid-ac-110-popup-detail {
+  height: 60vh;
+
+  :deep .dx-freespace-row {
+    display: none !important;
   }
 }
 </style>

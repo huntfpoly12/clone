@@ -163,4 +163,8 @@ export default defineComponent({
     width: auto;
   }
 }
+:deep(.dp__disabled) {
+  color: #A6A6A6;
+  background-color: #fff;
+}
 </style>

@@ -8,6 +8,7 @@
     </DxSelectBox>
 </template>
 <script lang="ts">
+import { useStore } from 'vuex';
 import { ref, watch, getCurrentInstance, computed } from "vue";
 import queries from "@/graphql/queries/AC/AC6/AC610/index";
 import { useQuery } from "@vue/apollo-composable";
@@ -36,6 +37,10 @@ export default {
             type: String,
             default: '',
         },
+        isExample: {
+          type: Boolean,
+          default: false,
+        }  
     },
     components: {
         DxSelectBox,
@@ -43,6 +48,7 @@ export default {
         DxRequiredRule,
     },
     setup(props: any, { emit }: any) {
+        const store = useStore();
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
         const messageRequired = ref(messages.getCommonMessage('102').message);
@@ -54,7 +60,7 @@ export default {
             rows: 10000,
             includeNonUse: false,
         });
-        const trigger = ref<boolean>(true); // trigger for call api
+        const trigger = ref<boolean>(!props.isExample); // trigger for call api
         const dataSource = ref([]); // data source of grid
         // get list client
         const {
@@ -79,6 +85,7 @@ export default {
                     label: value.name,
                 }
             })
+            store.commit('settings/setClients', dataSource.value)
         });
         const updateValue = (value: any) => {
             emit("update:valueInput", value);

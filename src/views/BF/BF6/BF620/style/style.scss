@@ -57,7 +57,7 @@
     text-align: center;
     color: white;
     width: 85px;
-    margin-left: 25px;
+    margin-left: 5px;
     border-radius: 5px;
     padding: 3px 10px;
   }
@@ -96,5 +96,9 @@
     text-align: center;
     border-radius: 5px;
     padding: 1px 10px;
+  }
+
+  :deep .dx-button-has-text .dx-button-content {
+    padding: 0px 8px;
   }
 }

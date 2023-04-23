@@ -26,7 +26,7 @@ export default defineComponent({
             type: String,
         },
         valueDate: {
-            type: [Number, String],
+            type: Object as () => string | number | null,
             default: parseInt(dayjs().format("YYYYMMDD")),
         },
         id: {
@@ -125,5 +125,9 @@ export default defineComponent({
     z-index: 999999;
     width: auto;
   }
+}
+:deep(.dp__disabled) {
+  color: #A6A6A6;
+  background-color: #fff;
 }
 </style>

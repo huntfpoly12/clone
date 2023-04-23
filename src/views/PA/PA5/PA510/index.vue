@@ -329,7 +329,7 @@
                     </DxDataGrid>
                 </a-spin>
             </a-col>
-            <a-col :span="10" class="custom-layout" style="padding-right: 0px;"
+            <a-col :span="10" class="custom-layout custom-form-data" style="padding-right: 0px;"
                 :class="{ 'disabledBlock': !store.state.common.pa510.dataTaxPayInfo.length }">
                 <FormDataComponent />
             </a-col>

@@ -29,11 +29,11 @@
                 @focused-row-changed="onFocusedRowChanged"
                 v-model:focused-row-key="focusedRowKey"
                 :focusedRowIndex="0"
-                style="max-height: 750px;"
+                style="height: 775px;"
               >
                 <DxPaging :page-size="0"/>
                 <DxScrolling mode="standard" show-scrollbar="always"/>
-                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" />
+                <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']" placeholder="검색" />
                 <DxExport :enabled="true" />
                 <DxToolbar>
                   <DxItem template="total-user" location="before"/>
@@ -163,6 +163,7 @@
                 <radio-group
                   :arrayValue="arrForeigner"
                   width="200px"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   v-model:valueRadioCheck="dataShow.foreigner"
                   layoutCustom="horizontal"
                   @update:valueRadioCheck="changeRadioForeigner"
@@ -226,6 +227,7 @@
                   width="200px"
                   placeholder="숫자 13자리"
                   :required="true"
+                  :disabled="!dataShow.deletable && !isNewRow"
                   :foreigner="dataShow.foreigner"
                 />
               </a-form-item>

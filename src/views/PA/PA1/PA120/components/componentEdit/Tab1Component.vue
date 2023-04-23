@@ -37,7 +37,8 @@
           </div>
         </a-form-item>
         <a-form-item label="내/외국인" label-align="right">
-          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal">
+          <radio-group :arrayValue="radioCheckForeigner" v-model:valueRadioCheck="foreigner" layoutCustom="horizontal"
+            :disabled="!initFormStateTabPA120.deletable">
           </radio-group>
         </a-form-item>
 
@@ -54,7 +55,8 @@
         </a-row>
 
         <a-form-item :label="labelResidebId" label-align="right" class="red">
-          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px" :foreigner="initFormStateTabPA120.foreigner">
+          <id-number-text-box :required="true" v-model:valueInput="initFormStateTabPA120.residentId" width="150px"
+            :foreigner="initFormStateTabPA120.foreigner" :disabled="!initFormStateTabPA120.deletable">
           </id-number-text-box>
         </a-form-item>
 
@@ -265,6 +267,7 @@ export default defineComponent({
       editRowData.householder = data.householder;
       editRowData.department = data.department;
       editRowData.responsibility = data.responsibility;
+      editRowData.deletable = data.deletable;
       store.commit('common/editRowPA120', editRowData);
       store.commit('common/initFormStateTabPA120', editRowData);
       employeeId.value = data.employeeId;
@@ -282,6 +285,7 @@ export default defineComponent({
         let editData = JSON.parse(JSON.stringify(initFormStateTabPA120.value));
         delete editData.employeeId;
         delete editData.key;
+        delete editData.deletable;
         let dataCallCreat = {
           ...originDataDetail.value,
           input: {

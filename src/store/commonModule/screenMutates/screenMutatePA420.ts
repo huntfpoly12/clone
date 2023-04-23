@@ -37,6 +37,9 @@ const screenMutatePA420 = {
   },
   setIsChangeForm(state: any, status: any) {
     state.isChangeForm = { ...state.isChangeForm, ...status }
+  },
+  setEmployee(state: any, data: any) {
+    state.employee = data
   }
 };
 export default screenMutatePA420;

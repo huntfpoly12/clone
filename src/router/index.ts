@@ -6,9 +6,10 @@ import RquestContract from "../views/requestContract/index.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import ChangePassword from "../views/ChangePassword.vue";
 import NotFound from "../views/NotFound.vue";
-import { AdminScreenRole, WorkScreenRole } from "@bankda/jangbuda-common";
+import { AdminScreenRole, WorkScreenRole, getJwtObject } from "@bankda/jangbuda-common";
 import isEmpty from "lodash/isEmpty";
 import useCheckPermission from "@/helpers/useCheckPermission";
+import store from '@/store'
 const ALL_ROLE = [...AdminScreenRole.all().map(i => i.enumKey), ...WorkScreenRole.all().map(i => i.enumKey)];
 
 const routes = [
@@ -463,8 +464,14 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.needAuth
   const roles = isEmpty(to.meta.roles) ? null : to.meta.roles as string[]
   const token = sessionStorage.getItem("token");
+
   const { read } = useCheckPermission(roles)
-  if (requiresAuth && !token) {
+  // check if token isExpired
+  if (token && getJwtObject(token).isExpired()) {
+    store.dispatch('auth/checkToken')
+  }
+  
+  if ((requiresAuth && !token)) {
     next("/login");
   } else if (requiresAuth && token && !read) {
     next("not-found");

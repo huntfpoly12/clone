@@ -139,3 +139,6 @@ td {
 .ant-switch-checked {
   background-color: #5cb85c;
 }
+:deep(.dx-freespace-row) {
+  display: none !important;
+}

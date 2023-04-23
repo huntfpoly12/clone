@@ -37,24 +37,29 @@
   <div class="grid-view">
     <div class="content-grid">
       <a-spin :spinning="loadingElectronicFiling" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        <DxDataGrid id="DxDataGrid-bf-630-tab5" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true">
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="일련번호" data-field="electronicFilingId" width="100px" alignment="center" />
           <DxColumn caption="참고사항" data-field="referenceInformation" />
-          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd hh:mm" />
+          <DxColumn caption="제작요청일시" data-field="productionRequestedAt" data-type="date" format="yyyy-MM-dd HH:mm" />
           <DxColumn caption="아이디" data-field="productionRequestUserId" width="100px" alignment="center" />
           <DxColumn caption="제작현황" cell-template="productionStatus" width="120px" alignment="center" />
           <template #productionStatus="{ data }">
-            <a-tooltip placement="topLeft" color="black" v-if="data.data.productionStatus == -1">
+            <a-tooltip placement="topLeft" color="red" v-if="data.data.productionStatus == -1">
               <template #title>{{ data.data.causeOfProductionFailure }}</template>
               <div>
                 <production-status :typeTag="5" padding="1px 10px" />
               </div>
             </a-tooltip>
+            <a-tooltip placement="topLeft" color="black" v-if="data.data.productionStatus == 2">
+              <template #title>전자신고파일 다운로드</template>
+              <div>
+                <production-status :typeTag="4" padding="1px 10px" />
+              </div>
+            </a-tooltip>
             <production-status :typeTag="0" v-if="data.data.productionStatus == 0" padding="0px 10px" />
-            <production-status :typeTag="4" v-if="data.data.productionStatus == 2" padding="1px 10px" />
           </template>
           <DxColumn caption="상세보기" width="80px" cell-template="action" />
           <template #action="{ data }">
@@ -63,7 +68,6 @@
                 @click="openPopupDetail(data.data)" />
             </div>
           </template>
-
           <DxSummary>
             <DxTotalItem column="일련번호" summary-type="count" display-format="전체: {0}" />
           </DxSummary>
@@ -181,7 +185,6 @@ export default defineComponent({
     })
 
     const openPopupDetail = (data: any) => {
-      console.log('datadatadata', data);
       dataPopup.value = data
       modalCompanies.value = true
     }

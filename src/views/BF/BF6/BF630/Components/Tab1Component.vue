@@ -104,7 +104,7 @@
     </div>
     <div class="content-grid">
       <a-spin :spinning="loadingIncomeWagePayment || loadingElectronicFilings" size="large">
-        <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+        <DxDataGrid id="DxDataGrid-bf-630-tab1" :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
           key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
           :column-auto-width="true" @selection-changed="selectionChanged" v-model:selected-row-keys="selectedRowKeys">
           <DxScrolling mode="standard" show-scrollbar="always" />
@@ -398,7 +398,8 @@ export default defineComponent({
     };
     const productionStatusData = (emitVal: any, index: number) => {
       countListData.value++
-      if (countListData.value > dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length) return
+      const lengthDataSourceAfterProduction = dataSource.value.filter((x: any) => !!x.lastProductionRequestedAt).length
+      if (countListData.value > lengthDataSourceAfterProduction) return
       if (emitVal !== null) {
         productionStatusArr.value = [...productionStatusArr.value, emitVal];
         dataSource.value[index].productionStatus = emitVal.productionStatus
@@ -406,7 +407,7 @@ export default defineComponent({
         dataSourceOrigin.value[index].productionStatus = emitVal.productionStatus
         dataSourceOrigin.value[index].afterProduction = true
       }
-      if (countListData.value == dataSource.value.length) {
+      if (countListData.value == lengthDataSourceAfterProduction) {
         if (isFirstSearchByfilter.value) {
           isFirstSearchByfilter.value = false
           searchByFilter()
@@ -510,7 +511,10 @@ export default defineComponent({
   }
 })
 </script>
-<style  scoped lang="scss" src="../style/styleTabs.scss"></style>
+<style  scoped lang="scss" src="../style/styleTabs.scss">
+
+
+</style>
 <style scoped lang="scss">
 :deep(.ant-form-item-label>label) {
   width: 110px;

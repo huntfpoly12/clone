@@ -124,7 +124,7 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="사유발생일" label-align="right">
+                <a-form-item label="사유발생일" label-align="right" class="red">
                   <date-time-box text="지" v-model:valueDate="formState.issueDate" bgColor="white" :clearable="false" width="200px" />
                 </a-form-item>
               </a-col>
@@ -137,7 +137,7 @@
               </a-col>
               <a-col :span="8">
                 <a-form-item label="우편번호" label-align="right">
-                  <number-box width="200px" v-model:valueInput="formState.afterReportPostNumber" />
+                  <default-text-box :lengthFixed="5" :maxCharacter="5" lengthFixMsg="length must be 5"  width="200px" v-model:valueInput="formState.afterReportPostNumber" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -178,7 +178,7 @@
               <a-col :span="8">
                 <a-form-item label="근로자수" label-align="right" :class="{ red: formState.healthInsuranceReport }">
                   <number-box width="200px" v-model:valueInput="formState.healthInsuranceEmployeeNumber"
-                    :required="formState.healthInsuranceReport" />
+                    :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport"/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -300,12 +300,12 @@ export default defineComponent({
     SearchOutlined,
     DxFileUploader,
   },
-  props: {
-    workId: {
-      type: Number,
-      default: NaN,
-    }
-  },
+  // props: {
+  //   workId: {
+  //     type: Number,
+  //     default: NaN,
+  //   }
+  // },
   setup(props, { emit }) {
     const store = useStore();
     const globalYear = computed(() => store.state.settings.globalYear);
@@ -325,7 +325,7 @@ export default defineComponent({
       isShutdown: true,
       isNoWorker: true,
       is1YearWithoutWorker: true,
-      issueDate: NaN,
+      issueDate: +dayjs().format('YYYYMMDD'),
       afterReportPostAddress: '',
       afterReportPostNumber: '',
       nationalPensionClosingPeriod: '',
@@ -346,7 +346,9 @@ export default defineComponent({
       reportDate: +dayjs().format('YYYYMMDD'),
     })
     const formStateToCompare = ref({ ...formState });
-    // get Company
+
+    //-------------------------- get Company-----------------------
+
     const myCompanyParam = reactive({
       companyId: companyId,
     });
@@ -393,50 +395,6 @@ export default defineComponent({
         formState.industrialAccidentInsuranceCloseDate = NaN;
       }
     }, { immediate: true })
-
-    // //---------------------------------DISABLED FIELD--------------------------------
-
-    // const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
-    // const isDisabled2 = computed(() => {
-    //   // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
-    //   let check = [23, 26, 32].some((item: any) => formState.healthInsuranceAcquisitionCode2 == item);
-    //   formState.includeDependents = check;
-    //   return check;
-    // })
-
-    //-----------------------------GET DETAIL getMajorInsuranceCompanyOut-------------------
-
-    const getCompanyOutTrigger = ref<boolean>(false);
-    const getCompanyOutParam = reactive({
-      companyId: companyId,
-      imputedYear: globalYear,
-      workId: NaN,
-    })
-    const { refetch: getCompanyOutRefetch, result: getCompanyOutResult, onError: getCompanyOutError } = useQuery(
-      queries.getMajorInsuranceCompanyOut,
-      getCompanyOutParam,
-      () => ({
-        enabled: getCompanyOutTrigger.value,
-        fetchPolicy: 'no-cache',
-      })
-    );
-    watch(getCompanyOutResult, (newVal) => {
-      if (newVal) {
-        let data = newVal.getMajorInsuranceCompanyOut;
-        console.log(`output->data`,data);
-        // formState.value = newVal.getMajorInsurancegetCompanyOut;
-        getCompanyOutTrigger.value = false;
-      }
-    });
-    getCompanyOutError((res: any) => {
-      notification('error', res.message)
-    })
-    watch(()=>props.workId,(newVal: number) => {
-      if(newVal){
-        getCompanyOutParam.workId = newVal;
-        getCompanyOutTrigger.value = true;
-      }
-    },{immediate: true})
     
     //-----------------------------API CREATE && FORM ACTION--------------------------------
 
@@ -453,8 +411,6 @@ export default defineComponent({
       var res = e.validationGroup.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
-        store.state.common.isNewRowPA120 = true;
-        store.commit('common/actionFormErrorPA120');
       } else {
         makeDataClean(formState, ['presidentResidentNumber']);
         createCompanyOutMutate({ companyId: companyId, imputedYear: globalYear.value, input: formState });

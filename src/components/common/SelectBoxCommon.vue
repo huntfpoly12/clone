@@ -1,7 +1,7 @@
 <template>
     <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
         v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
-        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="선택" @itemClick="itemClick">
+        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="선택">
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>
@@ -25,7 +25,7 @@ export default defineComponent({
         clearButton: Boolean,
         disabled: Boolean,
         valueInput: {
-            type: Number,
+            type: Object as () => string | number | null,
             default: "",
         },
         readOnly: Boolean,
@@ -45,9 +45,6 @@ export default defineComponent({
         searchEnabled: {
           type: Boolean,
           default: true
-        },
-        itemClick: {
-          type: Function
         }
     },
     components: {
@@ -73,11 +70,8 @@ export default defineComponent({
         const updateValue = (value: any) => {
             emit("update:valueInput", value);
         };
-      const test = () => {
-          alert()
-        }
         return {
-            value,test,
+            value,
             updateValue,
             messageRequired
         };

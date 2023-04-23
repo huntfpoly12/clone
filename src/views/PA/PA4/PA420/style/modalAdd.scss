@@ -55,7 +55,7 @@
     }
 }
 .block-radio {
-    margin: 20px 100px;
+    margin: 20px 80px;
     text-align: center;
 }
 .radio-group {
@@ -127,7 +127,7 @@
     ::v-deep label {
         padding-left: 40px;
     }
-} 
+}
 ::v-deep .dx-radiobutton {
     display: flex;
     align-items: center;
@@ -135,8 +135,10 @@
 ::v-deep .dx-radio-value-container {
     height: 18px;
 }
-::v-deep .one.dx-radiogroup-horizontal .dx-radiobutton:first-child{
-    margin-right: 95px;
+::v-deep .dx-collection{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
 }
 
 
