@@ -7,7 +7,7 @@
       <div class="user-info" v-if="userInfor">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <a-dropdown  :trigger="['click']">
+        <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
           <a class="ant-dropdown-link" @click.prevent>
             {{ userInfor.name }}
             <DownOutlined />
@@ -170,7 +170,7 @@
                 </DxTabs>
               </DxSortable>
             </div>
-            <div class="main-content">{{ userInfor }}
+            <div class="main-content">
               <template v-if="activeTab">
                 <keep-alive :exclude="cachedTab" :key="count">
                   <component :is="currentComponent" />
@@ -872,5 +872,8 @@ export default defineComponent({
 :deep .tab-main .dx-tabs-scrollable .dx-tabs-wrapper {
   border-left: 0;
   border-right: 0;
+}
+:deep .ant-dropdown-menu-item{
+  text-align: right;
 }
 </style>
