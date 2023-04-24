@@ -14,10 +14,10 @@
                             <a-col :span="8">
                                 <div style="display: flex; justify-content: center;">
                                     <h2>결의서</h2>
-                                    <DxButton :focusStateEnabled="false" text="O"
+                                    <DxButton v-if="store.state.common.ac120.formData.resolutionNormalStatus == true" :focusStateEnabled="false" text="O"
                                         :style="{ backgroundColor: '#337614', color: 'white' }"
                                         :height="$config_styles.HeightInput" />
-                                    <DxButton :focusStateEnabled="false" text="X"
+                                    <DxButton v-else-if="store.state.common.ac120.formData.resolutionNormalStatus == false" :focusStateEnabled="false" text="X"
                                         :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                         :height="$config_styles.HeightInput" />
                                     <!-- <button-basic style="margin: 0 10px;" text="" type="success" :mode="'contained'" />
@@ -27,7 +27,10 @@
                             <a-col :span="8">
                                 <div style="display: flex; justify-content: flex-end;">
                                     <a-form-item label="결의번호">
-                                        <button-basic text="수기" type="danger" :mode="'contained'" />
+                                        {{ store.state.common.ac120.formData.resolutionNumber }}
+                                        <DxButton v-if="store.state.common.ac120.formData.handwriting == true" :focusStateEnabled="false" text="수기"
+                                        :style="{ backgroundColor: '#BB3835', color: 'white' }"
+                                        :height="$config_styles.HeightInput" />
                                     </a-form-item>
                                 </div>
                             </a-col>
