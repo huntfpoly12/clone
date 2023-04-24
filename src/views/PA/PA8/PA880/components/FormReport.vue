@@ -273,14 +273,12 @@ import DxButton from "devextreme-vue/button";
 import { DxColumn, DxDataGrid, DxScrolling } from "devextreme-vue/data-grid";
 import { DxFileUploader } from "devextreme-vue/file-uploader";
 import {
-  computed,
   defineComponent,
   getCurrentInstance,
   reactive,
   ref,
   watch,
 } from "vue";
-import { useStore } from "vuex";
 import notification from "@/utils/notification";
 import comfirmClosePopup from "@/utils/comfirmClosePopup";
 export default defineComponent({
@@ -301,8 +299,7 @@ export default defineComponent({
   //   }
   // },
   setup(props, { emit }) {
-    const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
     const lenFixedMsg = messages.getCommonMessage('105').message;
