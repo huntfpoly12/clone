@@ -2,7 +2,7 @@
 import getDataDetail from "./getDataDetailUser";
 import getListUserCompany from "./getListUserCompany";
 import getDetailUserEdit from "./getDetailUserEdit";
-import getDataFacilityBusiness from "./getDataFacilityBusiness";
+import getMyCompanyFacilityBusinesses from "./getMyCompanyFacilityBusinesses";
 import checkUserNameCompany from "./checkUserNameCompany";
 import getSeal from "./getSeal";
 
@@ -10,7 +10,7 @@ const queries = {
     getDataDetail: getDataDetail,
     getListUserCompany: getListUserCompany,
     getDetailUser: getDetailUserEdit,
-    getDataFacilityBusiness: getDataFacilityBusiness,
+    getMyCompanyFacilityBusinesses: getMyCompanyFacilityBusinesses,
     checkUserNameCompany: checkUserNameCompany,
     getSeal: getSeal
 };
