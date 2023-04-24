@@ -7,5 +7,6 @@ export default gql`
             getMyCompanyFacilityBusinesses(companyId : $companyId) {
                 facilityBusinessId
                 name
+                startYearMonth
             }
         }`

@@ -25,6 +25,8 @@ export class Message extends BaseType {
       // CANCEL Button Click
         '301': { "message" : "변경사항을 저장하지 않은채 종료하시겠습니까?", "icon": "iconWarning"}, // [Modal-confirm] "Are you sure you want to exit without saving changes?
         '302': { "message" : "취소되었습니다.", "icon":"iconInfo"}, // Canceled!
+        '303': { "message" : "선택된 내역을 취소하겠습니까?", "yes": "네. 취소합니다","no":"아니요"}, // Are you sure you want to cancel the selected?
+      
       // Delete Button Click
         '401': { "message" : "정말로 삭제하시겠습니까?", "icon": "iconWarning"}, // Do you really want to delete this data?
         '402': { "message" : "삭제되었습니다", "icon": "iconInfo"}, // Deleted!
