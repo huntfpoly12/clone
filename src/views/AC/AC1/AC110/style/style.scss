@@ -123,6 +123,9 @@
         :deep .dx-freespace-row {
           display: none !important;
         }
+        :deep .dx-datagrid-focus-overlay {
+          visibility: hidden !important;
+        }
       }
     }
   }
