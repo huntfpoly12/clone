@@ -129,8 +129,12 @@
       }
     }
   }
-  .disable-button-edit-add {
+  .disable-icon-column {
     pointer-events: none;
-    color: rgb(180, 177, 177);
+    opacity: .1;
+  }
+  .disable-input-column {
+    pointer-events: none;
+    opacity: .4;
   }
 }
