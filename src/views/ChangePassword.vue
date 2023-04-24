@@ -47,6 +47,7 @@
           :use-submit-behavior="true"
           text="비밀번호 변경"
           type="success"
+          :height="$config_styles.HeightInput" 
         />
       </div>
     </form>

@@ -79,11 +79,7 @@ import notification from "@/utils/notification"
 import { Message } from "@/configs/enum";
 import dayjs from "dayjs";
 dayjs
-window.addEventListener('storage', (e) => {
-  if (e.key === 'acYear') {
-   alert()
-  }
-});
+
 export default defineComponent({
   components: {
     WarningOutlined,DxSelectBox, DxValidator, DxRequiredRule
@@ -203,6 +199,7 @@ export default defineComponent({
       acYear.value = parseInt(sessionStorage.getItem("acYear")?? "0")
       paYear.value = parseInt(sessionStorage.getItem("paYear")?? "0")
       facilityBiz.value = parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0")
+      trigger.value = true
       modalConfirm.value = true
     }
     return {

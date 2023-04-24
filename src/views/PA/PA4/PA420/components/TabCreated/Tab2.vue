@@ -100,7 +100,7 @@ const dataIncomeRetirement = ref()
 const store = useStore()
 const incomeCalculationInput = computed(() => store.getters['common/getIncomeCalculationInput'])
 
-const dataFormIncomeCalculation: any = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
+const dataFormIncomeCalculation = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const dataFormOld = ref<DataFormIncomeCalculation>(cloneDeep(incomeCalculationInput.value))
 const isChangeForm = computed(() => !isEqual(dataFormIncomeCalculation.value, dataFormOld.value))
 

@@ -221,7 +221,7 @@ export default defineComponent({
         const modalEdit = ref<boolean>(false)
         const popupDataDelete: any = ref([])
         const modalDelete = ref<boolean>(false)
-        const triggerDetail = ref<boolean>(true);
+        const triggerDetail = ref<boolean>(false);
         const store = useStore();
         const per_page = computed(() => store.state.settings.per_page);
         const move_column = computed(() => store.state.settings.move_column);
@@ -261,7 +261,7 @@ export default defineComponent({
               listEmployee.push(item.employeeId)
               }
             })
-          listEmployeeId.value = listEmployee
+            listEmployeeId.value = listEmployee
             triggerDetail.value = false
         })
         errorTableDetail(res => {

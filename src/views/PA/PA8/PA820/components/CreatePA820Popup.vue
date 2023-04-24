@@ -13,10 +13,10 @@
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="직원선택" class="label-required">
+                <a-form-item label="직원선택" class="red">
                   <div class="d-flex-center">
                     <employ-select :arrayValue="employeeArr" :required="true" v-model:valueEmploy="formState.employeeId"
-                      width="300px" />
+                      :width="formState.employeeType == 10 ? '220px' : '280px'" />
                     <!-- <div class="ml-5 d-flex-center">
                       <img src="@/assets/images/iconInfoGray.png" alt="" style="width: 15px;" class="mr-5">
                       <span class="custom-waring">
@@ -31,12 +31,12 @@
           <div class="form-group">
             <a-row>
               <a-col :span="10">
-                <a-form-item label="업체명" label-align="right" class="red">
+                <a-form-item label="업체명" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="대표자명" label-align="right" class="red">
+                <a-form-item label="대표자명" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.presidentName"
                     :required="true" />
                 </a-form-item>
@@ -44,13 +44,13 @@
             </a-row>
             <a-row class="mt-10">
               <a-col :span="10">
-                <a-form-item label="사업자등록번호" label-align="right" class="red">
+                <a-form-item label="사업자등록번호" label-align="right">
                   <biz-number-text-box v-model:valueInput="showData.bizNumber" width="200px" :disabled="true"
                     messRequired="이항목은 필수 입력사항입니다!" nameInput="companyBizNumber" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="사업장관리번호" label-align="right" class="red">
+                <a-form-item label="사업장관리번호" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.adding"
                     :required="true" />
                 </a-form-item>
@@ -60,25 +60,26 @@
           <div class="form-group">
             <a-row>
               <a-col :span="10">
-                <a-form-item label="성명" label-align="right" class="red">
+                <a-form-item label="성명" label-align="right">
                   <default-text-box width="200px" :disabled="true" v-model:valueInput="showData.name1" :required="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="주민등록번호" label-align="right" class="red">
-                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId" :mask="'#############*'" />
+                <a-form-item label="주민등록번호" label-align="right">
+                  <id-number-text-box :disabled="true" width="200px" v-model:valueInput="showData.residentId"
+                    :mask="'######-######*'" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="mt-10">
               <a-col :span="10">
-                <a-form-item label="취득일(입사일)" label-align="right" class="red">
+                <a-form-item label="취득일(입사일)" label-align="right">
                   <date-time-box text="지" v-model:valueDate="showData.joinedAt" bgColor="white" :clearable="false"
                     width="200px" :disabled="true" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="상실년월일(퇴사일)" label-align="right" class="red">
+                <a-form-item label="상실년월일(퇴사일)" label-align="right">
                   <date-time-box text="지" v-model:valueDate="showData.leavedAt" bgColor="white" :clearable="false"
                     width="200px" />
                 </a-form-item>
@@ -102,10 +103,10 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" nationaPersionSelectbox "
-                      :show-clear-button=" false " display-expr="label" value-expr="value" :disabled=" !formState.nationalPensionReport "
-                      v-model=" formState.nationalPensionLossCode " placeholder="선택" field-template="field"
-                      item-template="item">
+                    <DxSelectBox :search-enabled="false" width="357px" :data-source="nationaPersionSelectbox"
+                      :show-clear-button="false" display-expr="label" value-expr="value"
+                      :disabled="!formState.nationalPensionReport" v-model="formState.nationalPensionLossCode"
+                      placeholder="선택" field-template="field" item-template="item">
                       <template #field=" { data } : any " style="padding: 4px;display: flex; align-items: center;">
                         <div v-if=" data " style="padding: 2px;display: flex; align-items: center;">
                           <a-tag>{{ data?.value }}</a-tag>
@@ -134,8 +135,9 @@
                     v-model:valueInput="formState.nationalPensionLossCode"
                     :disabled="!formState.nationalPensionReport" placeholder="선택" /> -->
                   <span class="ml-50">
-                    <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
-                      :disabled="!formState.nationalPensionReport" />
+                    <checkbox-basic size="14" label="취득월 국민연금 납부"
+                      v-model:valueCheckbox=" showData.acquisitionMonthPayment "
+                      :disabled=" !formState.nationalPensionReport " />
                   </span>
                   <span class="ml-10 notice">
                     <img src="@/assets/images/iconInfo.png" style="width: 14px;" /> 1월취득은 만근퇴사의 경우 의무납부.
@@ -148,11 +150,11 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <DxSelectBox :search-enabled="false" width="357px" :data-source="healthInsuranceSelectbox"
-                      :show-clear-button="false" display-expr="label" value-expr="value"
-                      :disabled="!formState.healthInsuranceReport" v-model="formState.healthInsuranceLossCode"
-                      :height="$config_styles.HeightInput" placeholder="선택" field-template="field" item-template="item">
-                      <template #field="{ data } : any">
+                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" healthInsuranceSelectbox "
+                      :show-clear-button=" false " display-expr="label" value-expr="value"
+                      :disabled=" !formState.healthInsuranceReport " v-model=" formState.healthInsuranceLossCode "
+                      :height=" $config_styles.HeightInput " placeholder="선택" field-template="field" item-template="item">
+                      <template #field=" { data } : any ">
                         <div v-if=" data " class="text-overflow" style="padding: 2px;display: flex; align-items: center;">
                           <a-tag>{{ data?.value }}</a-tag>
                           <div>
@@ -236,13 +238,13 @@
           <div class="form-group">
             <a-row>
               <a-col :span=" 10 ">
-                <a-form-item label="당해년도 보수총액" label-align="right" class="red">
+                <a-form-item label="당해년도 보수총액" label-align="right">
                   <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryThisYear "
                     :required=" true " />
                 </a-form-item>
               </a-col>
               <a-col :span=" 12 ">
-                <a-form-item label="당해년도 산정월수" label-align="right" class="red">
+                <a-form-item label="당해년도 산정월수" label-align="right">
                   <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthThisYear "
                     :required=" true " />
                 </a-form-item>
@@ -250,13 +252,13 @@
             </a-row>
             <a-row>
               <a-col :span=" 10 ">
-                <a-form-item label="전년도 보수총액" label-align="right" class="red">
+                <a-form-item label="전년도 보수총액" label-align="right">
                   <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.totalSalaryLastYear "
                     :required=" true " />
                 </a-form-item>
               </a-col>
               <a-col :span=" 12 ">
-                <a-form-item label="전년도 산정월수" label-align="right" class="red">
+                <a-form-item label="전년도 산정월수" label-align="right">
                   <number-box-money width="200px" :disabled=" true " v-model:valueInput=" formState.workMonthLastYear "
                     :required=" true " />
                 </a-form-item>
@@ -302,6 +304,7 @@ import {
   reactive,
   ref,
   watch,
+  watchEffect,
 } from "vue";
 import { useStore } from "vuex";
 import notification from "@/utils/notification";
@@ -350,12 +353,12 @@ export default defineComponent({
     })
     const formState = reactive({
       employeeType: 10,
-      employeeId: 0,
+      employeeId: null,
       nationalPensionReport: false,
       healthInsuranceReport: true,
       employeementInsuranceReport: true,
       industrialAccidentInsuranceReport: true,
-      nationalPensionLossCode: 3,
+      nationalPensionLossCode: '0',
       nationalPensionPaymentCurrentMonthLoss: '',
       employeementInsuranceLossCode: '',
       employeementInsuranceJobChangeReport: false,
@@ -543,6 +546,31 @@ export default defineComponent({
       return check;
     })
 
+    // --------------------------------WATCH CHECK BOX--------------------------------
+
+    watch(() => formState.nationalPensionReport, (newVal: Boolean) => {
+      if (!newVal) {
+        formState.nationalPensionLossCode = '0';
+        showData.acquisitionMonthPayment = false;
+      } else {
+        formState.nationalPensionLossCode = '3';
+      }
+    }, { deep: true });
+    watch(() => formState.healthInsuranceReport, (newVal: Boolean) => {
+      if (!newVal) {
+        formState.healthInsuranceLossCode = '';
+      } else {
+        formState.healthInsuranceLossCode = '1';
+      }
+    }, { deep: true });
+    watchEffect(() => {
+      if (!formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport) {
+        showData.healthInsuranceAcquisitionCode2 = 0;
+        formState.employeementInsuranceJobChangeReport = false;
+        formState.employeementInsuranceLossDescription = '';
+      }
+    });
+
     //-----------------------------------FORM ACTION--------------------------------
 
     const messageCreate = messages.getCommonMessage('101').message;
@@ -597,10 +625,4 @@ export default defineComponent({
   white-space: nowrap;
   width: 322px;
 }
-
-// .text-overflow {
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-//   white-space: nowrap;
-// }
 </style>
