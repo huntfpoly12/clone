@@ -118,7 +118,11 @@ export class Message extends BaseType {
   //통장내역
     public static AC110 = new Message({
         '001': { "message" : "새로운 통장내역이 있는 경우 추가로 불러옵니다. 자주 사용시 시스템 부하를 줄 수 있기에, 제한되는 경우가 있으니 주의하셔서 이용하시기 바랍니다. 그래도 불러오시겠습니까?","yes": "네. 불러옵니다","no":"아니요"}, // If you have a new bank account details, call in addition. Frequent use may cause system load, so please be careful when using it. Will you still invite me?
+        '002': { "message" : "png, jpg, jpeg, gif 파일만 업로드할 수 있습니다" }, //  You can only upload png, jpg, jpeg, gif file!
+        '003': { "message" : "파일 크기는 10MB보다 작아야합니다"}, // Image must smaller than 10MB! 
+        '004': { "message" : "중복된 이미지는 업로드가 불가합니다" }, // Duplicate image are not allowed 
     });
+       
   
   //전표
     public static AC120 = new Message({
