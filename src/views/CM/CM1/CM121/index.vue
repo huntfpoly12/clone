@@ -315,7 +315,7 @@ export default defineComponent({
       }
     })
     let isChangeGlobalYear = ref<boolean>(false)
-    let globalYearChange = ref(globalYear.value)
+    let globalYearChange: any = ref(globalYear.value)
     let isChangeFocusSubmit = ref<boolean>(false)
     const cm121DxDataGrid = ref<any>()
     let isDuplicaseName = ref<boolean>(true)
