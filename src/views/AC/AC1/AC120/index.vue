@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="main">
-            {{ dataSource }}
+            <!-- {{ dataSource }} -->
             <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
@@ -74,7 +74,7 @@
                     <DxDataGrid id="dataGridAc120" key-expr="bankbookDetailId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-                        :column-auto-width="true" :onRowPrepared="onCellPrepared"
+                        :column-auto-width="true"
                         v-model:selected-row-keys="store.state.common.ac120.selectedRowKeys"
                         @selection-changed="selectionChanged">
                         <DxRowDragging :allow-reordering="true" :show-drag-icons="true" :on-reorder="onReorder"
@@ -411,25 +411,6 @@ export default defineComponent({
         const modalHistoryStatuAccountingDocuments = ref<boolean>(false);
 
         const dataRows: any = ref([])
-
-        let arraySelectBox = reactive([
-            {
-                value: 1,
-                label: '수익사업'
-            },
-            {
-                value: 2,
-                label: '자부담'
-            },
-            {
-                value: 3,
-                label: '보조금'
-            },
-            {
-                value: 4,
-                label: '후원듬'
-            }
-        ])
 
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const lastBalance = ref<number>(0)
@@ -790,35 +771,6 @@ export default defineComponent({
             // previousRowData.value = cloneDeep(e.row?.data);
         }
 
-        const onCellPrepared = (e: any) => {
-            // if (e.data) {
-            //     if (e.data.amount == e.data.amountNew) {
-            //         e.rowElement.style.color = 'black';
-            //     } else {
-            //         e.rowElement.style.color = 'red';
-            //     }
-            //     e.cells[0].cellElement.style.color = 'black';
-            //     e.cells[2].cellElement.style.color = 'black';
-            // }
-
-            // console.log();
-            // console.log();
-            // console.log();
-
-            if (e.rowType !== "data") {
-                return;
-            }
-            // console.log(e.rowType, e.data, e.rowIndex, e.rowElement, e.cells);
-            // e.cells[0].cellElement.rowSpan = 2
-            // if (e.cellElement) {
-            //     e.cellElement.rowSpan = 2;
-            //     console.log(e.cellElement?.rowSpan);
-
-            //     e.cellElement.innerHTML = "<div>My Text</div>";
-            // } else {
-            //     // e.cellElement.style.display = "none";
-            // }
-        }
 
         // ================ CUSTOM SUMMARY TABLE ============================================
         const customCountRow = () => {
@@ -870,7 +822,6 @@ export default defineComponent({
             loadingGetAccountingDocuments,
             dataRows,
             onFocusedRowChanging,
-            onCellPrepared,
             actionEditTaxPay,
             gridRefAC120Detail,
             lastBalance,
@@ -908,8 +859,6 @@ export default defineComponent({
             // statusPopupCopyData,
             statusModalItemDetail,
             // actionPopupCopyData,
-            
-            arraySelectBox,
             onDragStart,
 
             actionPopupItemDetail,

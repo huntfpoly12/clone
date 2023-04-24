@@ -257,7 +257,7 @@ export default defineComponent({
     setup() {
         const heightForm: any = ref('352px')
         const store = useStore();
-        const acYear = computed(() => store.state.settings.acYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const refFormAC120 = ref()

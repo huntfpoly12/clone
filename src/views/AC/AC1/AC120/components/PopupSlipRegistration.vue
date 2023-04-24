@@ -76,7 +76,7 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const store = useStore();
-        const acYear = computed(() => store.state.settings.acYear)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
         const countKey = ref<number>(0)
 
         const refFormAddAC120 = ref()
