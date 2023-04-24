@@ -257,8 +257,8 @@ export default defineComponent({
     setup() {
         const heightForm: any = ref('352px')
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = computed(() => store.state.settings.acYear)
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         store.state.common.ac120.formData = reactive({ ...initialStateFormData })
         const refFormAC120 = ref()
         let statusPopupCopyData = ref<boolean>(false);
@@ -377,7 +377,7 @@ export default defineComponent({
                 if (store.state.common.ac120.statusFormAdd) {
                     let dataSubmit = {
                         companyId: companyId,
-                        fiscalYear: globalYear.value,
+                        fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         transactionDetailDate: store.state.common.ac120.transactionDetailDate,
                         input: { ...store.state.common.ac120.formData }
@@ -389,7 +389,7 @@ export default defineComponent({
                 } else {
                     let dataSubmit = {
                         companyId: companyId,
-                        fiscalYear: globalYear.value,
+                        fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                         accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId,
@@ -431,7 +431,7 @@ export default defineComponent({
             if (store.state.common.ac120.formData.handwriting === true) {
                 mutateUnregisterAccountingDocument({
                     companyId: companyId,
-                    fiscalYear: globalYear.value,
+                    fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
                     transactionDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                     accountingDocumentId: store.state.common.ac120.formData.accountingDocumentId
@@ -439,7 +439,7 @@ export default defineComponent({
             } else if (store.state.common.ac120.formData.handwriting === false) {
                 mutateInitializeTransactionDetails({
                     companyId: companyId,
-                    fiscalYear: globalYear.value,
+                    fiscalYear: acYear.value,
                     facilityBusinessId: globalFacilityBizId.value,
                     bankbookDetailDate: store.state.common.ac120.formData.transactionDetailDate,
                     bankbookDetailId: store.state.common.ac120.formData.bankbookDetailId

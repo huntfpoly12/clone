@@ -234,7 +234,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const processKey = computed(() => store.state.common.pa110.processKeyPA110)
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
         const arrayEmploySelect: any = ref([])
         let modalDeductions = ref<boolean>(false)
         const modalInsurance = ref<boolean>(false)
@@ -256,22 +256,22 @@ export default defineComponent({
         const countKey: any = ref(0)
         const originDataEmployeeWage = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             employeeId: null,
         }
         const calculateVariables = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             totalTaxPay: 0,
             dependentCount: 1
         }
         const originData = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
         }
         const originDataConfig = {
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             useOnly: true,
         }
         const incomeWageParams = {
@@ -392,7 +392,7 @@ export default defineComponent({
                 store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa110.dataYearNew)
                 await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
@@ -404,7 +404,7 @@ export default defineComponent({
                 store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa110.dataYearNew)
                 await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
@@ -423,7 +423,7 @@ export default defineComponent({
                 store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa110.dataYearNew)
                 await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
@@ -443,7 +443,7 @@ export default defineComponent({
                 store.state.common.pa110.processKeyPA510.imputedYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.processKeyPA510.paymentYear = store.state.common.pa110.dataYearNew
                 store.state.common.pa110.loadingTableInfo++
-                await (store.state.settings.globalYear = store.state.common.pa110.dataYearNew)
+                await (store.state.settings.paYear = store.state.common.pa110.dataYearNew)
                 await (store.state.common.pa110.checkClickYear = false);
                 return;
             }
@@ -657,12 +657,12 @@ export default defineComponent({
             }
         })
 
-        watch(globalYear, (newVal) => {
-            originData.imputedYear = newVal
-            triggerEmployeeWages.value = true;
-            triggerConfigPayItems.value = true;
-            triggerConfigDeductions.value = true;
-        })
+        // watch(paYear, (newVal) => {
+        //     originData.imputedYear = newVal
+        //     triggerEmployeeWages.value = true;
+        //     triggerConfigPayItems.value = true;
+        //     triggerConfigDeductions.value = true;
+        // })
         // ======================= FUNCTION ================================
         const onChangeInputDeduction = () => {
             if (store.state.common.pa110.statusFormAdd) {
@@ -830,7 +830,7 @@ export default defineComponent({
         return {
             pa110FormRef,
             loadingConfigPayItems, loadingConfigDeductions, loading,
-            modalDeductions, globalYear,
+            modalDeductions, paYear,
             modalInsurance, modalDeteleTaxpay, modalDeteleMidTerm,
             dataIW,
             arrayEmploySelect,

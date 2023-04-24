@@ -9,12 +9,12 @@
                                 v-model:valueInput="dataBankBook" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
-                            <number-box :width="200" :required="true" v-model:valueInput="store.state.common.ac120.formData.amount"
-                                placeholder="금액" />
+                            <number-box :width="200" :required="true"
+                                v-model:valueInput="store.state.common.ac120.formData.amount" placeholder="금액" />
                         </a-form-item>
                         <a-form-item class="red" label="적요">
-                            <default-text-box :width="200" :required="true" v-model:valueInput="store.state.common.ac120.formData.summary"
-                                placeholder="적요" />
+                            <default-text-box :width="200" :required="true"
+                                v-model:valueInput="store.state.common.ac120.formData.summary" placeholder="적요" />
                         </a-form-item>
                         <a-form-item class="red" label="자금원천">
                             <FundingSourceSelect placeholder="선택" :width="200" :required="true"
@@ -29,11 +29,14 @@
                                 v-model:valueDate="store.state.common.ac120.transactionDetailDate" />
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
-                            <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" @update:valueRadioCheck="changeRadioResolutionType" />
+                            <radio-group :arrayValue="store.state.common.ac120.arrResolutionType"
+                                :layoutCustom="'horizontal'" :required="true"
+                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType"
+                                @update:valueRadioCheck="changeRadioResolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
-                            <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
+                            <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType"
+                                :layoutCustom="'horizontal'" :required="true"
                                 v-model:valueRadioCheck="store.state.common.ac120.formData.letterOfApprovalType" />
                         </a-form-item>
                     </a-col>
@@ -58,8 +61,9 @@ import { companyId } from "@/helpers/commonFunction";
 import { useStore } from 'vuex';
 import dayjs from "dayjs";
 import filters from "@/helpers/filters";
-// import { initialStateFormAdd } from '../utils/index'
-import { ResolutionType, LetterOfApprovalType, enum2Entries  } from "@bankda/jangbuda-common";
+import { initialStateFormAdd } from '../utils/index'
+import comfirmClosePopup from '@/utils/comfirmClosePopup';
+import { ResolutionType, LetterOfApprovalType, enum2Entries } from "@bankda/jangbuda-common";
 export default defineComponent({
     props: {
         modalStatus: {
@@ -72,16 +76,17 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const acYear = computed(() => store.state.settings.acYear)
         const countKey = ref<number>(0)
-        
+
         const refFormAddAC120 = ref()
         const dataBankBook = ref({})
-        
+        const statusRemoveRow = ref<boolean>(true)
         const dataQueryGetBankBooks = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
         })
+        let dataStateFormAdd = {};
 
         const arraySelectBox = ref([]);
         const triggerBankbooks = ref<boolean>(true);
@@ -92,7 +97,7 @@ export default defineComponent({
             enabled: triggerBankbooks.value,
             fetchPolicy: "no-cache",
         }))
-        
+
         // ================== WATCH ================
         // 1. getBankbooks
         watch(resBankbooks, (value) => {
@@ -110,9 +115,21 @@ export default defineComponent({
 
         watch(() => props.modalStatus, (newValue, old) => {
             if (newValue) {
-                store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs().set('year', globalYear.value).set('month', store.state.common.ac120.monthSelected - 1).set('date', 1).toDate())
+                dataStateFormAdd = {
+                    bankbookId: store.state.common.ac120.formData.bankbookId,
+                    // resolutionDate: store.state.common.ac120.formData.resolutionDate,
+                    resolutionType: store.state.common.ac120.formData.resolutionType,
+                    amount: store.state.common.ac120.formData.amount,
+                    summary: store.state.common.ac120.formData.summary,
+                    fundingSource: store.state.common.ac120.formData.fundingSource,
+                    letterOfApprovalType: store.state.common.ac120.formData.letterOfApprovalType,
+                };
                 countKey.value++
             }
+        })
+
+        watch(() => store.state.common.ac120.monthSelected, (newValue, old) => {
+            store.state.common.ac120.transactionDetailDate = filters.formatDateToInterger(dayjs().set('year', acYear.value).set('month', newValue - 1).set('date', 1).toDate())
         })
 
         watch(() => dataBankBook.value, (newValue: any, old) => {
@@ -127,17 +144,36 @@ export default defineComponent({
             if (!res.isValid) {
                 res.brokenRules[0].validator.focus();
             } else {
+                statusRemoveRow.value = false;
                 emit('submit', true)
             }
         }
         const cancel = () => {
-            emit("closePopup", false)
-            if (!store.state.common.ac120.statusFormAdd) {
-                console.log(111);
-                
-                store.state.common.ac120.onDeleteRowAdd
+
+            console.log(dataStateFormAdd);
+            console.log(initialStateFormAdd);
+
+            // console.log(JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd));
+
+            if (JSON.stringify(initialStateFormAdd) === JSON.stringify(dataStateFormAdd) == true) {
+                emit("closePopup", false)
+                if (statusRemoveRow.value) {
+                    store.state.common.ac120.onDeleteRowAdd++
+                }
+            } else {
+                comfirmClosePopup(() => {
+                    emit("closePopup", false)
+                    if (statusRemoveRow.value) {
+                        store.state.common.ac120.onDeleteRowAdd++
+                    }
+                })
             }
-            
+
+            // emit("closePopup", false)
+            // if (!store.state.common.ac120.statusFormAdd) {
+            //     store.state.common.ac120.onDeleteRowAdd
+            // }
+
         };
         const changeRadioResolutionType = (value: Number) => {
             console.log(value);
@@ -146,7 +182,7 @@ export default defineComponent({
             } else if (value == 12 || value == 22) {
                 store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
             }
-            
+
         }
 
         store.state.common.ac120.arrResolutionType = computed(() => {
