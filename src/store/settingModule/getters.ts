@@ -21,6 +21,8 @@ const getters:  GetterTree<SettingState, any> = {
   listFacilityBizTypeForUser: (state: any) => state.listFacilityBizTypeForUser,
   accountSubjects: (state: any) => state.accountSubject,
   clients: (state: any) => state.clients,
+  acYear: (state: any) => state.acYear,
+  paYear: (state: any) => state.paYear,
 };
 
 export default getters;

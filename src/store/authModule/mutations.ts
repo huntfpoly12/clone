@@ -11,9 +11,7 @@ const mutations: MutationTree<AuthState> = {
   },
   logout: (state) => {
     state.authData = null;
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('username');
-    sessionStorage.removeItem('refreshToken');
+    sessionStorage.clear()
   },
   loadUserInfo(state: any, dataInfor: any) {
     state.userInfor = dataInfor
