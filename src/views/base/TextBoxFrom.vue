@@ -9,6 +9,27 @@
       <tr>
         <td>
           <div class="dx-field">
+            <div class="dx-field-label">character cleanup</div>
+            <div class="dx-field-value">
+              <DxTextBox width="250px" value-change-event="input" :show-clear-button="clearButton" mode="text"
+                 v-model:value="textclear" >
+              </DxTextBox> <button @click="makeCleanText">Clean text</button>
+            </div>
+            <div class="dx-field-value">
+              <textarea name="" id="" cols="30" rows="3" >{{ textclean }}</textarea>
+            </div>
+          </div>
+        </td>
+        <td>
+          
+        </td>
+        <td>
+         
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="dx-field">
             <div class="dx-field-label">Default text box</div>
             <div class="dx-field-value">
               <default-text-box
@@ -242,11 +263,11 @@ import { defineComponent, ref } from "vue";
 import notify from "devextreme/ui/notify";
 import DxValidationSummary from "devextreme-vue/validation-summary";
 import DxButton from "devextreme-vue/button";
-
+import DxTextBox from "devextreme-vue/text-box";
 export default defineComponent({
   components: {
     DxButton,
-    DxValidationSummary,
+    DxValidationSummary,DxTextBox
   },
   data() {
     return {
@@ -257,6 +278,8 @@ export default defineComponent({
   },
   setup() {
     const bday = ref("");
+    const textclean = ref("");
+    const textclear = ref("( 급여 100000 *30명 ) * 12Month + 고정비 3000000");
     const text1 = ref("text example.....");
     function submit() {
       this.$refs["formTest"].onsubmit = onFormSubmit();
@@ -265,11 +288,16 @@ export default defineComponent({
 
     }
 
+    const makeCleanText = (e) => {
+      e.preventDefault();  
+      console.log(textclear.value);
+      textclean.value = textclear.value.replace(/[^\d+\-*/().]/g, "");
+    }
     return {
       text1,
       bday,
       submit,
-      onFormSubmit,
+      onFormSubmit,textclear,textclean,makeCleanText
     };
   },
 });
