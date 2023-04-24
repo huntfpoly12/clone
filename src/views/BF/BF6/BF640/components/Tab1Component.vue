@@ -74,7 +74,7 @@
         <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
           :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
           :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
-          id="dataGrid1">
+          id="tab1-bf640">
           <DxSelection mode="multiple" :fixed="true" />
           <DxColumn caption="사업자코드" data-field="code" cell-template="company-code" />
           <template #company-code="{ data }: any">
@@ -168,30 +168,32 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              paymentYear: companies[i].paymentYear,
-              paymentHalfYear: companies[i].paymentHalfYear,
-            }
-          }
-        }).then((res) => {
-          let productionStatus = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement[0].productionStatus;
-          let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.companyId == companies[i].companyId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2){
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                paymentYear: companies[i].paymentYear,
+                paymentHalfYear: companies[i].paymentHalfYear,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let productionStatus = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement[0].productionStatus;
+            let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeWageSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.companyId == companies[i].companyId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 
@@ -433,7 +435,7 @@ export default defineComponent({
   }
 }
 
-:deep .dx-datagrid {
+:deep #tab1-bf640 {
   height: calc(62vh);
 
   :deep .dx-datagrid-total-footer {
@@ -451,7 +453,7 @@ export default defineComponent({
     max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
   }
 
-  :deep .dx-freespace-row {
+  .dx-freespace-row {
     display: none !important; // cục lúc hiện lúc không
   }
 }

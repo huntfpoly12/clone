@@ -5,9 +5,9 @@
         <div class="ac-110-popup-cancellation-text">
           <span class="mr-10">대상 거래내역</span>
           <a-form-item>
-            <default-text-box :width="150" :valueInput="transactionDetailsCountSelected" :readOnly="true" />
+            <default-text-box :width="50" height="25" :valueInput="transactionDetailsCountSelected" :readOnly="true" />
           </a-form-item>
-          <span class="mr-10">건</span>
+          <span class="mr-10" style="margin-left: 2px" >건</span>
           <span>상기와 같이 전표취소하시겠습니까? </span>
         </div>
         <div class="mt-10">

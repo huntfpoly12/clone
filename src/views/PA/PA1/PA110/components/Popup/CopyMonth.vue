@@ -95,7 +95,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const processKey = computed(() => store.state.common.pa110.processKeyPA110)
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const month: any = ref<number>()
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
@@ -106,7 +106,7 @@ export default defineComponent({
             month.value = val
             trigger.value = true
         });
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear.value });
+        const dataQuery = ref({ companyId: companyId, imputedYear: paYear.value });
         const { result: resultConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -128,7 +128,7 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
             
         });
         const updateValue = (value: any) => {
@@ -161,7 +161,7 @@ export default defineComponent({
         };
 
         const onSubmit = () => {
-            store.state.common.pa110.processKeyPA110.imputedYear = globalYear.value
+            store.state.common.pa110.processKeyPA110.imputedYear = paYear.value
             store.state.common.pa110.processKeyPA110.imputedMonth = month.value
             store.state.common.pa110.processKeyPA110.paymentYear = parseInt(month2.value.toString().slice(0, 4))
             store.state.common.pa110.processKeyPA110.paymentMonth = parseInt(month2.value.toString().slice(4, 6))

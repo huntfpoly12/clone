@@ -21,9 +21,9 @@
     </a-modal>
     <a-modal v-model:visible="statusOnCallApiChange" okText="확인" :closable="false" :footer="null">
         <h3 style="text-align: center;">지급일변경 결과</h3>
-        <p>요청건수: {{ data.length }}건</p>
-        <p>처리건수: {{ sumSuccessCallApi }}건</p>
-        <p>미처리건수 및 내역: {{ sumErrorCallApi }} 건 </p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDay1.svg" alt="" class="mr-5" />요청건수: {{ data.length }}건</p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDaySuccess.svg" alt="" class="mr-5" />처리건수: {{ sumSuccessCallApi }}건</p>
+        <p class="d-flex-center"><img src="@/assets/images/changeDayErr.svg" alt="" class="mr-5" />미처리건수 및 내역: {{ sumErrorCallApi }} 건 </p>
         <ul>
             <li v-for="(item) in arrDataError" :key="item.employeeId" style="margin: 5px 0;">
                 <employee-info :idEmployee="item.employee.employeeId" :name="item.employee.name"

@@ -5,6 +5,7 @@
     <DxValidator :name="nameInput" :value="textBoxValue" v-bind="$props">
       <DxRequiredRule v-if="required" :message="messageRequired" />
       <DxStringLengthRule v-if="minCharacter > 0" :min="minCharacter" :message="messageString" />
+      <DxStringLengthRule v-if="lengthFixed > 0" :min="lengthFixed" :max="lengthFixed" :message="lengthFixMsg" />
       <DxCustomRule :validation-callback="ruleCustom" :message="messageRuleCustom" />
     </DxValidator>
   </DxTextBox>
@@ -58,6 +59,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    lengthFixMsg: {
+      type: String,
+      default: "",
+    },
     textUppercase: {
       type: Boolean,
       default: false,
@@ -65,6 +70,10 @@ export default defineComponent({
     rtlEnabled: {
       type: Boolean,
       default: false,
+    },
+    lengthFixed: {
+      type: Number,
+      default: 0,
     }
   },
   components: {

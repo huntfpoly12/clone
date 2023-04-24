@@ -45,7 +45,8 @@
                 height: 40px;
                 padding: 10px 4px;
                 width: 100%;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid
+                 #ddd;
                 &:hover{
                     background-color: blue;
                 }
@@ -58,14 +59,18 @@
 
 
         #dataGridAc120 {
-            max-height: 500px;
-            margin: -1px;
+            height: 520px;
+            max-width: 100% !important;
+            // margin: -1px;
         }
         .data-grid {
             height: calc(100vh - 795px);
-            border: 1px solid #ddd;
+            // border: 1px solid #ddd;
             overflow: hidden;
             transition: .5s;
+            :deep .dx-freespace-row {
+                display: none !important; // cục lúc hiện lúc không
+            }
         }
         .slipRegistration {
             display: flex;
@@ -165,6 +170,10 @@
 }
 :deep .dx-datagrid-headers .dx-row > td {
     padding: 4px 7px;
+}
+:deep .dx-datagrid-text-content {
+    white-space: pre-wrap;
+    text-align: left !important;
 }
 // :deep .data-grid-child .dx-datagrid-rowsview.dx-empty {
 //     height: 40px;

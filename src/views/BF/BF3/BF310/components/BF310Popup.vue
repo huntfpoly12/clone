@@ -107,10 +107,9 @@
                                         </a-form-item>
                                         <a-form-item :label="changeTypeCompany(formState.content.company.bizType)"
                                             label-align="left" :label-col="{ span: 9 }">
-                                            <id-number-text-box :required="true"
-                                                :isResidentId="isResidentId"
-                                                v-model:valueInput="formState.content.company.residentId" width="220"
-                                                messRequired="이항목은 필수 입력사항입니다!" nameInput="residentId" />
+                                            <id-number-text-box :required="true" key="100"
+                                                :foreigner="isResidentId"
+                                                v-model:valueInput="formState.content.company.residentId" width="220" />
                                         </a-form-item>
                                         <a-form-item label="주소" class="clr" label-align="left" :label-col="{ span: 9 }">
                                             <a-row :gutter="[0, 4]">
@@ -418,7 +417,7 @@ export default defineComponent({
         const imageLicenseFile = ref("");
         const licenseFileName = ref("");
         let visible = ref(false);
-        let activeKey = ref(1);
+        let activeKey = ref(2);
         const dataQuery = ref();
         const dataQueryCheckPer = ref({});
         let trigger = ref<boolean>(false);
@@ -459,8 +458,10 @@ export default defineComponent({
                 imageLicenseFile.value = "";
                 licenseFileName.value = "";
                 visible.value = newValue;
-                activeKey.value = 1;
             }
+            setTimeout(() => {
+                activeKey.value = 1;
+            }, 100);
         });
         const { result, loading, error, refetch } = useQuery(
             queries.getSubscriptionRequest,

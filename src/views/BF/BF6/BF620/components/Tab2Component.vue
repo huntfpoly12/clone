@@ -24,7 +24,7 @@
       </a-col>
     </a-row>
     <div class="content-grid">
-      <DxDataGrid :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
+      <DxDataGrid id="tab2-bf620" :show-load-panel="true" :show-row-lines="true" :hoverStateEnabled="true"
         :data-source="filteredDataSource" :show-borders="true" key-expr="companyId" class="mt-10"
         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize" :column-auto-width="true"
         @selection-changed="selectionChanged">
@@ -90,8 +90,8 @@
         </DxSummary>
       </DxDataGrid>
     </div>
-    <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData " tab-name="tab2"
-      @cancel=" onRequestDone " />
+    <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData "
+      tab-name="tab2" @cancel=" onRequestDone " />
   </div>
 </template>
   
@@ -159,29 +159,31 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByLocalIncomeTax, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              imputedYear: companies[i].imputedYear,
-              reportId: companies[i].reportId,
-            }
-          }
-        }).then((res) => {
-          let { productionStatus, causeOfProductionFailure } = res.data.getElectronicFilingsByLocalIncomeTax[0];
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.reportId == companies[i].reportId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2){
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByLocalIncomeTax, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                imputedYear: companies[i].imputedYear,
+                reportId: companies[i].reportId,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let { productionStatus, causeOfProductionFailure } = res.data.getElectronicFilingsByLocalIncomeTax[0];
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.reportId == companies[i].reportId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 
@@ -414,7 +416,7 @@ export default defineComponent({
   display: inline-block;
 }
 
-:deep .dx-datagrid {
+:deep #tab2-bf620 {
   height: calc(62vh);
 
   :deep .dx-datagrid-total-footer {
@@ -432,7 +434,7 @@ export default defineComponent({
     max-height: calc(calc(62vh) - 77px - 27px); // chiều cao bảng - chiều cao header - chiều cao footer
   }
 
-  :deep .dx-freespace-row {
+  .dx-freespace-row {
     display: none !important; // cục lúc hiện lúc không
   }
 }

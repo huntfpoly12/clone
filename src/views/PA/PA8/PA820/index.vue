@@ -1,5 +1,6 @@
 <template>
   <action-header title="신청내역 리스트" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
+
   <div id="pa-820" class="px-10 py-10">
     <a-spin :spinning="false" size="large">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
@@ -52,25 +53,30 @@
             </DxButton>
           </div>
         </template>
-        <DxColumn caption="이직확인서다운로드" cell-template="downB" width="140px" alignment="left" />
-        <template #downB=" { data }: any " class="custom-action">
-          <div class="d-flex justify-content-center">
-            <DxButton type="ghost" class="" style="cursor: pointer"
-              @click=" onGetFileStorageId(data.data.dependentsEvidenceFile.url) ">
-              <DownloadOutlined :size=" 12 " />
-            </DxButton>
-          </div>
-        </template>
-        <DxColumn caption="" cell-template="action" alignment="right" width="150px" />
+        <DxColumn caption="" cell-template="action" width="150px" />
         <template #action=" { data }: any " class="custom-action">
-          <div class="custom-action" style="text-align: center">
+          <div class="custom-action" style="margin-left: 40px;">
             <a-space>
               <DxButton type="ghost" style="cursor: pointer" @click=" onOpenLogs(data.data.workId) ">
-                <HistoryOutlined style="font-size: 16px" />
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      변경이력
+                    </div>
+                  </template>
+                  <HistoryOutlined style="font-size: 16px" />
+                </a-tooltip>
               </DxButton>
               <DxButton type="ghost" style="cursor: pointer" @click=" actionDelete(data.data.workId) "
-                :disabled=" data.data.workingStatus == 0 ">
-                <DeleteOutlined />
+                v-if=" data.data.workingStatus != 0 ">
+                <a-tooltip zIndex="9999999" placement="top" color="black">
+                  <template #title>
+                    <div>
+                      취소
+                    </div>
+                  </template>
+                  <DeleteOutlined style="font-size: 16px" />
+                </a-tooltip>
               </DxButton>
             </a-space>
           </div>
@@ -214,7 +220,7 @@ export default defineComponent({
 
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-    const contentDelete = Message.getCommonMessage('401').message as string
+    const contentDelete = Message.getCommonMessage('303').message as string
     const modalDelete = ref(false);
     const cancelCompanyOutParam = reactive({
       companyId: companyId,

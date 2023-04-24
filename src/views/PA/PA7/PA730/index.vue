@@ -9,7 +9,7 @@
               <a-col>
                 <div class="dflex custom-flex global-year">
                   <label class="lable-item">귀속연도 :</label>
-                  <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
+                  <a-tag color="#a3a2a0">귀 {{ paYear }}</a-tag>
                 </div>
               </a-col>
             </a-row>
@@ -178,7 +178,7 @@ export default defineComponent({
     let dataSelect = ref<any>([]);
     const store = useStore();
     const gridRef = ref(); // ref of grid
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const trigger = ref<boolean>(true);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
@@ -187,12 +187,12 @@ export default defineComponent({
     const dataSource = ref([]);
     const originData = ref({
       companyId: companyId,
-      imputedYear: globalYear,
+      imputedYear: paYear.value,
     });
     const valueDefaultIncomeExtra = ref({
       companyId: companyId,
       input: {
-        imputedYear: globalYear,
+        imputedYear: paYear.value,
         type: 1,
         receiptDate: parseInt(dayjs().format('YYYYMMDD')),
       },
@@ -217,7 +217,7 @@ export default defineComponent({
       popupSingleData.value = {
         companyId: companyId,
         input: {
-          imputedYear: globalYear,
+          imputedYear: paYear.value,
           type: valueDefaultIncomeExtra.value.input.type,
           receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
         },
@@ -239,7 +239,7 @@ export default defineComponent({
         popupGroupData.value = {
           companyId: companyId,
           input: {
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
             type: valueDefaultIncomeExtra.value.input.type,
             receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
           },
@@ -288,7 +288,7 @@ export default defineComponent({
     const receiptReportViewUrlParam = reactive({
       companyId: companyId,
       input: {
-        imputedYear: globalYear,
+        imputedYear: paYear.value,
         type: valueDefaultIncomeExtra.value.input.type,
         receiptDate: valueDefaultIncomeExtra.value.input.receiptDate,
       },
@@ -308,7 +308,7 @@ export default defineComponent({
     const onPrint = (data: any) => {
       gridRef.value?.instance.deselectAll()
       receiptReportViewUrlParam.employeeKeys = [{ employeeId: data.employee.employeeId, incomeTypeCode: data.employee.incomeTypeCode }];
-      receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
+      receiptReportViewUrlParam.input = { imputedYear: paYear.value, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
       receiptReportViewUrlTrigger.value = true;
       // refetchReceiptViewUrl();
     };
@@ -330,7 +330,7 @@ export default defineComponent({
           })
         })
         receiptReportViewUrlParam.employeeKeys = array
-        receiptReportViewUrlParam.input = { imputedYear: globalYear, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
+        receiptReportViewUrlParam.input = { imputedYear: paYear.value, type: valueDefaultIncomeExtra.value.input.type, receiptDate: valueDefaultIncomeExtra.value.input.receiptDate };
         receiptReportViewUrlTrigger.value = true;
         // refetchReceiptViewUrl();
       } else {
@@ -344,9 +344,9 @@ export default defineComponent({
       })
       return '원천징수세액계합계: ' + filters.formatCurrency(total)
     }
-    watch(globalYear, (newValue) => {
-      trigger.value = true;
-    })
+    // watch(paYear, (newValue) => {
+    //   trigger.value = true;
+    // })
     return {
       valueDefaultIncomeExtra,
       valueSwitch,
@@ -357,7 +357,7 @@ export default defineComponent({
       gridRef,
       actionOpenPopupEmailGroup,
       searching,
-      globalYear,
+      paYear,
       dataSource,
       move_column,
       colomn_resize,

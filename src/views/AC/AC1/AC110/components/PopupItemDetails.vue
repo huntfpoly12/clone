@@ -57,7 +57,7 @@
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
-            <DxTotalItem cssClass="custom-sumary" column="비고" :customize-text="totalDifference" />
+            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고" :customize-text="totalDifference" />
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { useStore } from 'vuex';
 import { useMutation } from "@vue/apollo-composable";
 import { InitStatementOfGoods } from '../utils/index'
@@ -155,14 +155,8 @@ export default defineComponent({
       setData()
     })
     const setData = () => {
-      arrSelectItem.value = []
-      arrSelectStandard.value = []
-      arrSelectUnit.value = []
       if (!!dataSource.value.statementOfGoodsItems) {
         dataSource.value.statementOfGoodsItems = dataSource.value.statementOfGoodsItems.map((item: any, index: number) => {
-          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item }]
-          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard }]
-          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit }]
           return {
             ...item,
             id: index
@@ -173,6 +167,30 @@ export default defineComponent({
       }
       dataSourceCopy.value = cloneDeep(dataSource.value.statementOfGoodsItems)
     }
+    watch(() => dataSource.value.statementOfGoodsItems, (value, oldValue) => {
+      if(!value) return
+      const lengthOldVal = !!oldValue ? oldValue.length : 0
+      if(value.length !== lengthOldVal){
+        setDataSelect()
+      }
+    }, {
+      deep: true,
+    }) 
+
+    const setDataSelect = () => {
+      dataSource.value.statementOfGoodsItems.forEach((item: any, index: number) => {
+        if(!!item.item && !arrSelectItem.value.some((option: any) => option.value === item.item.toString().trim())){
+          arrSelectItem.value = [...arrSelectItem.value, { id: index, value: item.item.toString().trim() }]
+        }
+        if(!!item.standard && !arrSelectStandard.value.some((option: any) =>  option.value === item.standard.toString().trim())){
+          arrSelectStandard.value = [...arrSelectStandard.value, { id: index, value: item.standard.toString().trim() }]
+        }
+        if(!!item.unit && !arrSelectUnit.value.some((option: any) =>  option.value === item.unit.toString().trim())){
+          arrSelectUnit.value = [...arrSelectUnit.value, { id: index, value: item.unit.toString().trim() }]
+        }
+      })
+    }
+
     const cancel = () => {
       if (!isEqual(dataSourceCopy.value, dataSource.value.statementOfGoodsItems)) {
         isModalConfirmSaveChange.value = true
@@ -258,7 +276,7 @@ export default defineComponent({
     }
     const addNewRow = () => {
       if (!!dataSource.value.statementOfGoodsItems && dataSource.value.statementOfGoodsItems.length) {
-        dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }, ...dataSource.value.statementOfGoodsItems]
+        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, { ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }]
       } else {
         dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: 'create' }]
       }
@@ -272,9 +290,13 @@ export default defineComponent({
       }
     }
     const changeInput = () => {
-      const el = document.querySelector('.refPopupDetail110TotalValue')
-      if(el){
-        el.textContent = totalValue()
+      const elTotalValue: any = document.querySelector('.refPopupDetail110TotalValue')
+      const elTotalDifference = document.querySelector('.refPopupDetail110TotalDifference')
+      if(elTotalValue){
+        elTotalValue.textContent = totalValue()
+      }
+      if(elTotalDifference){
+        elTotalDifference.textContent = totalDifference()
       }
     }
     return {

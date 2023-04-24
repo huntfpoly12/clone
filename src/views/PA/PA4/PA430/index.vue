@@ -115,7 +115,7 @@
                     </template>
                     <DxColumn width="70" caption="귀속연월" css-class="cell-center" cell-template="inputedYearMonth" />
                     <template #inputedYearMonth="{ data }">
-                        {{ globalYear }}-{{ $filters.formatMonth(data.data.imputedMonth) }}
+                        {{ paYear }}-{{ $filters.formatMonth(data.data.imputedMonth) }}
                     </template>
                     <DxColumn width="70" caption="지급연월" css-class="cell-center" cell-template="paymentYearMonth" />
                     <template #paymentYearMonth="{ data }">
@@ -227,7 +227,7 @@ export default defineComponent({
         const incomeIds = ref<any>([])
         const store = useStore();
         const mode2 = ref<any>(['month', 'month']);
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
         const trigger = ref<boolean>(true);
         const triggerReport = ref<boolean>(false);
         const move_column = computed(() => store.state.settings.move_column);
@@ -249,12 +249,12 @@ export default defineComponent({
             { id: 2, text: "발행자 보관용" },
             { id: 3, text: "발행자 보고용" },
         ]
-        const minDate = ref(dayjs(`${globalYear.value}-01-01`).startOf('year'));
-        const maxDate = ref(dayjs(`${globalYear.value}-12-31`).endOf('year'));
+        const minDate = ref(dayjs(`${paYear.value}-01-01`).startOf('year'));
+        const maxDate = ref(dayjs(`${paYear.value}-12-31`).endOf('year'));
         const valueRadioBox = ref(0);
         const rangeDate = ref([
-            { "month": 0, "year": globalYear.value },
-            { "month": 11, "year": globalYear.value }
+            { "month": 0, "year": paYear.value },
+            { "month": 11, "year": paYear.value }
         ]);
 
 
@@ -268,7 +268,7 @@ export default defineComponent({
         const originData = ref({
             companyId: companyId,
             filter: {
-                imputedYear: globalYear,
+                imputedYear: paYear.value,
                 startMonth: rangeDate.value[0].month + 1,
                 finishMonth: rangeDate.value[1].month + 1,
                 type: null,
@@ -277,19 +277,19 @@ export default defineComponent({
         const dataInputReport = reactive({
             companyId: companyId,
             input: {
-                imputedYear: globalYear,
+                imputedYear: paYear.value,
                 type: 1,
                 receiptDate: filters.formatDateToInterger(dayjs())
             },
             incomeIds: Array()
         })
-        watch(globalYear, (newValue) => {
-            rangeDate.value[0].year = newValue
-            rangeDate.value[1].year = newValue
-            minDate.value = dayjs(`${newValue}-01-01`).startOf('year');
-            maxDate.value = dayjs(`${newValue}-12-31`).endOf('year');
-            searching();
-        })
+        // watch(paYear, (newValue) => {
+        //     rangeDate.value[0].year = newValue
+        //     rangeDate.value[1].year = newValue
+        //     minDate.value = dayjs(`${newValue}-01-01`).startOf('year');
+        //     maxDate.value = dayjs(`${newValue}-12-31`).endOf('year');
+        //     searching();
+        // })
 
         // watch(valSwitch, (newValue) => {
         //     dataInputReport.input.type = newValue ? 2 : 3;
@@ -312,7 +312,7 @@ export default defineComponent({
             popupDataEmailSingle.value = {
                 companyId: companyId,
                 input: {
-                    imputedYear: globalYear.value,
+                    imputedYear: paYear.value,
                     type: dataInputReport.input.type,
                     receiptDate: dataInputReport.input.receiptDate,
                 },
@@ -340,7 +340,7 @@ export default defineComponent({
                 popupDataEmailMulti.value = {
                     companyId: companyId,
                     input: {
-                        imputedYear: globalYear.value,
+                        imputedYear: paYear.value,
                         type: dataInputReport.input.type,
                         receiptDate: dataInputReport.input.receiptDate,
                     },
@@ -457,7 +457,7 @@ export default defineComponent({
             actionOpenPopupEmailSingle,
             actionOpenPopupEmailMulti,
             searching,
-            globalYear,
+            paYear,
             dataSource,
             // sendMail,
             move_column,

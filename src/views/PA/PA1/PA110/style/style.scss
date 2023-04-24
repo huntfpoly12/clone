@@ -25,14 +25,15 @@
         }
     }
 
-    :deep .custom-layout {
-        padding: 10px 10px 10px 0;
-        
-        >div {
+    :deep .custom-layout.custom-form-data > div {
+        // >div {
             // height: calc(100vh - 312px);
             border: 1px solid #d7d7d7;
             padding: 10px;
-        }
+        // }
+    }
+    :deep .custom-layout {
+        padding: 10px 10px 10px 0;
     }
     .ml-3 {
         margin-left: 3px;
@@ -84,7 +85,7 @@
     width: 40px !important;
 }
 #pa-110-gridContainer {
-    height: calc(100vh - 312px);
+    height: calc(100vh - 290px);
     :deep .dx-freespace-row {
         display: none !important;
     }
@@ -108,3 +109,4 @@
 :deep .dx-datagrid-table .dx-row .dx-command-expand.dx-datagrid-group-space {
     padding-top: 4px;
 }
+
