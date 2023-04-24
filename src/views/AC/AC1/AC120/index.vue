@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="main">
-            {{ dataSource }}
+            <!-- {{ dataSource }} -->
             <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
