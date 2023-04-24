@@ -44,9 +44,11 @@ import getAccountingDocumentsLogs from './getAccountingDocumentsLogs'
 import getMe from "./getMe";
 import getMajorInsuranceCompanyOutLogs from "./getMajorInsuranceCompanyOutLogs";
 import getMajorInsuranceCompanyEmployeeLossLogs from "./getMajorInsuranceCompanyEmployeeLossLogs";
+import findUsername from "./findUsername";
 const queries = {
   getMe: getMe,
   getUser: getUser,
+  findUsername:findUsername,
   getListSale: getListSale,
   getUserLogs: getUserLogs,
   getIncomeWagesLogs: getIncomeWagesLogs,
