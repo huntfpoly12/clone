@@ -222,6 +222,14 @@
 .user-info {
 	display: flex;
 }
+.user-infor {
+	p{
+    margin-bottom: 1px !important;
+  }
+  .name-infor{
+    font-weight: bold;
+  }
+}
 
 #icon-menu{
     height: 30px;

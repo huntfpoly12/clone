@@ -49,5 +49,12 @@ const filters = {
             return month;
         }
     },
+    formatPhoneNumber(input: string) {
+      if (input) {
+        let formattedNumber = input.replace(/^(\d{3})(\d{4})(\d{4,})$/, '$1-$2-$3');
+        return formattedNumber;
+      } return null;
+    },
+    
 }
 export default filters;
