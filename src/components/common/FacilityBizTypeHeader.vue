@@ -199,6 +199,7 @@ export default defineComponent({
       acYear.value = parseInt(sessionStorage.getItem("acYear")?? "0")
       paYear.value = parseInt(sessionStorage.getItem("paYear")?? "0")
       facilityBiz.value = parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0")
+      trigger.value = true
       modalConfirm.value = true
     }
     return {
