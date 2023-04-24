@@ -112,7 +112,7 @@ export default defineComponent({
         const app: any = getCurrentInstance();
         const messages = app.appContext.config.globalProperties.$messages;
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const processKey = computed(() => store.state.common.pa110.processKeyPA110)
         const trigger = ref<boolean>(false)
 
@@ -136,7 +136,7 @@ export default defineComponent({
 
         const originData: any = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
             incomeIds: [],
         })
         const popupDataEmailSingle: any = ref({})

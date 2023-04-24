@@ -113,8 +113,8 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         // let showEmployeeInfo = ref(false);
         const dataSource = ref([]);
         // const search = ref<string>("");
@@ -122,9 +122,9 @@ export default defineComponent({
         const triggerQuerySearchSpendingAccountingDocuments = ref<boolean>(false)
         const dataQuerySearchSpendingAccountingDocuments = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
-            year: globalYear.value,
+            year: acYear.value,
             month: 4,
             resolutionNumber: null
         })
@@ -177,10 +177,10 @@ export default defineComponent({
                 store.state.common.ac120.formData.letterOfApprovalType = dataSelect.value.letterOfApprovalType
                 store.state.common.ac120.formData.causeUsage = dataSelect.value.causeUsage
                 store.state.common.ac120.formData.memo = `원본 지출결의서: ` + dataSelect.value.accountingDocumentId
-                setModalVisible()
+                emit("closePopup", false);
                 notification('success', Message.getMessage('AC120', '002').message)
             } else {
-                notification('error', 'vui lòng chọn data')
+                notification('error', '항목을 하나만 선택하십시오')
             }
             // emit("dataEmit", dataEmit.value);
             

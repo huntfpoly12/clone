@@ -9,7 +9,7 @@
                             <a-col>
                                 <div class="dflex custom-flex global-year">
                                     <label class="lable-item">귀속연도 :</label>
-                                    <a-tag color="#a3a2a0">귀 {{ globalYear }}</a-tag>
+                                    <a-tag color="#a3a2a0">귀 {{ paYear }}</a-tag>
                                 </div>
                             </a-col>
                         </a-row>
@@ -183,7 +183,7 @@ export default defineComponent({
         const dataSelect = ref<any>([])
         const store = useStore();
         const gridRef = ref(); // ref of grid
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
         const move_column = computed(() => store.state.settings.move_column);
@@ -194,12 +194,12 @@ export default defineComponent({
         // const amountFormat = ref({ currency: 'VND', useGrouping: true })
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear,
+            imputedYear: paYear.value,
         });
         const valueDefaultIncomeBusiness = ref({
             companyId: companyId,
             input: {
-                imputedYear: globalYear,
+                imputedYear: paYear.value,
                 type: 1,
                 receiptDate: parseInt(dayjs().format('YYYYMMDD')),
             },
@@ -237,7 +237,7 @@ export default defineComponent({
             popupDataEmailSingle.value = {
                 companyId: companyId,
                 input: {
-                    imputedYear: globalYear,
+                    imputedYear: paYear.value,
                     type: valueDefaultIncomeBusiness.value.input.type,
                     receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
                 },
@@ -263,7 +263,7 @@ export default defineComponent({
                 popupDataEmailMulti.value = {
                     companyId: companyId,
                     input: {
-                        imputedYear: globalYear,
+                        imputedYear: paYear.value,
                         type: valueDefaultIncomeBusiness.value.input.type,
                         receiptDate: valueDefaultIncomeBusiness.value.input.receiptDate,
                     },
@@ -315,9 +315,9 @@ export default defineComponent({
                 valueDefaultIncomeBusiness.value.input.type = 2
             }
         });
-        watch(globalYear, (newValue) => {
-            trigger.value = true;
-        })
+        // watch(paYear, (newValue) => {
+        //     trigger.value = true;
+        // })
 
         const searching = () => {
             trigger.value = true;
@@ -348,7 +348,7 @@ export default defineComponent({
             actionOpenPopupEmailSingle,
             actionOpenPopupEmailMulti,
             searching,
-            globalYear,
+            paYear,
             dataSource,
             move_column,
             colomn_resize,

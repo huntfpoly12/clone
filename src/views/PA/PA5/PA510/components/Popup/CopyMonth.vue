@@ -87,7 +87,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore()
         const processKey = computed(() => store.state.common.pa510.processKeyPA510)
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const month: any = ref<number>()
         const dataApiCopy: any = ref({})
         const arrDataPoint: any = ref({})
@@ -96,8 +96,8 @@ export default defineComponent({
         watch(() => props.data, (val) => {
             month.value = val
             originData.value.filter = {
-                startImputedYearMonth: parseInt(`${globalYear.value}01`),
-                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+                startImputedYearMonth: parseInt(`${paYear.value}01`),
+                finishImputedYearMonth: parseInt(`${paYear.value}12`),
             }
             trigger.value = true
             triggerFindIncome.value = true
@@ -112,7 +112,7 @@ export default defineComponent({
         const month2: any = ref(parseInt(dayjs().format('YYYYMM')))
         const modalCopy = ref(false)
         const paymentDayCopy = ref()
-        const dataQuery = ref({ companyId: companyId, imputedYear: globalYear });
+        const dataQuery = ref({ companyId: companyId, imputedYear: paYear });
         const { result: resultConfig } = useQuery(
             queries.getWithholdingConfig,
             dataQuery,
@@ -134,13 +134,13 @@ export default defineComponent({
                     paymentMonth = month.value + 1
                 }
             }
-            month2.value = parseInt(`${paymentMonth == 13 ? globalYear.value + 1 : globalYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
+            month2.value = parseInt(`${paymentMonth == 13 ? paYear.value + 1 : paYear.value}${paymentMonth == 13 ? '01' : filters.formatMonth(paymentMonth)}`)
         });
         const originData: any = ref({
             companyId: companyId,
             filter: {
-                startImputedYearMonth: parseInt(`${globalYear.value}01`),
-                finishImputedYearMonth: parseInt(`${globalYear.value}12`),
+                startImputedYearMonth: parseInt(`${paYear.value}01`),
+                finishImputedYearMonth: parseInt(`${paYear.value}12`),
             }
         })
         const {
@@ -184,7 +184,7 @@ export default defineComponent({
             store.state.common.pa510.processKeyPA510.paymentYear = parseInt(month2.value.toString().slice(0, 4))
             store.state.common.pa510.processKeyPA510.paymentMonth = parseInt(month2.value.toString().slice(4, 6))
             emit("dataAddIncomeProcess", {
-                imputedYear: globalYear.value,
+                imputedYear: paYear.value,
                 imputedMonth: month.value,
                 paymentYear: parseInt(month2.value.toString().slice(0, 4)),
                 paymentMonth: parseInt(month2.value.toString().slice(4, 6)),

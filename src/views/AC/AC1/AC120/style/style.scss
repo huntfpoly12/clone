@@ -45,7 +45,8 @@
                 height: 40px;
                 padding: 10px 4px;
                 width: 100%;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid
+                 #ddd;
                 &:hover{
                     background-color: blue;
                 }
@@ -58,14 +59,18 @@
 
 
         #dataGridAc120 {
-            max-height: 500px;
-            margin: -1px;
+            height: 520px;
+            max-width: 100% !important;
+            // margin: -1px;
         }
         .data-grid {
             height: calc(100vh - 795px);
-            border: 1px solid #ddd;
+            // border: 1px solid #ddd;
             overflow: hidden;
             transition: .5s;
+            :deep .dx-freespace-row {
+                display: none !important; // cục lúc hiện lúc không
+            }
         }
         .slipRegistration {
             display: flex;
