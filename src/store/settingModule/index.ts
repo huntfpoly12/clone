@@ -26,6 +26,7 @@ const settingModule: Module<SettingState, any>  = {
     clients: [],
     acYear: null,
     paYear: null,
+    changeFacilityBusiness: 0
   },
   mutations: mutations,
   actions: actions,
