@@ -6,7 +6,7 @@
                     <a-col :span="10" class="col-1">
                         <a-form-item class="red" label="통장">
                             <select-box-common placeholder="선택" :arrSelect="arraySelectBox"
-                                v-model:valueInput="store.state.common.ac120.formData.bankbookId" :required="true" :width="200" />
+                                v-model:valueInput="dataBankBook" :required="true" :width="200" />
                         </a-form-item>
                         <a-form-item class="red" label="금액">
                             <number-box :width="200" :required="true" v-model:valueInput="store.state.common.ac120.formData.amount"
@@ -30,7 +30,7 @@
                         </a-form-item>
                         <a-form-item class="red" label="결의서 종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrResolutionType" :layoutCustom="'horizontal'" :required="true"
-                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" />
+                                v-model:valueRadioCheck="store.state.common.ac120.formData.resolutionType" @update:valueRadioCheck="changeRadioResolutionType" />
                         </a-form-item>
                         <a-form-item class="red" label="품의종류">
                             <radio-group :arrayValue="store.state.common.ac120.arrLetterOfApprovalType" :layoutCustom="'horizontal'" :required="true"
@@ -76,6 +76,7 @@ export default defineComponent({
         const countKey = ref<number>(0)
         
         const refFormAddAC120 = ref()
+        const dataBankBook = ref({})
         
         const dataQueryGetBankBooks = ref({
             companyId: companyId,
@@ -101,7 +102,7 @@ export default defineComponent({
                 arraySelectBox.value = value.getBankbooks.map((value: any) => {
                     return {
                         'label': value.bankbookNickname,
-                        'value': value.bankbookId
+                        'value': value
                     }
                 })
             }
@@ -113,6 +114,12 @@ export default defineComponent({
                 countKey.value++
             }
         })
+
+        watch(() => dataBankBook.value, (newValue: any, old) => {
+            store.state.common.ac120.formData.bankbookId = newValue?.bankbookId
+            store.state.common.ac120.formData.bankbookNickname = newValue?.bankbookNickname
+            store.state.common.ac120.formData.bankbookNumber = newValue?.bankbookNumber
+        }, { deep: true })
 
         // ================ FUNCTION ============================================
         const submit = () => {
@@ -132,6 +139,15 @@ export default defineComponent({
             }
             
         };
+        const changeRadioResolutionType = (value: Number) => {
+            console.log(value);
+            if (value == 11 || value == 21) {
+                store.state.common.ac120.formData.amount = Math.abs(store.state.common.ac120.formData.amount)
+            } else if (value == 12 || value == 22) {
+                store.state.common.ac120.formData.amount = -store.state.common.ac120.formData.amount
+            }
+            
+        }
 
         store.state.common.ac120.arrResolutionType = computed(() => {
             let item: any = enum2Entries(ResolutionType).map((value) => ({
@@ -153,7 +169,8 @@ export default defineComponent({
             submit,
             cancel,
             arraySelectBox,
-            // arrLetterOfApprovalType,
+            dataBankBook,
+            changeRadioResolutionType,
             countKey,
             store,
         }

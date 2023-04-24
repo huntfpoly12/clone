@@ -65,162 +65,12 @@
             </div>
         </div>
         <div class="main">
-            {{ dataSource }}
+            <!-- {{ dataSource }} -->
             <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
-                    <!-- <DxDataGrid key-expr="fill1" :show-row-lines="true" :data-source="dataSource" :show-borders="true"
-                        :allow-column-reordering="move_column" v-model:focused-row-key="focusedRowKey"
-                        :allow-column-resizing="colomn_resize" :column-auto-width="true"
-                        @selection-changed="selectionChanged">
-                        <DxRowDragging :allow-reordering="true" :show-drag-icons="true" />
-                        <DxScrolling mode="standard" show-scrollbar="always" />
-                        <DxColumn caption="일자" data-field="fill1" cell-template="fill1" />
-                        <template #fill1="{ data }">
-                            {{ $filters.formatDate(data.value) }}
-                        </template>
-                        <DxColumn caption="순번" cell-template="fill2" css-class="custom-column" />
-                        <template #fill2="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <a-tooltip placement="left" title="{은행명} {통장번호} ">
-                                    <div>{{ item.fill2 }}</div>
-                                </a-tooltip>
-                            </div>
-                        </template>
-                        <DxColumn caption="결의번호" cell-template="fill3" css-class="custom-column" />
-                        <template #fill3="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill3 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="통장" cell-template="fill4" css-class="custom-column" />
-                        <template #fill4="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill4 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="결의 구분" cell-template="fill5" css-class="custom-column" />
-                        <template #fill5="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill5 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="수입액" cell-template="fill6" css-class="custom-column" />
-                        <template #fill6="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill6 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="지출액" cell-template="fill7" css-class="custom-column" />
-                        <template #fill7="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill7 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="잔액" cell-template="fill8" css-class="custom-column" />
-                        <template #fill8="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill8 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="통장적요" cell-template="fill9" css-class="custom-column" />
-                        <template #fill9="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill9 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="적요" cell-template="fill10" css-class="custom-column" />
-                        <template #fill10="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill10 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="계정과목" cell-template="fill11" css-class="custom-column" />
-                        <template #fill11="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill11 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="상대계정" cell-template="fill12" css-class="custom-column" />
-                        <template #fill12="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill12 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="자금원천" cell-template="fill13" css-class="custom-column" />
-                        <template #fill13="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill13 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="거래처" cell-template="fill14" css-class="custom-column" />
-                        <template #fill14="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill14 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="증빙" cell-template="fill15" css-class="custom-column" />
-                        <template #fill15="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div>{{ item.fill15 }}</div>
-                            </div>
-                        </template>
-                        <DxColumn caption="물품 내역" cell-template="normality" css-class="custom-column" />
-                        <template #normality="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <PlusOutlined style="font-size: 12px" @click="actionPopupItemDetail" />
-                            </div>
-                        </template>
-                        <DxColumn caption="수기 여부 " cell-template="slipRegistration" css-class="custom-column" />
-                        <template #slipRegistration="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div class="slipRegistration">
-                                    <button-basic :text="item.slipRegistration ? 'O' : 'X'"
-                                        :type="item.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
-                                        style="margin-right: 5px;" />
-                                </div>
-                            </div>
-
-                        </template>
-                        <DxColumn caption="정상 여부" cell-template="slipRegistration1" css-class="custom-column" />
-                        <template #slipRegistration1="{ data }">
-                            <div class="main-row" v-for="(item, index) in data.data.data" :key="index"
-                                :class="{ last: index === data.data.data.length - 1 }">
-                                <div class="slipRegistration">
-                                    <button-basic :text="item.slipRegistration ? 'O' : 'X'"
-                                        :type="item.slipRegistration ? 'success' : 'danger'" :mode="'contained'"
-                                        style="margin-right: 5px;" />
-                                </div>
-                            </div>
-                        </template>
-                        <DxSummary>
-                            <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
-                                display-format="수입액 합계: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
-                                display-format="지출액 합계: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="count8" />
-                            <DxTotalItem cssClass="custom-sumary" column="정상 여부" :customize-text="countSlipRegistration" />
-                        </DxSummary>
-                    </DxDataGrid> -->
                     <!-- {{ dataSource }} -->
-                    {{ store.state.common.ac120.selectedRowKeys }}
-                    {{ focusedRowKey }}
+                    <!-- {{ store.state.common.ac120.selectedRowKeys }}
+                    {{ focusedRowKey }} -->
                     <DxDataGrid id="dataGridAc120" key-expr="bankbookDetailId" :show-row-lines="true"
                         :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true" ref="gridRefAC120"
                         :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -233,7 +83,7 @@
                             mode="multiple" />
                         <DxScrolling mode="standard" show-scrollbar="always" />
 
-                        <DxColumn caption="일자" cell-template="transactionDetailDate" />
+                        <DxColumn caption="일자" cell-template="transactionDetailDate" width="85"/>
                         <template #transactionDetailDate="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -246,7 +96,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="순번" data-field="documentOrderByDate" cell-template="documentOrderByDate" />
+                        <DxColumn caption="순번" data-field="documentOrderByDate" cell-template="documentOrderByDate" width="45"/>
                         <template #documentOrderByDate="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -256,7 +106,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="결의번호" data-field="resolutionClassification" cell-template="resolutionNumber" />
+                        <DxColumn caption="결의번호" data-field="resolutionNumber" cell-template="resolutionNumber" width="68"/>
                         <template #resolutionNumber="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -266,7 +116,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" />
+                        <DxColumn caption="통장" cell-template="bankbook" data-field="bankbook" width="120"/>
                         <template #bankbook="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -282,7 +132,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="결의 구분" cell-template="resolutionClassification" />
+                        <DxColumn caption="결의 구분" cell-template="resolutionClassification" width="75"/>
                         <template #resolutionClassification="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -292,7 +142,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="수입액" cell-template="income" />
+                        <DxColumn caption="수입액" cell-template="income" width="75"/>
                         <template #income="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -302,7 +152,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="지출액" cell-template="spending" />
+                        <DxColumn caption="지출액" cell-template="spending" width="75"/>
                         <template #spending="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -312,7 +162,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="잔액" cell-template="balance" />
+                        <DxColumn caption="잔액" cell-template="balance" width="75"/>
                         <template #balance="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -320,14 +170,13 @@
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
                                 <DxColumn data-field="balance" cell-template="balanceDetail" />
                                 <template #balanceDetail="{ data: row }">
-                                    {{ $filters.formatCurrency(row.data.lastBalance + row.data.spending -
-                                        row.data.balance) }}
+                                    {{ $filters.formatCurrency(lastBalance + row.data.income - row.data.spending) }}
                                 </template>
                             </DxDataGrid>
                         </template>
 
                         <DxColumn caption="통장적요" data-field="summaryOfBankbookDetail"
-                            cell-template="summaryOfBankbookDetail" />
+                            cell-template="summaryOfBankbookDetail" width="75"/>
                         <template #summaryOfBankbookDetail="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -338,7 +187,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="적요" data-field="summary" cell-template="summary1" />
+                        <DxColumn caption="적요" data-field="summary" cell-template="summary1" width="75"/>
                         <template #summary1="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -348,7 +197,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200px" />
+                        <DxColumn caption="계정과목" data-field="accountCode" cell-template="accountCode" width="200" />
                         <template #accountCode="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -361,7 +210,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150px" />
+                        <DxColumn caption="상대계정" data-field="relationCode" cell-template="relationCode" width="150" />
                         <template #relationCode="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -374,7 +223,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" />
+                        <DxColumn caption="자금원천" data-field="fundingSource" cell-template="fundingSource" width="75"/>
                         <template #fundingSource="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -384,7 +233,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" />
+                        <DxColumn caption="거래처" data-field="clientId" cell-template="clientId" width="75"/>
                         <template #clientId="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -397,7 +246,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" cell-template="proofCount" />
+                        <DxColumn caption="증빙" data-field="proofCount" format="fixedPoint" cell-template="proofCount" width="50"/>
                         <template #proofCount="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -407,7 +256,7 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" />
+                        <DxColumn caption="물품 내역" cell-template="normality" css-class="cell-center" width="75"/>
                         <template #normality="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -422,24 +271,24 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="수기 여부" cell-template="slipRegistration" />
-                        <template #slipRegistration="{ data }">
+                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75"/>
+                        <template #handwriting="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="slipRegistration" cell-template="slipRegistrationDetail" />
-                                <template #slipRegistrationDetail="{ data: row }">
+                                <DxColumn data-field="handwriting" cell-template="handwritingDetail" />
+                                <template #handwritingDetail="{ data: row }">
                                     <div class="slipRegistration">
-                                        <DxButton :focusStateEnabled="false" :text="row.data.handwriting ? 'O' : 'X'"
-                                            :style="{ backgroundColor: row.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
+                                        <DxButton v-if="row.data.handwriting == true" :focusStateEnabled="false" text="O"
+                                            :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                             :height="$config_styles.HeightInput" />
                                     </div>
                                 </template>
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" />
+                        <DxColumn caption="정상 여부" cell-template="resolutionNormalStatus" width="75"/>
                         <template #resolutionNormalStatus="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
@@ -459,14 +308,11 @@
                         </template>
 
                         <DxSummary>
-                            <DxTotalItem column="순번" summary-type="count" display-format="전표 건수: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="수입액" summary-type="sum"
-                                display-format="수입액 합계: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="지출액" summary-type="sum"
-                                display-format="지출액 합계: {0}" />
-                            <DxTotalItem cssClass="custom-sumary" column="잔액" :customize-text="customBalance" />
-                            <DxTotalItem cssClass="custom-sumary" column="정상 여부"
-                                :customize-text="countResolutionNormalStatus" />
+                            <DxTotalItem column="순번" :customize-text="customCountRow" />
+                            <DxTotalItem column="수입액" :customize-text="sumOfIncome" />
+                            <DxTotalItem column="지출액" :customize-text="sumOfExpenses" />
+                            <DxTotalItem column="잔액" :customize-text="customBalance" />
+                            <DxTotalItem column="정상 여부" :customize-text="countResolutionNormalStatus" />
                         </DxSummary>
                     </DxDataGrid>
                 </a-spin>
@@ -546,7 +392,7 @@ export default defineComponent({
         const globalYear = computed(() => store.state.settings.globalYear)
         const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
         const clients = computed(() => store.state.settings.clients)
-
+        const dataApi = ref<any[]>([])
         // let statusAdjusting = ref(30);
         let focusedRowKey = ref()
 
@@ -653,16 +499,14 @@ export default defineComponent({
         // 2. getAccountingDocuments
         watch(resGetAccountingDocuments, (value) => {
             triggerGetAccountingDocuments.value = false
-
-            // dataSource.value = value.getAccountingDocuments?.accountingDocuments
-            let dataApi = value.getAccountingDocuments?.accountingDocuments
+            dataApi.value = value.getAccountingDocuments?.accountingDocuments
             let dataAll: any = []
-            dataApi.map((item: any, index: number) => {
+            dataApi.value.map((item: any, index: number) => {
                 if (item.bankbookDetailId) { // nếu có data bankbookDetailId
                     if (!dataAll.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId).length) { // nếu không có thằng bankbookDetailId đó trong mảng
                         dataAll.push({
                             bankbookDetailId: item.bankbookDetailId,
-                            data: dataApi.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId)
+                            data: dataApi.value.filter((row: any) => row.bankbookDetailId === item.bankbookDetailId)
                         })
                     }
                 } else {
@@ -672,7 +516,6 @@ export default defineComponent({
                     })
                 }
             })
-            console.log(dataAll);
 
             dataSource.value = dataAll
             lastBalance.value = value.getAccountingDocuments?.lastBalance
@@ -776,30 +619,7 @@ export default defineComponent({
             return `출금액 합계: ${total}`
         };
 
-        const countResolutionNormalStatus = () => {
-            let totalResolutionNormalStatuTrue = 0;
-            let totalResolutionNormalStatuFalse = 0;
-            dataSource.value.forEach((item: any) => {
-                if (item.resolutionNormalStatus) {
-                    totalResolutionNormalStatuTrue++
-                } else {
-                    totalResolutionNormalStatuFalse++
-                }
-            });
-            return `정상 내역 건수: ${filters.formatCurrency(totalResolutionNormalStatuTrue)},
-             비정상 내역 건: ${filters.formatCurrency(totalResolutionNormalStatuFalse)}`
-        };
-        const customBalance = () => {
-            let total = 0;
-            let totalIncome = 0;
-            let totalSpending = 0;
-            dataSource.value.forEach((item: any) => {
-                totalIncome += item.income
-                totalSpending += item.spending
-            });
-            total = lastBalance.value + totalIncome - totalSpending
-            return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
-        }
+        
 
 
         const actionPopupSlipCancellation = (value: any) => {
@@ -837,21 +657,7 @@ export default defineComponent({
 
 
 
-        const sumOfIncome = () => {
-            let total = 0;
-            dataDemoMain.forEach((item: any) => {
-                total += item.fill6;
-            });
-            return `수입액 합계: ${total}`
-        }
-
-        const sumOfExpenses = () => {
-            let total = 0;
-            dataDemoMain.forEach((item: any) => {
-                total += item.fill7;
-            });
-            return `지출액 합계: ${total}`
-        }
+        
 
         const onReorder = (e: any) => {
             console.log(e.toIndex);
@@ -996,6 +802,50 @@ export default defineComponent({
             // }
         }
 
+        // ================ CUSTOM SUMMARY TABLE ============================================
+        const customCountRow = () => {
+            return `전표 건수: ` + dataApi.value.length
+        }
+        const sumOfIncome = () => {
+            let total = 0;
+            dataApi.value.forEach((item: any) => {
+                console.log(item);
+                
+                total += item.income;
+            });
+            return `수입액 합계: ${total}`
+        }
+        const sumOfExpenses = () => {
+            let total = 0;
+            dataApi.value.forEach((item: any) => {
+                total += item.spending;
+            });
+            return `지출액 합계: ${total}`
+        }
+        const customBalance = () => {
+            let total = 0;
+            let totalIncome = 0;
+            let totalSpending = 0;
+            dataApi.value.forEach((item: any) => {
+                totalIncome += item.income
+                totalSpending += item.spending
+            });
+            total = lastBalance.value + totalIncome - totalSpending
+            return `전월 잔액: ${filters.formatCurrency(lastBalance.value)}, 예상 잔액: ${filters.formatCurrency(total)}`
+        }
+        const countResolutionNormalStatus = () => {
+            let totalResolutionNormalStatuTrue = 0;
+            let totalResolutionNormalStatuFalse = 0;
+            dataApi.value.forEach((item: any) => {
+                if (item.resolutionNormalStatus) {
+                    totalResolutionNormalStatuTrue++
+                } else {
+                    totalResolutionNormalStatuFalse++
+                }
+            });
+            return `정상 내역 건수: ${filters.formatCurrency(totalResolutionNormalStatuTrue)}, 비정상 내역 건: ${filters.formatCurrency(totalResolutionNormalStatuFalse)}`
+        };
+
         return {
             dataGetAccountingProcesses,
             dataSource,
@@ -1007,6 +857,9 @@ export default defineComponent({
             onCellPrepared,
             actionEditTaxPay,
             gridRefAC120Detail,
+            lastBalance,
+            customCountRow, sumOfIncome, sumOfExpenses, customBalance, countResolutionNormalStatus,
+
             // onSubmit,
             // refFormAC120,
 
@@ -1027,7 +880,7 @@ export default defineComponent({
             // fileList,
             totalDeposits,
             totalWithdrawal,
-            countResolutionNormalStatus,
+            
             isModalRetrieveStatements,
             Message,
             handleConfirmChange,
@@ -1039,8 +892,7 @@ export default defineComponent({
             // statusPopupCopyData,
             statusModalItemDetail,
             // actionPopupCopyData,
-            sumOfIncome,
-            sumOfExpenses,
+            
             arraySelectBox,
             onDragStart,
 
@@ -1049,7 +901,7 @@ export default defineComponent({
             actionPopupSlipCancellation,
             actionPopupSlipRegistration,
             // arrayRadioCheck,
-            customBalance,
+            
             dataDemoMain2,
             onReorder, onDragChange, onRowDragging,
 

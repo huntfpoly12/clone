@@ -227,9 +227,9 @@
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <a-badge v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" :count="data.data.goodsCount || 0" :offset="[7, 0]">
-                      <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                    </a-badge>
+                    <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
+                      {{ data.data.goodsCount || 0 }}
+                    </span>
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>

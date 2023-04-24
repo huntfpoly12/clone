@@ -178,7 +178,7 @@
               <a-col :span="8">
                 <a-form-item label="근로자수" label-align="right" :class="{ red: formState.healthInsuranceReport }">
                   <number-box width="200px" v-model:valueInput="formState.healthInsuranceEmployeeNumber"
-                    :required="formState.healthInsuranceReport" :disabled="!formState.healthInsuranceReport"/>
+                    :required="formState.healthInsuranceReport"/>
                 </a-form-item>
               </a-col>
             </a-row>
