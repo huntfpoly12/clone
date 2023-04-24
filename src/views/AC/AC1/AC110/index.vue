@@ -347,7 +347,8 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.state.settings.globalYear)
+    
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
     const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     const bankType = BankType.all();
     const bankbookUseType: any = computed(() => {
