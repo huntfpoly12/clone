@@ -6,7 +6,7 @@
       </div>
       <div class="user-info" v-if="username">
         <FacilityBizTypeHeader />
-        <year-header />
+        <!-- <year-header /> -->
         <a-dropdown>
           <a class="ant-dropdown-link" @click.prevent>
             {{ username }}
