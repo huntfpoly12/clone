@@ -69,8 +69,8 @@ export default defineComponent({
 
     setup(props, { emit }) {
         const store = useStore();
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
 
         const sumHandwritingTrue = ref(0)
         const sumHandwritingFalse = ref(0)
@@ -133,7 +133,7 @@ export default defineComponent({
                 if (row.handwriting === true) {
                     mutateUnregisterAccountingDocument({
                         companyId: companyId,
-                        fiscalYear: globalYear.value,
+                        fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         transactionDetailDate: row.transactionDetailDate,
                         accountingDocumentId: row.accountingDocumentId
@@ -141,7 +141,7 @@ export default defineComponent({
                 } else if (row.handwriting === false) {
                     mutateInitializeTransactionDetails({
                         companyId: companyId,
-                        fiscalYear: globalYear.value,
+                        fiscalYear: acYear.value,
                         facilityBusinessId: globalFacilityBizId.value,
                         bankbookDetailDate: row.transactionDetailDate,
                         bankbookDetailId: row.bankbookDetailId

@@ -9,7 +9,7 @@
                         @click="selectedMonth(month)">
                         <colorful-badge
                             :value="dataGetAccountingProcesses.find((item: any) => item.month === month)?.status || null"
-                            :year="globalYear" :month="month" />
+                            :year="acYear" :month="month" />
                     </div>
                 </div>
             </a-spin>
@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="main">
-            <!-- {{ dataSource }} -->
+            {{ dataSource }}
             <div class="data-grid" :style="[store.state.common.ac120.statusShowFull ? {} : { height: heightTable }]">
                 <a-spin tip="Loading..." :spinning="loadingGetAccountingDocuments">
                     <!-- {{ dataSource }} -->
@@ -389,8 +389,8 @@ export default defineComponent({
         const store = useStore();
         const move_column = computed(() => store.state.settings.move_column);
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
-        const globalYear = computed(() => store.state.settings.globalYear)
-        const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+        const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
+        const globalFacilityBizId = ref<number>(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? '0'));
         const clients = computed(() => store.state.settings.clients)
         const dataApi = ref<any[]>([])
         // let statusAdjusting = ref(30);
@@ -440,14 +440,14 @@ export default defineComponent({
         const triggerGetAccountingDocuments = ref<boolean>(true)
         const dataQueryGetAccountingProcesses = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value
         })
         const dataQueryGetAccountingDocuments = ref({
             companyId: companyId,
-            fiscalYear: globalYear.value,
+            fiscalYear: acYear.value,
             facilityBusinessId: globalFacilityBizId.value,
-            year: globalYear.value,
+            year: acYear.value,
             month: dayjs().month() + 1
         })
 
@@ -491,8 +491,6 @@ export default defineComponent({
         // ================== WATCH ================
         // 1. getAccountingProcesses
         watch(resGetAccountingProcesses, (value) => {
-            console.log(dayjs().startOf('month').toDate());
-
             triggerGetAccountingProcesses.value = false
             dataGetAccountingProcesses.value = value.getAccountingProcesses
         })
@@ -519,19 +517,7 @@ export default defineComponent({
 
             dataSource.value = dataAll
             lastBalance.value = value.getAccountingDocuments?.lastBalance
-
-            if (dataSource.value[0]) { // if table has data source
-                focusedRowKey.value = dataSource.value[0]?.data[0]?.accountingDocumentId
-                store.state.common.ac120.selectedRowKeys = [dataSource.value[0].bankbookDetailId]
-                Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
-                store.state.common.ac120.statusFormAdd = false
-            } else {
-                focusedRowKey.value = null
-                store.state.common.ac120.statusFormAdd = true
-                Object.assign(store.state.common.ac120.formData, initialStateFormData)
-                store.state.common.ac120.keyRefreshForm++
-            }
-
+            getOneRowData()
         })
 
         // call api GetAccountingDocuments
@@ -548,6 +534,19 @@ export default defineComponent({
         })
 
         // ================ FUNCTION ============================================
+        const getOneRowData = () => {
+            if (dataSource.value[0]) { // if table has data source
+                focusedRowKey.value = dataSource.value[0]?.data[0]?.accountingDocumentId
+                store.state.common.ac120.selectedRowKeys = [dataSource.value[0].bankbookDetailId]
+                Object.assign(store.state.common.ac120.formData, dataSource.value[0].data[0])
+                store.state.common.ac120.statusFormAdd = false
+            } else {
+                focusedRowKey.value = null
+                store.state.common.ac120.statusFormAdd = true
+                Object.assign(store.state.common.ac120.formData, initialStateFormData)
+                store.state.common.ac120.keyRefreshForm++
+            }
+        }
         const selectionChanged = (data: any) => {
             // gridRefAC120.value?.instance.refresh();
             dataRows.value = []
@@ -555,7 +554,7 @@ export default defineComponent({
                 rowData.map((data: any) => {
                     dataRows.value = dataRows.value.concat(data.data) 
                 })
-                console.log(dataRows.value);
+                // console.log(dataRows.value);
                 // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
                 //     gridRefPA510.value?.instance.deselectAll()
                 //     dataRows.value = []
@@ -570,7 +569,7 @@ export default defineComponent({
             } else {
                 // focusedRowKey.value = e.rows[e.newRowIndex]?.data.accountingDocumentId
                 // store.state.common.ac120.dataRowFocus = e.rows[e.newRowIndex]?.data
-                console.log(e.rows[e.newRowIndex]?.data);
+                // console.log(e.rows[e.newRowIndex]?.data);
 
                 Object.assign(store.state.common.ac120.formData, e.rows[e.newRowIndex]?.data)
                 if (store.state.common.ac120.statusFormAdd && store.state.common.ac120.formData.accountingDocumentId != 'AC120') {
@@ -602,9 +601,15 @@ export default defineComponent({
             }
         };
 
-        const deleteRowAdd = () => {
-            store.state.common.ac120.statusFormAdd = false;
-            dataSource.value = dataSource.value.splice(0, dataSource.value.length - 1)
+        const deleteRowAdd = async () => {
+            await (loadingGetAccountingDocuments.value = true)
+            // store.state.common.ac120.statusFormAdd = false;
+            // dataSource.value.splice(0, dataSource.value.length - 1)
+            await dataSource.value.pop()
+            await gridRefAC120.value?.instance.refresh()
+            
+            await (loadingGetAccountingDocuments.value = false)
+            await getOneRowData()
         }
 
         const totalDeposits = () => {
@@ -635,17 +640,18 @@ export default defineComponent({
 
         }
 
-        const actionPopupSlipRegistration = (value: any) => {
-            statusModalSlipRegistrantion.value = true
+        const actionPopupSlipRegistration = async (value: any) => {
+            
             if (!store.state.common.ac120.statusFormAdd) {
-                addNewRow()
+                await addNewRow()
             }
+            statusModalSlipRegistrantion.value = true
         }
 
 
 
         const actionPopupItemDetail = (data: any) => {
-            console.log(data);
+            // console.log(data);
 
             // store.state.common.ac120.dataRowFocus = data
             statusModalItemDetail.value = true
@@ -664,11 +670,11 @@ export default defineComponent({
         
 
         const onReorder = (e: any) => {
-            console.log(e.toIndex);
-            console.log(e.component.getVisibleRows());
+            // console.log(e.toIndex);
+            // console.log(e.component.getVisibleRows());
             const visibleRows = e.component.getVisibleRows();
-            console.log(visibleRows[e.toIndex].data);
-            console.log(e.itemData);
+            // console.log(visibleRows[e.toIndex].data);
+            // console.log(e.itemData);
 
             // const toIndex = dataSource.value.findIndex((item: any) => item.bankbookId === visibleRows[e.toIndex].data.bankbookId);
             // const fromIndex = dataSource.value.findIndex((item: any) => item.bankbookId === e.itemData.bankbookId);
@@ -684,7 +690,7 @@ export default defineComponent({
             // }
             // reorderAccountingDocuments({
             //     companyId: companyId,
-            //     fiscalYear: globalYear.value,
+            //     fiscalYear: acYear.value,
             //     facilityBusinessId: globalFacilityBizId.value,
             //     // transactionDetailDate: Int!
             // })
@@ -699,7 +705,7 @@ export default defineComponent({
         }
 
         const onRowDragging = (e: any) => {
-            console.log(e);
+            // console.log(e);
 
             if (e.toIndex >= dataDemoMain2.length) {
                 e.toIndex = dataDemoMain2.length - 1;
@@ -732,20 +738,30 @@ export default defineComponent({
 
         };
 
-        const addNewRow = () => {
+        const addNewRow = async () => {
+            await (loadingGetAccountingDocuments.value = true)
+            // gridRefAC120.value?.instance.addRow()
+            // gridRefAC120.value?.instance.deselectAll()
             store.state.common.ac120.statusFormAdd = true
-            dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
+            console.log(initialStateFormData);
+            
+            await dataSource.value.push({ data: [{...initialStateFormData}], bankbookDetailId: 'AC120' })
+            // gridRefAC120Detail.value?.instance.refresh()
+            await gridRefAC120.value?.instance.refresh()
+            // dataSource.value = JSON.parse(JSON.stringify(dataSource.value)).concat({ data: [initialStateFormData], bankbookDetailId: 'AC120' })
             store.state.common.ac120.formData = dataSource.value[dataSource.value.length - 1]?.data[0]
-            focusedRowKey.value = 'AC120';
-            gridRefAC120Detail.value?.instance.refresh()
-            gridRefAC120.value?.instance.refresh()
+            console.log(store.state.common.ac120.formData);
+            
+            focusedRowKey.value = 'AC120'
+            
             store.state.common.ac120.keyRefreshForm++
+            await (loadingGetAccountingDocuments.value = false)
         }
 
 
 
         const selectedMonth = (month: number) => {
-            console.log(month);
+            // console.log(month);
             store.state.common.ac120.monthSelected = month
             dataQueryGetAccountingDocuments.value.month = month
             triggerGetAccountingDocuments.value = true;
@@ -754,8 +770,6 @@ export default defineComponent({
 
         const modalHistoryAccountingProcess = () => {
             popupData.value = { ...dataQueryGetAccountingDocuments.value }
-            console.log(popupData.value);
-
             modalHistoryStatusAccountingProcess.value = true
         }
 
@@ -765,7 +779,7 @@ export default defineComponent({
         }
 
         const actionEditTaxPay = async (e: any) => {
-            console.log(e);
+            // console.log(e);
             
             await (focusedRowKey.value = null)
         // setTimeout(() => {
@@ -794,7 +808,7 @@ export default defineComponent({
             if (e.rowType !== "data") {
                 return;
             }
-            console.log(e.rowType, e.data, e.rowIndex, e.rowElement, e.cells);
+            // console.log(e.rowType, e.data, e.rowIndex, e.rowElement, e.cells);
             // e.cells[0].cellElement.rowSpan = 2
             // if (e.cellElement) {
             //     e.cellElement.rowSpan = 2;
@@ -813,8 +827,6 @@ export default defineComponent({
         const sumOfIncome = () => {
             let total = 0;
             dataApi.value.forEach((item: any) => {
-                console.log(item);
-                
                 total += item.income;
             });
             return `수입액 합계: ${total}`
@@ -877,7 +889,7 @@ export default defineComponent({
             // statusAdjusted,
             move_column,
             colomn_resize,
-            globalYear,
+            acYear,
             focusedRowKey,
             selectionChanged,
             dataDemoMain,

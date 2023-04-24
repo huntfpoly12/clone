@@ -378,14 +378,14 @@ export default defineComponent({
     },
     setup() {
         const store = useStore()
-        const globalYear = computed(() => store.state.settings.globalYear)
+        const paYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'))
         const per_page = computed(() => store.state.settings.per_page)
         const move_column = computed(() => store.state.settings.move_column)
         const colomn_resize = computed(() => store.state.settings.colomn_resize)
         store.state.common.pa510.processKeyPA510 = {
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
             imputedMonth: dayjs().month() + 1,
-            paymentYear: globalYear.value,
+            paymentYear: paYear.value,
             paymentMonth: dayjs().month() + 1,
         }
         const startYearMonth = getJwtObject(sessionStorage.getItem("token")!)?.withholding?.startYearMonth;
@@ -402,7 +402,7 @@ export default defineComponent({
         const trigger = ref<boolean>(true)
         const originData = ref({
             companyId: companyId,
-            imputedYear: globalYear.value,
+            imputedYear: paYear.value,
         })
         const originDataTaxPayInfo = ref({
             companyId: companyId,
@@ -461,7 +461,7 @@ export default defineComponent({
         successChangeIncomeProcess(e => {
             dataMonthNew.value.status = status.value
             notification('success', Message.getMessage('COMMON', '106').message)
-            originData.value.imputedYear = globalYear.value
+            originData.value.imputedYear = paYear.value
             // refetchData() 
             // isRunOnce.value = true;
             trigger.value = true; //reset data table 1
@@ -587,7 +587,7 @@ export default defineComponent({
             }
         })
         watch(() => store.state.common.pa510.loadingTableInfo, (newVal) => {
-            originData.value.imputedYear = globalYear.value
+            originData.value.imputedYear = paYear.value
             trigger.value = true; //reset data table 1
             dataGridRef.value?.refresh();
             // IncomeWageDailiesTrigger.value = true; //reset data table 2
@@ -610,27 +610,27 @@ export default defineComponent({
                 store.state.common.pa510.statusDisabledStatus = false;
             }
         })
-        watch(globalYear, (newVal, oldVal) => {
-            if ((store.state.common.pa510.statusChangeFormEdit && !store.state.common.pa510.statusFormAdd) || (store.state.common.pa510.statusChangeFormAdd && store.state.common.pa510.statusFormAdd)) {
-                if (!store.state.common.pa510.checkClickYear) {
-                    modalChangeRow.value = true
-                    store.state.common.pa510.checkClickYear = true
-                    store.state.settings.globalYear = oldVal;
-                    store.state.common.pa510.dataYearNew = newVal;
-                    return
-                }
-                return
-            } else {
-                isRunOnce.value = true;
-                store.state.common.pa510.processKeyPA510.imputedYear = newVal
-                store.state.common.pa510.processKeyPA510.paymentYear = newVal
-                // originDataTaxPayInfo.value.processKey.imputedYear = newVal
-                // originDataTaxPayInfo.value.processKey.paymentYear = newVal
-                originData.value.imputedYear = newVal
-                trigger.value = true; //reset data table 1
-                // IncomeWageDailiesTrigger.value = true; //reset data table 2
-            }
-        })
+        // watch(paYear, (newVal, oldVal) => {
+        //     if ((store.state.common.pa510.statusChangeFormEdit && !store.state.common.pa510.statusFormAdd) || (store.state.common.pa510.statusChangeFormAdd && store.state.common.pa510.statusFormAdd)) {
+        //         if (!store.state.common.pa510.checkClickYear) {
+        //             modalChangeRow.value = true
+        //             store.state.common.pa510.checkClickYear = true
+        //             store.state.settings.paYear = oldVal;
+        //             store.state.common.pa510.dataYearNew = newVal;
+        //             return
+        //         }
+        //         return
+        //     } else {
+        //         isRunOnce.value = true;
+        //         store.state.common.pa510.processKeyPA510.imputedYear = newVal
+        //         store.state.common.pa510.processKeyPA510.paymentYear = newVal
+        //         // originDataTaxPayInfo.value.processKey.imputedYear = newVal
+        //         // originDataTaxPayInfo.value.processKey.paymentYear = newVal
+        //         originData.value.imputedYear = newVal
+        //         trigger.value = true; //reset data table 1
+        //         // IncomeWageDailiesTrigger.value = true; //reset data table 2
+        //     }
+        // })
         watch(() => store.state.common.pa510.addRow, (newVal) => {
             gridRefPA510.value?.instance.deselectAll()
             dataRows.value = []
@@ -733,7 +733,7 @@ export default defineComponent({
                     store.state.common.pa510.processKeyPA510.paymentYear = store.state.common.pa510.dataYearNew
                     originData.value.imputedYear = store.state.common.pa510.dataYearNew
                     trigger.value = true; //reset data table 1
-                    await (store.state.settings.globalYear = store.state.common.pa510.dataYearNew)
+                    await (store.state.settings.paYear = store.state.common.pa510.dataYearNew)
                     await (store.state.common.pa510.checkClickYear = false);
                     return;
                 }
@@ -819,7 +819,7 @@ export default defineComponent({
         const checkStartYearMonth = (month: number) => {
             let startYear = ref<any>(startYearMonth?.toString().slice(0, 4))
             let startMonth = ref<any>(startYearMonth?.toString().slice(4, 6))
-            if (parseInt(startYear.value) !== parseInt(globalYear.value)) {
+            if (parseInt(startYear.value) !== paYear.value) {
                 return false;
             } else {
                 if (month >= parseInt(startMonth.value)) {

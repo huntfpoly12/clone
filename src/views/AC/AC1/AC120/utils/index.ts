@@ -24,10 +24,10 @@ export const initialArrayRadioMonth = [
 ]
 export const initialStateFormAdd = {
   bankbookId: null,
-  resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
+  // resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   resolutionType: 11,
   amount: null,
-  summary: null,
+  summary: '',
   fundingSource: 3,
   letterOfApprovalType: 1,
 };
@@ -36,12 +36,12 @@ export const initialStateFormData = {
   paymentDate: null,
   resolutionType: 11,
   amount: null,
-  summary: null,
+  summary: '',
   fundingSource: 3,
   letterOfApprovalType: 1,
   theOrder: 1,
   resolutionClassification: null,
-  resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
+  // resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   // transactionDetailDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
   causeActionDate: null,
   proposedDate: null,
