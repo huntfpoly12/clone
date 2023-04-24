@@ -4,16 +4,23 @@
       <div class="nav-logo">
         <a @click="addMenuTab('')"><img src="../assets/images/logo.png" /></a>
       </div>
-      <div class="user-info" v-if="username">
+      <div class="user-info" v-if="userInfor">
         <FacilityBizTypeHeader />
         <!-- <year-header /> -->
-        <a-dropdown>
+        <a-dropdown  :trigger="['click']">
           <a class="ant-dropdown-link" @click.prevent>
-            {{ username }}
+            {{ userInfor.name }}
             <DownOutlined />
           </a>
           <template #overlay>
             <a-menu>
+              <a-menu-item>
+                <div class="user-infor">
+                  <p class="name-infor">ID : {{userInfor.name}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type).color"></a-tag></p>
+                  <p>{{userInfor.email}}</p>
+                  <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
+                </div>
+              </a-menu-item>
               <a-menu-item>
                 <router-link to="/change-password">비밀번호 변경</router-link>
               </a-menu-item>
@@ -163,7 +170,7 @@
                 </DxTabs>
               </DxSortable>
             </div>
-            <div class="main-content">
+            <div class="main-content">{{ userInfor }}
               <template v-if="activeTab">
                 <keep-alive :exclude="cachedTab" :key="count">
                   <component :is="currentComponent" />
@@ -526,6 +533,8 @@ export default defineComponent({
 
     let menuItems = menuTree;
     const store = useStore();
+    store.dispatch('auth/getUserInfor');
+    const userInfor = computed(() => store.state.auth.userInfor);
     const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
     const router = useRouter()
     const route = useRoute();
@@ -740,6 +749,15 @@ export default defineComponent({
         openKeys.value = latestOpenKey ? [latestOpenKey] : [];
       }
     }
+    const getColorTag = (data) => {
+       if (data === "m") {
+            return {"name":"매니저","color":"black"};
+        } else if (data === "r") {
+            return {"name":"영업자","color":"grey"};
+        } else if (data === "p") {
+            return {"name":"파트너","color":"goldenrod"};
+        }
+    }
     return {
       logout,
       onSearch,
@@ -761,7 +779,9 @@ export default defineComponent({
       onTabDragStart,
       onTabDrop,
       MAX_TAB,
-      count
+      count,
+      userInfor,
+      getColorTag
     }
   },
 });
