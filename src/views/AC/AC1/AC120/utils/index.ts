@@ -29,7 +29,7 @@ export const initialStateFormAdd = {
   amount: null,
   summary: '',
   fundingSource: 3,
-  letterOfApprovalType: 1,
+  letterOfApprovalType: null,
 };
 export const initialStateFormData = {
   bankbookId: null,
@@ -38,7 +38,7 @@ export const initialStateFormData = {
   amount: null,
   summary: '',
   fundingSource: 3,
-  letterOfApprovalType: 1,
+  letterOfApprovalType: null,
   theOrder: 1,
   resolutionClassification: null,
   // resolutionDate: filters.formatDateToInterger(dayjs().startOf('month').toDate()),
