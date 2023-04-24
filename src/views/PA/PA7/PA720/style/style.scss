@@ -299,5 +299,9 @@
     :deep .dx-freespace-row {
       display: none !important; // cục lúc hiện lúc không
     }
+    :deep .ant-tag{
+      min-width: 29px;
+      text-align: center;
+    }
   }
 }

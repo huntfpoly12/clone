@@ -25,9 +25,10 @@
       {{ dataSource }} <br />
       {{ productionCount }} productionCount<br />
       {{ beforeCount }} beforeCount<br /> -->
-      <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource" :show-borders="true"
-        key-expr="companyId" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" @selection-changed="selectionChanged" :allowSelection="true">
+      <DxDataGrid id="tab1-bf620" :show-row-lines="true" :hoverStateEnabled="true" :data-source="filteredDataSource"
+        :show-borders="true" key-expr="companyId" class="mt-10" :allow-column-reordering="move_column"
+        :allow-column-resizing="colomn_resize" :column-auto-width="true" @selection-changed="selectionChanged"
+        :allowSelection="true">
         <DxScrolling mode="standard" show-scrollbar="always" />
         <DxLoadPanel :enabled="true" :showPane="true" />
         <DxSelection mode="multiple" :fixed="true" />
@@ -162,32 +163,35 @@ export default defineComponent({
 
     const { client } = useApolloClient();
     const fetchDataStatus = async (companies: any) => {
+      console.log(`output->companies`, companies)
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByWithholdingTax, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              imputedYear: companies[i].imputedYear,
-              reportId: companies[i].reportId,
-            }
-          }
-        }).then((res) => {
-          let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
-          let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.reportId == companies[i].reportId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2) {
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByWithholdingTax, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                imputedYear: companies[i].imputedYear,
+                reportId: companies[i].reportId,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let productionStatus = res.data.getElectronicFilingsByWithholdingTax[0].productionStatus;
+            let causeOfProductionFailure = res.data.getElectronicFilingsByWithholdingTax[0]?.causeOfProductionFailure;
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.reportId == companies[i].reportId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 
