@@ -331,7 +331,7 @@ export default defineComponent({
           })
       }else {
         isProcessingDeleteUpdate.value = true
-        const updates = {};
+        const updates: any = {};
         updates[`/${itemEditComment.value.key}`] = {...itemEditComment.value, ...payload.value }
         update(chatListRef, updates).then(() => {
         }).catch(() => {
@@ -387,7 +387,7 @@ export default defineComponent({
     }
     const deleteComment = (item: any) => {
       isProcessingDeleteUpdate.value = true
-      const updates = {};
+      const updates: any = {};
       updates[`/${item.key}`] = {...item, isDelete: true}
       update(chatListRef, updates).then(() => {
       }).catch(() => {

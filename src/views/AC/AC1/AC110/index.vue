@@ -882,7 +882,10 @@ export default defineComponent({
         data.data.income = 0
       }
       nextTick(() => {
-        document.querySelector(`.ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`).focus()
+        const elInput: any = document.querySelector(`.ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`)
+        if(!!elInput) {
+          elInput.focus()
+        }
       })
     }
     const updateGoodsCount = (accountingDocumentId: any, value: any) => {
