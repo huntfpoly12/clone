@@ -121,7 +121,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, nextTick, watch } from 'vue'
+import { defineComponent, ref, nextTick, watch, computed } from 'vue'
 import { EllipsisOutlined, EditOutlined, DeleteOutlined, CloseOutlined, SmileOutlined, FileAddOutlined, SendOutlined } from '@ant-design/icons-vue';
 import { databaseFirebase, storage } from "@/firebaseConfig";
 import {
@@ -150,7 +150,7 @@ export default defineComponent({
     // message to the group
     keyChatChannel: {
       type: [String, Number],
-      default: 'keyChatChannelCommon'
+      default: ''
     },
   },
   components: {
@@ -200,11 +200,13 @@ export default defineComponent({
       }
     };
 
-    let chatListRef = reffb(databaseFirebase, channelChatSubrights());
+    let chatListRef: any = computed(() => {
+      return !!channelChatSubrights() ? reffb(databaseFirebase, channelChatSubrights()) : null
+    });
 
     const getListContentChat = () => {
       onValue(
-        chatListRef,
+        chatListRef.value,
         (snapshot) => {
           const objList = snapshot.val()
           if(!objList){
@@ -222,13 +224,7 @@ export default defineComponent({
           }
           listChat.value = arr
           
-          nextTick(() => {
-            formTimeline.value.scrollTop = 10000000
-          })
-          const refChat = reffb(databaseFirebase, channelChatSubrights())
-          
-          
-          onChildAdded(query(refChat, limitToLast(1)), (data) => {
+          onChildAdded(query(chatListRef.value, limitToLast(1)), (data) => {
             if(!firstLoadChat.value) {
               listChat.value.push({
                 ...data.val(),
@@ -240,7 +236,7 @@ export default defineComponent({
             }
             firstLoadChat.value = false
           });
-          onChildChanged(refChat, (data) => {
+          onChildChanged(chatListRef.value, (data) => {
             const indexUpdate = listChat.value.findIndex((chat: any) => chat.key === data.key)
             if(!!data.val()?.isDelete) {
               listChat.value.splice(indexUpdate, 1)
@@ -251,6 +247,9 @@ export default defineComponent({
               }
             }
           });
+          nextTick(() => {
+            formTimeline.value.scrollTop = 10000000
+          })
         },
         {
           onlyOnce: true,
@@ -333,7 +332,7 @@ export default defineComponent({
         isProcessingDeleteUpdate.value = true
         const updates: any = {};
         updates[`/${itemEditComment.value.key}`] = {...itemEditComment.value, ...payload.value }
-        update(chatListRef, updates).then(() => {
+        update(chatListRef.value, updates).then(() => {
         }).catch(() => {
           console.log('eeeeeeeee');
         }).finally(() => {
@@ -344,9 +343,9 @@ export default defineComponent({
     }
 
     watch(() => [props.idUserTo, props.keyChatChannel], (value) => {
-      if (!!value) {
+      if (!!value[0] || !!value[1]) {
         firstLoadChat.value = true
-        chatListRef = reffb(databaseFirebase, channelChatSubrights());
+        chatListRef.value = reffb(databaseFirebase, channelChatSubrights());
         getListContentChat();
         nextTick(() => {
           formTimeline.value.scrollTop = 10000000
@@ -389,7 +388,7 @@ export default defineComponent({
       isProcessingDeleteUpdate.value = true
       const updates: any = {};
       updates[`/${item.key}`] = {...item, isDelete: true}
-      update(chatListRef, updates).then(() => {
+      update(chatListRef.value, updates).then(() => {
       }).catch(() => {
         console.log('eeeeeeeee');
       }).finally(() => {

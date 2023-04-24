@@ -69,8 +69,8 @@
             <b>관리사항</b>
           </div>
           <div class="ac-130__main-content-manager-chat">
-            <FormChatNotification>
-              <FormChat />
+            <FormChatNotification v-slot="slotProps">
+              <FormChat :keyChatChannel="slotProps.keyChatChannel" />
             </FormChatNotification>
           </div>
         </div>
