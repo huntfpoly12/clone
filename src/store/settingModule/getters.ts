@@ -23,6 +23,7 @@ const getters:  GetterTree<SettingState, any> = {
   clients: (state: any) => state.clients,
   acYear: (state: any) => state.acYear,
   paYear: (state: any) => state.paYear,
+  changeFacilityBusiness: (state: any) => state.changeFacilityBusiness,
 };
 
 export default getters;

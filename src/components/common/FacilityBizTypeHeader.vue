@@ -192,6 +192,7 @@ export default defineComponent({
           store.dispatch('settings/getAccountSubject', { companyId: companyId, fiscalYear: Number(dayjs().year()), facilityBizType: parseInt(globalFacilityBizId.value) })
         }
         setMenuTab([])
+        store.commit('settings/setChangeFacilityBusiness')
         modalConfirm.value = false
       }
     }

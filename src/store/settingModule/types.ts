@@ -24,7 +24,8 @@ export interface SettingState {
   accountSubject: any
   clients: any[],
   acYear: any,
-  paYear: any
+  paYear: any,
+  changeFacilityBusiness: number
 }
 
 export interface PayLoadAccSubject {

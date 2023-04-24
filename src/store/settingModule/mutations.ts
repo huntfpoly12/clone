@@ -37,6 +37,9 @@ const mutations: MutationTree<SettingState> = {
   setPaYear(state, value: any) {
     state.paYear = value
   },
+  setChangeFacilityBusiness(state) {
+    state.changeFacilityBusiness++
+  },
 };
 
 export default mutations;

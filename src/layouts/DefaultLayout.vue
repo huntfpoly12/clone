@@ -165,7 +165,7 @@
             </div>
             <div class="main-content">
               <template v-if="activeTab">
-                <keep-alive :exclude="cachedTab">
+                <keep-alive :exclude="cachedTab" :key="count">
                   <component :is="currentComponent" />
                 </keep-alive>
               </template>
@@ -515,6 +515,7 @@ export default defineComponent({
     },
   },
   setup() {
+
     const MAX_TAB = 20
     const inputSearchText = ref("");
     const filteredResult =ref([]);
@@ -525,6 +526,7 @@ export default defineComponent({
 
     let menuItems = menuTree;
     const store = useStore();
+    const count = computed(()=> store.getters['settings/changeFacilityBusiness'])
     const router = useRouter()
     const route = useRoute();
     const collapsed = ref(false);
@@ -758,7 +760,8 @@ export default defineComponent({
       tabIndex,
       onTabDragStart,
       onTabDrop,
-      MAX_TAB
+      MAX_TAB,
+      count
     }
   },
 });
