@@ -256,7 +256,7 @@ export default defineComponent({
         const colomn_resize = computed(() => store.state.settings.colomn_resize);
         const trigger = ref<boolean>(true);
         const triggerPrint = ref<boolean>(false);
-        const globalYear: any = computed(() => store.state.settings.globalYear);
+        const globalYear: any = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
         let vModalSelectedRowKeys: any = ref([])
         const arrCheckBoxSearch: any = reactive({
             quarter1: {
@@ -592,7 +592,7 @@ export default defineComponent({
                 companyId: companyId,
                 employeeIds: [res],
                 input: {
-                    imputedYear: globalYear,
+                    imputedYear: globalYear.value,
                     paymentYearMonths: getArrPaymentYearMonth(),
                     type: valueSwitchChange.value == true ? 1 : 2,
                     receiptDate: dateSendEmail.value
@@ -672,7 +672,7 @@ export default defineComponent({
                     companyId: companyId,
                     employeeIds: selectedItemKeys.value,
                     input: {
-                        imputedYear: globalYear,
+                        imputedYear: globalYear.value,
                         paymentYearMonths: getArrPaymentYearMonth(),
                         type: valueSwitchChange.value == true ? 1 : 2,
                         receiptDate: dateSendEmail.value

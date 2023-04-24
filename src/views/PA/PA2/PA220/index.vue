@@ -162,7 +162,7 @@ export default defineComponent({
         DxDataGrid, DxColumn, DxSelection, DxScrolling, DxToolbar, DxItem, DxButton, EmailSinglePopup, EmailMultiPopup
     },
     setup() {
-        const globalYear = computed(() => store.state.settings.globalYear);
+        const globalYear = computed(() => parseInt(sessionStorage.getItem("paYear") ?? "0"))
         const arrayRadioDivision = ref([...radioLeaved])
         const arrayRadioType = ref([...radioType])
         const formSearch = ref({
@@ -195,7 +195,7 @@ export default defineComponent({
         const searchData = ref([]);
         const searchParam = reactive({
             companyId: companyId,
-            filter: { imputedYear: globalYear, leaved: null, name: null }
+            filter: { imputedYear: globalYear.value, leaved: null, name: null }
         })
         let payloadSearchParamClear: any = ref(makeDataClean(searchParam))
         const searchTrigger = ref<boolean>(true)
@@ -242,7 +242,7 @@ export default defineComponent({
         //SEND MAIL GROUP
         const sendMailGroupParam = reactive({
             companyId: companyId,
-            input: { imputedYear: globalYear, type: viewUrlParam.input.type, receiptDate: viewUrlParam.input.receiptDate },
+            input: { imputedYear: globalYear.value, type: viewUrlParam.input.type, receiptDate: viewUrlParam.input.receiptDate },
             incomeInputs: [
                 {
                     receiverName: "",
@@ -274,7 +274,7 @@ export default defineComponent({
             popupDataEmailSingle.value = {
                 companyId: companyId,
                 input: {
-                    imputedYear: globalYear,
+                    imputedYear: globalYear.value,
                     type: viewUrlParam.input.type,
                     receiptDate: viewUrlParam.input.receiptDate,
                 },
