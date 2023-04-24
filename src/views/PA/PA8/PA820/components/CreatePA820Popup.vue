@@ -102,10 +102,37 @@
                 <div class="input-text">
                   <div class="select-group">
                     <span>상실부호</span>
-                    <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
-                      v-model:valueInput="formState.nationalPensionLossCode"
-                      :disabled="!formState.nationalPensionReport" placeholder="선택" />
+                    <DxSelectBox :search-enabled=" false " width="357px" :data-source=" nationaPersionSelectbox "
+                      :show-clear-button=" false " display-expr="label" value-expr="value" :disabled=" !formState.nationalPensionReport "
+                      v-model=" formState.nationalPensionLossCode " placeholder="선택" field-template="field"
+                      item-template="item">
+                      <template #field=" { data } : any " style="padding: 4px;display: flex; align-items: center;">
+                        <div v-if=" data " style="padding: 2px;display: flex; align-items: center;">
+                          <a-tag>{{ data?.value }}</a-tag>
+                          <div class="text-overflow">
+                            {{ data.label }}
+                          </div>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                        <div v-else class="pt-5 pl-5">
+                          <span>선택</span>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                      </template>
+                      <template #item=" { data } : any " style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center;">
+                          <a-tag>{{ data?.value }}</a-tag>
+                          <div class="text-overflow" style="width: 296px;">
+                            {{ data?.label }}
+                          </div>
+                          <DxTextBox style="display: none;" />
+                        </div>
+                      </template>
+                    </DxSelectBox>
                   </div>
+                  <!-- <select-box-common width="357px" :arrSelect="nationaPersionSelectbox" :required="true"
+                    v-model:valueInput="formState.nationalPensionLossCode"
+                    :disabled="!formState.nationalPensionReport" placeholder="선택" /> -->
                   <span class="ml-50">
                     <checkbox-basic size="14" label="취득월 국민연금 납부" v-model:valueCheckbox="showData.acquisitionMonthPayment"
                       :disabled="!formState.nationalPensionReport" />
@@ -252,7 +279,6 @@
 <script lang="ts">
 import mutations from "@/graphql/mutations/PA/PA8/PA820/index";
 import queries from "@/graphql/queries/PA/PA8/PA820/index";
-import getCompany from "@/graphql/queries/common/getCompany";
 import { companyId, makeDataClean } from "@/helpers/commonFunction";
 // import INITIAL_DATA, {Company, DependentsType} from "./../utils";
 import {
@@ -501,7 +527,6 @@ export default defineComponent({
     //--------------------------------CHANGE DATA---------------------------------------
 
     watch(() => showData.healthInsuranceAcquisitionCode2, (newVal: any) => {
-      console.log(`output->newVal`, newVal)
       if (newVal) {
         formState.employeementInsuranceLossDescription = getValue(showData.healthInsuranceAcquisitionCode2, includeDependentsSelectbox)
       }
@@ -509,7 +534,7 @@ export default defineComponent({
 
     //---------------------------------DISABLED FIELD--------------------------------
 
-    const isDisabled1 = computed(() => formState.employeementInsuranceReport == formState.industrialAccidentInsuranceReport)
+    const isDisabled1 = computed(() => !formState.employeementInsuranceReport && !formState.industrialAccidentInsuranceReport)
     const isDisabled2 = computed(() => {
       // if(formState.healthInsuranceAcquisitionCode2 == 23 || )
       let check = [23, 26, 31].some((item: any) => showData.healthInsuranceAcquisitionCode2 == item);

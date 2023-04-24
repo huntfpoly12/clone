@@ -271,17 +271,17 @@
                             </DxDataGrid>
                         </template>
 
-                        <DxColumn caption="수기 여부" cell-template="slipRegistration" width="75"/>
-                        <template #slipRegistration="{ data }">
+                        <DxColumn caption="수기 여부" cell-template="handwriting" width="75"/>
+                        <template #handwriting="{ data }">
                             <DxDataGrid ref="gridRefAC120Detail" key-expr="accountingDocumentId" :onRowClick="actionEditTaxPay"
                                 @focused-row-changing="onFocusedRowChanging" :focused-row-enabled="true"
                                 v-model:focused-row-key="focusedRowKey" class="data-grid-child" :showColumnHeaders="false"
                                 :show-row-lines="true" :hoverStateEnabled="true" :data-source="data.data.data">
-                                <DxColumn data-field="slipRegistration" cell-template="slipRegistrationDetail" />
-                                <template #slipRegistrationDetail="{ data: row }">
+                                <DxColumn data-field="handwriting" cell-template="handwritingDetail" />
+                                <template #handwritingDetail="{ data: row }">
                                     <div class="slipRegistration">
-                                        <DxButton :focusStateEnabled="false" :text="row.data.handwriting ? 'O' : 'X'"
-                                            :style="{ backgroundColor: row.data.handwriting ? '#337614' : '#BB3835', color: 'white' }"
+                                        <DxButton v-if="row.data.handwriting == true" :focusStateEnabled="false" text="O"
+                                            :style="{ backgroundColor: '#BB3835', color: 'white' }"
                                             :height="$config_styles.HeightInput" />
                                     </div>
                                 </template>

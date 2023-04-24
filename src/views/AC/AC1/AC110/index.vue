@@ -154,7 +154,7 @@
                     </div>
                   </a-tooltip>
                 </template>
-                <template #button-save>
+                <template #button-save> 
                   <a-tooltip placement="top">
                     <template #title>신규</template>
                     <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)">
@@ -167,18 +167,18 @@
                 </DxColumn>
                 <DxColumn caption="수입액" cell-template="income" width="150" />
                 <template #income="{ data }">
-                  <div :key="data.data.spending">
+                  <div :class="`ac110income${data.rowIndex}${data.columnIndex}`" :key="data.data.spending">
                     <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
                       :disabled="!!data.data.spending" height="26"
-                      @focusInput="(e: any) => changeInputIncomeSpending(e, data.data, 'income')" />
+                      @focusInput="changeInputIncomeSpending(data, 'income')" />
                   </div>
                 </template>
                 <DxColumn caption="지출액" cell-template="spending" width="150" />
                 <template #spending="{ data }">
-                  <div :key="data.data.income">
+                  <div :class="`ac110spending${data.rowIndex}${data.columnIndex}`" :key="data.data.income">
                     <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
                       :disabled="!!data.data.income" height="26"
-                      @focusInput="(e: any) => changeInputIncomeSpending(e, data.data, 'spending')" />
+                      @focusInput="changeInputIncomeSpending(data, 'spending')" />
                   </div>
                 </template>
                 <DxColumn caption="적요" cell-template="summary" width="200" />
@@ -227,9 +227,9 @@
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
                   <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
-                    <a-badge v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" :count="data.data.goodsCount || 0" :offset="[7, 0]">
-                      <PlusOutlined style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
-                    </a-badge>
+                    <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
+                      {{ data.data.goodsCount || 0 }}
+                    </span>
                     <PlusOutlined v-else style="font-size: 12px" @click="openPopupItemDetail(data.data)" />
                   </div>
                 </template>
@@ -866,15 +866,27 @@ export default defineComponent({
       const indexSelected = dataSource.value.findIndex((item: any) => item.bankbookDetailId === rowKeyfocused.value)
       dataSource.value[indexSelected].proofCount--
     }
-    const changeInputIncomeSpending = (e: any, data: any, key: string) => {
+    const changeInputIncomeSpending = (data: any, key: string) => {
       if (key === 'income') {
-        data.resolutionClassification = 1
-        data.spending = 0
+        if(!data.data.income) {
+          data.data.income = null
+        }
+        data.data.resolutionClassification = 1
+        data.data.spending = 0
       }
       else {
-        data.resolutionClassification = 2
-        data.income = 0
+        if(!data.data.spending) {
+          data.data.spending = null
+        }
+        data.data.resolutionClassification = 2
+        data.data.income = 0
       }
+      nextTick(() => {
+        const elInput: any = document.querySelector(`.ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`)
+        if(!!elInput) {
+          elInput.focus()
+        }
+      })
     }
     const updateGoodsCount = (accountingDocumentId: any, value: any) => {
       const indexTransition = dataSourceTransactionDetails.value.transactionDetails.findIndex((item: any) => item.accountingDocumentId === accountingDocumentId)
