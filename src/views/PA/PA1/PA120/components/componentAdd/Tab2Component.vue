@@ -244,7 +244,7 @@ export default defineComponent({
     const store = useStore();
     const dataConfigPayItems = ref();
     const dataConfigDeduction = ref();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const isDisableInsuranceSupport = computed(() => store.state.common.isDisableInsuranceSupport)
     const formStateTab2 = reactive<any>({
       ...initFormStateTab2,

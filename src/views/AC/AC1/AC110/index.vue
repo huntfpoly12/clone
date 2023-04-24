@@ -265,8 +265,8 @@
       </div>
     </div>
     <PopupRetrieveStatements :isModalRetrieveStatements="isModalRetrieveStatements"
-      @closePopup="isModalRetrieveStatements = false" :title="''" :content="contentPopupRetrieveStatements"
-      :okText="'네. 불러옵니다'" :cancelText="'아니요'" @confirm="handleConfirmRetrieveStatements" />
+      @closePopup="isModalRetrieveStatements = false" :title="''" :content="Message.getMessage('AC110', '001').message"
+      :okText="Message.getMessage('AC110', '001').yes" :cancelText="Message.getMessage('AC110', '001').no" @confirm="handleConfirmRetrieveStatements" />
     <PopupSlipRegistrationSelected :isModalSlipRegistrationSelected="isModalSlipRegistrationSelected"
       :propListSlipRegistrationSelected="propListSlipRegistrationSelected"
       @closePopup="isModalSlipRegistrationSelected = false" @submit="handleConfirmSlipRegistrationSelected" />

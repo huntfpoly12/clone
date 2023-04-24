@@ -20,12 +20,10 @@ export const formatMonth = (month: number) => {
   return month;
 };
 export const reportTypeSelectbox = [
-  { id: "all", text: "전체" },
   { id: 1, text: "가입" },
   { id: 2, text: "탈퇴" },
 ];
 export const situationSelectbox = [
-  { id: "all", text: "전체" },
   { id: 1, text: "등록" },
   { id: 2, text: "접수" },
   { id: 10, text: "완료" },
@@ -33,7 +31,6 @@ export const situationSelectbox = [
   { id: 0, text: "취소" },
 ];
 export const acceptanceStatusSelectbox = [
-  { id: "all", text: "전체" },
   { id: 1, text: "신규" },
   { id: 2, text: "수임" },
   { id: 3, text: "타사수임" },
@@ -64,9 +61,9 @@ export const dataTableTab1 = [
   },
 ];
 export const states1 = [
-  {id: 1, name: 'truong'},
-  {id: 2, name: 'truongnd'},
-  {id: 3, name: 'truongnd001'},
+  {id: 1, text: 'truong'},
+  {id: 2, text: 'truongnd'},
+  {id: 3, text: 'truongnd001'},
 ]
 export const reportTypeSelectbox2 = [
   { id: "all", text: "전체" },

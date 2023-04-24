@@ -158,15 +158,6 @@ export default defineComponent({
       }
     }
     const handleOk = () => { 
-      // if (infos && !facilityBiz.value) {
-      //   notification('warning', 'you have not selected base project and allocation year')
-      //   return
-      // }
-
-      // if (info && !paYear.value) {
-      //   notification('warning', 'you have not selected base project and allocation year')
-      //   return
-      // }
       var res = settingFacilityBizType.value.validate();
       if (!res.isValid) {
         res.brokenRules[0].validator.focus();
