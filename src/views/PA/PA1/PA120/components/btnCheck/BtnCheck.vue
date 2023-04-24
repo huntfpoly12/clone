@@ -5,7 +5,12 @@
 <script>
 import { defineComponent, ref } from 'vue';
 export default defineComponent({
-  props: ['value'],
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    }
+  },
 });
 </script>
 
@@ -18,4 +23,4 @@ export default defineComponent({
   border-radius: 3px;
   font-size: 12px;
 }
-</style>>
+</style>

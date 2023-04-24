@@ -30,7 +30,7 @@
           </a-col>
           <a-col>
             <a-form-item label="제작요청자">
-              <list-manager-dropdown width="150px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
+              <list-manager-dropdown width="200px" v-model:valueInput=" ElecFilingFileFilter.manageUserId " />
             </a-form-item>
           </a-col>
         </a-row>
