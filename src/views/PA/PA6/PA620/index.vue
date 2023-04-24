@@ -301,7 +301,7 @@ export default defineComponent({
     const originData = reactive({ ...origindata, rows: per_page });
     const trigger = ref<boolean>(true);
     const modalCopy = ref<boolean>(false);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const processKeyPA620 = computed(() => store.state.common.processKeyPA620);
     const valueCallApiGetIncomeProcessBusinesses = reactive({
       companyId: companyId,

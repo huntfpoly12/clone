@@ -153,7 +153,7 @@ export default defineComponent({
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
     const focusedRowKey = ref();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
 
     //--------------------------DATASOURCE cetMajorInsuranceCompanyEmployeeLosses--------------------------
 

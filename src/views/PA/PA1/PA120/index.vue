@@ -175,7 +175,7 @@ export default defineComponent({
     const store = useStore();
     const totalUserOnl = ref(0);
     const totalUserOff = ref(0);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const per_page = computed(() => store.state.settings.per_page);
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);

@@ -128,7 +128,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const trigger = ref<boolean>(true);
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const modalStatusDelete = ref(false)
     const idAction = ref()
     let disabledButton = ref<boolean>(false);

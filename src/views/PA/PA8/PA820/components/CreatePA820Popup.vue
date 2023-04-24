@@ -335,7 +335,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const app: any = getCurrentInstance();
     const messages = app.appContext.config.globalProperties.$messages;
     const employeeArr = ref([]);

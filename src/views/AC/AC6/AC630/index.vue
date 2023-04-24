@@ -105,7 +105,7 @@
           <DxColumn caption="사업자(고유)등록번호" data-field="administrationAgency" />
           <DxColumn caption="금액" data-field="administrationAgency" />
           <DxColumn caption="기부기간" data-field="administrationAgency" cell-template="administrationAgency" />
-          <template #administrationAgency="{ data }" class="custom-action">
+          <template #administrationAgency="{ data }: any" class="custom-action">
             <div class="d-flex justify-content-center" v-if="data.data.hasDownFile">
               {{ data.value }}
             </div>
@@ -184,14 +184,14 @@ export default defineComponent({
       administrationAgency: '사업장관리번호, ',
       hasDownFile: true,
     }]);
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const acYear = ref<number>(parseInt(sessionStorage.getItem("acYear") ?? '0'))
     const dataState = ref({
       registeredAt: '',
       manageId: '',
       check: false,
       companyId: companyId,
       workId: 1,
-      imputedYear: globalYear.value,
+      imputedYear: acYear.value,
       name: 'ss',
     })
     const rangeDate: any = ref([parseInt(dayjs().subtract(1, 'week').format('YYYYMM')), parseInt(dayjs().format('YYYYMM'))]);
@@ -337,7 +337,7 @@ export default defineComponent({
 
     const getMajorInsuranceParam = ref<any>({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: acYear.value,
       workId: dataState.value.workId,
     });
     const getMajorInsuranceTrigger = ref<boolean>(false);

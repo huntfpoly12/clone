@@ -272,7 +272,7 @@ export default defineComponent({
     });
 
     //----------------------------get employee extras --------------------------------
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const savePA710 = computed(()=>store.state.common.savePA710);
     const getEmployeeExtrasParams = reactive({
       companyId: companyId,

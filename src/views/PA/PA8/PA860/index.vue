@@ -131,7 +131,7 @@ export default defineComponent({
       companyId: companyId,
       workId: 1,
     })
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     //---------------------------add new data------------------
     const isOpenModalCreate = ref(false);
     const openAddNewModal = () => {

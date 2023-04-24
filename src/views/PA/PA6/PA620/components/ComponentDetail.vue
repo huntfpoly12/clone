@@ -237,7 +237,7 @@ export default defineComponent({
     const amountFormat = ref({ currency: 'VND', useGrouping: true })
     const store = useStore();
     const { per_page, move_column, colomn_resize } = store.state.settings;
-    const globalYear = computed(() => store.state.settings.globalYear)
+    const globalYear = ref<number>(parseInt(sessionStorage.getItem("paYear") ?? '0'));
     const modalHistory = ref<boolean>(false)
     const modalHistoryStatus = ref<boolean>(false)
     let paymentDayPA620 = computed(() => store.state.common.paymentDayPA620);
