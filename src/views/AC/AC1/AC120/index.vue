@@ -550,8 +550,12 @@ export default defineComponent({
         // ================ FUNCTION ============================================
         const selectionChanged = (data: any) => {
             // gridRefAC120.value?.instance.refresh();
+            dataRows.value = []
             data.component.getSelectedRowsData().then((rowData: any) => {
-                dataRows.value = rowData
+                rowData.map((data: any) => {
+                    dataRows.value = dataRows.value.concat(data.data) 
+                })
+                console.log(dataRows.value);
                 // if (rowData.find((element: any) => element.incomeId == "PA510" ?? null)) {
                 //     gridRefPA510.value?.instance.deselectAll()
                 //     dataRows.value = []

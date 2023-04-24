@@ -111,6 +111,8 @@ export default defineComponent({
 
         watch(() => props.modalStatus, async (newValue, old) => {
             if (newValue) {
+                sumHandwritingTrue.value = 0
+                sumHandwritingFalse.value = 0
                 props.dataRows.map((row: any) => {
                     if (row.handwriting === true) {
                         sumHandwritingTrue.value++ 
