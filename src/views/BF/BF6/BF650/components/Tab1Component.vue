@@ -58,7 +58,7 @@
           <date-time-box width="150px" dateFormat="YYYY-MM-DD" v-model:valueDate="dateTime"/>
           <a-tooltip placement="topLeft" color="black">
             <template #title>전자신고파일 제작 요청</template>
-            <div class="btn-modal-save" @click="openModalSave">
+            <div class="btn-modal-save" @click="keySelect.length > 0 && openModalSave()">
               <SaveOutlined class="fz-24 ml-5 action-save"/>
               <span style="margin-left: 5px;">파일제작요청</span>
             </div>
@@ -361,7 +361,7 @@ export default defineComponent({
       filter, dataSource, colomn_resize, move_column, modalConfirmMail,
       selectionChanged, openModalSave,
       dateTime,
-
+      keySelect,
       refetch
     }
   }

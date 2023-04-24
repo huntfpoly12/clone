@@ -100,10 +100,12 @@ export default defineComponent({
 }
 
 .tag-forDailyUse {
-    border: 1px solid black;
-    color: rgb(0, 0, 0);
-    padding: 3px 10px;
+    margin-right: 5px;
+    text-align: center;
+    border: 1px solid rgb(164, 164, 164);
     border-radius: 5px;
+    padding: 3px 4px;
+    height: 25px;
 }
 
 .display-none {

@@ -90,8 +90,8 @@
         </DxSummary>
       </DxDataGrid>
     </div>
-    <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData " tab-name="tab2"
-      @cancel=" onRequestDone " />
+    <RequestFilePopup v-if=" modalStatus " :modalStatus=" modalStatus " :requestFileData=" requestFileData "
+      tab-name="tab2" @cancel=" onRequestDone " />
   </div>
 </template>
   
@@ -159,29 +159,31 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByLocalIncomeTax, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              imputedYear: companies[i].imputedYear,
-              reportId: companies[i].reportId,
-            }
-          }
-        }).then((res) => {
-          let { productionStatus, causeOfProductionFailure } = res.data.getElectronicFilingsByLocalIncomeTax[0];
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.reportId == companies[i].reportId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2){
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByLocalIncomeTax, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                imputedYear: companies[i].imputedYear,
+                reportId: companies[i].reportId,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let { productionStatus, causeOfProductionFailure } = res.data.getElectronicFilingsByLocalIncomeTax[0];
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.reportId == companies[i].reportId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 

@@ -164,30 +164,32 @@ export default defineComponent({
     const fetchDataStatus = async (companies: any) => {
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
-        await client.query({
-          query: queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, variables: {
-            input: {
-              companyId: companies[i].companyId,
-              paymentYear: companies[i].paymentYear,
-              paymentMonth: companies[i].paymentMonth,
-            }
-          }
-        }).then((res) => {
-          let productionStatus = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0].productionStatus;
-          let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
-          productionCount.value--;
-          dataSource.value.forEach((item: any) => {
-            if (item.companyId == companies[i].companyId) {
-              item.productionStatus = productionStatus;
-              if (productionStatus == -1) {
-                item.causeOfProductionFailure = causeOfProductionFailure;
-              }
-              if (productionStatus == 2){
-                item.allowSelection = false;
+        if (companies[i]) {
+          await client.query({
+            query: queries.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement, variables: {
+              input: {
+                companyId: companies[i].companyId,
+                paymentYear: companies[i].paymentYear,
+                paymentMonth: companies[i].paymentMonth,
               }
             }
-          })
-        }).catch((err: any) => err);
+          }).then((res) => {
+            let productionStatus = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0].productionStatus;
+            let causeOfProductionFailure = res.data.getElectronicFilingsByIncomeBusinessSimplifiedPaymentStatement[0]?.causeOfProductionFailure;
+            productionCount.value--;
+            dataSource.value.forEach((item: any) => {
+              if (item.companyId == companies[i].companyId) {
+                item.productionStatus = productionStatus;
+                if (productionStatus == -1) {
+                  item.causeOfProductionFailure = causeOfProductionFailure;
+                }
+                if (productionStatus == 2) {
+                  item.allowSelection = false;
+                }
+              }
+            })
+          }).catch((err: any) => err);
+        }
       }
     };
 
