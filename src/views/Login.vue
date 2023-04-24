@@ -31,20 +31,21 @@
         {{ isSignup ? errors.error : 'Invalid credentials' }}
       </p>
       <a-row>
-          <a-col :span="9">
+          <a-col :span="5">
             <button class="primary" type="submit">
-              {{ signinLoading ? '로그인중입니다..' : '로그인' }}
+              로그인
             </button>
           </a-col>
-          <a-col :span="15">
+          <a-col :span="19">
             <div style="float: right;padding: 6px 0px 6px 0px;">
-              <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openForgotPassword"> 비밀번호 찾기</a>
+              <router-link to="/request-contract"> 신규고객 서비스가입신청</router-link> / <a @click="openFindUsername">  아이디 찾기 </a>/<a @click="openForgotPassword"> 비밀번호 찾기</a>
             </div>
           </a-col>
         </a-row>
 
     </form>
     <forget-password v-if="modalForgotPassword" :modalStatus="modalForgotPassword" @closePopup="modalForgotPassword = false"></forget-password>
+    <find-username v-if="modalFindUsername" :modalStatus="modalFindUsername" @closePopup="modalFindUsername = false"></find-username>
   </div>
 </template>
 
@@ -55,13 +56,14 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import mutations from '../graphql/mutations/index';
 import ForgetPassword from './ForgetPassword.vue';
-
+import FindUsername from './FindUsername.vue';
 export default {
-    components: { ForgetPassword },
+    components: { ForgetPassword,FindUsername },
     setup() {
         const store = useStore();
         const router = useRouter();
         const modalForgotPassword = ref(false)
+        const modalFindUsername = ref(false)
         const form = reactive({
             username: "",
             password: "",
@@ -90,10 +92,16 @@ export default {
         const openForgotPassword = () => {
           modalForgotPassword.value = true;
         };
+        const openFindUsername = () => {
+          modalFindUsername.value = true;
+        };
         return {
             form,
             submitForm,
-            openForgotPassword, modalForgotPassword,
+            openFindUsername,
+            modalFindUsername,
+            openForgotPassword,
+            modalForgotPassword,
             errors,
             signinLoading,
         };
@@ -105,7 +113,7 @@ export default {
 <style scoped>
 .auth-form {
   padding-top: 150px;
-  max-width: 400px;
+  max-width: 410px;
   margin: 0 auto;
 }
 .flex {
