@@ -57,7 +57,7 @@
             <DxTotalItem column="품목" summary-type="count" display-format="전체: {0}" />
             <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalValue" column="단위" :customize-text="totalValue" />
             <DxTotalItem cssClass="custom-sumary" column="단가" :customize-text="totalExpenditure" />
-            <DxTotalItem cssClass="custom-sumary" column="비고" :customize-text="totalDifference" />
+            <DxTotalItem cssClass="custom-sumary refPopupDetail110TotalDifference" column="비고" :customize-text="totalDifference" />
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
@@ -276,7 +276,7 @@ export default defineComponent({
     }
     const addNewRow = () => {
       if (!!dataSource.value.statementOfGoodsItems && dataSource.value.statementOfGoodsItems.length) {
-        dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }, ...dataSource.value.statementOfGoodsItems]
+        dataSource.value.statementOfGoodsItems = [...dataSource.value.statementOfGoodsItems, { ...InitStatementOfGoods, id: dataSource.value.statementOfGoodsItems[0].id + 'create' }]
       } else {
         dataSource.value.statementOfGoodsItems = [{ ...InitStatementOfGoods, id: 'create' }]
       }
@@ -290,9 +290,13 @@ export default defineComponent({
       }
     }
     const changeInput = () => {
-      const el = document.querySelector('.refPopupDetail110TotalValue')
-      if(el){
-        el.textContent = totalValue()
+      const elTotalValue: any = document.querySelector('.refPopupDetail110TotalValue')
+      const elTotalDifference = document.querySelector('.refPopupDetail110TotalDifference')
+      if(elTotalValue){
+        elTotalValue.textContent = totalValue()
+      }
+      if(elTotalDifference){
+        elTotalDifference.textContent = totalDifference()
       }
     }
     return {

@@ -167,7 +167,7 @@
                 </DxColumn>
                 <DxColumn caption="수입액" cell-template="income" width="150" />
                 <template #income="{ data }">
-                  <div :class="`ac110income${data.rowIndex}${data.columnIndex}`" :key="data.data.spending">
+                  <div :id="`ac110income${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.spending}">
                     <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
                       :disabled="!!data.data.spending" height="26"
                       @focusInput="changeInputIncomeSpending(data, 'income')" />
@@ -175,7 +175,7 @@
                 </template>
                 <DxColumn caption="지출액" cell-template="spending" width="150" />
                 <template #spending="{ data }">
-                  <div :class="`ac110spending${data.rowIndex}${data.columnIndex}`" :key="data.data.income">
+                  <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.income}">
                     <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
                       :disabled="!!data.data.income" height="26"
                       @focusInput="changeInputIncomeSpending(data, 'spending')" />
@@ -192,9 +192,11 @@
                 </template>
                 <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
                 <template #relationCode="{ data }">
-                  <account-code-select v-model:valueInput="data.data.relationCode"
+                  <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
+                    <account-code-select v-model:valueInput="data.data.relationCode"
                     :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
                     :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
+                  </div>
                 </template>
                 <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                 <template #fundingSource="{ data }">
@@ -206,13 +208,15 @@
                 </template>
                 <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
                 <template #letterOfApprovalType="{ data }">
-                  <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
+                  <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
+                    <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
                     :disabled="data.data.resolutionClassification === 1"
                     :required="data.data.resolutionClassification === 2" />
+                  </div>
                 </template>
                 <DxColumn caption="원인/용도" cell-template="causeUsage" alignment="center" />
                 <template #causeUsage="{ data }">
-                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
                     <a-tooltip v-if="!!data.data.causeUsage && data.data.causeUsage.length" placement="top">
                       <template #title>
                         <div class="ac-110-tooltip-memocauseUsage">{{ data.data.causeUsage }}</div>
@@ -226,7 +230,7 @@
                 </template>
                 <DxColumn caption="물품내역" cell-template="goodsCount" alignment="center" />
                 <template #goodsCount="{ data }">
-                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
                     <span v-if="!!data.data.goodsCount && data.data.resolutionClassification !== 1" style="cursor: pointer;" @click="openPopupItemDetail(data.data)">
                       {{ data.data.goodsCount || 0 }}
                     </span>
@@ -235,7 +239,7 @@
                 </template>
                 <DxColumn caption="메모" cell-template="memo" alignment="center" />
                 <template #memo="{ data }">
-                  <div :class="{ 'disable-button-edit-add': data.data.resolutionClassification === 1 }">
+                  <div :class="{ 'disable-icon-column': data.data.resolutionClassification === 1 }">
                     <a-tooltip v-if="!!data.data.memo && data.data.memo.length" placement="top">
                       <template #title>
                         <div class="ac-110-tooltip-memocauseUsage">{{ data.data.memo }}</div>
@@ -343,8 +347,9 @@ export default defineComponent({
     const store = useStore();
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.state.settings.globalYear)
-    const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+    
+    const globalYear = computed(() => parseInt(sessionStorage.getItem("acYear") ?? "0"))
+    const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     const bankType = BankType.all();
     const bankbookUseType: any = computed(() => {
       let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
@@ -506,6 +511,7 @@ export default defineComponent({
       loading: loadingRegisterTransactionDetailsToAccountingDocuments,
     } = useMutation(mutations.registerTransactionDetailsToAccountingDocuments);
     doneRegisterTransactionDetailsToAccountingDocuments((e) => {
+      triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorRegisterTransactionDetailsToAccountingDocuments(e => {
@@ -518,6 +524,7 @@ export default defineComponent({
       loading: loadingUnregisterTransactionDetailsToAccountingDocuments,
     } = useMutation(mutations.unregisterTransactionDetailsToAccountingDocuments);
     doneUnregisterTransactionDetailsToAccountingDocuments((e) => {
+      triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
     })
     errorUnregisterTransactionDetailsToAccountingDocuments(e => {
@@ -530,6 +537,7 @@ export default defineComponent({
       loading: loadingInitializeTransactionDetails,
     } = useMutation(mutations.initializeTransactionDetails);
     doneInitializeTransactionDetails((e) => {
+      triggerBankbookDetails.value = true
       notification('success', Message.getMessage('COMMON', '106').message)
       triggerTransactionDetails.value = true
     })
@@ -707,12 +715,13 @@ export default defineComponent({
       })
     }
     const handleConfirmSlipRegistrationSelected = () => {
-      let bankbookDetailDate: number = 0
-      const bankbookDetailIds: number[] = []
+      const keys: any = []
       dataSource.value.forEach(items => {
         if (selectedRowKeys.value.includes(items.bankbookDetailId)) {
-          bankbookDetailDate = items.bankbookDetailDate
-          bankbookDetailIds.push(items.bankbookDetailId)
+          keys.push({
+            bankbookDetailDate: items.bankbookDetailDate,
+            bankbookDetailId: items.bankbookDetailId
+          })
         }
       })
       isModalSlipRegistrationSelected.value = false
@@ -720,14 +729,13 @@ export default defineComponent({
         companyId: companyId,
         fiscalYear: globalYear.value,
         facilityBusinessId: globalFacilityBizId.value,
-        bankbookDetailDate,
-        bankbookDetailIds
+        keys: keys
       })
     }
     const handleSlipRegistration = () => {
       const keys: any = []
       dataSource.value.forEach(items => {
-        if (transactionDetailsCountSelected.value === items.transactionDetailsCount) {
+        if (rowKeyfocused.value === items.bankbookDetailId) {
           keys.push({
             bankbookDetailDate: items.bankbookDetailDate,
             bankbookDetailId: items.bankbookDetailId
@@ -743,12 +751,12 @@ export default defineComponent({
       })
     }
     const handleConfirmSlipCancellation = () => {
-      let bankbookDetailDate: number = 0
-      let bankbookDetailIds: number = 0
+      let bankbookDetailDate = null
+      let bankbookDetailId = null
       dataSource.value.forEach(items => {
-        if (transactionDetailsCountSelected.value === items.transactionDetailsCount) {
+        if (rowKeyfocused.value === items.bankbookDetailId) {
           bankbookDetailDate = items.bankbookDetailDate
-          bankbookDetailIds = items.bankbookDetailId
+          bankbookDetailId = items.bankbookDetailId
         }
       })
       isModalSlipCancellation.value = false
@@ -757,7 +765,7 @@ export default defineComponent({
         fiscalYear: globalYear.value,
         facilityBusinessId: globalFacilityBizId.value,
         bankbookDetailDate,
-        bankbookDetailIds
+        bankbookDetailId
       })
     }
     const handleInitializeTransactionDetails = () => {
@@ -798,7 +806,7 @@ export default defineComponent({
         initTransactionDetails.accountingDocumentId = 'create'
       }
       // refGridDetailAc110.value.instance.addRow(initTransactionDetails)
-      dataSourceTransactionDetails.value.transactionDetails = [initTransactionDetails, ...dataSourceTransactionDetails.value.transactionDetails]
+      dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
     const submitTransactionDetails = async (event: any) => {
       if (rowKeyfocused.value === null) return
@@ -882,7 +890,7 @@ export default defineComponent({
         data.data.income = 0
       }
       nextTick(() => {
-        const elInput: any = document.querySelector(`.ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`)
+        const elInput: any = document.querySelector(`#ac110${key}${data.rowIndex}${data.columnIndex} .dx-texteditor-input`)
         if(!!elInput) {
           elInput.focus()
         }
