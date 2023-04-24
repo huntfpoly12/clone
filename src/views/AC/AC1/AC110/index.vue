@@ -348,7 +348,7 @@ export default defineComponent({
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
     const globalYear = computed(() => store.state.settings.globalYear)
-    const globalFacilityBizId = computed(() => store.state.settings.globalFacilityBizId)
+    const globalFacilityBizId = ref(parseInt(sessionStorage.getItem("globalFacilityBizId") ?? "0"))
     const bankType = BankType.all();
     const bankbookUseType: any = computed(() => {
       let bsDeduction: any = enum2Entries(BankBookUseType).map((value) => ({
