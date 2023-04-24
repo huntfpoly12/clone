@@ -61,9 +61,9 @@ export const dataTableTab1 = [
   },
 ];
 export const states1 = [
-  {id: 1, name: 'truong'},
-  {id: 2, name: 'truongnd'},
-  {id: 3, name: 'truongnd001'},
+  {id: 1, text: 'truong'},
+  {id: 2, text: 'truongnd'},
+  {id: 3, text: 'truongnd001'},
 ]
 export const reportTypeSelectbox2 = [
   { id: "all", text: "전체" },
