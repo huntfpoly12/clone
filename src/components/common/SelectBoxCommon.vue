@@ -1,7 +1,7 @@
 <template>
-    <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton"
-        v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr" :disabled="disabled"
-        @value-changed="updateValue(value)" :height="$config_styles.HeightInput" :name="nameInput" placeholder="선택">
+    <DxSelectBox :search-enabled="searchEnabled" :width="width" :data-source="arrSelect" :show-clear-button="clearButton" v-model:value="value" :read-only="readOnly" :display-expr="displayeExpr" :value-expr="valueExpr"
+      :disabled="disabled" @value-changed="updateValue(value)" :height="$config_styles.HeightInput" placeholder="선택"
+      :name="nameInput" >
         <DxValidator :name="nameInput">
             <DxRequiredRule v-if="required" :message="messageRequired" />
         </DxValidator>

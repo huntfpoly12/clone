@@ -17,34 +17,34 @@
             <text-number-box width="150px" v-model:valueInput="formState.companyName3" />
           </a-form-item>
         </a-rol>
-        <a-rol class="mr-15">
+        <!-- <a-rol class="mr-15">
           <a-form-item label="신고구분">
-            <select-box-common :arrSelect="reportTypeSelectbox" v-model:valueInput="formState.companyName4"
+            <SelectBoxCT :arrSelect="reportTypeSelectbox" v-model:valueInput="formState.companyName4"
               displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
           </a-form-item>
-        </a-rol>
+        </a-rol> -->
         <a-rol class="mr-15">
           <a-form-item label="상태">
-            <select-box-common :arrSelect="situationSelectbox" v-model:valueInput="formState.companyName5"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
+            <SelectBoxCT :searchEnabled="true" :arrSelect="situationSelectbox" v-model:valueInput="formState.companyName5"
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택"/>
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="수임상태">
-            <select-box-common :arrSelect="acceptanceStatusSelectbox" v-model:valueInput="formState.companyName6"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
+            <SelectBoxCT :searchEnabled="true" :arrSelect="acceptanceStatusSelectbox" v-model:valueInput="formState.companyName6"
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택"/>
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="건강ED 연계상태">
-            <select-box-common :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName7"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
+            <SelectBoxCT :searchEnabled="true" :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName7"
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택"/>
           </a-form-item>
         </a-rol>
         <a-rol class="mr-15">
           <a-form-item label="연금EDI 연계상태">
-            <select-box-common :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName8"
-              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택" :searchEnabled="false" />
+            <SelectBoxCT :searchEnabled="true" :arrSelect="healthSelectbox" v-model:valueInput="formState.companyName8"
+              displayeExpr="text" valueExpr="id" width="150px" placeholder="선택"/>
           </a-form-item>
         </a-rol>
         <a-col>
@@ -57,7 +57,6 @@
     <a-row class="top-table" justify="end">
       <button-basic @onClick="handleOkConfirm" mode="contained" type="default" text="팩스발송" />
     </a-row>
-    <date-time-box v-model:valueDate="formState.companyName8"></date-time-box>
     <div class="content-grid">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="id" class="mt-10" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
@@ -82,7 +81,7 @@
         </DxColumn>
         <DxColumn data-field="lastProductionRequestedAt" caption="수임일" width="150" edit-cell-template="submission-date" alignment="center">
         </DxColumn>
-        <template #submission-date="{ data }">
+        <template #submission-date="{ data } : any">
           <date-time-box v-model:valueDate="data.data.lastProductionRequestedAt" width="125px" :clearable="false"></date-time-box>
         </template>
         <DxColumn data-field="productionStatus" caption="해지일" width="150" data-type="date">
@@ -101,7 +100,7 @@
           <button-basic @onClick="onOpenPop2" mode="contained" type="default" text="수정" />
         </template>
         <DxColumn caption="건강보험 EDI 위임장" cell-template="downA" alignment="right" :allow-editing="false" />
-        <template #downA="{ data }" class="custom-action">
+        <template #downA="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -109,7 +108,7 @@
           </div>
         </template>
         <DxColumn caption="국민연금 EDI 위임장 " cell-template="downB" alignment="right" :allow-editing="false" />
-        <template #downB="{ data }" class="custom-action">
+        <template #downB="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -117,7 +116,7 @@
           </div>
         </template>
         <DxColumn caption="보험사무대행기관 사무위탁서" cell-template="downC" alignment="right" :allow-editing="false" />
-        <template #downC="{ data }" class="custom-action">
+        <template #downC="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -125,7 +124,7 @@
           </div>
         </template>
         <DxColumn caption="위임장" cell-template="downD" alignment="right" :allow-editing="false" />
-        <template #downD="{ data }" class="custom-action">
+        <template #downD="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -133,7 +132,7 @@
           </div>
         </template>
         <DxColumn caption="고용산재 업무대행 수임(해지)신청서" cell-template="downE" alignment="right" :allow-editing="false" />
-        <template #downE="{ data }" class="custom-action">
+        <template #downE="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -141,7 +140,7 @@
           </div>
         </template>
         <DxColumn caption="사무위탁해지통지서" cell-template="downF" alignment="right" :allow-editing="false" />
-        <template #downF="{ data }" class="custom-action">
+        <template #downF="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -149,7 +148,7 @@
           </div>
         </template>
         <DxColumn caption="개인정보제공 동의서" cell-template="downG" alignment="right" :allow-editing="false" />
-        <template #downG="{ data }" class="custom-action">
+        <template #downG="{ data } : any" class="custom-action">
           <div class="d-flex justify-content-center">
             <DxButton type="ghost" class="" style="cursor: pointer" @click="onGetAcquistionRp(data.data.workId)">
               <DownloadOutlined :size="12" />
@@ -187,6 +186,7 @@ import dayjs from 'dayjs';
 import { isNumber } from 'lodash';
 import Tab1PopUp1 from './Tab1PopUp1.vue';
 import Tab1PopUp2 from './Tab1PopUp2.vue';
+import SelectBoxCT from './SelectBoxCT.vue';
 export default defineComponent({
   components: {
     SearchArea,
@@ -206,8 +206,9 @@ export default defineComponent({
     DxEditing,
     DxLookup,
     DownloadOutlined,
-    DxColumnFixing
-  },
+    DxColumnFixing,
+    SelectBoxCT
+},
   props: {
     search: {
       type: Number,
