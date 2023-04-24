@@ -79,11 +79,7 @@ import notification from "@/utils/notification"
 import { Message } from "@/configs/enum";
 import dayjs from "dayjs";
 dayjs
-window.addEventListener('storage', (e) => {
-  if (e.key === 'acYear') {
-   alert()
-  }
-});
+
 export default defineComponent({
   components: {
     WarningOutlined,DxSelectBox, DxValidator, DxRequiredRule
