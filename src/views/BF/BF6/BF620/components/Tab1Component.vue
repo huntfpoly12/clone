@@ -163,7 +163,6 @@ export default defineComponent({
 
     const { client } = useApolloClient();
     const fetchDataStatus = async (companies: any) => {
-      console.log(`output->companies`, companies)
       if (companies.length === 0) return;
       for (let i = 0; i < companies.length; i++) {
         if (companies[i]) {

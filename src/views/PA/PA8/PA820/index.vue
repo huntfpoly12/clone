@@ -2,7 +2,7 @@
   <action-header title="신청내역 리스트" :buttonDelete="false" :buttonSearch="false" :buttonPrint="false" :buttonSave="false" />
 
   <div id="pa-820" class="px-10 py-10">
-    <a-spin :spinning="false" size="large">
+    <a-spin :spinning="loading" size="large">
       <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
         :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
@@ -85,7 +85,7 @@
     </a-spin>
     <CreatePA820Popup v-if=" modalCreate " @closeModal=" onCreateModal " />
     <PopupMessage :modalStatus=" modalDelete " @closePopup=" modalDelete = false " typeModal="confirm"
-      :content=" contentDelete " okText="네. 삭제합니다" cancelText="아니요" @checkConfirm=" handleDelete " />
+      :content=" contentDelete.message " :okText="contentDelete.yes" :cancelText="contentDelete.no" @checkConfirm=" handleDelete " />
     <HistoryPopup :modalStatus=" modalHistory " @closePopup=" modalHistory = false " :data=" workIdHistory " title="변경이력"
       typeHistory="pa-820" />
   </div>
@@ -163,7 +163,7 @@ export default defineComponent({
       companyId: companyId,
       imputedYear: globalYear
     })
-    const { refetch: companyEmployeeLossesRefetch, result: companyEmployeeLossesResult, onError: companyEmployeeLossesError } = useQuery(
+    const { refetch: companyEmployeeLossesRefetch, result: companyEmployeeLossesResult, onError: companyEmployeeLossesError, loading } = useQuery(
       queries.getMajorInsuranceCompanyEmployeeLosses,
       companyEmployeeLossesParam,
       () => ({
@@ -220,7 +220,7 @@ export default defineComponent({
 
     //-------------------------MUTATION DELETE cancelMajorInsuranceCompanyOut -----------
 
-    const contentDelete = Message.getCommonMessage('303').message as string
+    const contentDelete = Message.getCommonMessage('303');
     const modalDelete = ref(false);
     const cancelCompanyOutParam = reactive({
       companyId: companyId,
@@ -285,7 +285,7 @@ export default defineComponent({
     };
 
     return {
-      per_page, move_column, colomn_resize,
+      per_page, move_column, colomn_resize,loading,
       focusedRowKey, dataSource, modalHistory,
       onOpenLogs, actionDelete, onGetFileStorageId, onGetAcquistionRp,
       onCreateModal, modalCreate, modalDelete, handleDelete, contentDelete,
