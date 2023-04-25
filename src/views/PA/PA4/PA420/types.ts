@@ -319,7 +319,7 @@ export type DeductibleWithholdingTax = {
 
 /** Retired years of service (퇴직근속연수) */
 export type RetiredYearsOfService = {
-  __typename?: 'RetiredYearsOfService';
+  // __typename?: 'RetiredYearsOfService';
   /** additional days (가산일수) */
   additionalDays: Scalars['Int'];
   /** number of days excluded (제외일수) */

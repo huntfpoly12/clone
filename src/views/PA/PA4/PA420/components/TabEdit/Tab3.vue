@@ -122,7 +122,7 @@
         </a-col>
         <div class="mb-10 wf-100 text-center">
           <button-basic text="퇴직소득세 계산" type="default" mode="contained" @onClick="handleCalculateIncomeRetirementTax"
-                        :disabled="taxableRetirementBenefitsRef <= 0 || disableBtn"/>
+                        :disabled="taxableRetirementBenefitsRef <= 0"/>
         </div>
 
         <a-col :span="12">
@@ -339,7 +339,6 @@ import {useQuery} from "@vue/apollo-composable";
 import queries from "@/graphql/queries/PA/PA4/PA420/index";
 import {companyId} from "@/helpers/commonFunction"
 import notification from '@/utils/notification';
-import {FORM_STATE_TAB_3} from "../../utils/index"
 import {Message} from '@/configs/enum';
 import {useStore} from "vuex";
 import cloneDeep from "lodash/cloneDeep";
@@ -386,25 +385,9 @@ const FORM_STATE_OLD = computed(() =>cloneDeep({
   nonTaxableRetirementBenefits:  Number(props.dataDetail.specification?.nonTaxableRetirementBenefits),
   taxCredit: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.taxCredit,
   prePaidDelayedTaxPaymentTaxAmount: props.dataDetail.specification?.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
-  prevRetirementBenefitStatus: {
-    retirementBenefits: null,
-    nonTaxableRetirementBenefits: null,
-    taxableRetirementBenefits: null,
-  },
-  prevRetiredYearsOfService: {
-    settlementStartDate: null,
-    settlementFinishDate: null,
-    paymentDate: null,
-    exclusionDays: 0,
-    additionalDays: 0,
-  },
-  lastRetiredYearsOfService: {
-    settlementStartDate: null,
-    settlementFinishDate: null,
-    paymentDate: null,
-    exclusionDays: 0,
-    additionalDays: 0,
-  }
+  prevRetirementBenefitStatus: props.dataDetail.specification?.specificationDetail.prevRetirementBenefitStatus,
+  prevRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.prevRetiredYearsOfService,
+  lastRetiredYearsOfService: props.dataDetail.specification?.specificationDetail.lastRetiredYearsOfService
 }))
 const initialIncomeRetirementTax_old = computed(() => cloneDeep({
   taxBaseCalculation: props.dataDetail.specification?.specificationDetail.taxBaseCalculation,
@@ -437,15 +420,15 @@ const formState = reactive(cloneDeep(FORM_STATE_OLD.value))
 const dataIncomeRetirementTax: any = reactive(cloneDeep(initialIncomeRetirementTax_old.value))
 const statementsAfterCal1 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[0]))
 const statementsAfterCal2 = reactive(cloneDeep(initialIncomeRetirementTax_old.value.calculationOfDeferredRetirementIncomeTax.statements[1]))
-const disableBtn = ref(true)
 
 const isChangeRetirementBenefits = computed(() => {
   return !isEqual(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[0], FORM_STATE_OLD.value.calculationOfDeferredRetirementIncomeTax.statements[0]) ||
     !isEqual(dataIncomeRetirementTax.calculationOfDeferredRetirementIncomeTax.statements[1], FORM_STATE_OLD.value.calculationOfDeferredRetirementIncomeTax.statements[0])
 })
-const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_TAB_3))
+const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_OLD.value))
 
 watchEffect(() => {
+  console.log('isChangeTaxInput', isChangeTaxInput.value)
   store.commit('common/setIsChangeForm', {tab3: isChangeRetirementBenefits.value || isChangeTaxInput.value})
 })
 watchEffect(() => {
@@ -495,6 +478,7 @@ onResult((value) => {
   trigger.value = false;
 })
 const handleCalculateIncomeRetirementTax = () => {
+  console.log('FORM_STATE_OLD.value.lastRetiredYearsOfService', FORM_STATE_OLD.value.lastRetiredYearsOfService)
   const {nonTaxableRetirementBenefits, ...newFormState} = formState
   let result: any = {
     ...newFormState,
@@ -517,10 +501,10 @@ const handleCalculateIncomeRetirementTax = () => {
       ...result,
       prevRetiredYearsOfService: {
         ...FORM_STATE_OLD.value.prevRetiredYearsOfService,
-        paymentDate: FORM_STATE_OLD.value.prevRetiredYearsOfService.paymentDate
+        paymentDate: FORM_STATE_OLD.value.prevRetiredYearsOfService?.paymentDate
       },
     }
-    if (FORM_STATE_OLD.value.prevRetirementBenefitStatus.nonTaxableRetirementBenefits) {
+    if (FORM_STATE_OLD.value.prevRetirementBenefitStatus?.nonTaxableRetirementBenefits) {
       result.prevRetirementBenefitStatus = FORM_STATE_OLD.value.prevRetirementBenefitStatus
     }
   } else {
@@ -548,21 +532,7 @@ function compareObjects(obj1: any, obj2: any) {
 }
 
 watch(formState.calculationOfDeferredRetirementIncomeTax.statements, (value) => {
-  if (value[0] && value[1]) {
-    const isNotEmpty1 = compareObjects(value[0], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[0])
-    const isNotEmpty2 = compareObjects(value[1], FORM_STATE_TAB_3.calculationOfDeferredRetirementIncomeTax.statements[1])
-    if (!isNotEmpty1 && !isNotEmpty2) {
-      disableBtn.value = true
-      return
-    }
-    if (isNotEmpty1) {
-      disableBtn.value = false
-    }
-    if (isNotEmpty2) {
-      disableBtn.value = false
-    }
     formState.calculationOfDeferredRetirementIncomeTax.totalAmount = +value[0].accountDepositAmount + +value[1].accountDepositAmount
-  }
 }, {deep: true})
 
 </script>
