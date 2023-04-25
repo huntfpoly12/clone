@@ -876,5 +876,6 @@ export default defineComponent({
 :deep .ant-dropdown-menu-item{
   text-align: right;
   line-height: 18px;
+
 }
 </style>
