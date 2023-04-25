@@ -16,7 +16,7 @@
             <a-menu>
               <a-menu-item>
                 <div class="user-infor">
-                  <p class="name-infor">ID : {{userInfor.name}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type).color">{{ getColorTag(userInfor.type).color }}</a-tag></p>
+                  <p class="name-infor">ID : {{userInfor.username}} <a-tag v-if="userInfor.type != 'c'" :color="getColorTag(userInfor.type).color">{{ getColorTag(userInfor.type).color }}</a-tag></p>
                   <p>{{userInfor.email}}</p>
                   <p>{{ $filters.formatPhoneNumber(userInfor.mobilePhone)}}</p>
                 </div>
