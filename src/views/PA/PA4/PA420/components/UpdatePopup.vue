@@ -90,7 +90,7 @@ const store = useStore();
 const globalYear = computed(() => store.state.settings.globalYear)
 const selectMonthColumn = computed(() => store.getters['common/getSelectMonthColumn'])
 const isDisableCreate = computed(() => store.getters['common/getIsDisableCreate'])
-const getAllData = computed(() => store.getters['common/getAllData'])
+const getAllData = computed(() => store.getters['common/getAllDataUpdate'])
 const interimPaymentTab1 = computed(() => store.getters['common/getInterimPaymentTab1'])
 const isDisableBtnTab2 = computed(() => store.getters['common/getIsDisableBtnTab2'])
 const isChangeForm = computed(() => store.getters['common/getIsChangeForm'])
@@ -227,77 +227,21 @@ const prevStep = () => {
   step.value--
 }
 const updated = () => {
-  let dataDefault = store.state.common.formStateEditPA420.specification
-  // validate datepicker tab 3
-  let statements = dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements;
-  let dtValidate = true
-  if (formEditTab3.value.isReqStatements1 && statements.length > 0 && statements[0].depositDate == null) {
-    formEditTab3.value.statements1Ref.validate(true)
-    dtValidate = false
+  if (isDisableCreate.value) {
   } else {
-    formEditTab3.value.statements1Ref.validate(false)
-  }
-  if (formEditTab3.value.isReqStatements2 && statements.length > 1 && statements[1].depositDate == null) {
-    formEditTab3.value.statements2Ref.validate(true)
-    dtValidate = false
-  } else {
-    formEditTab3.value.statements2Ref.validate(false)
-  }
-
-  // validate form tab 3
-  const validForm3 = formEditTab3.value.tab3EditForm.validate();
-  if (!validForm3.isValid) {
-    validForm3.brokenRules[0].validator.focus();
-  } else if (!dtValidate) {
-    dtValidate = true
-  } else {
-
-    let dataCallApiUpdate =
-      {
-        "companyId": companyId,
-        "processKey": selectMonthColumn.value,
-        "incomeId": props.keyRowIndex,
-        "input": {
-          retirementType: store.state.common.formStateEditPA420.retirementType,
-          executive: dataDefault.executive,
-          retirementReason: dataDefault.retirementReason,
-        },
-        "incomeCalculationInput": {
-          "totalPay3Month": dataDefault.totalPay3Month,
-          "totalAnualBonus": dataDefault.totalAnualBonus,
-          "annualLeaveAllowance": dataDefault.annualLeaveAllowance,
-          "settlementStartDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementStartDate,
-          "settlementFinishDate": dataDefault.specificationDetail.settlementRetiredYearsOfService.settlementFinishDate,
-          "exclusionDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.exclusionDays,
-          "additionalDays": dataDefault.specificationDetail.settlementRetiredYearsOfService.additionalDays
-        },
-        "taxCalculationInput": {
-          "calculationOfDeferredRetirementIncomeTax": {
-            "totalAmount": dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.totalAmount,
-            "statements": [...dataDefault.specificationDetail.calculationOfDeferredRetirementIncomeTax.statements]
-          },
-          "prePaidDelayedTaxPaymentTaxAmount": dataDefault.specificationDetail.taxAmountCalculation.prePaidDelayedTaxPaymentTaxAmount,
-          "taxCredit": dataDefault.specificationDetail.taxAmountCalculation.taxCredit,
-          "lastRetiredYearsOfService": dataDefault.specificationDetail.lastRetiredYearsOfService,
-          "prevRetiredYearsOfService": dataDefault.specificationDetail.prevRetiredYearsOfService,
-          "lastRetirementBenefitStatus": dataDefault.specificationDetail.lastRetirementBenefitStatus,
-          "prevRetirementBenefitStatus": dataDefault.specificationDetail.prevRetirementBenefitStatus
-        }
-      }
-    // remove all row name : __typename
-    const cleanData = JSON.parse(
-      JSON.stringify(dataCallApiUpdate, (name, val) => {
-        if (
-          name === "__typename" ||
-          (!store.state.common.formStateEditPA420.checkBoxCallApi && (name === "prevRetirementBenefitStatus" || name === "prevRetiredYearsOfService"))
-        ) {
-          delete val[name];
-        } else {
-          return val;
-        }
-      })
-    );
-    mutate(cleanData)
+    const dataForm: any = getAllData.value;
+    if (!interimPaymentTab1.value) {
+      delete dataForm.taxCalculationInput.prevRetiredYearsOfService
+      delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
+    }
+    if (!dataForm.taxCalculationInput?.prevRetirementBenefitStatus?.retirementBenefits)
+      delete dataForm.taxCalculationInput.prevRetirementBenefitStatus
+    const variables: any = reactive({
+      companyId: companyId,
+      incomeId: props.keyRowIndex,
+      ...dataForm
+    });
+    mutate(variables)
   }
 }
 

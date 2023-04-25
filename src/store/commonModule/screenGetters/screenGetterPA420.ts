@@ -19,6 +19,18 @@ const screenGetterPA420 = {
       taxCalculationInput: state.taxCalculationInput,
     }
   },
+  getAllDataUpdate: (state: any) => {
+    return {
+      processKey: state.selectMonthColumn,
+      input: {
+        retirementType: state.inputTab1.retirementType,
+        executive: state.inputTab1.executive,
+        retirementReason: state.inputTab1.retirementReason
+      },
+      incomeCalculationInput: state.incomeCalculationInput,
+      taxCalculationInput: state.taxCalculationInput,
+    }
+  },
   getIsChangeForm: (state: any) => state.isChangeForm.tab1 || state.isChangeForm.tab2 || state.isChangeForm.tab3,
   getEmployeeEdit: (state: any) => state.employee,
 };
