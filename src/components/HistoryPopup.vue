@@ -396,7 +396,7 @@ export default defineComponent({
                         case 'pa-840-1':
                           dataQuery.value = {
                             companyId: companyId,
-                            imputedYear: globalYear.value,
+                            imputedYear: globalYear,
                             workId: props.data,
                           };
                             triggerPA840_1.value = true;
@@ -405,7 +405,7 @@ export default defineComponent({
                         case 'pa-840-2':
                           dataQuery.value = {
                             companyId: companyId,
-                            imputedYear: globalYear.value,
+                            imputedYear: globalYear,
                             workId: props.data,
                           };
                             triggerPA840_2.value = true;
