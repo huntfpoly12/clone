@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" :trigger="['click']">
+  <a-dropdown  :overlayStyle="{ 'border': '2px solid'}">
       <a class="ant-dropdown-link" @click.prevent>
         <a-spin :spinning="!userInfor" size="small"></a-spin>{{ userInfor ? userInfor.name : ''}}
         <DownOutlined />
