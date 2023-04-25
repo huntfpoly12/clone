@@ -160,7 +160,7 @@ export default defineComponent({
     const userInfor = computed(() => (store.state.auth.userInfor))
     const move_column = computed(() => store.state.settings.move_column);
     const colomn_resize = computed(() => store.state.settings.colomn_resize);
-    const globalYear = computed(() => store.getters['settings/currentYear']);
+    const globalYear = computed(() => dayjs().year());
     let trigger = ref(true)
     let modalConfirmMail = ref(false)
     let dataModalSave = ref()
