@@ -1,7 +1,7 @@
 <template>
   <a-dropdown  :overlayStyle="{ 'border': '2px solid'}" :trigger="['click']">
       <a class="ant-dropdown-link" @click.prevent>
-        {{ userInfor ? userInfor.name : ''}}
+        <a-spin :spinning="!userInfor" size="small"></a-spin>{{ userInfor ? userInfor.name : ''}}
         <DownOutlined />
       </a>
       <template #overlay>

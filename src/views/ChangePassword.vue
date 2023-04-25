@@ -1,7 +1,7 @@
 <template>
-    <a-modal :visible="true" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
+    <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
           :width="445" :height="500">
-      <standard-form  formName="forget-password" ref="forgetPassword"  class="auth-form">
+      <standard-form  formName="change-password" ref="changePass"  class="auth-form">
         <div class="dx-fieldset">
           <div class="dx-fieldset-header">비밀번호 변경</div>
           <div class="dx-field">
@@ -14,14 +14,13 @@
             <div class="dx-field-label">비밀번호 확인</div>
             <div class="dx-field-value">
               <default-text-box width="100%" v-model:valueInput="confirmPassword" :required="true"   name="password"   id="password"  placeholder="" mode="password"/>
-              <p style="color: red;">{{ confirMessage }}</p>
+              <p style="color: red;">{{ confirmMessage }}</p>
             </div>
           </div>
         </div>
         <div class="dx-fieldset">
           <DxButton
             id="button"
-            :use-submit-behavior="true"
             text="비밀번호 변경"
             type="success"
             :height="$config_styles.HeightInput" 
@@ -35,26 +34,39 @@
   import DxButton from 'devextreme-vue/button';
   import { reactive, ref, watch } from "vue";
   import { useMutation } from "@vue/apollo-composable";
-  import { useRouter } from "vue-router";
   import mutations from "../graphql/mutations/index";
   import notification from '@/utils/notification';
+  import { useStore } from 'vuex';
   export default {
+    props: {
+      modalStatus: {
+          type: Boolean,
+          default: false,
+      },
+    },
     components: {
       DxButton,
     },
     setup(props,{emit}) {
-      const router = useRouter();
+      const store = useStore();
       const form = reactive({
         password: "",
       });
+      const changePass = ref();
       const errors = ref(null);
       const confirmPassword = ref('')
-      const confirMessage = ref('')
+      const isConfirm = ref(true)
+      const confirmMessage = ref('')
       const setModalVisible = () => {
             emit("closePopup", false)
       };
       const submitForm = () => {
-        changePassword();
+        const res = changePass.value.validate();
+        if (!res.isValid || !isConfirm.value) {
+          res.brokenRules[0].validator.focus();
+        } else {
+          changePassword();
+        }
       };
   
       // signin mutation
@@ -70,16 +82,19 @@
       }));
       resetDone(() => {
         notification('success', '비밀번호를 성공적으로 변경했으며 로그인하여 관리 페이지로 이동하세요')
-        setModalVisible()
+        location.reload();
+        store.commit("auth/logout");
       });
       onError((error) => {
         notification('error', error.message)
       });
       watch(confirmPassword, (newVal) => {
           if (form.password !== newVal) {
-            confirMessage.value = 'Passwords are not matching, please try again' 
+            confirmMessage.value = 'Passwords are not matching, please try again' 
+            isConfirm.value = false
           } else {
-            confirMessage.value=''
+              confirmMessage.value = ''
+              isConfirm.value = true
           }
       })
       return {
@@ -89,7 +104,8 @@
         setModalVisible,
         resetLoading,
         confirmPassword,
-        confirMessage
+        confirmMessage,
+        changePass
       };
     },
   };
