@@ -145,11 +145,11 @@ export default defineComponent({
     const contentDelete = Message.getCommonMessage('401').message as string
     const isDelete = ref(false);
     const store = useStore();
-    const globalYear = computed(() => store.state.settings.globalYear);
+    const paYear = computed(() => sessionStorage.getItem("paYear") || dayjs().year())
     const {per_page, move_column, colomn_resize} = store.state.settings;
     const actionParam = reactive({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: paYear.value,
       workId: null as (number | null),
     })
 
@@ -157,7 +157,7 @@ export default defineComponent({
     const dataSource = ref([]);
     const employeeAcquisitionsParam = reactive({
       companyId: companyId,
-      imputedYear: globalYear.value,
+      imputedYear: paYear.value,
     });
 
     const {
@@ -172,7 +172,7 @@ export default defineComponent({
 
     // watch change year
     watchEffect(() => {
-      employeeAcquisitionsParam.imputedYear = globalYear.value;
+      employeeAcquisitionsParam.imputedYear = paYear.value;
     })
     // -------history------
 
@@ -245,7 +245,7 @@ export default defineComponent({
   }
   // view detail
     return {
-      globalYear,
+      paYear,
       per_page,
       move_column,
       colomn_resize,

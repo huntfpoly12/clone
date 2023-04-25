@@ -145,8 +145,7 @@
         :processKey="dataTableDetail.processKey" />
     <AddPopup v-if="modalAdd" :modalStatus="modalAdd" @closePopup="handleClose" :data="popupDataDelete" :key="resetFormNum"
         :processKey="dataTableDetail.processKey" :listEmployeeexist="listEmployeeId"/>
-    <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup"
-        :processKey="dataTableDetail.processKey" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
+    <UpdatePopup v-if="modalUpdate" :modalStatus="modalUpdate" @closePopup="actionClosePopup" :keyRowIndex="keyDetailRow" @updateSuccess="actionDeleteSuccess" />
 </template>
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from "vue";

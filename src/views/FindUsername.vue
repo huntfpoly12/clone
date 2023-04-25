@@ -87,8 +87,8 @@
       fetchPolicy: "no-cache",
       }));
       onResult((res) => {
-        if (res.data) {
-          listUserMask.value = res.data
+        if (res) {
+          listUserMask.value = res.data.findUsername
         }
         trigger.value = false
       });
@@ -146,6 +146,7 @@
   padding-top: 15px;
   .has-result{
     font-weight: bold;
+    margin-left: 30px;
   }
   .empty-result {
     text-align: center;

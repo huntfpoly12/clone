@@ -524,9 +524,6 @@ watch(() => props.actionNextStep, () => {
 const openNewTab = () => {
   window.open('pa-120')
 };
-const positiveNumber = (value: any) => {
-  return value.value > 0
-}
 const submitForm = (e: any) => {
   // validate input date time
   let dtValidate = true

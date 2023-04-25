@@ -77,107 +77,107 @@ export type EmployeeWagePayItem = {
 export type EmployeeWage = {
   __typename?: 'EmployeeWage';
   /** activation status (활성여부) */
-  active: Scalars['Boolean'];
+  // active: Scalars['Boolean'];
   /** extended address (확장주소) */
-  addressExtend?: Maybe<Scalars['String']>;
+  // addressExtend?: Maybe<Scalars['String']>;
   /** generation date (생성일) */
-  createdAt: Scalars['DateScalar'];
+  // createdAt: Scalars['DateScalar'];
   /** generators (생성자) */
-  createdBy: Scalars['String'];
+  // createdBy: Scalars['String'];
   /** number of families subject to deduction (공제대상 가족수) */
-  deductionDependentCount: Scalars['Int'];
+  // deductionDependentCount: Scalars['Int'];
   /** Deduction item list of wage income earner (근로소득자 공제항목 목록) */
-  deductionItems?: Maybe<Array<EmployeeWageDeductionItem>>;
+  // deductionItems?: Maybe<Array<EmployeeWageDeductionItem>>;
   /** deletable status (삭제가능 여부) */
-  deletable: Scalars['Boolean'];
+  // deletable: Scalars['Boolean'];
   /** department (부서) */
-  department?: Maybe<Scalars['String']>;
+  // department?: Maybe<Scalars['String']>;
   /** List of dependents of wage income earner (근로소득자의 부양가족 목록) */
-  dependents?: Maybe<Array<EmployeeWageDependent>>;
+  // dependents?: Maybe<Array<EmployeeWageDependent>>;
   /** email (이메일) */
-  email?: Maybe<Scalars['String']>;
+  // email?: Maybe<Scalars['String']>;
   /** employee number (사번) */
   employeeId: Scalars['Int'];
   /** employeement insurance deduction status (고용보험공제여부) */
-  employeementInsuranceDeduction: Scalars['Boolean'];
+  // employeementInsuranceDeduction: Scalars['Boolean'];
   /** employee insurance support percent (고용보험 두루누리 적용 퍼센트) */
-  employeementInsuranceSupportPercent?: Maybe<Scalars['Int']>;
+  // employeementInsuranceSupportPercent?: Maybe<Scalars['Int']>;
   /** employeement reduction for SMEs status (중소기업취업감면여부) */
-  employeementReduction: Scalars['Boolean'];
+  // employeementReduction: Scalars['Boolean'];
   /** finish date of employeement reduction period for SMEs [YYYYMMDD] (중소기업취업감면기간 종료일) */
-  employeementReductionFinishDate?: Maybe<Scalars['Int']>;
+  // employeementReductionFinishDate?: Maybe<Scalars['Int']>;
   /** employeement reduction input type for SMEs (중소기업취업감면입력 유형) */
-  employeementReductionInput?: Maybe<Scalars['Int']>;
+  // employeementReductionInput?: Maybe<Scalars['Int']>;
   /** employeement reduction rate for SMEs (중소기업취업감면율 퍼센트) */
-  employeementReductionRatePercent?: Maybe<Scalars['Int']>;
+  // employeementReductionRatePercent?: Maybe<Scalars['Int']>;
   /** start date of employeement reduction period for SMEs [YYYYMMDD] (중소기업취업감면기간 시작일) */
-  employeementReductionStartDate?: Maybe<Scalars['Int']>;
+  // employeementReductionStartDate?: Maybe<Scalars['Int']>;
   /** foreigner status (외국인여부) */
   foreigner: Scalars['Boolean'];
   /** health insurance deduction status (건강보험공제여부) */
-  healthInsuranceDeduction: Scalars['Boolean'];
+  // healthInsuranceDeduction: Scalars['Boolean'];
   /** householder status (세대주여부) */
-  householder: Scalars['Boolean'];
+  // householder: Scalars['Boolean'];
   /** income payments (소득지급액) */
-  incomePayment: Scalars['Int'];
+  // incomePayment: Scalars['Int'];
   /** income tax magnification / % (소득세배율) */
-  incomeTaxMagnification: Scalars['Int'];
+  // incomeTaxMagnification: Scalars['Int'];
   /** income classification code (소득구분코드) */
   incomeTypeCode: Scalars['String'];
   /** insurance premium support usage status (두루누리사용여부) */
-  insuranceSupport: Scalars['Boolean'];
+  // insuranceSupport: Scalars['Boolean'];
   /** ip address (IP주소) */
-  ip: Scalars['String'];
+  // ip: Scalars['String'];
   /** date of joining the company [YYYYMMDD] (입사일) */
   joinedAt: Scalars['Int'];
   /** date of resignation [YYYYMMDD] (퇴사일) */
   leavedAt?: Maybe<Scalars['Int']>;
   /** long-term care insurance deduction status (장기요양보험공제여부) */
-  longTermCareInsuranceDeduction: Scalars['Boolean'];
+  // longTermCareInsuranceDeduction: Scalars['Boolean'];
   /** name (이름) */
   name: Scalars['String'];
   /** national pension deduction status (국민연금공제여부) */
-  nationalPensionDeduction: Scalars['Boolean'];
+  // nationalPensionDeduction: Scalars['Boolean'];
   /** national pension support percent (국민연금 두루누리 적용 퍼센트) */
-  nationalPensionSupportPercent?: Maybe<Scalars['Int']>;
+  // nationalPensionSupportPercent?: Maybe<Scalars['Int']>;
   /** foreign nationality (외국인국적) */
-  nationality?: Maybe<Scalars['String']>;
+  // nationality?: Maybe<Scalars['String']>;
   /** foreign nationality code (외국인국적코드) */
-  nationalityCode?: Maybe<Scalars['String']>;
+  // nationalityCode?: Maybe<Scalars['String']>;
   /** Pay item list of wage income earner (근로소득자 소득항목 목록) */
-  payItems?: Maybe<Array<EmployeeWagePayItem>>;
+  // payItems?: Maybe<Array<EmployeeWagePayItem>>;
   /** representative status (대표자여부) */
-  president: Scalars['Boolean'];
+  // president: Scalars['Boolean'];
   /** resident registration number / foreigner number (주민등록번호 / 외국인번호) */
   residentId: Scalars['String'];
   /** resident registration number / Foreigner number validity (주민등록번호 / 외국인번호 유효성) */
-  residentIdValidity: Scalars['Boolean'];
+  // residentIdValidity: Scalars['Boolean'];
   /** position (직책) */
-  responsibility?: Maybe<Scalars['String']>;
+  // responsibility?: Maybe<Scalars['String']>;
   /** road name address (도로명주소) */
-  roadAddress?: Maybe<Scalars['String']>;
+  // roadAddress?: Maybe<Scalars['String']>;
   /** status (상태) */
   status: Scalars['Int'];
   /** the qualifications required to stay (체류자격) */
-  stayQualification?: Maybe<Scalars['String']>;
+  // stayQualification?: Maybe<Scalars['String']>;
   /** total deduction (공제합계) */
-  totalDeduction: Scalars['Int'];
+  // totalDeduction: Scalars['Int'];
   /** salary + reward total (급여+재수당합계) */
   totalPay: Scalars['Int'];
   /** employee type (직원유형) */
-  type: Scalars['Int'];
+  // type: Scalars['Int'];
   /** revised date (수정일) */
-  updatedAt: Scalars['DateScalar'];
+  // updatedAt: Scalars['DateScalar'];
   /** modifiers (수정자) */
-  updatedBy: Scalars['String'];
+  // updatedBy: Scalars['String'];
   /** weekly prescribed working hours (주간 규정 근무시간) */
-  weeklyWorkingHours: Scalars['Int'];
+  // weeklyWorkingHours: Scalars['Int'];
   /** withholding income tax (원천징수소득세) */
-  withholdingIncomeTax?: Maybe<Scalars['Int']>;
+  // withholdingIncomeTax?: Maybe<Scalars['Int']>;
   /** withholding local income tax (원천징수지방소득세) */
-  withholdingLocalIncomeTax?: Maybe<Scalars['Int']>;
+  // withholdingLocalIncomeTax?: Maybe<Scalars['Int']>;
   /** withholding rural special tax (원천징수농어촌특별세) */
-  withholdingRuralSpecialTax?: Maybe<Scalars['Int']>;
+  // withholdingRuralSpecialTax?: Maybe<Scalars['Int']>;
 };
 /** Deduction item of daily wage income earner (일용직근로소득자 공제항목) */
 export type EmployeeWageDailyDeductionItem = {
@@ -418,74 +418,36 @@ export type TaxBaseCalculation = {
 /** Retirement income details (퇴직소득명세 상세) */
 export type IncomeRetirementSpecificationDetail = {
   __typename?: 'IncomeRetirementSpecificationDetail';
-  /** Calculation of deferred retirement income tax amount (이연퇴직소득세액계산) */
   calculationOfDeferredRetirementIncomeTax: CalculationOfDeferredRetirementIncomeTax;
-  /** Payment details / deductible source tax amount (납부명세/차감원천징수세액) */
   deductibleWithholdingTax: DeductibleWithholdingTax;
-  /** Last retired years of service (최종 퇴직근속연수) */
   lastRetiredYearsOfService: RetiredYearsOfService;
-  /** Last retirement benefit status (최종 퇴직급여현황) */
   lastRetirementBenefitStatus: RetirementBenefitStatus;
-  /** Previous retired years of service (이전 퇴직근속연수) */
   prevRetiredYearsOfService?: Maybe<RetiredYearsOfService>;
-  /** Previous retirement benefit status (이전 퇴직급여현황) */
   prevRetirementBenefitStatus?: Maybe<RetirementBenefitStatus>;
-  /** Deferred retirement income tax (이연퇴직소득세) */
   retirementIncomeTax: RetirementIncomeTax;
-  /** Settlement retired years of service (정산 퇴직근속연수) */
   settlementRetiredYearsOfService: RetiredYearsOfService;
-  /** Settlement retirement benefit status (정산 퇴직급여현황) */
-  settlementRetirementBenefitStatus: RetirementBenefitStatus;
-  /** Tax amount calculation (세액계산) */
   taxAmountCalculation: TaxAmountCalculation;
-  /** Tax amount to be reported (신고대상세액) */
   taxAmountToBeReported: TaxAmountToBeReported;
-  /** Tax base calculation (과세표준계산) */
   taxBaseCalculation: TaxBaseCalculation;
 };
 
 
 /** Retirement income statement (퇴직소득명세) */
 export type IncomeRetirementSpecification = {
-  __typename?: 'IncomeRetirementSpecification';
-  /** activation status (활성여부) */
-  active: Scalars['Boolean'];
-  /** annual allowance (연차수당) */
-  annualLeaveAllowance: Scalars['Int'];
-  /** generation date (생성일) */
-  createdAt: Scalars['DateScalar'];
-  /** generators (생성자) */
-  createdBy: Scalars['String'];
-  /** defined retirement benefits (확정퇴직급여) */
-  definedRetirementBenefits: Scalars['Int'];
-  /** executive status (임원여부) */
   executive: Scalars['Boolean'];
-  /** estimated retirement benefits (예상퇴직급여) */
-  expectedRetirementBenefits: Scalars['Int'];
-  /** retirement income specification serial number (퇴직소득명세일련번호) */
-  id: Scalars['Int'];
-  /** ip address (IP주소) */
-  ip: Scalars['String'];
-  /** defined non-taxable retirement benefits (확정비과세퇴직급여) */
-  nonTaxableRetirementBenefits: Scalars['Int'];
-  /** reason for retirement (퇴직사유) */
   retirementReason: Scalars['Float'];
-  /** Retirement income details (퇴직소득명세 상세) */
   specificationDetail: IncomeRetirementSpecificationDetail;
-  /** determined taxable retirement benefits (확정과세대상퇴직급여) */
-  taxableRetirementBenefits: Scalars['Int'];
-  /** total annual bonus amount (연간 상여금 총액) */
-  totalAnualBonus: Scalars['Int'];
-  /** total wage for 3 months before retirement / pre-tax (퇴직전3개월임금총액/세전) */
   totalPay3Month: Scalars['Int'];
-  /** revised date (수정일) */
-  updatedAt: Scalars['DateScalar'];
-  /** modifiers (수정자) */
-  updatedBy: Scalars['String'];
+  totalAnualBonus: Scalars['Int'];
+  annualLeaveAllowance: Scalars['Int'];
+  expectedRetirementBenefits: Scalars['Int'];
+  definedRetirementBenefits: Scalars['Int'];
+  nonTaxableRetirementBenefits: Scalars['Int'];
+  taxableRetirementBenefits: Scalars['Int'];
 };
 
 export type IncomeRetirement = {
-  __typename?: 'IncomeRetirement';
+  // __typename?: 'IncomeRetirement';
   /** activation status (활성여부) */
   active: Scalars['Boolean'];
   /** differential payment (차인지급액) */
@@ -493,7 +455,7 @@ export type IncomeRetirement = {
   /** generation date (생성일) */
   createdAt: Scalars['DateScalar'];
   /** generators (생성자) */
-  createdBy: Scalars['String'];
+  // createdBy: Scalars['String'];
   /** Retirement income earner (퇴직소득자) */
   employee?: Maybe<EmployeeRetirement>;
   /** employee number (사번) */
@@ -509,7 +471,7 @@ export type IncomeRetirement = {
   /** income classification code (소득구분코드) */
   incomeTypeCode: Scalars['String'];
   /** ip address (IP주소) */
-  ip: Scalars['String'];
+  // ip: Scalars['String'];
   /** non-taxable retirement benefits (비과세퇴직급여) */
   nonTaxableRetirementBenefits: Scalars['Int'];
   /** payment day (지급일) */
@@ -525,21 +487,21 @@ export type IncomeRetirement = {
   /** Retirement income classification (퇴직소득구분) */
   retirementType: Scalars['Int'];
   /** date of resignation / settlement end [YYYYMMDD] (퇴사일/정산종료일) */
-  settlementFinishDate: Scalars['Int'];
+  // settlementFinishDate: Scalars['Int'];
   /** date of joining / starting settlement [YYYYMMDD] (입사일/정산시작일) */
-  settlementStartDate: Scalars['Int'];
+  // settlementStartDate: Scalars['Int'];
   /** Retirement income specification (퇴직소득명세) */
   specification?: Maybe<IncomeRetirementSpecification>;
   /** retirement income specification serial number (퇴직소득명세일련번호) */
-  specificationId?: Maybe<Scalars['Int']>;
+  // specificationId?: Maybe<Scalars['Int']>;
   /** taxable retirement benefits (과세대상퇴직급여) */
   taxableRetirementBenefits: Scalars['Int'];
   /** total deduction (공제합계) */
   totalDeduction: Scalars['Int'];
   /** revised date (수정일) */
-  updatedAt: Scalars['DateScalar'];
+  // updatedAt: Scalars['DateScalar'];
   /** modifiers (수정자) */
-  updatedBy: Scalars['String'];
+  // updatedBy: Scalars['String'];
   /** withholding income tax (원천징수소득세) */
   withholdingIncomeTax: Scalars['Int'];
   /** withholding local income tax (원천징수지방소득세) */
