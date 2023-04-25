@@ -386,7 +386,7 @@ resIncomeProcessBusinesses(res => {
         value: filters.formatCurrency(val.incomeStat?.retirementBenefits - val.incomeStat?.withholdingIncomeTax - val.incomeStat?.withholdingLocalIncomeTax),
         ...dataAdd
       }
-      if (val.imputedMonth == dayjs().month() + 1) {
+      if (val.imputedMonth == dayjs().month() + 1 && selectMonthColumn.value.imputedMonth === dayjs().month() + 1) {
         store.commit('common/setPaymentDay', val.paymentMonth)
         store.commit('common/setSelectMonthColumn', {
           imputedMonth: val.imputedMonth,

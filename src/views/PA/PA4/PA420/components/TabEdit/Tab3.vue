@@ -347,7 +347,6 @@ import DefaultTextBox from "@/components/common/DefaultTextBox.vue";
 import {IncomeRetirement} from "@/views/PA/PA4/PA420/types";
 
 const props = defineProps<{ dataDetail: IncomeRetirement }>()
-console.log('props', props.dataDetail)
 const store = useStore()
 // const taxCalculationInputStore = computed(() => store.getters['common/getTaxCalculationInput'])
 const retirementBenefitsStore = computed(() => store.getters['common/getDefinedRetirementBenefits'])
@@ -428,7 +427,6 @@ const isChangeRetirementBenefits = computed(() => {
 const isChangeTaxInput = computed(() => !isEqual(formState, FORM_STATE_OLD.value))
 
 watchEffect(() => {
-  console.log('isChangeTaxInput', isChangeTaxInput.value)
   store.commit('common/setIsChangeForm', {tab3: isChangeRetirementBenefits.value || isChangeTaxInput.value})
 })
 watchEffect(() => {
@@ -478,7 +476,6 @@ onResult((value) => {
   trigger.value = false;
 })
 const handleCalculateIncomeRetirementTax = () => {
-  console.log('FORM_STATE_OLD.value.lastRetiredYearsOfService', FORM_STATE_OLD.value.lastRetiredYearsOfService)
   const {nonTaxableRetirementBenefits, ...newFormState} = formState
   let result: any = {
     ...newFormState,
