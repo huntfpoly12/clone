@@ -2,7 +2,7 @@
   <a-spin :spinning="loadingGetBankbookDetailProofs" size="large">
     <div class="form-upload-ac110" >
       <div ref="elementUpload" class="upload-pewview-img">
-        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
+        <a-upload list-type="picture-card" :disabled="!payload.bankbookDetailId || loadingRemoveBankbookDetailProof || disabled" :multiple="multiple" v-model:file-list="fileList" @preview="handlePreview"
           @change="changeFile" :customRequest="customRequest" :before-upload="beforeUpload" @remove="remove"
           accept="image/png, image/jpeg, image/jpg image/gif">
           <div v-if="fileList.length <= limit">
@@ -71,6 +71,10 @@ export default defineComponent({
     payLoadProofs: {
       type: Object,
       default: () => { }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
