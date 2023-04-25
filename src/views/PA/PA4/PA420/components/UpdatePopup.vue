@@ -118,6 +118,7 @@ const {
 } = useMutation(mutations.updateIncomeRetirement);
 onDone(() => {
   notification('success', Message.getCommonMessage('106').message)
+  store.commit('common/resetForm');
   emit("closePopup", false)
   emit("updateSuccess", true)
 })
@@ -157,11 +158,6 @@ resultGetDetail(async (newValue) => {
         taxableRetirementBenefits: 0
       }
     }
-    await store.dispatch("common/setFormStateEditPA420", {
-      ...newValue.data.getIncomeRetirement,
-      "checkBoxCallApi": checkBoxCallApi,
-    });
-
     store.commit('common/setEmployee', newValue.data.getIncomeRetirement.employee)
 
     firstLoad.value = 0
@@ -251,7 +247,7 @@ const setModalVisible = () => {
     statusModal.value = false;
   } else {
     comfirmClosePopup(() => {
-      emit("closePopup", false);
+      emit("closePopup", false)
       statusModal.value = false;
       store.commit('common/resetForm');
     })
