@@ -3,9 +3,9 @@
 
   <div id="pa-820" class="px-10 py-10">
     <a-spin :spinning="loading" size="large">
-      <DxDataGrid :show-row-lines="true" :hoverStateEnabled="true" :data-source="dataSource" :show-borders="true"
+      <DxDataGrid :show-row-lines="true" :data-source="dataSource" :show-borders="true"
         key-expr="workId" :allow-column-reordering="move_column" :allow-column-resizing="colomn_resize"
-        :column-auto-width="true" :focused-row-enabled="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
+        :column-auto-width="true" v-model:focused-row-key="focusedRowKey" ref="taxPayDataRef">
         <DxPaging :page-size="0" />
         <DxSearchPanel :visible="true" :highlight-case-sensitive="true" :search-visible-columns="['TypeCodeAndName']"
           placeholder="검색" />

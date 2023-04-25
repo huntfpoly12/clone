@@ -283,6 +283,7 @@ export default defineComponent({
         emit('employeeId', +initFormStateTabPA120.value.employeeId);
         let formData = { ...initFormStateTabPA120.value, employeeId: +initFormStateTabPA120.value.employeeId, };
         delete formData.key;
+        delete formData.deletable;
         if (isEdit.value) {
           delete formData.employeeId;
         }
