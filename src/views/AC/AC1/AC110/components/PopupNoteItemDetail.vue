@@ -1,9 +1,9 @@
 <template>
   <a-modal :visible="isModalNoteItemDetail" @cancel="cancel" :mask-closable="false" class="confirm-md ac-110-popup-detail"
     footer="" :width="1000">
-    <text-area-box v-model="valueInput" placeholder="Note....." height="300" style="margin-top: 20px;"/>
+    <text-area-box v-model="valueInput" placeholder="Note....." height="300" style="margin-top: 20px;" :readOnly="disabled" />
     <div class="ac-110-popup-detail-btn">
-      <button-basic text="저장" type="default" :mode="'contained'" @onClick="submit" />
+      <button-basic text="저장" type="default" :mode="'contained'" @onClick="submit" :disabled="disabled" />
     </div>
   </a-modal>
 </template>
@@ -19,6 +19,10 @@ export default defineComponent({
     transactionSelected: {
       type: Object,
       default: () => {}
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {
