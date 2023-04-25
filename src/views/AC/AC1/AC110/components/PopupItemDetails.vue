@@ -14,39 +14,39 @@
             <a-tooltip placement="top">
               <template #title>신규</template>
               <div>
-                <DxButton icon="plus" @click="addNewRow" />
+                <DxButton icon="plus" @click="addNewRow" :disabled="disabled"/>
               </div>
             </a-tooltip>
           </template>
           <DxScrolling mode="standard" show-scrollbar="always" />
           <DxColumn caption="품목" cell-template="item" width="150" />
           <template #item="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.item" :arrSelect="arrSelectItem" :required="true" :readOnly="disabled" />
           </template>
           <DxColumn caption="규격" cell-template="standard" width="150" />
           <template #standard="{ data }">
             <custom-item-select-box v-model:valueInput="data.data.standard" :arrSelect="arrSelectStandard"
-              :required="true" />
+              :required="true" :readOnly="disabled" />
           </template>
           <DxColumn caption="단위" cell-template="unit" width="150" />
           <template #unit="{ data }">
-            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" />
+            <custom-item-select-box v-model:valueInput="data.data.unit" :arrSelect="arrSelectUnit" :required="true" :readOnly="disabled"/>
           </template>
           <DxColumn caption="수량" cell-template="quantity" />
           <template #quantity="{ data }">
-            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" />
+            <number-box-money v-model:valueInput="data.data.quantity" :required="true" height="26" :readOnly="disabled" />
           </template>
           <DxColumn caption="단가" cell-template="unitPrice" />
           <template #unitPrice="{ data }">
-            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" />
+            <number-box-money v-model:valueInput="data.data.unitPrice" :required="true" height="26" :readOnly="disabled" />
           </template>
           <DxColumn caption="금액" cell-template="amount" />
           <template #amount="{ data }">
-            <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" @changeInput="changeInput"/>
+            <number-box-money v-model:valueInput="data.data.amount" :required="true" height="26" @changeInput="changeInput" :readOnly="disabled"/>
           </template>
           <DxColumn caption="비고" cell-template="remark" />
           <template #remark="{ data }">
-            <default-text-box v-model:valueInput="data.data.remark" />
+            <default-text-box v-model:valueInput="data.data.remark" :readOnly="disabled"/>
           </template>
           <DxColumn caption="삭제" cell-template="action" alignment="center" width="60" />
           <template #action="{ data }">
@@ -61,7 +61,7 @@
           </DxSummary>
         </DxDataGrid>
         <div class="ac-110-popup-detail-btn">
-          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" />
+          <button-basic text="저장" type="default" :mode="'contained'" @onClick="submitFormDetail($event)" :disabled="disabled" />
         </div>
       </standard-form>
     </a-spin>
@@ -102,6 +102,10 @@ export default defineComponent({
     payload: {
       type: Object,
       default: () => { }
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     }
   },
   components: {
@@ -227,6 +231,7 @@ export default defineComponent({
       return `차액: ${formatNumber(result)}`
     }
     const openPopupDeleteItem = (data: any) => {
+      if(props.disabled) return
       itemDelete.value = data
       isModalDelete.value = true
     }

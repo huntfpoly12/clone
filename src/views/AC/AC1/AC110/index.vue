@@ -143,21 +143,21 @@
                   </div>
                 </template>
                 <template #button-reset>
-                  <button-basic text="초기화" type="default" :mode="'contained'"
+                  <button-basic text="초기화" type="default" :mode="'contained'" :disabled="isRegistered"
                     @onClick="handleInitializeTransactionDetails" />
                 </template>
                 <template #button-add>
                   <a-tooltip placement="top">
                     <template #title>신규</template>
                     <div>
-                      <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" />
+                      <DxButton :focusStateEnabled="false" icon="plus" @click="addNewRowTransactionDetails" :disabled="isRegistered" />
                     </div>
                   </a-tooltip>
                 </template>
                 <template #button-save> 
                   <a-tooltip placement="top">
                     <template #title>신규</template>
-                    <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)">
+                    <DxButton :focusStateEnabled="false" @click="submitTransactionDetails($event)" :disabled="isRegistered">
                       <SaveFilled style="font-size: 19px;" />
                     </DxButton>
                   </a-tooltip>
@@ -169,7 +169,7 @@
                 <template #income="{ data }">
                   <div :id="`ac110income${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.spending}">
                     <number-box-money v-model:valueInput="data.data.income" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.spending" height="26"
+                      :disabled="!!data.data.spending" height="26" :readOnly="isRegistered"
                       @focusInput="changeInputIncomeSpending(data, 'income')" />
                   </div>
                 </template>
@@ -177,40 +177,40 @@
                 <template #spending="{ data }">
                   <div :id="`ac110spending${data.rowIndex}${data.columnIndex}`" :class="{'disable-input-column': !!data.data.income}">
                     <number-box-money v-model:valueInput="data.data.spending" :required="true" :spinButtons="false"
-                      :disabled="!!data.data.income" height="26"
-                      @focusInput="changeInputIncomeSpending(data, 'spending')" />
+                      :disabled="!!data.data.income" height="26" :readOnly="isRegistered"
+                      @focusInput="changeInputIncomeSpending(data, 'spending')" /> 
                   </div>
                 </template>
                 <DxColumn caption="적요" cell-template="summary" width="200" />
                 <template #summary="{ data }">
-                  <default-text-box v-model:valueInput="data.data.summary" :required="true" />
+                  <default-text-box v-model:valueInput="data.data.summary" :required="true" :readOnly="isRegistered" />
                 </template>
                 <DxColumn caption="계정과목" cell-template="accountCode" width="200" />
                 <template #accountCode="{ data }">
                   <account-code-select v-model:valueInput="data.data.accountCode"
-                    :classification="!!data.data.income ? [4] : [5]" :lengthText="10" />
+                    :classification="!!data.data.income ? [4] : [5]" :lengthText="10" :readOnly="isRegistered" />
                 </template>
                 <DxColumn caption="상대계정" cell-template="relationCode" width="200" />
                 <template #relationCode="{ data }">
                   <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
                     <account-code-select v-model:valueInput="data.data.relationCode"
-                    :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]"
+                    :classification="data.data.resolutionClassification === 2 ? [4] : [4, 5]" :readOnly="isRegistered"
                     :disabled="data.data.resolutionClassification === 1" :lengthText="10" />
                   </div>
                 </template>
                 <DxColumn caption="자금원천" cell-template="fundingSource" width="120" />
                 <template #fundingSource="{ data }">
-                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" />
+                  <FundingSourceSelect v-model:valueInput="data.data.fundingSource" :required="true" :readOnly="isRegistered" />
                 </template>
                 <DxColumn caption="거래처" cell-template="clientId" width="165px" />
                 <template #clientId="{ data }">
-                  <customer-select v-model:valueInput="data.data.clientId" width="150px" />
+                  <customer-select v-model:valueInput="data.data.clientId" width="150px" :readOnly="isRegistered" />
                 </template>
-                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100" />
+                <DxColumn caption="품의종류" cell-template="letterOfApprovalType" width="100"/>
                 <template #letterOfApprovalType="{ data }">
                   <div :class="{'disable-input-column': data.data.resolutionClassification === 1}">
                     <LetterOfApprovalTypeSelect v-model:valueInput="data.data.letterOfApprovalType"
-                    :disabled="data.data.resolutionClassification === 1"
+                    :disabled="data.data.resolutionClassification === 1" :readOnly="isRegistered"
                     :required="data.data.resolutionClassification === 2" />
                   </div>
                 </template>
@@ -259,7 +259,8 @@
           <div class="ac-110__main-detail-detail2-upload">
             <UploadPreviewImage width="400" :payLoadProofs="payloadGetTransactionDetails"
               @updateAddBankbookDetailProof="updateAddBankbookDetailProof"
-              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof" />
+              @updateremoveBankbookDetailProof="updateremoveBankbookDetailProof"
+              :disabled="isRegistered" />
           </div>
         </div>
       </div>
@@ -276,11 +277,11 @@
     <PopupSlipRegistration :isModalSlipRegistrantion="isModalSlipRegistrantion"
       :transactionDetailsCountSelected="transactionDetailsCountSelected" @closePopup="isModalSlipRegistrantion = false"
       @submit="handleSlipRegistration" />
-    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems"
+    <PopupItemDetails :isModalItemDetail="isModalItemDetail" :data="dataStatementOfGoodsItems" :disabled="isRegistered"
       :payload="payloadGetTransactionDetails" @closePopup="isModalItemDetail = false, dataStatementOfGoodsItems = {}"
       @updateGoodsCount="updateGoodsCount" />
     <PopupNoteItemDetail :isModalNoteItemDetail="isModalNoteItemDetail" :transactionSelected="transactionSelected"
-      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" />
+      @closePopup="isModalNoteItemDetail = false" @submit="updateNoteValue" :disabled="isRegistered" />
     <HistoryPopup :modalStatus="isModalHistory" @closePopup="isModalHistory = false" title="변경이력" :idRowEdit="idRowEdit"
       typeHistory="ac-110-bankbook" :data="payloadGetTransactionDetails" />
     <HistoryPopup :modalStatus="isModalHistoryAccountingProcessLogs"
@@ -445,6 +446,9 @@ export default defineComponent({
     const refGridDetailAc110: any = ref()
     // COMPUTED
     const bankbookSelected = computed(() => dataSource.value.find(item => item.bankbookDetailId === rowKeyfocused.value))
+    const isRegistered = computed(() => {
+      return !!bankbookSelected.value?.normalTransactionDetails && !!bankbookSelected.value?.documentRegistered
+    })
     // -------------- GRAPHQL --------------
     // queries
     const {
@@ -769,7 +773,7 @@ export default defineComponent({
       })
     }
     const handleInitializeTransactionDetails = () => {
-      if (rowKeyfocused.value === null) return
+      if (rowKeyfocused.value === null || isRegistered.value) return
       initializeTransactionDetails(
         payloadGetTransactionDetails
       )
@@ -794,7 +798,7 @@ export default defineComponent({
       isModalNoteItemDetail.value = false
     }
     const addNewRowTransactionDetails = () => {
-      if (rowKeyfocused.value === null) return
+      if (rowKeyfocused.value === null || isRegistered.value) return
 
       const initTransactionDetails: any = { ...InitTransactionDetails }
       const lengthData = dataSourceTransactionDetails.value.transactionDetails.length
@@ -809,7 +813,7 @@ export default defineComponent({
       dataSourceTransactionDetails.value.transactionDetails = [...dataSourceTransactionDetails.value.transactionDetails, initTransactionDetails]
     }
     const submitTransactionDetails = async (event: any) => {
-      if (rowKeyfocused.value === null) return
+      if (rowKeyfocused.value === null || isRegistered.value) return
       const res = await event.validationGroup.validate();
       if (!res.isValid) return
       // await refGridDetailAc110.value.instance.saveEditData()
@@ -983,7 +987,8 @@ export default defineComponent({
       fundingSource,
       letterOfApprovalType,
       changeInputIncomeSpending,
-      updateGoodsCount
+      updateGoodsCount,
+      isRegistered
     };
   },
 });
