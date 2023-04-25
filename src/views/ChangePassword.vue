@@ -1,6 +1,7 @@
 <template>
     <a-modal :visible="modalStatus" @cancel="setModalVisible" :mask-closable="false" class="confirm-md" footer=""
           :width="445" :height="500">
+    <a-spin :spinning="resetLoading" size="large">
       <standard-form  formName="change-password" ref="changePass"  class="auth-form">
         <div class="dx-fieldset">
           <div class="dx-fieldset-header">비밀번호 변경</div>
@@ -28,6 +29,7 @@
           />
         </div>
       </standard-form>
+    </a-spin>
     </a-modal>
   </template>
   <script lang="ts">
